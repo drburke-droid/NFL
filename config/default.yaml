@@ -1,0 +1,77 @@
+# NFL DFS Pipeline V2 Configuration
+
+paths:
+  db: db/nfl_odds.db
+  outputs: outputs/
+  models: outputs/models/
+  predictions: outputs/predictions/
+  reports: outputs/reports/
+  logs: outputs/logs/
+
+seasons: [2023, 2024, 2025]
+
+rolling:
+  window: 6
+  alpha: 0.65          # EWM decay — higher = more recent weight
+  min_history: 3       # min prior games before predicting
+
+walk_forward:
+  start_week: 5        # first prediction week each season
+  positions: [QB, RB, WR, TE]
+  min_train_rows: 200
+
+clustering:
+  player:
+    n_clusters:
+      QB: 3
+      RB: 4
+      WR: 4
+      TE: 3
+    min_games: 4
+    refit_interval: 1   # refit every N weeks (1 = every week)
+    method: kmeans       # kmeans or gmm
+  team:
+    offense_clusters: 4
+    defense_clusters: 4
+
+modeling:
+  lgbm:
+    n_estimators: 400
+    max_depth: 6
+    learning_rate: 0.04
+    subsample: 0.8
+    colsample_bytree: 0.8
+    min_child_samples: 20
+    reg_alpha: 0.15
+    reg_lambda: 0.15
+    random_state: 42
+  quantiles: [0.10, 0.25, 0.50, 0.75, 0.90]
+
+dfs:
+  site: draftkings
+  salary_cap: 50000
+  roster:
+    QB: 1
+    RB: 2
+    WR: 3
+    TE: 1
+    FLEX: 1    # RB/WR/TE
+    DST: 1
+  max_per_team: 8
+  min_roll_ppr: 3.0    # min rolling PPR to be DFS-relevant
+
+simulation:
+  n_sims: 10000
+  random_state: 42
+
+matchup_shrinkage:
+  global_weight: 0.3
+  position_weight: 0.3
+  archetype_weight: 0.4
+  min_n_for_raw: 30
+
+evaluation:
+  baseline_models:
+    - rolling_average
+    - market_implied
+    - spread_total_naive
