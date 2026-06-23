@@ -1,0 +1,30 @@
+feature,label,n,spearman,p
+prior_ppg,Prior PPG,5247,0.744,0.0
+prior2_ppg,PPG 2yrs ago,3807,0.663,0.0
+prior_total_tds,Prior total TDs,5247,0.663,0.0
+prior_off_pct,Prior snap %,3930,0.631,0.0
+prior_ppr_std,Prior weekly std,5247,0.622,0.0
+prior_cv,Prior coeff. of variation,5156,-0.61,0.0
+draft_pick,Draft pick,5247,-0.466,7.93486467138569e-282
+draft_round,Draft round,5247,-0.455,5.482064935945024e-267
+prior_games,Prior games played,5247,0.422,9.268358717896816e-226
+prior_passing_epa,Prior pass EPA,901,0.381,1.816835379889371e-32
+prior_receiving_epa,Prior rec EPA,4635,0.352,3.6965817074665787e-135
+prior_receptions_pg,Prior rec/g,5247,0.337,1.9828005679495435e-139
+prior_target_share,Prior target share,5247,0.329,7.536925065852976e-133
+prior_targets_pg,Prior targets/g,5247,0.318,1.9605449494552033e-123
+prior_receiving_yards_pg,Prior rec yds/g,5247,0.305,2.391902912387634e-113
+prior_attempts_pg,Prior pass att/g,5247,0.304,1.9479508519705513e-112
+prior_passing_yards_pg,Prior pass yds/g,5247,0.298,4.078114779378723e-108
+prior_wopr,Prior WOPR,5247,0.297,2.483135131607817e-107
+prior_carries_pg,Prior carries/g,5247,0.29,3.3541061928909267e-102
+prior_rushing_yards_pg,Prior rush yds/g,5247,0.282,2.10847797265722e-96
+team_change,Changed team,5247,-0.21,1.8243635470144962e-53
+prior_rush_td_rate,Prior rush TD/yd,3083,0.184,5.901668897830713e-25
+prior_rec_td_rate,Prior rec TD/yd,4565,0.179,3.99749490392084e-34
+prior_air_yards_share,Prior air-yards share,5247,0.159,3.8571905031536203e-31
+years_exp,Years exp,5230,0.099,7.246643295129317e-13
+prior_rushing_epa,Prior rush EPA,3142,0.095,1.0816492533244578e-07
+weight,Weight,5247,-0.027,0.04935689288894286
+age,Age,5247,0.02,0.15430211379174597
+forty,40 time,3607,0.015,0.36763947238302996

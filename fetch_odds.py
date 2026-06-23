@@ -14,7 +14,7 @@ from datetime import datetime, timedelta, timezone
 API_KEY = "29d902f2352064232e3d4022f78610b3"
 BASE_URL = "https://api.the-odds-api.com/v4"
 SPORT = "americanfootball_nfl"
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nfl_odds.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
 
 # US bookmakers relevant for DFS
 REGIONS = "us,us2"

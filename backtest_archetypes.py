@@ -19,7 +19,7 @@ from itertools import combinations
 # Fix Windows console encoding
 sys.stdout.reconfigure(encoding="utf-8")
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nfl_odds.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
 
 # Minimum sample size for a matchup to be reportable
 MIN_GAMES = 10

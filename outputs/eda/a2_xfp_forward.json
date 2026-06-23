@@ -1,0 +1,6 @@
+{
+  "H1 actual -> H2 actual": 0.766,
+  "H1 EXPECTED -> H2 actual": 0.768,
+  "H1 luck(actual-exp) -> H2 actual": 0.126,
+  "n": 3831
+}

@@ -26,7 +26,7 @@ from scipy.spatial.distance import cdist
 warnings.filterwarnings("ignore")
 sys.stdout.reconfigure(encoding="utf-8")
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nfl_odds.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
 
 # Rolling window config
 ROLLING_WINDOW = 6       # games to look back

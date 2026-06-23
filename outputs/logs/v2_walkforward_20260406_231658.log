@@ -1,0 +1,160 @@
+2026-04-06 23:16:58 [v2_walkforward] INFO: ================================================================================
+2026-04-06 23:16:58 [v2_walkforward] INFO: NFL DFS V2 Walk-Forward Pipeline
+2026-04-06 23:16:58 [v2_walkforward] INFO: ================================================================================
+2026-04-06 23:16:58 [v2_walkforward] INFO: Building full feature dataset...
+2026-04-06 23:17:10 [v2_walkforward] INFO: Dataset: 18530 rows, 72 features
+2026-04-06 23:17:10 [v2_walkforward] INFO: Feature families: football=48, market=10, interaction=13, context=1
+2026-04-06 23:17:10 [v2_walkforward] INFO: Walk-forward: 54 prediction weeks
+2026-04-06 23:17:10 [v2_walkforward] INFO:   Week 1/54: 2023 Wk5 | train=223, score=238
+2026-04-06 23:18:05 [v2_walkforward] INFO:   Week 10/54: 2023 Wk14 | train=2639, score=302
+2026-04-06 23:19:57 [v2_walkforward] INFO:   Week 20/54: 2024 Wk6 | train=5901, score=276
+2026-04-06 23:22:21 [v2_walkforward] INFO:   Week 30/54: 2024 Wk16 | train=8916, score=327
+2026-04-06 23:25:08 [v2_walkforward] INFO:   Week 40/54: 2025 Wk8 | train=12317, score=273
+2026-04-06 23:28:12 [v2_walkforward] INFO:   Week 50/54: 2025 Wk18 | train=15496, score=336
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: RESULTS
+2026-04-06 23:29:45 [v2_walkforward] INFO: ================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  A_football:
+    mae: 4.7183
+    rmse: 6.4079
+    pearson_r: 0.6132
+    spearman_r: 0.6552
+    n: 13528
+    top_decile: 0.3328
+2026-04-06 23:29:45 [v2_walkforward] INFO:   By position:
+2026-04-06 23:29:45 [v2_walkforward] INFO:     QB  : MAE=6.46 r=0.4666 rho=0.4269 n=1465
+2026-04-06 23:29:45 [v2_walkforward] INFO:     RB  : MAE=4.62 r=0.6324 rho=0.6867 n=3508
+2026-04-06 23:29:45 [v2_walkforward] INFO:     TE  : MAE=3.88 r=0.5376 rho=0.5693 n=2855
+2026-04-06 23:29:45 [v2_walkforward] INFO:     WR  : MAE=4.75 r=0.5627 rho=0.6192 n=5700
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  B_market:
+    mae: 4.9518
+    rmse: 6.5579
+    pearson_r: 0.5853
+    spearman_r: 0.5899
+    n: 13528
+    top_decile: 0.3609
+2026-04-06 23:29:45 [v2_walkforward] INFO:   By position:
+2026-04-06 23:29:45 [v2_walkforward] INFO:     QB  : MAE=6.56 r=0.4613 rho=0.4391 n=1465
+2026-04-06 23:29:45 [v2_walkforward] INFO:     RB  : MAE=4.98 r=0.5940 rho=0.5998 n=3508
+2026-04-06 23:29:45 [v2_walkforward] INFO:     TE  : MAE=4.10 r=0.5305 rho=0.5004 n=2855
+2026-04-06 23:29:45 [v2_walkforward] INFO:     WR  : MAE=4.95 r=0.5299 rho=0.5320 n=5700
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  C_full:
+    mae: 4.5751
+    rmse: 6.2508
+    pearson_r: 0.6366
+    spearman_r: 0.6771
+    n: 13528
+    top_decile: 0.3558
+2026-04-06 23:29:45 [v2_walkforward] INFO:   By position:
+2026-04-06 23:29:45 [v2_walkforward] INFO:     QB  : MAE=6.31 r=0.5026 rho=0.4539 n=1465
+2026-04-06 23:29:45 [v2_walkforward] INFO:     RB  : MAE=4.50 r=0.6579 rho=0.7077 n=3508
+2026-04-06 23:29:45 [v2_walkforward] INFO:     TE  : MAE=3.73 r=0.5712 rho=0.5933 n=2855
+2026-04-06 23:29:45 [v2_walkforward] INFO:     WR  : MAE=4.60 r=0.5869 rho=0.6408 n=5700
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  D_residual:
+    mae: 4.7234
+    rmse: 6.5388
+    pearson_r: 0.6092
+    spearman_r: 0.6519
+    n: 13528
+    top_decile: 0.3447
+2026-04-06 23:29:45 [v2_walkforward] INFO:   By position:
+2026-04-06 23:29:45 [v2_walkforward] INFO:     QB  : MAE=6.57 r=0.4710 rho=0.4389 n=1465
+2026-04-06 23:29:45 [v2_walkforward] INFO:     RB  : MAE=4.71 r=0.6244 rho=0.6730 n=3508
+2026-04-06 23:29:45 [v2_walkforward] INFO:     TE  : MAE=3.82 r=0.5566 rho=0.5683 n=2855
+2026-04-06 23:29:45 [v2_walkforward] INFO:     WR  : MAE=4.71 r=0.5585 rho=0.6118 n=5700
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  baseline_rolling:
+    mae: 4.9316
+    rmse: 6.9672
+    pearson_r: 0.5792
+    spearman_r: 0.6322
+    n: 13528
+    top_decile: 0.3306
+2026-04-06 23:29:45 [v2_walkforward] INFO:   By position:
+2026-04-06 23:29:45 [v2_walkforward] INFO:     QB  : MAE=6.81 r=0.4530 rho=0.4289 n=1465
+2026-04-06 23:29:45 [v2_walkforward] INFO:     RB  : MAE=4.85 r=0.5937 rho=0.6672 n=3508
+2026-04-06 23:29:45 [v2_walkforward] INFO:     TE  : MAE=4.09 r=0.4994 rho=0.5423 n=2855
+2026-04-06 23:29:45 [v2_walkforward] INFO:     WR  : MAE=4.92 r=0.5326 rho=0.5936 n=5700
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  baseline_market:
+    mae: 4.9518
+    rmse: 6.5579
+    pearson_r: 0.5853
+    spearman_r: 0.5899
+    n: 13528
+    top_decile: 0.3609
+2026-04-06 23:29:45 [v2_walkforward] INFO:   By position:
+2026-04-06 23:29:45 [v2_walkforward] INFO:     QB  : MAE=6.56 r=0.4613 rho=0.4391 n=1465
+2026-04-06 23:29:45 [v2_walkforward] INFO:     RB  : MAE=4.98 r=0.5940 rho=0.5998 n=3508
+2026-04-06 23:29:45 [v2_walkforward] INFO:     TE  : MAE=4.10 r=0.5305 rho=0.5004 n=2855
+2026-04-06 23:29:45 [v2_walkforward] INFO:     WR  : MAE=4.95 r=0.5299 rho=0.5320 n=5700
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: MODEL FAMILY COMPARISON
+2026-04-06 23:29:45 [v2_walkforward] INFO: ================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+                     mae    rmse  pearson_r  spearman_r        n  top_decile
+model                                                                       
+A_football        4.7183  6.4079     0.6132      0.6552  13528.0      0.3328
+B_market          4.9518  6.5579     0.5853      0.5899  13528.0      0.3609
+C_full            4.5751  6.2508     0.6366      0.6771  13528.0      0.3558
+D_residual        4.7234  6.5388     0.6092      0.6519  13528.0      0.3447
+baseline_rolling  4.9316  6.9672     0.5792      0.6322  13528.0      0.3306
+baseline_market   4.9518  6.5579     0.5853      0.5899  13528.0      0.3609
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: ABLATION ANSWERS
+2026-04-06 23:29:45 [v2_walkforward] INFO: ================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  Q1. Market-only power: MAE=4.952 (vs rolling baseline 4.932, improvement=-0.4%)
+2026-04-06 23:29:45 [v2_walkforward] INFO:   Q2. Football beyond market: Full MAE=4.575 vs Market MAE=4.952 (football adds 7.6%)
+2026-04-06 23:29:45 [v2_walkforward] INFO:   Q3. Residual model: MAE=4.723 vs Full=4.575
+2026-04-06 23:29:45 [v2_walkforward] INFO:   Q4. Football-only: MAE=4.718 (no market data at all)
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: QUANTILE MODEL ANALYSIS
+2026-04-06 23:29:45 [v2_walkforward] INFO: ================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO:   p10: 17.8% of actuals fall below (should be ~10%)
+2026-04-06 23:29:45 [v2_walkforward] INFO:   p25: 32.4% of actuals fall below (should be ~25%)
+2026-04-06 23:29:45 [v2_walkforward] INFO:   p50: 52.2% of actuals fall below (should be ~50%)
+2026-04-06 23:29:45 [v2_walkforward] INFO:   p75: 72.6% of actuals fall below (should be ~75%)
+2026-04-06 23:29:45 [v2_walkforward] INFO:   p90: 85.6% of actuals fall below (should be ~90%)
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+  Median as point prediction: MAE=4.353, r=0.6484
+2026-04-06 23:29:45 [v2_walkforward] INFO:   P90 ceiling exceeded: 14.4% of the time (should be ~10%)
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO: THRESHOLD PROBABILITY ANALYSIS
+2026-04-06 23:29:45 [v2_walkforward] INFO: ================================================================================
+2026-04-06 23:29:45 [v2_walkforward] INFO:   P(PPR >= 15): AUC=0.8194, Brier=0.1404, base_rate=18.9%
+2026-04-06 23:29:45 [v2_walkforward] INFO:     0%-20%    : predicted=4.8%, actual=5.4%, n=7476
+2026-04-06 23:29:45 [v2_walkforward] INFO:     20%-40%   : predicted=29.4%, actual=18.8%, n=1864
+2026-04-06 23:29:45 [v2_walkforward] INFO:     40%-60%   : predicted=49.9%, actual=32.4%, n=1522
+2026-04-06 23:29:45 [v2_walkforward] INFO:     60%-80%   : predicted=70.0%, actual=42.6%, n=1649
+2026-04-06 23:29:45 [v2_walkforward] INFO:     80%-100%  : predicted=87.7%, actual=59.8%, n=1017
+2026-04-06 23:29:45 [v2_walkforward] INFO:   P(PPR >= 20): AUC=0.7952, Brier=0.1006, base_rate=9.6%
+2026-04-06 23:29:45 [v2_walkforward] INFO:     0%-20%    : predicted=3.7%, actual=4.1%, n=9578
+2026-04-06 23:29:45 [v2_walkforward] INFO:     20%-40%   : predicted=29.3%, actual=16.5%, n=1592
+2026-04-06 23:29:45 [v2_walkforward] INFO:     40%-60%   : predicted=49.3%, actual=22.2%, n=1199
+2026-04-06 23:29:45 [v2_walkforward] INFO:     60%-80%   : predicted=69.1%, actual=29.4%, n=814
+2026-04-06 23:29:45 [v2_walkforward] INFO:     80%-100%  : predicted=86.9%, actual=41.2%, n=345
+2026-04-06 23:29:45 [v2_walkforward] INFO:   P(PPR >= 25): AUC=0.7766, Brier=0.0521, base_rate=4.3%
+2026-04-06 23:29:45 [v2_walkforward] INFO:     0%-20%    : predicted=2.3%, actual=3.1%, n=11957
+2026-04-06 23:29:45 [v2_walkforward] INFO:     20%-40%   : predicted=28.5%, actual=9.7%, n=827
+2026-04-06 23:29:45 [v2_walkforward] INFO:     40%-60%   : predicted=48.9%, actual=15.4%, n=422
+2026-04-06 23:29:45 [v2_walkforward] INFO:     60%-80%   : predicted=69.0%, actual=18.1%, n=248
+2026-04-06 23:29:45 [v2_walkforward] INFO:     80%-100%  : predicted=85.9%, actual=28.4%, n=74
+2026-04-06 23:29:45 [v2_walkforward] INFO:   P(PPR >= 30): AUC=0.7769, Brier=0.0187, base_rate=1.7%
+2026-04-06 23:29:45 [v2_walkforward] INFO:     0%-20%    : predicted=0.6%, actual=1.4%, n=12995
+2026-04-06 23:29:45 [v2_walkforward] INFO:     20%-40%   : predicted=28.7%, actual=11.1%, n=171
+2026-04-06 23:29:45 [v2_walkforward] INFO:     40%-60%   : predicted=50.3%, actual=8.3%, n=72
+2026-04-06 23:29:45 [v2_walkforward] INFO:     60%-80%   : predicted=68.6%, actual=18.6%, n=43
+2026-04-06 23:29:45 [v2_walkforward] INFO:     80%-100%  : predicted=87.1%, actual=11.1%, n=9
+2026-04-06 23:29:45 [v2_walkforward] INFO: 
+Outputs saved to C:\Users\rober\OneDrive\Documents\GitHub\NFL\outputs/reports
+2026-04-06 23:29:45 [v2_walkforward] INFO: Done!
