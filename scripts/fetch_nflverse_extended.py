@@ -57,7 +57,7 @@ def main():
         log("[2/9] weekly stats ...")
         w = pl(nflr.load_player_stats(SEASON_STATS, summary_level="week"))
         keep = ["player_id","player_display_name","position","position_group","season","week",
-                "season_type","recent_team","completions","attempts","passing_yards","passing_tds",
+                "season_type","team","opponent_team","completions","attempts","passing_yards","passing_tds",
                 "passing_interceptions","passing_epa","carries","rushing_yards","rushing_tds",
                 "rushing_epa","receptions","targets","receiving_yards","receiving_tds",
                 "receiving_air_yards","receiving_epa","target_share","air_yards_share","wopr",

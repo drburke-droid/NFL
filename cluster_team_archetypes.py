@@ -17,7 +17,7 @@ from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
-SEASONS = [2023, 2024, 2025]
+SEASONS = list(range(2012, 2026))
 
 TEAM_FULL_NAMES = {
     "ARI": "Arizona Cardinals", "ATL": "Atlanta Falcons", "BAL": "Baltimore Ravens",

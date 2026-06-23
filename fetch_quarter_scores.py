@@ -14,7 +14,7 @@ import nflreadpy as nflr
 sys.stdout.reconfigure(encoding="utf-8")
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
-SEASONS = [2023, 2024, 2025]
+SEASONS = list(range(2012, 2026))
 
 TEAM_ABBREV = {
     "Arizona Cardinals": "ARI", "Atlanta Falcons": "ATL", "Baltimore Ravens": "BAL",

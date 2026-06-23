@@ -98,8 +98,8 @@ def load_player_profiles(conn):
                CASE WHEN SUM(attempts) > 0 THEN 1.0*SUM(completions)/SUM(attempts) ELSE 0 END as comp_pct,
                AVG(passing_yards) as pass_yds_pg,
                AVG(passing_tds) as pass_td_pg,
-               AVG(interceptions) as int_pg,
-               AVG(sacks) as sack_pg,
+               AVG(passing_interceptions) as int_pg,
+               AVG(sacks_suffered) as sack_pg,
                AVG(passing_epa) as passing_epa_pg,
                AVG(passing_air_yards) as pass_air_yds_pg,
                AVG(passing_yards_after_catch) as yac_pg,
@@ -126,8 +126,8 @@ def load_player_profiles(conn):
                -- Fantasy
                AVG(fantasy_points) as fpts_pg,
                AVG(fantasy_points_ppr) as fpts_ppr_pg
-        FROM player_stats
-        WHERE position IN ('QB','RB','WR','TE')
+        FROM nflv_weekly
+        WHERE position IN ('QB','RB','WR','TE') AND season_type='REG'
         GROUP BY player_id, position, season
         HAVING COUNT(*) >= ?
     """, conn, params=(MIN_GAMES,))
