@@ -12,7 +12,7 @@ import os
 import nflreadpy as nflr
 import pandas as pd
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nfl_odds.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
 SEASONS = [2023, 2024, 2025]
 
 # Map full team names (odds API) to nflverse abbreviations

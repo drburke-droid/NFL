@@ -24,7 +24,17 @@ from sklearn.metrics import (precision_score, recall_score, f1_score,
 warnings.filterwarnings("ignore")
 sys.stdout.reconfigure(encoding="utf-8")
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nfl_odds.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
+
+# Full team name (odds API) -> nflverse abbreviation, for directional spreads
+ABBR = {"Arizona Cardinals":"ARI","Atlanta Falcons":"ATL","Baltimore Ravens":"BAL","Buffalo Bills":"BUF",
+ "Carolina Panthers":"CAR","Chicago Bears":"CHI","Cincinnati Bengals":"CIN","Cleveland Browns":"CLE",
+ "Dallas Cowboys":"DAL","Denver Broncos":"DEN","Detroit Lions":"DET","Green Bay Packers":"GB",
+ "Houston Texans":"HOU","Indianapolis Colts":"IND","Jacksonville Jaguars":"JAX","Kansas City Chiefs":"KC",
+ "Las Vegas Raiders":"LV","Los Angeles Chargers":"LAC","Los Angeles Rams":"LA","Miami Dolphins":"MIA",
+ "Minnesota Vikings":"MIN","New England Patriots":"NE","New Orleans Saints":"NO","New York Giants":"NYG",
+ "New York Jets":"NYJ","Philadelphia Eagles":"PHI","Pittsburgh Steelers":"PIT","San Francisco 49ers":"SF",
+ "Seattle Seahawks":"SEA","Tampa Bay Buccaneers":"TB","Tennessee Titans":"TEN","Washington Commanders":"WAS"}
 
 ROLLING_WINDOW = 6
 ROLLING_ALPHA = 0.65
@@ -112,6 +122,21 @@ def build_features(stats, odds, spreads, totals, props, team_arch, bt_edges, con
 
     stats = stats.sort_values(["player_id", "season", "week"]).copy()
 
+    # --- Expected fantasy points (xFP) merge — for tail/ceiling signal ---
+    # ff_opportunity gives weekly expected PPR; actual - expected = "luck" (non-persistent),
+    # and the VOLATILITY of expected points is the strongest explosion predictor in EDA.
+    if conn is not None:
+        try:
+            xfp = pd.read_sql_query(
+                "SELECT player_id, CAST(season AS INT) season, week, "
+                "total_fantasy_points_exp AS xfp FROM nflv_ff_opp", conn)
+            stats = stats.merge(xfp, on=["player_id", "season", "week"], how="left")
+            stats["luck"] = stats["ppr"] - stats["xfp"]
+        except Exception as e:
+            print(f"  !! xFP merge skipped: {e}")
+            stats["xfp"] = np.nan
+            stats["luck"] = np.nan
+
     # --- Rolling player stats ---
     roll_cols = ["ppr", "completions", "attempts", "passing_yards", "passing_tds",
                  "interceptions", "passing_epa", "carries", "rushing_yards", "rushing_tds",
@@ -139,6 +164,19 @@ def build_features(stats, odds, spreads, totals, props, team_arch, bt_edges, con
     )
     # Coefficient of variation (how "boom/bust" is this player?)
     stats["roll_ppr_cv"] = stats["roll_ppr_std"] / stats["roll_ppr"].replace(0, np.nan)
+
+    # --- Expected-points (xFP) rolling features — top explosion signals from EDA ---
+    if "xfp" in stats.columns:
+        stats["roll_xfp"] = stats.groupby("player_id")["xfp"].transform(
+            lambda x: x.shift(1).ewm(alpha=ROLLING_ALPHA, min_periods=1, adjust=False).mean())
+        # volatility of expected points = the #1 explosion feature in the v2 test
+        stats["roll_xfp_std"] = stats.groupby("player_id")["xfp"].transform(
+            lambda x: x.shift(1).rolling(ROLLING_WINDOW, min_periods=3).std())
+        # rolling luck (actual - expected); non-persistent, flags over/under-performers
+        stats["roll_luck"] = stats.groupby("player_id")["luck"].transform(
+            lambda x: x.shift(1).ewm(alpha=ROLLING_ALPHA, min_periods=1, adjust=False).mean())
+        # gap between recent ceiling and expectation
+        stats["roll_xfp_gap"] = stats["roll_ppr_max"] - stats["roll_xfp"]
 
     # Recent trend: last 2 games vs last 6
     stats["roll_ppr_recent"] = stats.groupby("player_id")["ppr"].transform(
@@ -244,6 +282,20 @@ def build_features(stats, odds, spreads, totals, props, team_arch, bt_edges, con
 
     df = df.merge(spreads, on="event_id", how="left")
     df = df.merge(totals, on="event_id", how="left")
+
+    # --- Directional implied team total (game environment) ---
+    # consensus signed spread per event/team -> implied points = total/2 - spread/2
+    if conn is not None:
+        try:
+            sp = pd.read_sql_query(
+                "SELECT event_id, outcome_name, AVG(point) AS team_spread "
+                "FROM game_odds WHERE market='spreads' GROUP BY event_id, outcome_name", conn)
+            sp["team"] = sp["outcome_name"].map(ABBR)
+            sp = sp.dropna(subset=["team"])[["event_id", "team", "team_spread"]]
+            df = df.merge(sp, on=["event_id", "team"], how="left")
+            df["implied_team_total"] = df["over_under"] / 2 - df["team_spread"] / 2
+        except Exception as e:
+            print(f"  !! implied team total skipped: {e}")
 
     # Props
     prop_cols = [c for c in props.columns if c.startswith("prop_")]
@@ -458,6 +510,7 @@ def get_features(df):
     feats = roll + prop + enc + ix + gs + [
         "abs_spread", "over_under", "is_home", "bt_edge",
         "player_tier", "opp_def_tier", "prev_explosion", "weeks_since_explosion",
+        "implied_team_total", "team_spread",
     ]
     feats = [f for f in feats if f in df.columns]
     return list(dict.fromkeys(feats))

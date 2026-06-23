@@ -6,7 +6,7 @@ Creates SQLite database with tables for games, game odds, player props, and scor
 import sqlite3
 import os
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nfl_odds.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
 
 
 def create_database():

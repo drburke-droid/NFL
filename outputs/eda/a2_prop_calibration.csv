@@ -1,0 +1,5 @@
+market,n,over_rate,line_mae,line_corr_actual
+player_reception_yds,9419,0.477,19.55,0.585
+player_rush_yds,4609,0.455,17.85,0.732
+player_pass_yds,1641,0.5,57.14,0.341
+player_receptions,8903,0.481,1.51,0.566

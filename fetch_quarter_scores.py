@@ -13,7 +13,7 @@ import nflreadpy as nflr
 
 sys.stdout.reconfigure(encoding="utf-8")
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "nfl_odds.db")
+DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "db", "nfl_odds.db")
 SEASONS = [2023, 2024, 2025]
 
 TEAM_ABBREV = {
