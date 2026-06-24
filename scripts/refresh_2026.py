@@ -30,6 +30,7 @@ STEPS = [
     ("Fit projection + boom/bust models", "projection_overhaul.py", True),
     ("Build 2026 board (vets + rookies)", "build_2026_targets.py", True),
     ("Generate targets report",          "report_2026_targets.py", True),
+    ("2025 half-season split (Risers)",  "half_season_split.py", False),
     ("Rebuild draft tool (data.js)",     "build_draft_tool.py", True),
     ("Refresh career comps",             "comp_finder.py", False),
     ("Refresh rookie comps",             "rookie_comps.py", False),
