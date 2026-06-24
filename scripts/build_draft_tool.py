@@ -78,6 +78,7 @@ def build_kdst(con):
         s["repl_pts"] = repl; s["vorp"] = s["proj_pts"] - repl
         s["is_flex_starter"] = 0; s["age"] = np.nan; s["prior_ppg"] = np.nan; s["conf"] = "low"
         s["breakout_prob"] = np.nan; s["hit_prob"] = np.nan; s["is_rookie"] = 0
+        s["bust"] = 0.6; s["boom"] = 0.05; s["floor"] = np.nan; s["ceiling"] = np.nan   # streamed: high bust, low boom
         key = "name" if pos == "K" else "team"
         s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
         out[pos] = (s, repl)
@@ -97,7 +98,7 @@ def main():
 
     cols=["name","position","team","age","pos_rank","proj_pts","proj_games","proj_ppg",
           "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf",
-          "breakout_prob","hit_prob","is_rookie"]
+          "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -115,11 +116,13 @@ def main():
 
     for c in ["proj_pts","proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","age"]:
         allp[c]=allp[c].round(1)
-    for c in ["breakout_prob","hit_prob"]:
+    for c in ["breakout_prob","hit_prob","bust","boom"]:
         allp[c]=allp[c].round(3)
+    for c in ["floor","ceiling"]:
+        allp[c]=allp[c].round(1)
     out_cols=["overall_rank","name","position","team","age","pos_rank","tier","proj_pts",
               "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg",
-              "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie"]
+              "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]

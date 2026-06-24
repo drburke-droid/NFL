@@ -113,6 +113,11 @@ def main():
     print(f"Finding comps for {len(cur)} current players (2025, yr>=2, ppg>=5)...\n")
 
     norm = lambda s: __import__("re").sub(r"\s+"," ",__import__("re").sub(r"[^a-z ]","",str(s).lower().replace(".","").replace("'",""))).strip()
+    # board = single source of truth for projection + bust/boom/floor/ceiling
+    bcon = sqlite3.connect(DB)
+    board = {r.player_id: r for _, r in pd.read_sql(
+        "SELECT player_id, pred_ppg, floor, ceiling, bust, boom FROM board_2026", bcon).iterrows()}
+    bcon.close()
     results, web = [], {}
     for _, q in cur.iterrows():
         r = comps_for(t, V, q.player_id, name_map, ppg_map, last_cy, K=8)
@@ -125,10 +130,14 @@ def main():
                         "comp_median": round(comp_med,1) if comp_med is not None else None,
                         "top_comps": ", ".join(f"{n} ({d})" for n,d in comp_names[:5])})
         dd = cohort_dist([c for c, _ in r["comps"]], r["N"], ppg_map, season_map)
+        b = board.get(q.player_id)
         web[norm(q.player_display_name)+"|"+q.position] = {
             "p": q.player_display_name, "pos": q.position, "yr": r["N"], "ppg": round(q.ppg,1),
-            "proj": blend, "ceiling": dd.get("ceiling"), "floor": dd.get("floor"),
-            "bust": dd.get("bust"), "elite": dd.get("elite"),
+            "proj": round(float(b["pred_ppg"]),1) if b is not None else blend,
+            "ceiling": float(b["ceiling"]) if (b is not None and pd.notna(b["ceiling"])) else dd.get("ceiling"),
+            "floor": float(b["floor"]) if (b is not None and pd.notna(b["floor"])) else dd.get("floor"),
+            "bust": float(b["bust"]) if (b is not None and pd.notna(b["bust"])) else dd.get("bust"),
+            "boom": float(b["boom"]) if (b is not None and pd.notna(b["boom"])) else dd.get("elite"),
             "comps": [{"n": name_map[d["id"]][0], "d": d["dist"],
                        "nx": round(d["nx"],1) if d["nx"] is not None else None} for d in r["detail"][:6]]}
 
