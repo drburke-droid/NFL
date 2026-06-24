@@ -2,10 +2,14 @@
 Avenue 1 model: predict next-season PPG, then derive positional finish + VBD.
 
 Season-blocked walk-forward: for each target season T, train on all seasons < T
-(honest out-of-sample). LightGBM regression on the EDA-confirmed feature set.
+(honest out-of-sample). LightGBM regression. The production feature set is
+FFA-ANCHORED: prior-year production/role/draft signals fused with the
+FantasyFootballAnalytics weighted-expert consensus (nflv_ffa_proj), which the
+value test showed is the best configuration. FFA features are NaN (-> -1) for
+players without a consensus projection, so all rows are still scored.
 Finish/VBD derived by projecting games and ranking projected season totals.
 
-Writes table season_predictions; prints evaluation; saves 2026 projections.
+Writes table season_predictions; prints evaluation.
 """
 import os, sqlite3, json, warnings
 import numpy as np, pandas as pd
@@ -28,6 +32,21 @@ FEATURES = [
     "prior_carries_pg","prior_rushing_yards_pg","prior_attempts_pg","prior_passing_yards_pg",
     "age","years_exp","draft_round","draft_pick","weight","forty","team_change",
 ]
+
+# FantasyFootballAnalytics consensus features (the season market anchor)
+FFA_FEATURES = [
+    "ffa_points","ffa_vor","ffa_floor","ffa_ceiling","ffa_sd","ffa_uncertainty",
+    "ffa_adp","ffa_pos_rank","ffa_rank","ffa_tier","ffa_dropoff",
+]
+MODEL_FEATURES = FEATURES + FFA_FEATURES + ["pos_id"]
+
+
+def attach_ffa(df, con):
+    """Left-join FFA consensus projections onto a (player_id, season) frame."""
+    ffa = pd.read_sql("SELECT * FROM nflv_ffa_proj WHERE player_id IS NOT NULL", con)
+    ffa = ffa.sort_values("ffa_points", ascending=False).drop_duplicates(["season","player_id"])
+    ffa = ffa.drop(columns=[c for c in ["position","player"] if c in ffa.columns])
+    return df.merge(ffa, on=["season","player_id"], how="left")
 
 
 def project_games(df):
@@ -56,6 +75,8 @@ def main():
     con = sqlite3.connect(DB)
     df = pd.read_sql("SELECT * FROM season_dataset", con).copy()
     df = df[df["next_ppg"].notna()]
+    df = attach_ffa(df, con)
+    df["has_ffa"] = df["ffa_points"].notna().astype(int)
     df["pos_id"] = df["position"].map({p:i for i,p in enumerate(POS)})
     df["proj_games"] = project_games(df)
 
@@ -67,8 +88,8 @@ def main():
     for T in range(2016, 2026):
         tr = df[df["season"] < T]; te = df[df["season"] == T]
         if len(te)==0: continue
-        Xtr = tr[FEATURES+["pos_id"]].astype(float).fillna(-1)
-        Xte = te[FEATURES+["pos_id"]].astype(float).fillna(-1)
+        Xtr = tr[MODEL_FEATURES].astype(float).fillna(-1)
+        Xte = te[MODEL_FEATURES].astype(float).fillna(-1)
         m = lgb.LGBMRegressor(**params); m.fit(Xtr, tr["next_ppg"])
         p = te.copy(); p["pred_ppg"] = m.predict(Xte)
         preds.append(p)
@@ -89,9 +110,14 @@ def main():
         s=d[[col,"next_ppg"]].dropna()
         return mean_absolute_error(s["next_ppg"],s[col]), r2_score(s["next_ppg"],s[col]), \
                spearmanr(s[col],s["next_ppg"])[0]
-    for label,col in [("model","pred_ppg"),("baseline(repeat)","base_ppg")]:
+    for label,col in [("model(FFA-anchored)","pred_ppg"),("baseline(repeat)","base_ppg")]:
         mae,r2,rho=ppg_eval(pred,col)
-        print(f"  PPG {label:18s} MAE={mae:.3f} R2={r2:.3f} rho={rho:.3f}")
+        print(f"  PPG {label:20s} MAE={mae:.3f} R2={r2:.3f} rho={rho:.3f}")
+    cov = pred["has_ffa"].mean()
+    fc = pred[pred["has_ffa"]==1]; nc = pred[pred["has_ffa"]==0]
+    print(f"  FFA coverage: {cov:.0%} of scored rows | model MAE  with-FFA "
+          f"{mean_absolute_error(fc['next_ppg'],fc['pred_ppg']):.2f}  "
+          f"no-FFA {mean_absolute_error(nc['next_ppg'],nc['pred_ppg']):.2f}")
     print("\n  PPG MAE by position (model vs baseline):")
     for p in POS:
         d=pred[pred["position"]==p]
@@ -124,16 +150,17 @@ def main():
                         con).drop_duplicates("player_id")
     pred = pred.merge(names, on="player_id", how="left")
     keep=["player_id","player_display_name","position","season","team","prior_season",
-          "prior_ppg","pred_ppg","next_ppg","proj_games","next_games",
+          "prior_ppg","ffa_points","has_ffa","pred_ppg","next_ppg","proj_games","next_games",
           "proj_total_pred","finish_pred","vbd_pred","finish_act","vbd_act"]
     pred[keep].to_sql("season_predictions", con, if_exists="replace", index=False)
-    json.dump({"rows":int(len(pred))}, open(os.path.join(OUT,"season_model_meta.json"),"w"))
+    json.dump({"rows":int(len(pred)),"ffa_coverage":float(pred["has_ffa"].mean())},
+              open(os.path.join(OUT,"season_model_meta.json"),"w"))
 
     # feature importance from a full-data fit (for the report)
     full = df[df["season"]<=2025]
-    mf = lgb.LGBMRegressor(**params).fit(full[FEATURES+["pos_id"]].astype(float).fillna(-1),
+    mf = lgb.LGBMRegressor(**params).fit(full[MODEL_FEATURES].astype(float).fillna(-1),
                                          full["next_ppg"])
-    imp = pd.DataFrame({"feature":FEATURES+["pos_id"],"importance":mf.feature_importances_}) \
+    imp = pd.DataFrame({"feature":MODEL_FEATURES,"importance":mf.feature_importances_}) \
             .sort_values("importance",ascending=False)
     imp.to_csv(os.path.join(OUT,"season_model_importance.csv"), index=False)
     print("\nTop 12 features:"); print(imp.head(12).to_string(index=False))

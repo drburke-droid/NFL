@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Fantasy Draft Board — Custom League</title>
+<script src="data.js"></script>
+<style>
+  :root{
+    --bg:#0f1419; --panel:#1a2230; --panel2:#222d3d; --line:#2c3a4d;
+    --txt:#e6edf3; --muted:#8b9bb0; --accent:#4da3ff;
+    --qb:#e85d75; --rb:#39c08a; --wr:#4da3ff; --te:#e0a23c; --k:#b07de0; --dst:#7d8a99;
+    --t1:#1f6f4a; --t2:#2f5e7e; --t3:#5a4a7a; --t4:#6b5535; --t5:#444f5e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 -apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:18px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
+  h1{margin:0 0 6px;font-size:20px}
+  .sub{color:var(--muted);font-size:13px}
+  .chips{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:12px;color:var(--muted)}
+  .chip b{color:var(--txt)}
+  .wrap{padding:16px 24px}
+  .cards{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:150px}
+  .card .lbl{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .card .val{font-size:18px;font-weight:600;margin-top:2px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  .btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+  .btn.active{background:var(--accent);border-color:var(--accent);color:#06121f;font-weight:600}
+  input[type=search]{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:7px 11px;border-radius:8px;min-width:220px;font-size:13px}
+  label.tgl{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  thead th{position:sticky;top:0;background:var(--panel2);border-bottom:2px solid var(--line);padding:8px 10px;text-align:right;cursor:pointer;white-space:nowrap;user-select:none}
+  thead th.l{text-align:left}
+  thead th:hover{color:var(--accent)}
+  tbody td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td.l{text-align:left}
+  tbody tr:hover{background:#19222f}
+  .pos{display:inline-block;width:30px;text-align:center;border-radius:4px;font-weight:700;font-size:11px;padding:2px 0;color:#06121f}
+  .pos.QB{background:var(--qb)} .pos.RB{background:var(--rb)} .pos.WR{background:var(--wr)} .pos.TE{background:var(--te)}
+  .pos.K{background:var(--k)} .pos.DST{background:var(--dst);color:#fff;width:38px}
+  .tier{display:inline-block;min-width:22px;text-align:center;border-radius:4px;padding:1px 5px;font-size:11px;font-weight:600}
+  .tier.t1{background:var(--t1)} .tier.t2{background:var(--t2)} .tier.t3{background:var(--t3)} .tier.t4{background:var(--t4)} .tier.t5{background:var(--t5)}
+  .name{font-weight:600}
+  .pos-pill{color:var(--muted);font-size:11px}
+  .vorp{font-weight:700}
+  .pos-neg{color:#e85d75}.pos-pos{color:#39c08a}
+  .muted{color:var(--muted)}
+  .foot{color:var(--muted);font-size:12px;margin-top:14px;line-height:1.6}
+  .flexstar{color:var(--te);font-weight:700;font-size:11px}
+</style>
+</head>
+<body>
+<header>
+  <h1>Fantasy Draft Board <span class="muted" id="szn"></span></h1>
+  <div class="sub" id="leaguesub"></div>
+  <div class="chips" id="scorechips"></div>
+</header>
+<div class="wrap">
+  <div class="cards" id="replcards"></div>
+  <div class="controls">
+    <div id="posbtns"></div>
+    <input type="search" id="q" placeholder="Search player / team…"/>
+    <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only (VORP ≥ 0)</label>
+    <span class="muted" id="count"></span>
+  </div>
+  <table id="tbl">
+    <thead><tr id="hrow"></tr></thead>
+    <tbody id="body"></tbody>
+  </table>
+  <div class="foot" id="notes"></div>
+</div>
+<script>
+const COLS = [
+  {k:"overall_rank", t:"#", l:false},
+  {k:"position", t:"Pos", l:true},
+  {k:"pos_rank", t:"PosRk", l:false},
+  {k:"tier", t:"Tier", l:false},
+  {k:"name", t:"Player", l:true},
+  {k:"team", t:"Tm", l:true},
+  {k:"age", t:"Age", l:false},
+  {k:"proj_pts", t:"Proj Pts", l:false},
+  {k:"proj_games", t:"G", l:false},
+  {k:"proj_ppg", t:"PPG", l:false},
+  {k:"vorp", t:"VORP", l:false},
+  {k:"repl_pts", t:"Repl", l:false},
+  {k:"actual_2025", t:"2025", l:false},
+  {k:"delta_ly", t:"Δ vs '25", l:false},
+];
+let posFilter="ALL", startersOnly=false, sortKey="overall_rank", sortDir=1, query="";
+
+function fmt(v){ return (v===null||v===undefined||v==="")?"—":v; }
+
+document.getElementById("szn").textContent = "· "+META.target_season+" projections";
+const s=META.starters;
+document.getElementById("leaguesub").textContent =
+  `${META.teams}-team · starters: `+Object.entries(s).map(([k,v])=>`${v} ${k}`).join(" / ");
+document.getElementById("scorechips").innerHTML = Object.entries(META.scoring)
+  .map(([k,v])=>`<span class="chip">${k} <b>${v}</b></span>`).join("");
+document.getElementById("notes").innerHTML = META.notes.map(n=>"• "+n).join("<br>");
+
+// replacement cards
+document.getElementById("replcards").innerHTML = Object.entries(META.replacement_points)
+  .map(([p,v])=>`<div class="card"><div class="lbl">${p} replacement</div><div class="val">${v}</div>
+   <div class="muted" style="font-size:11px">${META.starters_by_pos_incl_flex[p]} started</div></div>`).join("")
+  + `<div class="card"><div class="lbl">Players</div><div class="val">${META.player_count}</div>
+     <div class="muted" style="font-size:11px">QB/RB/WR/TE</div></div>`;
+
+// position buttons
+const POSES=["ALL","QB","RB","WR","TE","FLEX","K","DST"];
+document.getElementById("posbtns").innerHTML = POSES.map(p=>
+  `<button class="btn ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
+document.querySelectorAll("#posbtns .btn").forEach(b=>b.onclick=()=>{
+  posFilter=b.dataset.p; document.querySelectorAll("#posbtns .btn").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active"); render();
+});
+document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();render();};
+document.getElementById("startersOnly").onchange=e=>{startersOnly=e.target.checked;render();};
+
+// header
+document.getElementById("hrow").innerHTML = COLS.map(c=>
+  `<th class="${c.l?'l':''}" data-k="${c.k}">${c.t}</th>`).join("");
+document.querySelectorAll("#hrow th").forEach(th=>th.onclick=()=>{
+  const k=th.dataset.k;
+  if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=(k==='name'||k==='team'||k==='position')?1:-1;}
+  render();
+});
+
+function render(){
+  let rows = PLAYERS.filter(p=>{
+    if(posFilter==="FLEX"){ if(!["RB","WR","TE"].includes(p.position)) return false; }
+    else if(posFilter!=="ALL" && p.position!==posFilter) return false;
+    if(startersOnly && p.vorp<0) return false;
+    if(query){ const s=(p.name+" "+p.team).toLowerCase(); if(!s.includes(query)) return false; }
+    return true;
+  });
+  rows.sort((a,b)=>{
+    let x=a[sortKey], y=b[sortKey];
+    if(typeof x==="string"){ return sortDir*x.localeCompare(y); }
+    return sortDir*((x??-1e9)-(y??-1e9));
+  });
+  document.getElementById("count").textContent = rows.length+" players";
+  document.getElementById("body").innerHTML = rows.map(p=>{
+    const t=Math.min(p.tier,5);
+    const dly = p.delta_ly>0?`<span class="pos-pos">+${p.delta_ly}</span>`:`<span class="pos-neg">${p.delta_ly}</span>`;
+    const vc = p.vorp>=0?"pos-pos":"pos-neg";
+    return `<tr>
+      <td>${p.overall_rank}</td>
+      <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
+      <td>${p.pos_rank}</td>
+      <td><span class="tier t${t}">${p.tier}</span></td>
+      <td class="l"><span class="name">${p.name}</span>${p.is_flex_starter?' <span class="flexstar">FLEX</span>':''}</td>
+      <td class="l muted">${fmt(p.team)}</td>
+      <td class="muted">${fmt(p.age)}</td>
+      <td><b>${p.proj_pts}</b></td>
+      <td class="muted">${p.proj_games}</td>
+      <td>${p.proj_ppg}</td>
+      <td class="vorp ${vc}">${p.vorp}</td>
+      <td class="muted">${p.repl_pts}</td>
+      <td class="muted">${fmt(p.actual_2025)}</td>
+      <td>${dly}</td>
+    </tr>`;
+  }).join("");
+}
+render();
+</script>
+</body>
+</html>
