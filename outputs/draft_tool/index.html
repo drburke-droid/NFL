@@ -8,33 +8,39 @@
 <style>
   :root{
     --bg:#0f1419; --panel:#1a2230; --panel2:#222d3d; --line:#2c3a4d;
-    --txt:#e6edf3; --muted:#8b9bb0; --accent:#4da3ff;
+    --txt:#e6edf3; --muted:#8b9bb0; --accent:#4da3ff; --gold:#e0a23c; --good:#39c08a; --bad:#e85d75;
     --qb:#e85d75; --rb:#39c08a; --wr:#4da3ff; --te:#e0a23c; --k:#b07de0; --dst:#7d8a99;
     --t1:#1f6f4a; --t2:#2f5e7e; --t3:#5a4a7a; --t4:#6b5535; --t5:#444f5e;
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 -apple-system,Segoe UI,Roboto,sans-serif}
-  header{padding:18px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
-  h1{margin:0 0 6px;font-size:20px}
+  header{padding:16px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
+  h1{margin:0 0 6px;font-size:19px}
   .sub{color:var(--muted);font-size:13px}
+  .modebar{margin-top:10px;display:flex;gap:8px;align-items:center}
   .chips{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
   .chip{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:12px;color:var(--muted)}
   .chip b{color:var(--txt)}
-  .wrap{padding:16px 24px}
-  .cards{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:150px}
+  .layout{display:flex;gap:0}
+  .main{flex:1;padding:14px 24px;min-width:0}
+  .side{width:330px;border-left:1px solid var(--line);background:var(--panel);padding:14px;display:none;max-height:calc(100vh - 90px);overflow:auto;position:sticky;top:0}
+  body.auction .side{display:block}
+  .cards{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 13px;min-width:120px}
   .card .lbl{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
-  .card .val{font-size:18px;font-weight:600;margin-top:2px}
+  .card .val{font-size:17px;font-weight:600;margin-top:2px}
   .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
   .btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px}
   .btn.active{background:var(--accent);border-color:var(--accent);color:#06121f;font-weight:600}
-  input[type=search]{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:7px 11px;border-radius:8px;min-width:220px;font-size:13px}
+  .btn.sm{padding:3px 8px;font-size:12px}
+  input[type=search]{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:7px 11px;border-radius:8px;min-width:200px;font-size:13px}
+  input.num{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:4px 6px;border-radius:6px;width:56px;font-size:13px;text-align:right}
   label.tgl{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer}
   table{border-collapse:collapse;width:100%;font-size:13px}
-  thead th{position:sticky;top:0;background:var(--panel2);border-bottom:2px solid var(--line);padding:8px 10px;text-align:right;cursor:pointer;white-space:nowrap;user-select:none}
+  thead th{position:sticky;top:0;background:var(--panel2);border-bottom:2px solid var(--line);padding:7px 9px;text-align:right;cursor:pointer;white-space:nowrap;user-select:none;z-index:1}
   thead th.l{text-align:left}
   thead th:hover{color:var(--accent)}
-  tbody td{padding:7px 10px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:6px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
   tbody td.l{text-align:left}
   tbody tr:hover{background:#19222f}
   .pos{display:inline-block;width:30px;text-align:center;border-radius:4px;font-weight:700;font-size:11px;padding:2px 0;color:#06121f}
@@ -43,126 +49,235 @@
   .tier{display:inline-block;min-width:22px;text-align:center;border-radius:4px;padding:1px 5px;font-size:11px;font-weight:600}
   .tier.t1{background:var(--t1)} .tier.t2{background:var(--t2)} .tier.t3{background:var(--t3)} .tier.t4{background:var(--t4)} .tier.t5{background:var(--t5)}
   .name{font-weight:600}
-  .pos-pill{color:var(--muted);font-size:11px}
-  .vorp{font-weight:700}
-  .pos-neg{color:#e85d75}.pos-pos{color:#39c08a}
+  .bid{font-weight:700;color:var(--gold)}
+  .base{color:var(--muted)}
+  .up{color:var(--good)} .down{color:var(--bad)}
   .muted{color:var(--muted)}
   .foot{color:var(--muted);font-size:12px;margin-top:14px;line-height:1.6}
   .flexstar{color:var(--te);font-weight:700;font-size:11px}
+  .lowconf{color:#7d8a99;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px}
+  /* keeper panel */
+  .side h3{margin:0 0 8px;font-size:14px}
+  .infl{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;font-size:13px}
+  .infl .big{font-size:20px;font-weight:700}
+  .infl .row{display:flex;justify-content:space-between;color:var(--muted);margin-top:3px}
+  .infl .row b{color:var(--txt)}
+  .kp{display:flex;align-items:center;gap:6px;padding:6px 4px;border-bottom:1px solid var(--line)}
+  .kp .kn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+  .kp .sur{font-size:11px;font-weight:600;min-width:42px;text-align:right}
+  .kp .x{cursor:pointer;color:var(--bad);font-weight:700}
+  .keepbtn{cursor:pointer;color:var(--accent);font-weight:700;font-size:12px}
+  .empty{color:var(--muted);font-size:12px;padding:8px 0}
+  .settings{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
 <header>
   <h1>Fantasy Draft Board <span class="muted" id="szn"></span></h1>
   <div class="sub" id="leaguesub"></div>
-  <div class="chips" id="scorechips"></div>
-</header>
-<div class="wrap">
-  <div class="cards" id="replcards"></div>
-  <div class="controls">
-    <div id="posbtns"></div>
-    <input type="search" id="q" placeholder="Search player / team…"/>
-    <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only (VORP ≥ 0)</label>
+  <div class="modebar">
+    <button class="btn active" id="mCheat">Cheat Sheet</button>
+    <button class="btn" id="mAuction">Auction $</button>
     <span class="muted" id="count"></span>
   </div>
-  <table id="tbl">
-    <thead><tr id="hrow"></tr></thead>
-    <tbody id="body"></tbody>
-  </table>
-  <div class="foot" id="notes"></div>
+  <div class="chips" id="scorechips"></div>
+</header>
+<div class="layout">
+  <div class="main">
+    <div class="settings" id="settings" style="display:none">
+      <span>Teams <input class="num" id="cTeams" type="number" value="12"></span>
+      <span>Budget $<input class="num" id="cBudget" type="number" value="200"></span>
+      <span>Roster spots <input class="num" id="cRoster" type="number" value="16"></span>
+      <span class="muted">· Bid$ updates live as you set keepers →</span>
+    </div>
+    <div class="cards" id="replcards"></div>
+    <div class="controls">
+      <div id="posbtns"></div>
+      <input type="search" id="q" placeholder="Search player / team…"/>
+      <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only</label>
+    </div>
+    <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
+    <div class="foot" id="notes"></div>
+  </div>
+  <div class="side" id="side">
+    <h3>Keepers <span class="muted" id="kcount"></span></h3>
+    <div class="infl" id="inflbox"></div>
+    <div id="keeperlist"></div>
+    <button class="btn sm" id="clearK" style="margin-top:10px">Clear all keepers</button>
+    <div class="foot" style="margin-top:12px">Add keepers with the <span class="keepbtn">＋</span> in the table, then set each one's escalated salary. Saved in your browser.</div>
+  </div>
 </div>
 <script>
-const COLS = [
-  {k:"overall_rank", t:"#", l:false},
-  {k:"position", t:"Pos", l:true},
-  {k:"pos_rank", t:"PosRk", l:false},
-  {k:"tier", t:"Tier", l:false},
-  {k:"name", t:"Player", l:true},
-  {k:"team", t:"Tm", l:true},
-  {k:"age", t:"Age", l:false},
-  {k:"proj_pts", t:"Proj Pts", l:false},
-  {k:"proj_games", t:"G", l:false},
-  {k:"proj_ppg", t:"PPG", l:false},
-  {k:"vorp", t:"VORP", l:false},
-  {k:"repl_pts", t:"Repl", l:false},
-  {k:"actual_2025", t:"2025", l:false},
-  {k:"delta_ly", t:"Δ vs '25", l:false},
-];
-let posFilter="ALL", startersOnly=false, sortKey="overall_rank", sortDir=1, query="";
+// ---------- state ----------
+let mode="cheat", posFilter="ALL", startersOnly=false, sortKey="overall_rank", sortDir=1, query="";
+let cfg = JSON.parse(localStorage.getItem("draft_cfg")||'null') || {teams:12,budget:200,roster:16};
+let kept = JSON.parse(localStorage.getItem("draft_keepers")||'{}');  // id -> salary
+const pid = p => p.name+"|"+p.position+"|"+(p.team||"");
+const BYID = {}; PLAYERS.forEach(p=>BYID[pid(p)]=p);
+const isK = p => p.position==="K"||p.position==="DST";
+const save = ()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));};
 
-function fmt(v){ return (v===null||v===undefined||v==="")?"—":v; }
+// ---------- auction engine ----------
+function computeValues(keepers){
+  const totalSpots=cfg.teams*cfg.roster, totalMoney=cfg.teams*cfg.budget;
+  const ids=Object.keys(keepers), kset=new Set(ids);
+  const kdstSlots=cfg.teams*2;
+  const keptKDST=ids.filter(id=>BYID[id]&&isK(BYID[id])).length;
+  const kdstReserve=Math.max(kdstSlots-keptKDST,0);                 // $1 each
+  const skillSpots=totalSpots-kdstSlots;
+  const skillKeepers=ids.filter(id=>BYID[id]&&!isK(BYID[id]));
+  const skillSpotsRem=Math.max(skillSpots-skillKeepers.length,0);
+  const sumSal=ids.reduce((a,id)=>a+(+keepers[id]||0),0);
+  const skillMoney=totalMoney-kdstReserve-sumSal;
+  const pool=PLAYERS.filter(p=>!isK(p)&&!kset.has(pid(p))).sort((a,b)=>b.vorp-a.vorp).slice(0,skillSpotsRem);
+  const poolSet=new Set(pool.map(pid));
+  const sumV=pool.reduce((a,p)=>a+Math.max(p.vorp,0),0);
+  const disc=Math.max(skillMoney-skillSpotsRem,0);
+  const per=sumV>0?disc/sumV:0;
+  const vals={};
+  PLAYERS.forEach(p=>{const id=pid(p);
+    if(kset.has(id)){vals[id]=+keepers[id]||0;return;}
+    if(isK(p)){vals[id]= p.pos_rank<=6?2:(p.pos_rank<=cfg.teams?1:0);return;}
+    vals[id]= poolSet.has(id)?Math.max(1,Math.round(1+Math.max(p.vorp,0)*per)):(p.vorp>0?1:0);
+  });
+  return {vals,per,skillMoney,skillSpotsRem,sumSal,disc};
+}
+let BASE=computeValues({}), ADJ=computeValues(kept);
+function recompute(){ BASE=computeValues({}); ADJ=computeValues(kept); }
 
-document.getElementById("szn").textContent = "· "+META.target_season+" projections";
+// ---------- static header / chips ----------
+document.getElementById("szn").textContent="· "+META.target_season+" projections";
 const s=META.starters;
-document.getElementById("leaguesub").textContent =
-  `${META.teams}-team · starters: `+Object.entries(s).map(([k,v])=>`${v} ${k}`).join(" / ");
-document.getElementById("scorechips").innerHTML = Object.entries(META.scoring)
-  .map(([k,v])=>`<span class="chip">${k} <b>${v}</b></span>`).join("");
-document.getElementById("notes").innerHTML = META.notes.map(n=>"• "+n).join("<br>");
+document.getElementById("leaguesub").textContent=`${META.teams}-team · $${cfg.budget} auction · starters: `+Object.entries(s).map(([k,v])=>`${v} ${k}`).join(" / ");
+document.getElementById("scorechips").innerHTML=Object.entries(META.scoring).map(([k,v])=>`<span class="chip">${k} <b>${v}</b></span>`).join("");
+document.getElementById("notes").innerHTML=META.notes.map(n=>"• "+n).join("<br>")+
+  "<br>• Auction $: VBD over a "+cfg.teams+"-team $"+cfg.budget+" budget (16 roster spots). K/DST capped (streamed). Keepers inflate the remaining pool.";
 
 // replacement cards
-document.getElementById("replcards").innerHTML = Object.entries(META.replacement_points)
-  .map(([p,v])=>`<div class="card"><div class="lbl">${p} replacement</div><div class="val">${v}</div>
-   <div class="muted" style="font-size:11px">${META.starters_by_pos_incl_flex[p]} started</div></div>`).join("")
-  + `<div class="card"><div class="lbl">Players</div><div class="val">${META.player_count}</div>
-     <div class="muted" style="font-size:11px">QB/RB/WR/TE</div></div>`;
+function cards(){
+  document.getElementById("replcards").innerHTML=Object.entries(META.replacement_points)
+    .map(([p,v])=>`<div class="card"><div class="lbl">${p} repl pts</div><div class="val">${v}</div>
+     <div class="muted" style="font-size:11px">${META.starters_by_pos_incl_flex[p]} started</div></div>`).join("");
+}
+cards();
 
 // position buttons
 const POSES=["ALL","QB","RB","WR","TE","FLEX","K","DST"];
-document.getElementById("posbtns").innerHTML = POSES.map(p=>
-  `<button class="btn ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
-document.querySelectorAll("#posbtns .btn").forEach(b=>b.onclick=()=>{
-  posFilter=b.dataset.p; document.querySelectorAll("#posbtns .btn").forEach(x=>x.classList.remove("active"));
-  b.classList.add("active"); render();
-});
+document.getElementById("posbtns").innerHTML=POSES.map(p=>`<button class="btn sm pf ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
+document.querySelectorAll(".pf").forEach(b=>b.onclick=()=>{posFilter=b.dataset.p;document.querySelectorAll(".pf").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
 document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();render();};
 document.getElementById("startersOnly").onchange=e=>{startersOnly=e.target.checked;render();};
 
-// header
-document.getElementById("hrow").innerHTML = COLS.map(c=>
-  `<th class="${c.l?'l':''}" data-k="${c.k}">${c.t}</th>`).join("");
-document.querySelectorAll("#hrow th").forEach(th=>th.onclick=()=>{
-  const k=th.dataset.k;
-  if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=(k==='name'||k==='team'||k==='position')?1:-1;}
+// mode toggle
+function setMode(m){
+  mode=m; document.body.classList.toggle("auction",m==="auction");
+  document.getElementById("mCheat").classList.toggle("active",m==="cheat");
+  document.getElementById("mAuction").classList.toggle("active",m==="auction");
+  document.getElementById("settings").style.display=m==="auction"?"flex":"none";
+  sortKey = m==="auction"?"bid":"overall_rank"; sortDir=m==="auction"?-1:1;
   render();
+}
+document.getElementById("mCheat").onclick=()=>setMode("cheat");
+document.getElementById("mAuction").onclick=()=>setMode("auction");
+
+// settings inputs
+["cTeams","cBudget","cRoster"].forEach((id,i)=>{
+  const key=["teams","budget","roster"][i];
+  document.getElementById(id).value=cfg[key];
+  document.getElementById(id).onchange=e=>{cfg[key]=Math.max(1,+e.target.value||cfg[key]);save();recompute();render();};
 });
+document.getElementById("clearK").onclick=()=>{kept={};save();recompute();render();};
+
+// ---------- columns ----------
+const COLS_CHEAT=[["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
+  ["name","Player",1],["team","Tm",1],["age","Age",0],["proj_pts","Proj",0],["proj_ppg","PPG",0],
+  ["vorp","VORP",0],["actual_2025","2025",0],["delta_ly","Δ'25",0]];
+const COLS_AUCTION=[["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
+  ["name","Player",1],["team","Tm",1],["proj_pts","Proj",0],["vorp","VORP",0],
+  ["base","$ Base",0],["bid","$ Bid",0],["keep","",1]];
+
+function val(p,k){
+  if(k==="bid") return ADJ.vals[pid(p)]??0;
+  if(k==="base") return BASE.vals[pid(p)]??0;
+  return p[k];
+}
 
 function render(){
-  let rows = PLAYERS.filter(p=>{
+  const COLS = mode==="auction"?COLS_AUCTION:COLS_CHEAT;
+  document.getElementById("hrow").innerHTML=COLS.map(c=>`<th class="${c[2]?'l':''}" data-k="${c[0]}">${c[1]}</th>`).join("");
+  document.querySelectorAll("#hrow th").forEach(th=>th.onclick=()=>{
+    const k=th.dataset.k; if(!k) return;
+    if(sortKey===k) sortDir*=-1; else {sortKey=k; sortDir=(k==="name"||k==="team"||k==="position")?1:-1;}
+    render();
+  });
+
+  const keptSet=new Set(Object.keys(kept));
+  let rows=PLAYERS.filter(p=>{
+    if(mode==="auction" && keptSet.has(pid(p))) return false;       // kept shown in side panel
     if(posFilter==="FLEX"){ if(!["RB","WR","TE"].includes(p.position)) return false; }
     else if(posFilter!=="ALL" && p.position!==posFilter) return false;
     if(startersOnly && p.vorp<0) return false;
-    if(query){ const s=(p.name+" "+p.team).toLowerCase(); if(!s.includes(query)) return false; }
+    if(query){ if(!(p.name+" "+(p.team||"")).toLowerCase().includes(query)) return false; }
     return true;
   });
   rows.sort((a,b)=>{
-    let x=a[sortKey], y=b[sortKey];
-    if(typeof x==="string"){ return sortDir*x.localeCompare(y); }
-    return sortDir*((x??-1e9)-(y??-1e9));
+    let x=val(a,sortKey), y=val(b,sortKey);
+    if(typeof x==="string") return sortDir*x.localeCompare(y);
+    return sortDir*(((x??-1e9))-((y??-1e9)));
   });
-  document.getElementById("count").textContent = rows.length+" players";
-  document.getElementById("body").innerHTML = rows.map(p=>{
-    const t=Math.min(p.tier,5);
-    const dly = p.delta_ly>0?`<span class="pos-pos">+${p.delta_ly}</span>`:`<span class="pos-neg">${p.delta_ly}</span>`;
-    const vc = p.vorp>=0?"pos-pos":"pos-neg";
-    return `<tr>
-      <td>${p.overall_rank}</td>
-      <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td>${p.pos_rank}</td>
-      <td><span class="tier t${t}">${p.tier}</span></td>
-      <td class="l"><span class="name">${p.name}</span>${p.is_flex_starter?' <span class="flexstar">FLEX</span>':''}</td>
-      <td class="l muted">${fmt(p.team)}</td>
-      <td class="muted">${fmt(p.age)}</td>
-      <td><b>${p.proj_pts}</b></td>
-      <td class="muted">${p.proj_games}</td>
-      <td>${p.proj_ppg}</td>
-      <td class="vorp ${vc}">${p.vorp}</td>
-      <td class="muted">${p.repl_pts}</td>
-      <td class="muted">${fmt(p.actual_2025)}</td>
-      <td>${dly}</td>
-    </tr>`;
+  document.getElementById("count").textContent=rows.length+" available";
+
+  const f=v=>v===null||v===undefined?"—":v;
+  document.getElementById("body").innerHTML=rows.map(p=>{
+    const id=pid(p), t=Math.min(p.tier,5);
+    const base=BASE.vals[id]??0, bid=ADJ.vals[id]??0;
+    const cells=(mode==="auction"?COLS_AUCTION:COLS_CHEAT).map(c=>{
+      const k=c[0];
+      if(k==="position") return `<td class="l"><span class="pos ${p.position}">${p.position}</span></td>`;
+      if(k==="tier") return `<td><span class="tier t${t}">${p.tier}</span></td>`;
+      if(k==="name") return `<td class="l"><span class="name">${p.name}</span>${p.is_flex_starter?' <span class="flexstar">FLEX</span>':''}${p.conf==='low'?' <span class="lowconf" title="Near-random year-to-year (Spearman ~0.17). Heavily shrunk — stream, don\'t draft for it.">stream</span>':''}</td>`;
+      if(k==="team") return `<td class="l muted">${f(p.team)}</td>`;
+      if(k==="base") return `<td class="base">$${base}</td>`;
+      if(k==="bid"){const up=bid>base; return `<td class="bid">$${bid}${up&&bid>base?` <span class="up" style="font-weight:400;font-size:11px">+${bid-base}</span>`:''}</td>`;}
+      if(k==="keep") return `<td class="l"><span class="keepbtn" data-id="${id}">＋</span></td>`;
+      if(k==="delta_ly"){const v=p.delta_ly;return `<td>${v==null?'—':(v>0?`<span class="up">+${v}</span>`:`<span class="down">${v}</span>`)}</td>`;}
+      if(k==="vorp"){return `<td class="${p.vorp>=0?'up':'down'}" style="font-weight:600">${p.vorp}</td>`;}
+      return `<td>${f(p[k])}</td>`;
+    }).join("");
+    return `<tr>${cells}</tr>`;
   }).join("");
+  document.querySelectorAll(".keepbtn[data-id]").forEach(b=>b.onclick=()=>addKeeper(b.dataset.id));
+  if(mode==="auction") renderSide();
 }
+
+// ---------- keepers ----------
+function addKeeper(id){ if(kept[id]!==undefined) return; kept[id]=BASE.vals[id]??1; save(); recompute(); render(); }
+function renderSide(){
+  const ids=Object.keys(kept);
+  document.getElementById("kcount").textContent=`(${ids.length}/${cfg.teams*3} max)`;
+  const infl = BASE.per>0 ? ADJ.per/BASE.per : 1;
+  document.getElementById("inflbox").innerHTML=
+    `<div class="lbl muted" style="font-size:11px;text-transform:uppercase">Inflation on remaining pool</div>
+     <div class="big ${infl>=1?'up':'down'}">×${infl.toFixed(2)} <span style="font-size:13px">(${infl>=1?'+':''}${Math.round((infl-1)*100)}%)</span></div>
+     <div class="row"><span>$ spent on keepers</span><b>$${Math.round(ADJ.sumSal)}</b></div>
+     <div class="row"><span>Skill $ left</span><b>$${Math.round(ADJ.skillMoney)}</b></div>
+     <div class="row"><span>Skill spots left</span><b>${ADJ.skillSpotsRem}</b></div>
+     <div class="row"><span>$ / VORP point</span><b>$${ADJ.per.toFixed(2)} <span class="muted">(base $${BASE.per.toFixed(2)})</span></b></div>`;
+  if(!ids.length){ document.getElementById("keeperlist").innerHTML='<div class="empty">No keepers set. Add with ＋ in the table.</div>'; return; }
+  const sorted=ids.map(id=>BYID[id]).filter(Boolean).sort((a,b)=>(BASE.vals[pid(b)]||0)-(BASE.vals[pid(a)]||0));
+  document.getElementById("keeperlist").innerHTML=sorted.map(p=>{
+    const id=pid(p), base=BASE.vals[id]||0, sal=+kept[id]||0, sur=base-sal;
+    return `<div class="kp">
+      <span class="pos ${p.position}" style="transform:scale(.85)">${p.position}</span>
+      <span class="kn">${p.name}</span>
+      $<input class="num ksal" data-id="${id}" type="number" value="${sal}" style="width:46px">
+      <span class="sur ${sur>=0?'up':'down'}" title="value − salary">${sur>=0?'+':''}${Math.round(sur)}</span>
+      <span class="x" data-id="${id}">✕</span></div>`;
+  }).join("");
+  document.querySelectorAll(".ksal").forEach(inp=>inp.onchange=()=>{kept[inp.dataset.id]=Math.max(0,+inp.value||0);save();recompute();render();});
+  document.querySelectorAll(".kp .x").forEach(x=>x.onclick=()=>{delete kept[x.dataset.id];save();recompute();render();});
+}
+
 render();
 </script>
 </body>

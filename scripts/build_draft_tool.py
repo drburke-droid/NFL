@@ -23,14 +23,6 @@ FLEX_POS = ["RB", "WR", "TE"]
 FLEX_SPOTS = TEAMS
 TIER_GAP = {"QB": 20, "RB": 18, "WR": 18, "TE": 14, "K": 8, "DST": 8}
 TARGET = 2026
-RECENT_W = {2025: 0.6, 2024: 0.4, 2023: 0.2}  # recent-form blend for K/DST
-
-
-def project_recent(by_season):
-    avail = {s: by_season[s] for s in RECENT_W if s in by_season and pd.notna(by_season[s])}
-    if not avail: return np.nan
-    wsum = sum(RECENT_W[s] for s in avail)
-    return sum(RECENT_W[s]*by_season[s] for s in avail)/wsum
 
 
 def build_skill(con):
@@ -67,54 +59,45 @@ def build_skill(con):
     df["repl_pts"] = df["position"].map(repl)
     df["vorp"] = df["proj_pts"] - df["repl_pts"]
     df["is_flex_starter"] = df["player_id"].isin(flex_starters["player_id"]).astype(int)
+    df["conf"] = "model"
     return df, repl, starters
 
 
-def build_simple(hist, key, position, name_fn, proj_games, con):
-    """Build K or DST projections (12 starters, no flex)."""
-    rows=[]
-    for kid, g in hist.groupby(key):
-        by = dict(zip(g["season"], g["custom_pts"]))
-        proj = project_recent(by)
-        if pd.isna(proj): continue
-        latest = g.sort_values("season").iloc[-1]
-        rows.append({"name": name_fn(latest), "position": position,
-                     "team": latest.get("team", latest[key] if key=="team" else None),
-                     "proj_pts": proj, "actual_2025": by.get(2025, np.nan),
-                     "proj_games": proj_games})
-    d = pd.DataFrame(rows)
-    # keep likely starters: top ~ (TEAMS+ a few) plus anyone with real 2025 usage
-    d = d.sort_values("proj_pts", ascending=False)
-    d["pos_rank"] = d["proj_pts"].rank(ascending=False, method="min").astype(int)
-    pp = d["proj_pts"].values
-    repl = float(pp[TEAMS]) if TEAMS < len(pp) else float(pp[-1])
-    d["repl_pts"] = repl
-    d["vorp"] = d["proj_pts"] - repl
-    d["proj_ppg"] = d["proj_pts"]/d["proj_games"]
-    d["is_flex_starter"] = 0; d["age"] = np.nan; d["prior_ppg"] = np.nan
-    return d, repl
+def build_kdst(con):
+    """K/DST from the flattened, validated projections (nflv_kdst_proj). These
+    positions are near-random year-over-year, so values are heavily shrunk and
+    flagged low-confidence; VORP collapses to near-replacement (stream them)."""
+    proj = pd.read_sql("SELECT * FROM nflv_kdst_proj", con)
+    k25 = pd.read_sql("SELECT name, custom_pts a25 FROM nflv_kicking WHERE season=2025", con)
+    d25 = pd.read_sql("SELECT team, custom_pts a25 FROM nflv_team_def WHERE season=2025", con)
+    out = {}
+    for pos, games, a25 in [("K", 16, k25), ("DST", 17, d25)]:
+        s = proj[proj.position == pos].copy().sort_values("proj_pts", ascending=False)
+        s["proj_games"] = games; s["proj_ppg"] = s["proj_pts"]/games
+        s["pos_rank"] = s["proj_pts"].rank(ascending=False, method="min").astype(int)
+        pp = s["proj_pts"].values
+        repl = float(pp[TEAMS]) if TEAMS < len(pp) else float(pp[-1])
+        s["repl_pts"] = repl; s["vorp"] = s["proj_pts"] - repl
+        s["is_flex_starter"] = 0; s["age"] = np.nan; s["prior_ppg"] = np.nan; s["conf"] = "low"
+        key = "name" if pos == "K" else "team"
+        s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
+        out[pos] = (s, repl)
+    return out
 
 
 def main():
     con = sqlite3.connect(DB)
     skill, repl, starters = build_skill(con)
 
-    # Kickers: keep starters (>=6 games in 2025 or top-40 by projection)
-    kick = pd.read_sql("SELECT * FROM nflv_kicking", con)
-    k25 = kick[kick.season==2025].set_index("player_id")["games"].to_dict()
-    kdf, krepl = build_simple(kick, "player_id", "K", lambda r: r["name"], 16, con)
-    kdf = kdf[kdf.apply(lambda r: True, axis=1)].head(40)  # cap depth
-    # DST
-    tdef = pd.read_sql("SELECT * FROM nflv_team_def", con)
-    ddf, drepl = build_simple(tdef, "team", "DST", lambda r: str(r["team"])+" DST", 17, con)
-    ddf["team"] = ddf["name"].str.replace(" DST","",regex=False)
+    kdst = build_kdst(con)
+    kdf, krepl = kdst["K"]; ddf, drepl = kdst["DST"]
     con.close()
 
     repl.update({"K": round(krepl,1), "DST": round(drepl,1)})
     starters.update({"K": TEAMS, "DST": TEAMS})
 
     cols=["name","position","team","age","pos_rank","proj_pts","proj_games","proj_ppg",
-          "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter"]
+          "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -133,7 +116,7 @@ def main():
     for c in ["proj_pts","proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","age"]:
         allp[c]=allp[c].round(1)
     out_cols=["overall_rank","name","position","team","age","pos_rank","tier","proj_pts",
-              "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","is_flex_starter"]
+              "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","is_flex_starter","conf"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]
@@ -147,8 +130,9 @@ def main():
                     "Reception":1,"Fumble":-2,"FG<50":3,"FG40-49":4,"FG50+":5,"PAT":1,
                     "Sack":0.5,"DEF INT/FR":1,"DEF TD":6,"Safety/Block":2},
         "notes": ["RB/WR/TE custom scoring == nflverse PPR (exact); QB adjusted for 6-pt pass TD & -1 INT.",
-                  "QB/RB/WR/TE: prior-year-anchored 2026 model. K & DST: recent-form blend (0.6x'25 + 0.4x'24).",
-                  "K/DST scored exactly under league kicking/defense rules; FFA 2026 consensus not yet available."],
+                  "QB/RB/WR/TE: prior-year-anchored 2026 model.",
+                  "K & DST are near-random year-over-year (prior->next Spearman ~0.17; even a Vegas/sack-aware model can't beat the league mean). Their projections are HEAVILY shrunk to the mean and flagged low-confidence — stream them, don't draft for them.",
+                  "FFA 2026 consensus not yet available."],
         "player_count": len(records),
     }
     with open(os.path.join(OUTDIR,"data.js"),"w",encoding="utf-8") as f:
