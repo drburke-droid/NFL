@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>2026 Fantasy Draft Board</title>
 <script src="data.js"></script>
+<script src="comps.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -83,6 +84,7 @@
     <button class="btn active" id="mCheat">Cheat Sheet</button>
     <button class="btn" id="mAuction">Auction $</button>
     <button class="btn" id="mTargets">🎯 Targets</button>
+    <button class="btn" id="mComps">🧬 Career Comps</button>
     <span class="muted" id="count"></span>
   </div>
   <div class="ffabar">
@@ -132,6 +134,7 @@ let ffaMap=JSON.parse(localStorage.getItem("ffa2026")||'{}');
 const pid=p=>p.name+"|"+p.position+"|"+(p.team||"");
 const BYID={}; PLAYERS.forEach(p=>BYID[pid(p)]=p);
 const isK=p=>p.position==="K"||p.position==="DST";
+const CMP=(typeof COMPS!=="undefined")?COMPS:{};
 const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z ]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/g,"").replace(/\s+/g," ").trim();
 const fkey=(n,p)=>norm(n)+"|"+p;
@@ -280,13 +283,15 @@ function setMode(m){
   document.getElementById("mCheat").classList.toggle("active",m==="cheat");
   document.getElementById("mAuction").classList.toggle("active",m==="auction");
   document.getElementById("mTargets").classList.toggle("active",m==="targets");
+  document.getElementById("mComps").classList.toggle("active",m==="comps");
   document.getElementById("settings").style.display=m==="auction"?"flex":"none";
-  document.getElementById("replcards").style.display=m==="targets"?"none":"flex";
+  document.getElementById("replcards").style.display=(m==="targets"||m==="comps")?"none":"flex";
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
 }
 document.getElementById("mCheat").onclick=()=>setMode("cheat");
 document.getElementById("mAuction").onclick=()=>setMode("auction");
 document.getElementById("mTargets").onclick=()=>setMode("targets");
+document.getElementById("mComps").onclick=()=>setMode("comps");
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
   document.getElementById(id).value=cfg[key];
   document.getElementById(id).onchange=e=>{cfg[key]=Math.max(1,+e.target.value||cfg[key]);save();recompute();render();};});
@@ -361,7 +366,38 @@ function renderTargets(){
     " Use the position buttons / search to filter.";
 }
 
+// ---------- Career Comps tab ----------
+function renderComps(){
+  let rows=Object.values(CMP).filter(r=>{
+    if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(r.pos))return false;}
+    else if(posFilter==="ROOK"){return false;}
+    else if(posFilter!=="ALL"&&!["K","DST"].includes(posFilter)&&r.pos!==posFilter)return false;
+    else if(["K","DST"].includes(posFilter))return false;
+    if(query&&!r.p.toLowerCase().includes(query)&&!r.comps.some(c=>c.n.toLowerCase().includes(query)))return false;
+    return true;
+  });
+  rows.sort((a,b)=>(b.ppg||0)-(a.ppg||0));
+  document.getElementById("count").textContent=rows.length+" players";
+  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Closest career-trajectory comps (→ their next-year PPG)"];
+  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i===1||i===5?'l':''}">${h}</th>`).join("");
+  document.getElementById("body").innerHTML=rows.map(r=>{
+    const cs=r.comps.map(c=>`<span title="distance ${c.d}">${c.n}${c.nx!=null?` <span class="muted">→${c.nx}</span>`:''}</span>`).join("&nbsp;·&nbsp;");
+    const dir=r.proj>r.ppg?'upc':(r.proj<r.ppg?'downc':'muted');
+    return `<tr>
+      <td class="l"><span class="pos ${r.pos}">${r.pos}</span></td>
+      <td class="l"><span class="name">${r.p}</span></td>
+      <td>${r.yr}</td>
+      <td>${r.ppg}</td>
+      <td class="${dir}" style="font-weight:700">${r.proj}</td>
+      <td class="l muted" style="white-space:normal">${cs}</td>
+    </tr>`;
+  }).join("");
+  document.getElementById("notes").innerHTML="🧬 <b>Career-trajectory comps.</b> Each player's first-N-year arc (production + role, era-normalized) matched to the most similar historical players (2006–2025), shown with how those comps' careers continued (→ next-year PPG). "+
+    "<b>Proj '26</b> is the comp-blended projection (50% comps' median + 50% 2025), which backtests ~8% better than repeat-last-year (MAE 3.03 vs 3.30). Comp projection alone is weaker — the analogs are the qualitative value (what arc a player is tracking).";
+}
+
 function render(){
+  if(mode==="comps"){ renderComps(); return; }
   if(mode==="targets"){ renderTargets(); return; }
   notes();
   const COLS=cols();
