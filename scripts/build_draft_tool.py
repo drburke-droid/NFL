@@ -138,9 +138,12 @@ def main():
                   "Tags: ROOK = 2026 rookie; BREAK = veteran breakout prob >= 50%; SLEEP = cheap (<= $8) with breakout prob >= 45%."],
         "player_count": len(records), "rookies": int((allp.is_rookie==1).sum()),
     }
-    with open(os.path.join(OUTDIR,"data.js"),"w",encoding="utf-8") as f:
-        f.write("const META = "+json.dumps(meta)+";\n")
-        f.write("const PLAYERS = "+json.dumps(records)+";\n")
+    payload = "const META = "+json.dumps(meta)+";\n" + "const PLAYERS = "+json.dumps(records)+";\n"
+    DOCS = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "docs")
+    for d in (OUTDIR, DOCS):                       # local copy + GitHub Pages copy
+        os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "data.js"), "w", encoding="utf-8") as f:
+            f.write(payload)
 
     print(f"Wrote {len(records)} players ({(allp.position=='K').sum()} K, {(allp.position=='DST').sum()} DST)")
     print("Replacement points:", meta["replacement_points"])
