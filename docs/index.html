@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>2026 Fantasy Draft Board</title>
+<script src="data.js"></script>
+<style>
+  :root{
+    --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
+    --accent:#4da3ff;--gold:#e0a23c;--good:#39c08a;--bad:#e85d75;
+    --qb:#e85d75;--rb:#39c08a;--wr:#4da3ff;--te:#e0a23c;--k:#b07de0;--dst:#7d8a99;
+    --t1:#1f6f4a;--t2:#2f5e7e;--t3:#5a4a7a;--t4:#6b5535;--t5:#444f5e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 -apple-system,Segoe UI,Roboto,sans-serif}
+  header{padding:16px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
+  h1{margin:0 0 6px;font-size:19px}
+  .sub{color:var(--muted);font-size:13px}
+  .modebar{margin-top:10px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .chips{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .chip{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:12px;color:var(--muted)}
+  .chip b{color:var(--txt)}
+  .layout{display:flex}
+  .main{flex:1;padding:14px 24px;min-width:0}
+  .side{width:330px;border-left:1px solid var(--line);background:var(--panel);padding:14px;display:none;max-height:calc(100vh - 90px);overflow:auto;position:sticky;top:0}
+  body.auction .side{display:block}
+  .cards{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 13px;min-width:120px}
+  .card .lbl{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+  .card .val{font-size:17px;font-weight:600;margin-top:2px}
+  .controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  .btn{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:6px 12px;border-radius:8px;cursor:pointer;font-size:13px}
+  .btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.active{background:var(--accent);border-color:var(--accent);color:#06121f;font-weight:600}
+  .btn.sm{padding:3px 8px;font-size:12px}
+  .btn.up{background:var(--gold);border-color:var(--gold);color:#06121f;font-weight:600}
+  input[type=search]{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:7px 11px;border-radius:8px;min-width:200px;font-size:13px}
+  input.num{background:var(--panel2);border:1px solid var(--line);color:var(--txt);padding:4px 6px;border-radius:6px;width:56px;font-size:13px;text-align:right}
+  label.tgl{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:13px;cursor:pointer}
+  table{border-collapse:collapse;width:100%;font-size:13px}
+  thead th{position:sticky;top:0;background:var(--panel2);border-bottom:2px solid var(--line);padding:7px 9px;text-align:right;cursor:pointer;white-space:nowrap;user-select:none;z-index:1}
+  thead th.l{text-align:left}
+  thead th:hover{color:var(--accent)}
+  tbody td{padding:6px 9px;text-align:right;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td.l{text-align:left}
+  tbody tr:hover{background:#19222f}
+  .pos{display:inline-block;width:30px;text-align:center;border-radius:4px;font-weight:700;font-size:11px;padding:2px 0;color:#06121f}
+  .pos.QB{background:var(--qb)}.pos.RB{background:var(--rb)}.pos.WR{background:var(--wr)}.pos.TE{background:var(--te)}
+  .pos.K{background:var(--k)}.pos.DST{background:var(--dst);color:#fff;width:38px}
+  .tier{display:inline-block;min-width:22px;text-align:center;border-radius:4px;padding:1px 5px;font-size:11px;font-weight:600}
+  .tier.t1{background:var(--t1)}.tier.t2{background:var(--t2)}.tier.t3{background:var(--t3)}.tier.t4{background:var(--t4)}.tier.t5{background:var(--t5)}
+  .name{font-weight:600}
+  .bid{font-weight:700;color:var(--gold)}
+  .base{color:var(--muted)}
+  .upc{color:var(--good)}.downc{color:var(--bad)}.muted{color:var(--muted)}
+  .foot{color:var(--muted);font-size:12px;margin-top:14px;line-height:1.6}
+  .flexstar{color:var(--te);font-weight:700;font-size:11px}
+  .lowconf{color:#7d8a99;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px}
+  .tag{font-size:10px;border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px;font-weight:700}
+  .tag.rook{background:#b07de0;color:#06121f}.tag.brk{background:#39c08a;color:#06121f}
+  .side h3{margin:0 0 8px;font-size:14px}
+  .infl{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;font-size:13px}
+  .infl .big{font-size:20px;font-weight:700}
+  .infl .row{display:flex;justify-content:space-between;color:var(--muted);margin-top:3px}
+  .infl .row b{color:var(--txt)}
+  .kp{display:flex;align-items:center;gap:6px;padding:6px 4px;border-bottom:1px solid var(--line)}
+  .kp .kn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;font-size:12px}
+  .kp .sur{font-size:11px;font-weight:600;min-width:42px;text-align:right}
+  .kp .x{cursor:pointer;color:var(--bad);font-weight:700}
+  .keepbtn{cursor:pointer;color:var(--accent);font-weight:700;font-size:12px}
+  .empty{color:var(--muted);font-size:12px;padding:8px 0}
+  .settings{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--muted)}
+  .ffabar{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
+  .ffastat{color:var(--good);font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <h1>2026 Fantasy Draft Board <span class="muted" id="szn"></span></h1>
+  <div class="sub" id="leaguesub"></div>
+  <div class="modebar">
+    <button class="btn active" id="mCheat">Cheat Sheet</button>
+    <button class="btn" id="mAuction">Auction $</button>
+    <span class="muted" id="count"></span>
+  </div>
+  <div class="ffabar">
+    <b>Projections:</b>
+    <button class="btn sm active" id="srcModel">Model</button>
+    <button class="btn sm" id="srcFFA" disabled>FFA consensus</button>
+    <span style="flex:1"></span>
+    <label class="btn sm up" for="ffaFile">📂 Upload 2026 FFA CSV</label>
+    <input id="ffaFile" type="file" accept=".csv" style="display:none">
+    <button class="btn sm" id="ffaClear" style="display:none">clear</button>
+    <span class="muted" id="ffaStatus">No FFA loaded — board is a prior-year model guess. Upload the FantasyFootballAnalytics preseason CSV to switch to market-anchored consensus.</span>
+  </div>
+  <div class="chips" id="scorechips"></div>
+</header>
+<div class="layout">
+  <div class="main">
+    <div class="settings" id="settings" style="display:none">
+      <span>Teams <input class="num" id="cTeams" type="number" value="12"></span>
+      <span>Budget $<input class="num" id="cBudget" type="number" value="200"></span>
+      <span>Roster spots <input class="num" id="cRoster" type="number" value="16"></span>
+      <span class="muted">· Bid$ updates live as you set keepers →</span>
+    </div>
+    <div class="cards" id="replcards"></div>
+    <div class="controls">
+      <div id="posbtns"></div>
+      <input type="search" id="q" placeholder="Search player / team…"/>
+      <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only</label>
+    </div>
+    <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
+    <div class="foot" id="notes"></div>
+  </div>
+  <div class="side" id="side">
+    <h3>Keepers <span class="muted" id="kcount"></span></h3>
+    <div class="infl" id="inflbox"></div>
+    <div id="keeperlist"></div>
+    <button class="btn sm" id="clearK" style="margin-top:10px">Clear all keepers</button>
+    <div class="foot" style="margin-top:12px">Add keepers with the <span class="keepbtn">＋</span> in the table, then set each one's escalated salary. Saved in your browser.</div>
+  </div>
+</div>
+<script>
+// ---------- state ----------
+let mode="cheat",posFilter="ALL",startersOnly=false,sortKey="overall_rank",sortDir=1,query="";
+let projMode=localStorage.getItem("projMode")||"model";
+let cfg=JSON.parse(localStorage.getItem("draft_cfg")||'null')||{teams:12,budget:200,roster:16};
+let kept=JSON.parse(localStorage.getItem("draft_keepers")||'{}');
+let ffaMap=JSON.parse(localStorage.getItem("ffa2026")||'{}');
+const pid=p=>p.name+"|"+p.position+"|"+(p.team||"");
+const BYID={}; PLAYERS.forEach(p=>BYID[pid(p)]=p);
+const isK=p=>p.position==="K"||p.position==="DST";
+const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};
+const norm=s=>String(s).toLowerCase().replace(/[^a-z ]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/g,"").replace(/\s+/g," ").trim();
+const fkey=(n,p)=>norm(n)+"|"+p;
+const PRJ=p=>p._proj!=null?p._proj:p.proj_pts;
+const VP=p=>p._vorp!=null?p._vorp:p.vorp;
+const ffaOn=()=>projMode==="ffa"&&Object.keys(ffaMap).length>0;
+
+// ---------- projection / VORP (recomputed for FFA mode) ----------
+function recomputeSkillVorp(){
+  const skill=PLAYERS.filter(p=>!isK(p));
+  const BASE={QB:cfg.teams,RB:cfg.teams*2,WR:cfg.teams*2,TE:cfg.teams};
+  ["QB","RB","WR","TE"].forEach(pos=>{
+    skill.filter(p=>p.position===pos).sort((a,b)=>b._proj-a._proj).forEach((p,i)=>p._prk=i+1);
+  });
+  const flexPool=skill.filter(p=>["RB","WR","TE"].includes(p.position)&&p._prk>BASE[p.position])
+                      .sort((a,b)=>b._proj-a._proj).slice(0,cfg.teams);
+  const fc={}; flexPool.forEach(p=>fc[p.position]=(fc[p.position]||0)+1);
+  const repl={};
+  ["QB","RB","WR","TE"].forEach(pos=>{
+    const arr=skill.filter(p=>p.position===pos).sort((a,b)=>b._proj-a._proj).map(p=>p._proj);
+    const st=BASE[pos]+(["RB","WR","TE"].includes(pos)?(fc[pos]||0):0);
+    repl[pos]=st<arr.length?arr[st]:arr[arr.length-1];
+  });
+  skill.forEach(p=>p._vorp=p._proj-repl[p.position]);
+}
+function applyProjection(){
+  if(ffaOn()){
+    PLAYERS.forEach(p=>{
+      p._ffa=ffaMap[fkey(p.name,p.position)]||null;
+      if(isK(p)){p._proj=p.proj_pts;p._vorp=p.vorp;}
+      else{p._proj=p._ffa?p._ffa.pts:p.proj_pts;}   // FFA points (consensus); model fallback if unmatched
+    });
+    recomputeSkillVorp();
+  }else{
+    PLAYERS.forEach(p=>{p._proj=p.proj_pts;p._vorp=p.vorp;p._ffa=null;});
+  }
+}
+
+// ---------- auction engine (uses effective VORP) ----------
+function computeValues(keepers){
+  const totalSpots=cfg.teams*cfg.roster,totalMoney=cfg.teams*cfg.budget;
+  const ids=Object.keys(keepers),kset=new Set(ids);
+  const kdstSlots=cfg.teams*2;
+  const keptKDST=ids.filter(id=>BYID[id]&&isK(BYID[id])).length;
+  const kdstReserve=Math.max(kdstSlots-keptKDST,0);
+  const skillSpots=totalSpots-kdstSlots;
+  const skillKeepers=ids.filter(id=>BYID[id]&&!isK(BYID[id]));
+  const skillSpotsRem=Math.max(skillSpots-skillKeepers.length,0);
+  const sumSal=ids.reduce((a,id)=>a+(+keepers[id]||0),0);
+  const skillMoney=totalMoney-kdstReserve-sumSal;
+  const pool=PLAYERS.filter(p=>!isK(p)&&!kset.has(pid(p))).sort((a,b)=>VP(b)-VP(a)).slice(0,skillSpotsRem);
+  const poolSet=new Set(pool.map(pid));
+  const sumV=pool.reduce((a,p)=>a+Math.max(VP(p),0),0);
+  const disc=Math.max(skillMoney-skillSpotsRem,0);
+  const per=sumV>0?disc/sumV:0;
+  const vals={};
+  PLAYERS.forEach(p=>{const id=pid(p);
+    if(kset.has(id)){vals[id]=+keepers[id]||0;return;}
+    if(isK(p)){vals[id]=p.pos_rank<=6?2:(p.pos_rank<=cfg.teams?1:0);return;}
+    vals[id]=poolSet.has(id)?Math.max(1,Math.round(1+Math.max(VP(p),0)*per)):(VP(p)>0?1:0);
+  });
+  return {vals,per,skillMoney,skillSpotsRem,sumSal,disc};
+}
+let BASE,ADJ;
+function recompute(){applyProjection();BASE=computeValues({});ADJ=computeValues(kept);}
+
+// ---------- header / chips ----------
+document.getElementById("szn").textContent="· "+META.target_season;
+const s=META.starters;
+document.getElementById("leaguesub").textContent=`${META.teams}-team · $${cfg.budget} auction · starters: `+Object.entries(s).map(([k,v])=>`${v} ${k}`).join(" / ");
+document.getElementById("scorechips").innerHTML=Object.entries(META.scoring).map(([k,v])=>`<span class="chip">${k} <b>${v}</b></span>`).join("");
+function notes(){
+  document.getElementById("notes").innerHTML=META.notes.map(n=>"• "+n).join("<br>")+
+    "<br>• Auction $: VBD over a "+cfg.teams+"-team $"+cfg.budget+" budget. K/DST capped (streamed). Keepers inflate the remaining pool."+
+    (ffaOn()?"<br>• <b style='color:var(--gold)'>FFA consensus active</b> — projections/ranks/$ use the uploaded FantasyFootballAnalytics points (their scoring) + their ADP. Breakout/rookie tags remain model-based.":"");
+}
+function cards(){
+  document.getElementById("replcards").innerHTML=Object.entries(META.replacement_points)
+    .map(([p,v])=>`<div class="card"><div class="lbl">${p} repl pts</div><div class="val">${v}</div>
+     <div class="muted" style="font-size:11px">${META.starters_by_pos_incl_flex[p]} started</div></div>`).join("");
+}
+
+// ---------- FFA upload ----------
+function parseCSV(text){
+  const lines=text.replace(/\r/g,"").split("\n").filter(l=>l.trim().length);
+  const split=l=>{const o=[];let c="",q=false;for(const ch of l){if(ch==='"')q=!q;else if(ch===','&&!q){o.push(c);c="";}else c+=ch;}o.push(c);return o;};
+  const head=split(lines[0]).map(h=>h.trim().toLowerCase());
+  const idx=n=>head.indexOf(n);
+  const iP=idx("player"),iPos=idx("position")>=0?idx("position"):idx("pos"),iPts=idx("points"),
+        iAdp=idx("adp"),iTier=idx("tier"),iPr=idx("position_rank"),iCe=idx("ceiling"),iFl=idx("floor"),iUn=idx("uncertainty");
+  const m={};let n=0;
+  for(let r=1;r<lines.length;r++){
+    const c=split(lines[r]); if(iP<0||iPts<0) continue;
+    const name=c[iP], pos=(c[iPos]||"").toUpperCase().replace(/[^A-Z]/g,"");
+    if(!name||!["QB","RB","WR","TE"].includes(pos)) continue;
+    const pts=parseFloat(c[iPts]); if(isNaN(pts)) continue;
+    m[fkey(name,pos)]={pts:pts, adp:iAdp>=0?parseFloat(c[iAdp]):null, tier:iTier>=0?parseInt(c[iTier]):null,
+      posrank:iPr>=0?parseInt(c[iPr]):null, ceil:iCe>=0?parseFloat(c[iCe]):null, floor:iFl>=0?parseFloat(c[iFl]):null,
+      unc:iUn>=0?parseFloat(c[iUn]):null};
+    n++;
+  }
+  return {m,n};
+}
+function ffaStatusText(){
+  const ks=Object.keys(ffaMap);
+  if(!ks.length){return "No FFA loaded — board is a prior-year model guess. Upload the FantasyFootballAnalytics preseason CSV to switch to market-anchored consensus.";}
+  let matched=0; PLAYERS.forEach(p=>{if(!isK(p)&&ffaMap[fkey(p.name,p.position)])matched++;});
+  return `<span class="ffastat">FFA loaded: ${ks.length} players, ${matched} matched to the board.</span> Switch the "Projections" toggle to FFA consensus.`;
+}
+document.getElementById("ffaFile").onchange=e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=ev=>{
+    try{
+      const {m,n}=parseCSV(ev.target.result);
+      if(!n){alert("Couldn't parse any QB/RB/WR/TE rows. Expecting an FFA projections CSV with player/position/points columns.");return;}
+      ffaMap=m; projMode="ffa"; save();
+      document.getElementById("srcFFA").disabled=false;
+      document.getElementById("ffaClear").style.display="";
+      setSrc("ffa");
+    }catch(err){alert("Parse error: "+err.message);}
+  };
+  rd.readAsText(f);
+};
+document.getElementById("ffaClear").onclick=()=>{ffaMap={};projMode="model";save();document.getElementById("srcFFA").disabled=true;document.getElementById("ffaClear").style.display="none";setSrc("model");};
+function setSrc(src){
+  if(src==="ffa"&&!Object.keys(ffaMap).length) return;
+  projMode=src; save();
+  document.getElementById("srcModel").classList.toggle("active",src==="model");
+  document.getElementById("srcFFA").classList.toggle("active",src==="ffa");
+  document.getElementById("ffaStatus").innerHTML=ffaStatusText();
+  recompute(); notes(); render();
+}
+document.getElementById("srcModel").onclick=()=>setSrc("model");
+document.getElementById("srcFFA").onclick=()=>setSrc("ffa");
+
+// ---------- position filter / search ----------
+const POSES=["ALL","QB","RB","WR","TE","FLEX","ROOK","K","DST"];
+document.getElementById("posbtns").innerHTML=POSES.map(p=>`<button class="btn sm pf ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
+document.querySelectorAll(".pf").forEach(b=>b.onclick=()=>{posFilter=b.dataset.p;document.querySelectorAll(".pf").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
+document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();render();};
+document.getElementById("startersOnly").onchange=e=>{startersOnly=e.target.checked;render();};
+
+function setMode(m){
+  mode=m;document.body.classList.toggle("auction",m==="auction");
+  document.getElementById("mCheat").classList.toggle("active",m==="cheat");
+  document.getElementById("mAuction").classList.toggle("active",m==="auction");
+  document.getElementById("settings").style.display=m==="auction"?"flex":"none";
+  sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
+}
+document.getElementById("mCheat").onclick=()=>setMode("cheat");
+document.getElementById("mAuction").onclick=()=>setMode("auction");
+["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
+  document.getElementById(id).value=cfg[key];
+  document.getElementById(id).onchange=e=>{cfg[key]=Math.max(1,+e.target.value||cfg[key]);save();recompute();render();};});
+document.getElementById("clearK").onclick=()=>{kept={};save();recompute();render();};
+
+// ---------- columns ----------
+function cols(){
+  const ffa=ffaOn();
+  if(mode==="auction") return [["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
+    ["name","Player",1],["team","Tm",1],["proj","Proj",0],["vorp","VORP",0],["upside","Up%",0],
+    ...(ffa?[["ffa_adp","ADP",0]]:[]),["base","$ Base",0],["bid","$ Bid",0],["keep","",1]];
+  return [["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
+    ["name","Player",1],["team","Tm",1],["age","Age",0],["proj","Proj",0],["vorp","VORP",0],["upside","Up%",0],
+    ...(ffa?[["ffa_adp","ADP",0],["ffa_tier","FFA Tr",0]]:[]),["actual_2025","2025",0]];
+}
+const upside=p=>p.is_rookie===1?(p.hit_prob??null):(p.breakout_prob??null);
+function gv(p,k){
+  if(k==="bid")return ADJ.vals[pid(p)]??0;
+  if(k==="base")return BASE.vals[pid(p)]??0;
+  if(k==="proj")return PRJ(p);
+  if(k==="vorp")return VP(p);
+  if(k==="upside")return upside(p)??-1;
+  if(k==="ffa_adp")return p._ffa?(p._ffa.adp??999):999;
+  if(k==="ffa_tier")return p._ffa?(p._ffa.tier??99):99;
+  if(k==="overall_rank")return ffaOn()?-VP(p):p.overall_rank;
+  return p[k];
+}
+
+function render(){
+  const COLS=cols();
+  document.getElementById("hrow").innerHTML=COLS.map(c=>`<th class="${c[2]?'l':''}" data-k="${c[0]}">${c[1]}</th>`).join("");
+  document.querySelectorAll("#hrow th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!k)return;
+    if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==="name"||k==="team"||k==="position")?1:-1;}render();});
+  const keptSet=new Set(Object.keys(kept));
+  let rows=PLAYERS.filter(p=>{
+    if(mode==="auction"&&keptSet.has(pid(p)))return false;
+    if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(p.position))return false;}
+    else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
+    else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
+    if(startersOnly&&VP(p)<0)return false;
+    if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;
+    return true;
+  });
+  rows.sort((a,b)=>{let x=gv(a,sortKey),y=gv(b,sortKey);
+    if(typeof x==="string")return sortDir*x.localeCompare(y);return sortDir*(((x??-1e9))-((y??-1e9)));});
+  // re-number overall rank by current effective VORP order for display
+  const order=[...PLAYERS].sort((a,b)=>VP(b)-VP(a)); const ovr={}; order.forEach((p,i)=>ovr[pid(p)]=i+1);
+  document.getElementById("count").textContent=rows.length+" players"+(ffaOn()?" · FFA":"");
+  const f=v=>v===null||v===undefined?"—":v;
+  document.getElementById("body").innerHTML=rows.map(p=>{
+    const id=pid(p),t=Math.min(p.tier,5),base=BASE.vals[id]??0,bid=ADJ.vals[id]??0,u=upside(p);
+    return "<tr>"+COLS.map(c=>{const k=c[0];
+      if(k==="position")return `<td class="l"><span class="pos ${p.position}">${p.position}</span></td>`;
+      if(k==="overall_rank")return `<td>${ovr[id]}</td>`;
+      if(k==="tier")return `<td><span class="tier t${t}">${p.tier}</span></td>`;
+      if(k==="name"){let tg=p.is_flex_starter?' <span class="flexstar">FLEX</span>':'';
+        if(p.is_rookie===1)tg+=' <span class="tag rook">ROOK</span>';
+        else if((p.breakout_prob||0)>=0.5)tg+=' <span class="tag brk">BREAK</span>';
+        if(p.conf==='low')tg+=' <span class="lowconf">stream</span>';
+        return `<td class="l"><span class="name">${p.name}</span>${tg}</td>`;}
+      if(k==="team")return `<td class="l muted">${f(p.team)}</td>`;
+      if(k==="proj")return `<td><b>${PRJ(p)==null?'—':Math.round(PRJ(p))}</b></td>`;
+      if(k==="vorp")return `<td class="${VP(p)>=0?'upc':'downc'}" style="font-weight:600">${VP(p)==null?'—':Math.round(VP(p))}</td>`;
+      if(k==="upside")return `<td class="${u&&u>=0.5?'upc':'muted'}">${u==null?'—':Math.round(u*100)+'%'}</td>`;
+      if(k==="ffa_adp")return `<td class="muted">${p._ffa&&p._ffa.adp?p._ffa.adp.toFixed(1):'—'}</td>`;
+      if(k==="ffa_tier")return `<td class="muted">${p._ffa&&p._ffa.tier?p._ffa.tier:'—'}</td>`;
+      if(k==="base")return `<td class="base">$${base}</td>`;
+      if(k==="bid"){const up=bid>base;return `<td class="bid">$${bid}${up?` <span class="upc" style="font-weight:400;font-size:11px">+${bid-base}</span>`:''}</td>`;}
+      if(k==="keep")return `<td class="l"><span class="keepbtn" data-id="${id}">＋</span></td>`;
+      if(k==="actual_2025")return `<td class="muted">${f(p.actual_2025)}</td>`;
+      return `<td>${f(p[k])}</td>`;
+    }).join("")+"</tr>";
+  }).join("");
+  document.querySelectorAll(".keepbtn[data-id]").forEach(b=>b.onclick=()=>addKeeper(b.dataset.id));
+  if(mode==="auction")renderSide();
+}
+
+// ---------- keepers ----------
+function addKeeper(id){if(kept[id]!==undefined)return;kept[id]=BASE.vals[id]??1;save();recompute();render();}
+function renderSide(){
+  const ids=Object.keys(kept);
+  document.getElementById("kcount").textContent=`(${ids.length}/${cfg.teams*3} max)`;
+  const infl=BASE.per>0?ADJ.per/BASE.per:1;
+  document.getElementById("inflbox").innerHTML=
+    `<div class="lbl muted" style="font-size:11px;text-transform:uppercase">Inflation on remaining pool</div>
+     <div class="big ${infl>=1?'upc':'downc'}">×${infl.toFixed(2)} <span style="font-size:13px">(${infl>=1?'+':''}${Math.round((infl-1)*100)}%)</span></div>
+     <div class="row"><span>$ spent on keepers</span><b>$${Math.round(ADJ.sumSal)}</b></div>
+     <div class="row"><span>Skill $ left</span><b>$${Math.round(ADJ.skillMoney)}</b></div>
+     <div class="row"><span>Skill spots left</span><b>${ADJ.skillSpotsRem}</b></div>
+     <div class="row"><span>$ / VORP point</span><b>$${ADJ.per.toFixed(2)} <span class="muted">(base $${BASE.per.toFixed(2)})</span></b></div>`;
+  if(!ids.length){document.getElementById("keeperlist").innerHTML='<div class="empty">No keepers set. Add with ＋ in the table.</div>';return;}
+  const sorted=ids.map(id=>BYID[id]).filter(Boolean).sort((a,b)=>(BASE.vals[pid(b)]||0)-(BASE.vals[pid(a)]||0));
+  document.getElementById("keeperlist").innerHTML=sorted.map(p=>{
+    const id=pid(p),base=BASE.vals[id]||0,sal=+kept[id]||0,sur=base-sal;
+    return `<div class="kp"><span class="pos ${p.position}" style="transform:scale(.85)">${p.position}</span>
+      <span class="kn">${p.name}</span>$<input class="num ksal" data-id="${id}" type="number" value="${sal}" style="width:46px">
+      <span class="sur ${sur>=0?'upc':'downc'}">${sur>=0?'+':''}${Math.round(sur)}</span><span class="x" data-id="${id}">✕</span></div>`;
+  }).join("");
+  document.querySelectorAll(".ksal").forEach(inp=>inp.onchange=()=>{kept[inp.dataset.id]=Math.max(0,+inp.value||0);save();recompute();render();});
+  document.querySelectorAll(".kp .x").forEach(x=>x.onclick=()=>{delete kept[x.dataset.id];save();recompute();render();});
+}
+
+// ---------- init ----------
+if(Object.keys(ffaMap).length){document.getElementById("srcFFA").disabled=false;document.getElementById("ffaClear").style.display="";}
+document.getElementById("srcModel").classList.toggle("active",projMode==="model");
+document.getElementById("srcFFA").classList.toggle("active",projMode==="ffa");
+document.getElementById("ffaStatus").innerHTML=ffaStatusText();
+cards();notes();recompute();render();
+</script>
+</body>
+</html>
