@@ -113,8 +113,10 @@
       <div id="posbtns"></div>
       <input type="search" id="q" placeholder="Search player / team…"/>
       <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only</label>
+      <span id="compToggle" style="display:none"><button class="btn sm active" id="cvTable">▦ Table</button><button class="btn sm" id="cvScatter">⊕ Risk/Reward</button></span>
     </div>
     <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
+    <div id="scatter" style="display:none"></div>
     <div class="foot" id="notes"></div>
   </div>
   <div class="side" id="side">
@@ -287,12 +289,16 @@ function setMode(m){
   document.getElementById("mComps").classList.toggle("active",m==="comps");
   document.getElementById("settings").style.display=m==="auction"?"flex":"none";
   document.getElementById("replcards").style.display=(m==="targets"||m==="comps")?"none":"flex";
+  document.getElementById("compToggle").style.display=m==="comps"?"":"none";
+  if(m!=="comps"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
 }
 document.getElementById("mCheat").onclick=()=>setMode("cheat");
 document.getElementById("mAuction").onclick=()=>setMode("auction");
 document.getElementById("mTargets").onclick=()=>setMode("targets");
 document.getElementById("mComps").onclick=()=>setMode("comps");
+document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
+document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
   document.getElementById(id).value=cfg[key];
   document.getElementById(id).onchange=e=>{cfg[key]=Math.max(1,+e.target.value||cfg[key]);save();recompute();render();};});
@@ -315,6 +321,56 @@ function nameHTML(name,pos,extra){
   return `<span class="name${has?' jc':''}"${dn}>${name}</span>`+(extra||"");
 }
 function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;setMode("comps");}
+let compView="table";
+const POSCOL={QB:"#e85d75",RB:"#39c08a",WR:"#4da3ff",TE:"#e0a23c"};
+function compFilter(){
+  return Object.values(CMP).filter(r=>{
+    if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(r.pos))return false;}
+    else if(posFilter==="ROOK"){if(r.rookie!==1)return false;}
+    else if(["K","DST"].includes(posFilter))return false;
+    else if(posFilter!=="ALL"&&r.pos!==posFilter)return false;
+    if(query&&!r.p.toLowerCase().includes(query)&&!r.comps.some(c=>c.n.toLowerCase().includes(query)))return false;
+    return r.ceiling!=null&&r.bust!=null;
+  });
+}
+function renderScatter(){
+  document.getElementById("tbl").style.display="none";
+  const host=document.getElementById("scatter"); host.style.display="block";
+  const rows=compFilter();
+  document.getElementById("count").textContent=rows.length+" players";
+  const W=900,H=540,m={l:55,r:20,t:30,b:50};
+  const maxC=Math.max(25,...rows.map(r=>r.ceiling));
+  const X=b=>m.l+(b)* (W-m.l-m.r);                       // bust 0..1
+  const Y=c=>H-m.b-(c/maxC)*(H-m.t-m.b);                  // ceiling
+  const bustLine=0.30, ceilLine=14;
+  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;font:11px sans-serif">`;
+  // quadrant shading + guide lines
+  s+=`<rect x="${m.l}" y="${m.t}" width="${X(bustLine)-m.l}" height="${Y(ceilLine)-m.t}" fill="#39c08a" opacity="0.05"/>`;
+  s+=`<line x1="${X(bustLine)}" y1="${m.t}" x2="${X(bustLine)}" y2="${H-m.b}" stroke="#2c3a4d" stroke-dasharray="4"/>`;
+  s+=`<line x1="${m.l}" y1="${Y(ceilLine)}" x2="${W-m.r}" y2="${Y(ceilLine)}" stroke="#2c3a4d" stroke-dasharray="4"/>`;
+  // axes
+  s+=`<line x1="${m.l}" y1="${H-m.b}" x2="${W-m.r}" y2="${H-m.b}" stroke="#2c3a4d"/><line x1="${m.l}" y1="${m.t}" x2="${m.l}" y2="${H-m.b}" stroke="#2c3a4d"/>`;
+  for(let b=0;b<=1.0001;b+=0.2){s+=`<text x="${X(b)}" y="${H-m.b+16}" fill="#8b9bb0" text-anchor="middle">${Math.round(b*100)}%</text>`;}
+  for(let c=0;c<=maxC;c+=5){s+=`<text x="${m.l-8}" y="${Y(c)+4}" fill="#8b9bb0" text-anchor="end">${c}</text>`;}
+  s+=`<text x="${(m.l+W-m.r)/2}" y="${H-8}" fill="#8b9bb0" text-anchor="middle">Bust % (comps' prime &lt; 8 PPG)  →  riskier</text>`;
+  s+=`<text transform="translate(14,${(m.t+H-m.b)/2}) rotate(-90)" fill="#8b9bb0" text-anchor="middle">Ceiling (comps' prime P75)  →  higher upside</text>`;
+  // quadrant labels
+  s+=`<text x="${m.l+8}" y="${m.t+14}" fill="#39c08a" font-weight="700">SMASH — high ceiling, low bust</text>`;
+  s+=`<text x="${W-m.r-8}" y="${m.t+14}" fill="#e0a23c" text-anchor="end" font-weight="700">BOOM/BUST</text>`;
+  s+=`<text x="${m.l+8}" y="${H-m.b-8}" fill="#8b9bb0">safe but capped</text>`;
+  s+=`<text x="${W-m.r-8}" y="${H-m.b-8}" fill="#e85d75" text-anchor="end" font-weight="700">AVOID</text>`;
+  // points (label the top-ceiling ones)
+  const labeled=[...rows].sort((a,b)=>b.ceiling-a.ceiling).slice(0,16);
+  rows.forEach(r=>{
+    const x=X(r.bust),y=Y(r.ceiling),col=POSCOL[r.pos]||"#888";
+    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="5" fill="${col}" opacity="0.8"><title>${r.p} (${r.pos}) — ceiling ${r.ceiling}, floor ${r.floor}, bust ${Math.round(r.bust*100)}%, elite ${Math.round(r.elite*100)}%</title></circle>`;
+    if(labeled.includes(r)) s+=`<text x="${(x+7).toFixed(1)}" y="${(y+3).toFixed(1)}" fill="#e6edf3">${r.p.split(" ").slice(-1)[0]}</text>`;
+  });
+  s+="</svg>";
+  host.innerHTML=s;
+  document.getElementById("notes").innerHTML="⊕ <b>Risk/reward map.</b> Each dot = a player; <b>x</b> = comps' bust rate (downside), <b>y</b> = comps' ceiling (upside), colored by position. "+
+    "Top-left = high ceiling + low bust (smash); top-right = boom/bust; bottom-right = avoid. Hover any dot for floor/ceiling/bust/elite. Filter by position/search above.";
+}
 function wireJump(){document.querySelectorAll(".jc").forEach(el=>el.onclick=()=>gotoComps(el.dataset.nm));}
 function gv(p,k){
   if(k==="bid")return ADJ.vals[pid(p)]??0;
@@ -377,6 +433,9 @@ function renderTargets(){
 
 // ---------- Career Comps tab ----------
 function renderComps(){
+  if(compView==="scatter"){ renderScatter(); return; }
+  document.getElementById("tbl").style.display="";
+  document.getElementById("scatter").style.display="none";
   let rows=Object.values(CMP).filter(r=>{
     if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(r.pos))return false;}
     else if(posFilter==="ROOK"){if(r.rookie!==1)return false;}
@@ -387,8 +446,8 @@ function renderComps(){
   });
   rows.sort((a,b)=>((b.ppg!=null?b.ppg:b.proj)||0)-((a.ppg!=null?a.ppg:a.proj)||0));
   document.getElementById("count").textContent=rows.length+" players";
-  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Ceiling","Bust%","Elite%","Closest career-trajectory comps (→ their next-year / rookie PPG)"];
-  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i===1||i===8?'l':''}">${h}</th>`).join("");
+  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Floor","Ceiling","Bust%","Elite%","Closest career-trajectory comps (→ their next-year / rookie PPG)"];
+  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i===1||i===9?'l':''}">${h}</th>`).join("");
   const pct=v=>v==null?'—':Math.round(v*100)+'%';
   document.getElementById("body").innerHTML=rows.map(r=>{
     const cs=r.comps.map(c=>`<span title="distance ${c.d}">${c.n}${c.nx!=null?` <span class="muted">→${c.nx}</span>`:''}</span>`).join("&nbsp;·&nbsp;");
@@ -400,6 +459,7 @@ function renderComps(){
       <td>${r.yr}</td>
       <td>${ppgCell}</td>
       <td class="${dir}" style="font-weight:700">${r.proj}</td>
+      <td class="muted" title="comps' prime (best of next 3 yrs), 25th pct">${r.floor==null?'—':r.floor}</td>
       <td class="upc" title="comps' prime (best of next 3 yrs), 75th pct">${r.ceiling==null?'—':r.ceiling}</td>
       <td class="${r.bust>=0.4?'downc':'muted'}" title="% of comps whose prime stayed below 8 PPG">${pct(r.bust)}</td>
       <td class="${r.elite>=0.4?'upc':'muted'}" style="font-weight:600" title="% of comps who reached 18+ PPG">${pct(r.elite)}</td>
