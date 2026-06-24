@@ -92,6 +92,7 @@ def cohort_dist(ids, N, ppg_map, season_map, maxseason=2025):
     if not primes: return {}
     pr = np.array(primes)
     return {"ceiling": round(float(np.percentile(pr, 75)), 1),
+            "floor": round(float(np.percentile(pr, 25)), 1),
             "prime": round(float(np.median(pr)), 1),
             "bust": round(float(np.mean(pr < 8)), 2),
             "elite": round(float(np.mean(pr >= 18)), 2)}
@@ -126,7 +127,8 @@ def main():
         dd = cohort_dist([c for c, _ in r["comps"]], r["N"], ppg_map, season_map)
         web[norm(q.player_display_name)+"|"+q.position] = {
             "p": q.player_display_name, "pos": q.position, "yr": r["N"], "ppg": round(q.ppg,1),
-            "proj": blend, "ceiling": dd.get("ceiling"), "bust": dd.get("bust"), "elite": dd.get("elite"),
+            "proj": blend, "ceiling": dd.get("ceiling"), "floor": dd.get("floor"),
+            "bust": dd.get("bust"), "elite": dd.get("elite"),
             "comps": [{"n": name_map[d["id"]][0], "d": d["dist"],
                        "nx": round(d["nx"],1) if d["nx"] is not None else None} for d in r["detail"][:6]]}
 

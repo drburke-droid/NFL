@@ -78,11 +78,12 @@ def main():
         primes=[career_prime[p] for p in top12["player_id"] if entry.get(p,9999)<=2022 and p in career_prime]
         if len(primes)>=4:
             pr=np.array(primes)
-            ceiling=round(float(np.percentile(pr,75)),1); bust=round(float(np.mean(pr<8)),2); elite=round(float(np.mean(pr>=18)),2)
+            ceiling=round(float(np.percentile(pr,75)),1); floor=round(float(np.percentile(pr,25)),1)
+            bust=round(float(np.mean(pr<8)),2); elite=round(float(np.mean(pr>=18)),2)
         else:
-            ceiling=bust=elite=None
+            ceiling=floor=bust=elite=None
         web[norm(q["name"])+"|"+q["position"]]={"p":q["name"],"pos":q["position"],"yr":1,
-            "ppg":None,"proj":proj,"rookie":1,"ceiling":ceiling,"bust":bust,"elite":elite,"comps":comps}
+            "ppg":None,"proj":proj,"rookie":1,"ceiling":ceiling,"floor":floor,"bust":bust,"elite":elite,"comps":comps}
 
     # merge into existing comps.js
     base={}
