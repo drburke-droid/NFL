@@ -31,6 +31,12 @@ def build_skill(con):
     s25 = pd.read_sql("""SELECT player_id, games, passing_tds, passing_interceptions,
                          fantasy_points_ppr FROM nflv_season WHERE season=2025""", con).drop_duplicates("player_id")
     df = proj.merge(s25, on="player_id", how="left")
+    # 2025 first-half vs second-half role/production trend (scouting layer, NOT a
+    # projection input — the change itself has no walk-forward value, see test_half_trend.py)
+    hs = pd.read_sql("""SELECT player_id, ppg_H1 trend_h1, ppg_H2 trend_h2, d_ppg trend_dppg,
+                        d_snap trend_dsnap, d_tch trend_dtch, d_tgtsh trend_dtgtsh, g_H2 trend_g2
+                        FROM half_split_2025""", con).drop_duplicates("player_id")
+    df = df.merge(hs, on="player_id", how="left")
 
     df["proj_total_nfl"] = df["pred_ppg"] * df["proj_games"]
     qb = df["position"] == "QB"
@@ -79,6 +85,8 @@ def build_kdst(con):
         s["is_flex_starter"] = 0; s["age"] = np.nan; s["prior_ppg"] = np.nan; s["conf"] = "low"
         s["breakout_prob"] = np.nan; s["hit_prob"] = np.nan; s["is_rookie"] = 0
         s["bust"] = 0.6; s["boom"] = 0.05; s["floor"] = np.nan; s["ceiling"] = np.nan   # streamed: high bust, low boom
+        for c in ["trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]:
+            s[c] = np.nan
         key = "name" if pos == "K" else "team"
         s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
         out[pos] = (s, repl)
@@ -98,7 +106,8 @@ def main():
 
     cols=["name","position","team","age","pos_rank","proj_pts","proj_games","proj_ppg",
           "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf",
-          "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling"]
+          "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
+          "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -118,11 +127,14 @@ def main():
         allp[c]=allp[c].round(1)
     for c in ["breakout_prob","hit_prob","bust","boom"]:
         allp[c]=allp[c].round(3)
-    for c in ["floor","ceiling"]:
+    for c in ["floor","ceiling","trend_h1","trend_h2","trend_dppg","trend_dtch"]:
         allp[c]=allp[c].round(1)
+    for c in ["trend_dsnap","trend_dtgtsh","trend_g2"]:
+        allp[c]=allp[c].round(0)
     out_cols=["overall_rank","name","position","team","age","pos_rank","tier","proj_pts",
               "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg",
-              "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling"]
+              "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
+              "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]
