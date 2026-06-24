@@ -82,6 +82,7 @@
   <div class="modebar">
     <button class="btn active" id="mCheat">Cheat Sheet</button>
     <button class="btn" id="mAuction">Auction $</button>
+    <button class="btn" id="mTargets">🎯 Targets</button>
     <span class="muted" id="count"></span>
   </div>
   <div class="ffabar">
@@ -278,11 +279,14 @@ function setMode(m){
   mode=m;document.body.classList.toggle("auction",m==="auction");
   document.getElementById("mCheat").classList.toggle("active",m==="cheat");
   document.getElementById("mAuction").classList.toggle("active",m==="auction");
+  document.getElementById("mTargets").classList.toggle("active",m==="targets");
   document.getElementById("settings").style.display=m==="auction"?"flex":"none";
+  document.getElementById("replcards").style.display=m==="targets"?"none":"flex";
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
 }
 document.getElementById("mCheat").onclick=()=>setMode("cheat");
 document.getElementById("mAuction").onclick=()=>setMode("auction");
+document.getElementById("mTargets").onclick=()=>setMode("targets");
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
   document.getElementById(id).value=cfg[key];
   document.getElementById(id).onchange=e=>{cfg[key]=Math.max(1,+e.target.value||cfg[key]);save();recompute();render();};});
@@ -311,7 +315,55 @@ function gv(p,k){
   return p[k];
 }
 
+// ---------- Targets tab: highest probability of exceeding expectations ----------
+function renderTargets(){
+  const ffa=ffaOn();
+  let rows=[];
+  PLAYERS.forEach(p=>{
+    if(isK(p))return;
+    let up=null,type=null;
+    if(p.is_rookie===1){ if((p.hit_prob||0)>=0.5 && (p.proj_ppg||0)>=6){up=p.hit_prob;type="ROOK";} }
+    else if(p.breakout_prob!=null && p.breakout_prob>=0.40 && (p.age==null||p.age<=27) && (p.proj_ppg||0)>=8){
+      up=p.breakout_prob; type="BREAK";
+    }
+    if(up==null)return;
+    const cost=ADJ.vals[pid(p)]??0;
+    if(type==="BREAK" && cost<=8 && up>=0.45) type="SLEEPER";
+    if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(p.position))return;}
+    else if(posFilter==="ROOK"){if(p.is_rookie!==1)return;}
+    else if(posFilter!=="ALL"&&p.position!==posFilter)return;
+    if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return;
+    rows.push({p,up,type,cost});
+  });
+  rows.sort((a,b)=>b.up-a.up);
+  document.getElementById("count").textContent=rows.length+" upside targets"+(ffa?" · FFA":"");
+  const head=["#","Pos","Player","Tm","Proj","$","Exceed %",...(ffa?["FFA ADP"]:[]),"Why"];
+  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${(i>=2&&i<=3)||h==='Why'?'l':''}">${h}</th>`).join("");
+  const why={ROOK:"Rookie hit prob (startable yr-1)",SLEEPER:"Cheap (≤$8) breakout",BREAK:"Breakout prob (≥+4 PPG vs '25)"};
+  document.getElementById("body").innerHTML=rows.map((r,i)=>{
+    const p=r.p,tcls=r.type==="ROOK"?"rook":"brk";
+    return `<tr>
+      <td>${i+1}</td>
+      <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
+      <td class="l"><span class="name">${p.name}</span> <span class="tag ${tcls}">${r.type}</span></td>
+      <td class="l muted">${p.team||"—"}</td>
+      <td><b>${PRJ(p)==null?"—":Math.round(PRJ(p))}</b></td>
+      <td class="bid">$${r.cost}</td>
+      <td class="upc" style="font-weight:700">${Math.round(r.up*100)}%</td>
+      ${ffa?`<td class="muted">${p._ffa&&p._ffa.adp?p._ffa.adp.toFixed(1):"—"}</td>`:""}
+      <td class="l muted">${why[r.type]}</td>
+    </tr>`;
+  }).join("");
+  document.getElementById("notes").innerHTML="🎯 <b>Players most likely to EXCEED expectations.</b> "+
+    "Veterans ranked by model breakout probability (P of a ≥+4 PPG jump vs 2025; filtered to ascending players age ≤27 with a projected role). "+
+    "Rookies ranked by year-1 hit probability. <b>SLEEPER</b> = cheap (≤$8) with high breakout odds. "+
+    (ffa?"FFA ADP shown for cost context.":"Upload FFA to add consensus ADP context.")+
+    " Use the position buttons / search to filter.";
+}
+
 function render(){
+  if(mode==="targets"){ renderTargets(); return; }
+  notes();
   const COLS=cols();
   document.getElementById("hrow").innerHTML=COLS.map(c=>`<th class="${c[2]?'l':''}" data-k="${c[0]}">${c[1]}</th>`).join("");
   document.querySelectorAll("#hrow th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!k)return;
