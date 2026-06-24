@@ -11,6 +11,7 @@ import os, sqlite3, warnings, sys
 import numpy as np, pandas as pd
 warnings.filterwarnings("ignore")
 import lightgbm as lgb
+from sklearn.calibration import CalibratedClassifierCV
 try: sys.stdout.reconfigure(encoding="utf-8")
 except Exception: pass
 import importlib.util
@@ -55,8 +56,12 @@ def veterans(con):
     df["breakout_prob"]=bm.predict_proba(df[BSIG+["pos_id"]].astype(float).fillna(-1))[:,1]
     df["proj_games"]=MS.project_games(df)
     df["is_rookie"]=0; df["hit_prob"]=np.nan
+    # unified distribution from the overhaul model (central/floor/ceiling/bust/boom)
+    po=pd.read_sql("SELECT player_id, central, floor, ceiling, bust, boom FROM proj_overhaul", con)
+    df=df.merge(po, on="player_id", how="left")
+    df["pred_ppg"]=df["central"].fillna(df["pred_ppg"])           # one projection, everywhere
     return df[["player_id","player_display_name","position","team","age","prior_ppg","prior_cv","prior_games",
-               "pred_ppg","breakout_prob","hit_prob","proj_games","is_rookie"]]
+               "pred_ppg","floor","ceiling","bust","boom","breakout_prob","hit_prob","proj_games","is_rookie"]]
 
 
 PFR2NFLV={"GNB":"GB","KAN":"KC","LAR":"LA","LVR":"LV","NOR":"NO","NWE":"NE","SFO":"SF","TAM":"TB"}
@@ -94,11 +99,26 @@ def rookies(con):
     d["pos_id"]=d["position"].map({p:i for i,p in enumerate(POS)})
     d["pred_ppg"]=rk.predict(d[feats].astype(float).fillna(-1)).clip(min=0)
     d["hit_prob"]=hc.predict_proba(d[feats].astype(float).fillna(-1))[:,1]
+    # rookie distribution: per-position quantile floor/ceiling + calibrated bust/boom
+    RB_BUST={"QB":14,"RB":10,"WR":9,"TE":7}; RB_ELITE={"QB":18,"RB":14,"WR":13,"TE":10}
+    Xd=d[feats].astype(float).fillna(-1)
+    d["floor"]=np.nan; d["ceiling"]=np.nan; d["bust"]=np.nan; d["boom"]=np.nan
+    for pos in POS:
+        hm=hist[hist.position==pos]; idx=d.index[d.position==pos]
+        if len(hm)<30 or len(idx)==0: continue
+        Xh=hm[feats].astype(float).fillna(-1)
+        for a,nm in [(0.15,"floor"),(0.85,"ceiling")]:
+            d.loc[idx,nm]=lgb.LGBMRegressor(objective="quantile",alpha=a,**GBM).fit(Xh,hm["ppg"]).predict(Xd.loc[idx]).clip(min=0)
+        for line,nm in [(RB_BUST[pos],"bust"),(RB_ELITE[pos],"boom")]:
+            y=(hm["ppg"]<line).astype(int) if nm=="bust" else (hm["ppg"]>=line).astype(int)
+            if y.sum()<8 or y.sum()>len(y)-8: d.loc[idx,nm]=round(float(y.mean()),3); continue
+            cc=CalibratedClassifierCV(lgb.LGBMClassifier(objective="binary",**GBM),method="sigmoid",cv=3).fit(Xh,y)
+            d.loc[idx,nm]=np.clip(cc.predict_proba(Xd.loc[idx])[:,1],0.02,0.95).round(3)
     d["player_display_name"]=d["name"]; d["prior_ppg"]=np.nan; d["prior_cv"]=np.nan
     d["prior_games"]=np.nan; d["breakout_prob"]=np.nan; d["is_rookie"]=1
     d["proj_games"]=15.0
     return d[["player_id","player_display_name","position","team","age","prior_ppg","prior_cv","prior_games",
-              "pred_ppg","breakout_prob","hit_prob","proj_games","is_rookie"]]
+              "pred_ppg","floor","ceiling","bust","boom","breakout_prob","hit_prob","proj_games","is_rookie"]]
 
 
 def main():
@@ -106,6 +126,9 @@ def main():
     v=veterans(con); r=rookies(con)
     board=pd.concat([v,r],ignore_index=True)
     board=board[board.pred_ppg.notna()].copy()
+    # enforce monotone distribution: floor <= central(pred_ppg) <= ceiling
+    board["floor"]=board[["floor","pred_ppg"]].min(axis=1).round(1)
+    board["ceiling"]=board[["ceiling","pred_ppg"]].max(axis=1).round(1)
     board.to_sql("board_2026", con, if_exists="replace", index=False)
     con.close()
     print(f"board_2026: {len(board)} players ({(board.is_rookie==1).sum()} rookies)")

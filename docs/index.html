@@ -311,10 +311,10 @@ document.getElementById("clearK").onclick=()=>{kept={};save();recompute();render
 function cols(){
   const ffa=ffaOn();
   if(mode==="auction") return [["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
-    ["name","Player",1],["team","Tm",1],["proj","Proj",0],["vorp","VORP",0],["upside","Up%",0],
+    ["name","Player",1],["team","Tm",1],["proj","Proj",0],["vorp","VORP",0],["boom","Boom%",0],
     ...(ffa?[["ffa_adp","ADP",0]]:[]),["base","$ Base",0],["bid","$ Bid",0],["keep","",1]];
   return [["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
-    ["name","Player",1],["team","Tm",1],["age","Age",0],["proj","Proj",0],["vorp","VORP",0],["upside","Up%",0],
+    ["name","Player",1],["team","Tm",1],["age","Age",0],["proj","Proj",0],["vorp","VORP",0],["bust","Bust%",0],["boom","Boom%",0],
     ...(ffa?[["ffa_adp","ADP",0],["ffa_tier","FFA Tr",0]]:[]),["actual_2025","2025",0]];
 }
 const upside=p=>p.is_rookie===1?(p.hit_prob??null):(p.breakout_prob??null);
@@ -364,7 +364,7 @@ function renderScatter(){
   // points
   rows.forEach(r=>{
     const x=X(r.bust),y=Y(r.ceiling),col=POSCOL[r.pos]||"#888";
-    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${col}" opacity="0.85" stroke="#0f1419" stroke-width="0.5"><title>${r.p} (${r.pos}) — ceiling ${r.ceiling}, floor ${r.floor}, bust ${Math.round(r.bust*100)}%, elite ${Math.round(r.elite*100)}%</title></circle>`;
+    s+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4.5" fill="${col}" opacity="0.85" stroke="#0f1419" stroke-width="0.5"><title>${r.p} (${r.pos}) — ceiling ${r.ceiling}, floor ${r.floor}, bust ${Math.round(r.bust*100)}%, boom ${Math.round(r.boom*100)}%</title></circle>`;
   });
   // de-overlapped labels: priority = highest ceiling first
   const placed=[];
@@ -379,7 +379,7 @@ function renderScatter(){
   s+="</svg>";
   const legend=`<div class="sleg"><b>Risk / reward map</b> — dot = player · x: bust % · y: ceiling · `+
     Object.entries(POSCOL).map(([p,c])=>`<span><span class="sw" style="background:${c}"></span>${p}</span>`).join("")+
-    `<span class="muted">(hover a dot for floor/ceiling/bust/elite)</span></div>`;
+    `<span class="muted">(hover a dot for floor/ceiling/bust/boom)</span></div>`;
   host.innerHTML=legend+s;
   document.getElementById("notes").innerHTML="⊕ <b>Risk/reward map.</b> <b>x</b> = comps' bust rate (downside), <b>y</b> = comps' ceiling (upside). "+
     "Top-left (green) = high ceiling + low bust = smash; top-right = boom/bust; bottom-right (red) = avoid. Only non-overlapping names are labeled (highest ceiling first) — hover any dot for the rest. Filter by position/search above.";
@@ -459,7 +459,7 @@ function renderComps(){
   });
   rows.sort((a,b)=>((b.ppg!=null?b.ppg:b.proj)||0)-((a.ppg!=null?a.ppg:a.proj)||0));
   document.getElementById("count").textContent=rows.length+" players";
-  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Floor","Ceiling","Bust%","Elite%","Closest career-trajectory comps (→ their next-year / rookie PPG)"];
+  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Floor","Ceiling","Bust%","Boom%","Closest career-trajectory comps (→ their next-year / rookie PPG)"];
   document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i===1||i===9?'l':''}">${h}</th>`).join("");
   const pct=v=>v==null?'—':Math.round(v*100)+'%';
   document.getElementById("body").innerHTML=rows.map(r=>{
@@ -475,13 +475,12 @@ function renderComps(){
       <td class="muted" title="comps' prime (best of next 3 yrs), 25th pct">${r.floor==null?'—':r.floor}</td>
       <td class="upc" title="comps' prime (best of next 3 yrs), 75th pct">${r.ceiling==null?'—':r.ceiling}</td>
       <td class="${r.bust>=0.4?'downc':'muted'}" title="% of comps whose prime stayed below 8 PPG">${pct(r.bust)}</td>
-      <td class="${r.elite>=0.4?'upc':'muted'}" style="font-weight:600" title="% of comps who reached 18+ PPG">${pct(r.elite)}</td>
+      <td class="${r.boom>=0.4?'upc':'muted'}" style="font-weight:600" title="P(elite season next year), calibrated">${pct(r.boom)}</td>
       <td class="l muted" style="white-space:normal">${cs}</td>
     </tr>`;
   }).join("");
   document.getElementById("notes").innerHTML="🧬 <b>Career-trajectory comps — now with the outcome distribution (the real signal).</b> "+
-    "<b>Ceiling</b> = comps' prime PPG (best of next 3 yrs), 75th percentile. <b>Bust%</b> = share of comps whose prime stayed under 8 PPG. <b>Elite%</b> = share that reached 18+ PPG. "+
-    "These risk/ceiling rates backtest strongly (bust AUC 0.76, elite AUC 0.80) — a player whose comps hit elite often reaches elite ~36% vs ~5% — whereas the point projection doesn't beat repeat-last-year. "+
+    "<b>Proj / Floor / Ceiling / Bust% / Boom%</b> all come from the unified per-position projection model (same numbers as every other tab). <b>Floor</b>=P15, <b>Ceiling</b>=P85. <b>Bust%</b>=P(below-startable season next year), <b>Boom%</b>=P(elite season) — calibrated, validated walk-forward (bust AUC 0.82, boom 0.80); never 0%. "+
     "Veterans matched on first-N-year arc (era-normalized); rookies on pre-NFL profile (draft/combine/landing). <b>Proj '26</b> = comp-blended (vets) or comps' median rookie PPG. Click any player name elsewhere to jump here.";
 }
 
@@ -524,6 +523,8 @@ function render(){
       if(k==="proj")return `<td><b>${PRJ(p)==null?'—':Math.round(PRJ(p))}</b></td>`;
       if(k==="vorp")return `<td class="${VP(p)>=0?'upc':'downc'}" style="font-weight:600">${VP(p)==null?'—':Math.round(VP(p))}</td>`;
       if(k==="upside")return `<td class="${u&&u>=0.5?'upc':'muted'}">${u==null?'—':Math.round(u*100)+'%'}</td>`;
+      if(k==="bust")return `<td class="${p.bust>=0.5?'downc':'muted'}" title="P(below-startable season)">${p.bust==null?'—':Math.round(p.bust*100)+'%'}</td>`;
+      if(k==="boom")return `<td class="${p.boom>=0.4?'upc':'muted'}" style="font-weight:600" title="P(elite season)">${p.boom==null?'—':Math.round(p.boom*100)+'%'}</td>`;
       if(k==="ffa_adp")return `<td class="muted">${p._ffa&&p._ffa.adp?p._ffa.adp.toFixed(1):'—'}</td>`;
       if(k==="ffa_tier")return `<td class="muted">${p._ffa&&p._ffa.tier?p._ffa.tier:'—'}</td>`;
       if(k==="base")return `<td class="base">$${base}</td>`;

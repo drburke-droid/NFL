@@ -54,6 +54,9 @@ def main():
     con.close()
     career_prime=tr.groupby("player_id")["ppg"].max().to_dict()
     entry=tr.groupby("player_id")["rookie_year"].min().to_dict()
+    bcon=sqlite3.connect(DB)
+    board={r.player_id:r for _,r in pd.read_sql("SELECT player_id, pred_ppg, floor, ceiling, bust, boom FROM board_2026",bcon).iterrows()}
+    bcon.close()
 
     # standardize features within position (over the historical pool)
     stats={}
@@ -73,17 +76,12 @@ def main():
         top12=pool.nsmallest(12,"_d")
         top=top12.head(6)
         comps=[{"n":r.player_display_name,"d":round(r._d,2),"nx":round(r.ppg,1)} for _,r in top.iterrows()]
-        proj=round(float(top["ppg"].median()),1)
-        # career-outcome distribution over mature comps (entered <=2022) of the 12 nearest
-        primes=[career_prime[p] for p in top12["player_id"] if entry.get(p,9999)<=2022 and p in career_prime]
-        if len(primes)>=4:
-            pr=np.array(primes)
-            ceiling=round(float(np.percentile(pr,75)),1); floor=round(float(np.percentile(pr,25)),1)
-            bust=round(float(np.mean(pr<8)),2); elite=round(float(np.mean(pr>=18)),2)
-        else:
-            ceiling=floor=bust=elite=None
+        b=board.get(q["player_id"])
+        proj=round(float(b["pred_ppg"]),1) if b is not None else round(float(top["ppg"].median()),1)
+        gv=lambda k:(float(b[k]) if (b is not None and pd.notna(b[k])) else None)
         web[norm(q["name"])+"|"+q["position"]]={"p":q["name"],"pos":q["position"],"yr":1,
-            "ppg":None,"proj":proj,"rookie":1,"ceiling":ceiling,"floor":floor,"bust":bust,"elite":elite,"comps":comps}
+            "ppg":None,"proj":proj,"rookie":1,"ceiling":gv("ceiling"),"floor":gv("floor"),
+            "bust":gv("bust"),"boom":gv("boom"),"comps":comps}
 
     # merge into existing comps.js
     base={}

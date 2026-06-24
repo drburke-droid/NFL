@@ -27,9 +27,12 @@ FFA_2026 = os.path.join(ROOT, "data", "ffanalytics", "FFAn", "projections_2026_w
 STEPS = [
     ("Ingest FFA consensus projections", "fetch_ffa.py", True),
     ("Refresh ADP / ECR snapshot",       "fetch_adp.py", False),
+    ("Fit projection + boom/bust models", "projection_overhaul.py", True),
     ("Build 2026 board (vets + rookies)", "build_2026_targets.py", True),
     ("Generate targets report",          "report_2026_targets.py", True),
     ("Rebuild draft tool (data.js)",     "build_draft_tool.py", True),
+    ("Refresh career comps",             "comp_finder.py", False),
+    ("Refresh rookie comps",             "rookie_comps.py", False),
 ]
 
 
