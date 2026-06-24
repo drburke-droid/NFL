@@ -78,11 +78,31 @@ def comps_for(t, V, pid, name_map, ppg_map, last_career_year, K=8):
     return {"N": N, "comps": top, "detail": detail, "proj": proj, "cont": cont}
 
 
+def cohort_dist(ids, N, ppg_map, season_map, maxseason=2025):
+    """Outcome distribution of a comp cohort: prime (best of next 3, attrition=0),
+    ceiling (P75), bust% (prime<8), elite% (prime>=18). Right-censoring avoided by
+    only evaluating the horizon each comp could actually have completed."""
+    primes = []
+    for c in ids:
+        s = season_map.get((c, N))
+        if s is None: continue
+        H = min(3, maxseason - s)
+        if H < 1: continue
+        primes.append(max(ppg_map.get((c, N+h), 0.0) for h in range(1, H+1)))
+    if not primes: return {}
+    pr = np.array(primes)
+    return {"ceiling": round(float(np.percentile(pr, 75)), 1),
+            "prime": round(float(np.median(pr)), 1),
+            "bust": round(float(np.mean(pr < 8)), 2),
+            "elite": round(float(np.mean(pr >= 18)), 2)}
+
+
 def main():
     t = load()
     name_map = {r.player_id: (r.player_display_name, r.position, int(r.rookie_year) if pd.notna(r.rookie_year) else 9999)
                 for _, r in t.drop_duplicates("player_id").iterrows()}
     ppg_map = {(r.player_id, int(r.career_year)): r.ppg for _, r in t.iterrows()}
+    season_map = {(r.player_id, int(r.career_year)): int(r.season) for _, r in t.iterrows()}
     last_cy = t.groupby("player_id")["career_year"].max().astype(int).to_dict()
     V = {}
     for pos in FEATS: V.update(vecs_for(t, pos))
@@ -103,10 +123,12 @@ def main():
                         "ppg_2025": round(q.ppg,1), "proj_next_ppg": blend,
                         "comp_median": round(comp_med,1) if comp_med is not None else None,
                         "top_comps": ", ".join(f"{n} ({d})" for n,d in comp_names[:5])})
+        dd = cohort_dist([c for c, _ in r["comps"]], r["N"], ppg_map, season_map)
         web[norm(q.player_display_name)+"|"+q.position] = {
             "p": q.player_display_name, "pos": q.position, "yr": r["N"], "ppg": round(q.ppg,1),
-            "proj": blend, "comps": [{"n": name_map[d["id"]][0], "d": d["dist"],
-                                      "nx": round(d["nx"],1) if d["nx"] is not None else None} for d in r["detail"][:6]]}
+            "proj": blend, "ceiling": dd.get("ceiling"), "bust": dd.get("bust"), "elite": dd.get("elite"),
+            "comps": [{"n": name_map[d["id"]][0], "d": d["dist"],
+                       "nx": round(d["nx"],1) if d["nx"] is not None else None} for d in r["detail"][:6]]}
 
     res = pd.DataFrame(results)
     con = sqlite3.connect(DB); res.to_sql("comp_results", con, if_exists="replace", index=False); con.close()

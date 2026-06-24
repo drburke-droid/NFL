@@ -49,7 +49,11 @@ def main():
     con=sqlite3.connect(DB)
     hist=MR.build(con)                              # historical rookies 2011-2025 + rookie ppg
     r26=rookies_2026(con)
+    # career outcomes of historical players (peak PPG over their career) + entry year
+    tr=pd.read_sql("SELECT player_id, career_year, ppg, rookie_year FROM nflv_traj",con)
     con.close()
+    career_prime=tr.groupby("player_id")["ppg"].max().to_dict()
+    entry=tr.groupby("player_id")["rookie_year"].min().to_dict()
 
     # standardize features within position (over the historical pool)
     stats={}
@@ -66,11 +70,19 @@ def main():
         qv=vec(q)
         pool=hist[hist.position==q["position"]].copy()
         pool["_d"]=pool["_v"].apply(lambda v:float(np.linalg.norm(qv-v)))
-        top=pool.nsmallest(6,"_d")
+        top12=pool.nsmallest(12,"_d")
+        top=top12.head(6)
         comps=[{"n":r.player_display_name,"d":round(r._d,2),"nx":round(r.ppg,1)} for _,r in top.iterrows()]
         proj=round(float(top["ppg"].median()),1)
+        # career-outcome distribution over mature comps (entered <=2022) of the 12 nearest
+        primes=[career_prime[p] for p in top12["player_id"] if entry.get(p,9999)<=2022 and p in career_prime]
+        if len(primes)>=4:
+            pr=np.array(primes)
+            ceiling=round(float(np.percentile(pr,75)),1); bust=round(float(np.mean(pr<8)),2); elite=round(float(np.mean(pr>=18)),2)
+        else:
+            ceiling=bust=elite=None
         web[norm(q["name"])+"|"+q["position"]]={"p":q["name"],"pos":q["position"],"yr":1,
-            "ppg":None,"proj":proj,"rookie":1,"comps":comps}
+            "ppg":None,"proj":proj,"rookie":1,"ceiling":ceiling,"bust":bust,"elite":elite,"comps":comps}
 
     # merge into existing comps.js
     base={}
