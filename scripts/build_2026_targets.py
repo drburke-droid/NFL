@@ -40,10 +40,14 @@ def veterans(con):
     df["team_change"]=0; df["pos_id"]=df["position"].map({p:i for i,p in enumerate(POS)})
     df=df[df["prior_games"].fillna(0)>=3].copy()
 
+    # FFA-anchor the projection IF 2026 consensus exists (else prior-year-only guess)
+    ds=MS.attach_ffa(ds,con); df=MS.attach_ffa(df,con)
+    has_ffa = int(df["ffa_points"].notna().sum())
+    feats = (MS.FEATURES+MS.FFA_FEATURES) if has_ffa>=20 else MS.FEATURES
+    print(f"  2026 FFA coverage: {has_ffa} players -> {'FFA-ANCHORED' if has_ffa>=20 else 'prior-year-only (no 2026 market yet)'}")
     tr=ds[ds.next_ppg.notna()].copy(); tr["pos_id"]=tr["position"].map({p:i for i,p in enumerate(POS)})
-    # season ppg model (prior-only)
-    msm=lgb.LGBMRegressor(objective="regression_l1",**GBM).fit(tr[MS.FEATURES+["pos_id"]].astype(float).fillna(-1),tr.next_ppg)
-    df["pred_ppg"]=msm.predict(df[MS.FEATURES+["pos_id"]].astype(float).fillna(-1))
+    msm=lgb.LGBMRegressor(objective="regression_l1",**GBM).fit(tr[feats+["pos_id"]].astype(float).fillna(-1),tr.next_ppg)
+    df["pred_ppg"]=msm.predict(df[feats+["pos_id"]].astype(float).fillna(-1))
     # breakout classifier (prior-only)
     tr["breakout"]=((tr.next_ppg-tr.prior_ppg)>=4).astype(int)
     spw=(len(tr)-tr.breakout.sum())/max(tr.breakout.sum(),1)
