@@ -113,6 +113,29 @@ bumps. **The "poach the hot OC" heuristic doesn't predict success.**
 
 ---
 
+## Multi-year (sustained-investment) test
+
+The above used a rolling 3-year window. A longer test — **5-year cumulative draft
+*devotion* (share of capital to a position group, which controls for "bad teams pick
+higher overall") → that unit's performance averaged over the NEXT 3 seasons** — was run to
+check whether sustained investment compounds (e.g. "drafted DL high over years 1–5 → better
+DST in years 6–8").
+
+| Sustained 5-yr devotion | → next-3-yr outcome | raw ρ | partial ρ | top-25% vs bottom-25% |
+|---|---|---|---|---|
+| **DL share** | DST points | +0.005 | +0.009 | 51.7 vs 50.8 (≈0) |
+| Pass-rush share (DL+EDGE) | def sacks | −0.02 | −0.04 | 37.9 vs 38.5 |
+| **OL share** | pass EPA | +0.07 | +0.09 | **+8.8 vs −0.9** |
+| **QB share** | pass EPA | **−0.23** | −0.16 | **−1.7 vs +31.9** |
+| Total capital (5yr) | wins | −0.29 | −0.12 | — |
+
+- **DL/pass-rush devotion → future DST: still zero** (the specific hypothesis is not supported even over 5→3-year horizons; the one positive non-overlapping window, +0.26 in 2011–15→16–18, flips to +0.00 in 2016–20→21–23 — noise).
+- **QB devotion → future passing: strongly negative** (a −34-pt pass-EPA gap top-vs-bottom quartile, robust across windows) — the "perpetual QB search" trap: teams that keep drafting QBs are the ones who never solve the position.
+- **OL devotion → future passing: weak positive** (~+9 pass EPA, top vs bottom) — the only hypothesis with directionally consistent (if modest) long-run support.
+- **Hoarding capital → fewer future wins** even controlled — draft capital is a symptom of being stuck, not a path out.
+
+*Caveat: overlapping 5-yr windows autocorrelate (effective n ≪ 205), so magnitudes are suggestive; the DL≈0 and QB-negative results hold across overlapping + non-overlapping windows. Script: `draft_multiyear.py`.*
+
 ## Overall takeaways
 1. **Positional draft spend does not predict unit quality** — drafting DL/OL/QB heavily doesn't make those units better at the team-aggregate level (selection effects dominate).
 2. **Coaching changes (HC or OC) help only already-bad units** (~+1 win / +21 pass EPA) and tend to *hurt* decent ones; most of the apparent "bump" is mean reversion.

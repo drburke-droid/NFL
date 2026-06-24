@@ -56,6 +56,9 @@
   .foot{color:var(--muted);font-size:12px;margin-top:14px;line-height:1.6}
   .flexstar{color:var(--te);font-weight:700;font-size:11px}
   .lowconf{color:#7d8a99;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px}
+  .tag{font-size:10px;border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px;font-weight:700}
+  .tag.rook{background:#b07de0;color:#06121f} .tag.brk{background:#39c08a;color:#06121f}
+  .up{color:#39c08a}
   /* keeper panel */
   .side h3{margin:0 0 8px;font-size:14px}
   .infl{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;font-size:13px}
@@ -162,7 +165,7 @@ function cards(){
 cards();
 
 // position buttons
-const POSES=["ALL","QB","RB","WR","TE","FLEX","K","DST"];
+const POSES=["ALL","QB","RB","WR","TE","FLEX","ROOK","K","DST"];
 document.getElementById("posbtns").innerHTML=POSES.map(p=>`<button class="btn sm pf ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
 document.querySelectorAll(".pf").forEach(b=>b.onclick=()=>{posFilter=b.dataset.p;document.querySelectorAll(".pf").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
 document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();render();};
@@ -191,14 +194,16 @@ document.getElementById("clearK").onclick=()=>{kept={};save();recompute();render
 // ---------- columns ----------
 const COLS_CHEAT=[["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
   ["name","Player",1],["team","Tm",1],["age","Age",0],["proj_pts","Proj",0],["proj_ppg","PPG",0],
-  ["vorp","VORP",0],["actual_2025","2025",0],["delta_ly","Δ'25",0]];
+  ["vorp","VORP",0],["upside","Up%",0],["actual_2025","2025",0],["delta_ly","Δ'25",0]];
 const COLS_AUCTION=[["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
-  ["name","Player",1],["team","Tm",1],["proj_pts","Proj",0],["vorp","VORP",0],
+  ["name","Player",1],["team","Tm",1],["proj_pts","Proj",0],["vorp","VORP",0],["upside","Up%",0],
   ["base","$ Base",0],["bid","$ Bid",0],["keep","",1]];
 
+function upside(p){ return p.is_rookie===1 ? (p.hit_prob??null) : (p.breakout_prob??null); }
 function val(p,k){
   if(k==="bid") return ADJ.vals[pid(p)]??0;
   if(k==="base") return BASE.vals[pid(p)]??0;
+  if(k==="upside") return upside(p)??-1;
   return p[k];
 }
 
@@ -215,6 +220,7 @@ function render(){
   let rows=PLAYERS.filter(p=>{
     if(mode==="auction" && keptSet.has(pid(p))) return false;       // kept shown in side panel
     if(posFilter==="FLEX"){ if(!["RB","WR","TE"].includes(p.position)) return false; }
+    else if(posFilter==="ROOK"){ if(p.is_rookie!==1) return false; }
     else if(posFilter!=="ALL" && p.position!==posFilter) return false;
     if(startersOnly && p.vorp<0) return false;
     if(query){ if(!(p.name+" "+(p.team||"")).toLowerCase().includes(query)) return false; }
@@ -235,7 +241,14 @@ function render(){
       const k=c[0];
       if(k==="position") return `<td class="l"><span class="pos ${p.position}">${p.position}</span></td>`;
       if(k==="tier") return `<td><span class="tier t${t}">${p.tier}</span></td>`;
-      if(k==="name") return `<td class="l"><span class="name">${p.name}</span>${p.is_flex_starter?' <span class="flexstar">FLEX</span>':''}${p.conf==='low'?' <span class="lowconf" title="Near-random year-to-year (Spearman ~0.17). Heavily shrunk — stream, don\'t draft for it.">stream</span>':''}</td>`;
+      if(k==="name"){
+        let tags=p.is_flex_starter?' <span class="flexstar">FLEX</span>':'';
+        if(p.is_rookie===1) tags+=' <span class="tag rook" title="2026 rookie">ROOK</span>';
+        else if((p.breakout_prob||0)>=0.5) tags+=' <span class="tag brk" title="Breakout probability ≥ 50% (≥+4 PPG jump vs 2025)">BREAK</span>';
+        if(p.conf==='low') tags+=' <span class="lowconf" title="Near-random year-to-year (Spearman ~0.17). Heavily shrunk — stream, don\'t draft for it.">stream</span>';
+        return `<td class="l"><span class="name">${p.name}</span>${tags}</td>`;
+      }
+      if(k==="upside"){const u=upside(p); return `<td class="${u&&u>=0.5?'up':'muted'}">${u==null?'—':Math.round(u*100)+'%'}</td>`;}
       if(k==="team") return `<td class="l muted">${f(p.team)}</td>`;
       if(k==="base") return `<td class="base">$${base}</td>`;
       if(k==="bid"){const up=bid>base; return `<td class="bid">$${bid}${up&&bid>base?` <span class="up" style="font-weight:400;font-size:11px">+${bid-base}</span>`:''}</td>`;}

@@ -26,13 +26,11 @@ TARGET = 2026
 
 
 def build_skill(con):
-    proj = pd.read_sql("SELECT * FROM season_proj_2026", con)
+    # board_2026 = veterans (w/ breakout_prob, certainty inputs) + 2026 rookies (w/ hit_prob)
+    proj = pd.read_sql("SELECT * FROM board_2026", con)
     s25 = pd.read_sql("""SELECT player_id, games, passing_tds, passing_interceptions,
                          fantasy_points_ppr FROM nflv_season WHERE season=2025""", con).drop_duplicates("player_id")
-    ros = pd.read_sql("SELECT gsis_id player_id, birth_date FROM nflv_rosters WHERE season=2025", con)
-    ros["age"] = TARGET - pd.to_datetime(ros["birth_date"], errors="coerce").dt.year
-    ros = ros[["player_id","age"]].drop_duplicates("player_id")
-    df = proj.merge(s25, on="player_id", how="left").merge(ros, on="player_id", how="left")
+    df = proj.merge(s25, on="player_id", how="left")
 
     df["proj_total_nfl"] = df["pred_ppg"] * df["proj_games"]
     qb = df["position"] == "QB"
@@ -59,7 +57,7 @@ def build_skill(con):
     df["repl_pts"] = df["position"].map(repl)
     df["vorp"] = df["proj_pts"] - df["repl_pts"]
     df["is_flex_starter"] = df["player_id"].isin(flex_starters["player_id"]).astype(int)
-    df["conf"] = "model"
+    df["conf"] = np.where(df["is_rookie"]==1, "rookie", "model")
     return df, repl, starters
 
 
@@ -79,6 +77,7 @@ def build_kdst(con):
         repl = float(pp[TEAMS]) if TEAMS < len(pp) else float(pp[-1])
         s["repl_pts"] = repl; s["vorp"] = s["proj_pts"] - repl
         s["is_flex_starter"] = 0; s["age"] = np.nan; s["prior_ppg"] = np.nan; s["conf"] = "low"
+        s["breakout_prob"] = np.nan; s["hit_prob"] = np.nan; s["is_rookie"] = 0
         key = "name" if pos == "K" else "team"
         s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
         out[pos] = (s, repl)
@@ -97,7 +96,8 @@ def main():
     starters.update({"K": TEAMS, "DST": TEAMS})
 
     cols=["name","position","team","age","pos_rank","proj_pts","proj_games","proj_ppg",
-          "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf"]
+          "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf",
+          "breakout_prob","hit_prob","is_rookie"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -115,8 +115,11 @@ def main():
 
     for c in ["proj_pts","proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","age"]:
         allp[c]=allp[c].round(1)
+    for c in ["breakout_prob","hit_prob"]:
+        allp[c]=allp[c].round(3)
     out_cols=["overall_rank","name","position","team","age","pos_rank","tier","proj_pts",
-              "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","is_flex_starter","conf"]
+              "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg",
+              "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]
@@ -130,10 +133,10 @@ def main():
                     "Reception":1,"Fumble":-2,"FG<50":3,"FG40-49":4,"FG50+":5,"PAT":1,
                     "Sack":0.5,"DEF INT/FR":1,"DEF TD":6,"Safety/Block":2},
         "notes": ["RB/WR/TE custom scoring == nflverse PPR (exact); QB adjusted for 6-pt pass TD & -1 INT.",
-                  "QB/RB/WR/TE: prior-year-anchored 2026 model.",
-                  "K & DST are near-random year-over-year (prior->next Spearman ~0.17; even a Vegas/sack-aware model can't beat the league mean). Their projections are HEAVILY shrunk to the mean and flagged low-confidence — stream them, don't draft for them.",
-                  "FFA 2026 consensus not yet available."],
-        "player_count": len(records),
+                  "Veterans: prior-year-anchored 2026 model + Brk% = P(>=+4 PPG jump vs 2025). Rookies (2026 class) projected from draft capital + landing spot + combine; Hit% = P(startable rookie year). No 2026 ECR/ADP yet — model guesses.",
+                  "K & DST are near-random year-over-year (Spearman ~0.17) — projections heavily shrunk, flagged 'stream'; don't draft for them.",
+                  "Tags: ROOK = 2026 rookie; BREAK = veteran breakout prob >= 50%; SLEEP = cheap (<= $8) with breakout prob >= 45%."],
+        "player_count": len(records), "rookies": int((allp.is_rookie==1).sum()),
     }
     with open(os.path.join(OUTDIR,"data.js"),"w",encoding="utf-8") as f:
         f.write("const META = "+json.dumps(meta)+";\n")
