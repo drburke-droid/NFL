@@ -64,6 +64,22 @@
   .slabel{fill:#e6edf3;font-size:12px;paint-order:stroke;stroke:#0f1419;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
   .sleg{display:flex;gap:16px;align-items:center;margin:4px 0 8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
   .sleg b{color:var(--txt)} .sw{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:5px;vertical-align:-1px}
+  .dr-teams{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:12px}
+  .dr-team{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 9px;width:162px;font-size:12px;cursor:pointer}
+  .dr-team.me{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .dr-team.full{opacity:.5}
+  .dr-team .nm{font-weight:600;font-size:12px;display:flex;justify-content:space-between;align-items:center}
+  .dr-team .bud{color:var(--good);font-weight:700}
+  .dr-team .nd{margin-top:3px;line-height:1.7}
+  .dr-need{display:inline-block;font-size:10px;border-radius:3px;padding:0 4px;margin:1px;background:var(--panel2);color:var(--muted)}
+  .dr-need.act{background:#2f5e7e;color:#fff}
+  .dr-panel{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:11px 13px;margin-bottom:12px}
+  .dr-panel h3{margin:0 0 8px;font-size:14px}
+  .drsel,.drnum{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:6px;font-size:12px;padding:3px 5px}
+  .drnum{width:48px;text-align:right}
+  .pivot{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px solid var(--line);font-size:12px}
+  .maxbid{font-weight:700;color:var(--gold)}
+  .scarce{color:var(--bad);font-weight:700}
   .side h3{margin:0 0 8px;font-size:14px}
   .infl{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;font-size:13px}
   .infl .big{font-size:20px;font-weight:700}
@@ -89,6 +105,7 @@
     <button class="btn" id="mAuction">Auction $</button>
     <button class="btn" id="mTargets">🎯 Targets</button>
     <button class="btn" id="mComps">🧬 Career Comps</button>
+    <button class="btn" id="mDraft">🏟️ Draft Room</button>
     <span class="muted" id="count"></span>
   </div>
   <div class="ffabar">
@@ -120,6 +137,7 @@
     </div>
     <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
     <div id="scatter" style="display:none"></div>
+    <div id="draftroom" style="display:none"></div>
     <div class="foot" id="notes"></div>
   </div>
   <div class="side" id="side">
@@ -290,16 +308,19 @@ function setMode(m){
   document.getElementById("mAuction").classList.toggle("active",m==="auction");
   document.getElementById("mTargets").classList.toggle("active",m==="targets");
   document.getElementById("mComps").classList.toggle("active",m==="comps");
-  document.getElementById("settings").style.display=m==="auction"?"flex":"none";
-  document.getElementById("replcards").style.display=(m==="targets"||m==="comps")?"none":"flex";
+  document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
+  document.getElementById("settings").style.display=(m==="auction"||m==="draftroom")?"flex":"none";
+  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||m==="draftroom")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
-  if(m!=="comps"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
+  document.getElementById("draftroom").style.display=m==="draftroom"?"block":"none";
+  if(m!=="comps"&&m!=="draftroom"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
 }
 document.getElementById("mCheat").onclick=()=>setMode("cheat");
 document.getElementById("mAuction").onclick=()=>setMode("auction");
 document.getElementById("mTargets").onclick=()=>setMode("targets");
 document.getElementById("mComps").onclick=()=>setMode("comps");
+document.getElementById("mDraft").onclick=()=>setMode("draftroom");
 document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
 document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
@@ -484,7 +505,118 @@ function renderComps(){
     "Veterans matched on first-N-year arc (era-normalized); rookies on pre-NFL profile (draft/combine/landing). <b>Proj '26</b> = comp-blended (vets) or comps' median rookie PPG. Click any player name elsewhere to jump here.";
 }
 
+// ================= DRAFT ROOM =================
+const FLEXE=["RB","WR","TE"];
+let DR=JSON.parse(localStorage.getItem("draftroom")||"null")||{teams:Array.from({length:12},(_,i)=>({name:"Team "+(i+1)})),me:0,owned:{}};
+const saveDR=()=>localStorage.setItem("draftroom",JSON.stringify(DR));
+function teamState(t){
+  const own=Object.keys(DR.owned).filter(id=>DR.owned[id].t===t).map(id=>({id,price:+DR.owned[id].price||0,p:BYID[id]})).filter(x=>x.p);
+  const spent=own.reduce((a,x)=>a+x.price,0), budget=cfg.budget-spent;
+  const need={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1}; let bench=cfg.roster-9;
+  [...own].sort((a,b)=>(b.p.proj_pts||0)-(a.p.proj_pts||0)).forEach(x=>{const pos=x.p.position;
+    if(need[pos]>0)need[pos]--; else if(FLEXE.includes(pos)&&need.FLEX>0)need.FLEX--; else if(bench>0)bench--;});
+  return {own,spent,budget,need,bench,spotsLeft:cfg.roster-own.length};
+}
+function leagueOpen(){const o={QB:0,RB:0,WR:0,TE:0,K:0,DST:0,FLEX:0};
+  for(let t=0;t<DR.teams.length;t++){const s=teamState(t);for(const k in o)o[k]+=s.need[k]||0;}return o;}
+function flexAdd(pos,open){return FLEXE.includes(pos)?open.FLEX*{RB:.45,WR:.45,TE:.10}[pos]:0;}
+function dynamicMarket(){
+  const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]);
+  const open=leagueOpen(), repl={}, within=new Set();
+  let money=0,spots=0; for(let t=0;t<DR.teams.length;t++){const s=teamState(t);money+=s.budget;spots+=s.spotsLeft;}
+  ["QB","RB","WR","TE","K","DST"].forEach(pos=>{
+    const n=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));
+    const arr=avail.filter(p=>p.position===pos).sort((a,b)=>(b.proj_pts||0)-(a.proj_pts||0));
+    repl[pos]=n<arr.length?(arr[n].proj_pts||0):(arr.length?(arr[arr.length-1].proj_pts||0):0);
+    if(!["K","DST"].includes(pos)) arr.slice(0,n).forEach(p=>within.add(pid(p)));
+  });
+  let sumV=0; avail.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max((p.proj_pts||0)-repl[p.position],0);});
+  const disc=Math.max(money-spots,0), per=sumV>0?disc/sumV:0, price={};
+  avail.forEach(p=>{const id=pid(p),pos=p.position;
+    if(pos==="K"||pos==="DST"){price[id]=1;return;}
+    const v=Math.max((p.proj_pts||0)-repl[pos],0);
+    price[id]=within.has(id)?Math.max(1,Math.round(1+v*per)):(v>0?1:0);});
+  return {price,repl,per,open,money,spots};
+}
+function myVal(mkt){
+  const meS=teamState(DR.me);
+  const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1, myAvg=meS.spotsLeft>0?meS.budget/meS.spotsLeft:1;
+  const agg=leagueAvg>0?myAvg/leagueAvg:1, out={_agg:agg,_meS:meS};
+  PLAYERS.filter(p=>!DR.owned[pid(p)]).forEach(p=>{const id=pid(p),pos=p.position;
+    const market=mkt.price[id]||1, surplus=Math.max((p.proj_pts||0)-(mkt.repl[pos]||0),0);
+    const needed=(meS.need[pos]>0)||(FLEXE.includes(pos)&&meS.need.FLEX>0)||(meS.bench>0&&surplus>2);
+    const affordable=Math.max(1,meS.budget-(meS.spotsLeft-1));
+    let maxBid=needed?Math.round(market*Math.max(1,agg)):Math.round(market*0.6);
+    maxBid=Math.max(1,Math.min(maxBid,affordable));
+    out[id]={market,maxBid,surplus:Math.round(surplus),needed};});
+  return out;
+}
+function renderDraftRoom(){
+  document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
+  const host=document.getElementById("draftroom");host.style.display="block";
+  const mkt=dynamicMarket(), mv=myVal(mkt), meS=mv._meS;
+  const teamOpts=DR.teams.map((t,i)=>`<option value="${i}">${t.name}</option>`).join("");
+  // controls
+  let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+    <span>My team: <select class="drsel" id="drMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
+    <span>Assign next pick to: <select class="drsel" id="drAssign">${teamOpts}</select></span>
+    <span class="muted">click a player's <b>Draft</b> to assign at that price · ✕ on a roster spot to undo</span>
+    <span style="flex:1"></span><button class="btn sm" id="drReset">Reset draft</button></div></div>`;
+  // team strip
+  h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=teamState(i);
+    const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`<span class="dr-need act">${s.need[k]>1?s.need[k]+" ":""}${k}</span>`).join("")||'<span class="dr-need">full</span>';
+    const roster=s.own.sort((a,b)=>(b.p.proj_pts||0)-(a.p.proj_pts||0)).map(x=>`<div style="display:flex;justify-content:space-between;font-size:11px"><span class="muted">${x.p.position} ${x.p.name}</span><span>$${x.price} <span class="keepbtn drundo" data-id="${x.id}">✕</span></span></div>`).join("");
+    return `<div class="dr-team ${i===DR.me?"me":""} ${s.spotsLeft<=0?"full":""}" data-setme="${i}">
+      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
+      <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
+      <div class="nd">${needs}</div><div style="margin-top:4px">${roster}</div></div>`;}).join("")+`</div>`;
+  // my plan / pivots
+  const myNeedPos=["QB","RB","WR","TE","K","DST"].filter(k=>meS.need[k]>0).concat(meS.need.FLEX>0?["FLEX"]:[]);
+  const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p));
+  const pivotFor=pos=>{const elig=pos==="FLEX"?FLEXE:[pos];
+    return avail.filter(p=>elig.includes(p.position)).sort((a,b)=>(mv[pid(b)].surplus)-(mv[pid(a)].surplus)).slice(0,3);};
+  h+=`<div class="dr-panel"><h3>🎯 Your plan — $${meS.budget} for ${meS.spotsLeft} spots · spending power ×${mv._agg.toFixed(2)} ${mv._agg>1.15?'<span class="scarce">(be aggressive — money to spend)</span>':mv._agg<0.85?'<span class="scarce">(be thrifty — tight budget)</span>':''}</h3>`;
+  if(!myNeedPos.length) h+=`<div class="muted">All starters filled. Use remaining budget/bench on upside (sort the table by Surplus).</div>`;
+  myNeedPos.forEach(pos=>{const tops=pivotFor(pos);
+    h+=`<div style="margin-bottom:6px"><b>${pos}</b> need → `+tops.map(p=>`${p.name} <span class="muted">(mkt $${mv[pid(p)].market} · max <span class="maxbid">$${mv[pid(p)].maxBid}</span>)</span>`).join(" · &nbsp;")+`</div>`;});
+  h+=`<div class="muted" style="font-size:11px;margin-top:6px">Max bid = market × your spending power, capped so you can still fill every spot. Overbidding the top of a scarce, needed position is correct when your spending power is &gt;1; never pay up at deep positions (alternatives are close).</div></div>`;
+  // available table
+  let rows=avail.concat(PLAYERS.filter(p=>!DR.owned[pid(p)]&&isK(p))).filter(p=>{
+    if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
+    else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
+    else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
+    if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
+  rows.sort((a,b)=>(mv[pid(b)]?mv[pid(b)].maxBid:0)-(mv[pid(a)]?mv[pid(a)].maxBid:0));
+  document.getElementById("count").textContent=rows.length+" available";
+  h+=`<table style="width:100%"><thead><tr>
+    <th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th>Market $</th><th>My Max</th><th>Surplus</th><th class="l">Assign</th></tr></thead><tbody>`;
+  h+=rows.slice(0,300).map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1,surplus:0,needed:false};
+    const over=m.maxBid>m.market;
+    return `<tr>
+      <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
+      <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}</td>
+      <td>${isK(p)?"—":Math.round(p.proj_pts)}</td>
+      <td class="base">$${m.market}</td>
+      <td class="maxbid">$${m.maxBid}${over?' <span class="upc" style="font-size:10px;font-weight:400">↑</span>':''}</td>
+      <td class="${m.surplus>0?'upc':'muted'}">${isK(p)?"—":m.surplus}</td>
+      <td class="l">$<input class="drnum drprice" data-id="${id}" type="number" value="${m.market}"> <button class="btn sm drdraft" data-id="${id}">Draft</button></td>
+    </tr>`;}).join("")+`</tbody></table>`;
+  host.innerHTML=h;
+  document.getElementById("drMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
+  document.getElementById("drReset").onclick=()=>{if(confirm("Clear all keepers & picks?")){DR.owned={};saveDR();render();}};
+  document.querySelectorAll(".dr-team[data-setme]").forEach(el=>el.onclick=ev=>{if(ev.target.closest(".drundo"))return;DR.me=+el.dataset.setme;saveDR();render();});
+  document.querySelectorAll(".drundo").forEach(el=>el.onclick=ev=>{ev.stopPropagation();delete DR.owned[el.dataset.id];saveDR();render();});
+  document.querySelectorAll(".drdraft").forEach(b=>b.onclick=()=>{const id=b.dataset.id;
+    const price=+document.querySelector(`.drprice[data-id="${CSS.escape(id)}"]`).value||1;
+    const t=+document.getElementById("drAssign").value;
+    DR.owned[id]={t,price,kept:false};saveDR();render();});
+  document.getElementById("notes").innerHTML="🏟️ <b>Draft Room.</b> Pre-load each team's keepers (set <i>Assign next pick to</i>, type the salary, click Draft), set <i>My team</i>, then assign players live as they're won. "+
+    "<b>Market $</b> reacts to supply &amp; demand: as teams fill a position the open slots shrink and that market <b>collapses</b> (e.g. once most teams have a QB, QBs get cheap); cheap keepers inflate everything else. "+
+    "<b>My Max</b> = the most you should bid given your needs, budget, and spending power. If you're outbid, your plan above re-ranks instantly — pivot to the next name.";
+}
+
 function render(){
+  if(mode==="draftroom"){ renderDraftRoom(); return; }
   if(mode==="comps"){ renderComps(); return; }
   if(mode==="targets"){ renderTargets(); return; }
   notes();
