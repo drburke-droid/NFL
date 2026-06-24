@@ -60,6 +60,7 @@
   .lowconf{color:#7d8a99;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px}
   .tag{font-size:10px;border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px;font-weight:700}
   .tag.rook{background:#b07de0;color:#06121f}.tag.brk{background:#39c08a;color:#06121f}
+  .jc{cursor:pointer}.jc:hover{color:var(--accent);text-decoration:underline}
   .side h3{margin:0 0 8px;font-size:14px}
   .infl{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px;font-size:13px}
   .infl .big{font-size:20px;font-weight:700}
@@ -308,6 +309,13 @@ function cols(){
     ...(ffa?[["ffa_adp","ADP",0],["ffa_tier","FFA Tr",0]]:[]),["actual_2025","2025",0]];
 }
 const upside=p=>p.is_rookie===1?(p.hit_prob??null):(p.breakout_prob??null);
+function nameHTML(name,pos,extra){
+  const has=CMP[norm(name)+"|"+pos];
+  const dn=has?` data-nm="${String(name).replace(/"/g,'&quot;')}"`:"";
+  return `<span class="name${has?' jc':''}"${dn}>${name}</span>`+(extra||"");
+}
+function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;setMode("comps");}
+function wireJump(){document.querySelectorAll(".jc").forEach(el=>el.onclick=()=>gotoComps(el.dataset.nm));}
 function gv(p,k){
   if(k==="bid")return ADJ.vals[pid(p)]??0;
   if(k==="base")return BASE.vals[pid(p)]??0;
@@ -350,7 +358,7 @@ function renderTargets(){
     return `<tr>
       <td>${i+1}</td>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l"><span class="name">${p.name}</span> <span class="tag ${tcls}">${r.type}</span></td>
+      <td class="l">${nameHTML(p.name,p.position,` <span class="tag ${tcls}">${r.type}</span>`)}</td>
       <td class="l muted">${p.team||"—"}</td>
       <td><b>${PRJ(p)==null?"—":Math.round(PRJ(p))}</b></td>
       <td class="bid">$${r.cost}</td>
@@ -359,6 +367,7 @@ function renderTargets(){
       <td class="l muted">${why[r.type]}</td>
     </tr>`;
   }).join("");
+  wireJump();
   document.getElementById("notes").innerHTML="🎯 <b>Players most likely to EXCEED expectations.</b> "+
     "Veterans ranked by model breakout probability (P of a ≥+4 PPG jump vs 2025; filtered to ascending players age ≤27 with a projected role). "+
     "Rookies ranked by year-1 hit probability. <b>SLEEPER</b> = cheap (≤$8) with high breakout odds. "+
@@ -370,30 +379,31 @@ function renderTargets(){
 function renderComps(){
   let rows=Object.values(CMP).filter(r=>{
     if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(r.pos))return false;}
-    else if(posFilter==="ROOK"){return false;}
-    else if(posFilter!=="ALL"&&!["K","DST"].includes(posFilter)&&r.pos!==posFilter)return false;
+    else if(posFilter==="ROOK"){if(r.rookie!==1)return false;}
     else if(["K","DST"].includes(posFilter))return false;
+    else if(posFilter!=="ALL"&&r.pos!==posFilter)return false;
     if(query&&!r.p.toLowerCase().includes(query)&&!r.comps.some(c=>c.n.toLowerCase().includes(query)))return false;
     return true;
   });
-  rows.sort((a,b)=>(b.ppg||0)-(a.ppg||0));
+  rows.sort((a,b)=>((b.ppg!=null?b.ppg:b.proj)||0)-((a.ppg!=null?a.ppg:a.proj)||0));
   document.getElementById("count").textContent=rows.length+" players";
-  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Closest career-trajectory comps (→ their next-year PPG)"];
+  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Closest career-trajectory comps (→ their next-year / rookie PPG)"];
   document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i===1||i===5?'l':''}">${h}</th>`).join("");
   document.getElementById("body").innerHTML=rows.map(r=>{
     const cs=r.comps.map(c=>`<span title="distance ${c.d}">${c.n}${c.nx!=null?` <span class="muted">→${c.nx}</span>`:''}</span>`).join("&nbsp;·&nbsp;");
-    const dir=r.proj>r.ppg?'upc':(r.proj<r.ppg?'downc':'muted');
+    const dir=r.ppg==null?'muted':(r.proj>r.ppg?'upc':(r.proj<r.ppg?'downc':'muted'));
+    const ppgCell=r.ppg!=null?r.ppg:'<span class="tag rook">ROOK</span>';
     return `<tr>
       <td class="l"><span class="pos ${r.pos}">${r.pos}</span></td>
       <td class="l"><span class="name">${r.p}</span></td>
       <td>${r.yr}</td>
-      <td>${r.ppg}</td>
+      <td>${ppgCell}</td>
       <td class="${dir}" style="font-weight:700">${r.proj}</td>
       <td class="l muted" style="white-space:normal">${cs}</td>
     </tr>`;
   }).join("");
-  document.getElementById("notes").innerHTML="🧬 <b>Career-trajectory comps.</b> Each player's first-N-year arc (production + role, era-normalized) matched to the most similar historical players (2006–2025), shown with how those comps' careers continued (→ next-year PPG). "+
-    "<b>Proj '26</b> is the comp-blended projection (50% comps' median + 50% 2025), which backtests ~8% better than repeat-last-year (MAE 3.03 vs 3.30). Comp projection alone is weaker — the analogs are the qualitative value (what arc a player is tracking).";
+  document.getElementById("notes").innerHTML="🧬 <b>Career-trajectory comps.</b> Veterans: first-N-year arc (production + role, era-normalized) matched to the most similar historical players (2006–2025); <b>Proj '26</b> = comp-blended (50% comps' median + 50% 2025), which backtests ~8% better than repeat-last-year. "+
+    "<b>Rookies</b> (ROOK filter): matched by pre-NFL profile — draft capital, combine, age, landing spot — to historical rookies; <b>Proj</b> = those comps' median rookie-year PPG (a conservative analog lens; the board's model projection may differ). The named analogs are the real value — what arc a player is tracking. Click any player name elsewhere to jump here.";
 }
 
 function render(){
@@ -430,7 +440,7 @@ function render(){
         if(p.is_rookie===1)tg+=' <span class="tag rook">ROOK</span>';
         else if((p.breakout_prob||0)>=0.5)tg+=' <span class="tag brk">BREAK</span>';
         if(p.conf==='low')tg+=' <span class="lowconf">stream</span>';
-        return `<td class="l"><span class="name">${p.name}</span>${tg}</td>`;}
+        return `<td class="l">${nameHTML(p.name,p.position,tg)}</td>`;}
       if(k==="team")return `<td class="l muted">${f(p.team)}</td>`;
       if(k==="proj")return `<td><b>${PRJ(p)==null?'—':Math.round(PRJ(p))}</b></td>`;
       if(k==="vorp")return `<td class="${VP(p)>=0?'upc':'downc'}" style="font-weight:600">${VP(p)==null?'—':Math.round(VP(p))}</td>`;
@@ -445,6 +455,7 @@ function render(){
     }).join("")+"</tr>";
   }).join("");
   document.querySelectorAll(".keepbtn[data-id]").forEach(b=>b.onclick=()=>addKeeper(b.dataset.id));
+  wireJump();
   if(mode==="auction")renderSide();
 }
 
