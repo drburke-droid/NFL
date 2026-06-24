@@ -387,8 +387,9 @@ function renderComps(){
   });
   rows.sort((a,b)=>((b.ppg!=null?b.ppg:b.proj)||0)-((a.ppg!=null?a.ppg:a.proj)||0));
   document.getElementById("count").textContent=rows.length+" players";
-  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Closest career-trajectory comps (→ their next-year / rookie PPG)"];
-  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i===1||i===5?'l':''}">${h}</th>`).join("");
+  const head=["Pos","Player","Yr","2025 PPG","Proj '26","Ceiling","Bust%","Elite%","Closest career-trajectory comps (→ their next-year / rookie PPG)"];
+  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i===1||i===8?'l':''}">${h}</th>`).join("");
+  const pct=v=>v==null?'—':Math.round(v*100)+'%';
   document.getElementById("body").innerHTML=rows.map(r=>{
     const cs=r.comps.map(c=>`<span title="distance ${c.d}">${c.n}${c.nx!=null?` <span class="muted">→${c.nx}</span>`:''}</span>`).join("&nbsp;·&nbsp;");
     const dir=r.ppg==null?'muted':(r.proj>r.ppg?'upc':(r.proj<r.ppg?'downc':'muted'));
@@ -399,11 +400,16 @@ function renderComps(){
       <td>${r.yr}</td>
       <td>${ppgCell}</td>
       <td class="${dir}" style="font-weight:700">${r.proj}</td>
+      <td class="upc" title="comps' prime (best of next 3 yrs), 75th pct">${r.ceiling==null?'—':r.ceiling}</td>
+      <td class="${r.bust>=0.4?'downc':'muted'}" title="% of comps whose prime stayed below 8 PPG">${pct(r.bust)}</td>
+      <td class="${r.elite>=0.4?'upc':'muted'}" style="font-weight:600" title="% of comps who reached 18+ PPG">${pct(r.elite)}</td>
       <td class="l muted" style="white-space:normal">${cs}</td>
     </tr>`;
   }).join("");
-  document.getElementById("notes").innerHTML="🧬 <b>Career-trajectory comps.</b> Veterans: first-N-year arc (production + role, era-normalized) matched to the most similar historical players (2006–2025); <b>Proj '26</b> = comp-blended (50% comps' median + 50% 2025), which backtests ~8% better than repeat-last-year. "+
-    "<b>Rookies</b> (ROOK filter): matched by pre-NFL profile — draft capital, combine, age, landing spot — to historical rookies; <b>Proj</b> = those comps' median rookie-year PPG (a conservative analog lens; the board's model projection may differ). The named analogs are the real value — what arc a player is tracking. Click any player name elsewhere to jump here.";
+  document.getElementById("notes").innerHTML="🧬 <b>Career-trajectory comps — now with the outcome distribution (the real signal).</b> "+
+    "<b>Ceiling</b> = comps' prime PPG (best of next 3 yrs), 75th percentile. <b>Bust%</b> = share of comps whose prime stayed under 8 PPG. <b>Elite%</b> = share that reached 18+ PPG. "+
+    "These risk/ceiling rates backtest strongly (bust AUC 0.76, elite AUC 0.80) — a player whose comps hit elite often reaches elite ~36% vs ~5% — whereas the point projection doesn't beat repeat-last-year. "+
+    "Veterans matched on first-N-year arc (era-normalized); rookies on pre-NFL profile (draft/combine/landing). <b>Proj '26</b> = comp-blended (vets) or comps' median rookie PPG. Click any player name elsewhere to jump here.";
 }
 
 function render(){

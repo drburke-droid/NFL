@@ -58,6 +58,32 @@ player's own prior year beats both by **~8% MAE**. So the app's **"Proj '26" use
 and the **named comps are the real qualitative payoff** (what *kind* of career arc a player is
 tracking), not the point estimate.
 
+## The real power: the outcome *distribution*, not the point estimate
+The far-future *average* of a comp cohort decays toward zero as careers end — a survivorship
+artifact, not signal: mean forward PPG fades **9.7 → 7.7 → 6.0 → 4.4 → 3.3** over the next 5
+years (share still playing drops **83% → 30%**). The fix is to summarize the cohort's **outcome
+distribution** instead:
+
+- **Ceiling** = comps' prime PPG (best of next 3 years, attrition counted), 75th percentile
+- **Bust%** = share of comps whose prime stayed under 8 PPG
+- **Elite%** = share that reached 18+ PPG
+
+**Leakage-free backtest (n=1,825):** these rates carry strong, novel signal that a single
+projection cannot:
+
+| Signal | Result |
+|---|---|
+| Cohort **bust rate → actual bust** | **AUC 0.758** (base 30%) |
+| Cohort **elite rate → actual elite** | **AUC 0.800** (base 14%) |
+| Actual-elite rate by cohort-elite quintile | 5% · 4% · 6% · 17% → **36%** |
+
+A player whose comps frequently hit elite reaches elite **~36%** of the time vs **~5%** for those
+whose comps rarely did — a **7× spread**. Meanwhile the comp *point* projection (prime or
+next-year) still does **not** beat repeat-last-year on MAE. **So comps are powerful as a
+risk/ceiling profile, not as a better number** — and the app now shows Ceiling / Bust% / Elite%
+alongside each player. Example: **Hurts elite 62% vs Lawrence elite 12%** (same-ish projection,
+very different ceiling); **Trevor Lawrence's archetype rarely sustains elite** despite his pedigree.
+
 ## Caveats
 - Rare archetypes get thin comps; era normalization helps but doesn't fully erase scheme/era.
 - 2006-start cutoff means very early-2000s stars aren't in the pool.
