@@ -136,6 +136,7 @@
       <div id="posbtns"></div>
       <input type="search" id="q" placeholder="Search player / team…"/>
       <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only</label>
+      <label class="tgl"><input type="checkbox" id="draftableOnly"/> Draftable only</label>
       <span id="compToggle" style="display:none"><button class="btn sm active" id="cvTable">▦ Table</button><button class="btn sm" id="cvScatter">⊕ Risk/Reward</button></span>
     </div>
     <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
@@ -153,7 +154,7 @@
 </div>
 <script>
 // ---------- state ----------
-let mode="cheat",posFilter="ALL",startersOnly=false,sortKey="overall_rank",sortDir=1,query="";
+let mode="cheat",posFilter="ALL",startersOnly=false,draftableOnly=false,sortKey="overall_rank",sortDir=1,query="";
 let projMode=localStorage.getItem("projMode")||"model";
 let cfg=JSON.parse(localStorage.getItem("draft_cfg")||'null')||{teams:12,budget:200,roster:16};
 let kept=JSON.parse(localStorage.getItem("draft_keepers")||'{}');
@@ -304,6 +305,7 @@ document.getElementById("posbtns").innerHTML=POSES.map(p=>`<button class="btn sm
 document.querySelectorAll(".pf").forEach(b=>b.onclick=()=>{posFilter=b.dataset.p;document.querySelectorAll(".pf").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
 document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();render();};
 document.getElementById("startersOnly").onchange=e=>{startersOnly=e.target.checked;render();};
+document.getElementById("draftableOnly").onchange=e=>{draftableOnly=e.target.checked;render();};
 
 function setMode(m){
   mode=m;document.body.classList.toggle("auction",m==="auction");
@@ -682,6 +684,7 @@ function render(){
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(startersOnly&&VP(p)<0)return false;
+    if(draftableOnly&&p.overall_rank>cfg.teams*cfg.roster)return false;
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;
     return true;
   });
