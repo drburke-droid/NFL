@@ -93,7 +93,7 @@ def auction(teams, bot_val, our_val, pos_of, rookies, kept, rng=None, bid_sigma=
             if t.need(pos_of[p]): t.add(p, pos_of[p], 1); left.remove(p)
 
 
-def waivers(teams, Y, w, pos_of, WACT):
+def waivers(teams, Y, w, pos_of, WACT, EXP):
     if w <= 1: return
     rostered = {p for t in teams for p, _ in t.roster}
     def form(p):
@@ -102,13 +102,14 @@ def waivers(teams, Y, w, pos_of, WACT):
     fa = sorted([p for p in pos_of if p not in rostered], key=lambda p: -form(p))[:25]
     bids = []
     for t in teams:
-        bv = [(form(p), p) for p, _ in t.roster]
-        if not bv: continue
-        worst_f, worst_p = min(bv)
+        # protect YOUNG & CHEAP (keeper-controllable) stashes — don't cut them for a streamer
+        prot = lambda p: (EXP.get((Y, p), 9) <= 2 and t.prices.get(p, 99) <= 5)
+        droppable = [(form(p), p) for p, _ in t.roster if not prot(p)] or [(form(p), p) for p, _ in t.roster]
+        if not droppable: continue
+        worst_f, worst_p = min(droppable)
         for p in fa[:12]:
-            up = form(p) - worst_f
-            if up > 2.0 and t.faab > 0:
-                bids.append((int(min(t.faab, max(1, round(up * 3)))), -t.tid, t, p, worst_p)); break
+            if form(p) - worst_f > 1.5 and t.faab > 0:
+                bids.append((int(min(t.faab, max(1, round((form(p) - worst_f) * 3)))), -t.tid, t, p, worst_p)); break
     bids.sort(key=lambda x: (-x[0], x[1])); taken = set(); gone = set()
     for bid, _, t, p, worst_p in bids:
         if p in taken or t.faab < bid or t.tid in gone or worst_p not in {x[0] for x in t.roster}: continue
@@ -129,11 +130,17 @@ def load(con):
     ds = ds[ds.prior_games >= 3].copy()
     ds["leap_y"] = ((ds.next_ppg >= ds.position.map({"QB": 99, "RB": 11, "WR": 11, "TE": 8})) & ((ds.next_ppg - ds.prior_ppg) >= 4)).astype(int)
     ds["fade_y"] = ((ds.next_ppg < ds.position.map({"QB": 14, "RB": 9, "WR": 9, "TE": 7})) & ((ds.prior_ppg - ds.next_ppg) >= 4)).astype(int)
-    WACT, PTEAM = {}, {}
+    rost = pd.read_sql("SELECT season, gsis_id player_id, years_exp FROM nflv_rosters WHERE gsis_id IS NOT NULL", con)
+    WACT, PTEAM, tcount = {}, {}, {}
     for r in wkdf.itertuples():
         WACT.setdefault((r.season, r.player_id), {})[r.week] = r.pts
         PTEAM.setdefault((r.season, r.player_id), {})[r.week] = r.team
-    return dict(sk=sk, ds=ds, adp=adp, draft=draft, WACT=WACT, PTEAM=PTEAM,
+        tcount.setdefault((r.season, r.player_id), {}); tcount[(r.season, r.player_id)][r.team] = tcount[(r.season, r.player_id)].get(r.team, 0) + 1
+    GAMES_WK = {}
+    for r in lines.itertuples(): GAMES_WK.setdefault((r.season, r.week), set()).add(r.team)
+    PTEAM_PRIMARY = {k: max(v, key=v.get) for k, v in tcount.items()}     # most-played team that season
+    return dict(sk=sk, ds=ds, adp=adp, draft=draft, WACT=WACT, PTEAM=PTEAM, GAMES_WK=GAMES_WK, PTEAM_PRIMARY=PTEAM_PRIMARY,
+                EXP={(r.season, r.player_id): r.years_exp for r in rost.itertuples()},
                 LINE={(r.season, r.team, r.week): r.itt for r in lines.itertuples()},
                 PROPS={(r.season, r.week, r.player_id): r.proj_pts for r in props.itertuples()},
                 POS={(r.season, r.player_id): r.position for r in sk.itertuples()},
@@ -143,11 +150,14 @@ def load(con):
 
 def make_wproj(D):
     WACT, PROPS, LINE, POS, PRIORPPG, PTEAM = D["WACT"], D["PROPS"], D["LINE"], D["POS"], D["PRIORPPG"], D["PTEAM"]
+    GAMES_WK, PRIMARY = D["GAMES_WK"], D["PTEAM_PRIMARY"]
     def wproj(season, pid, week):
+        primary = PRIMARY.get((season, pid)); gw = GAMES_WK.get((season, week))
+        if primary and gw and primary not in gw: return 0.0          # team on BYE -> bench, don't start
         if (season, week, pid) in PROPS: return PROPS[(season, week, pid)]
         wa = WACT.get((season, pid), {}); prev = [wa[w] for w in range(max(1, week - 4), week) if w in wa]
         form = np.mean(prev) if prev else PRIORPPG.get((season - 1, pid), BASE_PPG.get(POS.get((season, pid), "WR"), 8))
-        team = PTEAM.get((season, pid), {}).get(week)
+        team = PTEAM.get((season, pid), {}).get(week, primary)
         env = np.clip(LINE.get((season, team, week), 22.5) / 22.5, 0.8, 1.25) if team else 1.0
         return max(form * env, 0.0)
     return wproj
@@ -210,7 +220,7 @@ def simulate_year(Y, teams, D, pv, wproj, rng=None, bid_sigma=0.0):
     sched = round_robin(order, REG_WEEKS)
     wins = {t.tid: 0 for t in teams}; pf = {t.tid: 0.0 for t in teams}
     for w, pairs in enumerate(sched, start=1):
-        waivers(teams, Y, w, pos_of, WACT)
+        waivers(teams, Y, w, pos_of, WACT, D["EXP"])
         for a, b in pairs:
             sa, sb = lineup_actual(teams[a], w), lineup_actual(teams[b], w)
             pf[a] += sa; pf[b] += sb
