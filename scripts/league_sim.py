@@ -51,6 +51,9 @@ def style_mult(style, pos, orank, is_rookie):
     if style == "rookie_lover": return 1.7 if is_rookie else 0.9
     if style == "te_premium": return 1.55 if pos == "TE" else 0.95
     if style == "hero_rb": return 1.45 if (pos == "RB" and orank <= 18) else (0.55 if pos == "RB" else (1.15 if pos == "WR" else 1.0))
+    if style == "qb_heavy": return 1.45 if pos == "QB" else 0.92
+    if style == "elite_te": return 1.6 if (pos == "TE" and orank <= 60) else (0.9 if pos == "TE" else 0.97)
+    if style == "robust_rb": return 1.25 if pos == "RB" else (1.1 if pos == "WR" else 0.9)
     return 1.0
 
 
