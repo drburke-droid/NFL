@@ -49,6 +49,21 @@ def build_skill(con):
                      (df["trend_dsnap"] >= 12) & (df["trend_g2"] >= 3) &
                      (df["trend_h2"] > df["trend_h1"]) & (df["trend_h2"] >= 8) &
                      (df["is_rookie"] != 1)).fillna(False).astype(int)
+    # "Vacated lead role" flag — validated ~+1.7 PPG signal (test_opportunity_signals.py):
+    # a returning RB whose backfield lost its lead back (>=150 carries) with no real
+    # replacement. Computed from CURRENT 2026 rosters in nflv_opportunity.
+    opp = pd.read_sql("SELECT player_id, vacated_role, vac_rb_carries FROM nflv_opportunity WHERE season=2026",
+                      con).drop_duplicates("player_id")
+    df = df.merge(opp, on="player_id", how="left")
+    df["vacated_role"] = df["vacated_role"].fillna(0).astype(int)
+    df["vac_rb_carries"] = df["vac_rb_carries"].fillna(0).round(0)
+    # the vacancy is team-level; flag only the top returning RB with a real role
+    # (not every backup on the team) so the tag points at the actual beneficiary
+    df.loc[(df.vacated_role == 1) & (df.pred_ppg < 6), "vacated_role"] = 0
+    vr = df[df.vacated_role == 1]
+    if len(vr):
+        win = vr.loc[vr.groupby("team")["pred_ppg"].idxmax()].index
+        df.loc[(df.vacated_role == 1) & (~df.index.isin(win)), "vacated_role"] = 0
 
     df["proj_total_nfl"] = df["pred_ppg"] * df["proj_games"]
     qb = df["position"] == "QB"
@@ -99,7 +114,7 @@ def build_kdst(con):
         s["bust"] = 0.6; s["boom"] = 0.05; s["floor"] = np.nan; s["ceiling"] = np.nan   # streamed: high bust, low boom
         for c in ["trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]:
             s[c] = np.nan
-        s["won_job"] = 0
+        s["won_job"] = 0; s["vacated_role"] = 0; s["vac_rb_carries"] = 0
         key = "name" if pos == "K" else "team"
         s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
         out[pos] = (s, repl)
@@ -120,7 +135,8 @@ def main():
     cols=["name","position","team","age","pos_rank","proj_pts","proj_games","proj_ppg",
           "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf",
           "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
-          "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job"]
+          "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
+          "vacated_role","vac_rb_carries"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -147,7 +163,8 @@ def main():
     out_cols=["overall_rank","name","position","team","age","pos_rank","tier","proj_pts",
               "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg",
               "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
-              "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job"]
+              "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
+              "vacated_role","vac_rb_carries"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]
