@@ -25,6 +25,43 @@ TIER_GAP = {"QB": 20, "RB": 18, "WR": 18, "TE": 14, "K": 8, "DST": 8}
 TARGET = 2026
 
 
+def assign_archetype(r):
+    """Player archetype from pre-known traits (combine size/speed + 2025 usage).
+    Returns (key, human label). Same thresholds as the validated study
+    (scripts/test_archetypes.py). Generic archetypes return an empty label."""
+    nz = lambda k: (0.0 if pd.isna(r.get(k)) else float(r.get(k)))
+    p = r["position"]; forty = r.get("forty"); ht = r.get("height"); wt = r.get("weight")
+    cpg, rpg, tpg, tsh = nz("carries_pg"), nz("receptions_pg"), nz("targets_pg"), nz("target_share")
+    aysh = r.get("air_yards_share"); rec_sh = rpg / max(cpg + rpg, 1e-6)
+    if p == "RB":
+        if tpg >= 3.0 or rec_sh >= 0.28: return "RB_receiving", "Pass-catch RB"
+        if cpg >= 11: return "RB_workhorse", "Workhorse RB"
+        return "RB_rotational", ""
+    if p == "WR":
+        fast = pd.notna(forty) and forty <= 4.45
+        small = pd.notna(ht) and ht <= 71 and (pd.isna(wt) or wt <= 190)
+        big = pd.notna(ht) and ht >= 74 and pd.notna(wt) and wt >= 210
+        deep = pd.notna(aysh) and aysh >= 0.32
+        if fast and deep: return "WR_deep_threat", "Deep threat"
+        if small: return "WR_slot_small", "Slot/undersized"
+        if big: return "WR_big_possession", "Big possession"
+        return "WR_balanced", ""
+    if p == "TE":
+        if tsh >= 0.14 or tpg >= 4.5: return "TE_receiving", "Receiving TE"
+        return "TE_inline", ""
+    if p == "QB":
+        if cpg >= 5.0: return "QB_mobile", "Mobile QB"
+        return "QB_pocket", ""
+    return "", ""
+
+
+def archetype_age_risk(key, age):
+    """Age-fragile archetypes (validated decline cliffs, ARCHETYPE_AGING.md)."""
+    if age is None or pd.isna(age): return 0
+    return int((key == "QB_mobile" and age >= 29) or (key == "WR_deep_threat" and age >= 28)
+               or (key == "RB_receiving" and age >= 29))
+
+
 def build_skill(con):
     # board_2026 = veterans (w/ breakout_prob, certainty inputs) + 2026 rookies (w/ hit_prob)
     proj = pd.read_sql("SELECT * FROM board_2026", con)
@@ -57,6 +94,21 @@ def build_skill(con):
     df = df.merge(opp, on="player_id", how="left")
     df["vacated_role"] = df["vacated_role"].fillna(0).astype(int)
     df["vac_rb_carries"] = df["vac_rb_carries"].fillna(0).round(0)
+    # archetype label + age-decline caution (display-only context; not a projection input,
+    # see outputs/models/ARCHETYPE_AGING.md). Inputs: 2025 usage + combine size/speed.
+    us = pd.read_sql("""SELECT player_id, games, carries, targets, receptions,
+                        target_share, air_yards_share FROM nflv_season WHERE season=2025""",
+                     con).drop_duplicates("player_id")
+    for c in ["carries", "targets", "receptions"]:
+        us[c + "_pg"] = us[c] / us["games"].clip(lower=1)
+    cb = pd.read_sql("SELECT player_id, forty, height, weight FROM season_dataset", con)
+    cb = cb.groupby("player_id").agg(forty=("forty", "median"), height=("height", "median"),
+                                     weight=("weight", "median")).reset_index()
+    df = df.merge(us[["player_id", "carries_pg", "targets_pg", "receptions_pg", "target_share", "air_yards_share"]],
+                  on="player_id", how="left").merge(cb, on="player_id", how="left")
+    arch = df.apply(assign_archetype, axis=1)
+    df["arch_key"] = [a[0] for a in arch]; df["archetype"] = [a[1] for a in arch]
+    df["age_risk"] = [archetype_age_risk(k, a) for k, a in zip(df["arch_key"], df["age"])]
     # the vacancy is team-level; flag only the top returning RB with a real role
     # (not every backup on the team) so the tag points at the actual beneficiary
     df.loc[(df.vacated_role == 1) & (df.pred_ppg < 6), "vacated_role"] = 0
@@ -115,6 +167,7 @@ def build_kdst(con):
         for c in ["trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]:
             s[c] = np.nan
         s["won_job"] = 0; s["vacated_role"] = 0; s["vac_rb_carries"] = 0
+        s["archetype"] = ""; s["age_risk"] = 0
         key = "name" if pos == "K" else "team"
         s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
         out[pos] = (s, repl)
@@ -136,7 +189,7 @@ def main():
           "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf",
           "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
           "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
-          "vacated_role","vac_rb_carries"]
+          "vacated_role","vac_rb_carries","archetype","age_risk"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -164,7 +217,7 @@ def main():
               "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg",
               "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
               "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
-              "vacated_role","vac_rb_carries"]
+              "vacated_role","vac_rb_carries","archetype","age_risk"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]
