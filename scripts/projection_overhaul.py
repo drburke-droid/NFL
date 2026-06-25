@@ -42,8 +42,12 @@ def main():
     con = sqlite3.connect(DB)
     df = pd.read_sql("SELECT * FROM season_dataset", con)
     cf = pd.read_sql("SELECT * FROM nflv_comp_features", con)
+    ns = pd.read_sql("SELECT player_id, season, games FROM nflv_season", con).drop_duplicates(["player_id", "season"])
     df = MS.attach_ffa(df, con); con.close()
     df = df.merge(cf, on=["player_id", "season"], how="left")
+    g2 = ns.rename(columns={"games": "prior2_games"}); g2["season"] = g2.season + 2   # games two seasons back
+    df = df.merge(g2, on=["player_id", "season"], how="left")
+    df = MS.add_injury_features(df)
     df = df[df.next_ppg.notna() & (df.prior_games >= 3)].copy()
 
     # ---- pass 1: walk-forward quantiles (P25/P50/P75) per position ----
@@ -118,15 +122,16 @@ def main():
     prior = sf[sf.season==2025][bsd.FEAT_COLS].copy()
     prior.columns = ["player_id","player_display_name","position","prior_season","prior_team"]+["prior_"+c for c in bsd.FEAT_COLS[5:]]
     prior["season"]=2026
-    prior2 = sf[sf.season==2024][["player_id","ppg"]].rename(columns={"ppg":"prior2_ppg"})
+    prior2 = sf[sf.season==2024][["player_id","ppg","games"]].rename(columns={"ppg":"prior2_ppg","games":"prior2_games"})
     ctx = sf[sf.season==2025][["player_id","recent_team","age","years_exp","height","weight",
         "draft_round","draft_pick","forty","vertical","broad_jump","cone","shuttle"]].rename(columns={"recent_team":"team"})
     ctx["age"]+=1; ctx["years_exp"]+=1
     con = sqlite3.connect(DB)
     v26 = MS.attach_ffa(prior.merge(prior2,on="player_id",how="left").merge(ctx,on="player_id",how="left"), con); con.close()
     v26["team_change"]=0; v26 = v26[v26.prior_games.fillna(0)>=3].copy()
-    FEATS = BASE + (MS.FFA_FEATURES if int(v26["ffa_points"].notna().sum())>=20 else [])
-    print("\n  Production features:", "BASE+FFA (market-anchored)" if len(FEATS)>len(BASE) else "BASE (no 2026 FFA yet)")
+    v26 = MS.add_injury_features(v26)                         # injury/games-aware prior (validated)
+    FEATS = BASE + MS.INJURY_FEATURES + (MS.FFA_FEATURES if int(v26["ffa_points"].notna().sum())>=20 else [])
+    print("\n  Production features:", ("BASE+INJ+FFA (market-anchored)" if len(FEATS)>len(BASE)+len(MS.INJURY_FEATURES) else "BASE+INJ (no 2026 FFA yet)"))
 
     out = []
     full = df  # all season_dataset (+comp/ffa) rows with next_ppg
