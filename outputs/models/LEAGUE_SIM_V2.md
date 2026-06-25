@@ -41,4 +41,4 @@ Every team uses the SAME weekly projection (real player props 2023-25, else form
 - In-season skill is equalized (identical projection + waiver logic for all 12), so finishing differences trace to **draft-day roster construction** — our team's only edge.
 - Weekly props (2023-25) give true market projections; pre-2023 uses leakage-free recent-form × game-environment. Lineups set by projection, scored by actual (realistic start/sit error).
 - K/DST streamed as an equal flat contribution (near-random, everyone streams). H2H wins, top-6 playoffs, FAAB $100 blind weekly bids.
-- Single deterministic realization (fixed schedule, no bid RNG). Verdict: with in-season skill equalized, the draft edge is real but **beatable** — our avg finish ~3.4 vs a field average of ~6, with down years. A Monte Carlo (noisy schedules/bids, N runs) would turn this into a finish distribution / title-odds.
+- Single deterministic realization; league_sim_v3.py Monte-Carlos the draft bids + schedule for finish distributions / title odds.
