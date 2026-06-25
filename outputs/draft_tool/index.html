@@ -671,11 +671,18 @@ function dynamicMarket(){
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]);
   const open=leagueOpen(), repl={}, within=new Set();
   let money=0,spots=0; for(let t=0;t<DR.teams.length;t++){const s=teamState(t);money+=s.budget;spots+=s.spotsLeft;}
+  const scarce={};
   ["QB","RB","WR","TE","K","DST"].forEach(pos=>{
     const n=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));
     const arr=avail.filter(p=>p.position===pos).sort((a,b)=>(b.proj_pts||0)-(a.proj_pts||0));
-    repl[pos]=n<arr.length?(arr[n].proj_pts||0):(arr.length?(arr[arr.length-1].proj_pts||0):0);
+    // Baseline = the MARGINAL startable player (rank = league demand), i.e. value-over-
+    // next-available (VONA), NOT raw VORP. A flat tier of equal players (12 QBs for 12
+    // slots) collapses to ~$0 — you're guaranteed one — while a lone scarce player keeps
+    // his full edge. (Old code used arr[n] = first bench, which over-priced abundant tiers.)
+    const mi=Math.min(Math.max(n-1,0),arr.length-1);
+    repl[pos]=arr.length?(n>0?(arr[mi].proj_pts||0):(arr[0].proj_pts||0)):0;
     if(!["K","DST"].includes(pos)) arr.slice(0,n).forEach(p=>within.add(pid(p)));
+    if(!["K","DST"].includes(pos)) scarce[pos]={demand:n,edge:arr.filter(p=>((p.proj_pts||0)-(repl[pos]||0))>3).length};
   });
   let sumV=0; avail.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max((p.proj_pts||0)-repl[p.position],0);});
   const disc=Math.max(money-spots,0), per=sumV>0?disc/sumV:0, price={};
@@ -683,7 +690,7 @@ function dynamicMarket(){
     if(pos==="K"||pos==="DST"){price[id]=1;return;}
     const v=Math.max((p.proj_pts||0)-repl[pos],0);
     price[id]=within.has(id)?Math.max(1,Math.round(1+v*per)):(v>0?1:0);});
-  return {price,repl,per,open,money,spots};
+  return {price,repl,per,open,money,spots,scarce};
 }
 function myVal(mkt){
   const meS=teamState(DR.me);
@@ -727,6 +734,15 @@ function renderDraftRoom(){
   myNeedPos.forEach(pos=>{const tops=pivotFor(pos);
     h+=`<div style="margin-bottom:6px"><b>${pos}</b> need → `+tops.map(p=>`${p.name} <span class="muted">(mkt $${mv[pid(p)].market} · max <span class="maxbid">$${mv[pid(p)].maxBid}</span>)</span>`).join(" · &nbsp;")+`</div>`;});
   h+=`<div class="muted" style="font-size:11px;margin-top:6px">Max bid = market × your spending power, capped so you can still fill every spot. Overbidding the top of a scarce, needed position is correct when your spending power is &gt;1; never pay up at deep positions (alternatives are close).</div></div>`;
+  // positional scarcity readout (value-over-next-available)
+  h+=`<div class="dr-panel"><h3>📊 Positional scarcity — who to pay up for vs wait on</h3>`;
+  ["QB","RB","WR","TE"].forEach(pos=>{const sc=mkt.scarce[pos]||{demand:0,edge:0};
+    let lab;
+    if(sc.edge===0) lab=`<span class="muted">abundant — every starter is ~replaceable; take the cheapest, don't overpay</span>`;
+    else if(sc.edge<=2) lab=`<span class="scarce">SCARCE — only ${sc.edge} player${sc.edge>1?'s':''} with a real edge left for ${sc.demand} open slot${sc.demand>1?'s':''}; pay up or you're stuck with replacement</span>`;
+    else lab=`${sc.edge} players with an edge for ${sc.demand} open slots — a few worth a premium, then it flattens`;
+    h+=`<div style="font-size:12px;margin-bottom:2px"><b>${pos}</b>: ${lab}</div>`;});
+  h+=`<div class="muted" style="font-size:11px;margin-top:4px">Prices use each player's edge over the <b>last startable</b> player at his position (value-over-next-available), not raw VORP. So 12 equally-good QBs for 12 teams price to ~$1 — you're guaranteed one — while a lone elite RB (everyone else a zero) commands the premium. The <b>Edge</b> column is that value-over-next-available.</div></div>`;
   // available table
   let rows=avail.concat(PLAYERS.filter(p=>!DR.owned[pid(p)]&&isK(p))).filter(p=>{
     if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
@@ -736,7 +752,7 @@ function renderDraftRoom(){
   rows.sort((a,b)=>(mv[pid(b)]?mv[pid(b)].maxBid:0)-(mv[pid(a)]?mv[pid(a)].maxBid:0));
   document.getElementById("count").textContent=rows.length+" available";
   h+=`<table style="width:100%"><thead><tr>
-    <th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th>Market $</th><th>My Max</th><th>Surplus</th><th class="l">Assign</th></tr></thead><tbody>`;
+    <th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th>Market $</th><th>My Max</th><th title="value over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones">Edge</th><th class="l">Assign</th></tr></thead><tbody>`;
   h+=rows.slice(0,300).map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1,surplus:0,needed:false};
     const over=m.maxBid>m.market;
     return `<tr>
