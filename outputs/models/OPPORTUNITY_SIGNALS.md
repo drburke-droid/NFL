@@ -41,3 +41,27 @@ replacement. Shown as `⬆ VACATED ROLE` on the board.
 
 Effect is large enough (+1.7, CI excludes 0, replicates) that it could justify an
 actual model feature, not just a tag — a reasonable next step if desired.
+
+## Tested as a model feature (`test_opportunity_feature.py`) — keep it a tag
+
+Added the opportunity features (vac/inc carries & targets, net, rookie counts) to the
+model, BASE vs BASE+OPP, walk-forward:
+
+| | BASE | +OPP | Δ |
+|---|---|---|---|
+| Central MAE (all) | 2.694 | 2.700 | **+0.006 (worse)** |
+| RB MAE | 2.937 | 2.947 | +0.010 (worse) |
+| Bust / Boom AUC | 0.879 / 0.893 | 0.879 / 0.895 | ~0 |
+
+It makes the global model slightly WORSE (the features are noise for the ~41% of
+players they don't apply to). But on the flagged RBs specifically, the feature model
+pulls mean projection **6.4 → 7.6** (actual 8.1) — it corrects ~70% of the *bias* —
+while their **MAE is unchanged (3.47 → 3.50)**.
+
+Lesson: +1.7 is an expected-VALUE / bias edge, not a per-player accuracy edge. These
+are high-variance boom/bust backs, so nudging the group up cuts the miss on the hits
+but adds to it on the flops — MAE (which punishes variance) nets to a wash, and is the
+wrong metric to justify the adjustment. So: **keep it a display tag.** If the EV edge
+should flow into auction $/VORP, the right tool is a targeted capped bias-bump on the
+flagged players' central projection (not a global feature) — deferred; in 2026 it moves
+only Chuba Hubbard.
