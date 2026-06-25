@@ -62,6 +62,8 @@
   .tag.rook{background:#b07de0;color:#06121f}.tag.brk{background:#39c08a;color:#06121f}
   .tag.won{background:#e0a23c;color:#06121f}
   .tag.vac{background:#5ad1c8;color:#06121f}
+  .tag.agerisk{background:#7a3b46;color:#ffd9e0}
+  .arch{font-size:10px;color:var(--muted);margin-left:6px;font-style:italic}
   .jc{cursor:pointer}.jc:hover{color:var(--accent);text-decoration:underline}
   .slabel{fill:#e6edf3;font-size:12px;paint-order:stroke;stroke:#0f1419;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
   .sleg{display:flex;gap:16px;align-items:center;margin:4px 0 8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
@@ -350,6 +352,13 @@ function nameHTML(name,pos,extra){
   const has=CMP[norm(name)+"|"+pos];
   const dn=has?` data-nm="${String(name).replace(/"/g,'&quot;')}"`:"";
   return `<span class="name${has?' jc':''}"${dn}>${name}</span>`+(extra||"");
+}
+function ageRiskNote(p){
+  const a=p.age?` (age ${Math.round(p.age)})`:"";
+  if(p.archetype==="Mobile QB")return `Mobile QBs historically decline faster than pocket passers${a} — ≈ −3.7 PPG/yr at 31+ vs −1.7 (rushing fades). Projection unchanged; context only.`;
+  if(p.archetype==="Deep threat")return `Deep-threat WRs hold value young then fall off from ~28${a} as speed declines (≈ −3.3 PPG/yr at 31+). Context only.`;
+  if(p.archetype==="Pass-catch RB")return `Pass-catching RBs historically cliff hardest at 29-30${a} (≈ −3.7 PPG/yr). Context only.`;
+  return "Age-fragile archetype — historically declines at this age. Context only.";
 }
 function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;setMode("comps");}
 let compView="table";
@@ -705,7 +714,9 @@ function render(){
         else if((p.breakout_prob||0)>=0.5)tg+=' <span class="tag brk">BREAK</span>';
         if(p.won_job===1)tg+=' <span class="tag won" title="Young (≤2 yr) player who ended 2025 entrenched after winning a role late — model runs slightly low (validated ~+0.7 PPG)">⬆ WON JOB</span>';
         if(p.vacated_role===1)tg+=` <span class="tag vac" title="Backfield lost its lead back (${p.vac_rb_carries||0} carries vacated, no real replacement) — returning RBs here beat projection ~+1.7 PPG (validated, both eras)">⬆ VACATED ROLE</span>`;
+        if(p.age_risk===1)tg+=` <span class="tag agerisk" title="${ageRiskNote(p)}">⚠ AGE</span>`;
         if(p.conf==='low')tg+=' <span class="lowconf">stream</span>';
+        if(p.archetype)tg+=` <span class="arch" title="Player archetype (from size/speed + usage)">${p.archetype}</span>`;
         return `<td class="l">${nameHTML(p.name,p.position,tg)}</td>`;}
       if(k==="team")return `<td class="l muted">${f(p.team)}</td>`;
       if(k==="proj")return `<td><b>${PRJ(p)==null?'—':Math.round(PRJ(p))}</b></td>`;
