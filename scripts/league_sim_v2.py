@@ -45,7 +45,7 @@ def round_robin(teams, weeks):
 
 class Team:
     def __init__(self, tid, style):
-        self.tid, self.style = tid, style; self.faab = 100; self.keepers = {}; self.reset()
+        self.tid, self.style = tid, style; self.faab = 100; self.keepers = {}; self.bench_w = 0.35; self.reset()
     def reset(self):
         self.budget = 200; self.roster = []; self.prices = {}
         self.filled = {p: 0 for p in STARTERS}; self.flex = 0; self.bench = 0
@@ -59,7 +59,7 @@ class Team:
     def value(self, base, pos, orank, isr):
         slot = self.need(pos)
         if slot is None: return 0
-        return base * L1.style_mult(self.style, pos, orank, isr) * (0.35 if slot == "bench" else 1.0)
+        return base * L1.style_mult(self.style, pos, orank, isr) * (self.bench_w if slot == "bench" else 1.0)
     def add(self, p, pos, price):
         self.roster.append([p, pos]); self.budget -= price; self.prices[p] = price
         slot = self.need(pos)
