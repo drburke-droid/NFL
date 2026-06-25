@@ -110,6 +110,7 @@
     <button class="btn" id="mTargets">🎯 Targets</button>
     <button class="btn" id="mComps">🧬 Career Comps</button>
     <button class="btn" id="mRisers">📈 Late Risers</button>
+    <button class="btn" id="mSleep">🚀 Sleepers</button>
     <button class="btn" id="mDraft">🏟️ Draft Room</button>
     <span class="muted" id="count"></span>
   </div>
@@ -316,9 +317,10 @@ function setMode(m){
   document.getElementById("mTargets").classList.toggle("active",m==="targets");
   document.getElementById("mComps").classList.toggle("active",m==="comps");
   document.getElementById("mRisers").classList.toggle("active",m==="risers");
+  document.getElementById("mSleep").classList.toggle("active",m==="sleepers");
   document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
   document.getElementById("settings").style.display=(m==="auction"||m==="draftroom")?"flex":"none";
-  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||m==="draftroom"||m==="risers")?"none":"flex";
+  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||m==="draftroom"||m==="risers"||m==="sleepers")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=m==="draftroom"?"block":"none";
   if(m!=="comps"&&m!=="draftroom"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
@@ -329,6 +331,7 @@ document.getElementById("mAuction").onclick=()=>setMode("auction");
 document.getElementById("mTargets").onclick=()=>setMode("targets");
 document.getElementById("mComps").onclick=()=>setMode("comps");
 document.getElementById("mRisers").onclick=()=>setMode("risers");
+document.getElementById("mSleep").onclick=()=>setMode("sleepers");
 document.getElementById("mDraft").onclick=()=>setMode("draftroom");
 document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
 document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
@@ -479,6 +482,45 @@ function renderTargets(){
     "Rookies ranked by year-1 hit probability. <b>SLEEPER</b> = cheap (≤$8) with high breakout odds. "+
     (ffa?"FFA ADP shown for cost context.":"Upload FFA to add consensus ADP context.")+
     " Use the position buttons / search to filter.";
+}
+
+// ---------- Sleepers tab: cheap players w/ breakout (value-leap) upside ----------
+function renderSleepers(){
+  document.getElementById("tbl").style.display="";
+  document.getElementById("scatter").style.display="none";
+  let rows=PLAYERS.filter(p=>{
+    if(p.leap_prob==null)return false;
+    if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(p.position))return false;}
+    else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
+    else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
+    if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;
+    return true;
+  });
+  rows.sort((a,b)=>b.leap_prob-a.leap_prob);
+  document.getElementById("count").textContent=rows.length+" sleepers";
+  const head=["#","Pos","Player","Tm","'25 PPG","'26 Proj","$","Leap %","Why"];
+  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${(i>=2&&i<=3)||h==='Why'?'l':''}">${h}</th>`).join("");
+  document.getElementById("body").innerHTML=rows.map((p,i)=>{
+    const cost=ADJ.vals[pid(p)]??0;
+    let why=[]; if(p.vacated_role===1)why.push("vacated lead role"); if(p.won_job===1)why.push("won job late");
+    if(p.trend_h2!=null&&p.trend_h1!=null&&p.trend_h2-p.trend_h1>=4)why.push("late-season surge");
+    return `<tr>
+      <td>${i+1}</td>
+      <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
+      <td class="l">${nameHTML(p.name,p.position,p.is_rookie===1?' <span class="tag rook">ROOK</span>':'')}</td>
+      <td class="l muted">${p.team||"—"}</td>
+      <td class="muted">${p.trend_h2!=null?((p.trend_h1*2+p.trend_h2*1)/3).toFixed(1):(p.prior_ppg==null?"—":p.prior_ppg.toFixed(1))}</td>
+      <td>${PRJ(p)==null?"—":Math.round(PRJ(p))}</td>
+      <td class="bid">$${cost}</td>
+      <td class="upc" style="font-weight:700">${Math.round(p.leap_prob*100)}%</td>
+      <td class="l muted">${why.join(", ")||"profile + opportunity"}</td>
+    </tr>`;
+  }).join("");
+  wireJump();
+  document.getElementById("notes").innerHTML="🚀 <b>Value-leap sleepers</b> — the season analog of the explosion model. "+
+    "Among players who were CHEAP / undraftable-caliber in 2025 (below a startable line), these have the highest modeled probability of breaking out into a startable asset this year — i.e. the late-round darts who get <i>drafted much higher next season</i>. "+
+    "Validated walk-forward: AUC 0.70, ~2.75× the base breakout rate in the top decile (precision 12% vs 4% base). Top drivers: vacated opportunity, draft capital, late-season touch/target surge. "+
+    "Breakouts from obscurity are genuinely rare, so most sit at a few %; the few standouts are the signal. These are upside dart-throws, not safe picks.";
 }
 
 // ---------- Late Risers tab: 2025 first-half vs second-half role/production ----------
@@ -678,6 +720,7 @@ function renderDraftRoom(){
 
 function render(){
   if(mode==="draftroom"){ renderDraftRoom(); return; }
+  if(mode==="sleepers"){ renderSleepers(); return; }
   if(mode==="risers"){ renderRisers(); return; }
   if(mode==="comps"){ renderComps(); return; }
   if(mode==="targets"){ renderTargets(); return; }
