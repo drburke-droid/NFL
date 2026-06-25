@@ -34,9 +34,21 @@ def build_skill(con):
     # 2025 first-half vs second-half role/production trend (scouting layer, NOT a
     # projection input — the change itself has no walk-forward value, see test_half_trend.py)
     hs = pd.read_sql("""SELECT player_id, ppg_H1 trend_h1, ppg_H2 trend_h2, d_ppg trend_dppg,
-                        d_snap trend_dsnap, d_tch trend_dtch, d_tgtsh trend_dtgtsh, g_H2 trend_g2
+                        d_snap trend_dsnap, snap_H2 trend_snap2, d_tch trend_dtch, d_tgtsh trend_dtgtsh, g_H2 trend_g2
                         FROM half_split_2025""", con).drop_duplicates("player_id")
     df = df.merge(hs, on="player_id", how="left")
+    exp = pd.read_sql("SELECT player_id, years_exp+1 exp26 FROM season_dataset WHERE season=2025",
+                      con).drop_duplicates("player_id")
+    df = df.merge(exp, on="player_id", how="left")
+    # "Won the job (young)" flag — the one mechanism-validated case where a late role
+    # surge is a real signal (early-career player who ENDED 2025 entrenched after an
+    # in-season jump; the full-season line understates them). See test_risers_conditional.py:
+    # this cell beats projection ~+0.7 PPG and replicates across 2013-19 AND 2020-25;
+    # the same surge in veterans does the opposite. Kept as a display tag, not a proj change.
+    df["won_job"] = ((df["exp26"] <= 2) & (df["age"] <= 25) & (df["trend_snap2"] >= 55) &
+                     (df["trend_dsnap"] >= 12) & (df["trend_g2"] >= 3) &
+                     (df["trend_h2"] > df["trend_h1"]) & (df["trend_h2"] >= 8) &
+                     (df["is_rookie"] != 1)).fillna(False).astype(int)
 
     df["proj_total_nfl"] = df["pred_ppg"] * df["proj_games"]
     qb = df["position"] == "QB"
@@ -87,6 +99,7 @@ def build_kdst(con):
         s["bust"] = 0.6; s["boom"] = 0.05; s["floor"] = np.nan; s["ceiling"] = np.nan   # streamed: high bust, low boom
         for c in ["trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]:
             s[c] = np.nan
+        s["won_job"] = 0
         key = "name" if pos == "K" else "team"
         s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
         out[pos] = (s, repl)
@@ -107,7 +120,7 @@ def main():
     cols=["name","position","team","age","pos_rank","proj_pts","proj_games","proj_ppg",
           "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf",
           "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
-          "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]
+          "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -134,7 +147,7 @@ def main():
     out_cols=["overall_rank","name","position","team","age","pos_rank","tier","proj_pts",
               "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg",
               "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
-              "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2"]
+              "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]

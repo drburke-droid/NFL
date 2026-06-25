@@ -60,6 +60,7 @@
   .lowconf{color:#7d8a99;font-size:10px;border:1px solid var(--line);border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px}
   .tag{font-size:10px;border-radius:3px;padding:0 4px;text-transform:uppercase;margin-left:4px;font-weight:700}
   .tag.rook{background:#b07de0;color:#06121f}.tag.brk{background:#39c08a;color:#06121f}
+  .tag.won{background:#e0a23c;color:#06121f}
   .jc{cursor:pointer}.jc:hover{color:var(--accent);text-decoration:underline}
   .slabel{fill:#e6edf3;font-size:12px;paint-order:stroke;stroke:#0f1419;stroke-width:3px;stroke-linejoin:round;pointer-events:none}
   .sleg{display:flex;gap:16px;align-items:center;margin:4px 0 8px;font-size:13px;color:var(--muted);flex-wrap:wrap}
@@ -485,14 +486,15 @@ function renderRisers(){
   });
   // role momentum: snap change is the cleanest signal; fall back to touches if snaps missing
   const role=p=>p.trend_dsnap!=null?p.trend_dsnap:(p.trend_dtch!=null?p.trend_dtch*5:-999);
-  rows.sort((a,b)=>role(b)-role(a)||(b.trend_dppg||0)-(a.trend_dppg||0));
+  // validated "won the job (young)" cases float to the very top
+  rows.sort((a,b)=>(b.won_job||0)-(a.won_job||0)||role(b)-role(a)||(b.trend_dppg||0)-(a.trend_dppg||0));
   document.getElementById("count").textContent=rows.length+" players (2025 H1→H2)";
   const head=["#","Pos","Player","Tm","'25 H1","'25 H2","ΔPPG","Δsnap","Δtch/g","Δtgt%","'26 Proj"];
   document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${i>=1&&i<=3?'l':''}">${h}</th>`).join("");
   document.getElementById("body").innerHTML=rows.map((p,i)=>`<tr>
       <td>${i+1}</td>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l">${nameHTML(p.name,p.position,p.is_rookie===1?' <span class="tag rook">ROOK</span>':'')}</td>
+      <td class="l">${nameHTML(p.name,p.position,(p.won_job===1?' <span class="tag won" title="Validated: young player who won a role late; model runs ~+0.7 PPG low">⬆ WON JOB</span>':'')+(p.is_rookie===1?' <span class="tag rook">ROOK</span>':''))}</td>
       <td class="l muted">${p.team||"—"}</td>
       <td class="muted">${p.trend_h1==null?"—":p.trend_h1.toFixed(1)}</td>
       <td><b>${p.trend_h2.toFixed(1)}</b></td>
@@ -507,7 +509,9 @@ function renderRisers(){
     "Sorted by <b>Δsnap</b> — the cleanest sign a player <i>earned a bigger role</i> late (touches &amp; target-share deltas alongside). "+
     "A points jump backed by rising snaps/touches/targets is a real role change; a jump with flat usage was TD/efficiency variance. "+
     "<b>Scouting tool, not a projection:</b> walk-forward, the late-season <i>change</i> doesn't predict next year on its own (it's already reflected in the full-year numbers, and many spikes came from others' injuries / soft schedules). "+
-    "Use it with offseason context — did the player they replaced leave? is the role likely to stick? — then trust the '26 Proj column for value.";
+    "Use it with offseason context — did the player they replaced leave? is the role likely to stick? — then trust the '26 Proj column for value.<br>"+
+    "<span class='tag won'>⬆ WON JOB</span> = the one mechanism-validated case: an early-career player (≤2 yr) who <b>ended the year entrenched</b> (2nd-half snaps ≥55%) after a role jump, with a low full-season line. "+
+    "That cell beats its projection ~+0.7 PPG and replicates across 2013-19 AND 2020-25 (the same surge in veterans does the opposite) — so the model runs slightly LOW on these. A modest edge, not a license to reach.";
 }
 
 // ---------- Career Comps tab ----------
@@ -695,6 +699,7 @@ function render(){
       if(k==="name"){let tg=p.is_flex_starter?' <span class="flexstar">FLEX</span>':'';
         if(p.is_rookie===1)tg+=' <span class="tag rook">ROOK</span>';
         else if((p.breakout_prob||0)>=0.5)tg+=' <span class="tag brk">BREAK</span>';
+        if(p.won_job===1)tg+=' <span class="tag won" title="Young (≤2 yr) player who ended 2025 entrenched after winning a role late — model runs slightly low (validated ~+0.7 PPG)">⬆ WON JOB</span>';
         if(p.conf==='low')tg+=' <span class="lowconf">stream</span>';
         return `<td class="l">${nameHTML(p.name,p.position,tg)}</td>`;}
       if(k==="team")return `<td class="l muted">${f(p.team)}</td>`;
