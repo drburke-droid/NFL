@@ -73,33 +73,46 @@ class Team:
 def auction(teams, bot_val, our_val, pos_of, rookies, kept, rng=None, bid_sigma=0.0):
     avail = {p: v for p, v in bot_val.items() if p not in kept}
     order = sorted(avail, key=lambda p: -avail[p]); orank = {p: i + 1 for i, p in enumerate(order)}
+    budget_left = sum(t.budget for t in teams); slots_left = sum(ROSTER - len(t.roster) for t in teams)
+    rv = sum(avail.values()); rc = len(order)
     for p in order:
+        # mild end-game INFLATION (excess money bids up remaining players); leftover is
+        # then deployed in cleanup so budgets clear without scrambling the competitive auction
+        disc_b = budget_left - slots_left; disc_v = rv - rc
+        infl = min(1.6, max(1.0, disc_b / disc_v)) if disc_v > 0 else 1.0
+        rv -= bot_val[p]; rc -= 1
         pos = pos_of[p]; isr = p in rookies; bids = []
         for t in teams:
             if len(t.roster) >= ROSTER: continue
-            base = our_val.get(p, bot_val[p]) if t.style == "ours" else bot_val[p]
+            base = (our_val.get(p, bot_val[p]) if t.style == "ours" else bot_val[p]) * infl
             if rng is not None and bid_sigma > 0: base *= float(np.exp(rng.normal(0, bid_sigma)))
             bid = min(t.value(base, pos, orank[p], isr), t.maxbid())
             if bid >= 1: bids.append((bid, t.tid, t))
         if not bids: continue
         bids.sort(key=lambda x: -x[0]); win = bids[0][2]; second = bids[1][0] if len(bids) > 1 else 1
         price = int(max(1, min(round(bids[0][0]), round(second) + 1))); price = min(price, win.maxbid())
-        win.add(p, pos, price)
+        win.add(p, pos, price); budget_left -= price; slots_left -= 1
     taken = {p for t in teams for p, _ in t.roster} | set(kept)
     left = [p for p in order if p not in taken]
-    for t in teams:
+    for t in teams:                                          # fill remaining slots AND deploy leftover budget
         for p in list(left):
             if len(t.roster) >= ROSTER: break
-            if t.need(pos_of[p]): t.add(p, pos_of[p], 1); left.remove(p)
+            if t.need(pos_of[p]):
+                open_slots = ROSTER - len(t.roster)
+                price = max(1, min(t.maxbid(), int(round(t.budget / open_slots))))
+                t.add(p, pos_of[p], price); left.remove(p)
 
 
-def waivers(teams, Y, w, pos_of, WACT, EXP):
+def waivers(teams, Y, w, pos_of, D):
+    WACT, EXP, GAMES_WK, PRIMARY = D["WACT"], D["EXP"], D["GAMES_WK"], D["PTEAM_PRIMARY"]
     if w <= 1: return
     rostered = {p for t in teams for p, _ in t.roster}
     def form(p):
         wa = WACT.get((Y, p), {}); prev = [wa[x] for x in range(max(1, w - 3), w) if x in wa]
         return np.mean(prev) if prev else 0.0
-    fa = sorted([p for p in pos_of if p not in rostered], key=lambda p: -form(p))[:25]
+    last = lambda p: WACT.get((Y, p), {}).get(w - 1, 0.0)
+    attract = lambda p: max(form(p), last(p) * 0.7)        # a breakout last week makes a FA a target
+    fa = sorted([p for p in pos_of if p not in rostered], key=lambda p: -attract(p))[:25]
     bids = []
     for t in teams:
         # protect YOUNG & CHEAP (keeper-controllable) stashes — don't cut them for a streamer
@@ -108,12 +121,35 @@ def waivers(teams, Y, w, pos_of, WACT, EXP):
         if not droppable: continue
         worst_f, worst_p = min(droppable)
         for p in fa[:12]:
-            if form(p) - worst_f > 1.5 and t.faab > 0:
-                bids.append((int(min(t.faab, max(1, round((form(p) - worst_f) * 3)))), -t.tid, t, p, worst_p)); break
+            up = attract(p) - worst_f
+            if up > 0.2 and t.faab > 0:
+                # realistic FAAB: routine adds $1-8; a player off a HUGE last week spikes to ~$30; ~never >$50
+                base = min(8, max(1, round(up * 0.8)))
+                bonus = max(0.0, last(p) - 15.0) * 1.4 if last(p) >= 18 else 0.0
+                bid = int(min(t.faab, min(45, max(1, round(base + bonus)))))
+                bids.append((bid, -t.tid, t, p, worst_p)); break
     bids.sort(key=lambda x: (-x[0], x[1])); taken = set(); gone = set()
     for bid, _, t, p, worst_p in bids:
         if p in taken or t.faab < bid or t.tid in gone or worst_p not in {x[0] for x in t.roster}: continue
         t.drop(worst_p); t.add(p, pos_of[p], 0); t.faab -= bid; taken.add(p); gone.add(t.tid)
+    # cheap bye/depth streaming ($1-4): fill a starting hole created by byes — the routine sub-$10 churn
+    gw = GAMES_WK.get((Y, w))
+    if gw:
+        rostered = {p for tm in teams for p, _ in tm.roster}
+        avail = [p for p in pos_of if p not in rostered and PRIMARY.get((Y, p)) in gw]
+        for t in teams:
+            if t.tid in gone or t.faab < 1: continue
+            need_pos = None
+            for pos, n in STARTERS.items():
+                live = sum(1 for p, pp in t.roster if pp == pos and PRIMARY.get((Y, p)) in gw)
+                if live < n: need_pos = pos; break
+            if not need_pos: continue
+            cands = sorted([p for p in avail if pos_of[p] == need_pos], key=lambda p: -last(p))
+            if cands:
+                add = cands[0]; bid = int(min(t.faab, max(1, round(form(add) * 0.4)), 4))
+                prot = lambda p: (EXP.get((Y, p), 9) <= 2 and t.prices.get(p, 99) <= 5)
+                dr = [(form(p), p) for p, _ in t.roster if not prot(p)] or [(form(p), p) for p, _ in t.roster]
+                worst = min(dr)[1]; t.drop(worst); t.add(add, pos_of[add], 0); t.faab -= bid; avail.remove(add)
 
 
 def load(con):
@@ -201,9 +237,12 @@ def simulate_year(Y, teams, D, pv, wproj, rng=None, bid_sigma=0.0):
     auction(teams, bot_val, our_val, pos_of, rookies, set(kept), rng=rng, bid_sigma=bid_sigma)
     for t in teams: t.faab = 100
 
+    GAMES_WK, PRIMARY = D["GAMES_WK"], D["PTEAM_PRIMARY"]
     def lineup_actual(t, w):
-        cand = {}
+        gw = GAMES_WK.get((Y, w)); cand = {}
         for p, pos in t.roster:
+            prim = PRIMARY.get((Y, p))
+            if prim and gw and prim not in gw: continue          # on BYE -> never start
             cand.setdefault(pos, []).append((wproj(Y, p, w), WACT.get((Y, p), {}).get(w, 0.0)))
         for pos in cand: cand[pos].sort(key=lambda x: -x[0])
         used = {"QB": 0, "RB": 0, "WR": 0, "TE": 0}; s = 0.0
@@ -220,7 +259,7 @@ def simulate_year(Y, teams, D, pv, wproj, rng=None, bid_sigma=0.0):
     sched = round_robin(order, REG_WEEKS)
     wins = {t.tid: 0 for t in teams}; pf = {t.tid: 0.0 for t in teams}
     for w, pairs in enumerate(sched, start=1):
-        waivers(teams, Y, w, pos_of, WACT, D["EXP"])
+        waivers(teams, Y, w, pos_of, D)
         for a, b in pairs:
             sa, sb = lineup_actual(teams[a], w), lineup_actual(teams[b], w)
             pf[a] += sa; pf[b] += sb

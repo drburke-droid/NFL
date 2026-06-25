@@ -75,6 +75,7 @@ def main():
         cand = {}
         for p, pos in t.roster:
             onbye = (pteam.get(p) is not None and w in games_wk and pteam[p] not in games_wk[w])
+            if onbye: continue                                   # never start a bye player
             cand.setdefault(pos, []).append((wproj(YEAR, p, w), WACT.get((YEAR, p), {}).get(w, 0.0), p, onbye))
         for pos in cand: cand[pos].sort(key=lambda x: -x[0])
         used = {"QB": 0, "RB": 0, "WR": 0, "TE": 0}; s = 0.0; starters = []
@@ -94,7 +95,7 @@ def main():
     for w, pairs in enumerate(V2.round_robin(list(range(12)), V2.REG_WEEKS), start=1):
         before = {tid: {p for p, _ in teams[tid].roster} for tid in (us, bot)}
         fb = {tid: teams[tid].faab for tid in (us, bot)}
-        V2.waivers(teams, YEAR, w, pos_of, WACT, D["EXP"])
+        V2.waivers(teams, YEAR, w, pos_of, D)
         for tid in (us, bot):
             after = {p for p, _ in teams[tid].roster}
             add, drop = after - before[tid], before[tid] - after
