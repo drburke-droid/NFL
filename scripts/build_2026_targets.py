@@ -33,7 +33,7 @@ def veterans(con):
     prior=sf[sf.season==2025][BSD.FEAT_COLS].copy()
     prior.columns=["player_id","player_display_name","position","prior_season","prior_team"]+["prior_"+c for c in BSD.FEAT_COLS[5:]]
     prior["season"]=2026
-    prior2=sf[sf.season==2024][["player_id","ppg"]].rename(columns={"ppg":"prior2_ppg"})
+    prior2=sf[sf.season==2024][["player_id","ppg","games"]].rename(columns={"ppg":"prior2_ppg","games":"prior2_games"})
     ctx=sf[sf.season==2025][["player_id","recent_team","age","years_exp","height","weight",
         "draft_round","draft_pick","forty","vertical","broad_jump","cone","shuttle"]].rename(columns={"recent_team":"team"})
     ctx["age"]+=1; ctx["years_exp"]+=1

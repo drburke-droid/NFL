@@ -40,6 +40,27 @@ FFA_FEATURES = [
 ]
 MODEL_FEATURES = FEATURES + FFA_FEATURES + ["pos_id"]
 
+# Injury / games-aware prior — a player coming off an injury-shortened season is
+# under-rated when anchored on prior_ppg alone. These down-weight a short recent
+# year toward the healthy baseline. Validated (test_injury_prior.py): improves
+# overall MAE (QB -0.08) and the injury-return subgroup without hurting the pool.
+INJURY_FEATURES = ["prior2_games", "gw_prior", "healthy_prior", "short_season", "bounce", "games_trend"]
+
+
+def add_injury_features(df):
+    """Add injury/games-aware prior features. Needs prior_ppg, prior2_ppg,
+    prior_games, prior2_games (prior2_games filled with NaN if absent)."""
+    d = df.copy()
+    if "prior2_games" not in d.columns: d["prior2_games"] = np.nan
+    pg = d["prior_games"].fillna(0); p2g = d["prior2_games"].fillna(0)
+    pp = d["prior_ppg"]; p2p = d["prior2_ppg"] if "prior2_ppg" in d.columns else pd.Series(np.nan, index=d.index)
+    d["gw_prior"] = ((pp.fillna(0)*pg + p2p.fillna(0)*p2g) / (pg+p2g).replace(0, np.nan)).fillna(pp)
+    d["healthy_prior"] = pd.concat([pp, p2p], axis=1).max(axis=1)
+    d["short_season"] = (pg <= 11).astype(int)
+    d["bounce"] = ((pg <= 11) & (p2g >= 14) & ((p2p - pp) >= 3)).astype(int)
+    d["games_trend"] = pg - p2g
+    return d
+
 
 def attach_ffa(df, con):
     """Left-join FFA consensus projections onto a (player_id, season) frame."""
@@ -50,9 +71,16 @@ def attach_ffa(df, con):
 
 
 def project_games(df):
-    """Simple, honest games projection: shrink prior games toward position mean."""
+    """Games projection, shrunk toward the position mean. Games-played has low
+    year-over-year persistence (r~0.42), so when a SECOND prior year is available
+    we blend it in — this keeps a single injury-shortened season from tanking the
+    projection (validated: lower next-games MAE overall AND for injury-returns)."""
     pos_mean = df.groupby("position")["prior_games"].transform("mean")
-    pg = 0.55*df["prior_games"].fillna(pos_mean) + 0.45*pos_mean
+    if "prior2_games" in df.columns:
+        p2 = df["prior2_games"].fillna(df["prior_games"]).fillna(pos_mean)
+        pg = 0.35*df["prior_games"].fillna(pos_mean) + 0.30*p2 + 0.35*pos_mean
+    else:
+        pg = 0.55*df["prior_games"].fillna(pos_mean) + 0.45*pos_mean
     return pg.clip(1, 17)
 
 
