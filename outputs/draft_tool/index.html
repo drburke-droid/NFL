@@ -111,6 +111,7 @@
     <button class="btn" id="mComps">🧬 Career Comps</button>
     <button class="btn" id="mRisers">📈 Late Risers</button>
     <button class="btn" id="mSleep">🚀 Sleepers</button>
+    <button class="btn" id="mFade">💣 Fade Risk</button>
     <button class="btn" id="mDraft">🏟️ Draft Room</button>
     <span class="muted" id="count"></span>
   </div>
@@ -318,9 +319,10 @@ function setMode(m){
   document.getElementById("mComps").classList.toggle("active",m==="comps");
   document.getElementById("mRisers").classList.toggle("active",m==="risers");
   document.getElementById("mSleep").classList.toggle("active",m==="sleepers");
+  document.getElementById("mFade").classList.toggle("active",m==="fade");
   document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
   document.getElementById("settings").style.display=(m==="auction"||m==="draftroom")?"flex":"none";
-  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||m==="draftroom"||m==="risers"||m==="sleepers")?"none":"flex";
+  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||m==="draftroom"||m==="risers"||m==="sleepers"||m==="fade")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=m==="draftroom"?"block":"none";
   if(m!=="comps"&&m!=="draftroom"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
@@ -332,6 +334,7 @@ document.getElementById("mTargets").onclick=()=>setMode("targets");
 document.getElementById("mComps").onclick=()=>setMode("comps");
 document.getElementById("mRisers").onclick=()=>setMode("risers");
 document.getElementById("mSleep").onclick=()=>setMode("sleepers");
+document.getElementById("mFade").onclick=()=>setMode("fade");
 document.getElementById("mDraft").onclick=()=>setMode("draftroom");
 document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
 document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
@@ -521,6 +524,47 @@ function renderSleepers(){
     "Among players who were CHEAP / undraftable-caliber in 2025 (below a startable line), these have the highest modeled probability of breaking out into a startable asset this year — i.e. the late-round darts who get <i>drafted much higher next season</i>. "+
     "Validated walk-forward: AUC 0.70, ~2.75× the base breakout rate in the top decile (precision 12% vs 4% base). Top drivers: vacated opportunity, draft capital, late-season touch/target surge. "+
     "Breakouts from obscurity are genuinely rare, so most sit at a few %; the few standouts are the signal. These are upside dart-throws, not safe picks.";
+}
+
+// ---------- Fade Risk tab: high-drafted players likely to collapse (implosion) ----------
+function renderFade(){
+  document.getElementById("tbl").style.display="";
+  document.getElementById("scatter").style.display="none";
+  let rows=PLAYERS.filter(p=>{
+    if(p.fade_prob==null)return false;
+    if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(p.position))return false;}
+    else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
+    else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
+    if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;
+    return true;
+  });
+  rows.sort((a,b)=>b.fade_prob-a.fade_prob);
+  document.getElementById("count").textContent=rows.length+" fade candidates";
+  const head=["#","Pos","Player","Tm","'25 PPG","'26 Proj","$","Fade %","Why"];
+  document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${(i>=2&&i<=3)||h==='Why'?'l':''}">${h}</th>`).join("");
+  document.getElementById("body").innerHTML=rows.map((p,i)=>{
+    const cost=ADJ.vals[pid(p)]??0;
+    let why=[];
+    if(p.age_risk===1)why.push("age-fragile archetype");
+    if(p.trend_h2!=null&&p.trend_h1!=null&&p.trend_h2-p.trend_h1<=-3)why.push("faded late 2025");
+    if(p.archetype==="Pass-catch RB"||p.archetype==="Workhorse RB"){} // context only
+    return `<tr>
+      <td>${i+1}</td>
+      <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
+      <td class="l">${nameHTML(p.name,p.position,p.age_risk===1?' <span class="tag agerisk" title="'+ageRiskNote(p)+'">⚠ AGE</span>':'')}</td>
+      <td class="l muted">${p.team||"—"}</td>
+      <td class="muted">${p.prior_ppg==null?"—":p.prior_ppg.toFixed(1)}</td>
+      <td>${PRJ(p)==null?"—":Math.round(PRJ(p))}</td>
+      <td class="bid">$${cost}</td>
+      <td class="downc" style="font-weight:700">${Math.round(p.fade_prob*100)}%</td>
+      <td class="l muted">${why.join(", ")||"profile + competition/regression"}</td>
+    </tr>`;
+  }).join("");
+  wireJump();
+  document.getElementById("notes").innerHTML="💣 <b>Fade-risk / implosion</b> — the mirror of Sleepers. "+
+    "Among players drafted HIGH (startable studs in 2025), these have the highest modeled probability of collapsing below startable this year — the ones who get <i>drafted much later next season</i>. "+
+    "Validated walk-forward: AUC 0.67, ~2.2× the base collapse rate in the top decile (32% vs 13% base) — and it beats naively fading the old/volatile. "+
+    "Top drivers: one-year-wonder profile (prior2 PPG low), fading late-season usage, incoming competition, volatility. Use it to avoid overpaying — not as a hard 'don't draft'.";
 }
 
 // ---------- Late Risers tab: 2025 first-half vs second-half role/production ----------
@@ -721,6 +765,7 @@ function renderDraftRoom(){
 function render(){
   if(mode==="draftroom"){ renderDraftRoom(); return; }
   if(mode==="sleepers"){ renderSleepers(); return; }
+  if(mode==="fade"){ renderFade(); return; }
   if(mode==="risers"){ renderRisers(); return; }
   if(mode==="comps"){ renderComps(); return; }
   if(mode==="targets"){ renderTargets(); return; }
