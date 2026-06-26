@@ -29,6 +29,27 @@ yields no usable skill. The faint directional hints that do exist (higher floor 
 durability `gw_prior` → slightly better outcomes; ~0.05 ratio spreads) are already baked into
 the risk-adjusted valuation.
 
+## Does the risk lever surface "confident ABOVE"? No — it surfaces reliability.
+The risk lever (`K_RISK`) adjusts the **valuation**, not the projection — so it cannot change
+the predictability finding (the verdict is measured vs the central projection). But does
+selecting low-risk players tilt the verdict mix toward booms? The opposite:
+
+| Risk tier | ABOVE | to_exp | BELOW | mean ratio |
+|---|---|---|---|---|
+| low-risk | **19%** | **38%** | 43% | 0.88 |
+| mid | 24% | 26% | 51% | 0.85 |
+| high-risk | **24%** | 25% | 52% | 0.85 |
+
+Low-risk players get MORE "to expectation" and FEWER "ABOVE" — the booms come
+disproportionately from HIGH-risk players (both tails are fatter). So the lever is a
+**variance dial, not a boom-finder**: turn it up for floor protection (fewer BELOW, more
+to_exp, fewer ABOVE), down to chase upside (more ABOVE and more BELOW). It cannot isolate
+*confident* ABOVE — that's inherently the volatile group.
+
+And at the draftable top (top-30/yr), the verdict mix is ~identical whether you rank by raw
+projection or risk-adjusted (23/36/41 vs 22/37/41) — the elite tier is the same players; the
+lever changes the PRICE you pay within it, not who's in it.
+
 ## Why this is the right answer
 The residual is dominated by **unforeseeable in-season injury and TD variance** — irreducible
 luck. This is the consistent thread of the whole project: we already extract the predictable

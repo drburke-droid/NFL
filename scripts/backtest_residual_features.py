@@ -87,6 +87,24 @@ def main():
         try: print(f"  AUC {lab:6s} (one-vs-rest): {roc_auc_score((R.y==j).astype(int), R[f'p{j}']):.3f}")
         except Exception: pass
 
+    # ---- does the RISK lever surface 'confident ABOVE', or just safe 'to_exp'? ----
+    POS_INJ = {"QB": 0.26, "RB": 0.40, "WR": 0.33, "TE": 0.39}
+    inj = P.position.map(POS_INJ).fillna(.33).apply(lambda x: max(0, (x - .26) / .14))
+    down = ((P.central - P.floorq) / P.central.clip(lower=1)).clip(lower=0)
+    P["risk"] = (0.45 * inj + 0.40 * P.bustp + 0.30 * down).clip(0, .9)
+    print("\n=== Verdict mix by RISK level (does low risk = more ABOVE, or just fewer BELOW?) ===")
+    P["rt"] = pd.qcut(P.risk.rank(method="first"), 3, labels=["low-risk", "mid", "high-risk"])
+    for t in ["low-risk", "mid", "high-risk"]:
+        s = P[P.rt == t]; vc = s.verdict.value_counts(normalize=True)
+        print(f"  {t:10s} (n={len(s)}):  ABOVE {vc.get('ABOVE',0):.0%}  to_exp {vc.get('to_exp',0):.0%}  BELOW {vc.get('BELOW',0):.0%}  | mean ratio {s.ratio.mean():.2f}")
+    # practical: top-30/yr by RAW proj vs by RISK-ADJUSTED value
+    print("\n=== Top-30/yr draftable set: ranked by RAW projection vs RISK-ADJUSTED ===")
+    for K, lab in [(0.0, "raw proj   "), (0.7, "risk-adj .7"), (1.2, "risk-adj 1.2")]:
+        P["score"] = P.central * (1 - K * P.risk)
+        sel = P.groupby("season", group_keys=False).apply(lambda g: g.nlargest(30, "score"))
+        vc = sel.verdict.value_counts(normalize=True)
+        print(f"  {lab}:  ABOVE {vc.get('ABOVE',0):.0%}  to_exp {vc.get('to_exp',0):.0%}  BELOW {vc.get('BELOW',0):.0%}  | mean ratio {sel.ratio.mean():.2f}")
+
     # ---- which features, and direction (mean ratio by tercile) ----
     full = lgb.LGBMClassifier(objective="multiclass", num_class=3, **GB).fit(P[CAND].astype(float).fillna(-1), P.y)
     imp = pd.Series(full.feature_importances_, index=CAND).sort_values(ascending=False)
