@@ -166,6 +166,18 @@ let ffaMap=JSON.parse(localStorage.getItem("ffa2026")||'{}');
 const pid=p=>p.name+"|"+p.position+"|"+(p.team||"");
 const BYID={}; PLAYERS.forEach(p=>BYID[pid(p)]=p);
 const isK=p=>p.position==="K"||p.position==="DST";
+// ---- risk-adjusted (certainty-equivalent) value: discount points by MEASURED risk ----
+// injury risk = % of startable-tier seasons missing significant time, by position (qb_reliability.py)
+const POS_INJ={QB:0.26,RB:0.40,WR:0.33,TE:0.39};
+const K_RISK=0.7;                                  // risk-aversion level (shape from data; level market-anchored)
+function playerRisk(p){
+  if(isK(p))return 0;
+  const ppg=p.proj_ppg||0, fl=(p.floor==null?ppg:p.floor), bu=(p.bust==null?0.30:p.bust);
+  const inj=Math.max(0,(((POS_INJ[p.position]||0.33)-0.26)/0.14));   // 0 = QB safest .. 1 = RB riskiest
+  const down=ppg>0?Math.max(0,(ppg-fl)/ppg):0;                       // floor gap (downside)
+  return Math.min(0.9, 0.45*inj + 0.40*bu + 0.30*down);
+}
+const raPts=p=>isK(p)?(p.proj_pts||0):(p.proj_pts||0)*(1-K_RISK*playerRisk(p));  // certainty-equivalent points
 const CMP=(typeof COMPS!=="undefined")?COMPS:{};
 const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z ]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/g,"").replace(/\s+/g," ").trim();
@@ -672,27 +684,29 @@ function dynamicMarket(){
   const open=leagueOpen(), repl={}, within=new Set();
   let money=0,spots=0; for(let t=0;t<DR.teams.length;t++){const s=teamState(t);money+=s.budget;spots+=s.spotsLeft;}
   const scarce={};
+  // value on RISK-ADJUSTED (certainty-equivalent) points: a steady high-floor producer is
+  // worth more than a boom/bust, injury-prone one at the same projection (raPts).
   ["QB","RB","WR","TE","K","DST"].forEach(pos=>{
     const n=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));
-    const arr=avail.filter(p=>p.position===pos).sort((a,b)=>(b.proj_pts||0)-(a.proj_pts||0));
+    const arr=avail.filter(p=>p.position===pos).sort((a,b)=>raPts(b)-raPts(a));
     // Baseline = the MARGINAL startable player (rank = league demand), i.e. value-over-
     // next-available (VONA), NOT raw VORP. A flat tier of equal players (12 QBs for 12
     // slots) collapses to ~$0 — you're guaranteed one — while a lone scarce player keeps
     // his full edge. (Old code used arr[n] = first bench, which over-priced abundant tiers.)
     const mi=Math.min(Math.max(n-1,0),arr.length-1);
-    repl[pos]=arr.length?(n>0?(arr[mi].proj_pts||0):(arr[0].proj_pts||0)):0;
+    repl[pos]=arr.length?(n>0?raPts(arr[mi]):raPts(arr[0])):0;
     if(!["K","DST"].includes(pos)) arr.slice(0,n).forEach(p=>within.add(pid(p)));
-    if(!["K","DST"].includes(pos)) scarce[pos]={demand:n,edge:arr.filter(p=>((p.proj_pts||0)-(repl[pos]||0))>3).length};
+    if(!["K","DST"].includes(pos)) scarce[pos]={demand:n,edge:arr.filter(p=>(raPts(p)-(repl[pos]||0))>3).length};
   });
-  let sumV=0; avail.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max((p.proj_pts||0)-repl[p.position],0);});
+  let sumV=0; avail.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max(raPts(p)-repl[p.position],0);});
   const disc=Math.max(money-spots,0), per=sumV>0?disc/sumV:0, price={};
-  // linear VORP->$ overstates the top (it implies a stars-and-scrubs build, which is the
-  // worst strategy). Compress the top toward observed clearing prices: a real 12-team $200
-  // auction tops out ~$70, not ~$95. Calibrated so raw $25 unchanged, raw $95 -> ~$72.
-  const realistic=v=>v<=25?v:25+(v-25)*0.67;
+  // MARKET ANCHOR (the one empirical knob): a full-rational budget-constrained auction clears
+  // the top ~$95, but real markets top ~$70-73 (risk aversion + cash-flexibility). Compress
+  // the top toward observed clearing prices. (Shape is risk-adjusted above; this sets the level.)
+  const realistic=v=>v<=25?v:25+(v-25)*0.80;
   avail.forEach(p=>{const id=pid(p),pos=p.position;
     if(pos==="K"||pos==="DST"){price[id]=1;return;}
-    const v=Math.max((p.proj_pts||0)-repl[pos],0);
+    const v=Math.max(raPts(p)-repl[pos],0);
     const raw=within.has(id)?Math.max(1,1+v*per):(v>0?1:0);
     price[id]=Math.round(realistic(raw));});
   return {price,repl,per,open,money,spots,scarce};
@@ -702,7 +716,7 @@ function myVal(mkt){
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1, myAvg=meS.spotsLeft>0?meS.budget/meS.spotsLeft:1;
   const agg=leagueAvg>0?myAvg/leagueAvg:1, out={_agg:agg,_meS:meS};
   PLAYERS.filter(p=>!DR.owned[pid(p)]).forEach(p=>{const id=pid(p),pos=p.position;
-    const market=mkt.price[id]||1, surplus=Math.max((p.proj_pts||0)-(mkt.repl[pos]||0),0);
+    const market=mkt.price[id]||1, surplus=Math.max(raPts(p)-(mkt.repl[pos]||0),0);
     const needed=(meS.need[pos]>0)||(FLEXE.includes(pos)&&meS.need.FLEX>0)||(meS.bench>0&&surplus>2);
     const affordable=Math.max(1,meS.budget-(meS.spotsLeft-1));
     let maxBid=needed?Math.round(market*Math.max(1,agg)):Math.round(market*0.6);
@@ -747,7 +761,7 @@ function renderDraftRoom(){
     else if(sc.edge<=2) lab=`<span class="scarce">SCARCE — only ${sc.edge} player${sc.edge>1?'s':''} with a real edge left for ${sc.demand} open slot${sc.demand>1?'s':''}; pay up or you're stuck with replacement</span>`;
     else lab=`${sc.edge} players with an edge for ${sc.demand} open slots — a few worth a premium, then it flattens`;
     h+=`<div style="font-size:12px;margin-bottom:2px"><b>${pos}</b>: ${lab}</div>`;});
-  h+=`<div class="muted" style="font-size:11px;margin-top:4px">Prices use each player's edge over the <b>last startable</b> player at his position (value-over-next-available), not raw VORP. So 12 equally-good QBs for 12 teams price to ~$1 — you're guaranteed one — while a lone elite RB (everyone else a zero) commands the premium. The <b>Edge</b> column is that value-over-next-available.</div></div>`;
+  h+=`<div class="muted" style="font-size:11px;margin-top:4px">Prices use each player's edge over the <b>last startable</b> player (value-over-next-available, not raw VORP), on <b>risk-adjusted</b> points — a steady high-floor producer is worth more than a boom/bust, injury-prone one at the same projection. So 12 equal QBs for 12 teams price to ~$1 (guaranteed one), a lone elite RB commands the premium, and volatile RBs are nudged below safer WRs/QBs. Top compressed to observed clearing prices (~$70). <b>Edge</b> = risk-adjusted value-over-next-available.</div></div>`;
   // available table
   let rows=avail.concat(PLAYERS.filter(p=>!DR.owned[pid(p)]&&isK(p))).filter(p=>{
     if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
