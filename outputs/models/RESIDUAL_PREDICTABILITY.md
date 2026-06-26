@@ -1,0 +1,39 @@
+# Can any feature predict who beats/misses their projection? (2014-2025)
+
+The verdict (above / to / below expectation) IS the projection's own error. So if any
+feature predicts it, the projection is leaving signal on the table. `scripts/backtest_residual_features.py`
+— walk-forward projections every year, then walk-forward predict the verdict from EVERY
+draft-day feature we have (base + half-trend + opportunity + comps + injury-prior + risk).
+
+## Two findings
+
+### 1. The draftable pool systematically returns ~85% of projection
+Across 1,648 relevant player-seasons: **48% BELOW, 29% to expectation, 22% ABOVE**, mean
+actual/projection ratio ≈ **0.85** — roughly uniform across every feature tercile. This is a
+**selection/regression + injury effect**: you draft the highest-projected players, who as a
+group regress, get hurt, and lose games. It is NOT tied to any feature — it's a global level
+bias, which is exactly what the risk-adjustment + top compression in the Draft Room already
+correct (discount the top toward realistic clearing prices). (A small part is the proj_total =
+central×16 games assumption; the relevant pool averages slightly fewer.)
+
+### 2. WHO beats vs misses is NOT predictable
+| | value |
+|---|---|
+| Verdict accuracy (walk-forward) | **0.423** |
+| Majority-class baseline ("always BELOW") | 0.471 |
+| AUC BELOW / to_exp / ABOVE (one-vs-rest) | 0.53 / 0.56 / 0.54 |
+
+The model is **worse than guessing "BELOW" every time**, and every class AUC sits at ~chance.
+Throwing all 40+ features — including everything we engineered this project — at the residual
+yields no usable skill. The faint directional hints that do exist (higher floor / lower bust /
+durability `gw_prior` → slightly better outcomes; ~0.05 ratio spreads) are already baked into
+the risk-adjusted valuation.
+
+## Why this is the right answer
+The residual is dominated by **unforeseeable in-season injury and TD variance** — irreducible
+luck. This is the consistent thread of the whole project: we already extract the predictable
+signal (the projection), and the niche ideas (career comps, half-season trend, opportunity)
+add nothing to the *residual*. The lever that remains is not "more edge features" but
+**managing variance** — which is precisely why the risk-adjusted, scarcity-aware valuation
+(certainty-equivalent + VONA) is where the real, durable improvement lives, not in chasing
+another predictor of who will boom or bust.
