@@ -11,7 +11,7 @@ Keep the 3 best-surplus players per team (the rational keep). 3-yr cap doesn't b
 import os, json, csv, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 INFLATION = 3          # flat estimate of the finish-based keeper bump (champ +5 / top6 +3 / 7-11 +2 / last +0)
-WAIVER_BASE = 4        # assumed base keeper cost for players added off waivers (not in last draft)
+WAIVER_COST = 1        # league rule: waiver pickups are kept for $1, no inflation
 norm = lambda s: re.sub(r"\b(jr|sr|ii|iii|iv|v)\b", "", re.sub(r"[^a-z ]", "", str(s).lower())).replace("  ", " ").strip()
 _out = []; _print = print
 def print(*a, **k):
@@ -56,22 +56,23 @@ for r in drafts:
 # ---- per-team keeper prediction ----
 L = json.load(open(os.path.join(ROOT, "outputs", "espn_league.json")))
 print(f"Predicted 2026 keepers — {L.get('name')} ({L.get('size')} teams). "
-      f"cost = 2025 price + ~${INFLATION} inflation; value = calibrated board $; keep top-3 surplus.\n")
+      f"cost = 2025 price + ~${INFLATION} inflation (waiver pickups = $1, no inflation); "
+      f"value = calibrated board $; keep top-3 surplus.\n")
 for t in sorted(L.get("teams", []), key=lambda x: x["id"]):
     cand = []
     for p in t.get("roster", []):
         if p.get("pos") in ("K", "DST", "?"): continue
         k = norm(p.get("name") or ""); val = VAL.get((k, p.get("pos")))
         if val is None: continue
-        base = cost25.get(k); waiver = base is None
-        cost = round((WAIVER_BASE if waiver else max(base, 1)) + INFLATION)
+        base = cost25.get(k); waiver = base is None       # not in 2025 draft -> waiver pickup
+        cost = WAIVER_COST if waiver else round(max(base, 1) + INFLATION)
         cand.append((val - cost, p["name"], p["pos"], val, cost, keptyrs.get(k, 0), waiver))
     cand.sort(key=lambda x: -x[0])
     keep = [c for c in cand if c[0] > 0][:3]
     me = "  <-- YOU" if t["id"] == L.get("myTeamId") else ""
     print(f"[{t['id']:>2}] {str(t['name'])[:26]:26s}{me}")
     for surplus, nm, pos, val, cost, ky, wv in keep:
-        tag = f" (kept {ky}yr)" if ky else ""; w = " ~waiver-cost" if wv else ""
+        tag = f" (kept {ky}yr)" if ky else ""; w = " [$1 waiver keeper]" if wv else ""
         print(f"     KEEP  {pos:<3} {nm[:22]:22s} value ${val:>2}  cost ${cost:>2}  surplus +${surplus:>2}{tag}{w}")
     nxt = next((c for c in cand if c not in keep), None)
     if nxt: print(f"     next: {nxt[1]} (surplus {nxt[0]:+d})")

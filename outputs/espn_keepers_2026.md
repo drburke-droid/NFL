@@ -1,12 +1,12 @@
 # Predicted 2026 keepers — Kuhn and Friends
 
 ```
-Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = 2025 price + ~$3 inflation; value = calibrated board $; keep top-3 surplus.
+Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = 2025 price + ~$3 inflation (waiver pickups = $1, no inflation); value = calibrated board $; keep top-3 surplus.
 
 [ 1] A Useless Johnson         
+     KEEP  WR  Wan'Dale Robinson      value $27  cost $ 1  surplus +$26 [$1 waiver keeper]
      KEEP  QB  Justin Herbert         value $30  cost $ 8  surplus +$22
-     KEEP  WR  Wan'Dale Robinson      value $27  cost $ 7  surplus +$20 ~waiver-cost
-     KEEP  RB  Rico Dowdle            value $13  cost $ 7  surplus +$ 6 ~waiver-cost
+     KEEP  RB  Rico Dowdle            value $13  cost $ 1  surplus +$12 [$1 waiver keeper]
      next: Jalen Hurts (surplus +3)
 
 [ 2] K-Pop and Lock            
@@ -17,32 +17,33 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = 2025 price + ~$3 
 
 [ 3] Spitting away the chase   
      KEEP  RB  De'Von Achane          value $55  cost $ 9  surplus +$46 (kept 2yr)
-     KEEP  TE  Harold Fannin Jr.      value $11  cost $ 7  surplus +$ 4 ~waiver-cost
-     next: Juwan Johnson (surplus +0)
+     KEEP  TE  Harold Fannin Jr.      value $11  cost $ 1  surplus +$10 [$1 waiver keeper]
+     KEEP  TE  Juwan Johnson          value $ 7  cost $ 1  surplus +$ 6 [$1 waiver keeper]
+     next: Kayshon Boutte (surplus +0)
 
 [ 4] 3AM  No Limit             
      KEEP  RB  Jahmyr Gibbs           value $66  cost $38  surplus +$28 (kept 2yr)
      KEEP  RB  D'Andre Swift          value $29  cost $14  surplus +$15 (kept 1yr)
      KEEP  WR  Tee Higgins            value $26  cost $15  surplus +$11 (kept 1yr)
-     next: Drake Maye (surplus +3)
+     next: Dalton Schultz (surplus +7)
 
 [ 5] Saja Boys                   <-- YOU
      KEEP  QB  Josh Allen             value $54  cost $30  surplus +$24
+     KEEP  WR  Alec Pierce            value $11  cost $ 1  surplus +$10 [$1 waiver keeper]
      KEEP  WR  Ja'Marr Chase          value $62  cost $56  surplus +$ 6 (kept 1yr)
-     KEEP  WR  Alec Pierce            value $11  cost $ 7  surplus +$ 4 ~waiver-cost
-     next: Jake Ferguson (surplus -3)
+     next: Emanuel Wilson (surplus +0)
 
 [ 7] 65 Dolla Make You Holla   
      KEEP  WR  Puka Nacua             value $54  cost $ 9  surplus +$45 (kept 2yr)
      KEEP  RB  Javonte Williams       value $33  cost $16  surplus +$17
-     KEEP  TE  Brock Bowers           value $20  cost $12  surplus +$ 8 (kept 1yr)
-     next: Matthew Stafford (surplus +7)
+     KEEP  QB  Matthew Stafford       value $14  cost $ 1  surplus +$13 [$1 waiver keeper]
+     next: Brock Bowers (surplus +8)
 
 [ 8] Rectify this              
      KEEP  TE  Kyle Pitts Sr.         value $23  cost $ 4  surplus +$19 (kept 1yr)
      KEEP  WR  Brian Thomas Jr.       value $26  cost $10  surplus +$16 (kept 1yr)
      KEEP  WR  Courtland Sutton       value $26  cost $21  surplus +$ 5
-     next: Caleb Williams (surplus -2)
+     next: Romeo Doubs (surplus +0)
 
 [ 9] State your name           
      KEEP  WR  Jameson Williams       value $39  cost $ 6  surplus +$33 (kept 1yr)
