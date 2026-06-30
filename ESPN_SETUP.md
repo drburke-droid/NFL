@@ -32,6 +32,13 @@ stays private.
 
 ---
 
+## Historical draft results (2023-2025)
+The same Action also runs `scripts/fetch_espn_drafts.py`, which pulls your league's past
+**draft/auction results** to `outputs/espn_drafts.csv` (season, pick, team, owner, player,
+position, **bid $**, keeper). That's the real clearing-price history for your league — we can
+use it to calibrate the Draft Room's auction values to how your league actually drafts.
+(Run locally: `python scripts/fetch_espn_drafts.py`.)
+
 ## What gets imported
 League size, roster slots, auction budget, the team names, **your** team, and everyone's
 **keepers** (matched to our players by name + position, with their keeper $). The live Draft

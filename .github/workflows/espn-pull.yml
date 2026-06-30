@@ -27,15 +27,20 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - run: pip install requests
-      - name: Fetch ESPN league
+      - name: Fetch ESPN league settings + rosters (current season)
         env:
           ESPN_S2: ${{ secrets.ESPN_S2 }}
           ESPN_SWID: ${{ secrets.ESPN_SWID }}
-        run: python scripts/fetch_espn.py "${{ inputs.leagueId }}" "${{ inputs.season }}" "${{ inputs.teamId }}"
-      - name: Commit league JSON
+        run: python scripts/fetch_espn.py "${{ inputs.leagueId }}" "${{ inputs.season }}" "${{ inputs.teamId }}" || echo "settings pull failed (continuing)"
+      - name: Fetch historical draft results (2023-2025)
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+        run: python scripts/fetch_espn_drafts.py "${{ inputs.leagueId }}" 2023 2024 2025 || echo "drafts pull failed (continuing)"
+      - name: Commit pulled data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add outputs/espn_league.json
-          git commit -m "ESPN league pull (automated)" || { echo "no changes"; exit 0; }
+          git add -A outputs/espn_league.json outputs/espn_drafts.csv outputs/espn_drafts.json 2>/dev/null || true
+          git commit -m "ESPN pull (automated): league + historical drafts" || { echo "no changes"; exit 0; }
           git push
