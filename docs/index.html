@@ -671,7 +671,6 @@ function renderComps(){
 
 // ================= DRAFT ROOM =================
 const FLEXE=["RB","WR","TE"];
-const BID_CAP=80;   // this league has never paid >~$76; hard-cap expected prices at $80
 let DR=JSON.parse(localStorage.getItem("draftroom")||"null")||{teams:Array.from({length:12},(_,i)=>({name:"Team "+(i+1)})),me:0,owned:{}};
 const saveDR=()=>localStorage.setItem("draftroom",JSON.stringify(DR));
 function teamState(t){
@@ -706,15 +705,25 @@ function dynamicMarket(){
   });
   let sumV=0; avail.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max(raPts(p)-repl[p.position],0);});
   const disc=Math.max(money-spots,0), per=sumV>0?disc/sumV:0, price={};
-  // MARKET ANCHOR — calibrated to THIS league's real auctions (vs outputs/espn_drafts.csv,
-  // non-keeper 2023+2025): clearing prices top ~$72 and run ~10-15% below the raw curve in the
-  // mid. Slope 0.75 matches the level; we keep our risk-adjusted SHAPE above (the edge).
   const realistic=v=>v<=25?v:25+(v-25)*0.75;
-  avail.forEach(p=>{const id=pid(p),pos=p.position;
-    if(pos==="K"||pos==="DST"){price[id]=1;return;}
-    const v=Math.max(raPts(p)-repl[pos],0);
-    const raw=within.has(id)?Math.max(1,1+v*per):(v>0?1:0);
-    price[id]=Math.min(BID_CAP,Math.round(realistic(raw)));});   // hard cap — league never pays more
+  const H=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve&&KEEPERS_2026.bidcurve.length)?KEEPERS_2026.bidcurve:null;
+  if(H){
+    // EXPECTED PRICE via the league's own bidding history: rank available skill players by risk-
+    // adjusted value-over-replacement, then assign the $ the league has historically paid at that
+    // rank (recency-weighted, from outputs/espn_drafts.csv). No hard cap — the curve tops where the
+    // league actually tops (~$66); as more studs get kept, everyone shifts UP the curve.
+    const sk=avail.filter(p=>!["K","DST"].includes(p.position))
+      .map(p=>({id:pid(p),v:Math.max(raPts(p)-(repl[p.position]||0),0)})).sort((a,b)=>b.v-a.v);
+    avail.forEach(p=>{if(["K","DST"].includes(p.position))price[pid(p)]=1;});
+    sk.forEach((o,r)=>{price[o.id]=o.v<=0?1:(r<H.length?Math.max(1,H[r]):1);});
+  } else {
+    // fallback (no history file): risk-adjusted VONA with league-calibrated top compression
+    avail.forEach(p=>{const id=pid(p),pos=p.position;
+      if(pos==="K"||pos==="DST"){price[id]=1;return;}
+      const v=Math.max(raPts(p)-repl[pos],0);
+      const raw=within.has(id)?Math.max(1,1+v*per):(v>0?1:0);
+      price[id]=Math.round(realistic(raw));});
+  }
   return {price,repl,per,open,money,spots,scarce};
 }
 // intrinsic player value = clearing price in a NORMAL full-money auction (no keeper inflation),
@@ -733,7 +742,7 @@ function baseValue(){
   PLAYERS.forEach(p=>{const id=pid(p),pos=p.position;
     if(pos==="K"||pos==="DST"){val[id]=1;return;}
     const v=Math.max(raPts(p)-repl[pos],0),raw=within.has(id)?Math.max(1,1+v*per):(v>0?1:0);
-    val[id]=Math.min(BID_CAP,Math.round(realistic(raw)));});
+    val[id]=Math.round(realistic(raw));});
   return val;
 }
 function myVal(mkt){
@@ -931,8 +940,8 @@ function renderMockKeepers(){
   avail.sort((a,b)=>(BV[pid(b)]||0)-(BV[pid(a)]||0));
   document.getElementById("count").textContent=avail.length+" available";
   h+=`<div class="dr-panel"><h3>💰 Available pool — value vs expected purchase price (after keepers)</h3>
-    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = what the player is worth (clearing price in a normal full-money auction, league-calibrated). <b>Exp $</b> = expected purchase price given who's been kept and the money left in the room — hard-capped at $${BID_CAP} (this league never pays more). <b>Edge</b> = Value − Exp $ (positive = expected bargain). <b>Likely targeted by</b> = teams that can afford it <i>and</i> still need the slot, ranked by budget × that owner's 2023–25 spend at the position; QB/TE count only teams missing their one starter (backups go $1), K/DST are $1 streams.</div>
-    <table style="width:100%"><thead><tr><th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th title="intrinsic worth">Value</th><th title="expected purchase price (capped $${BID_CAP})">Exp $</th><th>My Max</th><th title="value − expected price">Edge</th><th class="l">Likely targeted by</th></tr></thead><tbody>`;
+    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = what the player is worth (risk-adjusted, full-money auction). <b>Exp $</b> = expected purchase price <b>simulated from your league's 2023–25 bidding</b>: players are ranked by value and priced at the $ this league has actually paid at each rank (top buys ~$60–66), so prices follow your real curve — and as more studs get kept, the best remaining players shift <i>up</i> the curve (no hard cap). <b>Edge</b> = Value − Exp $ (positive = expected bargain). <b>Likely targeted by</b> = teams that can afford it <i>and</i> still need the slot, ranked by budget × that owner's 2023–25 spend at the position; QB/TE count only teams missing their one starter (backups go $1), K/DST are $1 streams.</div>
+    <table style="width:100%"><thead><tr><th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th title="intrinsic worth (risk-adjusted)">Value</th><th title="expected purchase price, simulated from 2023–25 league bidding">Exp $</th><th>My Max</th><th title="value − expected price; + = bargain">Edge</th><th class="l">Likely targeted by</th></tr></thead><tbody>`;
   h+=avail.slice(0,150).map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1},val=BV[id]||0,exp=m.market,edge=val-exp,cont=contenders(p,exp,TS);
     const names=cont.slice(0,4).map(c=>`<span class="${c.i===DR.me?'maxbid':(c.starter?'':'muted')}">${DR.teams[c.i].name}${c.i===DR.me?' (YOU)':''}</span>`).join(", ");
     const ns=cont.filter(c=>c.starter).length;
@@ -947,7 +956,7 @@ function renderMockKeepers(){
   document.getElementById("mkPredict").onclick=resetPredicted;
   document.getElementById("mkClear").onclick=()=>{if(confirm("Clear all locked keepers?"))clearKeepers();};
   document.querySelectorAll(".mkchk").forEach(cb=>cb.onchange=()=>setKeeper(cb.dataset.pid,+cb.dataset.t,+cb.dataset.cost,cb.checked));
-  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card) — columns are our <b>value</b>, the <b>keeper cost</b>, and the <b>surplus</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price, capped $"+BID_CAP+"), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
+  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card) — columns are our <b>value</b>, the <b>keeper cost</b>, and the <b>surplus</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price <b>simulated from your league's 2023–25 bid history</b> — no hard cap; the curve tops where your league actually tops, ~$66, and the best remaining players shift up it as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
 }
 
 function render(){
