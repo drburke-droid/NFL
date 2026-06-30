@@ -700,10 +700,10 @@ function dynamicMarket(){
   });
   let sumV=0; avail.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max(raPts(p)-repl[p.position],0);});
   const disc=Math.max(money-spots,0), per=sumV>0?disc/sumV:0, price={};
-  // MARKET ANCHOR (the one empirical knob): a full-rational budget-constrained auction clears
-  // the top ~$95, but real markets top ~$70-73 (risk aversion + cash-flexibility). Compress
-  // the top toward observed clearing prices. (Shape is risk-adjusted above; this sets the level.)
-  const realistic=v=>v<=25?v:25+(v-25)*0.80;
+  // MARKET ANCHOR — calibrated to THIS league's real auctions (vs outputs/espn_drafts.csv,
+  // non-keeper 2023+2025): clearing prices top ~$72 and run ~10-15% below the raw curve in the
+  // mid. Slope 0.75 matches the level; we keep our risk-adjusted SHAPE above (the edge).
+  const realistic=v=>v<=25?v:25+(v-25)*0.75;
   avail.forEach(p=>{const id=pid(p),pos=p.position;
     if(pos==="K"||pos==="DST"){price[id]=1;return;}
     const v=Math.max(raPts(p)-repl[pos],0);
