@@ -2,9 +2,14 @@
 Pull your ESPN league's FINAL STANDINGS for past seasons (default 2023-2025)
 -> outputs/espn_standings.csv (+ .json).
 
-Why: keeper inflation is finish-based (champ +$5 / top-6 +$3 / 7-11 +$2 / last +$0 per
-keeper), so to compute each year's keeper costs we need each team's final rank. The 2025
-keepers' inflation is set by the 2024 finish; the 2026 keepers by the 2025 finish.
+Why: keeper inflation (per the ICO league rules PDF) is +$5 default per season, reduced by
+-$2 for any team that MISSED the playoffs (regular-season top 6), and a further -$3 for the
+one non-playoff owner who drafted the eventual champion in the side-draft. So:
+  made playoffs (rank<=6)                          -> +$5
+  missed playoffs                                  -> +$3
+  missed playoffs AND drafted the eventual champ   -> +$0
+The 2025 keepers' inflation is set by the 2024 result; the 2026 keepers by the 2025 result.
+The champ-picker is a side-draft outcome not in ESPN's API, so it's recorded manually below.
 
 Same private-league auth as fetch_espn.py (espn_s2 + SWID via env or data/espn_cookies.json).
 The mTeam view returns rankCalculatedFinal (1 = champion), playoffSeed, and the W-L record.
@@ -33,13 +38,22 @@ def cookies():
     return s2, swid
 
 
-def bump(rank, size):
-    """Finish-based per-keeper inflation: champ +5, top-6 +3, mid +2, last +0."""
+# Non-playoff owner who drafted the eventual champion in the side-draft -> extra -$3 (to +$0).
+# Not available from ESPN's API; supplied by the league. Keyed by the season being graded
+# (i.e. the inflation applies to that owner's keepers the FOLLOWING season).
+CHAMP_PICKER = {
+    2024: "espn98580191",  # A Useless Johnson's owner drafted Saja Boys (2024 champ) -> their 2025 keepers +$0
+    2025: "kdoggs80",       # Ugh...Yeah Football drafted Andy/3AM (2025 champ)        -> their 2026 keepers +$0
+}
+
+
+def bump(rank, owner=None, season=None):
+    """ICO per-keeper inflation: +$5 default, -$2 if missed playoffs (rank>6),
+    -$3 more if a non-playoff owner drafted the eventual champion."""
     if not rank: return None
-    if rank == 1: return 5
-    if rank <= 6: return 3
-    if rank >= size: return 0
-    return 2
+    if rank <= 6: return 5                                  # made playoffs
+    if owner and owner == CHAMP_PICKER.get(season): return 0  # non-playoff + picked the champ
+    return 3                                                # non-playoff
 
 
 def main():
@@ -63,14 +77,15 @@ def main():
         for t in teams:
             rec = (t.get("record") or {}).get("overall") or {}
             rank = t.get("rankCalculatedFinal") or t.get("playoffSeed") or t.get("rankFinal")
+            owner = next((members.get(o) for o in (t.get("owners") or []) if members.get(o)), None)
             srows.append({
                 "season": season, "team_id": t.get("id"),
                 "team": (t.get("name") or f"{t.get('location','')} {t.get('nickname','')}").strip(),
-                "owner": next((members.get(o) for o in (t.get("owners") or []) if members.get(o)), None),
+                "owner": owner,
                 "rank_final": rank, "playoff_seed": t.get("playoffSeed"),
                 "wins": rec.get("wins"), "losses": rec.get("losses"), "ties": rec.get("ties"),
                 "points_for": round(rec.get("pointsFor") or 0, 1), "points_against": round(rec.get("pointsAgainst") or 0, 1),
-                "keeper_bump": bump(rank, size),
+                "keeper_bump": bump(rank, owner, season),
             })
         srows.sort(key=lambda x: (x["rank_final"] or 99))
         rows.extend(srows)
