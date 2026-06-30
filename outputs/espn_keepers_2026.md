@@ -40,7 +40,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      next: Brock Bowers (surplus +1)
 
 [ 8] Rectify this                (2026 bump +$3)
-     KEEP  TE  Kyle Pitts Sr.         value $23  cost $ 4 (=$1 +$3)  surplus +$19 (kept 1yr)
+     KEEP  TE  Kyle Pitts             value $23  cost $ 4 (=$1 +$3)  surplus +$19 (kept 1yr)
      KEEP  WR  Brian Thomas Jr.       value $26  cost $15 (=$12 +$3)  surplus +$11 (kept 1yr)
      KEEP  WR  Courtland Sutton       value $26  cost $21 (=$18 +$3)  surplus +$ 5
      next: Romeo Doubs (surplus +0)
@@ -70,8 +70,8 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      next: Quinshon Judkins (surplus +5)
 
 [14] Paul's Perfect Team         (2026 bump +$5)
-     KEEP  RB  James Cook III         value $50  cost $26 (=$21 +$5)  surplus +$24
-     KEEP  RB  Travis Etienne Jr.     value $29  cost $ 8 (=$3 +$5)  surplus +$21
+     KEEP  RB  James Cook             value $50  cost $26 (=$21 +$5)  surplus +$24
+     KEEP  RB  Travis Etienne         value $29  cost $ 8 (=$3 +$5)  surplus +$21
      KEEP  WR  Amon-Ra St. Brown      value $68  cost $53 (=$48 +$5)  surplus +$15 (kept 1yr)
      next: Patrick Mahomes (surplus +5)
 
