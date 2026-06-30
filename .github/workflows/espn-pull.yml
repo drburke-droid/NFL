@@ -37,10 +37,15 @@ jobs:
           ESPN_S2: ${{ secrets.ESPN_S2 }}
           ESPN_SWID: ${{ secrets.ESPN_SWID }}
         run: python scripts/fetch_espn_drafts.py "${{ inputs.leagueId }}" 2023 2024 2025 || echo "drafts pull failed (continuing)"
+      - name: Fetch final standings (2023-2025, for keeper inflation)
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+        run: python scripts/fetch_espn_standings.py "${{ inputs.leagueId }}" 2023 2024 2025 || echo "standings pull failed (continuing)"
       - name: Commit pulled data
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          for f in outputs/espn_league.json outputs/espn_drafts.csv outputs/espn_drafts.json; do git add "$f" 2>/dev/null || true; done
+          for f in outputs/espn_league.json outputs/espn_drafts.csv outputs/espn_drafts.json outputs/espn_standings.csv outputs/espn_standings.json; do git add "$f" 2>/dev/null || true; done
           git commit -m "ESPN pull (automated): league + historical drafts" || { echo "no changes"; exit 0; }
           git push
