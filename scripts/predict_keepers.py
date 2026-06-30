@@ -2,16 +2,21 @@
 Predict each team's likely 2026 keepers in the ESPN league.
 
 For every player on a team's carried-over 2026 roster (outputs/espn_league.json):
-  keeper_cost_2026 = 2025 acquisition cost (outputs/espn_drafts.csv) + finish inflation
-  value_2026       = our calibrated Draft-Room auction value (risk-adjusted VONA)
-  surplus          = value - cost
-Keep the 3 best-surplus players per team (the rational keep). 3-yr cap doesn't bind for 2026
-(keepers started 2024). Inflation is estimated (needs 2025 final standings for exact $).
+  cost_2026  = TRUE keeper cost entering 2026 + that team's 2026 inflation bump
+  value_2026 = our calibrated Draft-Room auction value (risk-adjusted VONA)
+  surplus    = value - cost
+Keep the 3 best-surplus players per team (the rational keep).
+
+ICO keeper rule (real, from league PDF — see fetch_espn_standings.py):
+  inflation bump = +$5 default, -$2 if the owner MISSED the top-6 playoffs, -$3 more if a
+  non-playoff owner DRAFTED THE EVENTUAL CHAMPION (so playoff +$5 / non-playoff +$3 / picked
+  champ +$0). Undrafted/waiver keepers floor at $1 (and a first-time waiver keep is $1, no
+  inflation). The 2025 draft FORGOT to apply inflation, so a 2025 keeper's TRUE cost = its
+  recorded base + the keeping owner's 2024 bump. The 2026 cost then adds the current owner's
+  2025 bump on top of that true basis. 3-yr cap doesn't bind for 2026 (keepers started 2024).
 """
 import os, json, csv, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-INFLATION = 3          # flat estimate of the finish-based keeper bump (champ +5 / top6 +3 / 7-11 +2 / last +0)
-WAIVER_COST = 1        # league rule: waiver pickups are kept for $1, no inflation
 norm = lambda s: re.sub(r"\b(jr|sr|ii|iii|iv|v)\b", "", re.sub(r"[^a-z ]", "", str(s).lower())).replace("  ", " ").strip()
 _out = []; _print = print
 def print(*a, **k):
@@ -42,38 +47,50 @@ for p in P:
     e = max(ra(p) - repl[p["position"]], 0); raw = (1 + e * per) if p["name"] in within else 1
     VAL[(norm(p["name"]), p["position"])] = round(comp(raw))
 
-# ---- 2025 acquisition cost + keeper history ----
+# ---- standings -> per-owner inflation bump (made playoffs +5 / non-playoff +3 / picked-champ +0) ----
+stand = list(csv.DictReader(open(os.path.join(ROOT, "outputs", "espn_standings.csv"), encoding="utf-8")))
+bump = {}                                              # (season, owner) -> $ inflation
+for r in stand:
+    if r["keeper_bump"] not in ("", "None"):
+        bump[(r["season"], r["owner"])] = int(r["keeper_bump"])
+
+# ---- 2025 draft -> TRUE keeper cost basis entering 2026 ----
 drafts = list(csv.DictReader(open(os.path.join(ROOT, "outputs", "espn_drafts.csv"), encoding="utf-8")))
 def fbid(r):
     try: return float(r["bid"])
     except: return 0.0
-cost25 = {}; keptyrs = {}
+basis25 = {}; keptyrs = {}                             # norm(name) -> true 2025 cost ; keeper-year count
 for r in drafts:
-    k = norm(r["player"])
-    if r["season"] == "2025": cost25[k] = fbid(r) or 0
-    if str(r["keeper"]).lower() in ("true", "1"): keptyrs[k] = keptyrs.get(k, 0) + 1
+    k = norm(r["player"]); kept = str(r["keeper"]).lower() in ("true", "1")
+    if kept: keptyrs[k] = keptyrs.get(k, 0) + 1
+    if r["season"] == "2025":
+        base = max(fbid(r), 1)                         # undrafted/$0 floors at $1 (league rule)
+        # a 2025 keeper was entered at base but OWED its keeper-owner's 2024 bump -> add it back
+        basis25[k] = base + (bump.get(("2024", r["owner"]), 0) if kept else 0)
 
 # ---- per-team keeper prediction ----
 L = json.load(open(os.path.join(ROOT, "outputs", "espn_league.json")))
 print(f"Predicted 2026 keepers — {L.get('name')} ({L.get('size')} teams). "
-      f"cost = 2025 price + ~${INFLATION} inflation (waiver pickups = $1, no inflation); "
-      f"value = calibrated board $; keep top-3 surplus.\n")
+      f"cost = true 2025 keeper cost + this team's 2026 bump (made playoffs +$5 / non-playoff +$3 / "
+      f"picked-champ +$0); waiver pickups = $1, no inflation. value = calibrated board $; keep top-3 surplus.\n")
 for t in sorted(L.get("teams", []), key=lambda x: x["id"]):
+    owner = t.get("owner"); b26 = bump.get(("2025", owner), 0)
     cand = []
     for p in t.get("roster", []):
         if p.get("pos") in ("K", "DST", "?"): continue
         k = norm(p.get("name") or ""); val = VAL.get((k, p.get("pos")))
         if val is None: continue
-        base = cost25.get(k); waiver = base is None       # not in 2025 draft -> waiver pickup
-        cost = WAIVER_COST if waiver else round(max(base, 1) + INFLATION)
-        cand.append((val - cost, p["name"], p["pos"], val, cost, keptyrs.get(k, 0), waiver))
+        basis = basis25.get(k); waiver = basis is None    # not in 2025 draft -> waiver pickup
+        cost = 1 if waiver else round(basis + b26)
+        cand.append((val - cost, p["name"], p["pos"], val, cost, keptyrs.get(k, 0), waiver, basis or 0, b26))
     cand.sort(key=lambda x: -x[0])
     keep = [c for c in cand if c[0] > 0][:3]
     me = "  <-- YOU" if t["id"] == L.get("myTeamId") else ""
-    print(f"[{t['id']:>2}] {str(t['name'])[:26]:26s}{me}")
-    for surplus, nm, pos, val, cost, ky, wv in keep:
-        tag = f" (kept {ky}yr)" if ky else ""; w = " [$1 waiver keeper]" if wv else ""
-        print(f"     KEEP  {pos:<3} {nm[:22]:22s} value ${val:>2}  cost ${cost:>2}  surplus +${surplus:>2}{tag}{w}")
+    print(f"[{t['id']:>2}] {str(t['name'])[:26]:26s}{me}  (2026 bump +${b26})")
+    for surplus, nm, pos, val, cost, ky, wv, basis, bp in keep:
+        tag = f" (kept {ky}yr)" if ky else ""
+        brk = " [$1 waiver keeper]" if wv else f" (=${int(round(basis))} +${bp})"
+        print(f"     KEEP  {pos:<3} {nm[:22]:22s} value ${val:>2}  cost ${cost:>2}{brk}  surplus +${surplus:>2}{tag}")
     nxt = next((c for c in cand if c not in keep), None)
     if nxt: print(f"     next: {nxt[1]} (surplus {nxt[0]:+d})")
     print()
