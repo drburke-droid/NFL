@@ -724,6 +724,32 @@ function myVal(mkt){
     out[id]={market,maxBid,surplus:Math.round(surplus),needed};});
   return out;
 }
+// Import the JSON produced by scripts/fetch_espn.py: set league size/budget/roster, team
+// names, my team, and pre-load keepers (matched to our players by name+position).
+function importEspnLeague(txt){
+  let L; try{ L=JSON.parse(txt); }catch(e){ alert("Not valid JSON. Use the file from scripts/fetch_espn.py."); return; }
+  if(!L.teams||!L.teams.length){ alert("No teams found in that file."); return; }
+  const slots=L.roster_slots||{};
+  const startN=(slots.QB||0)+(slots.RB||0)+(slots.WR||0)+(slots.TE||0)+(slots.FLEX||0)+(slots.K||0)+(slots.DST||0)+(slots.OP||0);
+  cfg.teams=L.size||L.teams.length;
+  cfg.roster=Object.entries(slots).filter(([k])=>k!=="IR").reduce((a,[,v])=>a+v,0)||cfg.roster;
+  cfg.budget=(L.draft&&L.draft.auctionBudget)||cfg.budget;
+  // order teams by ESPN id; remember mapping id->index
+  const ordered=[...L.teams].sort((a,b)=>a.id-b.id);
+  const idx={}; DR.teams=ordered.map((t,i)=>{idx[t.id]=i; return {name:t.name||("Team "+(i+1))};});
+  DR.me=idx[L.myTeamId]!=null?idx[L.myTeamId]:0;
+  DR.owned={};
+  // build name+pos lookup over our player pool
+  const byNP={}; PLAYERS.forEach(p=>{byNP[norm(p.name)+"|"+p.position]=p;});
+  let matched=0, miss=[];
+  ordered.forEach((t,i)=>t.roster.forEach(r=>{ if(!r.keeper) return;
+    const p=byNP[norm(r.name)+"|"+r.pos]; if(!p){ miss.push(r.name); return; }
+    DR.owned[pid(p)]={t:i, price:(+r.keeper_price||1), kept:true}; matched++;
+  }));
+  save(); saveDR();
+  document.getElementById("espnStatus").innerHTML=`Imported <b>${L.name||"league"}</b>: ${DR.teams.length} teams, ${startN} starters + ${slots.BENCH||0} bench, $${cfg.budget} budget · ${matched} keepers loaded`+(miss.length?` · unmatched: ${miss.slice(0,6).join(", ")}${miss.length>6?"…":""}`:"");
+  render();
+}
 function renderDraftRoom(){
   document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
   const host=document.getElementById("draftroom");host.style.display="block";
@@ -734,7 +760,11 @@ function renderDraftRoom(){
     <span>My team: <select class="drsel" id="drMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
     <span>Assign next pick to: <select class="drsel" id="drAssign">${teamOpts}</select></span>
     <span class="muted">click a player's <b>Draft</b> to assign at that price · ✕ on a roster spot to undo</span>
-    <span style="flex:1"></span><button class="btn sm" id="drReset">Reset draft</button></div></div>`;
+    <span style="flex:1"></span>
+    <label class="btn sm up" for="espnFile" title="Import outputs/espn_league.json produced by scripts/fetch_espn.py">📥 Import ESPN league</label>
+    <input id="espnFile" type="file" accept=".json" style="display:none">
+    <button class="btn sm" id="drReset">Reset draft</button></div>
+    <div class="muted" id="espnStatus" style="font-size:11px;margin-top:4px"></div></div>`;
   // team strip
   h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=teamState(i);
     const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`<span class="dr-need act">${s.need[k]>1?s.need[k]+" ":""}${k}</span>`).join("")||'<span class="dr-need">full</span>';
@@ -785,6 +815,7 @@ function renderDraftRoom(){
     </tr>`;}).join("")+`</tbody></table>`;
   host.innerHTML=h;
   document.getElementById("drMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
+  document.getElementById("espnFile").onchange=e=>{const f=e.target.files[0]; if(f) f.text().then(importEspnLeague);};
   document.getElementById("drReset").onclick=()=>{if(confirm("Clear all keepers & picks?")){DR.owned={};saveDR();render();}};
   document.querySelectorAll(".dr-team[data-setme]").forEach(el=>el.onclick=ev=>{if(ev.target.closest(".drundo"))return;DR.me=+el.dataset.setme;saveDR();render();});
   document.querySelectorAll(".drundo").forEach(el=>el.onclick=ev=>{ev.stopPropagation();delete DR.owned[el.dataset.id];saveDR();render();});
