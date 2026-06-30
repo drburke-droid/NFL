@@ -69,6 +69,30 @@ for r in drafts:
         # a 2025 keeper was entered at base but OWED its keeper-owner's 2024 bump -> add it back
         basis25[k] = base + (bump.get(("2024", r["owner"]), 0) if kept else 0)
 
+# ---- per-owner positional spend tendencies (non-keeper auction picks, recency-weighted) ----
+YW = {"2023": 1, "2024": 2, "2025": 3}                 # recent behavior weighted more
+osp = {}; omax = {}                                    # owner -> {pos: weighted$} ; owner -> {pos: max single bid}
+for r in drafts:
+    if str(r["keeper"]).lower() in ("true", "1"): continue
+    pos = r["pos"]
+    if pos not in ("QB", "RB", "WR", "TE"): continue
+    o = r["owner"]; b = fbid(r); w = YW.get(r["season"], 1)
+    sp = osp.setdefault(o, {}); sp[pos] = sp.get(pos, 0) + b * w
+    mx = omax.setdefault(o, {}); mx[pos] = max(mx.get(pos, 0), b)
+shares = {}
+for o, sp in osp.items():
+    tot = sum(sp.values()) or 1
+    shares[o] = {p: sp.get(p, 0) / tot for p in ("QB", "RB", "WR", "TE")}
+avg = {p: (sum(shares[o][p] for o in shares) / len(shares) if shares else .25) for p in ("QB", "RB", "WR", "TE")}
+def tend_for(o):
+    sh = shares.get(o, {p: .25 for p in avg}); mx = omax.get(o, {})
+    clip = lambda v: round(max(0.4, min(2.2, v)), 2)
+    td = {p: clip(sh[p] / (avg[p] or .25)) for p in ("QB", "RB", "WR", "TE")}
+    td["payTE"] = mx.get("TE", 0) >= 15            # has paid up for a TE -> may chase a 2nd
+    td["eliteQB"] = mx.get("QB", 0) >= 18          # buys a real QB rather than streaming
+    td["top"] = max(list(mx.values()) or [0])      # their biggest single buy (stars-and-scrubs)
+    return td
+
 # ---- per-team keeper prediction ----
 L = json.load(open(os.path.join(ROOT, "outputs", "espn_league.json")))
 print(f"Predicted 2026 keepers — {L.get('name')} ({L.get('size')} teams). "
@@ -92,7 +116,8 @@ for t in sorted(L.get("teams", []), key=lambda x: x["id"]):
     keep = [c for c in cand if c["surplus"] > 0][:3]
     keepids = {c["pid"] for c in keep}
     for c in cand: c["predicted"] = c["pid"] in keepids    # the model's default top-3 keep
-    teams_out.append({"id": t["id"], "name": t.get("name"), "owner": owner, "bump2026": b26, "candidates": cand})
+    teams_out.append({"id": t["id"], "name": t.get("name"), "owner": owner, "bump2026": b26,
+                      "tend": tend_for(owner), "candidates": cand})
     me = "  <-- YOU" if t["id"] == L.get("myTeamId") else ""
     print(f"[{t['id']:>2}] {str(t['name'])[:26]:26s}{me}  (2026 bump +${b26})")
     for c in keep:

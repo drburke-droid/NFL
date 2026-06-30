@@ -850,12 +850,31 @@ function resetPredicted(){ for(const id in DR.owned){if(DR.owned[id].kept)delete
   KEEPERS_2026.teams.forEach((t,i)=>t.candidates.filter(c=>c.predicted).forEach(c=>{DR.owned[c.pid]={t:i,price:c.cost,kept:true};}));
   saveDR(); render(); }
 function clearKeepers(){ for(const id in DR.owned){if(DR.owned[id].kept)delete DR.owned[id];} saveDR(); render(); }
-// teams that still need this slot AND can afford the price — best-funded first (the likely bidders)
+// per-owner historical positional spend tendencies (multipliers vs league) from keepers_2026.js
+function ownerTend(i){return (KEEPERS_2026.teams[i]&&KEEPERS_2026.teams[i].tend)||{QB:1,RB:1,WR:1,TE:1,payTE:false,eliteQB:false,top:0};}
+function tendLabel(td){const o=[];["RB","WR","QB","TE"].forEach(p=>{if(td[p]>=1.3)o.push("loves "+p);else if(td[p]<=0.65)o.push("light "+p);});
+  if(td.eliteQB&&td.QB>=1.1)o.push("pays QB"); if(td.payTE&&td.TE>=1.2)o.push("pays TE");
+  return o.slice(0,3).join(" · ")||"balanced";}
+// realistic remaining demand for a MEANINGFUL (>$1) player at pos, given roster construction:
+// teams roster 2 QB but only 1 costs >$1; ~1 paid TE (backup is $1); K & DST are $1 streams;
+// the rest of the roster is split between RB/WR (starter + flex + bench depth).
+function posDemand(s,pos,td){
+  if(pos==="K"||pos==="DST") return 0;
+  if(pos==="QB") return s.need.QB>0?1:0;                          // their one real QB; backup is $1
+  if(pos==="TE") return s.need.TE>0?1:(td.payTE&&s.bench>0?0.3:0);// one paid TE; 2nd only if they pay TE
+  return (s.need[pos]>0?1:0)+(s.need.FLEX>0?0.6:0)+(s.bench>0?0.4:0); // RB/WR: starter+flex+bench stockpile
+}
+// likely bidders for player p at its market price: must be ABLE to afford it (and still fill the
+// roster) AND have real demand; ranked by affordability × the owner's positional tendency, with
+// genuine starter-need teams surfaced ahead of bench-depth buyers.
 function contenders(p,market,TS){const pos=p.position,list=[];
+  if(pos==="K"||pos==="DST") return [];                          // $1 streams — not a target
   for(let i=0;i<DR.teams.length;i++){const s=TS[i]; if(s.spotsLeft<=0)continue;
-    const needs=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
-    if((needs||s.bench>0)&&s.budget>=market) list.push({i,needs,power:s.spotsLeft>0?s.budget/s.spotsLeft:0});}
-  list.sort((a,b)=>(b.needs-a.needs)||(b.power-a.power)); return list;}
+    const td=ownerTend(i), d=posDemand(s,pos,td); if(d<=0)continue;
+    const afford=s.budget-(s.spotsLeft-1);                        // most they can bid & still fill roster at $1
+    if(afford<market)continue;
+    list.push({i,d,starter:d>=1,interest:afford*(td[pos]||1)*Math.min(1,0.5+0.5*d)});}
+  list.sort((a,b)=>(b.starter-a.starter)||(b.interest-a.interest)); return list;}
 function renderMockKeepers(){
   document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
   const host=document.getElementById("draftroom");host.style.display="block";
@@ -878,6 +897,7 @@ function renderMockKeepers(){
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:248px">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">2026 bump +$${t.bump2026} · <b>${kc}/3</b> kept · ${s.spotsLeft} spots</div>
+      <div class="muted" style="font-size:10px;font-style:italic" title="from 2023–25 auction spend by position (recency-weighted)">${tendLabel(t.tend||{})}</div>
       <div style="margin-top:4px">${rows}</div></div>`;}).join("")+`</div>`;
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).filter(p=>{
     if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
@@ -887,11 +907,12 @@ function renderMockKeepers(){
   avail.sort((a,b)=>((mv[pid(b)]||{}).surplus||0)-((mv[pid(a)]||{}).surplus||0));
   document.getElementById("count").textContent=avail.length+" available";
   h+=`<div class="dr-panel"><h3>💰 Best available value — after keepers (sorted by surplus)</h3>
-    <div class="muted" style="font-size:11px;margin-bottom:6px">Market $ = post-keeper clearing price. <b>Likely targeted by</b> = teams that still need the slot and can afford it, best-funded first — few names = you can wait; a crowd = bid early or lose him.</div>
+    <div class="muted" style="font-size:11px;margin-bottom:6px">Market $ = post-keeper clearing price. <b>Likely targeted by</b> = teams that can afford the price <i>and</i> still need the slot — ranked by budget × that owner's historical spend at the position (2023–25). Starter-need teams in normal text, bench-depth buyers muted; few names = you can wait, a crowd = bid early. QBs/TEs only count teams without their one starter (backups go for $1); K/DST are $1 streams.</div>
     <table style="width:100%"><thead><tr><th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th>Market $</th><th>My Max</th><th>Surplus</th><th class="l">Likely targeted by</th></tr></thead><tbody>`;
   h+=avail.slice(0,120).map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1,surplus:0},cont=contenders(p,m.market,TS);
-    const names=cont.slice(0,4).map(c=>`<span class="${c.i===DR.me?'maxbid':(c.needs?'':'muted')}">${DR.teams[c.i].name}${c.i===DR.me?' (YOU)':''}</span>`).join(", ");
-    const tag=!cont.length?'<span class="muted">no one can afford — bargain</span>':cont.length<=2?`<span class="scarce">only ${cont.length}</span> · ${names}`:`${cont.length} teams · ${names}`;
+    const names=cont.slice(0,4).map(c=>`<span class="${c.i===DR.me?'maxbid':(c.starter?'':'muted')}">${DR.teams[c.i].name}${c.i===DR.me?' (YOU)':''}</span>`).join(", ");
+    const ns=cont.filter(c=>c.starter).length;
+    const tag=!cont.length?'<span class="muted">no realistic suitor — bargain</span>':cont.length<=2?`<span class="scarce">thin (${cont.length})</span> · ${names}`:`${ns?ns+' need-fit':cont.length+' teams'} · ${names}`;
     return `<tr><td class="l"><span class="pos ${p.position}">${p.position}</span></td>
       <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span></td>
       <td>${Math.round(p.proj_pts)}</td><td class="base">$${m.market}</td><td class="maxbid">$${m.maxBid}</td>
@@ -902,7 +923,7 @@ function renderMockKeepers(){
   document.getElementById("mkPredict").onclick=resetPredicted;
   document.getElementById("mkClear").onclick=()=>{if(confirm("Clear all locked keepers?"))clearKeepers();};
   document.querySelectorAll(".mkchk").forEach(cb=>cb.onchange=()=>setKeeper(cb.dataset.pid,+cb.dataset.t,+cb.dataset.cost,cb.checked));
-  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team lists its keeper-eligible players ranked by <b>surplus</b> (board value − keeper cost); the predicted top-3 are pre-ticked. Tick 0–3 per team to lock keepers — the board below instantly recomputes clearing prices, your Max bids, and which rival teams can still chase each player. Carry the same keepers into 🏟️ Draft Room to run the live auction.";
+  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team lists its keeper-eligible players ranked by <b>surplus</b> (board value − keeper cost); the predicted top-3 are pre-ticked, and the italic line is that owner's historical positional lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 auction spend. Tick 0–3 per team to lock keepers — the board recomputes clearing prices, your Max bids, and the <b>likely bidders</b> for each player (modeled on roster construction: one paid QB &amp; TE per team, rest RB/WR; weighted by each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
 }
 
 function render(){
