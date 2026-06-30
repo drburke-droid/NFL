@@ -11,9 +11,8 @@ Usage:  python scripts/fetch_espn_drafts.py                 (2023 2024 2025)
         python scripts/fetch_espn_drafts.py 2022 2023 2024
         python scripts/fetch_espn_drafts.py <leagueId> 2023 2024 2025
 """
-import os, sys, json
+import os, sys, json, csv
 import requests
-import pandas as pd
 
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 LEAGUE_ID = 1211359110
@@ -78,15 +77,19 @@ def main():
               + (f", names matched {sum(1 for p in picks if pm.get(p.get('playerId')))}/{len(picks)}" if pm else " (no name map)"))
     if not rows:
         print("No draft data pulled."); sys.exit(1)
-    df = pd.DataFrame(rows).sort_values(["season", "overall_pick"])
-    df.to_csv(OUT_CSV, index=False); df.to_json(OUT_JSON, orient="records")
-    print(f"\nSaved {os.path.relpath(OUT_CSV)} ({len(df)} picks, {df.season.nunique()} seasons)")
-    for season in sorted(df.season.unique()):
-        s = df[df.season == season]
-        if s.bid.max() > 0:
+    rows.sort(key=lambda r: (r["season"], r["overall_pick"] or 0))
+    cols = ["season", "overall_pick", "round", "round_pick", "team", "owner", "player", "pos", "bid", "keeper"]
+    with open(OUT_CSV, "w", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=cols); w.writeheader(); w.writerows(rows)
+    json.dump(rows, open(OUT_JSON, "w"), indent=1)
+    seasons = sorted(set(r["season"] for r in rows))
+    print(f"\nSaved {os.path.relpath(OUT_CSV)} ({len(rows)} picks, {len(seasons)} seasons)")
+    for season in seasons:
+        s = [r for r in rows if r["season"] == season]
+        if max((r["bid"] or 0) for r in s) > 0:
             print(f"\n  {season} top auction prices:")
-            for _, r in s.sort_values("bid", ascending=False).head(8).iterrows():
-                print(f"    ${int(r.bid):>3}  {r.pos:<3} {str(r.player)[:22]:22s} -> {str(r.team)[:18]}")
+            for r in sorted(s, key=lambda r: -(r["bid"] or 0))[:8]:
+                print(f"    ${int(r['bid']):>3}  {r['pos']:<3} {str(r['player'])[:22]:22s} -> {str(r['team'])[:18]}")
 
 
 if __name__ == "__main__":
