@@ -1,0 +1,1675 @@
+{
+ "leagueId": 1211359110,
+ "season": 2026,
+ "myTeamId": 5,
+ "name": "Kuhn and Friends",
+ "size": 12,
+ "roster_slots": {
+  "QB": 1,
+  "RB": 2,
+  "WR": 2,
+  "TE": 1,
+  "DST": 1,
+  "K": 1,
+  "BENCH": 7,
+  "FLEX": 1
+ },
+ "scoringType": "H2H_POINTS",
+ "scoring_raw": [
+  {
+   "statId": 134,
+   "points": 0.0
+  },
+  {
+   "statId": 135,
+   "points": 0.0
+  },
+  {
+   "statId": 91,
+   "points": 0.0
+  },
+  {
+   "statId": 132,
+   "points": 0.0
+  },
+  {
+   "statId": 133,
+   "points": 0.0
+  },
+  {
+   "statId": 72,
+   "points": -1.0
+  },
+  {
+   "statId": 136,
+   "points": 0.0
+  },
+  {
+   "statId": 206,
+   "points": 2.0
+  },
+  {
+   "statId": 25,
+   "points": 6.0
+  },
+  {
+   "statId": 209,
+   "points": 1.0
+  },
+  {
+   "statId": 53,
+   "points": 1.0
+  },
+  {
+   "statId": 92,
+   "points": 0.0
+  },
+  {
+   "statId": 93,
+   "points": 6.0
+  },
+  {
+   "statId": 98,
+   "points": 0.0
+  },
+  {
+   "statId": 43,
+   "points": 6.0
+  },
+  {
+   "statId": 97,
+   "points": 0.0
+  },
+  {
+   "statId": 19,
+   "points": 2.0
+  },
+  {
+   "statId": 102,
+   "points": 6.0
+  },
+  {
+   "statId": 24,
+   "points": 0.1
+  },
+  {
+   "statId": 103,
+   "points": 6.0
+  },
+  {
+   "statId": 101,
+   "points": 6.0
+  },
+  {
+   "statId": 63,
+   "points": 6.0
+  },
+  {
+   "statId": 80,
+   "points": 3.0
+  },
+  {
+   "statId": 104,
+   "points": 6.0
+  },
+  {
+   "statId": 26,
+   "points": 2.0
+  },
+  {
+   "statId": 95,
+   "points": 0.0
+  },
+  {
+   "statId": 77,
+   "points": 4.0
+  },
+  {
+   "statId": 109,
+   "points": 0.0
+  },
+  {
+   "statId": 96,
+   "points": 0.0
+  },
+  {
+   "statId": 20,
+   "points": -1.0
+  },
+  {
+   "statId": 3,
+   "points": 0.04
+  },
+  {
+   "statId": 86,
+   "points": 1.0
+  },
+  {
+   "statId": 42,
+   "points": 0.1
+  },
+  {
+   "statId": 89,
+   "points": 0.0
+  },
+  {
+   "statId": 90,
+   "points": 0.0
+  },
+  {
+   "statId": 123,
+   "points": 0.0
+  },
+  {
+   "statId": 121,
+   "points": 0.0
+  },
+  {
+   "statId": 4,
+   "points": 6.0
+  },
+  {
+   "statId": 44,
+   "points": 2.0
+  },
+  {
+   "statId": 124,
+   "points": 0.0
+  },
+  {
+   "statId": 125,
+   "points": 0.0
+  },
+  {
+   "statId": 130,
+   "points": 0.0
+  },
+  {
+   "statId": 99,
+   "points": 0.0
+  },
+  {
+   "statId": 201,
+   "points": 6.0
+  },
+  {
+   "statId": 128,
+   "points": 0.0
+  },
+  {
+   "statId": 198,
+   "points": 5.0
+  },
+  {
+   "statId": 129,
+   "points": 0.0
+  }
+ ],
+ "draft": {
+  "auctionBudget": 200,
+  "isTradingEnabled": false,
+  "keeperCount": 3,
+  "keeperCountFuture": 3,
+  "keeperOrderType": "TRADITIONAL",
+  "leagueSubType": "NONE",
+  "orderType": "MANUAL",
+  "pickOrder": [
+   11,
+   8,
+   13,
+   9,
+   3,
+   12,
+   1,
+   2,
+   14,
+   5,
+   7,
+   4
+  ],
+  "timePerSelection": 90,
+  "type": "AUCTION"
+ },
+ "teams": [
+  {
+   "id": 1,
+   "name": "A Useless Johnson",
+   "abbrev": "ED",
+   "owner": "espn98580191",
+   "roster": [
+    {
+     "name": "Drake London",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 37
+    },
+    {
+     "name": "Jalen Hurts",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 19
+    },
+    {
+     "name": "Justin Herbert",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Wan'Dale Robinson",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 11
+    },
+    {
+     "name": "Rico Dowdle",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 13
+    },
+    {
+     "name": "Tyler Allgeier",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 2
+    },
+    {
+     "name": "Kyle Monangai",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 12
+    },
+    {
+     "name": "Jauan Jennings",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 2
+    },
+    {
+     "name": "Michael Wilson",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Ka'imi Fairbairn",
+     "pos": "K",
+     "slot": "K",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "George Kittle",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 24
+    },
+    {
+     "name": "Bijan Robinson",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 68
+    },
+    {
+     "name": "Chris Rodriguez Jr.",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Darren Waller",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Blake Corum",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "49ers D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    }
+   ]
+  },
+  {
+   "id": 2,
+   "name": "K-Pop and Lock",
+   "abbrev": "Rumi",
+   "owner": "eyedocjj",
+   "roster": [
+    {
+     "name": "Marvin Harrison Jr.",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 42
+    },
+    {
+     "name": "Derrick Henry",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 34
+    },
+    {
+     "name": "Ladd McConkey",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 4
+    },
+    {
+     "name": "Travis Kelce",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 7
+    },
+    {
+     "name": "Saquon Barkley",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 61
+    },
+    {
+     "name": "Cameron Dicker",
+     "pos": "K",
+     "slot": "K",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Chris Olave",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 15
+    },
+    {
+     "name": "Christian Kirk",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Luther Burden III",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Jaxson Dart",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Darnell Mooney",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Colston Loveland",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 15
+    },
+    {
+     "name": "Jerry Jeudy",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 35
+    },
+    {
+     "name": "Jacoby Brissett",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Tank Bigsby",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Panthers D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    }
+   ]
+  },
+  {
+   "id": 3,
+   "name": "Spitting away the chase",
+   "abbrev": "ONEI",
+   "owner": "funblood",
+   "roster": [
+    {
+     "name": "Chuba Hubbard",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 6
+    },
+    {
+     "name": "Rome Odunze",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 13
+    },
+    {
+     "name": "Baker Mayfield",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 20
+    },
+    {
+     "name": "Patriots D/ST",
+     "pos": "DST",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Kenny Gainwell",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 7
+    },
+    {
+     "name": "Kayshon Boutte",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Sam Darnold",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 8
+    },
+    {
+     "name": "Juwan Johnson",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Cairo Santos",
+     "pos": "K",
+     "slot": "K",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Christian Watson",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 14
+    },
+    {
+     "name": "Jayden Higgins",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "De'Von Achane",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 6
+    },
+    {
+     "name": "Nico Collins",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 28
+    },
+    {
+     "name": "Harold Fannin Jr.",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 7
+    },
+    {
+     "name": "Adonai Mitchell",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Vikings D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    }
+   ]
+  },
+  {
+   "id": 4,
+   "name": "3AM  No Limit",
+   "abbrev": "CST",
+   "owner": "espn14211458",
+   "roster": [
+    {
+     "name": "Jahmyr Gibbs",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 35
+    },
+    {
+     "name": "Tee Higgins",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 12
+    },
+    {
+     "name": "Garrett Wilson",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 23
+    },
+    {
+     "name": "D'Andre Swift",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 11
+    },
+    {
+     "name": "DK Metcalf",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 26
+    },
+    {
+     "name": "Cam Skattebo",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Drake Maye",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Stefon Diggs",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 11
+    },
+    {
+     "name": "Rhamondre Stevenson",
+     "pos": "RB",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 15
+    },
+    {
+     "name": "Isiah Pacheco",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Trevor Lawrence",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Andy Borregales",
+     "pos": "K",
+     "slot": "K",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Rams D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Dalton Schultz",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Dylan Sampson",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Taysom Hill",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 5
+    }
+   ]
+  },
+  {
+   "id": 5,
+   "name": "Saja Boys",
+   "abbrev": "KPOP",
+   "owner": "BobbyeddyB",
+   "roster": [
+    {
+     "name": "Josh Allen",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 27
+    },
+    {
+     "name": "Christian McCaffrey",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 49
+    },
+    {
+     "name": "Rashee Rice",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 27
+    },
+    {
+     "name": "Khalil Shakir",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 17
+    },
+    {
+     "name": "Seahawks D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": true,
+     "keeper_price": 15
+    },
+    {
+     "name": "Joe Burrow",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Justin Jefferson",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 52
+    },
+    {
+     "name": "Josh Jacobs",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 56
+    },
+    {
+     "name": "Ja'Marr Chase",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 53
+    },
+    {
+     "name": "Jake Ferguson",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Eddy Pineiro",
+     "pos": "K",
+     "slot": "K",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Alvin Kamara",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Emanuel Wilson",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Jayden Daniels",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Travis Hunter",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Alec Pierce",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": false,
+     "keeper_price": 0
+    }
+   ]
+  },
+  {
+   "id": 7,
+   "name": "65 Dolla Make You Holla",
+   "abbrev": "R8RS",
+   "owner": "silverandblack.27",
+   "roster": [
+    {
+     "name": "Puka Nacua",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 6
+    },
+    {
+     "name": "Jordan Love",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 6
+    },
+    {
+     "name": "Brock Bowers",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 9
+    },
+    {
+     "name": "CeeDee Lamb",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 65
+    },
+    {
+     "name": "Chase McLaughlin",
+     "pos": "K",
+     "slot": "K",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Broncos D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Ashton Jeanty",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 66
+    },
+    {
+     "name": "Javonte Williams",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 13
+    },
+    {
+     "name": "Jordan Addison",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 2
+    },
+    {
+     "name": "Matthew Stafford",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 6
+    },
+    {
+     "name": "Troy Franklin",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Tez Johnson",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Devin Singletary",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 8
+    },
+    {
+     "name": "Jaguars D/ST",
+     "pos": "DST",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 4
+    },
+    {
+     "name": "Steelers D/ST",
+     "pos": "DST",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "AJ Barner",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 61
+    }
+   ]
+  },
+  {
+   "id": 8,
+   "name": "Rectify this",
+   "abbrev": "BAMF",
+   "owner": "CBPainTrain",
+   "roster": [
+    {
+     "name": "DJ Moore",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 20
+    },
+    {
+     "name": "Brian Thomas Jr.",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 7
+    },
+    {
+     "name": "Caleb Williams",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 17
+    },
+    {
+     "name": "Omarion Hampton",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 42
+    },
+    {
+     "name": "Tyler Warren",
+     "pos": "TE",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Courtland Sutton",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 18
+    },
+    {
+     "name": "RJ Harvey",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 31
+    },
+    {
+     "name": "Zach Charbonnet",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 11
+    },
+    {
+     "name": "Brock Purdy",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Kyle Pitts Sr.",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Romeo Doubs",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 13
+    },
+    {
+     "name": "Colts D/ST",
+     "pos": "DST",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Lions D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Jason Myers",
+     "pos": "K",
+     "slot": "K",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Kareem Hunt",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 13
+    },
+    {
+     "name": "Jacory Croskey-Merritt",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 17
+    }
+   ]
+  },
+  {
+   "id": 9,
+   "name": "State your name",
+   "abbrev": "SCHI",
+   "owner": "espn19238790",
+   "roster": [
+    {
+     "name": "Kyren Williams",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 6
+    },
+    {
+     "name": "Jameson Williams",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "A.J. Brown",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 48
+    },
+    {
+     "name": "Eagles D/ST",
+     "pos": "DST",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 2
+    },
+    {
+     "name": "Xavier Worthy",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 22
+    },
+    {
+     "name": "Jared Goff",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Jayden Reed",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Rashid Shaheed",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Quentin Johnston",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 16
+    },
+    {
+     "name": "Hunter Henry",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Michael Carter",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Chris Boswell",
+     "pos": "K",
+     "slot": "K",
+     "keeper": true,
+     "keeper_price": 2
+    },
+    {
+     "name": "Joe Flacco",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Bills D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Tony Pollard",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 15
+    },
+    {
+     "name": "Trey McBride",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 6
+    }
+   ]
+  },
+  {
+   "id": 11,
+   "name": "Maple Maulers",
+   "abbrev": "!",
+   "owner": "Rohabhabibo",
+   "roster": [
+    {
+     "name": "Malik Nabers",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 28
+    },
+    {
+     "name": "Zay Flowers",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 13
+    },
+    {
+     "name": "Brandon Aubrey",
+     "pos": "K",
+     "slot": "K",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Breece Hall",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 19
+    },
+    {
+     "name": "Jakobi Meyers",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Bo Nix",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 9
+    },
+    {
+     "name": "Jaylen Warren",
+     "pos": "RB",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Aaron Jones Sr.",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 17
+    },
+    {
+     "name": "DeVonta Smith",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 17
+    },
+    {
+     "name": "Michael Pittman Jr.",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "J.K. Dobbins",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 18
+    },
+    {
+     "name": "Hollywood Brown",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 9
+    },
+    {
+     "name": "Cedric Tillman",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Luke Musgrave",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Bryce Young",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Saints D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    }
+   ]
+  },
+  {
+   "id": 12,
+   "name": "Micahroni and Cheese",
+   "abbrev": "CHZ",
+   "owner": "RPT0777",
+   "roster": [
+    {
+     "name": "Terry McLaurin",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Tyrone Tracy Jr.",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Jonathan Taylor",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 26
+    },
+    {
+     "name": "TreVeyon Henderson",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 26
+    },
+    {
+     "name": "Emeka Egbuka",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 22
+    },
+    {
+     "name": "Tetairoa McMillan",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 21
+    },
+    {
+     "name": "George Pickens",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 9
+    },
+    {
+     "name": "Dak Prescott",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 4
+    },
+    {
+     "name": "Dalton Kincaid",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 7
+    },
+    {
+     "name": "Packers D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Woody Marks",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 11
+    },
+    {
+     "name": "Oronde Gadsden",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 27
+    },
+    {
+     "name": "Cam Little",
+     "pos": "K",
+     "slot": "K",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Bhayshul Tuten",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 8
+    },
+    {
+     "name": "Browns D/ST",
+     "pos": "DST",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 2
+    },
+    {
+     "name": "C.J. Stroud",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 2
+    }
+   ]
+  },
+  {
+   "id": 13,
+   "name": "Ugh...Yeah...What...Football!",
+   "abbrev": "KUHN",
+   "owner": "kdoggs80",
+   "roster": [
+    {
+     "name": "Bucky Irving",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Jaxon Smith-Njigba",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 8
+    },
+    {
+     "name": "Lamar Jackson",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 32
+    },
+    {
+     "name": "Kenneth Walker III",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 32
+    },
+    {
+     "name": "Jaylen Waddle",
+     "pos": "WR",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 19
+    },
+    {
+     "name": "T.J. Hockenson",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 17
+    },
+    {
+     "name": "Chris Godwin Jr.",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Quinshon Judkins",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Jake Bates",
+     "pos": "K",
+     "slot": "K",
+     "keeper": true,
+     "keeper_price": 2
+    },
+    {
+     "name": "Trey Benson",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 7
+    },
+    {
+     "name": "Ravens D/ST",
+     "pos": "DST",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Chase Brown",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 11
+    },
+    {
+     "name": "Mike Evans",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Texans D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Michael Mayer",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Kirk Cousins",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": false,
+     "keeper_price": 0
+    }
+   ]
+  },
+  {
+   "id": 14,
+   "name": "Paul's Perfect Team",
+   "abbrev": "PPT",
+   "owner": "ESPNFAN25233150",
+   "roster": [
+    {
+     "name": "Davante Adams",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 31
+    },
+    {
+     "name": "Amon-Ra St. Brown",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 48
+    },
+    {
+     "name": "James Cook III",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 21
+    },
+    {
+     "name": "David Montgomery",
+     "pos": "RB",
+     "slot": "FLEX",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Harrison Butker",
+     "pos": "K",
+     "slot": "K",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Patrick Mahomes",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 18
+    },
+    {
+     "name": "Nick Chubb",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Ricky Pearsall",
+     "pos": "WR",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 17
+    },
+    {
+     "name": "Deebo Samuel",
+     "pos": "WR",
+     "slot": "WR",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Travis Etienne Jr.",
+     "pos": "RB",
+     "slot": "RB",
+     "keeper": true,
+     "keeper_price": 3
+    },
+    {
+     "name": "Dallas Goedert",
+     "pos": "TE",
+     "slot": "TE",
+     "keeper": true,
+     "keeper_price": 1
+    },
+    {
+     "name": "Theo Johnson",
+     "pos": "TE",
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "J.J. McCarthy",
+     "pos": "QB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 5
+    },
+    {
+     "name": "Devin Neal",
+     "pos": "RB",
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 10
+    },
+    {
+     "name": "Cowboys D/ST",
+     "pos": "DST",
+     "slot": "DST",
+     "keeper": false,
+     "keeper_price": 0
+    },
+    {
+     "name": "Tyler Shough",
+     "pos": "QB",
+     "slot": "QB",
+     "keeper": true,
+     "keeper_price": 10
+    }
+   ]
+  }
+ ]
+}
