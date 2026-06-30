@@ -1,0 +1,5 @@
+{
+  "_comment": "LOCAL PATH ONLY. Copy this file to data/espn_cookies.json (gitignored) and paste your two ESPN cookie values. For the remote/GitHub path, use repo Secrets instead (see ESPN_SETUP.md).",
+  "espn_s2": "PASTE_YOUR_espn_s2_VALUE_HERE",
+  "SWID": "{PASTE-YOUR-SWID-WITH-BRACES}"
+}
