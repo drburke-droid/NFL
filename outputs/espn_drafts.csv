@@ -1,0 +1,561 @@
+season,overall_pick,round,round_pick,team,owner,player,pos,bid,keeper
+2023,1,1,1,"Hahaha nice name, i got nothing",Rohabhabibo,Justin Jefferson,WR,75,False
+2023,2,1,2,De'Von Corleone,BobbyeddyB,Austin Ekeler,RB,62,False
+2023,3,1,3,"Hahaha nice name, i got nothing",Rohabhabibo,Justin Tucker,K,3,False
+2023,4,1,4,"Hahaha nice name, i got nothing",Rohabhabibo,Christian McCaffrey,RB,55,False
+2023,5,1,5,Nacua please!!,silverandblack.27,Ja'Marr Chase,WR,65,False
+2023,6,1,6,Team 2ITP 1ITS,ESPNFAN25233150,Tyreek Hill,WR,58,False
+2023,7,1,7,Rollin' with Ma-homes,eyedocjj,Davante Adams,WR,57,False
+2023,8,1,8,3AM  No Limit,espn14211458,Tee Higgins,WR,31,False
+2023,9,1,9,Team 2ITP 1ITS,ESPNFAN25233150,Eagles D/ST,DST,2,False
+2023,10,1,10,Rollin' with Ma-homes,eyedocjj,Derrick Henry,RB,52,False
+2023,11,1,11,Nacua please!!,silverandblack.27,Josh Jacobs,RB,41,False
+2023,12,1,12,Ugh...Yeah...What...Football!,kdoggs80,Josh Allen,QB,44,False
+2023,13,2,1,Etienne all the Capicola,CBPainTrain,Justin Fields,QB,22,False
+2023,14,2,2,Chasin' the Dream,RPT0777,49ers D/ST,DST,2,False
+2023,15,2,3,"Hahaha nice name, i got nothing",Rohabhabibo,Dolphins D/ST,DST,1,False
+2023,16,2,4,Chasin' the Dream,RPT0777,Saquon Barkley,RB,47,False
+2023,17,2,5,Hand motion @ 6 inches,espn19238790,Bijan Robinson,RB,53,False
+2023,18,2,6,You gonna get Butkus'd,funblood,Stefon Diggs,WR,49,False
+2023,19,2,7,Ugh...Yeah...What...Football!,kdoggs80,Tony Pollard,RB,52,False
+2023,20,2,8,Chasin' the Dream,RPT0777,Amon-Ra St. Brown,WR,39,False
+2023,21,2,9,De'Von Corleone,BobbyeddyB,Travis Kelce,TE,51,False
+2023,22,2,10,ILM Matt Ulrich aka Chest,espn98580191,Cooper Kupp,WR,36,False
+2023,23,2,11,Nacua please!!,silverandblack.27,Nick Chubb,RB,51,False
+2023,24,2,12,Rollin' with Ma-homes,eyedocjj,Joe Burrow,QB,30,False
+2023,25,3,1,Nacua please!!,silverandblack.27,Daniel Carlson,K,2,False
+2023,26,3,2,Etienne all the Capicola,CBPainTrain,Patrick Mahomes,QB,40,False
+2023,27,3,3,"Hahaha nice name, i got nothing",Rohabhabibo,David Montgomery,RB,11,False
+2023,28,3,4,Etienne all the Capicola,CBPainTrain,A.J. Brown,WR,42,False
+2023,29,3,5,De'Von Corleone,BobbyeddyB,CeeDee Lamb,WR,40,False
+2023,30,3,6,Team 2ITP 1ITS,ESPNFAN25233150,DeVonta Smith,WR,30,False
+2023,31,3,7,Hand motion @ 6 inches,espn19238790,Deebo Samuel,WR,19,False
+2023,32,3,8,Ugh...Yeah...What...Football!,kdoggs80,T.J. Hockenson,TE,24,False
+2023,33,3,9,Etienne all the Capicola,CBPainTrain,Travis Etienne Jr.,RB,39,False
+2023,34,3,10,3AM  No Limit,espn14211458,Jaylen Waddle,WR,34,False
+2023,35,3,11,ILM Matt Ulrich aka Chest,espn98580191,DeAndre Hopkins,WR,12,False
+2023,36,3,12,Team 2ITP 1ITS,ESPNFAN25233150,Jalen Hurts,QB,33,False
+2023,37,4,1,Nacua please!!,silverandblack.27,Commanders D/ST,DST,1,False
+2023,38,4,2,3AM  No Limit,espn14211458,Garrett Wilson,WR,42,False
+2023,39,4,3,You gonna get Butkus'd,funblood,Justin Herbert,QB,18,False
+2023,40,4,4,ILM Matt Ulrich aka Chest,espn98580191,Joe Mixon,RB,38,False
+2023,41,4,5,ILM Matt Ulrich aka Chest,espn98580191,DK Metcalf,WR,26,False
+2023,42,4,6,Team 2ITP 1ITS,ESPNFAN25233150,Diontae Johnson,WR,15,False
+2023,43,4,7,Chasin' the Dream,RPT0777,Aaron Jones,RB,25,False
+2023,44,4,8,3AM  No Limit,espn14211458,Jahmyr Gibbs,RB,32,False
+2023,45,4,9,Rollin' with Ma-homes,eyedocjj,Anthony Richardson,QB,2,False
+2023,46,4,10,Rollin' with Ma-homes,eyedocjj,Harrison Butker,K,2,False
+2023,47,4,11,Rollin' with Ma-homes,eyedocjj,Kenneth Walker III,RB,13,False
+2023,48,4,12,De'Von Corleone,BobbyeddyB,Evan McPherson,K,1,False
+2023,49,5,1,Ugh...Yeah...What...Football!,kdoggs80,Alvin Kamara,RB,18,False
+2023,50,5,2,Chasin' the Dream,RPT0777,Lamar Jackson,QB,31,False
+2023,51,5,3,"Hahaha nice name, i got nothing",Rohabhabibo,Kyle Pitts,TE,7,False
+2023,52,5,4,You gonna get Butkus'd,funblood,Rhamondre Stevenson,RB,26,False
+2023,53,5,5,Rollin' with Ma-homes,eyedocjj,Isiah Pacheco,RB,9,False
+2023,54,5,6,Team 2ITP 1ITS,ESPNFAN25233150,Pat Freiermuth,TE,1,False
+2023,55,5,7,Rollin' with Ma-homes,eyedocjj,DJ Moore,WR,17,False
+2023,56,5,8,You gonna get Butkus'd,funblood,Chris Olave,WR,30,False
+2023,57,5,9,ILM Matt Ulrich aka Chest,espn98580191,Calvin Ridley,WR,22,False
+2023,58,5,10,Chasin' the Dream,RPT0777,Jonathan Taylor,RB,21,False
+2023,59,5,11,Ugh...Yeah...What...Football!,kdoggs80,Keenan Allen,WR,24,False
+2023,60,5,12,3AM  No Limit,espn14211458,Najee Harris,RB,30,False
+2023,61,6,1,Chasin' the Dream,RPT0777,Mark Andrews,TE,20,False
+2023,62,6,2,Ugh...Yeah...What...Football!,kdoggs80,Tyler Bass,K,1,False
+2023,63,6,3,"Hahaha nice name, i got nothing",Rohabhabibo,Kirk Cousins,QB,8,False
+2023,64,6,4,ILM Matt Ulrich aka Chest,espn98580191,Dameon Pierce,RB,23,False
+2023,65,6,5,ILM Matt Ulrich aka Chest,espn98580191,James Conner,RB,14,False
+2023,66,6,6,Hand motion @ 6 inches,espn19238790,Alexander Mattison,RB,20,False
+2023,67,6,7,"Hahaha nice name, i got nothing",Rohabhabibo,D'Andre Swift,RB,6,False
+2023,68,6,8,Rollin' with Ma-homes,eyedocjj,Michael Wilson,WR,1,False
+2023,69,6,9,Hand motion @ 6 inches,espn19238790,Dalton Kincaid,TE,8,False
+2023,70,6,10,3AM  No Limit,espn14211458,Trevor Lawrence,QB,10,False
+2023,71,6,11,Hand motion @ 6 inches,espn19238790,Amari Cooper,WR,18,False
+2023,72,6,12,Team 2ITP 1ITS,ESPNFAN25233150,AJ Dillon,RB,4,False
+2023,73,7,1,Ugh...Yeah...What...Football!,kdoggs80,Chris Godwin,WR,16,False
+2023,74,7,2,Ugh...Yeah...What...Football!,kdoggs80,Cam Akers,RB,9,False
+2023,75,7,3,De'Von Corleone,BobbyeddyB,Mike Williams,WR,12,False
+2023,76,7,4,ILM Matt Ulrich aka Chest,espn98580191,Greg Zuerlein,K,1,False
+2023,77,7,5,Hand motion @ 6 inches,espn19238790,Jakobi Meyers,WR,1,False
+2023,78,7,6,Team 2ITP 1ITS,ESPNFAN25233150,J.K. Dobbins,RB,7,False
+2023,79,7,7,You gonna get Butkus'd,funblood,Rachaad White,RB,15,False
+2023,80,7,8,"Hahaha nice name, i got nothing",Rohabhabibo,Jalin Hyatt,WR,2,False
+2023,81,7,9,Etienne all the Capicola,CBPainTrain,Zay Flowers,WR,15,False
+2023,82,7,10,Etienne all the Capicola,CBPainTrain,Khalil Herbert,RB,10,False
+2023,83,7,11,De'Von Corleone,BobbyeddyB,Christian Watson,WR,11,False
+2023,84,7,12,Hand motion @ 6 inches,espn19238790,Christian Kirk,WR,9,False
+2023,85,8,1,Team 2ITP 1ITS,ESPNFAN25233150,Darnell Mooney,WR,5,False
+2023,86,8,2,Etienne all the Capicola,CBPainTrain,Bills D/ST,DST,2,False
+2023,87,8,3,"Hahaha nice name, i got nothing",Rohabhabibo,Tyler Lockett,WR,11,False
+2023,88,8,4,Nacua please!!,silverandblack.27,Darren Waller,TE,12,False
+2023,89,8,5,Hand motion @ 6 inches,espn19238790,Zach Charbonnet,RB,6,False
+2023,90,8,6,Team 2ITP 1ITS,ESPNFAN25233150,Javonte Williams,RB,8,False
+2023,91,8,7,Hand motion @ 6 inches,espn19238790,Breece Hall,RB,12,False
+2023,92,8,8,ILM Matt Ulrich aka Chest,espn98580191,Evan Engram,TE,2,False
+2023,93,8,9,Hand motion @ 6 inches,espn19238790,James Cook,RB,15,False
+2023,94,8,10,Rollin' with Ma-homes,eyedocjj,Antonio Gibson,RB,2,False
+2023,95,8,11,De'Von Corleone,BobbyeddyB,Mike Evans,WR,8,False
+2023,96,8,12,Etienne all the Capicola,CBPainTrain,Miles Sanders,RB,9,False
+2023,97,9,1,ILM Matt Ulrich aka Chest,espn98580191,Raheem Mostert,RB,4,False
+2023,98,9,2,Ugh...Yeah...What...Football!,kdoggs80,Jaxon Smith-Njigba,WR,3,False
+2023,99,9,3,"Hahaha nice name, i got nothing",Rohabhabibo,Treylon Burks,WR,3,False
+2023,100,9,4,You gonna get Butkus'd,funblood,Dalvin Cook,RB,11,False
+2023,101,9,5,Rollin' with Ma-homes,eyedocjj,George Kittle,TE,8,False
+2023,102,9,6,Team 2ITP 1ITS,ESPNFAN25233150,Jason Myers,K,1,False
+2023,103,9,7,You gonna get Butkus'd,funblood,Steelers D/ST,DST,1,False
+2023,104,9,8,Etienne all the Capicola,CBPainTrain,Brandon Aiyuk,WR,10,False
+2023,105,9,9,Nacua please!!,silverandblack.27,Jordan Addison,WR,6,False
+2023,106,9,10,Chasin' the Dream,RPT0777,Jake Elliott,K,1,False
+2023,107,9,11,Hand motion @ 6 inches,espn19238790,Terry McLaurin,WR,10,False
+2023,108,9,12,De'Von Corleone,BobbyeddyB,Patriots D/ST,DST,1,False
+2023,109,10,1,Team 2ITP 1ITS,ESPNFAN25233150,Brian Robinson Jr.,RB,3,False
+2023,110,10,2,Ugh...Yeah...What...Football!,kdoggs80,Saints D/ST,DST,1,False
+2023,111,10,3,You gonna get Butkus'd,funblood,Marvin Mims Jr.,WR,5,False
+2023,112,10,4,ILM Matt Ulrich aka Chest,espn98580191,Daniel Jones,QB,1,False
+2023,113,10,5,Hand motion @ 6 inches,espn19238790,Riley Patterson,K,1,False
+2023,114,10,6,Team 2ITP 1ITS,ESPNFAN25233150,Cole Kmet,TE,1,False
+2023,115,10,7,You gonna get Butkus'd,funblood,George Pickens,WR,7,False
+2023,116,10,8,"Hahaha nice name, i got nothing",Rohabhabibo,Jerry Jeudy,WR,9,False
+2023,117,10,9,Etienne all the Capicola,CBPainTrain,Brandon McManus,K,1,False
+2023,118,10,10,De'Von Corleone,BobbyeddyB,Skyy Moore,WR,2,False
+2023,119,10,11,Team 2ITP 1ITS,ESPNFAN25233150,Drake London,WR,7,False
+2023,120,10,12,De'Von Corleone,BobbyeddyB,De'Von Achane,RB,1,False
+2023,121,11,1,Nacua please!!,silverandblack.27,Deshaun Watson,QB,7,False
+2023,122,11,2,3AM  No Limit,espn14211458,Aaron Rodgers,QB,2,False
+2023,123,11,3,"Hahaha nice name, i got nothing",Rohabhabibo,Samaje Perine,RB,5,False
+2023,124,11,4,Team 2ITP 1ITS,ESPNFAN25233150,Brandin Cooks,WR,8,False
+2023,125,11,5,Hand motion @ 6 inches,espn19238790,Cowboys D/ST,DST,1,False
+2023,126,11,6,Team 2ITP 1ITS,ESPNFAN25233150,Geno Smith,QB,1,False
+2023,127,11,7,You gonna get Butkus'd,funblood,Dallas Goedert,TE,9,False
+2023,128,11,8,You gonna get Butkus'd,funblood,Tank Bigsby,RB,4,False
+2023,129,11,9,Chasin' the Dream,RPT0777,Jaylen Warren,RB,2,False
+2023,130,11,10,Chasin' the Dream,RPT0777,Tua Tagovailoa,QB,1,False
+2023,131,11,11,3AM  No Limit,espn14211458,Michael Pittman Jr.,WR,3,False
+2023,132,11,12,Hand motion @ 6 inches,espn19238790,Dak Prescott,QB,8,False
+2023,133,12,1,You gonna get Butkus'd,funblood,Jahan Dotson,WR,9,False
+2023,134,12,2,Chasin' the Dream,RPT0777,Gabe Davis,WR,4,False
+2023,135,12,3,ILM Matt Ulrich aka Chest,espn98580191,Jamaal Williams,RB,5,False
+2023,136,12,4,3AM  No Limit,espn14211458,Marquise Brown,WR,2,False
+2023,137,12,5,Hand motion @ 6 inches,espn19238790,Quentin Johnston,WR,8,False
+2023,138,12,6,You gonna get Butkus'd,funblood,Graham Gano,K,1,False
+2023,139,12,7,Rollin' with Ma-homes,eyedocjj,Browns D/ST,DST,1,False
+2023,140,12,8,Etienne all the Capicola,CBPainTrain,Juwan Johnson,TE,1,False
+2023,141,12,9,Nacua please!!,silverandblack.27,Jerick McKinnon,RB,2,False
+2023,142,12,10,3AM  No Limit,espn14211458,David Njoku,TE,1,False
+2023,143,12,11,De'Von Corleone,BobbyeddyB,Kenny Pickett,QB,1,False
+2023,144,12,12,Nacua please!!,silverandblack.27,Russell Wilson,QB,1,False
+2023,145,13,1,Hand motion @ 6 inches,espn19238790,Jared Goff,QB,2,False
+2023,146,13,2,Nacua please!!,silverandblack.27,Courtland Sutton,WR,5,False
+2023,147,13,3,ILM Matt Ulrich aka Chest,espn98580191,Ravens D/ST,DST,1,False
+2023,148,13,4,3AM  No Limit,espn14211458,Rashaad Penny,RB,4,False
+2023,149,13,5,Rollin' with Ma-homes,eyedocjj,Tyjae Spears,RB,1,False
+2023,150,13,6,Etienne all the Capicola,CBPainTrain,Kenneth Gainwell,RB,1,False
+2023,151,13,7,ILM Matt Ulrich aka Chest,espn98580191,Elijah Moore,WR,2,False
+2023,152,13,8,3AM  No Limit,espn14211458,Roschon Johnson,RB,4,False
+2023,153,13,9,De'Von Corleone,BobbyeddyB,Deuce Vaughn,RB,1,False
+2023,154,13,10,Nacua please!!,silverandblack.27,Gerald Everett,TE,1,False
+2023,155,13,11,Ugh...Yeah...What...Football!,kdoggs80,Matthew Stafford,QB,1,False
+2023,156,13,12,De'Von Corleone,BobbyeddyB,Michael Thomas,WR,4,False
+2023,157,14,1,ILM Matt Ulrich aka Chest,espn98580191,Tyler Higbee,TE,3,False
+2023,158,14,2,3AM  No Limit,espn14211458,JuJu Smith-Schuster,WR,2,False
+2023,159,14,3,Ugh...Yeah...What...Football!,kdoggs80,Kadarius Toney,WR,3,False
+2023,160,14,4,You gonna get Butkus'd,funblood,Elijah Mitchell,RB,2,False
+2023,161,14,5,De'Von Corleone,BobbyeddyB,Nico Collins,WR,2,False
+2023,162,14,6,3AM  No Limit,espn14211458,Dalton Schultz,TE,1,False
+2023,163,14,7,De'Von Corleone,BobbyeddyB,Taysom Hill,TE,1,False
+2023,164,14,8,Etienne all the Capicola,CBPainTrain,Allen Lazard,WR,2,False
+2023,165,14,9,Ugh...Yeah...What...Football!,kdoggs80,K.J. Osborn,WR,1,False
+2023,166,14,10,Nacua please!!,silverandblack.27,Odell Beckham Jr.,WR,3,False
+2023,167,14,11,You gonna get Butkus'd,funblood,Brock Purdy,QB,4,False
+2023,168,14,12,You gonna get Butkus'd,funblood,Sam LaPorta,TE,4,False
+2023,169,15,1,Rollin' with Ma-homes,eyedocjj,Irv Smith Jr.,TE,1,False
+2023,170,15,2,Etienne all the Capicola,CBPainTrain,Dawson Knox,TE,1,False
+2023,171,15,3,Etienne all the Capicola,CBPainTrain,Jonathan Mingo,WR,2,False
+2023,172,15,4,3AM  No Limit,espn14211458,Jets D/ST,DST,1,False
+2023,173,15,5,De'Von Corleone,BobbyeddyB,Deon Jackson,RB,2,False
+2023,174,15,6,Chasin' the Dream,RPT0777,Romeo Doubs,WR,2,False
+2023,175,15,7,Ugh...Yeah...What...Football!,kdoggs80,Chigoziem Okonkwo,TE,1,False
+2023,176,15,8,"Hahaha nice name, i got nothing",Rohabhabibo,Rondale Moore,WR,1,False
+2023,177,15,9,ILM Matt Ulrich aka Chest,espn98580191,Ryan Tannehill,QB,1,False
+2023,178,15,10,Rollin' with Ma-homes,eyedocjj,Marquez Valdes-Scantling,WR,1,False
+2023,179,15,11,Etienne all the Capicola,CBPainTrain,Seahawks D/ST,DST,1,False
+2023,180,15,12,Chasin' the Dream,RPT0777,Jameson Williams,WR,1,False
+2023,181,16,1,3AM  No Limit,espn14211458,Younghoe Koo,K,1,False
+2023,182,16,2,Nacua please!!,silverandblack.27,DJ Chark Jr.,WR,1,False
+2023,183,16,3,Ugh...Yeah...What...Football!,kdoggs80,Adam Thielen,WR,1,False
+2023,184,16,4,"Hahaha nice name, i got nothing",Rohabhabibo,Michael Gallup,WR,1,False
+2023,185,16,5,Rollin' with Ma-homes,eyedocjj,Zay Jones,WR,1,False
+2023,186,16,6,Chasin' the Dream,RPT0777,Jeff Wilson Jr.,RB,1,False
+2023,187,16,7,Nacua please!!,silverandblack.27,Ezekiel Elliott,RB,1,False
+2023,188,16,8,Ugh...Yeah...What...Football!,kdoggs80,Tyler Allgeier,RB,1,False
+2023,189,16,9,"Hahaha nice name, i got nothing",Rohabhabibo,Devin Singletary,RB,1,False
+2023,190,16,10,Chasin' the Dream,RPT0777,Tyler Boyd,WR,1,False
+2023,191,16,11,Nacua please!!,silverandblack.27,Mack Hollins,WR,1,False
+2023,192,16,12,Chasin' the Dream,RPT0777,Puka Nacua,WR,1,False
+2024,1,1,1,Rolling with Younghoes,espn98580191,Trey McBride,TE,6,True
+2024,2,1,2,Rolling with Younghoes,espn98580191,Raheem Mostert,RB,9,True
+2024,3,1,3,Rolling with Younghoes,espn98580191,Evan Engram,TE,7,True
+2024,4,1,4,To be A. Rich I need a Pacheco,eyedocjj,Brandon Aiyuk,WR,13,True
+2024,5,1,5,To be A. Rich I need a Pacheco,eyedocjj,Isiah Pacheco,RB,12,True
+2024,6,1,6,To be A. Rich I need a Pacheco,eyedocjj,Anthony Richardson,QB,5,True
+2024,7,1,7,We call this the hail mary!,funblood,C.J. Stroud,QB,4,True
+2024,8,1,8,We call this the hail mary!,funblood,Sam LaPorta,TE,7,True
+2024,9,1,9,We call this the hail mary!,funblood,Tank Dell,WR,4,True
+2024,10,1,10,3AM  No Limit,espn14211458,Jahmyr Gibbs,RB,35,True
+2024,11,1,11,3AM  No Limit,espn14211458,Garrett Wilson,WR,45,True
+2024,12,2,1,3AM  No Limit,espn14211458,Michael Pittman Jr.,WR,6,True
+2024,13,2,2,Lucero's Bail Bonds,BobbyeddyB,Kyren Williams,RB,6,True
+2024,14,2,3,Lucero's Bail Bonds,BobbyeddyB,De'Von Achane,RB,6,True
+2024,15,2,4,Lucero's Bail Bonds,BobbyeddyB,CeeDee Lamb,WR,45,True
+2024,16,2,5,The Replacements,silverandblack.27,Puka Nacua,WR,6,True
+2024,17,2,6,The Replacements,silverandblack.27,Zamir White,RB,6,True
+2024,18,2,7,The Replacements,silverandblack.27,Jordan Love,QB,6,True
+2024,19,2,8,Etienne all the Capicola,CBPainTrain,DJ Moore,WR,20,True
+2024,20,2,9,Etienne all the Capicola,CBPainTrain,Zay Flowers,WR,18,True
+2024,21,2,10,Da'Kine Bail Bonds,espn19238790,Bijan Robinson,RB,58,True
+2024,22,2,11,Da'Kine Bail Bonds,espn19238790,Breece Hall,RB,17,True
+2024,23,3,1,"Hahaha nice name, i got nothing",Rohabhabibo,D'Andre Swift,RB,8,True
+2024,24,3,2,"Hahaha nice name, i got nothing",Rohabhabibo,Kyle Pitts,TE,9,True
+2024,25,3,3,"Hahaha nice name, i got nothing",Rohabhabibo,Christian McCaffrey,RB,57,True
+2024,26,3,4,Lambeau Calrissian,RPT0777,Saquon Barkley,RB,52,True
+2024,27,3,5,Lambeau Calrissian,RPT0777,Amon-Ra St. Brown,WR,44,True
+2024,28,3,6,Lambeau Calrissian,RPT0777,Jonathan Taylor,RB,26,True
+2024,29,3,7,Ugh...Yeah...What...Football!,kdoggs80,Rashee Rice,WR,6,True
+2024,30,3,8,Ugh...Yeah...What...Football!,kdoggs80,Alvin Kamara,RB,23,True
+2024,31,3,9,Ugh...Yeah...What...Football!,kdoggs80,Jaxon Smith-Njigba,WR,8,True
+2024,32,3,10,Lambeau Calrissian,RPT0777,Brandon Aubrey,K,3,False
+2024,33,3,11,Lucero's Bail Bonds,BobbyeddyB,Nico Collins,WR,28,False
+2024,34,4,1,Lucero's Bail Bonds,BobbyeddyB,Tyreek Hill,WR,57,False
+2024,35,4,2,We call this the hail mary!,funblood,Ja'Marr Chase,WR,53,False
+2024,36,4,3,The Replacements,silverandblack.27,Justin Tucker,K,1,False
+2024,37,4,4,Lucero's Bail Bonds,BobbyeddyB,Josh Allen,QB,29,False
+2024,38,4,5,Ugh...Yeah...What...Football!,kdoggs80,Justin Jefferson,WR,52,False
+2024,39,4,6,Etienne all the Capicola,CBPainTrain,49ers D/ST,DST,1,False
+2024,40,4,7,The Replacements,silverandblack.27,Jalen Hurts,QB,31,False
+2024,41,4,8,"Hahaha nice name, i got nothing",Rohabhabibo,Malik Nabers,WR,28,False
+2024,42,4,9,To be A. Rich I need a Pacheco,eyedocjj,James Conner,RB,17,False
+2024,43,4,10,To be A. Rich I need a Pacheco,eyedocjj,Derrick Henry,RB,34,False
+2024,44,4,11,"Hahaha nice name, i got nothing",Rohabhabibo,Travis Kelce,TE,21,False
+2024,45,5,1,Ugh...Yeah...What...Football!,kdoggs80,Cowboys D/ST,DST,1,False
+2024,46,5,2,To be A. Rich I need a Pacheco,eyedocjj,Davante Adams,WR,37,False
+2024,47,5,3,The Replacements,silverandblack.27,Dolphins D/ST,DST,1,False
+2024,48,5,4,To be A. Rich I need a Pacheco,eyedocjj,Harrison Butker,K,4,False
+2024,49,5,5,To be A. Rich I need a Pacheco,eyedocjj,Marvin Harrison Jr.,WR,42,False
+2024,50,5,6,Etienne all the Capicola,CBPainTrain,Xavier Worthy,WR,15,False
+2024,51,5,7,To be A. Rich I need a Pacheco,eyedocjj,Aaron Rodgers,QB,3,False
+2024,52,5,8,Lambeau Calrissian,RPT0777,Patrick Mahomes,QB,22,False
+2024,53,5,9,Rolling with Younghoes,espn98580191,Rhamondre Stevenson,RB,7,False
+2024,54,5,10,The Replacements,silverandblack.27,Brock Bowers,TE,9,False
+2024,55,5,11,Etienne all the Capicola,CBPainTrain,Mark Andrews,TE,12,False
+2024,56,6,1,Rolling with Younghoes,espn98580191,A.J. Brown,WR,55,False
+2024,57,6,2,Etienne all the Capicola,CBPainTrain,Travis Etienne Jr.,RB,44,False
+2024,58,6,3,Etienne all the Capicola,CBPainTrain,Caleb Williams,QB,17,False
+2024,59,6,4,"Hahaha nice name, i got nothing",Rohabhabibo,Jake Elliott,K,3,False
+2024,60,6,5,Da'Kine Bail Bonds,espn19238790,Keenan Allen,WR,11,False
+2024,61,6,6,"Hahaha nice name, i got nothing",Rohabhabibo,Rome Odunze,WR,9,False
+2024,62,6,7,To be A. Rich I need a Pacheco,eyedocjj,Dalton Kincaid,TE,19,False
+2024,63,6,8,"Hahaha nice name, i got nothing",Rohabhabibo,Joe Burrow,QB,11,False
+2024,64,6,9,Rolling with Younghoes,espn98580191,James Cook,RB,29,False
+2024,65,6,10,Ugh...Yeah...What...Football!,kdoggs80,Lamar Jackson,QB,21,False
+2024,66,6,11,Lucero's Bail Bonds,BobbyeddyB,George Kittle,TE,15,False
+2024,67,7,1,We call this the hail mary!,funblood,Chris Olave,WR,41,False
+2024,68,7,2,Rolling with Younghoes,espn98580191,Browns D/ST,DST,1,False
+2024,69,7,3,Etienne all the Capicola,CBPainTrain,Cole Kmet,TE,2,False
+2024,70,7,4,"Hahaha nice name, i got nothing",Rohabhabibo,Jets D/ST,DST,5,False
+2024,71,7,5,Lambeau Calrissian,RPT0777,Jerry Jeudy,WR,4,False
+2024,72,7,6,Etienne all the Capicola,CBPainTrain,Brian Robinson Jr.,RB,6,False
+2024,73,7,7,To be A. Rich I need a Pacheco,eyedocjj,Ladd McConkey,WR,4,False
+2024,74,7,8,3AM  No Limit,espn14211458,Chris Godwin,WR,11,False
+2024,75,7,9,Ugh...Yeah...What...Football!,kdoggs80,Josh Jacobs,RB,37,False
+2024,76,7,10,Lucero's Bail Bonds,BobbyeddyB,Ravens D/ST,DST,3,False
+2024,77,7,11,Da'Kine Bail Bonds,espn19238790,Keon Coleman,WR,4,False
+2024,78,8,1,Ugh...Yeah...What...Football!,kdoggs80,Evan McPherson,K,1,False
+2024,79,8,2,3AM  No Limit,espn14211458,Greg Zuerlein,K,2,False
+2024,80,8,3,3AM  No Limit,espn14211458,Calvin Ridley,WR,13,False
+2024,81,8,4,3AM  No Limit,espn14211458,Tee Higgins,WR,12,False
+2024,82,8,5,3AM  No Limit,espn14211458,Diontae Johnson,WR,9,False
+2024,83,8,6,The Replacements,silverandblack.27,Kenneth Walker III,RB,33,False
+2024,84,8,7,The Replacements,silverandblack.27,Mike Evans,WR,37,False
+2024,85,8,8,The Replacements,silverandblack.27,Deebo Samuel Sr.,WR,25,False
+2024,86,8,9,We call this the hail mary!,funblood,Joe Mixon,RB,30,False
+2024,87,8,10,To be A. Rich I need a Pacheco,eyedocjj,Bears D/ST,DST,2,False
+2024,88,8,11,Rolling with Younghoes,espn98580191,Younghoe Koo,K,2,False
+2024,89,9,1,We call this the hail mary!,funblood,Rachaad White,RB,36,False
+2024,90,9,2,Rolling with Younghoes,espn98580191,DK Metcalf,WR,26,False
+2024,91,9,3,The Replacements,silverandblack.27,Amari Cooper,WR,11,False
+2024,92,9,4,Lambeau Calrissian,RPT0777,Terry McLaurin,WR,10,False
+2024,93,9,5,Da'Kine Bail Bonds,espn19238790,Jaylen Waddle,WR,18,False
+2024,94,9,6,3AM  No Limit,espn14211458,Jaylen Warren,RB,2,False
+2024,95,9,7,The Replacements,silverandblack.27,DeVonta Smith,WR,16,False
+2024,96,9,8,The Replacements,silverandblack.27,Kyler Murray,QB,9,False
+2024,97,9,9,3AM  No Limit,espn14211458,Steelers D/ST,DST,2,False
+2024,98,9,10,3AM  No Limit,espn14211458,Brock Purdy,QB,3,False
+2024,99,9,11,Lucero's Bail Bonds,BobbyeddyB,Jason Myers,K,1,False
+2024,100,10,1,3AM  No Limit,espn14211458,David Njoku,TE,6,False
+2024,101,10,2,Da'Kine Bail Bonds,espn19238790,Christian Kirk,WR,10,False
+2024,102,10,3,Da'Kine Bail Bonds,espn19238790,Austin Ekeler,RB,6,False
+2024,103,10,4,Ugh...Yeah...What...Football!,kdoggs80,Jayden Reed,WR,7,False
+2024,104,10,5,Da'Kine Bail Bonds,espn19238790,Jameson Williams,WR,3,False
+2024,105,10,6,Etienne all the Capicola,CBPainTrain,Ka'imi Fairbairn,K,1,False
+2024,106,10,7,Ugh...Yeah...What...Football!,kdoggs80,Jake Ferguson,TE,10,False
+2024,107,10,8,Da'Kine Bail Bonds,espn19238790,Dak Prescott,QB,11,False
+2024,108,10,9,Da'Kine Bail Bonds,espn19238790,Jake Moody,K,2,False
+2024,109,10,10,3AM  No Limit,espn14211458,Dallas Goedert,TE,3,False
+2024,110,10,11,Etienne all the Capicola,CBPainTrain,Brian Thomas Jr.,WR,7,False
+2024,111,11,1,Ugh...Yeah...What...Football!,kdoggs80,T.J. Hockenson,TE,4,False
+2024,112,11,2,3AM  No Limit,espn14211458,Jayden Daniels,QB,5,False
+2024,113,11,3,3AM  No Limit,espn14211458,Aaron Jones,RB,16,False
+2024,114,11,4,"Hahaha nice name, i got nothing",Rohabhabibo,Jordan Addison,WR,3,False
+2024,115,11,5,Ugh...Yeah...What...Football!,kdoggs80,Cooper Kupp,WR,26,False
+2024,116,11,6,Etienne all the Capicola,CBPainTrain,Jared Goff,QB,13,False
+2024,117,11,7,Etienne all the Capicola,CBPainTrain,David Montgomery,RB,8,False
+2024,118,11,8,Rolling with Younghoes,espn98580191,Drake London,WR,37,False
+2024,119,11,9,We call this the hail mary!,funblood,Chiefs D/ST,DST,1,False
+2024,120,11,10,Da'Kine Bail Bonds,espn19238790,Texans D/ST,DST,2,False
+2024,121,11,11,Lucero's Bail Bonds,BobbyeddyB,Jaleel McLaughlin,RB,1,False
+2024,122,12,1,Rolling with Younghoes,espn98580191,Chase Brown,RB,3,False
+2024,123,12,2,Etienne all the Capicola,CBPainTrain,Najee Harris,RB,4,False
+2024,124,12,3,Da'Kine Bail Bonds,espn19238790,Isaiah Likely,TE,16,False
+2024,125,12,4,"Hahaha nice name, i got nothing",Rohabhabibo,Tyler Lockett,WR,1,False
+2024,126,12,5,Da'Kine Bail Bonds,espn19238790,Taysom Hill,TE,7,False
+2024,127,12,6,Etienne all the Capicola,CBPainTrain,Tyjae Spears,RB,5,False
+2024,128,12,7,Lambeau Calrissian,RPT0777,Pat Freiermuth,TE,2,False
+2024,129,12,8,3AM  No Limit,espn14211458,Stefon Diggs,WR,27,False
+2024,130,12,9,We call this the hail mary!,funblood,Cairo Santos,K,1,False
+2024,131,12,10,Lambeau Calrissian,RPT0777,Colts D/ST,DST,1,False
+2024,132,12,11,Etienne all the Capicola,CBPainTrain,George Pickens,WR,14,False
+2024,133,13,1,The Replacements,silverandblack.27,Gus Edwards,RB,2,False
+2024,134,13,2,Da'Kine Bail Bonds,espn19238790,Tua Tagovailoa,QB,3,False
+2024,135,13,3,The Replacements,silverandblack.27,Demarcus Robinson,WR,3,False
+2024,136,13,4,"Hahaha nice name, i got nothing",Rohabhabibo,Devin Singletary,RB,5,False
+2024,137,13,5,Da'Kine Bail Bonds,espn19238790,Blake Corum,RB,9,False
+2024,138,13,6,To be A. Rich I need a Pacheco,eyedocjj,Bengals D/ST,DST,1,False
+2024,139,13,7,Lucero's Bail Bonds,BobbyeddyB,Justin Herbert,QB,2,False
+2024,140,13,8,Da'Kine Bail Bonds,espn19238790,Javonte Williams,RB,4,False
+2024,141,13,9,We call this the hail mary!,funblood,Christian Watson,WR,6,False
+2024,142,13,10,"Hahaha nice name, i got nothing",Rohabhabibo,Ezekiel Elliott,RB,2,False
+2024,143,13,11,To be A. Rich I need a Pacheco,eyedocjj,Mike Williams,WR,2,False
+2024,144,14,1,The Replacements,silverandblack.27,Tyler Allgeier,RB,1,False
+2024,145,14,2,Rolling with Younghoes,espn98580191,Kirk Cousins,QB,7,False
+2024,146,14,3,Lambeau Calrissian,RPT0777,Jonathon Brooks,RB,13,False
+2024,147,14,4,"Hahaha nice name, i got nothing",Rohabhabibo,Courtland Sutton,WR,2,False
+2024,148,14,5,We call this the hail mary!,funblood,Khalil Shakir,WR,4,False
+2024,149,14,6,Rolling with Younghoes,espn98580191,Joshua Palmer,WR,2,False
+2024,150,14,7,Lucero's Bail Bonds,BobbyeddyB,Zack Moss,RB,2,False
+2024,151,14,8,Rolling with Younghoes,espn98580191,Jakobi Meyers,WR,1,False
+2024,152,14,9,Rolling with Younghoes,espn98580191,Deshaun Watson,QB,2,False
+2024,153,14,10,To be A. Rich I need a Pacheco,eyedocjj,Trey Benson,RB,3,False
+2024,154,14,11,Lambeau Calrissian,RPT0777,Jerome Ford,RB,9,False
+2024,155,15,1,Lambeau Calrissian,RPT0777,Darnell Mooney,WR,1,False
+2024,156,15,2,We call this the hail mary!,funblood,Ben Sinnott,TE,3,False
+2024,157,15,3,We call this the hail mary!,funblood,Chuba Hubbard,RB,6,False
+2024,158,15,4,Rolling with Younghoes,espn98580191,Nick Chubb,RB,1,False
+2024,159,15,5,"Hahaha nice name, i got nothing",Rohabhabibo,DeAndre Hopkins,WR,1,False
+2024,160,15,6,Lucero's Bail Bonds,BobbyeddyB,Dalton Schultz,TE,2,False
+2024,161,15,7,We call this the hail mary!,funblood,Geno Smith,QB,1,False
+2024,162,15,8,Lambeau Calrissian,RPT0777,Hollywood Brown,WR,1,False
+2024,163,15,9,Lucero's Bail Bonds,BobbyeddyB,Malachi Corley,WR,1,False
+2024,164,15,10,Ugh...Yeah...What...Football!,kdoggs80,Matthew Stafford,QB,1,False
+2024,165,15,11,"Hahaha nice name, i got nothing",Rohabhabibo,Trevor Lawrence,QB,1,False
+2024,166,16,1,To be A. Rich I need a Pacheco,eyedocjj,Juwan Johnson,TE,1,False
+2024,167,16,2,We call this the hail mary!,funblood,Jaylen Wright,RB,1,False
+2024,168,16,3,Lambeau Calrissian,RPT0777,Rico Dowdle,RB,1,False
+2024,169,16,4,Lucero's Bail Bonds,BobbyeddyB,Tony Pollard,RB,1,False
+2024,170,16,5,Ugh...Yeah...What...Football!,kdoggs80,Bucky Irving,RB,1,False
+2024,171,16,6,We call this the hail mary!,funblood,Jordan Mason,RB,1,False
+2024,172,16,7,Lambeau Calrissian,RPT0777,Adonai Mitchell,WR,1,False
+2024,173,16,8,Lucero's Bail Bonds,BobbyeddyB,Rashod Bateman,WR,1,False
+2024,174,16,9,Ugh...Yeah...What...Football!,kdoggs80,J.K. Dobbins,RB,1,False
+2024,175,16,10,Lambeau Calrissian,RPT0777,Braelon Allen,RB,1,False
+2024,176,16,11,Ugh...Yeah...What...Football!,kdoggs80,Curtis Samuel,WR,1,False
+2025,1,1,1,A Useless Johnson,espn98580191,Drake London,WR,37,True
+2025,2,1,2,A Useless Johnson,espn98580191,Jerry Jeudy,WR,0,True
+2025,3,1,3,A Useless Johnson,espn98580191,Trey McBride,TE,6,True
+2025,4,1,4,K-Pop and Lock,eyedocjj,Marvin Harrison Jr.,WR,42,True
+2025,5,1,5,K-Pop and Lock,eyedocjj,Derrick Henry,RB,34,True
+2025,6,1,6,K-Pop and Lock,eyedocjj,Ladd McConkey,WR,4,True
+2025,7,1,7,Spitting away the chase,funblood,Ja'Marr Chase,WR,53,True
+2025,8,1,8,Spitting away the chase,funblood,Chuba Hubbard,RB,6,True
+2025,9,1,9,Spitting away the chase,funblood,Tucker Kraft,TE,0,True
+2025,10,1,10,3AM  No Limit,espn14211458,Jahmyr Gibbs,RB,35,True
+2025,11,1,11,3AM  No Limit,espn14211458,Tee Higgins,WR,12,True
+2025,12,1,12,3AM  No Limit,espn14211458,Jayden Daniels,QB,5,True
+2025,13,2,1,Saja Boys,BobbyeddyB,De'Von Achane,RB,6,True
+2025,14,2,2,Saja Boys,BobbyeddyB,Chase Brown,RB,11,True
+2025,15,2,3,Saja Boys,BobbyeddyB,Nico Collins,WR,28,True
+2025,16,2,4,65 Dolla Make You Holla,silverandblack.27,Puka Nacua,WR,6,True
+2025,17,2,5,65 Dolla Make You Holla,silverandblack.27,Jordan Love,QB,6,True
+2025,18,2,6,65 Dolla Make You Holla,silverandblack.27,Brock Bowers,TE,9,True
+2025,19,2,7,Rectify this,CBPainTrain,DJ Moore,WR,20,True
+2025,20,2,8,Rectify this,CBPainTrain,Brian Thomas Jr.,WR,7,True
+2025,21,2,9,Rectify this,CBPainTrain,Caleb Williams,QB,17,True
+2025,22,2,10,State your name,espn19238790,Kyren Williams,RB,6,True
+2025,23,2,11,State your name,espn19238790,Jameson Williams,WR,3,True
+2025,24,2,12,Maple Maulers,Rohabhabibo,Malik Nabers,WR,28,True
+2025,25,3,1,Micahroni and Cheese,RPT0777,Terry McLaurin,WR,10,True
+2025,26,3,2,Micahroni and Cheese,RPT0777,Tyrone Tracy Jr.,RB,0,True
+2025,27,3,3,Micahroni and Cheese,RPT0777,Jonathan Taylor,RB,26,True
+2025,28,3,4,Ugh...Yeah...What...Football!,kdoggs80,Bucky Irving,RB,1,True
+2025,29,3,5,Ugh...Yeah...What...Football!,kdoggs80,Justin Jefferson,WR,52,True
+2025,30,3,6,Ugh...Yeah...What...Football!,kdoggs80,Jaxon Smith-Njigba,WR,8,True
+2025,31,3,7,State your name,espn19238790,Bijan Robinson,RB,68,False
+2025,32,3,8,K-Pop and Lock,eyedocjj,Darius Cooper,WR,9,False
+2025,33,3,9,State your name,espn19238790,Chandler Brayboy,WR,6,False
+2025,34,3,10,Ugh...Yeah...What...Football!,kdoggs80,Theo Wease Jr.,WR,15,False
+2025,35,3,11,Spitting away the chase,funblood,Corey Kiner,RB,10,False
+2025,36,3,12,65 Dolla Make You Holla,silverandblack.27,Donovan Edwards,RB,15,False
+2025,37,4,1,Paul's Perfect Team,ESPNFAN25233150,Davante Adams,WR,31,False
+2025,38,4,2,A Useless Johnson,espn98580191,Harrison Mevis,K,1,False
+2025,39,4,3,Saja Boys,BobbyeddyB,Kyle McCord,QB,5,False
+2025,40,4,4,Micahroni and Cheese,RPT0777,Kene Nwangwu,RB,16,False
+2025,41,4,5,Rectify this,CBPainTrain,Nick Nash,WR,15,False
+2025,42,4,6,3AM  No Limit,espn14211458,Caleb Lohner,TE,15,False
+2025,43,4,7,Maple Maulers,Rohabhabibo,Xavier Restrepo,WR,3,False
+2025,44,4,8,A Useless Johnson,espn98580191,James Conner,RB,15,False
+2025,45,4,9,65 Dolla Make You Holla,silverandblack.27,CeeDee Lamb,WR,65,False
+2025,46,4,10,Paul's Perfect Team,ESPNFAN25233150,Amon-Ra St. Brown,WR,48,False
+2025,47,4,11,K-Pop and Lock,eyedocjj,Travis Kelce,TE,7,False
+2025,48,4,12,65 Dolla Make You Holla,silverandblack.27,Chase McLaughlin,K,1,False
+2025,49,5,1,K-Pop and Lock,eyedocjj,Saquon Barkley,RB,61,False
+2025,50,5,2,Paul's Perfect Team,ESPNFAN25233150,James Cook III,RB,21,False
+2025,51,5,3,65 Dolla Make You Holla,silverandblack.27,Broncos D/ST,DST,3,False
+2025,52,5,4,Micahroni and Cheese,RPT0777,Texans D/ST,DST,1,False
+2025,53,5,5,Saja Boys,BobbyeddyB,Josh Allen,QB,27,False
+2025,54,5,6,Saja Boys,BobbyeddyB,Christian McCaffrey,RB,49,False
+2025,55,5,7,Maple Maulers,Rohabhabibo,Lions D/ST,DST,1,False
+2025,56,5,8,Maple Maulers,Rohabhabibo,Kyler Murray,QB,4,False
+2025,57,5,9,State your name,espn19238790,A.J. Brown,WR,48,False
+2025,58,5,10,Ugh...Yeah...What...Football!,kdoggs80,Vikings D/ST,DST,1,False
+2025,59,5,11,Spitting away the chase,funblood,Josh Jacobs,RB,56,False
+2025,60,5,12,State your name,espn19238790,George Kittle,TE,24,False
+2025,61,6,1,Maple Maulers,Rohabhabibo,Colston Loveland,TE,10,False
+2025,62,6,2,State your name,espn19238790,Eagles D/ST,DST,2,False
+2025,63,6,3,A Useless Johnson,espn98580191,Jake Bates,K,2,False
+2025,64,6,4,Maple Maulers,Rohabhabibo,Zay Flowers,WR,13,False
+2025,65,6,5,A Useless Johnson,espn98580191,Ravens D/ST,DST,2,False
+2025,66,6,6,A Useless Johnson,espn98580191,Jalen Hurts,QB,19,False
+2025,67,6,7,Maple Maulers,Rohabhabibo,Brandon Aubrey,K,3,False
+2025,68,6,8,K-Pop and Lock,eyedocjj,Cameron Dicker,K,1,False
+2025,69,6,9,K-Pop and Lock,eyedocjj,Joe Burrow,QB,17,False
+2025,70,6,10,65 Dolla Make You Holla,silverandblack.27,Ashton Jeanty,RB,66,False
+2025,71,6,11,Saja Boys,BobbyeddyB,Chris Boswell,K,2,False
+2025,72,6,12,Micahroni and Cheese,RPT0777,TreVeyon Henderson,RB,26,False
+2025,73,7,1,Paul's Perfect Team,ESPNFAN25233150,David Montgomery,RB,10,False
+2025,74,7,2,Saja Boys,BobbyeddyB,Tyreek Hill,WR,32,False
+2025,75,7,3,Paul's Perfect Team,ESPNFAN25233150,David Njoku,TE,5,False
+2025,76,7,4,Spitting away the chase,funblood,Rome Odunze,WR,13,False
+2025,77,7,5,Rectify this,CBPainTrain,Steelers D/ST,DST,3,False
+2025,78,7,6,Ugh...Yeah...What...Football!,kdoggs80,Lamar Jackson,QB,32,False
+2025,79,7,7,Maple Maulers,Rohabhabibo,Breece Hall,RB,19,False
+2025,80,7,8,3AM  No Limit,espn14211458,Garrett Wilson,WR,23,False
+2025,81,7,9,Spitting away the chase,funblood,Baker Mayfield,QB,20,False
+2025,82,7,10,Ugh...Yeah...What...Football!,kdoggs80,Tyler Bass,K,1,False
+2025,83,7,11,Spitting away the chase,funblood,Jake Elliott,K,1,False
+2025,84,7,12,3AM  No Limit,espn14211458,D'Andre Swift,RB,11,False
+2025,85,8,1,Paul's Perfect Team,ESPNFAN25233150,Harrison Butker,K,1,False
+2025,86,8,2,Rectify this,CBPainTrain,Omarion Hampton,RB,42,False
+2025,87,8,3,Micahroni and Cheese,RPT0777,Emeka Egbuka,WR,22,False
+2025,88,8,4,A Useless Johnson,espn98580191,Calvin Ridley,WR,12,False
+2025,89,8,5,3AM  No Limit,espn14211458,Sam LaPorta,TE,16,False
+2025,90,8,6,Paul's Perfect Team,ESPNFAN25233150,Patrick Mahomes,QB,18,False
+2025,91,8,7,Maple Maulers,Rohabhabibo,Jakobi Meyers,WR,5,False
+2025,92,8,8,Maple Maulers,Rohabhabibo,Austin Ekeler,RB,5,False
+2025,93,8,9,A Useless Johnson,espn98580191,Tony Pollard,RB,15,False
+2025,94,8,10,A Useless Johnson,espn98580191,Evan Engram,TE,8,False
+2025,95,8,11,Spitting away the chase,funblood,Patriots D/ST,DST,1,False
+2025,96,8,12,State your name,espn19238790,Xavier Worthy,WR,22,False
+2025,97,9,1,Paul's Perfect Team,ESPNFAN25233150,Bills D/ST,DST,1,False
+2025,98,9,2,A Useless Johnson,espn98580191,Mike Evans,WR,22,False
+2025,99,9,3,Saja Boys,BobbyeddyB,Mark Andrews,TE,7,False
+2025,100,9,4,3AM  No Limit,espn14211458,DK Metcalf,WR,26,False
+2025,101,9,5,Rectify this,CBPainTrain,Matt Gay,K,1,False
+2025,102,9,6,A Useless Johnson,espn98580191,Alvin Kamara,RB,24,False
+2025,103,9,7,Maple Maulers,Rohabhabibo,Bo Nix,QB,9,False
+2025,104,9,8,Maple Maulers,Rohabhabibo,Jaylen Warren,RB,5,False
+2025,105,9,9,Ugh...Yeah...What...Football!,kdoggs80,Kenneth Walker III,RB,32,False
+2025,106,9,10,Rectify this,CBPainTrain,Tyler Warren,TE,10,False
+2025,107,9,11,Micahroni and Cheese,RPT0777,Tetairoa McMillan,WR,21,False
+2025,108,9,12,Micahroni and Cheese,RPT0777,George Pickens,WR,9,False
+2025,109,10,1,Paul's Perfect Team,ESPNFAN25233150,Nick Chubb,RB,3,False
+2025,110,10,2,Rectify this,CBPainTrain,Courtland Sutton,WR,18,False
+2025,111,10,3,Saja Boys,BobbyeddyB,49ers D/ST,DST,1,False
+2025,112,10,4,Maple Maulers,Rohabhabibo,Aaron Jones Sr.,RB,17,False
+2025,113,10,5,Spitting away the chase,funblood,Matthew Golden,WR,14,False
+2025,114,10,6,Rectify this,CBPainTrain,Travis Hunter,WR,8,False
+2025,115,10,7,Maple Maulers,Rohabhabibo,DeVonta Smith,WR,17,False
+2025,116,10,8,K-Pop and Lock,eyedocjj,Browns D/ST,DST,1,False
+2025,117,10,9,Rectify this,CBPainTrain,RJ Harvey,RB,31,False
+2025,118,10,10,Spitting away the chase,funblood,Jacory Croskey-Merritt,RB,17,False
+2025,119,10,11,Ugh...Yeah...What...Football!,kdoggs80,J.J. McCarthy,QB,2,False
+2025,120,10,12,Ugh...Yeah...What...Football!,kdoggs80,Jaylen Waddle,WR,19,False
+2025,121,11,1,K-Pop and Lock,eyedocjj,Chris Olave,WR,15,False
+2025,122,11,2,Micahroni and Cheese,RPT0777,Isiah Pacheco,RB,27,False
+2025,123,11,3,Saja Boys,BobbyeddyB,Isaac TeSlaa,WR,1,False
+2025,124,11,4,Micahroni and Cheese,RPT0777,Brandon McManus,K,1,False
+2025,125,11,5,Paul's Perfect Team,ESPNFAN25233150,Ricky Pearsall,WR,17,False
+2025,126,11,6,3AM  No Limit,espn14211458,Cooper Kupp,WR,7,False
+2025,127,11,7,Maple Maulers,Rohabhabibo,Michael Pittman Jr.,WR,1,False
+2025,128,11,8,Micahroni and Cheese,RPT0777,Dak Prescott,QB,4,False
+2025,129,11,9,State your name,espn19238790,Jared Goff,QB,3,False
+2025,130,11,10,3AM  No Limit,espn14211458,Cam Skattebo,RB,3,False
+2025,131,11,11,65 Dolla Make You Holla,silverandblack.27,Javonte Williams,RB,13,False
+2025,132,11,12,65 Dolla Make You Holla,silverandblack.27,Jerome Ford,RB,1,False
+2025,133,12,1,Paul's Perfect Team,ESPNFAN25233150,Deebo Samuel,WR,10,False
+2025,134,12,2,A Useless Johnson,espn98580191,Justin Herbert,QB,5,False
+2025,135,12,3,Saja Boys,BobbyeddyB,Joshua Palmer,WR,1,False
+2025,136,12,4,Micahroni and Cheese,RPT0777,Trevor Lawrence,QB,1,False
+2025,137,12,5,Ugh...Yeah...What...Football!,kdoggs80,T.J. Hockenson,TE,17,False
+2025,138,12,6,3AM  No Limit,espn14211458,Drake Maye,QB,1,False
+2025,139,12,7,Maple Maulers,Rohabhabibo,J.K. Dobbins,RB,18,False
+2025,140,12,8,A Useless Johnson,espn98580191,Kaleb Johnson,RB,26,False
+2025,141,12,9,Rectify this,CBPainTrain,Zach Charbonnet,RB,11,False
+2025,142,12,10,3AM  No Limit,espn14211458,Stefon Diggs,WR,11,False
+2025,143,12,11,Rectify this,CBPainTrain,Brock Purdy,QB,3,False
+2025,144,12,12,3AM  No Limit,espn14211458,Rhamondre Stevenson,RB,15,False
+2025,145,13,1,Paul's Perfect Team,ESPNFAN25233150,Travis Etienne Jr.,RB,3,False
+2025,146,13,2,A Useless Johnson,espn98580191,Keenan Allen,WR,3,False
+2025,147,13,3,Saja Boys,BobbyeddyB,Braelon Allen,RB,1,False
+2025,148,13,4,Micahroni and Cheese,RPT0777,Dalton Kincaid,TE,7,False
+2025,149,13,5,Micahroni and Cheese,RPT0777,Ollie Gordon II,RB,3,False
+2025,150,13,6,3AM  No Limit,espn14211458,Jordan Mason,RB,17,False
+2025,151,13,7,K-Pop and Lock,eyedocjj,Christian Kirk,WR,1,False
+2025,152,13,8,State your name,espn19238790,Cam Ward,QB,1,False
+2025,153,13,9,Paul's Perfect Team,ESPNFAN25233150,Khalil Shakir,WR,9,False
+2025,154,13,10,65 Dolla Make You Holla,silverandblack.27,Jordan Addison,WR,2,False
+2025,155,13,11,65 Dolla Make You Holla,silverandblack.27,Josh Downs,WR,1,False
+2025,156,13,12,Paul's Perfect Team,ESPNFAN25233150,Trey Benson,RB,1,False
+2025,157,14,1,Saja Boys,BobbyeddyB,Rashee Rice,WR,27,False
+2025,158,14,2,Micahroni and Cheese,RPT0777,Packers D/ST,DST,1,False
+2025,159,14,3,Ugh...Yeah...What...Football!,kdoggs80,Keon Coleman,WR,6,False
+2025,160,14,4,3AM  No Limit,espn14211458,Seahawks D/ST,DST,1,False
+2025,161,14,5,K-Pop and Lock,eyedocjj,Luther Burden III,WR,1,False
+2025,162,14,6,65 Dolla Make You Holla,silverandblack.27,Jauan Jennings,WR,2,False
+2025,163,14,7,Ugh...Yeah...What...Football!,kdoggs80,Darnell Mooney,WR,1,False
+2025,164,14,8,65 Dolla Make You Holla,silverandblack.27,Jayden Higgins,WR,4,False
+2025,165,14,9,Ugh...Yeah...What...Football!,kdoggs80,Rachaad White,RB,5,False
+2025,166,14,10,Paul's Perfect Team,ESPNFAN25233150,Dallas Goedert,TE,1,False
+2025,167,14,11,Saja Boys,BobbyeddyB,Marvin Mims Jr.,WR,1,False
+2025,168,14,12,Rectify this,CBPainTrain,Brian Robinson Jr.,RB,1,False
+2025,169,15,1,3AM  No Limit,espn14211458,Cairo Santos,K,1,False
+2025,170,15,2,K-Pop and Lock,eyedocjj,Tank Bigsby,RB,1,False
+2025,171,15,3,Ugh...Yeah...What...Football!,kdoggs80,Chris Godwin Jr.,WR,5,False
+2025,172,15,4,Rectify this,CBPainTrain,Jaydon Blue,RB,2,False
+2025,173,15,5,Spitting away the chase,funblood,Justin Fields,QB,5,False
+2025,174,15,6,65 Dolla Make You Holla,silverandblack.27,Joe Mixon,RB,1,False
+2025,175,15,7,Paul's Perfect Team,ESPNFAN25233150,C.J. Stroud,QB,1,False
+2025,176,15,8,Saja Boys,BobbyeddyB,Brandon Aiyuk,WR,1,False
+2025,177,15,9,Rectify this,CBPainTrain,Kyle Pitts Sr.,TE,1,False
+2025,178,15,10,65 Dolla Make You Holla,silverandblack.27,Tua Tagovailoa,QB,2,False
+2025,179,15,11,State your name,espn19238790,Jayden Reed,WR,1,False
+2025,180,15,12,Ugh...Yeah...What...Football!,kdoggs80,Quinshon Judkins,RB,1,False
+2025,181,16,1,Spitting away the chase,funblood,Bhayshul Tuten,RB,1,False
+2025,182,16,2,K-Pop and Lock,eyedocjj,Michael Penix Jr.,QB,1,False
+2025,183,16,3,State your name,espn19238790,Rashid Shaheed,WR,1,False
+2025,184,16,4,Spitting away the chase,funblood,Jake Ferguson,TE,1,False
+2025,185,16,5,K-Pop and Lock,eyedocjj,Kendre Miller,RB,1,False
+2025,186,16,6,State your name,espn19238790,Xavier Legette,WR,1,False
+2025,187,16,7,Spitting away the chase,funblood,Tre' Harris,WR,1,False
+2025,188,16,8,K-Pop and Lock,eyedocjj,Darren Waller,TE,1,False
+2025,189,16,9,State your name,espn19238790,Tyler Allgeier,RB,1,False
+2025,190,16,10,Spitting away the chase,funblood,Cedric Tillman,WR,1,False
+2025,191,16,11,State your name,espn19238790,Najee Harris,RB,1,False
+2025,192,16,12,State your name,espn19238790,Tyler Loop,K,1,False
