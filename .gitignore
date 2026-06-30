@@ -5,4 +5,3 @@ __pycache__/
 # ESPN private league (do not commit cookies or pulled private data)
 data/espn_cookies.json
 data/espn/
-outputs/espn_league.json

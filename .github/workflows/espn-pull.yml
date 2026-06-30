@@ -1,0 +1,41 @@
+name: Pull ESPN league
+
+# Remote-friendly: stores your ESPN cookies as repo Secrets and pulls your league on
+# demand, committing outputs/espn_league.json back to the (private) repo. No local files.
+#
+# One-time setup:
+#   Settings -> Secrets and variables -> Actions -> New repository secret
+#     ESPN_S2   = <your espn_s2 cookie value>
+#     ESPN_SWID = {<your SWID cookie value, keep the braces>}
+# Then: Actions tab -> "Pull ESPN league" -> Run workflow.
+
+on:
+  workflow_dispatch:
+    inputs:
+      leagueId: { description: "League ID", default: "1211359110" }
+      season:   { description: "Season",    default: "2026" }
+      teamId:   { description: "Your team ID", default: "5" }
+
+permissions:
+  contents: write
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install requests
+      - name: Fetch ESPN league
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+        run: python scripts/fetch_espn.py "${{ inputs.leagueId }}" "${{ inputs.season }}" "${{ inputs.teamId }}"
+      - name: Commit league JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add outputs/espn_league.json
+          git commit -m "ESPN league pull (automated)" || { echo "no changes"; exit 0; }
+          git push
