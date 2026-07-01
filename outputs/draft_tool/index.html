@@ -195,11 +195,15 @@ const contractTag=p=>{const c=cstat(p); if(!c)return "";
   if(c.status==="walk")return ` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — applies a validated +${c.bump} PPG bump (improves out-of-sample projection MAE; effect largest at RB)">📄 WALK YR</span>`;
   if(c.status==="fade")return ` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives — after regression to the mean these players hold their level (post coef +0.9 PPG, MAE not improved). Informational tag only, no value change.">📄 just paid</span>`;
   return "";};
-const effPts=p=>{const pts=p.proj_pts||0; if(p.is_rookie||!NORMG[p.position])return pts;
-  const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;   // injury-return healthy-rate override
-  const ng=NORMG[p.position],ppg=hr||p.proj_ppg;
+const effPts=p=>{const ng=NORMG[p.position]||0;
+  // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
+  // so the whole value engine re-prices globally. Keep only the validated contract bump.
+  if(ffaOn()) return (PRJ(p)||0)+cbump(p)*ng;
+  const pts=p.proj_pts||0; if(p.is_rookie||!ng)return pts;
+  const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;   // injury-return / manual healthy-rate override
+  const ppg=hr||p.proj_ppg;
   const base=(ppg&&ng)?Math.max(pts,ppg*ng):pts;
-  return base+cbump(p)*(ng||0);};                                        // + contract-year bump over a normal season
+  return base+cbump(p)*ng;};                                        // + contract-year bump over a normal season
 const raPts=p=>isK(p)?(p.proj_pts||0):effPts(p)*(1-K_RISK*playerRisk(p));  // certainty-equivalent, full-season pts
 const CMP=(typeof COMPS!=="undefined")?COMPS:{};
 const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};
@@ -276,7 +280,7 @@ document.getElementById("scorechips").innerHTML=Object.entries(META.scoring).map
 function notes(){
   document.getElementById("notes").innerHTML=META.notes.map(n=>"• "+n).join("<br>")+
     "<br>• Auction $: VBD over a "+cfg.teams+"-team $"+cfg.budget+" budget. K/DST capped (streamed). Keepers inflate the remaining pool."+
-    (ffaOn()?"<br>• <b style='color:var(--gold)'>FFA consensus active</b> — projections/ranks/$ use the uploaded FantasyFootballAnalytics points (their scoring) + their ADP. Breakout/rookie tags remain model-based.":"");
+    (ffaOn()?"<br>• <b style='color:var(--gold)'>FFA consensus active</b> — projections/ranks/$ across every tab <b>including the Draft Room &amp; Mock Keepers value engine</b> use the uploaded FantasyFootballAnalytics points + ADP. The model-only injury/manual per-player overrides are bypassed (FFA already reflects them); the validated contract-year bump still applies. Breakout/rookie tags remain model-based.":"");
 }
 function cards(){
   document.getElementById("replcards").innerHTML=Object.entries(META.replacement_points)
@@ -784,6 +788,18 @@ function baseValue(){
     val[id]=Math.round(Math.max(realistic(base),floor,1));});
   return val;
 }
+// expected REDRAFT price per player: his position-curve price at his within-position value rank over
+// the FULL pool (what he'd cost in the auction if not kept). FFA-aware via raPts. Used by the keeper
+// cards' keep-vs-redraft decision so it re-prices when FFA is uploaded.
+function redraftExp(){
+  const HP=(typeof KEEPERS_2026!=="undefined")?KEEPERS_2026.bidcurve_pos:null, out={};
+  PLAYERS.forEach(p=>{out[pid(p)]=1;});
+  if(!HP)return out;
+  ["QB","RB","WR","TE"].forEach(pos=>{const C=HP[pos]||[];
+    PLAYERS.filter(p=>p.position===pos).sort((a,b)=>raPts(b)-raPts(a))
+      .forEach((p,r)=>{out[pid(p)]=r<C.length?Math.max(1,C[r]):1;});});
+  return out;
+}
 function myVal(mkt){
   const meS=teamState(DR.me);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1, myAvg=meS.spotsLeft>0?meS.budget/meS.spotsLeft:1;
@@ -949,6 +965,7 @@ function renderMockKeepers(){
   const host=document.getElementById("draftroom");host.style.display="block";
   if(!ensureKeeperLeague()){host.innerHTML='<div class="dr-panel">No keeper data. Run <code>scripts/predict_keepers.py</code> to generate <code>keepers_2026.js</code>, then reload.</div>';document.getElementById("notes").innerHTML="";return;}
   const KT=KEEPERS_2026.teams, TS=DR.teams.map((_,i)=>teamState(i)), mkt=dynamicMarket(), mv=myVal(mkt);
+  const BV=baseValue(), EXP=redraftExp();   // live, FFA-aware value + redraft price (drive the keep decision)
   let totKept=0,totCost=0; KT.forEach((t,i)=>{const k=keptForTeam(i);totKept+=k.length;k.forEach(c=>totCost+=c.cost);});
   let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
     <h3 style="margin:0">🧩 Mock Keepers — confirm each team's 0–3, watch the board react</h3><span style="flex:1"></span>
@@ -959,16 +976,18 @@ function renderMockKeepers(){
   h+=`<div class="dr-teams">`+KT.map((t,i)=>{const s=TS[i],kc=keptForTeam(i).length,full=kc>=3;
     const hd=`<div class="muted" style="font-size:9px;display:flex;gap:4px;padding-right:2px"><span style="flex:1"></span><span style="width:26px;text-align:right" title="our board value">val</span><span style="width:26px;text-align:right" title="keeper cost">cost</span><span style="width:26px;text-align:right" title="expected redraft price">exp</span><span style="width:44px;text-align:right" title="KEEP (keeping saves $) / redraft (good value but cheaper to re-buy) / — (pass)">keep?</span></div>`;
     const rows=t.candidates.map(c=>{const on=DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept,dis=!on&&full;
-      const badge=c.decision==="keep"?`<span class="upc" title="Keeping saves $${c.savings} vs redrafting (exp $${c.exp} > cost $${c.cost})">+$${c.savings}</span>`
-        :c.decision==="redraft"?`<span style="color:#e3b57f" title="Good value, but you can redraft him for ~$${c.exp} < the $${c.cost} keeper cost — don't waste a slot">redraft</span>`
-        :`<span class="muted" title="Not worth a keeper slot (value $${c.value} ≤ cost $${c.cost})">—</span>`;
+      const val=BV[c.pid]!=null?BV[c.pid]:c.value, exp=EXP[c.pid]!=null?EXP[c.pid]:c.exp;   // live (FFA-aware)
+      const good=val>c.cost, saves=exp-c.cost, decision=good&&saves>0?"keep":good?"redraft":"pass";
+      const badge=decision==="keep"?`<span class="upc" title="Keeping saves $${saves} vs redrafting (exp $${exp} > cost $${c.cost})">+$${saves}</span>`
+        :decision==="redraft"?`<span style="color:#e3b57f" title="Good value, but you can redraft him for ~$${exp} < the $${c.cost} keeper cost — don't waste a slot">redraft</span>`
+        :`<span class="muted" title="Not worth a keeper slot (value $${val} ≤ cost $${c.cost})">—</span>`;
       return `<label class="mkc" style="display:flex;align-items:center;gap:4px;font-size:11px;${dis?'opacity:.35':''}">
         <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${dis?"disabled":""}>
         <span class="pos ${c.pos}" style="transform:scale(.8)">${c.pos}</span>
         <span style="flex:1">${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
-        <span class="muted" style="width:26px;text-align:right">$${c.value}</span>
+        <span class="muted" style="width:26px;text-align:right">$${val}</span>
         <span style="width:26px;text-align:right">$${c.cost}</span>
-        <span class="muted" style="width:26px;text-align:right">$${c.exp}</span>
+        <span class="muted" style="width:26px;text-align:right">$${exp}</span>
         <span style="width:44px;text-align:right">${badge}</span></label>`;}).join("");
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:262px">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
@@ -980,8 +999,7 @@ function renderMockKeepers(){
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
-  const BV=baseValue();
-  // build row data once, then sort by the chosen column
+  // build row data once, then sort by the chosen column (BV computed at top of function)
   const rd=avail.map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1},val=BV[id]||0,exp=m.market;
     return {p,proj:p.proj_pts||0,val,exp,mymax:m.maxBid||1,edge:val-exp,cont:contenders(p,exp,TS)};});
   const SK={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,mymax:r=>r.mymax,edge:r=>r.edge,targeted:r=>r.cont.length};
