@@ -17,7 +17,9 @@ so signals the projection already uses are likely already priced in.
 | Scheme: team pass rate | t=+3.2, ΔMAE −.001 | 🟡 weak | yes |
 | RB opportunities/game | t=+1.1 | ❌ none | yes |
 | QB quality: incoming QB prior ppg | t=−0.9 | ❌ none | — |
-| Athletic: RB Speed Score | +1.3 PPG hi vs lo | 🟡 modest | maybe |
+| Athletic: RB Speed Score | +1.3 naive, but **−0.015 over projection** | ❌ REJECTED (mirage — collinear w/ draft/size) | yes |
+| Athletic: WR NGS separation | ~0 over projection | already in | yes |
+| Athletic: WR 40-time (young) | +0.014 over projection | too marginal to apply | mostly |
 
 **Age cliff (descriptive):** next-yr PPG change by age — RB 27-28 **−2.9**, 31-32 **−5.7**; WR 29-30
 −1.6, 31-32 −2.9; TE flat/noisy. **2nd-year WR leap:** rookie 8.4 → yr2 9.1 (+0.7); small on
