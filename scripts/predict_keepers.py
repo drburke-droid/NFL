@@ -32,10 +32,25 @@ try:  # 2026 walk-year (contract-year) value bump (scripts/contract_status.py); 
     CONTRACT = json.loads(open(os.path.join(ROOT, "docs", "contract_status.js"), encoding="utf-8").read().split("= ", 1)[1].rstrip(";\n"))
 except Exception:
     CONTRACT = {}
-try:  # 2026 clean-vacancy WR inheritor bump (scripts/vacated_role_2026.py)
-    VACATED = json.loads(open(os.path.join(ROOT, "docs", "vacated_role.js"), encoding="utf-8").read().split("= ", 1)[1].rstrip(";\n"))
-except Exception:
-    VACATED = {}
+def _load_js_consts(path):                             # vacated_role.js now holds several consts
+    out = {}
+    try:
+        for line in open(path, encoding="utf-8"):
+            line = line.strip()
+            if line.startswith("const ") and "=" in line and "{" in line:
+                nm = line[6:line.index("=")].strip(); body = line[line.index("=") + 1:]
+                body = body[:body.rindex("}") + 1]
+                try: out[nm] = json.loads(body)
+                except Exception: pass
+    except Exception: pass
+    return out
+_VC = _load_js_consts(os.path.join(ROOT, "docs", "vacated_role.js"))
+VACATED = _VC.get("VACATED_ROLE", {})                  # clean-vacancy inheritor bump
+VEGAS = _VC.get("VEGAS_2026", {})                      # per-team implied-total PPG bump
+ROSTER = _VC.get("ROSTER_2026", {})                    # default 2026 team by player
+_CAN = {'GNB': 'GB', 'KAN': 'KC', 'LVR': 'LV', 'OAK': 'LV', 'NOR': 'NO', 'NWE': 'NE', 'SFO': 'SF',
+        'TAM': 'TB', 'SD': 'LAC', 'STL': 'LAR', 'LA': 'LAR', 'WSH': 'WAS', 'JAC': 'JAX'}
+_can = lambda t: _CAN.get(t, t)
 isK = lambda p: p["position"] in ("K", "DST"); INJ = {"QB": .26, "RB": .40, "WR": .33, "TE": .39}
 def risk(p):
     if isK(p): return 0
@@ -59,7 +74,8 @@ def eff_pts(p):
     base = max(pts, ppg * ng) if (ppg and ng) else pts
     cb = (CONTRACT.get(p["name"]) or {}).get("bump", 0)                                # walk-year bump
     vb = (VACATED.get(p["name"]) or {}).get("bump", 0)                                 # vacated-role bump
-    return base + (cb + vb) * (ng or 0)
+    vg = VEGAS.get(ROSTER.get(p["name"]) or _can(p.get("team") or ""), 0)              # Vegas env bump
+    return base + (cb + vb + vg) * (ng or 0)
 ra = lambda p: eff_pts(p) * (1 - .7 * risk(p))
 open_ = {"QB": 12, "RB": 24, "WR": 24, "TE": 12, "FLEX": 12}
 fa = lambda pos: open_["FLEX"] * ({"RB": .45, "WR": .45, "TE": .10}.get(pos, 0))
