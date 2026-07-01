@@ -76,11 +76,11 @@ def main():
         print("  %-22s %-3s  %4.1f  %5.1f    %3d  %4.1f  -> %.1f" % (nm[:22], pos, proj, p24, g24, g25, rate))
 
     # ---- manual QB-restore overrides (TEMPORARY — FFA 2026 upload supersedes these globally) ----
-    # Ja'Marr Chase: his 2025 rate (which the projection leans on) was dragged by ~6 games without an
-    # injured Burrow. 2023 natural experiment: Chase 19.0 PPG with Burrow vs 12.2 without (=0.64x).
-    # De-blend 2025 (~10 in / 6 out -> factor 0.866) and apply the same uplift to proj 18.0 -> 20.8,
-    # i.e. a full season with a healthy Burrow. Only lifts (effPts takes max with proj_pts).
-    MANUAL = {"Ja'Marr Chase": 20.8}
+    # NOTE: a Ja'Marr Chase +Burrow override was REMOVED after checking the 2025 game logs
+    # (scripts/chase_burrow_2025.py, derived from raw play-by-play). The 2023 drop (0.64x without
+    # Burrow) did NOT replicate: in 2025 Chase went 20.0 PPG with Burrow vs 19.2 without (0.96x) —
+    # he's QB-agnostic now, so his projection was never dragged down and needs no uplift.
+    MANUAL = {}
     for nm, rate in MANUAL.items():
         healthy[nm] = rate
         print(f"  [manual QB-restore] {nm} -> {rate} PPG")
