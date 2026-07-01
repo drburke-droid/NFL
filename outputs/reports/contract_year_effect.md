@@ -42,6 +42,24 @@ random high season.
   regression-to-mean alone would produce.
 - Single-season, ≥6-game samples; simple 1-sample t-tests (not player-clustered).
 
+## Does it improve projection MAE? (walk-forward, no leakage — `scripts/contract_year_mae.py`)
+Tested by adding a walk-year feature to an OLS projection (next-season PPG ~ prior-2-season PPG +
+age + age² + position), trained only on prior seasons, evaluated 2016–2024:
+
+| | MAE baseline | MAE +walk-year | Δ |
+|---|--:|--:|--:|
+| Full panel | 2.650 | 2.603 | **−0.046** (−1.7%) |
+| Walk-year players only | 2.647 | 2.604 | −0.043 |
+
+- Out-of-sample walk-year coefficient **+1.41 PPG, stable every year** (+1.29…+1.55) — a learnable
+  signal, not noise. (Larger than the +0.97 within-player figure because here it's conditional on
+  prior PPG + age.)
+- **Full-panel MAE improved in all 9 test years** — the feature never hurt.
+- On walk-year players specifically it helps on average but is noisy year-to-year (small n).
+
+**Verdict: it genuinely improves projections, but modestly** (~1.7% MAE; only ~15% of players
+affected). Worth a small bump, not a needle-mover.
+
 ## Practical read for drafting/keepers
 - A **modest, real edge (~1 PPG / ~10%)** — worth a small bump as a tiebreaker, most for **RBs**
   entering a walk year.
