@@ -749,21 +749,28 @@ function dynamicMarket(){
 }
 // intrinsic player value = clearing price in a NORMAL full-money auction (no keeper inflation),
 // independent of who's been kept. Same formula/calibration as dynamicMarket but full pool+budget.
+const BENCH_CAP=6;   // bubble/bench players (past the startable line) ramp $BENCH_CAP -> $1 (no cliff)
 function baseValue(){
-  const open={QB:cfg.teams,RB:cfg.teams*2,WR:cfg.teams*2,TE:cfg.teams,FLEX:cfg.teams},repl={},within=new Set();
+  const open={QB:cfg.teams,RB:cfg.teams*2,WR:cfg.teams*2,TE:cfg.teams,FLEX:cfg.teams},repl={},rdeep={},emarg={},within=new Set();
   ["QB","RB","WR","TE","K","DST"].forEach(pos=>{
     const n=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));
     const arr=PLAYERS.filter(p=>p.position===pos).sort((a,b)=>raPts(b)-raPts(a));
     const mi=Math.min(Math.max(n-1,0),arr.length-1);
     repl[pos]=arr.length?(n>0?raPts(arr[mi]):raPts(arr[0])):0;
-    if(!["K","DST"].includes(pos))arr.slice(0,n).forEach(p=>within.add(pid(p)));});
+    if(!["K","DST"].includes(pos)){
+      arr.slice(0,n).forEach(p=>within.add(pid(p)));
+      const rd=Math.min(arr.length-1,Math.round(n*1.6)); rdeep[pos]=arr.length?raPts(arr[rd]):0;  // deep "last rosterable"
+      emarg[pos]=Math.max(repl[pos]-rdeep[pos],1e-6);}});
   let sumV=0;PLAYERS.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max(raPts(p)-repl[p.position],0);});
   const disc=Math.max(cfg.teams*cfg.budget-cfg.teams*cfg.roster,0),per=sumV>0?disc/sumV:0;
   const realistic=v=>v<=25?v:25+(v-25)*0.75,val={};
   PLAYERS.forEach(p=>{const id=pid(p),pos=p.position;
     if(pos==="K"||pos==="DST"){val[id]=1;return;}
-    const v=Math.max(raPts(p)-repl[pos],0),raw=within.has(id)?Math.max(1,1+v*per):(v>0?1:0);
-    val[id]=Math.round(realistic(raw));});
+    const v=Math.max(raPts(p)-repl[pos],0),base=within.has(id)?Math.max(1,1+v*per):(v>0?1:0);
+    // smooth bench floor so rosterable players past the cutoff ramp gently to $1 instead of snapping;
+    // capped low, so startable/top values (>> BENCH_CAP) are untouched.
+    const floor=Math.min(BENCH_CAP,BENCH_CAP*Math.max(raPts(p)-(rdeep[pos]||0),0)/(emarg[pos]||1));
+    val[id]=Math.round(Math.max(realistic(base),floor,1));});
   return val;
 }
 function myVal(mkt){
