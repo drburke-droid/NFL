@@ -15,7 +15,7 @@ ICO keeper rule (real, from league PDF — see fetch_espn_standings.py):
   recorded base + the keeping owner's 2024 bump. The 2026 cost then adds the current owner's
   2025 bump on top of that true basis. 3-yr cap doesn't bind for 2026 (keepers started 2024).
 """
-import os, json, csv, re
+import os, json, csv, re, statistics
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 norm = lambda s: re.sub(r"\b(jr|sr|ii|iii|iv|v)\b", "", re.sub(r"[^a-z ]", "", str(s).lower())).replace("  ", " ").strip()
 _out = []; _print = print
@@ -30,7 +30,22 @@ def risk(p):
     ppg = p.get("proj_ppg") or 0; fl = p.get("floor") if p.get("floor") is not None else ppg; bu = p.get("bust") if p.get("bust") is not None else .3
     inj = max(0, ((INJ.get(p["position"], .33) - .26) / .14)); down = max(0, (ppg - fl) / ppg) if ppg > 0 else 0
     return min(.9, .45 * inj + .40 * bu + .30 * down)
-ra = lambda p: (p.get("proj_pts") or 0) * (1 - .7 * risk(p))
+# FULL-SEASON VALUE: value established players on ppg x a normal-season games baseline, so a
+# resolved past injury (low projected games) doesn't bury a healthy bounce-back. Only ever LIFTS
+# (max with proj_pts), so it targets injury-returns and never inflates the healthy board. Baseline
+# = median games among each position's projected starters (rookies excluded from the treatment).
+_DEMAND = {"QB": 12, "RB": 24, "WR": 24, "TE": 12}
+NORMG = {}
+for _pos, _n in _DEMAND.items():
+    _arr = sorted([p for p in P if p["position"] == _pos], key=lambda p: -(p.get("proj_pts") or 0))[:_n]
+    _gs = [p.get("proj_games") for p in _arr if p.get("proj_games")]
+    NORMG[_pos] = statistics.median(_gs) if _gs else 15
+def eff_pts(p):
+    pts = p.get("proj_pts") or 0
+    if p.get("is_rookie") or p["position"] not in NORMG: return pts
+    ppg = p.get("proj_ppg"); ng = NORMG.get(p["position"])
+    return max(pts, ppg * ng) if (ppg and ng) else pts
+ra = lambda p: eff_pts(p) * (1 - .7 * risk(p))
 open_ = {"QB": 12, "RB": 24, "WR": 24, "TE": 12, "FLEX": 12}
 fa = lambda pos: open_["FLEX"] * ({"RB": .45, "WR": .45, "TE": .10}.get(pos, 0))
 repl = {}; within = set()
