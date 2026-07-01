@@ -219,19 +219,20 @@ function refreshVacatedFromFFA(){   // use the uploaded FFA file's team column a
 }
 const vstat=p=>{const m=VAC_DYNAMIC||((typeof VACATED_ROLE!=="undefined")?VACATED_ROLE:null); return m?(m[p.name]||null):null;};
 const vbump=p=>{const v=vstat(p); return (v&&v.bump)?v.bump:0;};
-// validated Vegas environment bump (implied team total; +0.063 MAE OVER the projection). Player's 2026
-// team from the FFA file if uploaded, else the roster release, else data.js. Two-sided (boost/fade).
+// Vegas environment: INFORMATIONAL only. Our projection model already uses implied_team_total as a
+// top-3 feature, so applying a Vegas bump double-counts (adds ~0.001 MAE to the real model). We show
+// the team's total as context but do NOT adjust value. Player 2026 team from FFA > roster > data.js.
 const team26=p=>{const f=Object.keys(ffaMap).length?ffaMap[fkey(p.name,p.position)]:null;
   if(f&&f.team)return vcan(f.team);
   if(typeof ROSTER_2026!=="undefined"&&ROSTER_2026[p.name])return ROSTER_2026[p.name];
   return vcan(p.team||"");};
-const vegasBump=p=>{if(isK(p)||typeof VEGAS_2026==="undefined")return 0; return VEGAS_2026[team26(p)]||0;};
-const bonus=p=>cbump(p)+vbump(p)+vegasBump(p);                      // validated additive PPG bumps
-const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasBump(p); let t="";
+const vegasCtx=p=>{if(isK(p)||typeof VEGAS_2026==="undefined")return 0; return VEGAS_2026[team26(p)]||0;};
+const bonus=p=>cbump(p)+vbump(p);                                  // validated additive PPG bumps (NOT Vegas — already in proj)
+const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasCtx(p); let t="";
   if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — validated +${c.bump} PPG bump (improves projection MAE; largest at RB)">📄 WALK YR</span>`;
   else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
   if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="${v.pos} inheriting a clean vacated role (${v.vac_share}% left by ${v.departed}, no ${v.pos} drafted rd1-2${v.ffa?'; teams from your FFA upload':''}). Validated -> +${v.bump} PPG.">↑ VACATED ${v.vac_share}%</span>`;
-  if(Math.abs(vg)>=0.35)t+=` <span class="tag" style="background:${vg>0?'#2d2410':'#22262d'};color:${vg>0?'#e3d07f':'#9aa7b3'}" title="${team26(p)} 2026 Vegas implied team total ${vg>0?'above':'below'} average — validated environment ${vg>0?'boost':'fade'} of ${vg>0?'+':''}${vg} PPG (adds +0.063 MAE over the projection).">${vg>0?'🔥':'❄'} VEGAS ${vg>0?'+':''}${vg}</span>`;
+  if(Math.abs(vg)>=0.35)t+=` <span class="tag muted" style="background:${vg>0?'#2a2415':'#1e2228'};color:${vg>0?'#c9bd8a':'#8894a0'}" title="${team26(p)} 2026 Vegas implied team total is ${vg>0?'above':'below'} average — context only; the projection ALREADY prices team environment in (implied_team_total is a top-3 model feature), so no value change.">${vg>0?'○':'○'} ${team26(p)} ${vg>0?'high':'low'} total</span>`;
   return t;};
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
