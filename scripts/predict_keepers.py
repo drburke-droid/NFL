@@ -32,6 +32,10 @@ try:  # 2026 walk-year (contract-year) value bump (scripts/contract_status.py); 
     CONTRACT = json.loads(open(os.path.join(ROOT, "docs", "contract_status.js"), encoding="utf-8").read().split("= ", 1)[1].rstrip(";\n"))
 except Exception:
     CONTRACT = {}
+try:  # 2026 clean-vacancy WR inheritor bump (scripts/vacated_role_2026.py)
+    VACATED = json.loads(open(os.path.join(ROOT, "docs", "vacated_role.js"), encoding="utf-8").read().split("= ", 1)[1].rstrip(";\n"))
+except Exception:
+    VACATED = {}
 isK = lambda p: p["position"] in ("K", "DST"); INJ = {"QB": .26, "RB": .40, "WR": .33, "TE": .39}
 def risk(p):
     if isK(p): return 0
@@ -54,7 +58,8 @@ def eff_pts(p):
     ppg = HEALTHY.get(p["name"]) or p.get("proj_ppg"); ng = NORMG.get(p["position"])  # healthy-rate override
     base = max(pts, ppg * ng) if (ppg and ng) else pts
     cb = (CONTRACT.get(p["name"]) or {}).get("bump", 0)                                # walk-year bump
-    return base + cb * (ng or 0)
+    vb = (VACATED.get(p["name"]) or {}).get("bump", 0)                                 # vacated-role bump
+    return base + (cb + vb) * (ng or 0)
 ra = lambda p: eff_pts(p) * (1 - .7 * risk(p))
 open_ = {"QB": 12, "RB": 24, "WR": 24, "TE": 12, "FLEX": 12}
 fa = lambda pos: open_["FLEX"] * ({"RB": .45, "WR": .45, "TE": .10}.get(pos, 0))
