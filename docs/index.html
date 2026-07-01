@@ -727,12 +727,21 @@ function dynamicMarket(){
   let sumV=0; avail.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max(raPts(p)-repl[p.position],0);});
   const disc=Math.max(money-spots,0), per=sumV>0?disc/sumV:0, price={};
   const realistic=v=>v<=25?v:25+(v-25)*0.75;
+  const HP=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos)?KEEPERS_2026.bidcurve_pos:null;
   const H=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve&&KEEPERS_2026.bidcurve.length)?KEEPERS_2026.bidcurve:null;
-  if(H){
-    // EXPECTED PRICE via the league's own bidding history: rank available skill players by risk-
-    // adjusted value-over-replacement, then assign the $ the league has historically paid at that
-    // rank (recency-weighted, from outputs/espn_drafts.csv). No hard cap — the curve tops where the
-    // league actually tops (~$66); as more studs get kept, everyone shifts UP the curve.
+  if(HP){
+    // EXPECTED PRICE via the league's own bidding history, PER POSITION: rank the available players
+    // at each position by risk-adjusted value-over-replacement, then assign the $ the league has
+    // historically paid for its r-th most expensive buy AT THAT POSITION. QB/TE ceilings (~$34/$28)
+    // are respected instead of pricing an elite QB like an elite WR. Keepers shift everyone up the
+    // curve within their position. K/DST = $1.
+    avail.forEach(p=>{if(["K","DST"].includes(p.position))price[pid(p)]=1;});
+    ["QB","RB","WR","TE"].forEach(pos=>{const C=HP[pos]||[];
+      const arr=avail.filter(p=>p.position===pos)
+        .map(p=>({id:pid(p),v:Math.max(raPts(p)-(repl[pos]||0),0)})).sort((a,b)=>b.v-a.v);
+      arr.forEach((o,r)=>{price[o.id]=o.v<=0?1:(r<C.length?Math.max(1,C[r]):1);});});
+  } else if(H){
+    // fallback: single pooled curve (rank all skill together)
     const sk=avail.filter(p=>!["K","DST"].includes(p.position))
       .map(p=>({id:pid(p),v:Math.max(raPts(p)-(repl[p.position]||0),0)})).sort((a,b)=>b.v-a.v);
     avail.forEach(p=>{if(["K","DST"].includes(p.position))price[pid(p)]=1;});
