@@ -179,7 +179,16 @@ function playerRisk(p){
   const down=ppg>0?Math.max(0,(ppg-fl)/ppg):0;                       // floor gap (downside)
   return Math.min(0.9, 0.45*inj + 0.40*bu + 0.30*down);
 }
-const raPts=p=>isK(p)?(p.proj_pts||0):(p.proj_pts||0)*(1-K_RISK*playerRisk(p));  // certainty-equivalent points
+// FULL-SEASON VALUE: value established players on ppg x a normal-season games baseline so a
+// resolved past injury (low projected games) doesn't bury a healthy bounce-back. Only ever LIFTS
+// (max with proj_pts) — targets injury-returns, never inflates the healthy board. Baseline =
+// median games among each position's projected starters (rookies excluded).
+const _DEMANDG={QB:12,RB:24,WR:24,TE:12},NORMG={};
+["QB","RB","WR","TE"].forEach(pos=>{const arr=PLAYERS.filter(p=>p.position===pos).sort((a,b)=>(b.proj_pts||0)-(a.proj_pts||0)).slice(0,_DEMANDG[pos]);
+  const gs=arr.map(p=>p.proj_games).filter(x=>x).sort((a,b)=>a-b); NORMG[pos]=gs.length?gs[Math.floor(gs.length/2)]:15;});
+const effPts=p=>{const pts=p.proj_pts||0; if(p.is_rookie||!NORMG[p.position])return pts;
+  const ppg=p.proj_ppg,ng=NORMG[p.position]; return (ppg&&ng)?Math.max(pts,ppg*ng):pts;};
+const raPts=p=>isK(p)?(p.proj_pts||0):effPts(p)*(1-K_RISK*playerRisk(p));  // certainty-equivalent, full-season pts
 const CMP=(typeof COMPS!=="undefined")?COMPS:{};
 const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z ]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/g,"").replace(/\s+/g," ").trim();
