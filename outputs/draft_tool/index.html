@@ -192,14 +192,38 @@ const _DEMANDG={QB:12,RB:24,WR:24,TE:12},NORMG={};
 // validated walk-year (contract-year) PPG bump — improves projection MAE (scripts/contract_year_mae.py)
 const cstat=p=>(typeof CONTRACT_STATUS!=="undefined")?CONTRACT_STATUS[p.name]:null;
 const cbump=p=>{const c=cstat(p); return (c&&c.bump)?c.bump:0;};
-// validated clean-vacancy WR inheritor bump (scripts/vacated_role_backtest2.py: +1.7 vs control, MAE-safe)
-const vstat=p=>(typeof VACATED_ROLE!=="undefined")?VACATED_ROLE[p.name]:null;
+// validated clean-vacancy WR+RB inheritor bump (scripts/vacated_role_backtest_all.py: +1.4-1.7 vs control, MAE-safe)
+const VCAN={GNB:'GB',KAN:'KC',LVR:'LV',OAK:'LV',NOR:'NO',NWE:'NE',SFO:'SF',TAM:'TB',SD:'LAC',STL:'LAR',LA:'LAR',WSH:'WAS',JAC:'JAX'};
+const vcan=t=>VCAN[t]||t;
+let VAC_DYNAMIC=null;   // recomputed from the FFA file's team column (true rosters) when uploaded; else static VACATED_ROLE
+function computeVacated(team26){   // team26: canonical name -> 2026 team; re-derives flags from VAC_DATA ingredients
+  if(typeof VAC_DATA==="undefined") return null;
+  const U=VAC_DATA.usage,D=VAC_DATA.drafted,PA=VAC_DATA.params,out={},bt={};
+  for(const n in U){(bt[U[n].tm]=bt[U[n].tm]||[]).push(n);}
+  for(const A in bt){const names=bt[A];
+    for(const pos in PA){const P=PA[pos];
+      const dep=names.filter(n=>U[n].pos===pos&&U[n].sh>=P.vac&&(team26[n]||U[n].tm)!==A);
+      if(!dep.length||(D[pos]||[]).indexOf(A)>=0)continue;
+      const hold=names.filter(n=>U[n].pos===pos&&(team26[n]||U[n].tm)===A&&U[n].sh>=P.lo&&U[n].sh<=P.hi);
+      if(!hold.length)continue;
+      const inh=hold.reduce((a,b)=>U[b].sh>U[a].sh?b:a),dg=dep.reduce((a,b)=>U[b].sh>U[a].sh?b:a);
+      out[inh]={bump:P.bump,pos:pos,team:A,vac_share:Math.round(U[dg].sh*100),departed:dg,ffa:true};}}
+  return out;
+}
+function refreshVacatedFromFFA(){   // use the uploaded FFA file's team column as TRUE 2026 rosters, if present
+  VAC_DYNAMIC=null;
+  if(typeof VAC_DATA==="undefined"||!Object.keys(ffaMap).length) return;
+  const t26={}; let have=false;
+  PLAYERS.forEach(p=>{const f=ffaMap[fkey(p.name,p.position)]; if(f&&f.team){t26[p.name]=vcan(f.team);have=true;}});
+  if(have) VAC_DYNAMIC=computeVacated(t26);
+}
+const vstat=p=>{const m=VAC_DYNAMIC||((typeof VACATED_ROLE!=="undefined")?VACATED_ROLE:null); return m?(m[p.name]||null):null;};
 const vbump=p=>{const v=vstat(p); return (v&&v.bump)?v.bump:0;};
 const bonus=p=>cbump(p)+vbump(p);                                   // validated additive PPG bumps
 const contractTag=p=>{const c=cstat(p),v=vstat(p); let t="";
-  if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — applies a validated +${c.bump} PPG bump (improves out-of-sample projection MAE; effect largest at RB)">📄 WALK YR</span>`;
+  if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — validated +${c.bump} PPG bump (improves projection MAE; largest at RB)">📄 WALK YR</span>`;
   else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
-  if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="Inherits a clean vacated target role (${v.vac_share}% share left by ${v.departed}, no early WR drafted). Validated ~+1.7 PPG vs control -> +${v.bump} bump.">↑ VACATED ${v.vac_share}%</span>`;
+  if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="${v.pos} inheriting a clean vacated role (${v.vac_share}% left by ${v.departed}, no ${v.pos} drafted rd1-2${v.ffa?'; teams from your FFA upload':''}). Validated -> +${v.bump} PPG.">↑ VACATED ${v.vac_share}%</span>`;
   return t;};
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
@@ -276,7 +300,7 @@ function computeValues(keepers){
   return {vals,per,skillMoney,skillSpotsRem,sumSal,disc};
 }
 let BASE,ADJ;
-function recompute(){applyProjection();BASE=computeValues({});ADJ=computeValues(kept);}
+function recompute(){refreshVacatedFromFFA();applyProjection();BASE=computeValues({});ADJ=computeValues(kept);}
 
 // ---------- header / chips ----------
 document.getElementById("szn").textContent="· "+META.target_season;
@@ -301,7 +325,8 @@ function parseCSV(text){
   const head=split(lines[0]).map(h=>h.trim().toLowerCase());
   const idx=n=>head.indexOf(n);
   const iP=idx("player"),iPos=idx("position")>=0?idx("position"):idx("pos"),iPts=idx("points"),
-        iAdp=idx("adp"),iTier=idx("tier"),iPr=idx("position_rank"),iCe=idx("ceiling"),iFl=idx("floor"),iUn=idx("uncertainty");
+        iAdp=idx("adp"),iTier=idx("tier"),iPr=idx("position_rank"),iCe=idx("ceiling"),iFl=idx("floor"),iUn=idx("uncertainty"),
+        iTm=idx("team")>=0?idx("team"):idx("tm");   // true 2026 NFL team (for vacated-role rosters)
   const m={};let n=0;
   for(let r=1;r<lines.length;r++){
     const c=split(lines[r]); if(iP<0||iPts<0) continue;
@@ -310,7 +335,7 @@ function parseCSV(text){
     const pts=parseFloat(c[iPts]); if(isNaN(pts)) continue;
     m[fkey(name,pos)]={pts:pts, adp:iAdp>=0?parseFloat(c[iAdp]):null, tier:iTier>=0?parseInt(c[iTier]):null,
       posrank:iPr>=0?parseInt(c[iPr]):null, ceil:iCe>=0?parseFloat(c[iCe]):null, floor:iFl>=0?parseFloat(c[iFl]):null,
-      unc:iUn>=0?parseFloat(c[iUn]):null};
+      unc:iUn>=0?parseFloat(c[iUn]):null, team:iTm>=0?(c[iTm]||"").toUpperCase().replace(/[^A-Z]/g,""):null};
     n++;
   }
   return {m,n};

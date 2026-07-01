@@ -1,65 +1,83 @@
 """
-2026 clean-vacancy vacated-role inheritors -> docs/vacated_role.js.
+2026 clean-vacancy vacated-role inheritors (WR + RB) -> docs/vacated_role.js.
 
-Backtest (scripts/vacated_role_backtest2.py): a returning WR2/3 (6-18% target share) on a team that
-lost a >=12%-share WR AND did NOT draft a WR rd1-2 the next spring rebounds ~+1.7 PPG vs a matched
-control; contested vacancies decline. MAE-neutral -> small shrunk bump + a tag.
+Validated (scripts/vacated_role_backtest_all.py): a returning WR2/3 (target share) or RB2 (touch
+share) on a team that lost a big-usage player AND did NOT draft that position rd1-2 rebounds ~+1.4-1.7
+PPG vs control; contested vacancies decline. Shrunk bump: WR +1.0, RB +0.8.
 
-2025 usage from raw play-by-play; 2026 NFL teams from the roster_2026 release (real free-agency
-moves); 2026 WR draft from the draft_picks release. All read directly (pkg gates 2025/2026).
+Emits (a) VACATED_ROLE — default flags using 2026 NFL teams from the roster release; and (b) VAC_DATA
+— the raw ingredients (2025 usage, 2026 draft, params, canonical names) so the board can RE-DERIVE the
+flags from the FFA file's team column once you upload it (true rosters override the roster release).
+2025 usage from play-by-play; teams/draft read directly (pkg gates 2025/26).
 """
 import warnings; warnings.filterwarnings("ignore")
 import os, json, re
 import pandas as pd
 import nfl_data_py as nfl
-ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-REL="https://github.com/nflverse/nflverse-data/releases/download/"
+ROOT=os.path.dirname(os.path.dirname(os.path.abspath(__file__))); REL="https://github.com/nflverse/nflverse-data/releases/download/"
 CAN={'GNB':'GB','KAN':'KC','LVR':'LV','OAK':'LV','NOR':'NO','NWE':'NE','SFO':'SF','TAM':'TB','SD':'LAC','STL':'LAR','LA':'LAR','WSH':'WAS','JAC':'JAX'}
 can=lambda t: CAN.get(t,t)
 norm=lambda s: re.sub(r"\b(jr|sr|ii|iii|iv|v)\b","",re.sub(r"[^a-z ]","",str(s).lower())).replace("  "," ").strip()
-BUMP, LO, HI, VAC = 1.0, 0.06, 0.18, 0.12
+PARAMS={"WR":{"vac":0.12,"lo":0.06,"hi":0.18,"bump":1.0},"RB":{"vac":0.10,"lo":0.04,"hi":0.14,"bump":0.8}}
 
-# 2025 WR target share (play-by-play), by gsis
-pbp=pd.read_parquet(REL+"pbp/play_by_play_2025.parquet",columns=["posteam","pass_attempt","receiver_player_id","season_type"])
-pbp=pbp[(pbp.season_type=="REG")&(pbp.pass_attempt==1)&pbp.receiver_player_id.notna()].copy(); pbp["tm"]=pbp.posteam.map(can)
-tt=pbp.groupby("tm").size().rename("tt")
-rt=pbp.groupby(["receiver_player_id","tm"]).size().rename("tgt").reset_index().sort_values("tgt").groupby("receiver_player_id").tail(1).merge(tt,on="tm")
-rt["ts"]=rt.tgt/rt.tt
+# 2025 usage from play-by-play: WR target share, RB touch(=carry+target) share
+pbp=pd.read_parquet(REL+"pbp/play_by_play_2025.parquet",
+    columns=["posteam","pass_attempt","receiver_player_id","rush_attempt","rusher_player_id","season_type"])
+pbp=pbp[pbp.season_type=="REG"].copy(); pbp["tm"]=pbp.posteam.map(can)
+tgt=pbp[(pbp.pass_attempt==1)&pbp.receiver_player_id.notna()]
+car=pbp[(pbp.rush_attempt==1)&pbp.rusher_player_id.notna()]
+team_tgt=tgt.groupby("tm").size(); team_touch=team_tgt.add(car.groupby("tm").size(),fill_value=0)
+ptg=tgt.groupby(["receiver_player_id","tm"]).size().rename("t").reset_index()
+pca=car.groupby(["rusher_player_id","tm"]).size().rename("c").reset_index()
 pl=nfl.import_players()[["gsis_id","display_name","position"]]
 nm=dict(zip(pl.gsis_id,pl.display_name)); ps=dict(zip(pl.gsis_id,pl.position))
-wr={r.receiver_player_id:{"ts":r.ts,"tm25":r.tm,"name":nm.get(r.receiver_player_id)} for r in rt.itertuples()
-    if ps.get(r.receiver_player_id)=="WR" and nm.get(r.receiver_player_id)}
-
-# 2026 NFL team by gsis (roster release)
-r26=pd.read_parquet(REL+"rosters/roster_2026.parquet",columns=["season","team","position","gsis_id"])
-tm26={g:can(t) for g,t in zip(r26.gsis_id,r26.team) if pd.notna(g)}
-
-# 2026 WR rd1-2 draft (contested vacancies)
+# player primary team + touches
+touch={}
+for r in ptg.itertuples(): touch.setdefault(r.receiver_player_id,{}).setdefault(r.tm,[0,0])[0]+=r.t
+for r in pca.itertuples(): touch.setdefault(r.rusher_player_id,{}).setdefault(r.tm,[0,0])[1]+=r.c
+# 2026 team (roster release) + draft rd1-2
+r26=pd.read_parquet(REL+"rosters/roster_2026.parquet",columns=["team","gsis_id"]); tm26={g:can(t) for g,t in zip(r26.gsis_id,r26.team) if pd.notna(g)}
 dp=pd.read_parquet(REL+"draft_picks/draft_picks.parquet")
-drafted={can(r.team) for r in dp[(dp.season==2026)&(dp.position=="WR")&(dp["round"]<=2)].itertuples() if pd.notna(r.team)}
-
-# 2026 projection pool (only flag players we actually value)
+drafted={pos:{can(r.team) for r in dp[(dp.season==2026)&(dp.position==pos)&(dp["round"]<=2)].itertuples() if pd.notna(r.team)} for pos in ("WR","RB")}
+# canonical data.js names
 P=json.loads(open(os.path.join(ROOT,"docs","data.js"),encoding="utf-8").read().split("const PLAYERS = ")[1].rsplit(";",1)[0])
-canon_name={norm(p["name"]):p["name"] for p in P if p["position"]=="WR"}
+canon={norm(p["name"]):p["name"] for p in P}
 
-byteam={}
-for g,v in wr.items(): byteam.setdefault(v["tm25"],[]).append(g)
-out={}
-for A,gs in byteam.items():
-    dep=[g for g in gs if wr[g]["ts"]>=VAC and tm26.get(g)!=A]        # left the team (or out of league) for 2026
-    if not dep or A in drafted: continue                             # need a vacancy, and a CLEAN one
-    hold=[g for g in gs if tm26.get(g)==A and LO<=wr[g]["ts"]<=HI]   # returning WR2/3 in band
-    if not hold: continue
-    ig=max(hold,key=lambda g: wr[g]["ts"]); cn=canon_name.get(norm(wr[ig]["name"]))
-    if not cn: continue                                              # must be in our 2026 board
-    dg=max(dep,key=lambda g: wr[g]["ts"])
-    out[cn]={"bump":BUMP,"team":A,"vac_share":round(wr[dg]["ts"]*100),"departed":wr[dg]["name"]}
-print(f"2026 clean-vacancy vacated-role inheritors (bump +{BUMP} PPG):")
-for n,d in sorted(out.items(),key=lambda x:-x[1]["vac_share"]):
-    print(f"   {n:24s} {d['team']:4s}  inherits {d['vac_share']}% from {d['departed']}")
-js="// AUTO-GENERATED by scripts/vacated_role_2026.py — clean-vacancy WR inheritors (validated).\n"\
-   "const VACATED_ROLE = "+json.dumps(out,separators=(",",":"))+";\n"
+usage={}                          # canonical name -> {pos, tm25, sh}
+for g,tmd in touch.items():
+    pos=ps.get(g); disp=nm.get(g)
+    if pos not in ("WR","RB") or not disp: continue
+    A=max(tmd,key=lambda t: sum(tmd[t]))                       # primary 2025 team
+    t,c=tmd[A]; sh=(t/team_tgt.get(A,1)) if pos=="WR" else ((t+c)/team_touch.get(A,1))
+    cn=canon.get(norm(disp))
+    if cn: usage[cn]={"pos":pos,"tm":A,"sh":round(sh,4)}
+gsis_by_canon={ (canon.get(norm(nm.get(g))) ): g for g in touch if nm.get(g)}
+
+def compute(team26):
+    byteam={}
+    for cn,u in usage.items(): byteam.setdefault(u["tm"],[]).append(cn)
+    out={}
+    for A,names in byteam.items():
+        for pos,P_ in PARAMS.items():
+            dep=[n for n in names if usage[n]["pos"]==pos and usage[n]["sh"]>=P_["vac"] and team26.get(n,usage[n]["tm"])!=A]
+            if not dep or A in drafted[pos]: continue
+            hold=[n for n in names if usage[n]["pos"]==pos and team26.get(n,usage[n]["tm"])==A and P_["lo"]<=usage[n]["sh"]<=P_["hi"]]
+            if not hold: continue
+            inh=max(hold,key=lambda n: usage[n]["sh"]); dg=max(dep,key=lambda n: usage[n]["sh"])
+            out[inh]={"bump":P_["bump"],"pos":pos,"team":A,"vac_share":round(usage[dg]["sh"]*100),"departed":dg}
+    return out
+
+# default team map from the roster release (by canonical name)
+roster_team={cn:tm26.get(g) for cn,g in gsis_by_canon.items() if cn and tm26.get(g)}
+default=compute(roster_team)
+print("2026 clean-vacancy inheritors (default, roster-release teams):")
+for n,d in sorted(default.items(),key=lambda x:-x[1]["vac_share"]):
+    print(f"   {d['pos']} {n:22s} {d['team']:4s} +{d['bump']}  inherits {d['vac_share']}% from {d['departed']}")
+VAC={"usage":usage,"drafted":{k:sorted(v) for k,v in drafted.items()},"params":PARAMS}
+js=("// AUTO-GENERATED by scripts/vacated_role_2026.py — clean-vacancy WR+RB inheritors (validated).\n"
+    "const VACATED_ROLE = "+json.dumps(default,separators=(",",":"))+";\n"
+    "const VAC_DATA = "+json.dumps(VAC,separators=(",",":"))+";  // ingredients for FFA-roster recompute\n")
 for d in (os.path.join(ROOT,"docs"),os.path.join(ROOT,"outputs","draft_tool")):
     try: open(os.path.join(d,"vacated_role.js"),"w",encoding="utf-8").write(js)
     except OSError: pass
-print(f"\nWrote docs/vacated_role.js ({len(out)} players)")
+print(f"\nWrote docs/vacated_role.js (default {len(default)} players; VAC_DATA usage {len(usage)})")
