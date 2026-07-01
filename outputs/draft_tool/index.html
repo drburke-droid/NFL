@@ -10,6 +10,7 @@
 <script src="healthy_ppg.js"></script>
 <script src="contract_status.js"></script>
 <script src="vacated_role.js"></script>
+<script src="rb_archetype.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -230,11 +231,22 @@ const team26=p=>{const f=Object.keys(ffaMap).length?ffaMap[fkey(p.name,p.positio
   return vcan(p.team||"");};
 const vegasCtx=p=>{if(isK(p)||typeof VEGAS_2026==="undefined")return 0; return VEGAS_2026[team26(p)]||0;};
 const bonus=p=>cbump(p)+vbump(p);                                  // validated additive PPG bumps (NOT Vegas — already in proj)
+// INFORMATIONAL RB archetype (2025 usage). Gdula/4for4 thesis; tested in scripts/rb_archetype.py —
+// the projection ALREADY prices carries/g × targets/g, so this is context only (no value change).
+const archTag=p=>{if(p.position!=="RB"||typeof RB_ARCH==="undefined")return "";
+  const a=RB_ARCH[p.name]; if(!a)return "";
+  const meta={med_dt:["#12241f","#7fd8c0","↔ dual-threat","Medium-volume dual-threat (%c car/g, %t tgt/g) — the durable, rising RB profile. Context only; value already reflects usage."],
+    spec:["#2d1a1a","#e39a9a","△ pass-specialist","Pass-catching specialist (%c car/g, %t tgt/g) — a fading, higher-risk repeat profile (next-yr fade tested real). Context only; no value change."],
+    high:["#1c2430","#8fb0d6","● workhorse","High-volume workhorse (%c car/g). Context only."],
+    med:["#22242a","#9aa4b0","● medium","Medium-volume, limited receiving (%c car/g, %t tgt/g). Context only."]}[a.a];
+  if(!meta)return ""; const[bg,fg,txt,tip]=meta;
+  return ` <span class="tag muted" style="background:${bg};color:${fg}" title="${tip.replace('%c',a.cpg).replace('%t',a.tpg)}">${txt}</span>`;};
 const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasCtx(p); let t="";
   if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — validated +${c.bump} PPG bump (improves projection MAE; largest at RB)">📄 WALK YR</span>`;
   else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
   if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="${v.pos} inheriting a clean vacated role (${v.vac_share}% left by ${v.departed}, no ${v.pos} drafted rd1-2${v.ffa?'; teams from your FFA upload':''}). Validated -> +${v.bump} PPG.">↑ VACATED ${v.vac_share}%</span>`;
   if(Math.abs(vg)>=0.35)t+=` <span class="tag muted" style="background:${vg>0?'#2a2415':'#1e2228'};color:${vg>0?'#c9bd8a':'#8894a0'}" title="${team26(p)} 2026 Vegas implied team total is ${vg>0?'above':'below'} average — context only; the projection ALREADY prices team environment in (implied_team_total is a top-3 model feature), so no value change.">${vg>0?'○':'○'} ${team26(p)} ${vg>0?'high':'low'} total</span>`;
+  t+=archTag(p);
   return t;};
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
