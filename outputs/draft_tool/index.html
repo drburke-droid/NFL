@@ -193,7 +193,7 @@ const cstat=p=>(typeof CONTRACT_STATUS!=="undefined")?CONTRACT_STATUS[p.name]:nu
 const cbump=p=>{const c=cstat(p); return (c&&c.bump)?c.bump:0;};
 const contractTag=p=>{const c=cstat(p); if(!c)return "";
   if(c.status==="walk")return ` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — applies a validated +${c.bump} PPG bump (improves out-of-sample projection MAE; effect largest at RB)">📄 WALK YR</span>`;
-  if(c.status==="fade")return ` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal — post-contract letdown risk (informational tag only; not yet MAE-validated, no value change)">📄 just paid</span>`;
+  if(c.status==="fade")return ` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives — after regression to the mean these players hold their level (post coef +0.9 PPG, MAE not improved). Informational tag only, no value change.">📄 just paid</span>`;
   return "";};
 const effPts=p=>{const pts=p.proj_pts||0; if(p.is_rookie||!NORMG[p.position])return pts;
   const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;   // injury-return healthy-rate override

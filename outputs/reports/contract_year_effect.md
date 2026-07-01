@@ -60,6 +60,16 @@ age + age² + position), trained only on prior seasons, evaluated 2016–2024:
 **Verdict: it genuinely improves projections, but modestly** (~1.7% MAE; only ~15% of players
 affected). Worth a small bump, not a needle-mover.
 
+### Is there a post-contract "fade"? No — it fails validation
+The event study shows performance dropping after signing (walk +1.04 → first paid year +0.47), which
+looks like a "cash-in and coast" fade. But once a projection regresses the inflated walk-year lag,
+that drop is already accounted for. Adding a post-signing feature to the walk-forward test gives a
+**+0.90 PPG coefficient (positive, stable every year)** — post-signing players sit slightly *above*
+their lag/age baseline, not below (talent selection). Full-panel MAE barely moves (2.603 → 2.592),
+and on post-signing players themselves MAE gets **worse** (2.650 → 2.761). So the "fade" is
+regression-to-the-mean, not a behavioral letdown: **no fade value adjustment is applied** — "just
+signed" stays an informational tag only.
+
 ## Practical read for drafting/keepers
 - A **modest, real edge (~1 PPG / ~10%)** — worth a small bump as a tiebreaker, most for **RBs**
   entering a walk year.
