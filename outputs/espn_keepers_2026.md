@@ -6,8 +6,8 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
 [ 1] A Useless Johnson           (2026 bump +$5)
      KEEP  QB  Justin Herbert         value $27  cost $10 (=$5 +$5)  surplus +$17
      KEEP  WR  Wan'Dale Robinson      value $18  cost $ 1 [$1 waiver keeper]  surplus +$17
-     KEEP  TE  George Kittle          value $34  cost $29 (=$24 +$5)  surplus +$ 5
-     next: Rico Dowdle (surplus +0)
+     KEEP  RB  Rico Dowdle            value $ 6  cost $ 1 [$1 waiver keeper]  surplus +$ 5
+     next: George Kittle (surplus +5)
 
 [ 2] K-Pop and Lock              (2026 bump +$5)
      KEEP  WR  Chris Olave            value $28  cost $20 (=$15 +$5)  surplus +$ 8
@@ -18,8 +18,8 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
 [ 3] Spitting away the chase     (2026 bump +$3)
      KEEP  RB  De'Von Achane          value $50  cost $14 (=$11 +$3)  surplus +$36 (kept 2yr)
      KEEP  TE  Harold Fannin Jr.      value $ 8  cost $ 1 [$1 waiver keeper]  surplus +$ 7
-     KEEP  TE  Juwan Johnson          value $ 3  cost $ 1 [$1 waiver keeper]  surplus +$ 2
-     next: Kayshon Boutte (surplus +0)
+     KEEP  TE  Juwan Johnson          value $ 6  cost $ 1 [$1 waiver keeper]  surplus +$ 5
+     next: Sam Darnold (surplus +2)
 
 [ 4] 3AM  No Limit               (2026 bump +$5)
      KEEP  RB  Jahmyr Gibbs           value $68  cost $45 (=$40 +$5)  surplus +$23 (kept 2yr)
@@ -30,8 +30,8 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
 [ 5] Saja Boys                   <-- YOU  (2026 bump +$5)
      KEEP  QB  Josh Allen             value $54  cost $32 (=$27 +$5)  surplus +$22
      KEEP  WR  Rashee Rice            value $41  cost $32 (=$27 +$5)  surplus +$ 9 (kept 1yr)
-     KEEP  QB  Joe Burrow             value $26  cost $22 (=$17 +$5)  surplus +$ 4
-     next: Emanuel Wilson (surplus +0)
+     KEEP  WR  Alec Pierce            value $ 6  cost $ 1 [$1 waiver keeper]  surplus +$ 5
+     next: Joe Burrow (surplus +4)
 
 [ 7] 65 Dolla Make You Holla     (2026 bump +$5)
      KEEP  WR  Puka Nacua             value $65  cost $16 (=$11 +$5)  surplus +$49 (kept 2yr)
@@ -66,7 +66,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      KEEP  WR  Jaxon Smith-Njigba     value $56  cost $13 (=$13 +$0)  surplus +$43 (kept 2yr)
      KEEP  RB  Chase Brown            value $39  cost $16 (=$16 +$0)  surplus +$23 (kept 1yr)
      KEEP  RB  Bucky Irving           value $21  cost $ 6 (=$6 +$0)  surplus +$15 (kept 1yr)
-     next: Quinshon Judkins (surplus +0)
+     next: Quinshon Judkins (surplus +5)
 
 [14] Paul's Perfect Team         (2026 bump +$5)
      KEEP  RB  James Cook             value $45  cost $26 (=$21 +$5)  surplus +$19
