@@ -42,9 +42,11 @@ So the ~0s for TD-regression / pass-rate / QB are real: **the projection already
 Only **Vegas team total** survives — external data no player-level model contains.
 
 ## Recommendation
-- **Apply Vegas team total** as a small environment adjustment (external signal, not in the model,
-  and 2026 implied totals exist) — after confirming it improves MAE vs the *actual* projection, not
-  just the naive baseline.
+- **Vegas team total — APPLIED** (validated +0.063 MAE over the actual projection). `vacated_role_2026.py`
+  emits `VEGAS_2026` (per-team PPG bump = 0.15 × (2026 implied total − league mean), capped ±2.0) + a
+  default `ROSTER_2026` team map; the board resolves each player's 2026 team (FFA upload > roster
+  release > data.js) and applies a two-sided env tilt via `bonus` + a `🔥/❄ VEGAS` tag. DET/BAL/LAR
+  ~+0.5–0.7, ARI/NYJ/MIA/CLE ~−0.7.
 - **Durability** signal validates keeping the existing injury-risk term (no new work).
 - The rest are either **already in the projection** (target share, draft, age, yards) → no additive
   bump, or **weak/null** (RB opp, QB quality, scheme) → not applied. Matches prior discipline:
