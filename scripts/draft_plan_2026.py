@@ -12,9 +12,15 @@ P,VAL,PMAP,norm,pidof=pk.P,pk.VAL,pk.PMAP,pk.norm,pk.pidof
 CURVE=pk.bid_curve_pos; L=pk.L; MY=L.get("myTeamId")
 teams=pk.teams_out
 # --- 1) lock in predicted keepers ---
+# FORCED: user-confirmed keeps the engine missed (it called Bowers 'redraft' on a $2 technicality —
+# cost $19 vs exp $17 — but a human keeps him; his team had only 2 predicted keeps anyway).
+FORCED={"Brock Bowers"}
 kept=set(); tinfo={}
 for t in teams:
     keeps=[c for c in t["candidates"] if c.get("predicted")]
+    for c in t["candidates"]:
+        if c["name"] in FORCED and not any(k["pid"]==c["pid"] for k in keeps):
+            keeps=sorted(keeps+[c],key=lambda x:-x["savings"])[:3]
     spend=sum(c["cost"] for c in keeps)
     tinfo[t["id"]]={"name":t["name"],"keeps":keeps,"budget":200-spend,"tend":t["tend"]}
     kept.update(c["pid"] for c in keeps)

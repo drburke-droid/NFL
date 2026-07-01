@@ -2,7 +2,16 @@
 
 Reproducible: `scripts/draft_plan_2026.py` (execs `predict_keepers.py`, locks each team's predicted
 top-3 +value keepers, re-ranks the remaining pool on the league's positional bid curves, layers owner
-tendencies + budgets). Assumes 28 keepers league-wide ($355 of $2400), **$2,045 in the room**.
+tendencies + budgets). **User override: Brock Bowers KEPT by team 7** (engine said 'redraft' on a $2
+technicality). 29 keepers league-wide, **~$2,026 in the room**.
+
+## UPDATE — Bowers kept (2026-07-01)
+Kittle becomes the **lone elite TE** (val 36, exp $28) with FOUR TE-hungry owners (State your name
+×1.76/$176, 3AM ×1.73, Ugh ×1.45, Maple ×1.38) chasing one target → expect him well past $28.
+**TE becomes punt-first**: take Kittle only ≤**$32** (still +4); otherwise Kelce ~$17–19 (val 18) /
+Loveland ~$14 / LaPorta ~$12 and shift the saved ~$15 to WR2 (BTJ ≤$24) or a 3rd value RB.
+Path C (Chase pivot) gets MORE attractive since the TE punt is likely anyway. Everything else holds —
+edge board is now RB-dominated: Bijan +12, Hall/Swift +8, Javonte/Love +7, Jeanty +6.
 
 ## My situation
 Keeps: **Josh Allen $32** (val 48), **Rashee Rice $32** (val 47), Alec Pierce $1 (val 6) → **$135 left,
