@@ -20,6 +20,20 @@ so signals the projection already uses are likely already priced in.
 | Athletic: RB Speed Score | +1.3 naive, but **−0.015 over projection** | ❌ REJECTED (mirage — collinear w/ draft/size) | yes |
 | Athletic: WR NGS separation | ~0 over projection | already in | yes |
 | Athletic: WR 40-time (young) | +0.014 over projection | too marginal to apply | mostly |
+| **RB pass-specialist fade** (Gdula) | naive −1.14 (t−1.7); −0.012 over rich proxy | 🟡 real fade, but priced | yes (cpg+tpg) |
+| **RB medium-vol dual-threat** (Gdula) | naive +1.60 recent (t+2.2); **+0.011 over rich proxy** | ❌ mirage — priced | yes (cpg+tpg) |
+
+**RB archetype thesis (`scripts/rb_archetype.py`, Gdula/4for4 "death of the pass-game specialist"):**
+Trend CONFIRMED in our data — pass-specialists (≤8.5 car/g, ≥10 PPG) fell ~5.8/yr (2016–20) → ~1.5/yr
+(2021–24); medium-volume relevant RBs rose ~15 → ~21/yr. Naively the medium-vol dual-threat (8.5–15
+car/g + ≥2.5 tgt/g) flag predicts next-yr PPG **+1.60 in 2021–24 (t+2.2)** vs −0.48 earlier — a real
+regime shift. BUT over a rich proxy (2-yr PPG, car/g, tgt/g, target share, age, draft pick) the flag
+adds only **+0.011 MAE** (recent) / +0.004 (all): the archetype is *definitionally* car/g×tgt/g, which
+the projection already uses continuously, so the label carries no residual. Pass-specialist flag HURTS
+(−0.012). **No bump applied.** Actionable takeaway is draft-strategy, not a model change: the fading
+pass-specialist (old Zero-RB PPR merchant) is a higher-risk repeat bet; favor backs who pair receiving
+with enough rushing volume to stay on the field. An *informational* RB archetype tag (High-vol /
+Medium dual-threat / Pass-specialist-risk) could surface this without touching value — like the Vegas tag.
 
 **Age cliff (descriptive):** next-yr PPG change by age — RB 27-28 **−2.9**, 31-32 **−5.7**; WR 29-30
 −1.6, 31-32 −2.9; TE flat/noisy. **2nd-year WR leap:** rookie 8.4 → yr2 9.1 (+0.7); small on
