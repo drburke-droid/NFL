@@ -123,7 +123,9 @@
   <div class="ffabar">
     <b>Projections:</b>
     <button class="btn sm active" id="srcModel">Model</button>
-    <button class="btn sm" id="srcFFA" disabled>FFA consensus</button>
+    <button class="btn sm" id="srcBlend" disabled>Blend</button>
+    <button class="btn sm" id="srcFFA" disabled>FFA</button>
+    <span id="blendWrap" style="display:none;font-size:11px" class="muted">FFA weight <input id="blendW" type="range" min="0" max="100" step="5" style="vertical-align:middle;width:90px"> <b id="blendWv">50%</b></span>
     <span style="flex:1"></span>
     <label class="btn sm up" for="ffaFile">📂 Upload 2026 FFA CSV</label>
     <input id="ffaFile" type="file" accept=".csv" style="display:none">
@@ -237,7 +239,7 @@ const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasCtx(p); let t="";
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
   // so the whole value engine re-prices globally. Keep only the validated bumps (walk-year, vacancy).
-  if(ffaOn()) return (PRJ(p)||0)+bonus(p)*ng;
+  if(projActive()) return (PRJ(p)||0)+bonus(p)*ng;
   const pts=p.proj_pts||0; if(p.is_rookie||!ng)return pts;
   const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;   // injury-return / manual healthy-rate override
   const ppg=hr||p.proj_ppg;
@@ -245,12 +247,15 @@ const effPts=p=>{const ng=NORMG[p.position]||0;
   return base+bonus(p)*ng;};                                        // + validated contract-year / vacated-role bumps
 const raPts=p=>isK(p)?(p.proj_pts||0):effPts(p)*(1-K_RISK*playerRisk(p));  // certainty-equivalent, full-season pts
 const CMP=(typeof COMPS!=="undefined")?COMPS:{};
-const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};
+const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));localStorage.setItem("blendW",BLEND_W);};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z ]/g,"").replace(/\b(jr|sr|ii|iii|iv|v)\b/g,"").replace(/\s+/g," ").trim();
 const fkey=(n,p)=>norm(n)+"|"+p;
 const PRJ=p=>p._proj!=null?p._proj:p.proj_pts;
 const VP=p=>p._vorp!=null?p._vorp:p.vorp;
-const ffaOn=()=>projMode==="ffa"&&Object.keys(ffaMap).length>0;
+let BLEND_W=parseFloat(localStorage.getItem("blendW")||"0.5");        // FFA weight in Blend mode (0..1)
+const ffaLoaded=()=>Object.keys(ffaMap).length>0;
+const ffaOn=()=>projMode==="ffa"&&ffaLoaded();
+const projActive=()=>(projMode==="ffa"||projMode==="blend")&&ffaLoaded();   // using an alt projection (_proj set)
 
 // ---------- projection / VORP (recomputed for FFA mode) ----------
 function recomputeSkillVorp(){
@@ -271,11 +276,24 @@ function recomputeSkillVorp(){
   skill.forEach(p=>p._vorp=p._proj-repl[p.position]);
 }
 function applyProjection(){
-  if(ffaOn()){
+  if(projActive()){
+    const blend=projMode==="blend", st={};
+    if(blend){   // per-position rescale FFA to the model's scale (robust to different scoring) before blending
+      ["QB","RB","WR","TE"].forEach(pos=>{
+        const a=PLAYERS.filter(p=>p.position===pos&&ffaMap[fkey(p.name,p.position)]);
+        const mp=a.map(p=>p.proj_pts||0), fp=a.map(p=>ffaMap[fkey(p.name,p.position)].pts||0);
+        const mn=x=>x.reduce((s,v)=>s+v,0)/(x.length||1), sd=x=>{const m=mn(x);return Math.sqrt(x.reduce((s,v)=>s+(v-m)*(v-m),0)/(x.length||1))||1;};
+        st[pos]={mm:mn(mp),ms:sd(mp),fm:mn(fp),fs:sd(fp)};
+      });
+    }
     PLAYERS.forEach(p=>{
       p._ffa=ffaMap[fkey(p.name,p.position)]||null;
-      if(isK(p)){p._proj=p.proj_pts;p._vorp=p.vorp;}
-      else{p._proj=p._ffa?p._ffa.pts:p.proj_pts;}   // FFA points (consensus); model fallback if unmatched
+      if(isK(p)){p._proj=p.proj_pts;p._vorp=p.vorp;return;}
+      if(!p._ffa){p._proj=p.proj_pts;return;}                 // unmatched -> model
+      if(blend){const s=st[p.position]||{ms:1,fs:1,mm:0,fm:0};
+        const ffaScaled=s.mm+(p._ffa.pts-s.fm)*(s.ms/s.fs);   // FFA rescaled to model level
+        p._proj=(1-BLEND_W)*(p.proj_pts||0)+BLEND_W*ffaScaled;
+      }else p._proj=p._ffa.pts;                                // pure FFA swap
     });
     recomputeSkillVorp();
   }else{
@@ -319,7 +337,7 @@ document.getElementById("scorechips").innerHTML=Object.entries(META.scoring).map
 function notes(){
   document.getElementById("notes").innerHTML=META.notes.map(n=>"• "+n).join("<br>")+
     "<br>• Auction $: VBD over a "+cfg.teams+"-team $"+cfg.budget+" budget. K/DST capped (streamed). Keepers inflate the remaining pool."+
-    (ffaOn()?"<br>• <b style='color:var(--gold)'>FFA consensus active</b> — projections/ranks/$ across every tab <b>including the Draft Room &amp; Mock Keepers value engine</b> use the uploaded FantasyFootballAnalytics points + ADP. The model-only injury/manual per-player overrides are bypassed (FFA already reflects them); the validated contract-year bump still applies. Breakout/rookie tags remain model-based.":"");
+    (projActive()?"<br>• <b style='color:var(--gold)'>"+(projMode==="blend"?("Blend active ("+Math.round(BLEND_W*100)+"% FFA / "+Math.round((1-BLEND_W)*100)+"% model)"):"FFA consensus active")+"</b> — projections/ranks/$ across every tab <b>including the Draft Room &amp; Mock Keepers value engine</b> "+(projMode==="blend"?"blend the model with the uploaded FFA points (FFA rescaled per-position to the model's level). The blend injects FFA's current-season info (moves, rookies, injuries) the historical model lacks":"use the uploaded FantasyFootballAnalytics points + ADP")+". Model-only injury/manual overrides are bypassed; the validated contract-year / vacated-role bumps still apply. Breakout/rookie tags remain model-based.":"");
 }
 function cards(){
   document.getElementById("replcards").innerHTML=Object.entries(META.replacement_points)
@@ -362,25 +380,31 @@ document.getElementById("ffaFile").onchange=e=>{
     try{
       const {m,n}=parseCSV(ev.target.result);
       if(!n){alert("Couldn't parse any QB/RB/WR/TE rows. Expecting an FFA projections CSV with player/position/points columns.");return;}
-      ffaMap=m; projMode="ffa"; save();
-      document.getElementById("srcFFA").disabled=false;
+      ffaMap=m; save();
+      document.getElementById("srcFFA").disabled=false; document.getElementById("srcBlend").disabled=false;
       document.getElementById("ffaClear").style.display="";
-      setSrc("ffa");
+      setSrc("blend");                                   // default to Blend (model + FFA) on upload
     }catch(err){alert("Parse error: "+err.message);}
   };
   rd.readAsText(f);
 };
-document.getElementById("ffaClear").onclick=()=>{ffaMap={};projMode="model";save();document.getElementById("srcFFA").disabled=true;document.getElementById("ffaClear").style.display="none";setSrc("model");};
+document.getElementById("ffaClear").onclick=()=>{ffaMap={};projMode="model";save();document.getElementById("srcFFA").disabled=true;document.getElementById("srcBlend").disabled=true;document.getElementById("ffaClear").style.display="none";setSrc("model");};
 function setSrc(src){
-  if(src==="ffa"&&!Object.keys(ffaMap).length) return;
+  if((src==="ffa"||src==="blend")&&!ffaLoaded()) return;
   projMode=src; save();
   document.getElementById("srcModel").classList.toggle("active",src==="model");
+  document.getElementById("srcBlend").classList.toggle("active",src==="blend");
   document.getElementById("srcFFA").classList.toggle("active",src==="ffa");
+  document.getElementById("blendWrap").style.display=src==="blend"?"":"none";
   document.getElementById("ffaStatus").innerHTML=ffaStatusText();
   recompute(); notes(); render();
 }
 document.getElementById("srcModel").onclick=()=>setSrc("model");
+document.getElementById("srcBlend").onclick=()=>setSrc("blend");
 document.getElementById("srcFFA").onclick=()=>setSrc("ffa");
+(function(){const s=document.getElementById("blendW"),v=document.getElementById("blendWv");
+  s.value=Math.round(BLEND_W*100); v.textContent=Math.round(BLEND_W*100)+"%";
+  s.oninput=()=>{BLEND_W=(+s.value)/100; v.textContent=s.value+"%"; save(); if(projMode==="blend"){recompute();render();}};})();
 
 // ---------- position filter / search ----------
 const POSES=["ALL","QB","RB","WR","TE","FLEX","ROOK","K","DST"];
@@ -1162,9 +1186,11 @@ function renderSide(){
 }
 
 // ---------- init ----------
-if(Object.keys(ffaMap).length){document.getElementById("srcFFA").disabled=false;document.getElementById("ffaClear").style.display="";}
+if(Object.keys(ffaMap).length){document.getElementById("srcFFA").disabled=false;document.getElementById("srcBlend").disabled=false;document.getElementById("ffaClear").style.display="";}
 document.getElementById("srcModel").classList.toggle("active",projMode==="model");
+document.getElementById("srcBlend").classList.toggle("active",projMode==="blend");
 document.getElementById("srcFFA").classList.toggle("active",projMode==="ffa");
+document.getElementById("blendWrap").style.display=projMode==="blend"?"":"none";
 document.getElementById("ffaStatus").innerHTML=ffaStatusText();
 cards();notes();recompute();render();
 </script>
