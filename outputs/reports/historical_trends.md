@@ -50,10 +50,13 @@ Min PPG of the tier your league starts (early → recent era):
 2011–15 **12%** → 2016–20 15% → 2021–24 **19%**. Rushing increasingly defines QB1 scoring → **prioritize
 dual-threat QBs**; their rushing floor is stickier than passing TDs. (Rushing yards are already a model input.)
 
-## 5. Rookie WR immediate impact — EDGE (worth testing)
-Mean rookie-WR PPG is flat (~8), but **rookie WRs hitting ≥12 PPG jumped 2.4/yr → 2.6 → 3.8/yr** (2021–24).
-The immediate-hit rate is up ~50%. A rookie model trained on 2011–24 may **under-project** recent rookie WRs.
-*Flagged for validation* against the actual rookie model (connects to the depth-chart investigation).
+## 5. Rookie WR immediate impact — trend REAL, edge BUSTED (validated)
+Mean rookie-WR PPG is flat (~8), but **rookie WRs hitting ≥12 PPG jumped 2.4/yr → 2.6 → 3.8/yr** (2021–24) —
+hit rate up ~50%. **Tested** whether the actual rookie model under-projects them (`scripts/rookie_wr_era_test.py`):
+it does **not**. Walk-forward residual is flat (2016–20 +0.30 vs 2021–25 +0.20; slope t=+0.1) and the model
+actually got *sharper* recently (rank corr 0.48 → **0.69**). A trailing-residual bias-correction **HURTS**
+MAE (−0.075). The extra hits are a right-tail/draft-capital phenomenon the model already ranks correctly —
+draft capital + landing spot encode the modern rookie WR. No edge, no change.
 
 ## 6. "Death of the WR2" (season-long) — BUSTED in this data
 Season-long WR fantasy-point concentration is **remarkably flat** across 14 years: top-12 ≈ 19–20%,
@@ -67,5 +70,9 @@ relevant for best-ball/weekly-lineup risk, not season-long value.
 
 ## Bottom line
 Most of these are **draft-strategy intelligence**, not model bumps (the projection already prices age,
-usage, rushing). The one **potential edge** is the rising rookie-WR hit rate (#5) — worth a validation pass.
-The one **cautionary counter-finding** is that the season-long "WR2 death" (#6) isn't in the data.
+usage, rushing). The rookie-WR hit-rate edge (#5) was **tested and busted** — the model already ranks
+recent rookie WRs correctly (rho 0.69), a correction hurts. The **cautionary counter-finding** is that
+the season-long "WR2 death" (#6) isn't in the data. Net: no new model bumps earned; the value is in the
+keeper-safety / scarcity / age playbook above. Consistent with the standing scoreboard — real trends
+keep turning out to be already priced; only genuinely external signals (Vegas already in model, walk-year,
+vacated-role) have ever earned a bump.
