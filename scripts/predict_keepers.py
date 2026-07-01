@@ -156,11 +156,24 @@ def tend_for(o):
     td["top"] = max(list(mx.values()) or [0])      # their biggest single buy (stars-and-scrubs)
     return td
 
+# ---- expected auction (redraft) price per player, from the position bid curve ----
+# The r-th most valuable player at a position is expected to redraft at ~the $ the league pays for
+# its r-th most expensive buy at that position. This is the key to the KEEP decision: you only keep
+# a player if keeping is CHEAPER than redrafting him (exp > cost) AND he's good value (value > cost).
+exp_price = {}
+for _pos in SKILL:
+    _arr = sorted([p for p in P if p["position"] == _pos and not isK(p)],
+                  key=lambda p: -(VAL.get((norm(p["name"]), _pos)) or 0))
+    _C = bid_curve_pos.get(_pos, [])
+    for _r, p in enumerate(_arr):
+        _v = VAL.get((norm(p["name"]), _pos)) or 0
+        exp_price[pidof(p)] = (_C[_r] if _r < len(_C) else 1) if _v > 1 else 1
+
 # ---- per-team keeper prediction ----
 L = json.load(open(os.path.join(ROOT, "outputs", "espn_league.json")))
 print(f"Predicted 2026 keepers — {L.get('name')} ({L.get('size')} teams). "
-      f"cost = true 2025 keeper cost + this team's 2026 bump (made playoffs +$5 / non-playoff +$3 / "
-      f"picked-champ +$0); waiver pickups = $1, no inflation. value = calibrated board $; keep top-3 surplus.\n")
+      f"cost = true 2025 keeper cost + this team's 2026 bump. KEEP only if keeping beats redrafting "
+      f"(exp > cost) AND good value (value > cost); rank by $ saved. 'redraft' = good value but cheaper to re-buy.\n")
 teams_out = []
 for t in sorted(L.get("teams", []), key=lambda x: x["id"]):
     owner = t.get("owner"); b26 = bump.get(("2025", owner), 0)
@@ -169,26 +182,30 @@ for t in sorted(L.get("teams", []), key=lambda x: x["id"]):
         if p.get("pos") in ("K", "DST", "?"): continue
         k = norm(p.get("name") or ""); val = VAL.get((k, p.get("pos")))
         if val is None: continue
-        pl = PMAP[(k, p.get("pos"))]                       # canonical board player (for name/team/pid)
+        pl = PMAP[(k, p.get("pos"))]; cid = pidof(pl)      # canonical board player
         basis = basis25.get(k); waiver = basis is None     # not in 2025 draft -> waiver pickup
         cost = 1 if waiver else round(basis + b26)
-        cand.append({"pid": pidof(pl), "name": pl["name"], "pos": pl["position"], "team": pl.get("team") or "",
-                     "value": val, "cost": cost, "surplus": val - cost, "basis": round(basis or 0),
-                     "bump": b26, "waiver": waiver, "keptyrs": keptyrs.get(k, 0)})
-    cand.sort(key=lambda c: -c["surplus"])
-    keep = [c for c in cand if c["surplus"] > 0][:3]
+        exp = exp_price.get(cid, 1); savings = exp - cost; good = val > cost
+        decision = "keep" if (good and savings > 0) else ("redraft" if good else "pass")
+        cand.append({"pid": cid, "name": pl["name"], "pos": pl["position"], "team": pl.get("team") or "",
+                     "value": val, "cost": cost, "exp": exp, "savings": savings, "surplus": val - cost,
+                     "decision": decision, "basis": round(basis or 0), "bump": b26,
+                     "waiver": waiver, "keptyrs": keptyrs.get(k, 0)})
+    keep = sorted([c for c in cand if c["decision"] == "keep"], key=lambda c: -c["savings"])[:3]
     keepids = {c["pid"] for c in keep}
-    for c in cand: c["predicted"] = c["pid"] in keepids    # the model's default top-3 keep
+    for c in cand: c["predicted"] = c["pid"] in keepids    # the model's recommended keeps
+    cand.sort(key=lambda c: (c["decision"] != "keep", c["decision"] != "redraft", -c["savings"], -c["surplus"]))
     teams_out.append({"id": t["id"], "name": t.get("name"), "owner": owner, "bump2026": b26,
                       "tend": tend_for(owner), "candidates": cand})
     me = "  <-- YOU" if t["id"] == L.get("myTeamId") else ""
     print(f"[{t['id']:>2}] {str(t['name'])[:26]:26s}{me}  (2026 bump +${b26})")
     for c in keep:
         tag = f" (kept {c['keptyrs']}yr)" if c["keptyrs"] else ""
-        brk = " [$1 waiver keeper]" if c["waiver"] else f" (=${c['basis']} +${c['bump']})"
-        print(f"     KEEP  {c['pos']:<3} {c['name'][:22]:22s} value ${c['value']:>2}  cost ${c['cost']:>2}{brk}  surplus +${c['surplus']:>2}{tag}")
-    nxt = next((c for c in cand if c not in keep), None)
-    if nxt: print(f"     next: {nxt['name']} (surplus {nxt['surplus']:+d})")
+        print(f"     KEEP    {c['pos']:<3} {c['name'][:22]:22s} value ${c['value']:>2}  cost ${c['cost']:>2}  "
+              f"exp ${c['exp']:>2}  saves +${c['savings']:>2}{tag}")
+    for c in [c for c in cand if c["decision"] == "redraft"][:3]:
+        print(f"     redraft {c['pos']:<3} {c['name'][:22]:22s} value ${c['value']:>2}  cost ${c['cost']:>2}  "
+              f"exp ${c['exp']:>2}  (re-buy ${c['exp']} < keep ${c['cost']})")
     print()
 
 open(os.path.join(ROOT, "outputs", "espn_keepers_2026.md"), "w", encoding="utf-8").write(
