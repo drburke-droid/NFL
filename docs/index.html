@@ -7,6 +7,7 @@
 <script src="data.js"></script>
 <script src="comps.js"></script>
 <script src="keepers_2026.js"></script>
+<script src="healthy_ppg.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -187,7 +188,8 @@ const _DEMANDG={QB:12,RB:24,WR:24,TE:12},NORMG={};
 ["QB","RB","WR","TE"].forEach(pos=>{const arr=PLAYERS.filter(p=>p.position===pos).sort((a,b)=>(b.proj_pts||0)-(a.proj_pts||0)).slice(0,_DEMANDG[pos]);
   const gs=arr.map(p=>p.proj_games).filter(x=>x).sort((a,b)=>a-b); NORMG[pos]=gs.length?gs[Math.floor(gs.length/2)]:15;});
 const effPts=p=>{const pts=p.proj_pts||0; if(p.is_rookie||!NORMG[p.position])return pts;
-  const ppg=p.proj_ppg,ng=NORMG[p.position]; return (ppg&&ng)?Math.max(pts,ppg*ng):pts;};
+  const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;   // injury-return healthy-rate override
+  const ppg=hr||p.proj_ppg,ng=NORMG[p.position]; return (ppg&&ng)?Math.max(pts,ppg*ng):pts;};
 const raPts=p=>isK(p)?(p.proj_pts||0):effPts(p)*(1-K_RISK*playerRisk(p));  // certainty-equivalent, full-season pts
 const CMP=(typeof COMPS!=="undefined")?COMPS:{};
 const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};

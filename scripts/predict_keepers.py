@@ -24,6 +24,10 @@ def print(*a, **k):
 
 # ---- our calibrated auction value per player ----
 P = json.loads(open(os.path.join(ROOT, "docs", "data.js"), encoding="utf-8").read().split("const PLAYERS = ")[1].rsplit(";", 1)[0])
+try:  # blended healthy PPG for injury-return players (scripts/healthy_ppg.py); keyed by exact name
+    HEALTHY = json.loads(open(os.path.join(ROOT, "docs", "healthy_ppg.js"), encoding="utf-8").read().split("= ", 1)[1].rstrip(";\n"))
+except Exception:
+    HEALTHY = {}
 isK = lambda p: p["position"] in ("K", "DST"); INJ = {"QB": .26, "RB": .40, "WR": .33, "TE": .39}
 def risk(p):
     if isK(p): return 0
@@ -43,7 +47,7 @@ for _pos, _n in _DEMAND.items():
 def eff_pts(p):
     pts = p.get("proj_pts") or 0
     if p.get("is_rookie") or p["position"] not in NORMG: return pts
-    ppg = p.get("proj_ppg"); ng = NORMG.get(p["position"])
+    ppg = HEALTHY.get(p["name"]) or p.get("proj_ppg"); ng = NORMG.get(p["position"])  # healthy-rate override
     return max(pts, ppg * ng) if (ppg and ng) else pts
 ra = lambda p: eff_pts(p) * (1 - .7 * risk(p))
 open_ = {"QB": 12, "RB": 24, "WR": 24, "TE": 12, "FLEX": 12}
