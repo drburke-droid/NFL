@@ -19,7 +19,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      KEEP  RB  De'Von Achane          value $50  cost $14 (=$11 +$3)  surplus +$36 (kept 2yr)
      KEEP  TE  Harold Fannin Jr.      value $ 8  cost $ 1 [$1 waiver keeper]  surplus +$ 7
      KEEP  TE  Juwan Johnson          value $ 6  cost $ 1 [$1 waiver keeper]  surplus +$ 5
-     next: Sam Darnold (surplus +2)
+     next: Sam Darnold (surplus +1)
 
 [ 4] 3AM  No Limit               (2026 bump +$5)
      KEEP  RB  Jahmyr Gibbs           value $68  cost $45 (=$40 +$5)  surplus +$23 (kept 2yr)

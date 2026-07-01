@@ -750,6 +750,9 @@ function dynamicMarket(){
 // intrinsic player value = clearing price in a NORMAL full-money auction (no keeper inflation),
 // independent of who's been kept. Same formula/calibration as dynamicMarket but full pool+budget.
 const BENCH_CAP=6;   // bubble/bench players (past the startable line) ramp $BENCH_CAP -> $1 (no cliff)
+// per-position "last rosterable" depth (x startable cutoff), calibrated to where the league's real
+// auctions hit $1 (outputs/reports/position_auction_curves.md): WR/RB run deep, TE/QB are shallow.
+const DEEP_MULT={QB:1.4,RB:1.5,WR:1.5,TE:1.1};
 function baseValue(){
   const open={QB:cfg.teams,RB:cfg.teams*2,WR:cfg.teams*2,TE:cfg.teams,FLEX:cfg.teams},repl={},rdeep={},emarg={},within=new Set();
   ["QB","RB","WR","TE","K","DST"].forEach(pos=>{
@@ -759,7 +762,7 @@ function baseValue(){
     repl[pos]=arr.length?(n>0?raPts(arr[mi]):raPts(arr[0])):0;
     if(!["K","DST"].includes(pos)){
       arr.slice(0,n).forEach(p=>within.add(pid(p)));
-      const rd=Math.min(arr.length-1,Math.round(n*1.6)); rdeep[pos]=arr.length?raPts(arr[rd]):0;  // deep "last rosterable"
+      const rd=Math.min(arr.length-1,Math.round(n*(DEEP_MULT[pos]||1.5))); rdeep[pos]=arr.length?raPts(arr[rd]):0;
       emarg[pos]=Math.max(repl[pos]-rdeep[pos],1e-6);}});
   let sumV=0;PLAYERS.forEach(p=>{if(within.has(pid(p)))sumV+=Math.max(raPts(p)-repl[p.position],0);});
   const disc=Math.max(cfg.teams*cfg.budget-cfg.teams*cfg.roster,0),per=sumV>0?disc/sumV:0;
