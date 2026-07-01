@@ -44,6 +44,15 @@ TreVeyon ~$18 / Love ~$20 (+7, rookie).
 → punt TE (Kelce ~$17 val 18 / Loveland $14 / LaPorta $12) → THREE value RBs (Swift $22 + Javonte $23 +
 Love $20 — all medium dual-threats, the validated durable archetype). ≈ $53+17+65.
 
+## Scenario: Chase + Bijan double-anchor (both are in the pool; Chase is MY unkept player)
+At expected prices ($60+$53=$113 of $126 core) the pair is +13 edge — IDENTICAL to Path A, but with
+$13 left the RB2/TE become $8/$3 darts = two weekly starting holes, and the tournament/sim evidence
+says forced stars-and-scrubs finishes LAST (10.1/12; extreme S&S never top-3). Only the DISCOUNT
+branch flips it: Bijan ≤$60 AND Chase ≤$45 → +23 edge, best available basket. Decision rule: land
+whichever comes up first at its Path price (Bijan ≤$60 → Path A; Chase ≤$50 → Path C), then bid the
+second ONLY at a ~$8-below-market discount (Chase ≤$45 / Bijan ≤$55); otherwise complete the single-
+anchor path. Keeping Chase at $61 is strictly worse than re-buying at ~$53 (engine's 'pass' stands).
+
 ## Do-not-pay list (our corrected model dings aging/moving stars — validated +0.025 MAE)
 Derrick Henry $54 (val 45, age 32) · Josh Jacobs $51 (val 42) · CMC $48 (val 42, age 30) ·
 Nabers $49 (val 37) · London $44 (val 31) · Adams $21 (val 11) · Metcalf/Waddle/Evans/Diggs teens
