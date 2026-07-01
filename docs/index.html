@@ -8,6 +8,7 @@
 <script src="comps.js"></script>
 <script src="keepers_2026.js"></script>
 <script src="healthy_ppg.js"></script>
+<script src="contract_status.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -187,9 +188,18 @@ function playerRisk(p){
 const _DEMANDG={QB:12,RB:24,WR:24,TE:12},NORMG={};
 ["QB","RB","WR","TE"].forEach(pos=>{const arr=PLAYERS.filter(p=>p.position===pos).sort((a,b)=>(b.proj_pts||0)-(a.proj_pts||0)).slice(0,_DEMANDG[pos]);
   const gs=arr.map(p=>p.proj_games).filter(x=>x).sort((a,b)=>a-b); NORMG[pos]=gs.length?gs[Math.floor(gs.length/2)]:15;});
+// validated walk-year (contract-year) PPG bump — improves projection MAE (scripts/contract_year_mae.py)
+const cstat=p=>(typeof CONTRACT_STATUS!=="undefined")?CONTRACT_STATUS[p.name]:null;
+const cbump=p=>{const c=cstat(p); return (c&&c.bump)?c.bump:0;};
+const contractTag=p=>{const c=cstat(p); if(!c)return "";
+  if(c.status==="walk")return ` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — applies a validated +${c.bump} PPG bump (improves out-of-sample projection MAE; effect largest at RB)">📄 WALK YR</span>`;
+  if(c.status==="fade")return ` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal — post-contract letdown risk (informational tag only; not yet MAE-validated, no value change)">📄 just paid</span>`;
+  return "";};
 const effPts=p=>{const pts=p.proj_pts||0; if(p.is_rookie||!NORMG[p.position])return pts;
   const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;   // injury-return healthy-rate override
-  const ppg=hr||p.proj_ppg,ng=NORMG[p.position]; return (ppg&&ng)?Math.max(pts,ppg*ng):pts;};
+  const ng=NORMG[p.position],ppg=hr||p.proj_ppg;
+  const base=(ppg&&ng)?Math.max(pts,ppg*ng):pts;
+  return base+cbump(p)*(ng||0);};                                        // + contract-year bump over a normal season
 const raPts=p=>isK(p)?(p.proj_pts||0):effPts(p)*(1-K_RISK*playerRisk(p));  // certainty-equivalent, full-season pts
 const CMP=(typeof COMPS!=="undefined")?COMPS:{};
 const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};
@@ -966,7 +976,7 @@ function renderMockKeepers(){
     const ns=cont.filter(c=>c.starter).length;
     const tag=!cont.length?'<span class="muted">no realistic suitor — bargain</span>':cont.length<=2?`<span class="scarce">thin (${cont.length})</span> · ${names}`:`${ns?ns+' need-fit':cont.length+' teams'} · ${names}`;
     return `<tr><td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span></td>
+      <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${contractTag(p)}</td>
       <td>${Math.round(p.proj_pts)}</td><td style="font-weight:600">$${val}</td><td class="base">$${exp}</td><td class="maxbid">$${r.mymax}</td>
       <td class="${edge>0?'upc':(edge<0?'downc':'muted')}">${edge>=0?'+':''}${edge}</td>
       <td class="l" style="font-size:11px">${tag}</td></tr>`;}).join("")+`</tbody></table></div>`;
@@ -1022,6 +1032,7 @@ function render(){
         if(p.won_job===1)tg+=' <span class="tag won" title="Young (≤2 yr) player who ended 2025 entrenched after winning a role late — model runs slightly low (validated ~+0.7 PPG)">⬆ WON JOB</span>';
         if(p.vacated_role===1)tg+=` <span class="tag vac" title="Backfield lost its lead back (${p.vac_rb_carries||0} carries vacated, no real replacement) — returning RBs here beat projection ~+1.7 PPG (validated, both eras)">⬆ VACATED ROLE</span>`;
         if(p.age_risk===1)tg+=` <span class="tag agerisk" title="${ageRiskNote(p)}">⚠ AGE</span>`;
+        tg+=contractTag(p);
         if(p.conf==='low')tg+=' <span class="lowconf">stream</span>';
         if(p.archetype)tg+=` <span class="arch" title="Player archetype (from size/speed + usage)">${p.archetype}</span>`;
         return `<td class="l">${nameHTML(p.name,p.position,tg)}</td>`;}

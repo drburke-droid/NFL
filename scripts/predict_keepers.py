@@ -28,6 +28,10 @@ try:  # blended healthy PPG for injury-return players (scripts/healthy_ppg.py); 
     HEALTHY = json.loads(open(os.path.join(ROOT, "docs", "healthy_ppg.js"), encoding="utf-8").read().split("= ", 1)[1].rstrip(";\n"))
 except Exception:
     HEALTHY = {}
+try:  # 2026 walk-year (contract-year) value bump (scripts/contract_status.py); keyed by exact name
+    CONTRACT = json.loads(open(os.path.join(ROOT, "docs", "contract_status.js"), encoding="utf-8").read().split("= ", 1)[1].rstrip(";\n"))
+except Exception:
+    CONTRACT = {}
 isK = lambda p: p["position"] in ("K", "DST"); INJ = {"QB": .26, "RB": .40, "WR": .33, "TE": .39}
 def risk(p):
     if isK(p): return 0
@@ -48,7 +52,9 @@ def eff_pts(p):
     pts = p.get("proj_pts") or 0
     if p.get("is_rookie") or p["position"] not in NORMG: return pts
     ppg = HEALTHY.get(p["name"]) or p.get("proj_ppg"); ng = NORMG.get(p["position"])  # healthy-rate override
-    return max(pts, ppg * ng) if (ppg and ng) else pts
+    base = max(pts, ppg * ng) if (ppg and ng) else pts
+    cb = (CONTRACT.get(p["name"]) or {}).get("bump", 0)                                # walk-year bump
+    return base + cb * (ng or 0)
 ra = lambda p: eff_pts(p) * (1 - .7 * risk(p))
 open_ = {"QB": 12, "RB": 24, "WR": 24, "TE": 12, "FLEX": 12}
 fa = lambda pos: open_["FLEX"] * ({"RB": .45, "WR": .45, "TE": .10}.get(pos, 0))
