@@ -9,6 +9,7 @@
 <script src="keepers_2026.js"></script>
 <script src="healthy_ppg.js"></script>
 <script src="contract_status.js"></script>
+<script src="vacated_role.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -191,19 +192,24 @@ const _DEMANDG={QB:12,RB:24,WR:24,TE:12},NORMG={};
 // validated walk-year (contract-year) PPG bump — improves projection MAE (scripts/contract_year_mae.py)
 const cstat=p=>(typeof CONTRACT_STATUS!=="undefined")?CONTRACT_STATUS[p.name]:null;
 const cbump=p=>{const c=cstat(p); return (c&&c.bump)?c.bump:0;};
-const contractTag=p=>{const c=cstat(p); if(!c)return "";
-  if(c.status==="walk")return ` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — applies a validated +${c.bump} PPG bump (improves out-of-sample projection MAE; effect largest at RB)">📄 WALK YR</span>`;
-  if(c.status==="fade")return ` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives — after regression to the mean these players hold their level (post coef +0.9 PPG, MAE not improved). Informational tag only, no value change.">📄 just paid</span>`;
-  return "";};
+// validated clean-vacancy WR inheritor bump (scripts/vacated_role_backtest2.py: +1.7 vs control, MAE-safe)
+const vstat=p=>(typeof VACATED_ROLE!=="undefined")?VACATED_ROLE[p.name]:null;
+const vbump=p=>{const v=vstat(p); return (v&&v.bump)?v.bump:0;};
+const bonus=p=>cbump(p)+vbump(p);                                   // validated additive PPG bumps
+const contractTag=p=>{const c=cstat(p),v=vstat(p); let t="";
+  if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — applies a validated +${c.bump} PPG bump (improves out-of-sample projection MAE; effect largest at RB)">📄 WALK YR</span>`;
+  else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
+  if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="Inherits a clean vacated target role (${v.vac_share}% share left by ${v.departed}, no early WR drafted). Validated ~+1.7 PPG vs control -> +${v.bump} bump.">↑ VACATED ${v.vac_share}%</span>`;
+  return t;};
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
-  // so the whole value engine re-prices globally. Keep only the validated contract bump.
-  if(ffaOn()) return (PRJ(p)||0)+cbump(p)*ng;
+  // so the whole value engine re-prices globally. Keep only the validated bumps (walk-year, vacancy).
+  if(ffaOn()) return (PRJ(p)||0)+bonus(p)*ng;
   const pts=p.proj_pts||0; if(p.is_rookie||!ng)return pts;
   const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;   // injury-return / manual healthy-rate override
   const ppg=hr||p.proj_ppg;
   const base=(ppg&&ng)?Math.max(pts,ppg*ng):pts;
-  return base+cbump(p)*ng;};                                        // + contract-year bump over a normal season
+  return base+bonus(p)*ng;};                                        // + validated contract-year / vacated-role bumps
 const raPts=p=>isK(p)?(p.proj_pts||0):effPts(p)*(1-K_RISK*playerRisk(p));  // certainty-equivalent, full-season pts
 const CMP=(typeof COMPS!=="undefined")?COMPS:{};
 const save=()=>{localStorage.setItem("draft_keepers",JSON.stringify(kept));localStorage.setItem("draft_cfg",JSON.stringify(cfg));localStorage.setItem("projMode",projMode);localStorage.setItem("ffa2026",JSON.stringify(ffaMap));};

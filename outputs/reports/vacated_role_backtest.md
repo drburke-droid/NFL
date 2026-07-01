@@ -20,11 +20,24 @@ vacancy (strips out mean-reversion).
 - **Weak link = prediction:** the top returning WR only actually inherits sometimes (+0.5pp ex-ante
   vs +4.2pp for the true gainer); teams often fill the hole with a FA/rookie.
 
-## Recommendation
-Use as a **soft draft-target flag / tiebreaker** ("stepping into vacated targets, on a team that lost
-≥12% share"), NOT a projection value bump. A smarter inheritor-predictor (incorporating offseason FA
-signings, draft capital, and player age) could capture more of the +1.8 PPG look-ahead effect and
-might then clear the MAE bar — worth building only if we want to act on this.
+## Smarter predictor — CLEAN vacancies (validated & applied)
+`scripts/vacated_role_backtest2.py` adds the draft-capital refinement: only count the inheritor when
+the team did NOT draft a WR in rounds 1–2 the next spring (a *clean* vacancy the holdover actually
+gets, vs a *contested* one a rookie takes).
+
+| Group | n | Δ target share | PPG Y→Y+1 | beat |
+|---|--:|--:|--:|--:|
+| **Clean vacancy** (no early WR drafted) | 46 | **+1.6pp** | 8.8 → 10.0 (**+1.2**) | 54% |
+| Contested (drafted WR rd1–2) | 30 | −1.1pp | 8.6 → 8.0 (−0.6) | 47% |
+| Control | 132 | +0.1pp | 9.3 → 8.8 (−0.5) | 38% |
+
+**Clean edge vs control ≈ +1.73 PPG** (vs +1.0 naive), approaching the look-ahead ceiling; contested
+inheritors *decline*, confirming the mechanism. MAE is **neutral** (3.79 vs 3.79) — no accuracy cost.
+
+**APPLIED:** `scripts/vacated_role_2026.py` flags 2026 clean-vacancy WR inheritors (2025 usage from
+play-by-play, 2026 teams from the roster release, draft from the draft_picks release) → a shrunk
+**+1.0 PPG bump** (~0.6× the +1.7 edge) + an `↑ VACATED %` tag in the board. 9 players (e.g. Rashee
+Rice ← M. Brown, Josh Downs ← Pittman, Quentin Johnston ← Keenan Allen).
 
 ## Standings of the intuitive concepts tested
 - **Walk-year bump:** +1.41, improved MAE −1.7% → APPLIED.
