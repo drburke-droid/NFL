@@ -737,9 +737,8 @@ function dynamicMarket(){
     // curve within their position. K/DST = $1.
     avail.forEach(p=>{if(["K","DST"].includes(p.position))price[pid(p)]=1;});
     ["QB","RB","WR","TE"].forEach(pos=>{const C=HP[pos]||[];
-      const arr=avail.filter(p=>p.position===pos)
-        .map(p=>({id:pid(p),v:Math.max(raPts(p)-(repl[pos]||0),0)})).sort((a,b)=>b.v-a.v);
-      arr.forEach((o,r)=>{price[o.id]=o.v<=0?1:(r<C.length?Math.max(1,C[r]):1);});});
+      const arr=avail.filter(p=>p.position===pos).sort((a,b)=>raPts(b)-raPts(a));  // rank within position
+      arr.forEach((p,r)=>{price[pid(p)]=r<C.length?Math.max(1,C[r]):1;});});        // curve tails to $1 (no hard v-gate)
   } else if(H){
     // fallback: single pooled curve (rank all skill together)
     const sk=avail.filter(p=>!["K","DST"].includes(p.position))
@@ -956,17 +955,21 @@ function renderMockKeepers(){
     <span>My team: <select class="drsel" id="mkMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
     <button class="btn sm up" id="mkPredict">↺ Reset to predicted</button>
     <button class="btn sm" id="mkClear">Clear all</button></div>
-    <div class="muted" style="font-size:12px;margin-top:6px"><b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. Cost = true 2025 value + team's 2026 bump (playoff +$5 / non-playoff +$3 / picked-champ +$0); waivers $1. High-surplus keepers spend little and <b>inflate</b> the price of everyone left.</div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:6px"><b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. <b>Keep?</b> column: <span class="upc">+$N</span> = KEEP (keeping saves \$N vs redrafting: exp&gt;cost &amp; good value) · <span style="color:#e3b57f">redraft</span> = good value but you'd re-buy him cheaper than the keeper cost · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked.</div></div>`;
   h+=`<div class="dr-teams">`+KT.map((t,i)=>{const s=TS[i],kc=keptForTeam(i).length,full=kc>=3;
-    const hd=`<div class="muted" style="font-size:9px;display:flex;gap:6px;padding-right:2px"><span style="flex:1"></span><span style="width:30px;text-align:right" title="our board value">val</span><span style="width:30px;text-align:right" title="keeper cost">cost</span><span style="width:30px;text-align:right" title="surplus = value − cost">+/−</span></div>`;
+    const hd=`<div class="muted" style="font-size:9px;display:flex;gap:4px;padding-right:2px"><span style="flex:1"></span><span style="width:26px;text-align:right" title="our board value">val</span><span style="width:26px;text-align:right" title="keeper cost">cost</span><span style="width:26px;text-align:right" title="expected redraft price">exp</span><span style="width:44px;text-align:right" title="KEEP (keeping saves $) / redraft (good value but cheaper to re-buy) / — (pass)">keep?</span></div>`;
     const rows=t.candidates.map(c=>{const on=DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept,dis=!on&&full;
-      return `<label class="mkc" style="display:flex;align-items:center;gap:6px;font-size:11px;${dis?'opacity:.35':''}">
+      const badge=c.decision==="keep"?`<span class="upc" title="Keeping saves $${c.savings} vs redrafting (exp $${c.exp} > cost $${c.cost})">+$${c.savings}</span>`
+        :c.decision==="redraft"?`<span style="color:#e3b57f" title="Good value, but you can redraft him for ~$${c.exp} < the $${c.cost} keeper cost — don't waste a slot">redraft</span>`
+        :`<span class="muted" title="Not worth a keeper slot (value $${c.value} ≤ cost $${c.cost})">—</span>`;
+      return `<label class="mkc" style="display:flex;align-items:center;gap:4px;font-size:11px;${dis?'opacity:.35':''}">
         <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${dis?"disabled":""}>
         <span class="pos ${c.pos}" style="transform:scale(.8)">${c.pos}</span>
         <span style="flex:1">${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
-        <span class="muted" style="width:30px;text-align:right">$${c.value}</span>
-        <span style="width:30px;text-align:right">$${c.cost}</span>
-        <span class="${c.surplus>0?'upc':'muted'}" style="width:30px;text-align:right">${c.surplus>=0?'+':''}${c.surplus}</span></label>`;}).join("");
+        <span class="muted" style="width:26px;text-align:right">$${c.value}</span>
+        <span style="width:26px;text-align:right">$${c.cost}</span>
+        <span class="muted" style="width:26px;text-align:right">$${c.exp}</span>
+        <span style="width:44px;text-align:right">${badge}</span></label>`;}).join("");
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:262px">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">2026 bump +$${t.bump2026} · <b>${kc}/3</b> kept · ${s.spotsLeft} spots · ${t.candidates.length} keepable</div>
