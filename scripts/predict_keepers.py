@@ -59,12 +59,13 @@ ra = lambda p: eff_pts(p) * (1 - .7 * risk(p))
 open_ = {"QB": 12, "RB": 24, "WR": 24, "TE": 12, "FLEX": 12}
 fa = lambda pos: open_["FLEX"] * ({"RB": .45, "WR": .45, "TE": .10}.get(pos, 0))
 BENCH_CAP = 6                                          # bubble/bench players ramp $BENCH_CAP -> $1 (no cliff)
+DEEP_MULT = {"QB": 1.4, "RB": 1.5, "WR": 1.5, "TE": 1.1}   # per-pos "last rosterable" depth (auction data)
 repl = {}; rdeep = {}; emarg = {}; within = set()
 for pos in ("QB", "RB", "WR", "TE"):
     n = round(open_[pos] + fa(pos)); arr = sorted([p for p in P if p["position"] == pos], key=ra, reverse=True)
     repl[pos] = ra(arr[min(max(n - 1, 0), len(arr) - 1)])
     for p in arr[:n]: within.add(p["name"])
-    rdeep[pos] = ra(arr[min(len(arr) - 1, round(n * 1.6))])     # deep "last rosterable" replacement
+    rdeep[pos] = ra(arr[min(len(arr) - 1, round(n * DEEP_MULT[pos]))])   # deep "last rosterable" replacement
     emarg[pos] = max(repl[pos] - rdeep[pos], 1e-6)
 sumE = sum(max(ra(p) - repl[p["position"]], 0) for p in P if p["name"] in within)
 per = (12 * 200 - 12 * 16) / sumE
