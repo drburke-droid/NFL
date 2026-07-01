@@ -127,8 +127,14 @@ def main():
         "draft_round","draft_pick","forty","vertical","broad_jump","cone","shuttle"]].rename(columns={"recent_team":"team"})
     ctx["age"]+=1; ctx["years_exp"]+=1
     con = sqlite3.connect(DB)
-    v26 = MS.attach_ffa(prior.merge(prior2,on="player_id",how="left").merge(ctx,on="player_id",how="left"), con); con.close()
-    v26["team_change"]=0; v26 = v26[v26.prior_games.fillna(0)>=3].copy()
+    v26 = MS.attach_ffa(prior.merge(prior2,on="player_id",how="left").merge(ctx,on="player_id",how="left"), con)
+    r26 = pd.read_sql("SELECT player_id, team AS team_2026 FROM nflv_rosters_2026", con).drop_duplicates("player_id")
+    con.close()
+    # real 2026 team-change flag from the roster release (was hardcoded 0 for everyone; team_change is
+    # both a model feature and a validated over-projection segment — see bias correction below)
+    v26 = v26.merge(r26, on="player_id", how="left")
+    v26["team_change"] = (v26.team_2026.notna() & v26.team.notna() & (v26.team_2026 != v26.team)).astype(int)
+    v26 = v26[v26.prior_games.fillna(0)>=3].copy()
     v26 = MS.add_injury_features(v26)                         # injury/games-aware prior (validated)
     FEATS = BASE + MS.INJURY_FEATURES + (MS.FFA_FEATURES if int(v26["ffa_points"].notna().sum())>=20 else [])
     print("\n  Production features:", ("BASE+INJ+FFA (market-anchored)" if len(FEATS)>len(BASE)+len(MS.INJURY_FEATURES) else "BASE+INJ (no 2026 FFA yet)"))
@@ -141,6 +147,13 @@ def main():
         mods = {nm: lgb.LGBMRegressor(objective="quantile", alpha=a, **GB).fit(tr[FEATS].astype(float).fillna(-1), tr.next_ppg)
                 for a,nm in [(0.15,"floor"),(0.5,"central"),(0.85,"ceiling")]}
         for nm,m in mods.items(): te[nm]=m.predict(te[FEATS].astype(float).fillna(-1)).clip(min=0)
+        # Validated segment bias correction (scripts/season_bias_correction_test.py): the scorer
+        # systematically over-projects age-30+ (resid -0.52), team-changers (-0.45), and 14+ PPG
+        # stars (-0.24). Walk-forward correction improves MAE +0.025 PPG, positive in 7/7 test years.
+        adj = (np.where(te.age.fillna(0)>=30, -0.52, 0.0)
+             + np.where(te.team_change==1, -0.45, 0.0)
+             + np.where(te.prior_ppg.fillna(0)>=14, -0.24, 0.0))
+        for nm in mods: te[nm]=(te[nm]+adj).clip(lower=0)
         # boom/bust: Platt-calibrated probabilities (smooth, realistic; no class-weight distortion)
         tr2 = tr.copy(); tr2["bz"]=(tr2.next_ppg<BUST_LINE[pos]).astype(int); tr2["bm"]=(tr2.next_ppg>=ELITE_LINE[pos]).astype(int)
         Xtr = tr2[FEATS].astype(float).fillna(-1); Xte = te[FEATS].astype(float).fillna(-1)
