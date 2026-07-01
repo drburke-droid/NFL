@@ -74,8 +74,9 @@ def eff_pts(p):
     base = max(pts, ppg * ng) if (ppg and ng) else pts
     cb = (CONTRACT.get(p["name"]) or {}).get("bump", 0)                                # walk-year bump
     vb = (VACATED.get(p["name"]) or {}).get("bump", 0)                                 # vacated-role bump
-    vg = VEGAS.get(ROSTER.get(p["name"]) or _can(p.get("team") or ""), 0)              # Vegas env bump
-    return base + (cb + vb + vg) * (ng or 0)
+    # NOTE: no Vegas bump — the projection model already uses implied_team_total (top-3 feature);
+    # applying it here would double-count (verified: +0.001 MAE to the real model). VEGAS_2026 kept for display.
+    return base + (cb + vb) * (ng or 0)
 ra = lambda p: eff_pts(p) * (1 - .7 * risk(p))
 open_ = {"QB": 12, "RB": 24, "WR": 24, "TE": 12, "FLEX": 12}
 fa = lambda pos: open_["FLEX"] * ({"RB": .45, "WR": .45, "TE": .10}.get(pos, 0))

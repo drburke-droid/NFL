@@ -44,11 +44,13 @@ So the ~0s for TD-regression / pass-rate / QB are real: **the projection already
 Only **Vegas team total** survives — external data no player-level model contains.
 
 ## Recommendation
-- **Vegas team total — APPLIED** (validated +0.063 MAE over the actual projection). `vacated_role_2026.py`
-  emits `VEGAS_2026` (per-team PPG bump = 0.15 × (2026 implied total − league mean), capped ±2.0) + a
-  default `ROSTER_2026` team map; the board resolves each player's 2026 team (FFA upload > roster
-  release > data.js) and applies a two-sided env tilt via `bonus` + a `🔥/❄ VEGAS` tag. DET/BAL/LAR
-  ~+0.5–0.7, ARI/NYJ/MIA/CLE ~−0.7.
+- **Vegas team total — REVERTED to informational** (was briefly applied). The +0.063 was measured over
+  a rich PROXY that lacked Vegas; but the ACTUAL projection model already uses `implied_team_total` as
+  its **3rd-biggest feature** (weekly_v2_importance.csv), plus team_spread/game_total/interactions. So
+  the bump double-counts — verified: adding it to the real model changes MAE by **+0.001** (nothing).
+  `VEGAS_2026`/`ROSTER_2026` kept; the board shows a muted "high/low total" context tag but applies **no
+  value change**. Lesson: validate incremental value against the ACTUAL model, not a proxy that omits
+  the very feature. (Walk-year & vacated-role are NOT in the model's features, so they remain additive.)
 - **Durability** signal validates keeping the existing injury-risk term (no new work).
 - The rest are either **already in the projection** (target share, draft, age, yards) → no additive
   bump, or **weak/null** (RB opp, QB quality, scheme) → not applied. Matches prior discipline:
