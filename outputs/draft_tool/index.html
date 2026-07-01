@@ -11,6 +11,7 @@
 <script src="contract_status.js"></script>
 <script src="vacated_role.js"></script>
 <script src="rb_archetype.js"></script>
+<script src="lottery_2026.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -241,12 +242,20 @@ const archTag=p=>{if(p.position!=="RB"||typeof RB_ARCH==="undefined")return "";
     med:["#22242a","#9aa4b0","● medium","Medium-volume, limited receiving (%c car/g, %t tgt/g). Context only."]}[a.a];
   if(!meta)return ""; const[bg,fg,txt,tip]=meta;
   return ` <span class="tag muted" style="background:${bg};color:${fg}" title="${tip.replace('%c',a.cpg).replace('%t',a.tpg)}">${txt}</span>`;};
+// $1-3 LOTTERY tickets (scripts/build_lottery_tag.py — validated 6.7x screen). Young (age<=26)
+// bright per user preference; vets muted. Data regenerates when FFA 2026 uploads (refresh chain).
+const lotteryTag=p=>{if(typeof LOTTERY_2026==="undefined")return "";
+  const l=LOTTERY_2026[p.name]; if(!l)return "";
+  const tip=`$1-3 lottery ticket — ${(l.p*100).toFixed(1)}% modeled star odds (${Math.round(l.p/0.012)}x the 1.2% base for this price tier). Signals: ${l.why}. Validated screen: top-10/season hit 8% star + 20% startable (2016-25). Recalculates when FFA 2026 is uploaded.`;
+  return l.young
+    ? ` <span class="tag" style="background:#332b10;color:#ffd76a" title="${tip}">🎟 LOTTERY</span>`
+    : ` <span class="tag muted" style="background:#26221a;color:#a89c7a" title="${tip} (Age ${l.age} — user prefers young tickets; vet shown muted.)">🎟 ticket</span>`;};
 const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasCtx(p); let t="";
   if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — validated +${c.bump} PPG bump (improves projection MAE; largest at RB)">📄 WALK YR</span>`;
   else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
   if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="${v.pos} inheriting a clean vacated role (${v.vac_share}% left by ${v.departed}, no ${v.pos} drafted rd1-2${v.ffa?'; teams from your FFA upload':''}). Validated -> +${v.bump} PPG.">↑ VACATED ${v.vac_share}%</span>`;
   if(Math.abs(vg)>=0.35)t+=` <span class="tag muted" style="background:${vg>0?'#2a2415':'#1e2228'};color:${vg>0?'#c9bd8a':'#8894a0'}" title="${team26(p)} 2026 Vegas implied team total is ${vg>0?'above':'below'} average — context only; the projection ALREADY prices team environment in (implied_team_total is a top-3 model feature), so no value change.">${vg>0?'○':'○'} ${team26(p)} ${vg>0?'high':'low'} total</span>`;
-  t+=archTag(p);
+  t+=archTag(p)+lotteryTag(p);
   return t;};
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),

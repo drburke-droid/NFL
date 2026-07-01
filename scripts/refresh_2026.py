@@ -35,6 +35,7 @@ STEPS = [
     ("Opportunity flags (2026 rosters)", "build_opportunity.py", False),
     ("Value-leap sleeper scores",        "build_value_leap.py", False),
     ("Implosion / fade-risk scores",     "build_implosion.py", False),
+    ("Lottery-ticket tags ($1-3 stars)", "build_lottery_tag.py", False),
     ("Rebuild draft tool (data.js)",     "build_draft_tool.py", True),
     ("Refresh career comps",             "comp_finder.py", False),
     ("Refresh rookie comps",             "rookie_comps.py", False),
