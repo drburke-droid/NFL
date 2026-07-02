@@ -23,6 +23,15 @@ so signals the projection already uses are likely already priced in.
 | **RB pass-specialist fade** (Gdula) | naive −1.14 (t−1.7); −0.012 over rich proxy | 🟡 real fade, but priced | yes (cpg+tpg) |
 | **RB medium-vol dual-threat** (Gdula) | naive +1.60 recent (t+2.2); **+0.011 over rich proxy** | ❌ mirage — priced | yes (cpg+tpg) |
 
+**Advanced-stats audit (`scripts/advanced_stats_test.py`, 2026-07-01):** every advanced metric we had
+NOT yet fed the season model, tested over the actual walk-forward (baseline 2.5192): conversion ratios
+cpoe/racr/pacr/aDOT **−0.005**; xFP opportunity+gap **−0.002**; team-QB context (epa/cpoe) **−0.003**;
+NGS tracking (separation/cushion/TT/aggressiveness/8-box/RYOE, 2016+) **−0.000**; OL sack rate
+**−0.013**; all together −0.008. **None add; several hurt.** The projection's role/production features
+(EPA, WOPR, target share, per-game rates) already subsume tracking-level detail. These stats are
+DIAGNOSTIC tools (e.g., the Jefferson QB-context decomposition, DeVonta rebound profile), not
+projection features — use them to explain residuals and spot market mispricing, not to move values.
+
 **RB archetype thesis (`scripts/rb_archetype.py`, Gdula/4for4 "death of the pass-game specialist"):**
 Trend CONFIRMED in our data — pass-specialists (≤8.5 car/g, ≥10 PPG) fell ~5.8/yr (2016–20) → ~1.5/yr
 (2021–24); medium-volume relevant RBs rose ~15 → ~21/yr. Naively the medium-vol dual-threat (8.5–15
