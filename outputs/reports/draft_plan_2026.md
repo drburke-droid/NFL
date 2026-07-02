@@ -53,6 +53,16 @@ whichever comes up first at its Path price (Bijan ≤$60 → Path A; Chase ≤$5
 second ONLY at a ~$8-below-market discount (Chase ≤$45 / Bijan ≤$55); otherwise complete the single-
 anchor path. Keeping Chase at $61 is strictly worse than re-buying at ~$53 (engine's 'pass' stands).
 
+## Market-perception override (user reads: Chase ~$64, Jefferson ~$58)
+Our exp$ = bid curve at OUR-value rank; the room prices name-brand stars at their REPUTATION rank.
+Chase: our projection actually likes him (2025 = WR3 in PPG at 19.6 even without Burrow; central 17.7,
+val $55 = our WR2) — the $53-vs-$64 gap is purely curve SLOT (our rank 2-3 vs market rank 1). At $64
+his edge is −9 → **Path C trigger tightens to Chase ≤ $55**; let him go above that. Jefferson: NOT an
+injury artifact — 17 games, 11.9 PPG (≈WR20s), second straight decline, central 13.4, val $25. At the
+user's $58 market he is the single largest overpay on the board (−$33) — nominate him EARLY as budget
+bait. When FFA 2026 uploads, exp$ realism improves (ffa_aav/adp give true market ranks) and consensus
+will lift/settle both names in the blend.
+
 ## Do-not-pay list (our corrected model dings aging/moving stars — validated +0.025 MAE)
 Derrick Henry $54 (val 45, age 32) · Josh Jacobs $51 (val 42) · CMC $48 (val 42, age 30) ·
 Nabers $49 (val 37) · London $44 (val 31) · Adams $21 (val 11) · Metcalf/Waddle/Evans/Diggs teens
