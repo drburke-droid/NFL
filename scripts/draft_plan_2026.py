@@ -39,6 +39,16 @@ for pos in ("QB","RB","WR","TE"):
         e=(C[r] if r<len(C) else 1) if v>1 else 1
         rows.append({"name":p["name"],"team":p.get("team") or "","v":v,"exp":e,"edge":v-e})
     pool[pos]=rows
+# --- 2b) KEEPER INFLATION: scale curve $ so the priced pool clears the room's actual money ---
+n_slots=12*16-len(kept); room=12*200-tot_keep
+exps=sorted([r["exp"] for pos in pool for r in pool[pos]],reverse=True)
+exps=(exps+[1]*60)[:n_slots]                      # pad tail with $1 (K/DST/deep bench)
+infl=max(0.85,min(1.8,room/sum(exps)))
+for pos in pool:
+    for r in pool[pos]:
+        r["exp"]=max(1,round(1+(r["exp"]-1)*infl)); r["v"]=max(1,round(r["v"]*infl)); r["edge"]=r["v"]-r["exp"]
+print(f"KEEPER INFLATION: raw curve sums ${sum(exps)} over {n_slots} slots vs ${room} in room -> x{infl:.2f}")
+print("(values also restated in room-dollars so edges stay comparable)\n")
 # --- 3) my team ---
 me=tinfo[MY]
 print(f"MY TEAM [{MY}] {me['name']} — budget after keepers: ${me['budget']}")

@@ -5,6 +5,19 @@ top-3 +value keepers, re-ranks the remaining pool on the league's positional bid
 tendencies + budgets). **User override: Brock Bowers KEPT by team 7** (engine said 'redraft' on a $2
 technicality). 29 keepers league-wide, **~$2,026 in the room**.
 
+## UPDATE — KEEPER INFLATION applied (2026-07-02) — all $ below superseded by these
+User caught exp prices running low vs league history. Root cause: the bid curve is average-year $,
+but keepers remove more VALUE than they cost, so the surviving $2,026 chases a thinner pool — raw
+curve summed only $1,737 over 163 slots. Fix (board `dynamicMarket` + this plan): scale prices so the
+pool clears the room's money → **×1.17**. Values restated in room-dollars. New landscape matches
+history and the user's reads: **ARSB $74, Bijan $69 (val 83, +14), Henry $63, Chase $62 (user said
+$64), Jacobs $59, Nabers $57**. Revised anchors/caps: Bijan ≤**$76**; Kittle exp $32 cap **$38**
+(val 42); value RBs: Swift $25/Javonte $27/**Hall $30**/Jeanty $34 (all +7..+10); WR2 BTJ ~$28 /
+McLaurin ~$26; Chase cap **$64**. Jefferson now exp $36 (val 29) — still −$22 vs the user's $58 market
+read. **The Chase+Bijan double-anchor is DEAD**: $69+$62=$131 of $135 leaves $4 for 11 slots.
+ALSO fixed: **My Max is now roster-aware** — positions whose starters are already filled by keepers
+(e.g. a kept QB) drop to bench-stash price (≤$8) instead of full market ($34 backup QBs no more).
+
 ## UPDATE — Bowers kept (2026-07-01)
 Kittle becomes the **lone elite TE** (val 36, exp $28) with FOUR TE-hungry owners (State your name
 ×1.76/$176, 3AM ×1.73, Ugh ×1.45, Maple ×1.38) chasing one target → expect him well past $28.
