@@ -32,6 +32,15 @@ NGS tracking (separation/cushion/TT/aggressiveness/8-box/RYOE, 2016+) **−0.000
 DIAGNOSTIC tools (e.g., the Jefferson QB-context decomposition, DeVonta rebound profile), not
 projection features — use them to explain residuals and spot market mispricing, not to move values.
 
+**Teammate-quality crowding (`scripts/crowding_test.py`, 2026-07-01, user theory):** a WR2 behind an
+alpha WR1 DOES struggle — crowding is REAL (mates target-share coef −1.40, t=−5.1; alpha-WR1 WR2s
+decline −1.7 PPG vs −0.5 behind modest WR1s) and the model MISSES it (residual −0.52 on crowded WR2s
+vs +0.55 on open WR2s = 1.07 PPG spread). BUT the pocket is too thin to harvest: ~10 players/yr, the
+walk-forward segment correction washes (−0.0004) and +CROWD features win only 7/10 years (avg +0.006,
+worst −0.028). Below the apply bar → **informational board tag** (▼ crowded WR2 / ▲ open WR2, PR).
+2026: crowded = Higgins (Chase 30%), Jameson Williams (ARSB), Adams (Nacua), Kupp (JSN); open = Brian
+Thomas Jr., DJ Moore, Worthy (caveat: 2025 full-season shares understate injured alphas like Rice).
+
 **RB archetype thesis (`scripts/rb_archetype.py`, Gdula/4for4 "death of the pass-game specialist"):**
 Trend CONFIRMED in our data — pass-specialists (≤8.5 car/g, ≥10 PPG) fell ~5.8/yr (2016–20) → ~1.5/yr
 (2021–24); medium-volume relevant RBs rose ~15 → ~21/yr. Naively the medium-vol dual-threat (8.5–15
