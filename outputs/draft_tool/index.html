@@ -1224,16 +1224,26 @@ function ownerBid(i,p,mkt,TS){
   const raw=1+((mkt.price[id]||1)-1)/(mkt.infl||1);                     // un-inflated curve $ at his live slot
   const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1;
-  const agg=Math.max(0.85,Math.min(1.12,(s.spotsLeft>0?s.budget/s.spotsLeft:1)/(leagueAvg||1)));
+  // flushness: money-per-spot vs the room. Nobody leaves cash on the table — a flush team bids
+  // well OVER curve on players it needs (the hard star ceilings below still hold, so the surplus
+  // flows DOWN the curve into mid-tier starters and bench stashes, like the real room does).
+  const agg=Math.max(0.85,Math.min(2.2,(s.spotsLeft>0?s.budget/s.spotsLeft:1)/(leagueAvg||1)));
   let lean=Math.max(0.8,Math.min(1.2,td[pos]||1));
   if(raw>=25){if(pos==="QB"&&!td.eliteQB)lean=Math.min(lean,0.7);       // never paid up for a QB — won't start now
     if(pos==="TE"&&!td.payTE)lean=Math.min(lean,0.75);}
   let bid=raw*lean*agg*(starter?1:0.35)*mdJit(i,id);
-  if(!starter)bid=Math.min(bid,BENCH_CAP+2);                            // bench-only money
+  if(!starter)bid=Math.min(bid,Math.round((BENCH_CAP+2)*Math.max(1,agg)));  // bench money grows when flush
+  // SPEND IT DOWN: nobody leaves money on the table. A flush team's bid is floored at its exact
+  // surplus-clearing price — spots × (1 + surplus/spot) = budget — so late money dumps into the
+  // best remaining players instead of $1 steals (the hard history ceilings below still apply).
+  const perSur=s.spotsLeft>0?(s.budget-s.spotsLeft)/s.spotsLeft:0;
+  if(perSur>2)bid=Math.max(bid,1+perSur);
   const HPc=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos)?KEEPERS_2026.bidcurve_pos[pos]:null;
   const posTop=HPc&&HPc.length?HPc[0]:66;                               // league's all-time top $ at this position
   bid=Math.min(bid,Math.max(BENCH_CAP+2,(td.top||45)*1.05),posTop*1.08);
-  return Math.max(0,Math.min(Math.round(bid),afford));
+  // floor $1: real demand (we passed the posDemand gate) always bids — deep bench RB/WR must
+  // never round to $0 or the endgame force-feeds junk QBs/Ks to whoever nominates
+  return Math.max(1,Math.min(Math.round(bid),afford));
 }
 function mdWhy(i,p,TS){const s=TS[i],td=ownerTend(i),pos=p.position,o=[];
   if(s.spotsLeft<=0)return "roster full";
@@ -1256,7 +1266,8 @@ function mdNominee(i,mkt,TS){
   let best=null,bb=0;
   avail.forEach(p=>{const b=ownerBid(i,p,mkt,TS);
     if(b>bb||(b===bb&&b>0&&best&&raPts(p)>raPts(best))){bb=b;best=p;}});
-  return best||avail.sort((a,b)=>raPts(b)-raPts(a))[0];}
+  // fallback: the best PRICED player left (never a 5th junk QB the room force-eats)
+  return best||avail.sort((a,b)=>(mkt.price[pid(b)]||0)-(mkt.price[pid(a)]||0))[0];}
 // run the bidding: highest max wins (ties: you), pays runner-up +$1; nobody in -> nominator, $1
 function mdResolve(id,myMax){
   const p=BYID[id]; if(!p||DR.owned[id])return;
@@ -1268,7 +1279,12 @@ function mdResolve(id,myMax){
   let w=bids[0],second=bids[1]?bids[1].max:0;
   if(w.max<1){const t=TS[MD.nom]&&TS[MD.nom].spotsLeft>0?MD.nom:(bids.map(b=>b.i).find(i=>TS[i].spotsLeft>0));
     if(t==null)return; w={i:t,max:1};second=0;}
-  const price=Math.max(1,Math.min(w.max,second+1));
+  // PRICE ENFORCEMENT: the room never lets a flush team steal — when the winner has clearly more
+  // money-per-spot than the field, rivals bid him up toward his max (they know he must spend it).
+  const lAvg=mkt.spots>0?mkt.money/mkt.spots:1,ws=TS[w.i];
+  const flushW=lAvg>0?(ws.spotsLeft>0?ws.budget/ws.spotsLeft:1)/lAvg:1;
+  const enforce=flushW>1.1?Math.round(w.max*Math.min(0.97,0.6+0.18*flushW)):0;
+  const price=Math.max(1,Math.min(w.max,Math.max(second+1,enforce)));
   DR.owned[id]={t:w.i,price,kept:false};
   const ru=bids.find(b=>b.i!==w.i);
   MD.log.unshift({name:p.name,pos:p.position,t:w.i,price,ru:ru&&ru.max>0?ru.i:null,rmax:ru?ru.max:0,mine:w.i===DR.me});
@@ -1393,7 +1409,7 @@ function renderMockDraft(){
   if(S("mdBlockBtn"))S("mdBlockBtn").onclick=()=>{MD.block=MD.sel;MD.sel=null;saveMD();render();};
   document.querySelectorAll(".mdblock").forEach(b=>b.onclick=ev=>{ev.stopPropagation();MD.block=b.dataset.id;MD.sel=null;saveMD();render();});
   document.querySelectorAll(".mdrow").forEach(r=>r.onclick=()=>{MD.sel=r.dataset.id;saveMD();render();});
-  document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean and elite-QB/pay-TE habits, hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. "+
+  document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean and elite-QB/pay-TE habits, hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
     "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
     "Click any row anytime for a bid preview without nominating. Team cards show each roster taking shape with <b>projected PPG per week</b> for starters and bench. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft for you. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
