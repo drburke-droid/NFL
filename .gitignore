@@ -2,5 +2,7 @@ __pycache__/
 *.pyc
 .claude/
 
-# ESPN league data syncs via git (user opted in 2026-07-02 — private repo; cookies expire ~yearly).
-# The GitHub Action still uses ESPN_S2/ESPN_SWID repo Secrets independently.
+# ESPN cookies stay ONLY in repo Secrets (ESPN_S2/ESPN_SWID) — the espn-pull Action uses them and
+# commits the pulled data; never commit a local cookie file.
+data/espn_cookies.json
+data/espn/
