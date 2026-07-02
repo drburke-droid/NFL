@@ -1207,25 +1207,32 @@ function mdRestore(){const s=localStorage.getItem(MD_SNAP);if(!s)return;
 function mdJit(i,id){let x=(MD.seed*2654435761)^(i*40503+40009);
   for(let k=0;k<id.length;k++)x=(x*31+id.charCodeAt(k))|0;
   x^=x<<13;x^=x>>>17;x^=x<<5;return 0.88+((x>>>0)%1000)/1000*0.24;}
-// what team i would realistically pay for p RIGHT NOW
+// what team i would realistically pay for p RIGHT NOW.
+// ANCHOR = the league's real winning-bid distribution (bidcurve_pos: every non-keeper auction
+// price 2023–25, rank-ordered per position). Those bids were ALREADY paid in keeper-inflated
+// rooms, so we bid on the RAW curve value at the player's live slot — applying the room's
+// inflation rescale again would double-count it (that's how Nabers was running to $80 when this
+// league has never paid a WR past ~$64). Personality only SHADES the curve (tight ±20%), and two
+// hard dollar ceilings from history close it out: the owner's own biggest-ever buy, and the
+// position's all-time top price.
 function ownerBid(i,p,mkt,TS){
   const s=TS[i]; if(s.spotsLeft<=0)return 0;
   const afford=s.budget-(s.spotsLeft-1); if(afford<1)return 0;
   const pos=p.position,td=ownerTend(i),id=pid(p);
   if(isK(p))return s.need[pos]>0?1:0;                                   // $1 streams
   if(posDemand(s,pos,td)<=0)return 0;                                   // no realistic use
-  const market=mkt.price[id]||1;
+  const raw=1+((mkt.price[id]||1)-1)/(mkt.infl||1);                     // un-inflated curve $ at his live slot
   const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1;
-  const agg=Math.max(0.7,Math.min(1.25,(s.spotsLeft>0?s.budget/s.spotsLeft:1)/(leagueAvg||1)));
-  let lean=td[pos]||1;
-  if(market>=25){if(pos==="QB"&&!td.eliteQB)lean*=0.7;                  // never paid up for a QB — won't start now
-    if(pos==="TE"&&!td.payTE)lean*=0.75;}
-  let bid=market*lean*agg*(starter?1:0.35)*mdJit(i,id);
+  const agg=Math.max(0.85,Math.min(1.12,(s.spotsLeft>0?s.budget/s.spotsLeft:1)/(leagueAvg||1)));
+  let lean=Math.max(0.8,Math.min(1.2,td[pos]||1));
+  if(raw>=25){if(pos==="QB"&&!td.eliteQB)lean=Math.min(lean,0.7);       // never paid up for a QB — won't start now
+    if(pos==="TE"&&!td.payTE)lean=Math.min(lean,0.75);}
+  let bid=raw*lean*agg*(starter?1:0.35)*mdJit(i,id);
   if(!starter)bid=Math.min(bid,BENCH_CAP+2);                            // bench-only money
-  // star appetite is a hard DOLLAR ceiling, not a multiplier: an owner who's never gone past
-  // his historical top buy won't start now (rescaled to this room's keeper inflation)
-  bid=Math.min(bid,Math.max(BENCH_CAP+2,(td.top||45)*(mkt.infl||1)*1.05));
+  const HPc=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos)?KEEPERS_2026.bidcurve_pos[pos]:null;
+  const posTop=HPc&&HPc.length?HPc[0]:66;                               // league's all-time top $ at this position
+  bid=Math.min(bid,Math.max(BENCH_CAP+2,(td.top||45)*1.05),posTop*1.08);
   return Math.max(0,Math.min(Math.round(bid),afford));
 }
 function mdWhy(i,p,TS){const s=TS[i],td=ownerTend(i),pos=p.position,o=[];
@@ -1308,7 +1315,7 @@ function renderMockDraft(){
       :`<button class="btn sm up" id="mdStart">▶ Start mock draft</button>`}
     ${drafted?`<button class="btn sm" id="mdReset">↺ Reset to keepers (clears ${drafted} drafted)</button>`:MD.on?`<button class="btn sm" id="mdReset">✕ End mock</button>`:""}
     ${localStorage.getItem(MD_SNAP)?`<button class="btn sm" id="mdRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩ Restore pre-mock picks</button>`:""}</div>
-    <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). Each bot bids its owner's <b>2023–25 personality</b> (positional lean · star appetite · elite-QB/pay-TE habits) × <b>live roster need</b> × <b>remaining-budget aggression</b> on the live market price. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). Bot maxes sit ON the league's <b>real 2023–25 winning-bid curve</b> at the player's live rank (WR has never gone past ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.WR)?KEEPERS_2026.bidcurve_pos.WR[0]:64}, QB ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.QB)?KEEPERS_2026.bidcurve_pos.QB[0]:34} — bots won't either), shaded by each owner's personality (positional lean · elite-QB/pay-TE habits) and capped at his own biggest-ever buy. Live roster need and remaining budget gate everything. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
   // on the clock
   if(MD.on&&!done){
     h+=`<div class="dr-panel" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
@@ -1386,7 +1393,7 @@ function renderMockDraft(){
   if(S("mdBlockBtn"))S("mdBlockBtn").onclick=()=>{MD.block=MD.sel;MD.sel=null;saveMD();render();};
   document.querySelectorAll(".mdblock").forEach(b=>b.onclick=ev=>{ev.stopPropagation();MD.block=b.dataset.id;MD.sel=null;saveMD();render();});
   document.querySelectorAll(".mdrow").forEach(r=>r.onclick=()=>{MD.sel=r.dataset.id;saveMD();render();});
-  document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner (his 2023–25 positional lean, star appetite and elite-QB/pay-TE habits from <code>keepers_2026.js</code>, scaled by live roster need and remaining budget). "+
+  document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean and elite-QB/pay-TE habits, hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. "+
     "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
     "Click any row anytime for a bid preview without nominating. Team cards show each roster taking shape with <b>projected PPG per week</b> for starters and bench. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft for you. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
