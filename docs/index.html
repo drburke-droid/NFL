@@ -738,7 +738,7 @@ function renderRisers(){
       <td class="${dc(p.trend_dsnap)}">${p.trend_dsnap==null?"—":sgn(p.trend_dsnap)+"%"}</td>
       <td class="${dc(p.trend_dtch)}">${sgn(p.trend_dtch)}</td>
       <td class="${dc(p.trend_dtgtsh)}">${p.trend_dtgtsh==null?"—":sgn(p.trend_dtgtsh)}</td>
-      <td class="muted">${p.proj_ppg==null?"—":p.proj_ppg.toFixed(1)}</td>
+      <td class="muted">${p.proj_ppg==null?"—":((p.proj_games?(PRJ(p)/p.proj_games):p.proj_ppg)).toFixed(1)}</td>
     </tr>`).join("");
   wireJump();
   document.getElementById("notes").innerHTML="📈 <b>2025 first half (wk 1-9) vs second half (wk 10-18).</b> "+
@@ -798,7 +798,7 @@ function teamState(t){
   const own=Object.keys(DR.owned).filter(id=>DR.owned[id].t===t).map(id=>({id,price:+DR.owned[id].price||0,p:BYID[id]})).filter(x=>x.p);
   const spent=own.reduce((a,x)=>a+x.price,0), budget=cfg.budget-spent;
   const need={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1}; let bench=cfg.roster-9;
-  [...own].sort((a,b)=>(b.p.proj_pts||0)-(a.p.proj_pts||0)).forEach(x=>{const pos=x.p.position;
+  [...own].sort((a,b)=>(PRJ(b.p)||0)-(PRJ(a.p)||0)).forEach(x=>{const pos=x.p.position;
     if(need[pos]>0)need[pos]--; else if(FLEXE.includes(pos)&&need.FLEX>0)need.FLEX--; else if(bench>0)bench--;});
   return {own,spent,budget,need,bench,spotsLeft:cfg.roster-own.length};
 }
@@ -836,9 +836,27 @@ function dynamicMarket(){
     // are respected instead of pricing an elite QB like an elite WR. Keepers shift everyone up the
     // curve within their position. K/DST = $1.
     avail.forEach(p=>{if(["K","DST"].includes(p.position))price[pid(p)]=1;});
+    // LIVE DEMAND-AWARE PRICING — three live inputs move every expected price in real time:
+    //  (1) remaining league money -> global inflation rescale below;
+    //  (2) remaining positional STARTER demand: once every team has filled its starters at a
+    //      position, the rest of that position is bench-only and ramps to ~$1 (QB prices plummet
+    //      when all 12 QB slots are full);
+    //  (3) players already BOUGHT there advance the curve slot (an auction never re-pays the top
+    //      price after the top names are gone). Keepers don't advance it — the curve is calibrated
+    //      on post-keeper history; they act through open slots + money instead.
+    const bought={QB:0,RB:0,WR:0,TE:0};
+    Object.keys(DR.owned||{}).forEach(id=>{const o=DR.owned[id],pl=BYID[id];
+      if(pl&&o&&!o.kept&&bought[pl.position]!=null)bought[pl.position]++;});
     ["QB","RB","WR","TE"].forEach(pos=>{const C=HP[pos]||[];
       const arr=avail.filter(p=>p.position===pos).sort((a,b)=>raPts(b)-raPts(a));  // rank within position
-      arr.forEach((p,r)=>{price[pid(p)]=r<C.length?Math.max(1,C[r]):1;});});        // curve tails to $1 (no hard v-gate)
+      const nStart=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));       // LIVE starter+flex demand
+      const off=bought[pos]||0;
+      arr.forEach((p,r)=>{
+        const slot=off+r, cv=slot<C.length?Math.max(1,C[slot]):1;
+        if(r<nStart){price[pid(p)]=cv;}                                            // real demand -> curve slot
+        else{const ramp=Math.max(0,BENCH_CAP-(r-nStart)*1.2);                      // bench-only -> $6 -> $1
+          price[pid(p)]=Math.max(1,Math.round(Math.min(cv,ramp)));}
+      });});
   } else if(H){
     // fallback: single pooled curve (rank all skill together)
     const sk=avail.filter(p=>!["K","DST"].includes(p.position))
@@ -860,7 +878,7 @@ function dynamicMarket(){
   if(HP||H){
     const top=avail.map(p=>price[pid(p)]||1).sort((a,b)=>b-a).slice(0,Math.max(spots,0));
     const cs=top.reduce((a,b)=>a+b,0);
-    infl=cs>0?Math.max(0.85,Math.min(1.8,money/cs)):1;
+    infl=cs>0?Math.max(0.8,Math.min(2.5,money/cs)):1;   // wide clamp: endgame one-position scarcity can legitimately spike
     if(Math.abs(infl-1)>0.02)avail.forEach(p=>{const id=pid(p);price[id]=Math.max(1,Math.round(1+((price[id]||1)-1)*infl));});
   }
   return {price,repl,per,open,money,spots,scarce,infl};
@@ -968,7 +986,7 @@ function renderDraftRoom(){
   // team strip
   h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=teamState(i);
     const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`<span class="dr-need act">${s.need[k]>1?s.need[k]+" ":""}${k}</span>`).join("")||'<span class="dr-need">full</span>';
-    const roster=s.own.sort((a,b)=>(b.p.proj_pts||0)-(a.p.proj_pts||0)).map(x=>`<div style="display:flex;justify-content:space-between;font-size:11px"><span class="muted">${x.p.position} ${x.p.name}</span><span>$${x.price} <span class="keepbtn drundo" data-id="${x.id}">✕</span></span></div>`).join("");
+    const roster=s.own.sort((a,b)=>(PRJ(b.p)||0)-(PRJ(a.p)||0)).map(x=>`<div style="display:flex;justify-content:space-between;font-size:11px"><span class="muted">${x.p.position} ${x.p.name}</span><span>$${x.price} <span class="keepbtn drundo" data-id="${x.id}">✕</span></span></div>`).join("");
     return `<div class="dr-team ${i===DR.me?"me":""} ${s.spotsLeft<=0?"full":""}" data-setme="${i}">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
@@ -1007,7 +1025,7 @@ function renderDraftRoom(){
     return `<tr>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
       <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}</td>
-      <td>${isK(p)?"—":Math.round(p.proj_pts)}</td>
+      <td>${isK(p)?"—":Math.round(PRJ(p)||0)}</td>
       <td class="base">$${m.market}</td>
       <td class="maxbid">$${m.maxBid}${over?' <span class="upc" style="font-size:10px;font-weight:400">↑</span>':''}</td>
       <td class="${m.surplus>0?'upc':'muted'}">${isK(p)?"—":m.surplus}</td>
@@ -1112,7 +1130,7 @@ function renderMockKeepers(){
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
   // build row data once, then sort by the chosen column (BV computed at top of function)
   const rd=avail.map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1},val=BV[id]||0,exp=m.market;
-    return {p,proj:p.proj_pts||0,val,exp,mymax:m.maxBid||1,edge:val-exp,cont:contenders(p,exp,TS)};});
+    return {p,proj:PRJ(p)||0,val,exp,mymax:m.maxBid||1,edge:val-exp,cont:contenders(p,exp,TS)};});
   const SK={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,mymax:r=>r.mymax,edge:r=>r.edge,targeted:r=>r.cont.length};
   const kf=SK[mkSort]||SK.value;
   rd.sort((a,b)=>{const x=kf(a),y=kf(b);return typeof x==="string"?mkDir*x.localeCompare(y):mkDir*((x||0)-(y||0));});
@@ -1128,7 +1146,7 @@ function renderMockKeepers(){
     const tag=!cont.length?'<span class="muted">no realistic suitor — bargain</span>':cont.length<=2?`<span class="scarce">thin (${cont.length})</span> · ${names}`:`${ns?ns+' need-fit':cont.length+' teams'} · ${names}`;
     return `<tr><td class="l"><span class="pos ${p.position}">${p.position}</span></td>
       <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${contractTag(p)}</td>
-      <td>${Math.round(p.proj_pts)}</td><td style="font-weight:600">$${val}</td><td class="base">$${exp}</td><td class="maxbid">$${r.mymax}</td>
+      <td>${Math.round(PRJ(p)||0)}</td><td style="font-weight:600">$${val}</td><td class="base">$${exp}</td><td class="maxbid">$${r.mymax}</td>
       <td class="${edge>0?'upc':(edge<0?'downc':'muted')}">${edge>=0?'+':''}${edge}</td>
       <td class="l" style="font-size:11px">${tag}</td></tr>`;}).join("")+`</tbody></table></div>`;
   host.innerHTML=h;
