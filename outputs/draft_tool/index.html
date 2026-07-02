@@ -12,6 +12,7 @@
 <script src="vacated_role.js"></script>
 <script src="rb_archetype.js"></script>
 <script src="lottery_2026.js"></script>
+<script src="crowding_2026.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -250,12 +251,22 @@ const lotteryTag=p=>{if(typeof LOTTERY_2026==="undefined")return "";
   return l.young
     ? ` <span class="tag" style="background:#332b10;color:#ffd76a" title="${tip}">🎟 LOTTERY</span>`
     : ` <span class="tag muted" style="background:#26221a;color:#a89c7a" title="${tip} (Age ${l.age} — user prefers young tickets; vet shown muted.)">🎟 ticket</span>`;};
+// WR2 crowding (INFORMATIONAL — scripts/crowding_test.py: real effect t=-5.1; model runs -0.5 PPG
+// hot on crowded WR2s / +0.5 cold on open WR2s, but segment too thin to auto-correct. No value change.)
+const crowdTag=p=>{if(p.position!=="WR"||typeof CROWDING_2026==="undefined")return "";
+  const c=CROWDING_2026[p.name]; if(!c)return "";
+  const tip=c.k==="crowded"
+    ?`WR2 behind an alpha (${c.alpha} ${c.a_sh}% target share, 2025 full-season — injury-shortened alphas understated). Historically the model runs ~0.5 PPG HOT on this profile (crowded target pie). Context only.`
+    :`WR2 with no alpha above him (top teammate ${c.alpha} only ${c.a_sh}%). Historically the model runs ~0.5 PPG COLD on this profile (open target pie). Context only.`;
+  return c.k==="crowded"
+    ? ` <span class="tag muted" style="background:#2b1d1d;color:#d99a9a" title="${tip}">▼ crowded WR2</span>`
+    : ` <span class="tag muted" style="background:#1d2b21;color:#9ad9ae" title="${tip}">▲ open WR2</span>`;};
 const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasCtx(p); let t="";
   if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — validated +${c.bump} PPG bump (improves projection MAE; largest at RB)">📄 WALK YR</span>`;
   else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
   if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="${v.pos} inheriting a clean vacated role (${v.vac_share}% left by ${v.departed}, no ${v.pos} drafted rd1-2${v.ffa?'; teams from your FFA upload':''}). Validated -> +${v.bump} PPG.">↑ VACATED ${v.vac_share}%</span>`;
   if(Math.abs(vg)>=0.35)t+=` <span class="tag muted" style="background:${vg>0?'#2a2415':'#1e2228'};color:${vg>0?'#c9bd8a':'#8894a0'}" title="${team26(p)} 2026 Vegas implied team total is ${vg>0?'above':'below'} average — context only; the projection ALREADY prices team environment in (implied_team_total is a top-3 model feature), so no value change.">${vg>0?'○':'○'} ${team26(p)} ${vg>0?'high':'low'} total</span>`;
-  t+=archTag(p)+lotteryTag(p);
+  t+=archTag(p)+lotteryTag(p)+crowdTag(p);
   return t;};
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
