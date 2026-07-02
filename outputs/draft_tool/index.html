@@ -997,7 +997,8 @@ function renderDraftRoom(){
     <span style="flex:1"></span>
     <label class="btn sm up" for="espnFile" title="Import outputs/espn_league.json produced by scripts/fetch_espn.py">📥 Import ESPN league</label>
     <input id="espnFile" type="file" accept=".json" style="display:none">
-    <button class="btn sm" id="drReset">Reset draft</button></div>
+    <button class="btn sm" id="drReset">Reset draft</button>
+    ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩ Restore pre-mock picks</button>`:""}</div>
     <div class="muted" id="espnStatus" style="font-size:11px;margin-top:4px"></div></div>`;
   // team strip
   h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=teamState(i);
@@ -1051,6 +1052,7 @@ function renderDraftRoom(){
   document.getElementById("drMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   document.getElementById("espnFile").onchange=e=>{const f=e.target.files[0]; if(f) f.text().then(importEspnLeague);};
   document.getElementById("drReset").onclick=()=>{if(confirm("Clear all keepers & picks?")){DR.owned={};saveDR();render();}};
+  if(document.getElementById("drRestore"))document.getElementById("drRestore").onclick=mdRestore;
   document.querySelectorAll(".dr-team[data-setme]").forEach(el=>el.onclick=ev=>{if(ev.target.closest(".drundo"))return;DR.me=+el.dataset.setme;saveDR();render();});
   document.querySelectorAll(".drundo").forEach(el=>el.onclick=ev=>{ev.stopPropagation();delete DR.owned[el.dataset.id];saveDR();render();});
   document.querySelectorAll(".drdraft").forEach(b=>b.onclick=()=>{const id=b.dataset.id;
@@ -1170,6 +1172,7 @@ function renderMockKeepers(){
   host.innerHTML=h;
   document.getElementById("mkMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   if(mkDrafted)document.getElementById("mkClearDrafted").onclick=()=>{
+    mdBackup();
     for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
     MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();};
   document.getElementById("mkPredict").onclick=resetPredicted;
@@ -1188,6 +1191,17 @@ function renderMockKeepers(){
 // every mock plays out a little differently. Winner pays runner-up max +$1 (English auction).
 let MD=JSON.parse(localStorage.getItem("mockdraft")||"null")||{on:false,nom:0,seed:7,log:[],block:null,sel:null};
 const saveMD=()=>localStorage.setItem("mockdraft",JSON.stringify(MD));
+// The Draft Room and Mock Draft share DR.owned (keepers carry over by design), so a mock must
+// never destroy LIVE draft progress: picks this mock didn't make (drafted count ≠ mock log) are
+// backed up before any bulk clear, and ↩ Restore puts them back. Mock-made picks are disposable
+// and never overwrite the backup.
+const MD_SNAP="draftroom_pre_mock";
+function mdForeign(){const n=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
+  return n&&n!==MD.log.length?n:0;}
+function mdBackup(){if(mdForeign())localStorage.setItem(MD_SNAP,JSON.stringify(DR.owned));}
+function mdRestore(){const s=localStorage.getItem(MD_SNAP);if(!s)return;
+  DR.owned=JSON.parse(s);localStorage.removeItem(MD_SNAP);
+  MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();}
 // stable per-(draft,owner,player) wobble ±12%: same all draft (an owner doesn't flip-flop on a
 // player), different next mock (press Start again for a fresh room)
 function mdJit(i,id){let x=(MD.seed*2654435761)^(i*40503+40009);
@@ -1292,7 +1306,8 @@ function renderMockDraft(){
     <span>My team: <select class="drsel" id="mdMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
     ${MD.on&&!done?`<button class="btn sm" id="mdSim10">⏩ Sim 10 picks</button><button class="btn sm" id="mdSimEnd">⏭ Sim to end</button>`
       :`<button class="btn sm up" id="mdStart">▶ Start mock draft</button>`}
-    ${drafted?`<button class="btn sm" id="mdReset">↺ Reset to keepers (clears ${drafted} drafted)</button>`:MD.on?`<button class="btn sm" id="mdReset">✕ End mock</button>`:""}</div>
+    ${drafted?`<button class="btn sm" id="mdReset">↺ Reset to keepers (clears ${drafted} drafted)</button>`:MD.on?`<button class="btn sm" id="mdReset">✕ End mock</button>`:""}
+    ${localStorage.getItem(MD_SNAP)?`<button class="btn sm" id="mdRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩ Restore pre-mock picks</button>`:""}</div>
     <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). Each bot bids its owner's <b>2023–25 personality</b> (positional lean · star appetite · elite-QB/pay-TE habits) × <b>live roster need</b> × <b>remaining-budget aggression</b> on the live market price. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
   // on the clock
   if(MD.on&&!done){
@@ -1353,11 +1368,16 @@ function renderMockDraft(){
   host.innerHTML=h;
   const S=id=>document.getElementById(id);
   S("mdMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
-  if(S("mdStart"))S("mdStart").onclick=()=>{for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
+  if(S("mdStart"))S("mdStart").onclick=()=>{const f=mdForeign();
+    if(f&&!confirm("Starting a mock clears "+f+" recorded pick"+(f>1?"s":"")+" that didn't come from a mock — likely LIVE draft progress (keepers stay). They'll be backed up; ↩ Restore brings them back. Continue?"))return;
+    mdBackup();
+    for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
     MD={on:true,nom:0,seed:(MD.seed*13+7)%997+1,log:[],block:null,sel:null};saveDR();saveMD();render();};
   if(S("mdReset"))S("mdReset").onclick=()=>{if(!confirm("Reset rosters to keepers only? ("+drafted+" drafted players cleared — keepers stay)"))return;
+    mdBackup();
     for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
     MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();};
+  if(S("mdRestore"))S("mdRestore").onclick=mdRestore;
   if(S("mdSim10"))S("mdSim10").onclick=()=>mdSim(10);
   if(S("mdSimEnd"))S("mdSimEnd").onclick=()=>mdSim(null);
   if(S("mdNomGo"))S("mdNomGo").onclick=()=>{const p=mdNominee(MD.nom,mkt,TS);if(p){MD.block=pid(p);MD.sel=null;saveMD();render();}};
