@@ -1113,12 +1113,13 @@ function renderMockKeepers(){
   const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
   // ONE pricing engine for cards + pool: exp = live market price (mkt.expIf rank-inserts kept players)
   let totKept=0,totCost=0; KT.forEach((t,i)=>{const k=keptForTeam(i);totKept+=k.length;k.forEach(c=>totCost+=c.cost);});
+  const mkDrafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
   let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
     <h3 style="margin:0">🧩 Mock Keepers — confirm each team's 0–3, watch the board react</h3><span style="flex:1"></span>
     <span>My team: <select class="drsel" id="mkMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
     <button class="btn sm up" id="mkPredict">↺ Reset to predicted</button>
     <button class="btn sm" id="mkClear">Clear all</button></div>
-    <div class="muted" style="font-size:12px;margin-top:6px"><b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. <b>Keep?</b> column: <span class="upc">+$N</span> = KEEP (keeping saves \$N vs redrafting: exp&gt;cost &amp; good value) · <span style="color:#e3b57f">redraft</span> = good value but you'd re-buy him cheaper than the keeper cost · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked.</div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. <b>Keep?</b> column: <span class="upc">+$N</span> = KEEP (keeping saves \$N vs redrafting: exp&gt;cost &amp; good value) · <span style="color:#e3b57f">redraft</span> = good value but you'd re-buy him cheaper than the keeper cost · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked.</div></div>`;
   h+=`<div class="dr-teams">`+KT.map((t,i)=>{const s=TS[i],kc=keptForTeam(i).length,full=kc>=3;
     const hd=`<div class="muted" style="font-size:9px;display:flex;gap:4px;padding-right:2px"><span style="flex:1"></span><span style="width:26px;text-align:right" title="our board value">val</span><span style="width:26px;text-align:right" title="keeper cost">cost</span><span style="width:26px;text-align:right" title="expected redraft price">exp</span><span style="width:44px;text-align:right" title="KEEP (keeping saves $) / redraft (good value but cheaper to re-buy) / — (pass)">keep?</span></div>`;
     const rows=t.candidates.map(c=>{const on=DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept,dis=!on&&full;
@@ -1168,6 +1169,9 @@ function renderMockKeepers(){
       <td class="l" style="font-size:11px">${tag}</td></tr>`;}).join("")+`</tbody></table></div>`;
   host.innerHTML=h;
   document.getElementById("mkMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
+  if(mkDrafted)document.getElementById("mkClearDrafted").onclick=()=>{
+    for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
+    MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();};
   document.getElementById("mkPredict").onclick=resetPredicted;
   document.getElementById("mkClear").onclick=()=>{if(confirm("Clear all locked keepers?"))clearKeepers();};
   document.querySelectorAll(".mkchk").forEach(cb=>cb.onchange=()=>setKeeper(cb.dataset.pid,+cb.dataset.t,+cb.dataset.cost,cb.checked));
@@ -1279,14 +1283,16 @@ function renderMockDraft(){
   let guard=DR.teams.length+1; while(MD.on&&guard-->0&&teamState(MD.nom).spotsLeft<=0&&!DR.teams.every((_,t)=>teamState(t).spotsLeft<=0))mdAdvance();
   const mkt=dynamicMarket(),TS=DR.teams.map((_,i)=>teamState(i)),mv=myVal(mkt);
   const kc=Object.keys(DR.owned).filter(id=>DR.owned[id].kept).length;
+  const drafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
   const done=TS.every(s=>s.spotsLeft<=0), onclk=DR.teams[MD.nom]?DR.teams[MD.nom].name:"—";
   const spentAll=MD.log.reduce((a,l)=>a+l.price,0);
   // controls
   let h=`<div class="dr-panel"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
     <h3 style="margin:0">🤖 Mock Draft — every owner bids like himself</h3><span style="flex:1"></span>
     <span>My team: <select class="drsel" id="mdMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
-    ${MD.on&&!done?`<button class="btn sm" id="mdSim10">⏩ Sim 10 picks</button><button class="btn sm" id="mdSimEnd">⏭ Sim to end</button><button class="btn sm" id="mdReset">✕ End mock</button>`
-      :`<button class="btn sm up" id="mdStart">▶ Start mock draft</button>${MD.log.length?`<button class="btn sm" id="mdReset">✕ Clear result</button>`:""}`}</div>
+    ${MD.on&&!done?`<button class="btn sm" id="mdSim10">⏩ Sim 10 picks</button><button class="btn sm" id="mdSimEnd">⏭ Sim to end</button>`
+      :`<button class="btn sm up" id="mdStart">▶ Start mock draft</button>`}
+    ${drafted?`<button class="btn sm" id="mdReset">↺ Reset to keepers (clears ${drafted} drafted)</button>`:MD.on?`<button class="btn sm" id="mdReset">✕ End mock</button>`:""}</div>
     <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). Each bot bids its owner's <b>2023–25 personality</b> (positional lean · star appetite · elite-QB/pay-TE habits) × <b>live roster need</b> × <b>remaining-budget aggression</b> on the live market price. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
   // on the clock
   if(MD.on&&!done){
@@ -1349,7 +1355,7 @@ function renderMockDraft(){
   S("mdMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   if(S("mdStart"))S("mdStart").onclick=()=>{for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
     MD={on:true,nom:0,seed:(MD.seed*13+7)%997+1,log:[],block:null,sel:null};saveDR();saveMD();render();};
-  if(S("mdReset"))S("mdReset").onclick=()=>{if(!confirm("End the mock and clear drafted players? (keepers stay)"))return;
+  if(S("mdReset"))S("mdReset").onclick=()=>{if(!confirm("Reset rosters to keepers only? ("+drafted+" drafted players cleared — keepers stay)"))return;
     for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
     MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();};
   if(S("mdSim10"))S("mdSim10").onclick=()=>mdSim(10);
