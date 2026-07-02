@@ -1231,16 +1231,22 @@ function ownerBid(i,p,mkt,TS){
   let lean=Math.max(0.8,Math.min(1.2,td[pos]||1));
   if(raw>=25){if(pos==="QB"&&!td.eliteQB)lean=Math.min(lean,0.7);       // never paid up for a QB — won't start now
     if(pos==="TE"&&!td.payTE)lean=Math.min(lean,0.75);}
-  let bid=raw*lean*agg*(starter?1:0.35)*mdJit(i,id);
-  if(!starter)bid=Math.min(bid,Math.round((BENCH_CAP+2)*Math.max(1,agg)));  // bench money grows when flush
+  // bench/depth money: the league's real $10-24 band is mostly these buys (2024-25: ~26-45 of
+  // them per draft), so depth is shaded to 55% of curve with a cap that grows when flush —
+  // squashing it to $2-9 hollowed the sim's middle class vs the actual bid history.
+  let bid=raw*lean*agg*(starter?1:0.65)*mdJit(i,id);
+  if(!starter)bid=Math.min(bid,Math.round(14*Math.max(1,agg)));
   // SPEND IT DOWN: nobody leaves money on the table. A flush team's bid is floored at its exact
   // surplus-clearing price — spots × (1 + surplus/spot) = budget — so late money dumps into the
   // best remaining players instead of $1 steals (the hard history ceilings below still apply).
   const perSur=s.spotsLeft>0?(s.budget-s.spotsLeft)/s.spotsLeft:0;
   if(perSur>2)bid=Math.max(bid,1+perSur);
   const HPc=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos)?KEEPERS_2026.bidcurve_pos[pos]:null;
-  const posTop=HPc&&HPc.length?HPc[0]:66;                               // league's all-time top $ at this position
-  bid=Math.min(bid,Math.max(BENCH_CAP+2,(td.top||45)*1.05),posTop*1.08);
+  const posTop=HPc&&HPc.length?HPc[0]:66;                               // league's top $ at this position
+  // RB/WR records get nudged (+8% — the league's raw maxes run above the smoothed curve top:
+  // RB $68 in '25, WR $75 in '23); QB/TE ceilings are STICKY (raw recent maxes $32/$24 sit
+  // BELOW the curve tops 34/28 — nobody's beating them, so no headroom)
+  bid=Math.min(bid,Math.max(BENCH_CAP+2,(td.top||45)*1.05),posTop*((pos==="QB"||pos==="TE")?1:1.08));
   // floor $1: real demand (we passed the posDemand gate) always bids — deep bench RB/WR must
   // never round to $0 or the endgame force-feeds junk QBs/Ks to whoever nominates
   return Math.max(1,Math.min(Math.round(bid),afford));
