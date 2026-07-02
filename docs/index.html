@@ -120,6 +120,7 @@
     <button class="btn" id="mSleep">🚀 Sleepers</button>
     <button class="btn" id="mFade">💣 Fade Risk</button>
     <button class="btn" id="mKeep">🧩 Mock Keepers</button>
+    <button class="btn" id="mMock">🤖 Mock Draft</button>
     <button class="btn" id="mDraft">🏟️ Draft Room</button>
     <span class="muted" id="count"></span>
   </div>
@@ -457,7 +458,8 @@ function setMode(m){
   document.getElementById("mFade").classList.toggle("active",m==="fade");
   document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
   document.getElementById("mKeep").classList.toggle("active",m==="mockkeep");
-  const host=(m==="draftroom"||m==="mockkeep");
+  document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
+  const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft");
   document.getElementById("settings").style.display=(m==="auction"||m==="draftroom")?"flex":"none";
   document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
@@ -474,6 +476,7 @@ document.getElementById("mSleep").onclick=()=>setMode("sleepers");
 document.getElementById("mFade").onclick=()=>setMode("fade");
 document.getElementById("mDraft").onclick=()=>setMode("draftroom");
 document.getElementById("mKeep").onclick=()=>setMode("mockkeep");
+document.getElementById("mMock").onclick=()=>setMode("mockdraft");
 document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
 document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
@@ -1173,8 +1176,198 @@ function renderMockKeepers(){
   document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card) — columns are our <b>value</b>, the <b>keeper cost</b>, and the <b>surplus</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price <b>simulated from your league's 2023–25 bid history</b> — no hard cap; the curve tops where your league actually tops, ~$66, and the best remaining players shift up it as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
 }
 
+// ================= MOCK DRAFT (every owner is a bot) =================
+// Each team bids like ITS owner: the live bid-curve market price (dynamicMarket — keepers,
+// demand and inflation all included) shaped by that owner's 2023–25 auction personality
+// (positional lean, star appetite = his historical top buy, elite-QB / pay-TE habits), his
+// remaining budget aggression, and his live roster needs — plus a per-draft seeded wobble so
+// every mock plays out a little differently. Winner pays runner-up max +$1 (English auction).
+let MD=JSON.parse(localStorage.getItem("mockdraft")||"null")||{on:false,nom:0,seed:7,log:[],block:null,sel:null};
+const saveMD=()=>localStorage.setItem("mockdraft",JSON.stringify(MD));
+// stable per-(draft,owner,player) wobble ±12%: same all draft (an owner doesn't flip-flop on a
+// player), different next mock (press Start again for a fresh room)
+function mdJit(i,id){let x=(MD.seed*2654435761)^(i*40503+40009);
+  for(let k=0;k<id.length;k++)x=(x*31+id.charCodeAt(k))|0;
+  x^=x<<13;x^=x>>>17;x^=x<<5;return 0.88+((x>>>0)%1000)/1000*0.24;}
+// what team i would realistically pay for p RIGHT NOW
+function ownerBid(i,p,mkt,TS){
+  const s=TS[i]; if(s.spotsLeft<=0)return 0;
+  const afford=s.budget-(s.spotsLeft-1); if(afford<1)return 0;
+  const pos=p.position,td=ownerTend(i),id=pid(p);
+  if(isK(p))return s.need[pos]>0?1:0;                                   // $1 streams
+  if(posDemand(s,pos,td)<=0)return 0;                                   // no realistic use
+  const market=mkt.price[id]||1;
+  const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
+  const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1;
+  const agg=Math.max(0.7,Math.min(1.25,(s.spotsLeft>0?s.budget/s.spotsLeft:1)/(leagueAvg||1)));
+  let lean=td[pos]||1;
+  if(market>=25){if(pos==="QB"&&!td.eliteQB)lean*=0.7;                  // never paid up for a QB — won't start now
+    if(pos==="TE"&&!td.payTE)lean*=0.75;}
+  let bid=market*lean*agg*(starter?1:0.35)*mdJit(i,id);
+  if(!starter)bid=Math.min(bid,BENCH_CAP+2);                            // bench-only money
+  // star appetite is a hard DOLLAR ceiling, not a multiplier: an owner who's never gone past
+  // his historical top buy won't start now (rescaled to this room's keeper inflation)
+  bid=Math.min(bid,Math.max(BENCH_CAP+2,(td.top||45)*(mkt.infl||1)*1.05));
+  return Math.max(0,Math.min(Math.round(bid),afford));
+}
+function mdWhy(i,p,TS){const s=TS[i],td=ownerTend(i),pos=p.position,o=[];
+  if(s.spotsLeft<=0)return "roster full";
+  if(isK(p))return s.need[pos]>0?"needs the slot ($1 stream)":"streams later";
+  const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
+  o.push(s.need[pos]>0?"starter need":starter?"flex need":posDemand(s,pos,td)>0?"bench depth":"no need");
+  if((td[pos]||1)>=1.2)o.push("loves "+pos);else if((td[pos]||1)<=0.7)o.push("light "+pos);
+  if(pos==="QB"&&td.eliteQB&&(td.QB||1)>=1)o.push("pays QB"); if(pos==="TE"&&td.payTE)o.push("pays TE");
+  return o.join(" · ");}
+// every owner's likely max for p (my row = my sheet's suggested max, not a bot)
+function mdBids(p,mkt,TS,mv){const id=pid(p);
+  return DR.teams.map((t,i)=>({i,name:t.name,me:i===DR.me,
+    max:i===DR.me?(mv[id]?mv[id].maxBid:1):ownerBid(i,p,mkt,TS),
+    why:i===DR.me?"your sheet — suggested max":mdWhy(i,p,TS)}))
+    .sort((a,b)=>b.max-a.max||(b.me?1:0)-(a.me?1:0));}
+function mdAdvance(){let g=DR.teams.length+1;do{MD.nom=(MD.nom+1)%DR.teams.length;}while(g-->0&&teamState(MD.nom).spotsLeft<=0);}
+// who owner i brings to the block: the player he'd pay most for (his need + his lean)
+function mdNominee(i,mkt,TS){
+  const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]);
+  let best=null,bb=0;
+  avail.forEach(p=>{const b=ownerBid(i,p,mkt,TS);
+    if(b>bb||(b===bb&&b>0&&best&&raPts(p)>raPts(best))){bb=b;best=p;}});
+  return best||avail.sort((a,b)=>raPts(b)-raPts(a))[0];}
+// run the bidding: highest max wins (ties: you), pays runner-up +$1; nobody in -> nominator, $1
+function mdResolve(id,myMax){
+  const p=BYID[id]; if(!p||DR.owned[id])return;
+  const mkt=dynamicMarket(),TS=DR.teams.map((_,t)=>teamState(t));
+  // my bid is gated like everyone else's: no space -> out; capped so I can still fill my roster
+  const meS=TS[DR.me],myEff=meS.spotsLeft>0?Math.min(Math.max(0,Math.round(+myMax||0)),Math.max(1,meS.budget-(meS.spotsLeft-1))):0;
+  const bids=DR.teams.map((t,i)=>({i,max:i===DR.me?myEff:ownerBid(i,p,mkt,TS)}))
+    .sort((a,b)=>b.max-a.max||((b.i===DR.me)?1:0)-((a.i===DR.me)?1:0));
+  let w=bids[0],second=bids[1]?bids[1].max:0;
+  if(w.max<1){const t=TS[MD.nom]&&TS[MD.nom].spotsLeft>0?MD.nom:(bids.map(b=>b.i).find(i=>TS[i].spotsLeft>0));
+    if(t==null)return; w={i:t,max:1};second=0;}
+  const price=Math.max(1,Math.min(w.max,second+1));
+  DR.owned[id]={t:w.i,price,kept:false};
+  const ru=bids.find(b=>b.i!==w.i);
+  MD.log.unshift({name:p.name,pos:p.position,t:w.i,price,ru:ru&&ru.max>0?ru.i:null,rmax:ru?ru.max:0,mine:w.i===DR.me});
+  if(MD.log.length>300)MD.log.pop();
+  MD.block=null;MD.sel=null;mdAdvance();saveDR();saveMD();
+}
+// sim n picks (or to the end): bots nominate & bid, YOUR bot bids your sheet's suggested max
+function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*cfg.roster*20;
+  while(MD.log.length<target&&g-->0){
+    const TS=DR.teams.map((_,t)=>teamState(t));
+    if(TS.every(s=>s.spotsLeft<=0))break;
+    if(TS[MD.nom].spotsLeft<=0){mdAdvance();continue;}
+    const mkt=dynamicMarket(),mv=myVal(mkt);
+    const p=(MD.block&&BYID[MD.block]&&!DR.owned[MD.block])?BYID[MD.block]:mdNominee(MD.nom,mkt,TS);
+    if(!p)break;
+    const id=pid(p),m=mv[id];
+    mdResolve(id,m&&m.needed?m.maxBid:0);   // your bot bids your sheet — and passes on players you don't need
+  }
+  render();}
+// projected PPG per week (season proj / 17), optimal starters vs bench
+function teamPPGwk(i){const s=teamState(i),slots={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1};let st=0,bn=0;
+  [...s.own].sort((a,b)=>(PRJ(b.p)||0)-(PRJ(a.p)||0)).forEach(x=>{const pos=x.p.position,w=(PRJ(x.p)||x.p.proj_pts||0)/17;
+    if(slots[pos]>0){slots[pos]--;st+=w;}
+    else if(FLEXE.includes(pos)&&slots.FLEX>0){slots.FLEX--;st+=w;}
+    else bn+=w;});
+  return {st,bn};}
+function renderMockDraft(){
+  document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
+  const host=document.getElementById("draftroom");host.style.display="block";
+  if(!ensureKeeperLeague()){host.innerHTML='<div class="dr-panel">No keeper data. Run <code>scripts/predict_keepers.py</code> to generate <code>keepers_2026.js</code>, then reload.</div>';document.getElementById("notes").innerHTML="";return;}
+  if(MD.block&&(!BYID[MD.block]||DR.owned[MD.block]))MD.block=null;
+  if(MD.sel&&(!BYID[MD.sel]||DR.owned[MD.sel]))MD.sel=null;
+  let guard=DR.teams.length+1; while(MD.on&&guard-->0&&teamState(MD.nom).spotsLeft<=0&&!DR.teams.every((_,t)=>teamState(t).spotsLeft<=0))mdAdvance();
+  const mkt=dynamicMarket(),TS=DR.teams.map((_,i)=>teamState(i)),mv=myVal(mkt);
+  const kc=Object.keys(DR.owned).filter(id=>DR.owned[id].kept).length;
+  const done=TS.every(s=>s.spotsLeft<=0), onclk=DR.teams[MD.nom]?DR.teams[MD.nom].name:"—";
+  const spentAll=MD.log.reduce((a,l)=>a+l.price,0);
+  // controls
+  let h=`<div class="dr-panel"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+    <h3 style="margin:0">🤖 Mock Draft — every owner bids like himself</h3><span style="flex:1"></span>
+    <span>My team: <select class="drsel" id="mdMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
+    ${MD.on&&!done?`<button class="btn sm" id="mdSim10">⏩ Sim 10 picks</button><button class="btn sm" id="mdSimEnd">⏭ Sim to end</button><button class="btn sm" id="mdReset">✕ End mock</button>`
+      :`<button class="btn sm up" id="mdStart">▶ Start mock draft</button>${MD.log.length?`<button class="btn sm" id="mdReset">✕ Clear result</button>`:""}`}</div>
+    <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). Each bot bids its owner's <b>2023–25 personality</b> (positional lean · star appetite · elite-QB/pay-TE habits) × <b>live roster need</b> × <b>remaining-budget aggression</b> on the live market price. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
+  // on the clock
+  if(MD.on&&!done){
+    h+=`<div class="dr-panel" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <b>On the clock:</b> <b class="${MD.nom===DR.me?'maxbid':''}">${onclk}</b>${MD.nom===DR.me?' <span class="muted">— your nomination: click a player below</span>':''}
+      ${!MD.block&&MD.nom!==DR.me?`<button class="btn sm up" id="mdNomGo">▶ Let ${onclk} nominate</button>`:''}
+      <span style="flex:1"></span><span class="muted" style="font-size:11px">${MD.log.length} sold · $${spentAll} spent</span></div>`;}
+  if(done&&MD.log.length){
+    const rank=DR.teams.map((t,i)=>Object.assign({i,name:t.name},teamPPGwk(i))).sort((a,b)=>b.st-a.st);
+    h+=`<div class="dr-panel"><h3>🏁 Draft complete — projected starter PPG/week</h3>`+
+      rank.map((r,k)=>`<div style="font-size:12px">${k+1}. <b class="${r.i===DR.me?'maxbid':''}">${r.name}${r.i===DR.me?' (YOU)':''}</b> — <b>${r.st.toFixed(1)}</b> <span class="muted">starters</span> · ${r.bn.toFixed(1)} <span class="muted">bench</span></div>`).join("")+`</div>`;}
+  // bid panel (on the block, or preview of any clicked player)
+  const selId=MD.block||MD.sel;
+  if(selId&&BYID[selId]&&!DR.owned[selId]){
+    const p=BYID[selId],id=selId,bids=mdBids(p,mkt,TS,mv),isBlock=MD.on&&MD.block===id;
+    const topRival=bids.filter(b=>!b.me).reduce((a,b)=>Math.max(a,b.max),0);
+    const mine=mv[id]?mv[id].maxBid:1,needBid=topRival+1,canWin=needBid<=mine,topBid=bids[0].max;
+    h+=`<div class="dr-panel"><h3>${isBlock?'🔨 ON THE BLOCK':'👁 Bid preview'} — <span class="pos ${p.position}">${p.position}</span> ${p.name} <span class="muted" style="font-weight:400">${p.team||""} · market $${mkt.price[id]||1} · proj ${Math.round(PRJ(p)||0)}</span></h3>
+      <div style="margin:6px 0;font-size:13px"><b>You should bid up to <span class="maxbid">$${mine}</span></b> — top rival max is <b>$${topRival}</b>, so ${canWin?`<span class="upc">~$${needBid} likely wins him</span>`:`<span class="downc">he'll run to ~$${Math.min(needBid,topRival)}, over your number — let him go</span>`}.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:3px">`+
+      bids.map(b=>`<div style="display:flex;gap:6px;align-items:baseline;font-size:12px;${b.me?'outline:1px solid #4da3ff55;border-radius:6px;padding:1px 4px;':''}">
+        <b style="width:32px;text-align:right" class="${b.max>=topBid&&b.max>0?'upc':b.max<1?'muted':''}">${b.max>=1?'$'+b.max:'—'}</b>
+        <span style="white-space:nowrap">${b.name}${b.me?' (YOU)':''}</span>
+        <span class="muted" style="font-size:10px">${b.why}</span></div>`).join("")+`</div>`;
+    if(isBlock)h+=`<div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">My max: $<input class="drnum" id="mdMyMax" type="number" value="${Math.min(mine,needBid)}">
+      <button class="btn sm up" id="mdGo">🔨 Run the bidding</button><button class="btn sm" id="mdPassBtn">Pass — bots only</button>
+      <span class="muted" style="font-size:11px">you pay runner-up +$1, never more than your max</span></div>`;
+    else if(MD.on&&!MD.block&&MD.nom===DR.me)h+=`<div style="margin-top:8px"><button class="btn sm up" id="mdBlockBtn">⚡ Put him on the block</button></div>`;
+    h+=`</div>`;}
+  // rosters taking shape + weekly PPG
+  h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=TS[i],ppg=teamPPGwk(i);
+    const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`${s.need[k]>1?s.need[k]:""}${k}`).join(" ")||"full";
+    const roster=[...s.own].sort((a,b)=>(PRJ(b.p)||0)-(PRJ(a.p)||0)).map(x=>`<div style="display:flex;justify-content:space-between;font-size:11px"><span class="muted"><span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span> ${x.p.name}${DR.owned[x.id].kept?' 🔒':''}</span><span>$${x.price}</span></div>`).join("");
+    return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:232px${MD.on&&!done&&i===MD.nom?';outline:1px solid #e0a23c':''}">
+      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
+      <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max $${Math.max(1,s.budget-(s.spotsLeft-1))} · needs ${needs}</div>
+      <div style="font-size:11px;margin:3px 0"><b>${ppg.st.toFixed(1)}</b> <span class="muted">proj PPG/wk starters</span> · <b>${ppg.bn.toFixed(1)}</b> <span class="muted">bench</span></div>
+      <div style="max-height:220px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
+  // draft log
+  if(MD.log.length)h+=`<div class="dr-panel"><h3>📜 Results</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;font-size:12px">`+
+    MD.log.slice(0,80).map(l=>`<div><span class="pos ${l.pos}" style="transform:scale(.8)">${l.pos}</span> ${l.name} → <b class="${l.mine?'maxbid':''}">${DR.teams[l.t]?DR.teams[l.t].name:'?'}</b> <b>$${l.price}</b>${l.ru!=null&&DR.teams[l.ru]?` <span class="muted">(over ${DR.teams[l.ru].name} $${l.rmax})</span>`:''}</div>`).join("")+`</div></div>`;
+  // available pool
+  const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]).filter(p=>{
+    if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
+    else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
+    else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
+    if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
+  avail.sort((a,b)=>(mkt.price[pid(b)]||0)-(mkt.price[pid(a)]||0));
+  document.getElementById("count").textContent=avail.length+" available";
+  h+=`<div class="dr-panel"><h3>💰 Available — click a player to see what every owner would pay</h3>
+    <table style="width:100%"><thead><tr><th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th>Market $</th><th>My Max</th><th class="l"></th></tr></thead><tbody>`+
+    avail.slice(0,300).map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1};
+      return `<tr class="mdrow" data-id="${id}" style="cursor:pointer">
+        <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
+        <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span></td>
+        <td>${isK(p)?"—":Math.round(PRJ(p)||0)}</td><td class="base">$${mkt.price[id]||1}</td><td class="maxbid">$${m.maxBid}</td>
+        <td class="l">${MD.on&&!done&&!MD.block&&MD.nom===DR.me?`<button class="btn sm mdblock" data-id="${id}">⚡ Block</button>`:'<span class="muted" style="font-size:11px">👁 bids</span>'}</td></tr>`;}).join("")+`</tbody></table></div>`;
+  host.innerHTML=h;
+  const S=id=>document.getElementById(id);
+  S("mdMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
+  if(S("mdStart"))S("mdStart").onclick=()=>{for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
+    MD={on:true,nom:0,seed:(MD.seed*13+7)%997+1,log:[],block:null,sel:null};saveDR();saveMD();render();};
+  if(S("mdReset"))S("mdReset").onclick=()=>{if(!confirm("End the mock and clear drafted players? (keepers stay)"))return;
+    for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
+    MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();};
+  if(S("mdSim10"))S("mdSim10").onclick=()=>mdSim(10);
+  if(S("mdSimEnd"))S("mdSimEnd").onclick=()=>mdSim(null);
+  if(S("mdNomGo"))S("mdNomGo").onclick=()=>{const p=mdNominee(MD.nom,mkt,TS);if(p){MD.block=pid(p);MD.sel=null;saveMD();render();}};
+  if(S("mdGo"))S("mdGo").onclick=()=>{mdResolve(MD.block,+S("mdMyMax").value||0);render();};
+  if(S("mdPassBtn"))S("mdPassBtn").onclick=()=>{mdResolve(MD.block,0);render();};
+  if(S("mdBlockBtn"))S("mdBlockBtn").onclick=()=>{MD.block=MD.sel;MD.sel=null;saveMD();render();};
+  document.querySelectorAll(".mdblock").forEach(b=>b.onclick=ev=>{ev.stopPropagation();MD.block=b.dataset.id;MD.sel=null;saveMD();render();});
+  document.querySelectorAll(".mdrow").forEach(r=>r.onclick=()=>{MD.sel=r.dataset.id;saveMD();render();});
+  document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner (his 2023–25 positional lean, star appetite and elite-QB/pay-TE habits from <code>keepers_2026.js</code>, scaled by live roster need and remaining budget). "+
+    "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
+    "Click any row anytime for a bid preview without nominating. Team cards show each roster taking shape with <b>projected PPG per week</b> for starters and bench. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft for you. Keepers from 🧩 Mock Keepers are locked in 🔒.";
+}
+
 function render(){
   if(mode==="mockkeep"){ renderMockKeepers(); return; }
+  if(mode==="mockdraft"){ renderMockDraft(); return; }
   if(mode==="draftroom"){ renderDraftRoom(); return; }
   if(mode==="sleepers"){ renderSleepers(); return; }
   if(mode==="fade"){ renderFade(); return; }
