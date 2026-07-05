@@ -32,7 +32,18 @@ Three structural facts explain everything:
 - Practical rule if betting anyway: **volume-market UNDERS only, only after shopping ≥5 books** —
   the margin is in the PRICE, not the prediction.
 
-## The real next edge to test (data already in hand)
-We hold ~547 snapshots per market: the sharp play is beating the **OPENING** line, not the close.
-Test: our model (or even just the eventual closing consensus) vs FIRST-snapshot lines — if model-vs-open
-edge predicts line MOVEMENT, betting early is classic +CLV. Unbuilt; flagged as the follow-up.
+## Opening-line / CLV study (`scripts/prop_open_clv.py`) — untestable with current capture
+Ran the opener test on 17K matched markets. Result: our "openers" are NOT openers — the collector's
+FIRST prop snapshot is median **2.1 hrs before kickoff** (p90: 9 hrs), so we only captured the final
+sliver of each market. Consequently lines "move" in only 1–13% of props (receptions 1%), model-edge-
+vs-opener has ZERO correlation with movement (+0.005), prob-CLV is 0.000, ROI at open ≈ at close
+(unders +2.9% best-book / −0.7% median; overs −13%), and even cheating steam-follow loses (−2.6%).
+**Verdict: CLV hypothesis untested, not disproven** — real prop openers post Tue–Wed and sharpen over
+days; we never saw that window.
+
+## ACTION for the 2026 season (the one real path to +EV here)
+Change the Odds API fetch cadence to snapshot player props **from Tuesday onward** (e.g. 2-3x/day
+Tue–Thu, then closing). By mid-season we'd hold true open→close trajectories to test: (a) does our
+model beat Tuesday lines? (b) does model-vs-open edge predict movement (CLV)? Books cap prop stakes
+anyway, so this is the only framing where a stats model plausibly wins. Until then: no prop betting
+edge exists in our data beyond volume-market unders + aggressive line shopping (≈breakeven).
