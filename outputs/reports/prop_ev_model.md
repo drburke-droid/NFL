@@ -41,6 +41,22 @@ vs-opener has ZERO correlation with movement (+0.005), prob-CLV is 0.000, ROI at
 **Verdict: CLV hypothesis untested, not disproven** — real prop openers post Tue–Wed and sharpen over
 days; we never saw that window.
 
+## Market-anchored follow-up (`scripts/prop_anchored.py`) — the market prob IS improvable, by ONE number
+User idea: use the market prob as baseline, learn improvements on top (the FFA-anchored pattern).
+Train 2024 → test 2025 (9,027 props), Brier ladder:
+| model | 2025 Brier |
+|---|--:|
+| M0 raw de-vigged market | 0.24829 |
+| **M1 = market − 2.2pp global over-bias shrink** | **0.24756** ✅ best |
+| M2 market-only logistic | 0.24769 |
+| M3 anchored LGBM + ALL our player features | 0.25332 ❌ worse than raw market |
+The market probability is beatable — but the ENTIRE improvement is the constant over-bias correction
+(estimated on 2024, held on 2025). Every player-level feature on top is overfit noise (M3 deviates
+>5pp from market on 47% of props, all of it wrong). ROI with the improved prob: **+5.3% at best-of-20-
+books (n=2,404, 2025)** but **−1.5% at ~median book** — the profit is price shopping, not prediction.
+Final law of this market: P*(over) ≈ novig − 2.2pp; edge comes from EXECUTION (books × timing), never
+from out-modeling the closing consensus.
+
 ## ACTION for the 2026 season (the one real path to +EV here)
 Change the Odds API fetch cadence to snapshot player props **from Tuesday onward** (e.g. 2-3x/day
 Tue–Thu, then closing). By mid-season we'd hold true open→close trajectories to test: (a) does our
