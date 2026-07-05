@@ -57,6 +57,16 @@ books (n=2,404, 2025)** but **−1.5% at ~median book** — the profit is price 
 Final law of this market: P*(over) ≈ novig − 2.2pp; edge comes from EXECUTION (books × timing), never
 from out-modeling the closing consensus.
 
+## Sharp-book hunt (`scripts/sharp_book_hunt.py`) — Pinnacle-truth vs DK: FAILS at the close
+2024 sharpness (Brier of de-vigged P(over), consensus-line props): **Pinnacle 0.2463** best among books
+alive in 2025 (also lowest hold 5.4%) — but the whole field sits 0.2460-0.2477: at CLOSING, every book
+has converged on the same consensus; there is no persistently dumb book. Hunting DK in 2025 with
+Pinnacle's prob as truth (same-line props, n=4,647 overlaps): EV>0% → **−5.0%** (n=597), EV>2% →
+**−8.7%** (n=192), EV>4% +1.1% on n=52 (noise). Killer diagnostic: the SAME bets placed at Pinnacle's
+own prices lose −17% — when DK and Pinnacle disagree at close in our capture, the disagreement
+resolves in DK's favor, i.e. we're selecting Pinnacle's stale outliers, not DK's weak lines. The
+classic Pinnacle-origination strategy needs LIVE mid-week odds; at T-2h closing snapshots it's dead.
+
 ## ACTION for the 2026 season (the one real path to +EV here)
 Change the Odds API fetch cadence to snapshot player props **from Tuesday onward** (e.g. 2-3x/day
 Tue–Thu, then closing). By mid-season we'd hold true open→close trajectories to test: (a) does our
