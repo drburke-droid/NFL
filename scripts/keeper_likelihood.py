@@ -44,6 +44,11 @@ for nm, season, g, ppr in con.execute(
     if g and ppr is not None:
         ppg[(norm(nm), int(season))] = ppr / g
         games[(norm(nm), int(season))] = g
+id2nm = dict(con.execute("SELECT DISTINCT player_id, player_display_name FROM nflv_season"))
+age_by_name = {}
+for pid_, season, a in con.execute(
+        "SELECT player_id, season, age FROM season_dataset WHERE age IS NOT NULL"):
+    if pid_ in id2nm: age_by_name[(norm(id2nm[pid_]), int(season))] = a
 
 # positional $/rank curve from ALL seasons (recency-weighted, finance-calibrated) — the
 # market-level expected-redraft price for the r-th best returning player at a position
@@ -97,6 +102,7 @@ def build_rows(Y, skip_curve_season=None):
         rows.append({"year": Y, "owner": r["owner"], "name": r["player"], "pos": r["pos"],
                      "cost": cost, "exp": exp, "savings": exp - cost,
                      "ppg": ppg.get((nm, Y - 1), 0.0), "gms": games.get((nm, Y - 1), 0),
+                     "age": age_by_name.get((nm, Y - 1), 26.0),
                      "keptprev": 1.0 if nm in kept_prev else 0.0,
                      "kept": 1.0 if kept_Y.get(nm) == r["owner"] else 0.0})
     return rows
@@ -157,7 +163,7 @@ for o in sorted(set(r["owner"] for r in rows)):
         print(f"  {o[:20]:20s} {0:>5}")
 
 # ---------------- Part 2: likelihood model ----------------
-FEATS = ["savings", "cost", "ppg", "keptprev"]
+FEATS = ["savings", "cost", "ppg", "keptprev", "gms", "age"]
 def design(rs): return np.array([[r[f] for f in FEATS] for r in rs], float)
 def fit(rs, lam=2.0):
     X, y = design(rs), np.array([r["kept"] for r in rs])
@@ -197,6 +203,20 @@ model, w = fit(hist)
 print("\nfinal fit on both seasons — standardized coefficients:")
 for nm, c in zip(["intercept"] + FEATS, w): print(f"  {nm:10s} {c:+6.2f}")
 
+# SLAM-DUNK RULE: a young, healthy, elite-production player at big savings is a lock.
+# Audited on history — every pass that LOOKS like a counterexample was an injury-stale
+# PPG (Godwin 7 gms, Rice 4, M.Williams 3), an age-30+ vet the room wouldn't re-price
+# at his PPG rank (Keenan 32, Kamara 30, Evans 31), or slot competition (Nico Collins
+# '24 was the 4th-best keep on a stacked team). The rule requires all four guards plus
+# a top-3 slot on his own team, and only ever RAISES a probability (floor 0.97).
+DUNK = lambda r: r["savings"] >= 15 and r["ppg"] >= 17 and r["gms"] >= 10 and r["age"] <= 28
+d = [r for r in hist if DUNK(r)]
+print(f"\nslam-dunk audit (savings>=15, ppg>=17, gms>=10, age<=28): "
+      f"kept {int(sum(r['kept'] for r in d))}/{len(d)}")
+for r in d:
+    print(f"   {'KEPT' if r['kept'] else 'PASS'} {r['year']} {r['owner'][:16]:16s} {r['pos']:3s} "
+          f"{r['name'][:22]:22s} save +{r['savings']:>3.0f} ppg {r['ppg']:4.1f} age {r['age']:.0f}")
+
 # ---------------- Part 3: score every player on every 2026 roster ----------------
 K = json.loads(open(os.path.join(ROOT, "docs", "keepers_2026.js"), encoding="utf-8")
                .read().split("const KEEPERS_2026 = ")[1].rsplit(";", 1)[0])
@@ -208,8 +228,10 @@ teams_scored = []
 for t in K["teams"]:
     cand = []
     for c in t["candidates"]:
+        nm = norm(c["name"])
         r = {"savings": c["exp"] - c["cost"], "cost": c["cost"],
-             "ppg": ppg.get((norm(c["name"]), 2025), 0.0),
+             "ppg": ppg.get((nm, 2025), 0.0), "gms": games.get((nm, 2025), 0),
+             "age": age_by_name.get((nm, 2025), 26.0),
              "keptprev": 1.0 if c.get("keptyrs") else 0.0}
         cand.append((c, r))
     if cand: teams_scored.append((t, cand, model([r for _, r in cand])))
@@ -225,21 +247,25 @@ print(f"(base-rate calibration x{CAL:.2f}: raw expected {raw_total:.1f} keeps ->
       f"{target*len(teams_scored):.1f} = the league's real {target:.2f} keeps/team incl. waiver keeps)")
 league_keeps = []
 for t, cand, p in teams_scored:
-    padj = np.minimum(p * CAL, 0.95)
+    padj = np.minimum(p * CAL, 0.99)
     # a team may keep at most 3: rescale within team so probabilities sum to <= 3
     s = padj.sum()
     if s > 3.0: padj = padj * (3.0 / s)
     order = sorted(zip(cand, padj), key=lambda t: -t[1])
+    # slam-dunk floor (audited above): only for players holding one of the team's top-3 slots
+    order = [((c, r), max(pp, 0.97) if i < 3 and DUNK(r) else pp)
+             for i, ((c, r), pp) in enumerate(order)]
     exp_keeps = sum(pp for _, pp in order)
     league_keeps.append(exp_keeps)
     print(f"\n[{t['id']:>2}] {str(t['name'])[:30]:30s} (owner {t['owner'][:16]}, expected keeps {exp_keeps:.1f})")
     for (c, r), pp in order:
         if pp < 0.02 and not c.get("predicted"): continue
         star = "*" if c.get("predicted") else " "
+        lock = "LOCK" if pp >= 0.97 and DUNK(r) else "    "
         tag = " wvr" if c.get("waiver") else ""
         print(f"   {100*pp:5.1f}% {star} {c['pos']:<3} {c['name'][:22]:22s} "
               f"cost ${c['cost']:>2}  exp ${c['exp']:>2}  save {c['exp']-c['cost']:+3d}  "
-              f"ppg {r['ppg']:4.1f}{tag}")
+              f"ppg {r['ppg']:4.1f} {lock}{tag}")
 print(f"\nleague-wide expected keeper count: {sum(league_keeps):.1f} "
       f"(actual history: 31 in 2024, 30 in 2025)")
 
