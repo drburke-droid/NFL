@@ -85,7 +85,21 @@ def rep(*a):
     s = " ".join(str(x) for x in a); _out.append(s); print(s)
 
 # ---------------- NFL-team fandom ----------------
-rep("=" * 74); rep("NFL-TEAM BIAS per owner (frequency vs pool share + price premium)"); rep("=" * 74)
+# USER-DECLARED fans (ground truth from the league): auction residuals alone under-detect
+# fandom when several owners share a team (the buy-share baseline dilutes) or when a fan
+# expresses it through KEEPS rather than overbids. Declared fans get the 1.10 floor.
+KNOWN_FANS = {"CBPainTrain": "CHI", "ESPNFAN25233150": "CHI", "espn14211458": "CHI"}
+
+# keeper conviction: keeping 2+ DISTINCT players of one NFL team (at their kept-season team)
+# is fandom the auction data can't see — e.g. CBPainTrain kept DJ Moore twice AND Caleb
+# Williams at -$20 savings. One player kept repeatedly is player loyalty, not team fandom.
+kept_team = defaultdict(lambda: defaultdict(set))      # owner -> team -> distinct kept players
+for r in drafts:
+    if r["kept"]:
+        tm = team_of.get((norm(r["player"]), int(r["season"])))
+        if tm: kept_team[r["owner"]][tm].add(norm(r["player"]))
+
+rep("=" * 74); rep("NFL-TEAM BIAS per owner (frequency vs pool share, price premium, keeper conviction)"); rep("=" * 74)
 league_team_share = defaultdict(int)
 for b in buys: league_team_share[b["team"]] += 1
 TOT = len(buys)
@@ -94,23 +108,30 @@ for o in sorted(set(b["owner"] for b in buys)):
     ob = [b for b in buys if b["owner"] == o]
     seen = defaultdict(list)
     for b in ob: seen[b["team"]].append(b)
-    for tm, arr in sorted(seen.items(), key=lambda kv: -len(kv[1])):
-        if tm == "?" or len(arr) < 3: continue
+    for tm in set(list(seen.keys()) + ([KNOWN_FANS[o]] if o in KNOWN_FANS else [])):
+        arr = seen.get(tm, [])
+        if tm == "?" or (len(arr) < 3 and KNOWN_FANS.get(o) != tm and len(kept_team[o][tm]) < 2):
+            continue
         exp_n = len(ob) * league_team_share[tm] / TOT
         ratio = len(arr) / exp_n if exp_n else 0
-        prem = float(np.mean([b["resid"] for b in arr]))
+        prem = float(np.mean([b["resid"] for b in arr])) if arr else 0.0
         seasons = len(set(b["season"] for b in arr))
-        # FAN flag needs multi-season evidence AND either a heavy frequency cluster (>=4 buys at
-        # >=3.5x pool share) or a real price premium on a repeated cluster (>=2x share, >=$3 over
-        # curve). With 32 teams and ~40 buys/owner, a 3-buy 2.2x cell at curve price is noise.
-        fan = seasons >= 2 and ((len(arr) >= 4 and ratio >= 3.5) or (ratio >= 2.0 and prem >= 3))
-        if seasons >= 2 and ratio >= 2.0:
-            rep(f"  {o[:18]:18s} {tm:3s}: {len(arr)} buys over {seasons} seasons "
-                f"({ratio:.1f}x the pool share), avg ${prem:+.1f} vs curve"
-                f"{'  <-- FAN' if fan else ''}  "
+        kk = len(kept_team[o][tm])
+        # FAN if: user-declared; OR keeper conviction (2+ distinct kept players + any buys); OR
+        # multi-season heavy frequency (>=4 buys at >=3.5x pool share); OR repeated price
+        # premium (>=2x share, >=$3 over curve). A 3-buy 2.2x cell at curve price is noise.
+        fan = (KNOWN_FANS.get(o) == tm
+               or (kk >= 2 and len(arr) + kk >= 4)
+               or (seasons >= 2 and ((len(arr) >= 4 and ratio >= 3.5) or (ratio >= 2.0 and prem >= 3))))
+        if fan or (seasons >= 2 and ratio >= 2.0):
+            why = "declared" if KNOWN_FANS.get(o) == tm else (f"{kk} distinct keeps" if kk >= 2 else "")
+            rep(f"  {o[:18]:18s} {tm:3s}: {len(arr)} buys "
+                f"({ratio:.1f}x pool share), avg ${prem:+.1f} vs curve, {kk} kept"
+                f"{'  <-- FAN ' + why if fan else ''}  "
                 f"[{', '.join(sorted(set(b['player'] for b in arr))[:5])}]")
         if fan:
-            fan_bias[o][tm] = {"n": len(arr), "ratio": round(ratio, 1), "prem": round(prem, 1)}
+            fan_bias[o][tm] = {"n": len(arr), "ratio": round(ratio, 1), "prem": round(prem, 1),
+                               "declared": KNOWN_FANS.get(o) == tm, "keeps": kk}
 
 # ---------------- positional PRICE bias (allocation is already in tend[]) ----------------
 rep(""); rep("=" * 74); rep("POSITIONAL OVERPAY per owner (mean $ vs curve; n>=5 and |mean|>=$2 shown)"); rep("=" * 74)
@@ -157,9 +178,12 @@ REBUY_PREM = float(np.mean(rebuy_res) - np.mean(base_res)) if rebuy_res else 0.0
 # hard historical caps still hold. Positional PRICE premiums and re-buy loyalty tested but
 # not significant (see report) -> allocation tendencies in tend[] remain the only positional
 # bias, and no rebuy term is emitted.
+# declared / keeper-conviction fans floor at 1.10 (a fan's premium shows in keeps the
+# residual can't price); pure bid-detected fans keep the measured 1.05 floor.
 OWNER_BIAS = {}
 for o, fans in fan_bias.items():
-    OWNER_BIAS[o] = {"fan": {tm: round(min(1.30, 1.05 + max(d["prem"], 0) / 18), 2)
+    OWNER_BIAS[o] = {"fan": {tm: round(min(1.30, max(1.05 + max(d["prem"], 0) / 18,
+                                                     1.10 if (d["declared"] or d["keeps"] >= 2) else 1.05)), 2)
                              for tm, d in fans.items()}}
 js = ("// AUTO-GENERATED by scripts/owner_bias.py — per-owner NFL-team fandom mined from the\n"
       "// league's 2023-25 winning bids: {owner: {fan: {NFL team: bid multiplier}}}. A team makes\n"

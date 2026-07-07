@@ -3,4 +3,4 @@
 // the list only with 2+ seasons of evidence and either >=4 buys at >=3.5x the pool share
 // or a >=$3 over-curve premium on a >=2x cluster. Positional overpay and player-loyalty
 // biases were tested and are NOT real in this league (outputs/reports/owner_bias.md).
-const OWNER_BIAS = {"Rohabhabibo": {"fan": {"DEN": 1.1}}, "espn14211458": {"fan": {"NE": 1.12}}, "espn98580191": {"fan": {"TEN": 1.09}}, "eyedocjj": {"fan": {"ARI": 1.05}}, "funblood": {"fan": {"GB": 1.23}}, "kdoggs80": {"fan": {"MIN": 1.14, "TB": 1.05}}, "silverandblack.27": {"fan": {"LV": 1.3}}};
+const OWNER_BIAS = {"CBPainTrain": {"fan": {"CHI": 1.1}}, "ESPNFAN25233150": {"fan": {"CHI": 1.1}}, "Rohabhabibo": {"fan": {"DEN": 1.1}}, "espn14211458": {"fan": {"CHI": 1.19, "NE": 1.12}}, "espn98580191": {"fan": {"TEN": 1.09}}, "eyedocjj": {"fan": {"ARI": 1.05}}, "funblood": {"fan": {"GB": 1.23}}, "kdoggs80": {"fan": {"TB": 1.05, "MIN": 1.14}}, "silverandblack.27": {"fan": {"LV": 1.3}}};
