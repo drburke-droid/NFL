@@ -7,6 +7,7 @@
 <script src="data.js"></script>
 <script src="comps.js"></script>
 <script src="keepers_2026.js"></script>
+<script src="keeper_prob_2026.js"></script>
 <script src="price_anchor_2026.js"></script>
 <script src="healthy_ppg.js"></script>
 <script src="contract_status.js"></script>
@@ -1136,24 +1137,34 @@ function renderMockKeepers(){
     <span>My team: <select class="drsel" id="mkMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
     <button class="btn sm up" id="mkPredict">↺ Reset to predicted</button>
     <button class="btn sm" id="mkClear">Clear all</button></div>
-    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. <b>Keep?</b> column: <span class="upc">+$N</span> = KEEP (keeping saves \$N vs redrafting: exp&gt;cost &amp; good value) · <span style="color:#e3b57f">redraft</span> = good value but you'd re-buy him cheaper than the keeper cost · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked.</div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. Each card is sorted by <b>keep %</b> — the modeled odds that owner keeps the player, fitted on the league's actual 2023–25 keeper decisions (<span class="upc" style="font-weight:700">green ≥75%</span> is near-lock, discounted young stars are 97%+). <b>Verdict</b> is the rational call: <span class="upc">+$N</span> = keeping saves \$N vs redrafting · <span style="color:#e3b57f">redraft</span> = good value but cheaper to re-buy · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked.</div></div>`;
+  // MOCK KEEPER CARDS — header and rows share ONE grid template so titles sit exactly over
+  // their values: checkbox | pos | player | keep % (modeled likelihood, rows sorted by it) |
+  // cost | exp $ | val | verdict
+  const KP=(typeof KEEPER_PROB!=="undefined")?KEEPER_PROB:{};
+  const MKCOLS="15px 30px minmax(0,1fr) 38px 30px 30px 30px 46px";
+  const probCell=pr=>{if(pr==null)return `<span class="muted" style="text-align:right" title="no likelihood score — rerun scripts/keeper_likelihood.py">—</span>`;
+    const pc=Math.round(pr*100), col=pc>=75?"var(--good)":pc>=40?"#e3b57f":pc>=15?"var(--txt)":"var(--muted)";
+    return `<span style="text-align:right;color:${col};font-weight:${pc>=75?700:400}" title="Modeled keep likelihood — fitted on this league's actual 2023-25 keeper decisions (savings, cost, prior PPG, games, age); young healthy discounted stars are 97%+ locks">${pc}%</span>`;};
   h+=`<div class="dr-teams">`+KT.map((t,i)=>{const s=TS[i],kc=keptForTeam(i).length,full=kc>=3;
-    const hd=`<div class="muted" style="font-size:9px;display:flex;gap:4px;padding-right:2px"><span style="flex:1"></span><span style="width:26px;text-align:right" title="our board value">val</span><span style="width:26px;text-align:right" title="keeper cost">cost</span><span style="width:26px;text-align:right" title="expected redraft price">exp</span><span style="width:44px;text-align:right" title="KEEP (keeping saves $) / redraft (good value but cheaper to re-buy) / — (pass)">keep?</span></div>`;
-    const rows=t.candidates.map(c=>{const on=DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept,dis=!on&&full;
+    const hd=`<div class="muted" style="font-size:9px;display:grid;grid-template-columns:${MKCOLS};gap:3px;align-items:center"><span></span><span></span><span></span><span style="text-align:right" title="modeled likelihood this owner keeps him, from the league's actual 2023-25 keeper behavior (players sorted by it)">keep %</span><span style="text-align:right" title="2026 keeper cost (true basis + this owner's bump)">cost</span><span style="text-align:right" title="expected auction price if he's thrown back to the draft">exp $</span><span style="text-align:right" title="our board value in room dollars">val</span><span style="text-align:right" title="rational verdict: +$N = keeping saves $N vs redrafting · redraft = cheaper to re-buy at auction · — = not worth a slot">verdict</span></div>`;
+    const cands=Object.keys(KP).length?[...t.candidates].sort((a,b)=>(KP[a.pid]!=null||KP[b.pid]!=null)?(KP[b.pid]||0)-(KP[a.pid]||0):0):t.candidates;
+    const rows=cands.map(c=>{const on=DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept,dis=!on&&full;
       const val=BV[c.pid]!=null?RV(c.pid):c.value, exp=BYID[c.pid]?mkt.expIf(BYID[c.pid]):c.exp;   // room-$, same engine as pool
       const good=val>c.cost, saves=exp-c.cost, decision=good&&saves>0?"keep":good?"redraft":"pass";
       const badge=decision==="keep"?`<span class="upc" title="Keeping saves $${saves} vs redrafting (exp $${exp} > cost $${c.cost})">+$${saves}</span>`
         :decision==="redraft"?`<span style="color:#e3b57f" title="Good value, but you can redraft him for ~$${exp} < the $${c.cost} keeper cost — don't waste a slot">redraft</span>`
         :`<span class="muted" title="Not worth a keeper slot (value $${val} ≤ cost $${c.cost})">—</span>`;
-      return `<label class="mkc" style="display:flex;align-items:center;gap:4px;font-size:11px;${dis?'opacity:.35':''}">
+      return `<label class="mkc" style="display:grid;grid-template-columns:${MKCOLS};gap:3px;align-items:center;font-size:11px;${dis?'opacity:.35':''}">
         <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${dis?"disabled":""}>
         <span class="pos ${c.pos}" style="transform:scale(.8)">${c.pos}</span>
-        <span style="flex:1">${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
-        <span class="muted" style="width:26px;text-align:right">$${val}</span>
-        <span style="width:26px;text-align:right">$${c.cost}</span>
-        <span class="muted" style="width:26px;text-align:right">$${exp}</span>
-        <span style="width:44px;text-align:right">${badge}</span></label>`;}).join("");
-    return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:262px">
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.name}">${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
+        ${probCell(KP[c.pid])}
+        <span style="text-align:right">$${c.cost}</span>
+        <span class="muted" style="text-align:right">$${exp}</span>
+        <span class="muted" style="text-align:right">$${val}</span>
+        <span style="text-align:right">${badge}</span></label>`;}).join("");
+    return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:330px">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">2026 bump +$${t.bump2026} · <b>${kc}/3</b> kept · ${s.spotsLeft} spots · ${t.candidates.length} keepable</div>
       <div class="muted" style="font-size:10px;font-style:italic" title="from 2023–25 auction spend by position (recency-weighted)">${tendLabel(t.tend||{})}</div>
@@ -1195,7 +1206,7 @@ function renderMockKeepers(){
   document.querySelectorAll(".mkchk").forEach(cb=>cb.onchange=()=>setKeeper(cb.dataset.pid,+cb.dataset.t,+cb.dataset.cost,cb.checked));
   document.querySelectorAll(".mkh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(mkSort===k)mkDir*=-1; else{mkSort=k;mkDir=(k==="player"||k==="pos")?1:-1;} render();});
-  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card) — columns are our <b>value</b>, the <b>keeper cost</b>, and the <b>surplus</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price from your league's <b>2023–25 bid history</b>: rank curve × per-player anchor fitted on what the room paid him before — the best remaining players shift up the curve as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
+  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card), sorted by <b>keep %</b> — the modeled likelihood that owner keeps the player, fitted on the league's actual 2023–25 keeper behavior — then the <b>keeper cost</b>, <b>exp $</b> (redraft price), our <b>value</b>, and the rational <b>verdict</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price from your league's <b>2023–25 bid history</b>: rank curve × per-player anchor fitted on what the room paid him before — the best remaining players shift up the curve as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
 }
 
 // ================= MOCK DRAFT (every owner is a bot) =================
