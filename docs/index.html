@@ -300,6 +300,44 @@ const ffaLoaded=()=>Object.keys(ffaMap).length>0;
 const ffaOn=()=>projMode==="ffa"&&ffaLoaded();
 const projActive=()=>(projMode==="ffa"||projMode==="blend")&&ffaLoaded();   // using an alt projection (_proj set)
 
+// ---------- ESPN live draft trends (PUBLIC sitewide ADP + average auction $) ----------
+// Pasted from ESPN's Live Draft Trends page into a .txt and uploaded (📈 button in the Draft
+// Room / Mock Draft). Format: repeating blocks of rank / NameName / Name / team / pos / ADP /
+// ADP-trend / AVG AUCTION $ / auction-trend / %rostered. Anyone NOT listed goes for ~$1 in
+// sitewide drafts. THE BOTS BENCHMARK ON THIS PUBLIC DATA (it's what the room sees); our
+// Exp $ / Value engine (league history + per-player anchors + FFA) stays the proprietary edge.
+let ESPNT=JSON.parse(localStorage.getItem("espnTrends2026")||"null")||{map:{},n:0,ts:0};
+function parseEspnTrends(txt){
+  // tolerant block parser: rank / NameName (doubled) / Name / [injury tag] / team / POS /
+  // ADP / ADP-trend / AVG AUCTION $ / trend / %rostered — extra status lines shift the block,
+  // so anchor on the doubled-name line and scan forward for the position line.
+  const POSSET={QB:1,RB:1,WR:1,TE:1,K:1,"D/ST":1};
+  const L=txt.split(/\r?\n/).map(s=>s.trim()).filter(s=>s!=="");
+  const num=s=>/^[+-]?\d+(\.\d+)?$/.test(s);
+  const map={};let n=0;
+  for(let i=0;i<L.length-6;i++){
+    if(!/^\d+$/.test(L[i]))continue;
+    const d=L[i+1],half=d.slice(0,Math.floor(d.length/2));
+    if(d.length<4||half!==d.slice(Math.floor(d.length/2)))continue;   // doubled-name anchor
+    let j=-1;for(let k=i+2;k<=i+7&&k<L.length;k++){if(POSSET[L[k]]){j=k;break;}}
+    if(j<0||!num(L[j+1])||!num(L[j+3]))continue;                      // pos, then ADP / trend / AUCTION $
+    const pos=L[j]==="D/ST"?"DST":L[j];
+    map[fkey(half,pos)]={av:parseFloat(L[j+3]),adp:parseFloat(L[j+1])};
+    n++;i=j+3;
+  }
+  return {map,n,ts:Date.now()};
+}
+const espnAV=p=>{const e=ESPNT.map[fkey(p.name,p.position)];return e?e.av:0;};
+const espnLoaded=()=>ESPNT.n>=30;
+const espnStatusTxt=()=>espnLoaded()
+  ?`📈 ESPN trends: <b>${ESPNT.n}</b> players · ${new Date(ESPNT.ts).toLocaleDateString()} — bots benchmark on this public data (unlisted = $1 sitewide)`
+  :`📈 ESPN trends <b>not loaded</b> — bots fall back to league history alone. Paste ESPN's Live Draft Trends page into a .txt and upload it.`;
+function wireEspnUpload(){const tf=document.getElementById("espnTrendFile");if(!tf)return;
+  tf.onchange=e=>{const f=e.target.files[0];if(!f)return;
+    f.text().then(t=>{const r=parseEspnTrends(t);
+      if(r.n<10){alert("Couldn't parse that file ("+r.n+" players found). Paste the ESPN Live Draft Trends table (rank/name/team/pos/ADP/AVG $ blocks) into a plain .txt.");return;}
+      ESPNT=r;localStorage.setItem("espnTrends2026",JSON.stringify(r));render();});};}
+
 // ---------- projection / VORP (recomputed for FFA mode) ----------
 function recomputeSkillVorp(){
   const skill=PLAYERS.filter(p=>!isK(p));
@@ -1063,6 +1101,20 @@ function preoptPPG(BV){
   _preopt={k:key,v};
   return v;
 }
+// shared team-card grading — the Draft Room and the Mock Draft score every roster identically:
+// ⚡ current starter PPG/wk · % of the predraft-optimal roster · $ surplus captured, plus the
+// owner's next targets (open slots ordered by his positional lean + NFL fandom)
+function teamScoreHTML(i,BV,PREOPT){
+  const s=teamState(i),ppg=teamPPGwk(i),pct=PREOPT>0?Math.round(100*ppg.st/PREOPT):0;
+  const surplus=s.own.reduce((a,x)=>a+((BV[x.id]||1)-x.price),0);
+  return `<div style="font-size:10px" title="draft score: current starters' projected PPG/week vs the predraft-optimal roster (${PREOPT.toFixed(1)}); surplus = intrinsic value bought − $ paid (keepers included)">⚡ <b>${ppg.st.toFixed(1)}</b> ppg · <b class="${pct>=90?'upc':''}">${pct}%</b> of opt · <span class="${surplus>=0?'upc':'downc'}">${surplus>=0?'+':''}$${surplus}</span> surplus</div>`;
+}
+function teamTargetsHTML(i){
+  const s=teamState(i),td=ownerTend(i);
+  const targ=["RB","WR","QB","TE"].filter(pos=>s.need[pos]>0).sort((a,b)=>(td[b]||1)-(td[a]||1)).map(pos=>pos+(s.need[pos]>1?"×"+s.need[pos]:"")).join(" ");
+  const fan=(typeof OWNER_BIAS!=="undefined"&&typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.teams[i]&&OWNER_BIAS[KEEPERS_2026.teams[i].owner]&&OWNER_BIAS[KEEPERS_2026.teams[i].owner].fan)?" · 🏈 "+Object.keys(OWNER_BIAS[KEEPERS_2026.teams[i].owner].fan).join("/"):"";
+  return `<div class="muted" style="font-size:10px" title="open starter slots ordered by this owner's 2023–25 positional spend lean${fan?'; 🏈 = NFL-team fandom mined from his bids':''}">${targ?`targets ${targ}`:'starters full'}${fan}</div>`;
+}
 // Import the JSON produced by scripts/fetch_espn.py: set league size/budget/roster, team
 // names, my team, and pre-load keepers (matched to our players by name+position).
 function importEspnLeague(txt){
@@ -1104,24 +1156,21 @@ function renderDraftRoom(){
     <span style="flex:1"></span>
     <label class="btn sm up" for="espnFile" title="Import outputs/espn_league.json produced by scripts/fetch_espn.py">📥 Import ESPN league</label>
     <input id="espnFile" type="file" accept=".json" style="display:none">
+    <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $. The bots benchmark their bids on this public data; re-upload any time as the draft nears.">📈 ESPN trends</label>
+    <input id="espnTrendFile" type="file" accept=".txt,text/plain" style="display:none">
     <button class="btn sm" id="drReset" title="clears drafted players; keepers stay (manage those in 🧩 Mock Keepers)">Reset draft (keepers stay)</button>
     ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩ Restore pre-mock picks</button>`:""}</div>
-    <div class="muted" id="espnStatus" style="font-size:11px;margin-top:4px"></div></div>`;
+    <div class="muted" style="font-size:11px;margin-top:4px">${espnStatusTxt()}</div>
+    <div class="muted" id="espnStatus" style="font-size:11px;margin-top:2px"></div></div>`;
   // team strip — every owner's roster card: keepers 🔒, live draft score (starter PPG vs the
   // predraft optimal), surplus captured (value bought − $ paid), and what they're targeting next
   h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=TS[i];
     const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`<span class="dr-need act">${s.need[k]>1?s.need[k]+" ":""}${k}</span>`).join("")||'<span class="dr-need">full</span>';
     const roster=[...s.own].sort((a,b)=>(PRJ(b.p)||0)-(PRJ(a.p)||0)).map(x=>`<div style="display:flex;justify-content:space-between;font-size:11px"><span class="muted" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${x.p.position} ${x.p.name}${DR.owned[x.id]&&DR.owned[x.id].kept?' 🔒':''}</span><span style="white-space:nowrap">$${x.price} <span class="keepbtn drundo" data-id="${x.id}">✕</span></span></div>`).join("");
-    const ppg=teamPPGwk(i), pct=PREOPT>0?Math.round(100*ppg.st/PREOPT):0;
-    const surplus=s.own.reduce((a,x)=>a+((BV[x.id]||1)-x.price),0);
-    const td=ownerTend(i);
-    const targ=["RB","WR","QB","TE"].filter(pos=>s.need[pos]>0).sort((a,b)=>(td[b]||1)-(td[a]||1)).map(pos=>pos+(s.need[pos]>1?"×"+s.need[pos]:"")).join(" ");
-    const fan=(typeof OWNER_BIAS!=="undefined"&&typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.teams[i]&&OWNER_BIAS[KEEPERS_2026.teams[i].owner]&&OWNER_BIAS[KEEPERS_2026.teams[i].owner].fan)?" · 🏈 "+Object.keys(OWNER_BIAS[KEEPERS_2026.teams[i].owner].fan).join("/"):"";
     return `<div class="dr-team ${i===DR.me?"me":""} ${s.spotsLeft<=0?"full":""}" data-setme="${i}">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
-      <div style="font-size:10px" title="draft score: current starters' projected PPG/week vs the predraft-optimal roster (${PREOPT.toFixed(1)}); surplus = intrinsic value bought − $ paid (keepers included)">⚡ <b>${ppg.st.toFixed(1)}</b> ppg · <b class="${pct>=90?'upc':''}">${pct}%</b> of opt · <span class="${surplus>=0?'upc':'downc'}">${surplus>=0?'+':''}$${surplus}</span> surplus</div>
-      <div class="muted" style="font-size:10px" title="open starter slots ordered by this owner's 2023–25 positional spend lean${fan?'; 🏈 = NFL-team fandom mined from his bids':''}">${targ?`targets ${targ}`:'starters full'}${fan}</div>
+      ${teamScoreHTML(i,BV,PREOPT)}${teamTargetsHTML(i)}
       <div class="nd">${needs}</div><div style="margin-top:4px;max-height:150px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
   // my plan — LIVE KNAPSACK: the optimal completion of MY roster at current Exp $ (optimalPlan)
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p));
@@ -1167,16 +1216,16 @@ function renderDraftRoom(){
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
-  const drd=rows.map(p=>{const id=pid(p),m=mv[id]||{market:1,value:1,maxBid:1,surplus:0,needed:false};
-    return {p,id,m,proj:PRJ(p)||0,val:m.value||1,exp:m.market,mymax:m.maxBid,edge:(m.value||1)-m.market,vona:m.surplus};});
-  const SKR={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,mymax:r=>r.mymax,edge:r=>r.edge,vona:r=>r.vona};
+  const drd=rows.map(p=>{const id=pid(p),m=mv[id]||{market:1,value:1,maxBid:1,surplus:0,needed:false},eav=espnAV(p);
+    return {p,id,m,eav,proj:PRJ(p)||0,val:m.value||1,exp:m.market,mymax:m.maxBid,edge:(m.value||1)-m.market,vona:m.surplus};});
+  const SKR={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,espn:r=>r.eav,mymax:r=>r.mymax,edge:r=>r.edge,vona:r=>r.vona};
   const kfr=SKR[drSort]||SKR.mymax;
   drd.sort((a,b)=>{const x=kfr(a),y=kfr(b);return typeof x==="string"?drDir*x.localeCompare(y):drDir*((x||0)-(y||0));});
   document.getElementById("count").textContent=rows.length+" available";
   const arrowR=k=>drSort===k?(drDir<0?' ▼':' ▲'):'';
   const thr=(k,lab,cls,ttl)=>`<th class="drh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowR(k)}</th>`;
   h+=`<div class="muted" style="font-size:11px;margin:6px 0"><b>Value</b> = what he's worth (risk-adjusted, in this room's dollars — worth has no historical ceiling, so elite players can be worth more than anyone has ever PAID) · <b>Exp $</b> = expected purchase price at his live curve rank (capped at the most this league has ever paid at the position) · <b>My Max</b> = the most YOU should bid: Value × your spending power, roster-need gated · <b>Edge</b> = Value − Exp $ in dollars (positive = expected bargain) · <b>VONA pts</b> = risk-adjusted points over the last startable player at his position. <i>Click any column to sort.</i></div>
-    <table style="width:100%"><thead><tr>${thr('pos','Pos','l')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
+    <table style="width:100%"><thead><tr>${thr('pos','Pos','l')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
   // background bots: top-2 likely bidders (each owner's modeled max — personality, fandom,
   // budget, need) shown quietly under the player name; full board in the row's tooltip
   const suitors=(p,id)=>{const bs=DR.teams.map((t,ii)=>({n:t.name,b:ii===DR.me?0:ownerBid(ii,p,mkt,TS)}))
@@ -1193,6 +1242,7 @@ function renderDraftRoom(){
       <td>${isK(p)?"—":Math.round(r.proj)}</td>
       <td style="font-weight:600">$${r.val}</td>
       <td class="base">$${r.exp}</td>
+      ${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}
       <td class="maxbid">$${r.mymax}${over?' <span class="upc" style="font-size:10px;font-weight:400">↑</span>':''}</td>
       <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${isK(p)?"—":(r.edge>=0?'+':'')+r.edge}</td>
       <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
@@ -1210,6 +1260,7 @@ function renderDraftRoom(){
   host.innerHTML=h;
   document.getElementById("drMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   document.getElementById("espnFile").onchange=e=>{const f=e.target.files[0]; if(f) f.text().then(importEspnLeague);};
+  wireEspnUpload();
   document.getElementById("drReset").onclick=()=>{const n=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
     if(!n){alert("No drafted players to clear (keepers are managed in 🧩 Mock Keepers).");return;}
     if(!confirm(`Clear ${n} drafted player${n>1?"s":""}? Keepers stay locked.`))return;
@@ -1423,7 +1474,12 @@ function ownerBid(i,p,mkt,TS){
   const pos=p.position,td=ownerTend(i),id=pid(p);
   if(isK(p))return s.need[pos]>0?1:0;                                   // $1 streams
   if(posDemand(s,pos,td)<=0)return 0;                                   // no realistic use
-  const raw=1+((mkt.price[id]||1)-1)/(mkt.infl||1);                     // un-inflated curve $ at his live slot
+  let raw=1+((mkt.price[id]||1)-1)/(mkt.infl||1);                       // un-inflated curve $ at his live slot
+  // PUBLIC BENCHMARK: when ESPN live-trend data is loaded, bots anchor 65% on the sitewide
+  // average auction $ (what the room actually sees) and 35% on this league's own curve.
+  // Unlisted players go ~$1 in public drafts, so bots won't pay up for them — while OUR
+  // board (league history + anchors + FFA) still can: that asymmetry is the edge.
+  if(espnLoaded()){const eav=espnAV(p);raw=eav>0?0.65*eav+0.35*raw:Math.min(raw,2);}
   const fan=ownerFan(i,p);                                              // fandom stretches the whole bid
   const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1;
@@ -1536,6 +1592,7 @@ function renderMockDraft(){
   const mkt=dynamicMarket(),TS=DR.teams.map((_,i)=>teamState(i));
   const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
   const mv=myVal(mkt,BV);
+  const PREOPT=preoptPPG(BV);                              // same grading benchmark as the Draft Room
   const kc=Object.keys(DR.owned).filter(id=>DR.owned[id].kept).length;
   const drafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
   const done=TS.every(s=>s.spotsLeft<=0), onclk=DR.teams[MD.nom]?DR.teams[MD.nom].name:"—";
@@ -1546,9 +1603,12 @@ function renderMockDraft(){
     <span>My team: <select class="drsel" id="mdMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
     ${MD.on&&!done?`<button class="btn sm" id="mdSim10">⏩ Sim 10 picks</button><button class="btn sm" id="mdSimEnd">⏭ Sim to end</button>`
       :`<button class="btn sm up" id="mdStart">▶ Start mock draft</button>`}
+    <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $. The bots benchmark their bids on this public data; re-upload any time as the draft nears.">📈 ESPN trends</label>
+    <input id="espnTrendFile" type="file" accept=".txt,text/plain" style="display:none">
     ${drafted?`<button class="btn sm" id="mdReset">↺ Reset to keepers (clears ${drafted} drafted)</button>`:MD.on?`<button class="btn sm" id="mdReset">✕ End mock</button>`:""}
     ${localStorage.getItem(MD_SNAP)?`<button class="btn sm" id="mdRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩ Restore pre-mock picks</button>`:""}</div>
-    <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). Bot maxes sit ON the league's <b>real 2023–25 winning-bid curve</b> at the player's live rank (WR has never gone past ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.WR)?KEEPERS_2026.bidcurve_pos.WR[0]:64}, QB ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.QB)?KEEPERS_2026.bidcurve_pos.QB[0]:34} — bots won't either), shaded by each owner's personality (positional lean · elite-QB/pay-TE habits) and capped at his own biggest-ever buy. Live roster need and remaining budget gate everything. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
+    <div class="muted" style="font-size:11px;margin-top:4px">${espnStatusTxt()}</div>
+    <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). ${espnLoaded()?`Bot maxes anchor <b>65% on ESPN's public average auction $</b> (what the room actually sees) and 35% on the league's own curve — unlisted players go ~$1 to bots while OUR board may still like them (the proprietary edge). Curve part:`:`Bot maxes sit ON the league's <b>real 2023–25 winning-bid curve</b> at the player's live rank`} (WR has never gone past ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.WR)?KEEPERS_2026.bidcurve_pos.WR[0]:64}, QB ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.QB)?KEEPERS_2026.bidcurve_pos.QB[0]:34} — bots won't either), shaded by each owner's personality (positional lean · elite-QB/pay-TE habits) and capped at his own biggest-ever buy. Live roster need and remaining budget gate everything. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
   // on the clock
   if(MD.on&&!done){
     h+=`<div class="dr-panel" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
@@ -1557,8 +1617,8 @@ function renderMockDraft(){
       <span style="flex:1"></span><span class="muted" style="font-size:11px">${MD.log.length} sold · $${spentAll} spent</span></div>`;}
   if(done&&MD.log.length){
     const rank=DR.teams.map((t,i)=>Object.assign({i,name:t.name},teamPPGwk(i))).sort((a,b)=>b.st-a.st);
-    h+=`<div class="dr-panel"><h3>🏁 Draft complete — projected starter PPG/week</h3>`+
-      rank.map((r,k)=>`<div style="font-size:12px">${k+1}. <b class="${r.i===DR.me?'maxbid':''}">${r.name}${r.i===DR.me?' (YOU)':''}</b> — <b>${r.st.toFixed(1)}</b> <span class="muted">starters</span> · ${r.bn.toFixed(1)} <span class="muted">bench</span></div>`).join("")+`</div>`;}
+    h+=`<div class="dr-panel"><h3>🏁 Draft complete — final grades (starter PPG/wk vs the predraft-optimal ${PREOPT.toFixed(1)})</h3>`+
+      rank.map((r,k)=>`<div style="font-size:12px">${k+1}. <b class="${r.i===DR.me?'maxbid':''}">${r.name}${r.i===DR.me?' (YOU)':''}</b> — <b>${r.st.toFixed(1)}</b> <span class="muted">starters</span> · <b class="${100*r.st/PREOPT>=90?'upc':''}">${Math.round(100*r.st/PREOPT)}%</b> <span class="muted">of optimal</span> · ${r.bn.toFixed(1)} <span class="muted">bench</span></div>`).join("")+`</div>`;}
   // bid panel (on the block, or preview of any clicked player)
   const selId=MD.block||MD.sel;
   if(selId&&BYID[selId]&&!DR.owned[selId]){
@@ -1584,7 +1644,8 @@ function renderMockDraft(){
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:232px${MD.on&&!done&&i===MD.nom?';outline:1px solid #e0a23c':''}">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max $${Math.max(1,s.budget-(s.spotsLeft-1))} · needs ${needs}</div>
-      <div style="font-size:11px;margin:3px 0"><b>${ppg.st.toFixed(1)}</b> <span class="muted">proj PPG/wk starters</span> · <b>${ppg.bn.toFixed(1)}</b> <span class="muted">bench</span></div>
+      ${teamScoreHTML(i,BV,PREOPT)}${teamTargetsHTML(i)}
+      <div class="muted" style="font-size:10px">bench ${ppg.bn.toFixed(1)} ppg/wk</div>
       <div style="max-height:220px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
   // draft log
   if(MD.log.length)h+=`<div class="dr-panel"><h3>📜 Results</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;font-size:12px">`+
@@ -1597,8 +1658,8 @@ function renderMockDraft(){
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
   const rd=avail.map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1},exp=mkt.price[id]||1,val=RV(id);
-    return {p,id,proj:PRJ(p)||0,val,exp,edge:val-exp,mymax:m.maxBid||1};});
-  const SKD={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,mymax:r=>r.mymax,edge:r=>r.edge};
+    return {p,id,eav:espnAV(p),proj:PRJ(p)||0,val,exp,edge:val-exp,mymax:m.maxBid||1};});
+  const SKD={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,espn:r=>r.eav,mymax:r=>r.mymax,edge:r=>r.edge};
   const kfd=SKD[mdPoolSort]||SKD.exp;
   rd.sort((a,b)=>{const x=kfd(a),y=kfd(b);return typeof x==="string"?mdPoolDir*x.localeCompare(y):mdPoolDir*((x||0)-(y||0));});
   document.getElementById("count").textContent=avail.length+" available";
@@ -1606,16 +1667,17 @@ function renderMockDraft(){
   const thd=(k,lab,cls,ttl)=>`<th class="mdh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowD(k)}</th>`;
   h+=`<div class="dr-panel"><h3>💰 Available — click a player to see what every owner would pay</h3>
     <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid: his <b>Value</b> × your budget aggression (above Exp $ on bargains — go get him; below it on overpriced names — let someone else pay), dropped to stash money (≤$8) when your starters there are filled · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i></div>
-    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}<th class="l"></th></tr></thead><tbody>`+
+    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${espnLoaded()?thd('espn','ESPN $','','sitewide average auction value from the uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (~$1 sitewide)'):''}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}<th class="l"></th></tr></thead><tbody>`+
     rd.slice(0,300).map(r=>{const p=r.p,id=r.id;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer">
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
         <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span></td>
-        <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td><td class="maxbid">$${r.mymax}</td>
+        <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td>${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}<td class="maxbid">$${r.mymax}</td>
         <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${r.edge>=0?'+':''}${r.edge}</td>
         <td class="l">${MD.on&&!done&&!MD.block&&MD.nom===DR.me?`<button class="btn sm mdblock" data-id="${id}">⚡ Block</button>`:'<span class="muted" style="font-size:11px">👁 bids</span>'}</td></tr>`;}).join("")+`</tbody></table></div>`;
   host.innerHTML=h;
   const S=id=>document.getElementById(id);
+  wireEspnUpload();
   S("mdMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   if(S("mdStart"))S("mdStart").onclick=()=>{const f=mdForeign();
     if(f&&!confirm("Starting a mock clears "+f+" recorded pick"+(f>1?"s":"")+" that didn't come from a mock — likely LIVE draft progress (keepers stay). They'll be backed up; ↩ Restore brings them back. Continue?"))return;
@@ -1639,7 +1701,7 @@ function renderMockDraft(){
     if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean, elite-QB/pay-TE habits and <b>NFL-team fandom</b> (🏈 — mined from his own bids: e.g. the Raiders fan who paid $71 for Jeanty stretches ×1.3 on LV players), hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
     "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
-    "Click any row anytime for a bid preview without nominating. The pool is <b>sortable</b> (click any column) and shows <b>Value</b>, <b>Exp $</b>, <b>My Max</b> and <b>Edge</b> on the same engine as every other screen — sort by Edge to find the bargains to nominate late. Team cards show each roster taking shape with <b>projected PPG per week</b> for starters and bench. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft for you. Keepers from 🧩 Mock Keepers are locked in 🔒.";
+    "Click any row anytime for a bid preview without nominating. The pool is <b>sortable</b> and shows <b>Value</b>, <b>Exp $</b>"+(espnLoaded()?", <b>ESPN $</b> (the public price the bots bid from)":"")+", <b>My Max</b> and <b>Edge</b> on the same engine as the Draft Room. Team cards carry the <b>same grading as the real Draft Room</b> — ⚡ starter PPG · % of the predraft-optimal roster · surplus captured — so you can see how your team performs and which owners to watch. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft; 🏁 final grades rank everyone vs optimal. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
 
 function render(){
