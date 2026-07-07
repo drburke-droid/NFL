@@ -8,6 +8,7 @@
 <script src="comps.js"></script>
 <script src="keepers_2026.js"></script>
 <script src="keeper_prob_2026.js"></script>
+<script src="owner_bias_2026.js"></script>
 <script src="price_anchor_2026.js"></script>
 <script src="healthy_ppg.js"></script>
 <script src="contract_status.js"></script>
@@ -1175,7 +1176,7 @@ function renderMockKeepers(){
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:330px">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">2026 bump +$${t.bump2026} · <b>${kc}/3</b> kept · ${s.spotsLeft} spots · ${t.candidates.length} keepable</div>
-      <div class="muted" style="font-size:10px;font-style:italic" title="from 2023–25 auction spend by position (recency-weighted)">${tendLabel(t.tend||{})}</div>
+      <div class="muted" style="font-size:10px;font-style:italic" title="from 2023–25 auction spend by position (recency-weighted); 🏈 = NFL-team fandom mined from his bids (buys them far above pool share and/or pays over the curve)">${tendLabel(t.tend||{})}${(typeof OWNER_BIAS!=="undefined"&&OWNER_BIAS[t.owner]&&OWNER_BIAS[t.owner].fan)?' · 🏈 '+Object.entries(OWNER_BIAS[t.owner].fan).map(([tm,m])=>tm+" fan ×"+m).join(" · "):''}</div>
       ${hd}<div style="max-height:300px;overflow:auto">${rows}</div></div>`;}).join("")+`</div>`;
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).filter(p=>{
     if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
@@ -1249,6 +1250,13 @@ function mdJit(i,id){let x=(MD.seed*2654435761)^(i*40503+40009);
 // league has never paid a WR past ~$64). Personality only SHADES the curve (tight ±20%), and two
 // hard dollar ceilings from history close it out: the owner's own biggest-ever buy, and the
 // position's all-time top price.
+// NFL-team fandom (scripts/owner_bias.py, mined from 2023-25 bids): the multiplier this owner
+// stretches for players on his fan team (e.g. silverandblack -> LV x1.3: paid $71 for Jeanty)
+function ownerFan(i,p){
+  if(typeof OWNER_BIAS==="undefined"||typeof KEEPERS_2026==="undefined"||!KEEPERS_2026.teams[i])return 1;
+  const b=OWNER_BIAS[KEEPERS_2026.teams[i].owner];
+  return (b&&b.fan&&b.fan[team26(p)])||1;
+}
 function ownerBid(i,p,mkt,TS){
   const s=TS[i]; if(s.spotsLeft<=0)return 0;
   const afford=s.budget-(s.spotsLeft-1); if(afford<1)return 0;
@@ -1256,6 +1264,7 @@ function ownerBid(i,p,mkt,TS){
   if(isK(p))return s.need[pos]>0?1:0;                                   // $1 streams
   if(posDemand(s,pos,td)<=0)return 0;                                   // no realistic use
   const raw=1+((mkt.price[id]||1)-1)/(mkt.infl||1);                     // un-inflated curve $ at his live slot
+  const fan=ownerFan(i,p);                                              // fandom stretches the whole bid
   const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1;
   // flushness: money-per-spot vs the room. Nobody leaves cash on the table — a flush team bids
@@ -1268,8 +1277,8 @@ function ownerBid(i,p,mkt,TS){
   // bench/depth money: the league's real $10-24 band is mostly these buys (2024-25: ~26-45 of
   // them per draft), so depth is shaded to 55% of curve with a cap that grows when flush —
   // squashing it to $2-9 hollowed the sim's middle class vs the actual bid history.
-  let bid=raw*lean*agg*(starter?1:0.65)*mdJit(i,id);
-  if(!starter)bid=Math.min(bid,Math.round(14*Math.max(1,agg)));
+  let bid=raw*lean*agg*(starter?1:0.65)*mdJit(i,id)*fan;
+  if(!starter)bid=Math.min(bid,Math.round(14*Math.max(1,agg)*fan));    // fans overpay even for their team's stashes
   // SPEND IT DOWN: nobody leaves money on the table. A flush team's bid is floored at its exact
   // surplus-clearing price — spots × (1 + surplus/spot) = budget — so late money dumps into the
   // best remaining players instead of $1 steals (the hard history ceilings below still apply).
@@ -1292,6 +1301,7 @@ function mdWhy(i,p,TS){const s=TS[i],td=ownerTend(i),pos=p.position,o=[];
   o.push(s.need[pos]>0?"starter need":starter?"flex need":posDemand(s,pos,td)>0?"bench depth":"no need");
   if((td[pos]||1)>=1.2)o.push("loves "+pos);else if((td[pos]||1)<=0.7)o.push("light "+pos);
   if(pos==="QB"&&td.eliteQB&&(td.QB||1)>=1)o.push("pays QB"); if(pos==="TE"&&td.payTE)o.push("pays TE");
+  if(ownerFan(i,p)>1)o.push("🏈 "+team26(p)+" fan (x"+ownerFan(i,p)+")");
   return o.join(" · ");}
 // every owner's likely max for p (my row = my sheet's suggested max, not a bot)
 function mdBids(p,mkt,TS,mv){const id=pid(p);
@@ -1467,7 +1477,7 @@ function renderMockDraft(){
   document.querySelectorAll(".mdrow").forEach(r=>r.onclick=()=>{MD.sel=r.dataset.id;saveMD();render();});
   document.querySelectorAll(".mdh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
-  document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean and elite-QB/pay-TE habits, hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
+  document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean, elite-QB/pay-TE habits and <b>NFL-team fandom</b> (🏈 — mined from his own bids: e.g. the Raiders fan who paid $71 for Jeanty stretches ×1.3 on LV players), hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
     "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
     "Click any row anytime for a bid preview without nominating. The pool is <b>sortable</b> (click any column) and shows <b>Value</b>, <b>Exp $</b>, <b>My Max</b> and <b>Edge</b> on the same engine as every other screen — sort by Edge to find the bargains to nominate late. Team cards show each roster taking shape with <b>projected PPG per week</b> for starters and bench. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft for you. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
