@@ -937,18 +937,6 @@ function baseValue(){
     val[id]=Math.round(Math.max(realistic(base),floor,1));});
   return val;
 }
-// expected REDRAFT price per player: his position-curve price at his within-position value rank over
-// the FULL pool (what he'd cost in the auction if not kept). FFA-aware via raPts. Used by the keeper
-// cards' keep-vs-redraft decision so it re-prices when FFA is uploaded.
-function redraftExp(){
-  const HP=(typeof KEEPERS_2026!=="undefined")?KEEPERS_2026.bidcurve_pos:null, out={};
-  PLAYERS.forEach(p=>{out[pid(p)]=1;});
-  if(!HP)return out;
-  ["QB","RB","WR","TE"].forEach(pos=>{const C=HP[pos]||[];
-    PLAYERS.filter(p=>p.position===pos).sort((a,b)=>raPts(b)-raPts(a))
-      .forEach((p,r)=>{out[pid(p)]=r<C.length?Math.max(1,C[r]):1;});});
-  return out;
-}
 function myVal(mkt){
   const meS=teamState(DR.me);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1, myAvg=meS.spotsLeft>0?meS.budget/meS.spotsLeft:1;
@@ -1167,7 +1155,7 @@ function renderMockKeepers(){
   const arrow=k=>mkSort===k?(mkDir<0?' ▼':' ▲'):'';
   const th=(k,lab,cls,ttl)=>`<th class="mkh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrow(k)}</th>`;
   h+=`<div class="dr-panel"><h3>💰 Available pool — value vs expected purchase price (after keepers)</h3>
-    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = what the player is worth (risk-adjusted), restated in <b>this room's dollars</b> (keeper inflation applied, so Value and Exp $ are the same currency — identical numbers in the keeper cards above). <b>Exp $</b> = expected purchase price <b>simulated from your league's 2023–25 bidding</b>: players are ranked by value and priced at the $ this league has actually paid at each rank (top buys ~$60–66), so prices follow your real curve — and as more studs get kept, the best remaining players shift <i>up</i> the curve (no hard cap). <b>Edge</b> = Value − Exp $ (positive = expected bargain). <b>Likely targeted by</b> = teams that can afford it <i>and</i> still need the slot, ranked by budget × that owner's 2023–25 spend at the position; QB/TE count only teams missing their one starter (backups go $1), K/DST are $1 streams. <i>Click any column to sort.</i></div>
+    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = what the player is worth (risk-adjusted), restated in <b>this room's dollars</b> (keeper inflation applied, so Value and Exp $ are the same currency — identical numbers in the keeper cards above). <b>Exp $</b> = expected purchase price from your league's <b>2023–25 bidding</b>: the rank curve (the $ this league actually pays at each rank, 11-team 2024 finance-calibrated) blended with a <b>per-player anchor</b> fitted on what this room paid HIM (last price, PPG, career, age, position — 20% sharper than the curve alone in season-out validation); injury-returns, breakouts and rookies stay on the curve. As more studs get kept, remaining players shift <i>up</i> the curve. <b>Edge</b> = Value − Exp $ (positive = expected bargain). <b>Likely targeted by</b> = teams that can afford it <i>and</i> still need the slot, ranked by budget × that owner's 2023–25 spend at the position; QB/TE count only teams missing their one starter (backups go $1), K/DST are $1 streams. <i>Click any column to sort.</i></div>
     <table style="width:100%"><thead><tr>${th('pos','Pos','l')}${th('player','Player','l')}${th('proj','Proj')}${th('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${th('exp','Exp $','','expected purchase price: 2023–25 league bid curve, scaled to the room&#39;s post-keeper money (keeper inflation)')}${th('mymax','My Max')}${th('edge','Edge','','value − expected price; + = bargain')}${th('targeted','Likely targeted by','l','number of realistic suitor teams')}</tr></thead><tbody>`;
   h+=rd.slice(0,150).map(r=>{const p=r.p,val=r.val,exp=r.exp,edge=r.edge,cont=r.cont;
     const names=cont.slice(0,4).map(c=>`<span class="${c.i===DR.me?'maxbid':(c.starter?'':'muted')}">${DR.teams[c.i].name}${c.i===DR.me?' (YOU)':''}</span>`).join(", ");
@@ -1189,7 +1177,7 @@ function renderMockKeepers(){
   document.querySelectorAll(".mkchk").forEach(cb=>cb.onchange=()=>setKeeper(cb.dataset.pid,+cb.dataset.t,+cb.dataset.cost,cb.checked));
   document.querySelectorAll(".mkh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(mkSort===k)mkDir*=-1; else{mkSort=k;mkDir=(k==="player"||k==="pos")?1:-1;} render();});
-  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card) — columns are our <b>value</b>, the <b>keeper cost</b>, and the <b>surplus</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price <b>simulated from your league's 2023–25 bid history</b> — no hard cap; the curve tops where your league actually tops, ~$66, and the best remaining players shift up it as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
+  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card) — columns are our <b>value</b>, the <b>keeper cost</b>, and the <b>surplus</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price from your league's <b>2023–25 bid history</b>: rank curve × per-player anchor fitted on what the room paid him before — the best remaining players shift up the curve as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
 }
 
 // ================= MOCK DRAFT (every owner is a bot) =================

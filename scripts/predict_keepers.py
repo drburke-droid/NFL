@@ -197,13 +197,27 @@ def tend_for(o):
 # its r-th most expensive buy at that position. This is the key to the KEEP decision: you only keep
 # a player if keeping is CHEAPER than redrafting him (exp > cost) AND he's good value (value > cost).
 exp_price = {}
+# per-player price anchors (scripts/build_price_anchor.py): blend the fitted what-THIS-league-
+# pays-THIS-player model over the rank curve at the validated weight — the SAME blend the tool's
+# dynamicMarket()/expIf() applies, so predicted keepers are chosen against the same Exp $ the
+# screens display. Run build_price_anchor.py BEFORE this script when data refreshes.
+_ANCHOR, _AW = {}, 0.0
+try:
+    _atxt = open(os.path.join(ROOT, "docs", "price_anchor_2026.js"), encoding="utf-8").read()
+    _ANCHOR = json.loads(_atxt.split("const PRICE_ANCHOR = ")[1].split(";\n")[0])
+    _AW = float(_atxt.split("const PRICE_ANCHOR_W = ")[1].split(";")[0])
+    print(f"price anchors loaded: {len(_ANCHOR)} players, blend W={_AW}")
+except (FileNotFoundError, IndexError, ValueError):
+    print("price_anchor_2026.js not found - exp prices from the rank curve only")
 for _pos in SKILL:
     _arr = sorted([p for p in P if p["position"] == _pos and not isK(p)],
                   key=lambda p: -(VAL.get((norm(p["name"]), _pos)) or 0))
     _C = bid_curve_pos.get(_pos, [])
     for _r, p in enumerate(_arr):
         _v = VAL.get((norm(p["name"]), _pos)) or 0
-        exp_price[pidof(p)] = (_C[_r] if _r < len(_C) else 1) if _v > 1 else 1
+        _cv = (_C[_r] if _r < len(_C) else 1) if _v > 1 else 1
+        _a = _ANCHOR.get(pidof(p))
+        exp_price[pidof(p)] = round(_AW * _a + (1 - _AW) * _cv) if _a is not None else _cv
 
 # ---- per-team keeper prediction ----
 L = json.load(open(os.path.join(ROOT, "outputs", "espn_league.json")))
