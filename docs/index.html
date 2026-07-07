@@ -1057,6 +1057,12 @@ function optimalPlan(mkt){
   let lo=0.02,hi=40,S=sel(lo),lam=lo;
   if(S.spend>budget){for(let it=0;it<36;it++){const mid=(lo+hi)/2,T=sel(mid);
     if(T.spend<=budget){hi=mid;S=T;}else lo=mid;}lam=hi;}
+  // FEASIBILITY GUARD: if no λ produced an affordable roster (bisection kept the λ=0.02 luxury
+  // plan — this is how a $10-left / 8-spot state once "recommended" a $6 Derrick Henry), fall
+  // back to the strict cheapest-per-slot roster. If even THAT overspends, the budget is below
+  // $1/slot — an impossible state the SOLD modal now prevents — and the plan flags it.
+  if(S.spend>budget){S=sel(1e6);lam=hi;}
+  const infeasible=S.spend>budget;
   // leftover pass: pour remaining $ into the single best affordable upgrade, repeat
   for(let it=0;it<24;it++){const un=budget-S.spend;let bi=-1,bp=null,bg=0;
     S.picks.forEach((pk,i)=>{for(const p of avail){
@@ -1075,7 +1081,7 @@ function optimalPlan(mkt){
     const self=pk.u-lam*pk.cost;
     pk.du=pk.alt?Math.max(0,Math.round(pk.u-pk.uf(pk.alt))):999;   // irreplaceability: season pts lost to next-best alt
     pk.wa=pk.alt?Math.max(pk.cost,Math.min(Math.round(pk.cost+(self-altn)/Math.max(lam,0.02)),cap)):cap;});
-  return {picks:S.picks,spend:S.spend,unspent:budget-S.spend,lam,nslots:needs.length};
+  return {picks:S.picks,spend:S.spend,unspent:budget-S.spend,lam,nslots:needs.length,infeasible};
 }
 // PREDRAFT OPTIMAL: starter PPG/wk of the best budget-feasible roster from the FULL pool at
 // intrinsic (baseValue) prices — the benchmark every team's draft is scored against. Cached.
@@ -1124,6 +1130,7 @@ function planPanelHTML(mkt,mv){
   const bnP=plan.picks.filter(pk=>pk.slot==="BN");
   const kdP=plan.picks.filter(pk=>["K","DST"].includes(pk.slot));
   let h=`<div class="dr-panel"><h3>🎯 Your plan — the optimal roster you can still buy: $${meS.budget} across ${plan.nslots} spots · spending power ×${mv._agg.toFixed(2)} ${mv._agg>1.15?'<span class="scarce">(money to spend)</span>':mv._agg<0.85?'<span class="scarce">(tight budget)</span>':''}</h3>`;
+  if(plan.infeasible) h+=`<div class="scarce" style="font-size:12px;margin-bottom:4px">⚠ Budget $${meS.budget} is below $1 per open spot (${plan.nslots}) — this roster can't be completed. Undo a pick (✕ on a roster spot) to get back to a legal state.</div>`;
   if(!plan.nslots) h+=`<div class="muted">Roster full.</div>`;
   else{
     stP.sort((a,b)=>(b.du||0)-(a.du||0));                  // most irreplaceable first: losing him hurts most
@@ -1284,7 +1291,12 @@ function renderDraftRoom(){
   // fast SOLD flow: Draft → modal (price preselected) → click owner / Enter=default / Esc=cancel
   const modal=document.getElementById("drModal");let drmId=null;
   const drmClose=()=>{modal.style.display="none";drmId=null;};
+  // NO TEAM MAY GO NEGATIVE: a winner must keep $1 for every other open spot. Reject any
+  // price above that team's true max bid instead of recording an impossible sale.
   const drmAssign=t=>{if(drmId==null)return;const price=Math.max(1,Math.round(+document.getElementById("drmPrice").value||1));
+    const s=teamState(t),afford=Math.max(1,s.budget-(s.spotsLeft-1));
+    if(s.spotsLeft<=0){alert(DR.teams[t].name+" has no roster spots left.");return;}
+    if(price>afford){alert(DR.teams[t].name+" can't pay $"+price+" — their max bid is $"+afford+" ($"+s.budget+" left, must keep $1 for each of their other "+(s.spotsLeft-1)+" spots).");return;}
     DR.owned[drmId]={t,price,kept:false};saveDR();drmClose();render();};
   document.querySelectorAll(".drdraft").forEach(b=>b.onclick=()=>{const id=b.dataset.id,p=BYID[id];if(!p)return;
     drmId=id;
@@ -1294,7 +1306,8 @@ function renderDraftRoom(){
     document.getElementById("drmHint").textContent=su.length?("bots: "+su.slice(0,3).map(x=>x.n+" $"+x.b).join(" · ")):"";
     document.getElementById("drmDef").textContent=DR.teams[+document.getElementById("drAssign").value].name;
     document.getElementById("drmOwners").innerHTML=DR.teams.map((t,ii)=>{const s=TS[ii],full=s.spotsLeft<=0;
-      return `<button class="${ii===DR.me?'me':''}" data-t="${ii}" ${full?'disabled':''}>${t.name}${ii===DR.me?' (YOU)':''}<br><span class="muted" style="font-size:10px">$${s.budget} · ${s.spotsLeft} spots</span></button>`;}).join("");
+      const aff=Math.max(1,s.budget-(s.spotsLeft-1));
+      return `<button class="${ii===DR.me?'me':''}" data-t="${ii}" ${full?'disabled':''} title="$${s.budget} left · ${s.spotsLeft} spots · can bid at most $${aff}">${t.name}${ii===DR.me?' (YOU)':''}<br><span class="muted" style="font-size:10px">max $${aff} · ${s.spotsLeft} spots</span></button>`;}).join("");
     document.querySelectorAll("#drmOwners button").forEach(ob=>ob.onclick=()=>drmAssign(+ob.dataset.t));
     const pi=document.getElementById("drmPrice");pi.value=mkt.price[id]||1;
     modal.style.display="flex";pi.focus();pi.select();
