@@ -141,13 +141,27 @@ def build_curve(season_lists):                          # {season: [bids desc]} 
     for i in range(2, len(raw) - 1): sm[i] = (raw[i - 1] + raw[i] + raw[i + 1]) / 3
     return [max(1, round(x)) for x in sm]
 
+# FINANCE CALIBRATION: 2024 was an 11-team league, so its auction moved fewer dollars per team
+# ($140/team vs $150 in 2025). Bids are rescaled to the most-recent season's per-team auction
+# spend before entering the curve, so a smaller-league year doesn't deflate the price curve.
+def _season_scale():
+    per_team = {}
+    for s in set(r["season"] for r in drafts):
+        rows = [r for r in drafts if r["season"] == s and str(r["keeper"]).lower() not in ("true", "1")]
+        owners = set(r["owner"] for r in rows)
+        tot = sum(max(fbid(r), 1) for r in rows)
+        if owners: per_team[s] = tot / len(owners)
+    ref = per_team.get(max(per_team), 1)
+    return {s: (ref / v if v else 1) for s, v in per_team.items()}
+SEASON_SCALE = _season_scale()
+
 def season_lists(pos=None):
     out = {}
     for r in drafts:
         if str(r["keeper"]).lower() in ("true", "1"): continue
         if r["pos"] not in SKILL or (pos and r["pos"] != pos): continue
         b = fbid(r)
-        if b >= 1: out.setdefault(r["season"], []).append(b)
+        if b >= 1: out.setdefault(r["season"], []).append(b * SEASON_SCALE.get(r["season"], 1))
     for s in out: out[s].sort(reverse=True)
     return out
 
@@ -183,13 +197,27 @@ def tend_for(o):
 # its r-th most expensive buy at that position. This is the key to the KEEP decision: you only keep
 # a player if keeping is CHEAPER than redrafting him (exp > cost) AND he's good value (value > cost).
 exp_price = {}
+# per-player price anchors (scripts/build_price_anchor.py): blend the fitted what-THIS-league-
+# pays-THIS-player model over the rank curve at the validated weight — the SAME blend the tool's
+# dynamicMarket()/expIf() applies, so predicted keepers are chosen against the same Exp $ the
+# screens display. Run build_price_anchor.py BEFORE this script when data refreshes.
+_ANCHOR, _AW = {}, 0.0
+try:
+    _atxt = open(os.path.join(ROOT, "docs", "price_anchor_2026.js"), encoding="utf-8").read()
+    _ANCHOR = json.loads(_atxt.split("const PRICE_ANCHOR = ")[1].split(";\n")[0])
+    _AW = float(_atxt.split("const PRICE_ANCHOR_W = ")[1].split(";")[0])
+    print(f"price anchors loaded: {len(_ANCHOR)} players, blend W={_AW}")
+except (FileNotFoundError, IndexError, ValueError):
+    print("price_anchor_2026.js not found - exp prices from the rank curve only")
 for _pos in SKILL:
     _arr = sorted([p for p in P if p["position"] == _pos and not isK(p)],
                   key=lambda p: -(VAL.get((norm(p["name"]), _pos)) or 0))
     _C = bid_curve_pos.get(_pos, [])
     for _r, p in enumerate(_arr):
         _v = VAL.get((norm(p["name"]), _pos)) or 0
-        exp_price[pidof(p)] = (_C[_r] if _r < len(_C) else 1) if _v > 1 else 1
+        _cv = (_C[_r] if _r < len(_C) else 1) if _v > 1 else 1
+        _a = _ANCHOR.get(pidof(p))
+        exp_price[pidof(p)] = round(_AW * _a + (1 - _AW) * _cv) if _a is not None else _cv
 
 # ---- per-team keeper prediction ----
 L = json.load(open(os.path.join(ROOT, "outputs", "espn_league.json")))
