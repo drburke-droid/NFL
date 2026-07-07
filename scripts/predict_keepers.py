@@ -141,13 +141,27 @@ def build_curve(season_lists):                          # {season: [bids desc]} 
     for i in range(2, len(raw) - 1): sm[i] = (raw[i - 1] + raw[i] + raw[i + 1]) / 3
     return [max(1, round(x)) for x in sm]
 
+# FINANCE CALIBRATION: 2024 was an 11-team league, so its auction moved fewer dollars per team
+# ($140/team vs $150 in 2025). Bids are rescaled to the most-recent season's per-team auction
+# spend before entering the curve, so a smaller-league year doesn't deflate the price curve.
+def _season_scale():
+    per_team = {}
+    for s in set(r["season"] for r in drafts):
+        rows = [r for r in drafts if r["season"] == s and str(r["keeper"]).lower() not in ("true", "1")]
+        owners = set(r["owner"] for r in rows)
+        tot = sum(max(fbid(r), 1) for r in rows)
+        if owners: per_team[s] = tot / len(owners)
+    ref = per_team.get(max(per_team), 1)
+    return {s: (ref / v if v else 1) for s, v in per_team.items()}
+SEASON_SCALE = _season_scale()
+
 def season_lists(pos=None):
     out = {}
     for r in drafts:
         if str(r["keeper"]).lower() in ("true", "1"): continue
         if r["pos"] not in SKILL or (pos and r["pos"] != pos): continue
         b = fbid(r)
-        if b >= 1: out.setdefault(r["season"], []).append(b)
+        if b >= 1: out.setdefault(r["season"], []).append(b * SEASON_SCALE.get(r["season"], 1))
     for s in out: out[s].sort(reverse=True)
     return out
 

@@ -7,6 +7,7 @@
 <script src="data.js"></script>
 <script src="comps.js"></script>
 <script src="keepers_2026.js"></script>
+<script src="price_anchor_2026.js"></script>
 <script src="healthy_ppg.js"></script>
 <script src="contract_status.js"></script>
 <script src="vacated_role.js"></script>
@@ -832,7 +833,7 @@ function dynamicMarket(){
   const realistic=v=>v<=25?v:25+(v-25)*0.75;
   const HP=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos)?KEEPERS_2026.bidcurve_pos:null;
   const H=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve&&KEEPERS_2026.bidcurve.length)?KEEPERS_2026.bidcurve:null;
-  const bought={QB:0,RB:0,WR:0,TE:0},_ra={},_nst={},_off={};
+  const bought={QB:0,RB:0,WR:0,TE:0},_ra={},_nst={},_off={};let _anchored=(p,cv)=>cv;
   Object.keys(DR.owned||{}).forEach(id=>{const o=DR.owned[id],pl=BYID[id];
     if(pl&&o&&!o.kept&&bought[pl.position]!=null)bought[pl.position]++;});
   if(HP){
@@ -850,17 +851,25 @@ function dynamicMarket(){
     //  (3) players already BOUGHT there advance the curve slot (an auction never re-pays the top
     //      price after the top names are gone). Keepers don't advance it — the curve is calibrated
     //      on post-keeper history; they act through open slots + money instead.
+    // PER-PLAYER ANCHOR (price_anchor_2026.js): what THIS league pays THIS player, fitted on
+    // its own 2023-25 winning bids (last price, prior PPG, career, age, position; the 11-team
+    // 2024 season finance-calibrated). Season-out validation: blending anchor over the rank
+    // curve at W=0.8 cuts MAE 18%. Rookies have no anchor - the curve prices them.
+    const ANC=(typeof PRICE_ANCHOR!=="undefined")?PRICE_ANCHOR:null;
+    const AW=(typeof PRICE_ANCHOR_W!=="undefined")?PRICE_ANCHOR_W:0;
+    const anchored=(p,cv)=>{const a=ANC?ANC[pid(p)]:null;return a!=null?AW*a+(1-AW)*cv:cv;};
     ["QB","RB","WR","TE"].forEach(pos=>{const C=HP[pos]||[];
       const arr=avail.filter(p=>p.position===pos).sort((a,b)=>raPts(b)-raPts(a));  // rank within position
       const nStart=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));       // LIVE starter+flex demand
       const off=bought[pos]||0;
       _ra[pos]=arr.map(raPts); _nst[pos]=nStart; _off[pos]=off;                    // for expIf() below
       arr.forEach((p,r)=>{
-        const slot=off+r, cv=slot<C.length?Math.max(1,C[slot]):1;
-        if(r<nStart){price[pid(p)]=cv;}                                            // real demand -> curve slot
+        const slot=off+r, cv=anchored(p,slot<C.length?Math.max(1,C[slot]):1);
+        if(r<nStart){price[pid(p)]=Math.max(1,Math.round(cv));}                    // real demand -> anchored curve slot
         else{const ramp=Math.max(0,BENCH_CAP-(r-nStart)*1.2);                      // bench-only -> $6 -> $1
           price[pid(p)]=Math.max(1,Math.round(Math.min(cv,ramp)));}
       });});
+    _anchored=anchored;                                                            // for expIf() below
   } else if(H){
     // fallback: single pooled curve (rank all skill together)
     const sk=avail.filter(p=>!["K","DST"].includes(p.position))
@@ -894,7 +903,7 @@ function dynamicMarket(){
     const A=_ra[pos]||[],C=HP[pos]||[],v=raPts(p);
     let r=0; while(r<A.length&&A[r]>v)r++;
     const ns=_nst[pos]||0, slot=(_off[pos]||0)+r;
-    let cv=slot<C.length?Math.max(1,C[slot]):1;
+    let cv=_anchored(p,slot<C.length?Math.max(1,C[slot]):1);                     // same per-player anchor as price[]
     if(r>=ns)cv=Math.max(1,Math.min(cv,Math.max(0,BENCH_CAP-(r-ns)*1.2)));
     return Math.max(1,Math.round(1+(cv-1)*infl));};
   return {price,repl,per,open,money,spots,scarce,infl,expIf};
@@ -1290,7 +1299,12 @@ function mdResolve(id,myMax){
   const lAvg=mkt.spots>0?mkt.money/mkt.spots:1,ws=TS[w.i];
   const flushW=lAvg>0?(ws.spotsLeft>0?ws.budget/ws.spotsLeft:1)/lAvg:1;
   const enforce=flushW>1.1?Math.round(w.max*Math.min(0.97,0.6+0.18*flushW)):0;
-  const price=Math.max(1,Math.min(w.max,Math.max(second+1,enforce)));
+  // endgame: relative flushness goes blind when the winner IS most of the remaining money
+  // (everyone else broke -> flushW≈1) — a winner with absolute surplus pays at least his own
+  // surplus-clearing price (spots × (1+surplus/spot) = budget), so the last wallet drains too
+  const perSurW=ws.spotsLeft>0?(ws.budget-ws.spotsLeft)/ws.spotsLeft:0;
+  const clearing=perSurW>2?Math.round(1+perSurW):0;
+  const price=Math.max(1,Math.min(w.max,Math.max(second+1,enforce,clearing)));
   DR.owned[id]={t:w.i,price,kept:false};
   const ru=bids.find(b=>b.i!==w.i);
   MD.log.unshift({name:p.name,pos:p.position,t:w.i,price,ru:ru&&ru.max>0?ru.i:null,rmax:ru?ru.max:0,mine:w.i===DR.me});
