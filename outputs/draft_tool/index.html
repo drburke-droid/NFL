@@ -1115,6 +1115,57 @@ function teamTargetsHTML(i){
   const fan=(typeof OWNER_BIAS!=="undefined"&&typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.teams[i]&&OWNER_BIAS[KEEPERS_2026.teams[i].owner]&&OWNER_BIAS[KEEPERS_2026.teams[i].owner].fan)?" · 🏈 "+Object.keys(OWNER_BIAS[KEEPERS_2026.teams[i].owner].fan).join("/"):"";
   return `<div class="muted" style="font-size:10px" title="open starter slots ordered by this owner's 2023–25 positional spend lean${fan?'; 🏈 = NFL-team fandom mined from his bids':''}">${targ?`targets ${targ}`:'starters full'}${fan}</div>`;
 }
+// 🎯 YOUR PLAN panel — shared by the Draft Room and the Mock Draft (identical screens; only
+// the winner-input mechanism differs). Returns {html, plan} so callers can reuse plan.picks.
+function planPanelHTML(mkt,mv){
+  const meS=mv._meS;
+  const plan=optimalPlan(mkt);
+  const stP=plan.picks.filter(pk=>!["BN","K","DST"].includes(pk.slot));
+  const bnP=plan.picks.filter(pk=>pk.slot==="BN");
+  const kdP=plan.picks.filter(pk=>["K","DST"].includes(pk.slot));
+  let h=`<div class="dr-panel"><h3>🎯 Your plan — the optimal roster you can still buy: $${meS.budget} across ${plan.nslots} spots · spending power ×${mv._agg.toFixed(2)} ${mv._agg>1.15?'<span class="scarce">(money to spend)</span>':mv._agg<0.85?'<span class="scarce">(tight budget)</span>':''}</h3>`;
+  if(!plan.nslots) h+=`<div class="muted">Roster full.</div>`;
+  else{
+    stP.sort((a,b)=>(b.du||0)-(a.du||0));                  // most irreplaceable first: losing him hurts most
+    const pri=pk=>pk.du==null?'':pk.du>=20?`<span class="scarce" title="MUST-GET: losing him costs ~${pk.du} season pts vs the next-best ${pk.slot}${pk.alt?' ('+pk.alt.name+')':''} — the drop-off you can't buy back">★</span>`
+      :pk.du>=10?`<span style="color:var(--gold)" title="high priority: −${pk.du} season pts to the fallback${pk.alt?' ('+pk.alt.name+')':''}">▲</span>`
+      :`<span class="muted" title="replaceable: only −${pk.du} pts to the fallback${pk.alt?' ('+pk.alt.name+')':''} — never overpay here">≈</span>`;
+    const prow=pk=>`<div style="display:flex;gap:6px;font-size:12px;align-items:center;margin-bottom:1px">
+      <span style="width:14px;text-align:center">${pk.wa!=null?pri(pk):''}</span>
+      <span class="muted" style="width:34px">${pk.slot}</span>
+      <span class="pos ${pk.p.position}" style="transform:scale(.75)">${pk.p.position}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name} <span class="muted" style="font-size:10px">${pk.p.team||""}</span></span>
+      <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
+      <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
+        ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
+        :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span></div>`;
+    h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:4px 24px">
+      <div><div class="muted" style="font-size:10px;margin-bottom:2px">STARTERS — ordered by irreplaceability (★ must-get · ▲ high · ≈ replaceable); buy at ≤ Exp $, walk away past the number</div>${stP.map(prow).join("")}${kdP.map(prow).join("")}</div>
+      <div><div class="muted" style="font-size:10px;margin-bottom:2px">BENCH — high-upside RB/WR only (K/DST streamed, QB2/TE2 off bye-week waivers)</div>${bnP.map(prow).join("")}</div></div>`;
+    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench is chosen on <b>ceiling + lottery odds</b>, not median projection.</div>`;
+  }
+  return {html:h+`</div>`,plan};
+}
+// 📊 positional scarcity panel — shared by the Draft Room and the Mock Draft
+function scarcityPanelHTML(mkt){
+  let h=`<div class="dr-panel"><h3>📊 Positional scarcity — who to pay up for vs wait on</h3>`;
+  ["QB","RB","WR","TE"].forEach(pos=>{const sc=mkt.scarce[pos]||{demand:0,edge:0};
+    let lab;
+    if(sc.edge===0) lab=`<span class="muted">abundant — every starter is ~replaceable; take the cheapest, don't overpay</span>`;
+    else if(sc.edge<=2) lab=`<span class="scarce">SCARCE — only ${sc.edge} player${sc.edge>1?'s':''} with a real edge left for ${sc.demand} open slot${sc.demand>1?'s':''}; pay up or you're stuck with replacement</span>`;
+    else lab=`${sc.edge} players with an edge for ${sc.demand} open slots — a few worth a premium, then it flattens`;
+    h+=`<div style="font-size:12px;margin-bottom:2px"><b>${pos}</b>: ${lab}</div>`;});
+  return h+`<div class="muted" style="font-size:11px;margin-top:4px">Prices use each player's edge over the <b>last startable</b> player (value-over-next-available, not raw VORP), on <b>risk-adjusted</b> points — a steady high-floor producer is worth more than a boom/bust, injury-prone one at the same projection. So 12 equal QBs for 12 teams price to ~$1 (guaranteed one), a lone elite RB commands the premium, and volatile RBs are nudged below safer WRs/QBs. Top compressed to observed clearing prices (~$70). The table's <b>VONA pts</b> column is this same points edge.</div></div>`;
+}
+// 🤖 background bots: top-2 likely bidders on a player (personality, fandom, ESPN benchmark,
+// budget, need) — quiet line under the name, full board in the row tooltip. Shared.
+function suitorsHTML(p,mkt,TS){
+  const bs=DR.teams.map((t,ii)=>({n:t.name,b:ii===DR.me?0:ownerBid(ii,p,mkt,TS)}))
+    .filter(x=>x.b>1).sort((a,b)=>b.b-a.b);
+  if(!bs.length)return {line:"",tip:"no bot sees a real bid here"};
+  return {line:`<div class="muted" style="font-size:10px">🤖 ${bs.slice(0,2).map(x=>`${x.n} $${x.b}`).join(" · ")}${bs.length>2?` <span title="${bs.slice(2,8).map(x=>x.n+" $"+x.b).join(" · ")}">+${bs.length-2}</span>`:''}</div>`,
+          tip:bs.slice(0,8).map(x=>x.n+" $"+x.b).join(" · ")};
+}
 // Import the JSON produced by scripts/fetch_espn.py: set league size/budget/roster, team
 // names, my team, and pre-load keepers (matched to our players by name+position).
 function importEspnLeague(txt){
@@ -1172,43 +1223,11 @@ function renderDraftRoom(){
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
       ${teamScoreHTML(i,BV,PREOPT)}${teamTargetsHTML(i)}
       <div class="nd">${needs}</div><div style="margin-top:4px;max-height:150px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
-  // my plan — LIVE KNAPSACK: the optimal completion of MY roster at current Exp $ (optimalPlan)
+  // my plan (shared knapsack panel) + positional scarcity — same panels as the Mock Draft
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p));
-  const plan=optimalPlan(mkt);
-  const stP=plan.picks.filter(pk=>!["BN","K","DST"].includes(pk.slot));
-  const bnP=plan.picks.filter(pk=>pk.slot==="BN");
-  const kdP=plan.picks.filter(pk=>["K","DST"].includes(pk.slot));
-  h+=`<div class="dr-panel"><h3>🎯 Your plan — the optimal roster you can still buy: $${meS.budget} across ${plan.nslots} spots · spending power ×${mv._agg.toFixed(2)} ${mv._agg>1.15?'<span class="scarce">(money to spend)</span>':mv._agg<0.85?'<span class="scarce">(tight budget)</span>':''}</h3>`;
-  if(!plan.nslots) h+=`<div class="muted">Roster full.</div>`;
-  else{
-    stP.sort((a,b)=>(b.du||0)-(a.du||0));                  // most irreplaceable first: losing him hurts most
-    const pri=pk=>pk.du==null?'':pk.du>=20?`<span class="scarce" title="MUST-GET: losing him costs ~${pk.du} season pts vs the next-best ${pk.slot}${pk.alt?' ('+pk.alt.name+')':''} — the drop-off you can't buy back">★</span>`
-      :pk.du>=10?`<span style="color:var(--gold)" title="high priority: −${pk.du} season pts to the fallback${pk.alt?' ('+pk.alt.name+')':''}">▲</span>`
-      :`<span class="muted" title="replaceable: only −${pk.du} pts to the fallback${pk.alt?' ('+pk.alt.name+')':''} — never overpay here">≈</span>`;
-    const prow=pk=>`<div style="display:flex;gap:6px;font-size:12px;align-items:center;margin-bottom:1px">
-      <span style="width:14px;text-align:center">${pk.wa!=null?pri(pk):''}</span>
-      <span class="muted" style="width:34px">${pk.slot}</span>
-      <span class="pos ${pk.p.position}" style="transform:scale(.75)">${pk.p.position}</span>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name} <span class="muted" style="font-size:10px">${pk.p.team||""}</span></span>
-      <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
-      <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
-        ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
-        :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span></div>`;
-    h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:4px 24px">
-      <div><div class="muted" style="font-size:10px;margin-bottom:2px">STARTERS — ordered by irreplaceability (★ must-get · ▲ high · ≈ replaceable); buy at ≤ Exp $, walk away past the number</div>${stP.map(prow).join("")}${kdP.map(prow).join("")}</div>
-      <div><div class="muted" style="font-size:10px;margin-bottom:2px">BENCH — high-upside RB/WR only (K/DST streamed, QB2/TE2 off bye-week waivers)</div>${bnP.map(prow).join("")}</div></div>`;
-    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench is chosen on <b>ceiling + lottery odds</b>, not median projection.</div>`;
-  }
-  h+=`</div>`;
-  // positional scarcity readout (value-over-next-available)
-  h+=`<div class="dr-panel"><h3>📊 Positional scarcity — who to pay up for vs wait on</h3>`;
-  ["QB","RB","WR","TE"].forEach(pos=>{const sc=mkt.scarce[pos]||{demand:0,edge:0};
-    let lab;
-    if(sc.edge===0) lab=`<span class="muted">abundant — every starter is ~replaceable; take the cheapest, don't overpay</span>`;
-    else if(sc.edge<=2) lab=`<span class="scarce">SCARCE — only ${sc.edge} player${sc.edge>1?'s':''} with a real edge left for ${sc.demand} open slot${sc.demand>1?'s':''}; pay up or you're stuck with replacement</span>`;
-    else lab=`${sc.edge} players with an edge for ${sc.demand} open slots — a few worth a premium, then it flattens`;
-    h+=`<div style="font-size:12px;margin-bottom:2px"><b>${pos}</b>: ${lab}</div>`;});
-  h+=`<div class="muted" style="font-size:11px;margin-top:4px">Prices use each player's edge over the <b>last startable</b> player (value-over-next-available, not raw VORP), on <b>risk-adjusted</b> points — a steady high-floor producer is worth more than a boom/bust, injury-prone one at the same projection. So 12 equal QBs for 12 teams price to ~$1 (guaranteed one), a lone elite RB commands the premium, and volatile RBs are nudged below safer WRs/QBs. Top compressed to observed clearing prices (~$70). The table's <b>VONA pts</b> column is this same points edge.</div></div>`;
+  const PP=planPanelHTML(mkt,mv), plan=PP.plan;
+  h+=PP.html;
+  h+=scarcityPanelHTML(mkt);
   // available table — same Value / Exp $ / My Max / Edge($) engine and labels as every other
   // screen, plus VONA pts (the POINTS edge the scarcity panel above talks about). Sortable.
   let rows=avail.concat(PLAYERS.filter(p=>!DR.owned[pid(p)]&&isK(p))).filter(p=>{
@@ -1226,16 +1245,9 @@ function renderDraftRoom(){
   const thr=(k,lab,cls,ttl)=>`<th class="drh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowR(k)}</th>`;
   h+=`<div class="muted" style="font-size:11px;margin:6px 0"><b>Value</b> = what he's worth (risk-adjusted, in this room's dollars — worth has no historical ceiling, so elite players can be worth more than anyone has ever PAID) · <b>Exp $</b> = expected purchase price at his live curve rank (capped at the most this league has ever paid at the position) · <b>My Max</b> = the most YOU should bid: Value × your spending power, roster-need gated · <b>Edge</b> = Value − Exp $ in dollars (positive = expected bargain) · <b>VONA pts</b> = risk-adjusted points over the last startable player at his position. <i>Click any column to sort.</i></div>
     <table style="width:100%"><thead><tr>${thr('pos','Pos','l')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
-  // background bots: top-2 likely bidders (each owner's modeled max — personality, fandom,
-  // budget, need) shown quietly under the player name; full board in the row's tooltip
-  const suitors=(p,id)=>{const bs=DR.teams.map((t,ii)=>({n:t.name,b:ii===DR.me?0:ownerBid(ii,p,mkt,TS)}))
-    .filter(x=>x.b>1).sort((a,b)=>b.b-a.b);
-    if(!bs.length)return {line:"",tip:"no bot sees a real bid here"};
-    return {line:`<div class="muted" style="font-size:10px">🤖 ${bs.slice(0,2).map(x=>`${x.n} $${x.b}`).join(" · ")}${bs.length>2?` <span title="${bs.slice(2,8).map(x=>x.n+" $"+x.b).join(" · ")}">+${bs.length-2}</span>`:''}</div>`,
-            tip:bs.slice(0,8).map(x=>x.n+" $"+x.b).join(" · ")};};
   h+=drd.slice(0,300).map((r,ri)=>{const p=r.p,id=r.id,m=r.m;
     const over=m.maxBid>m.market;
-    const su=(!isK(p)&&ri<90&&r.exp>=5)?suitors(p,id):null;
+    const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
     return `<tr${su?` title="likely bidders: ${su.tip}"`:''}>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
       <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
@@ -1647,6 +1659,9 @@ function renderMockDraft(){
       ${teamScoreHTML(i,BV,PREOPT)}${teamTargetsHTML(i)}
       <div class="muted" style="font-size:10px">bench ${ppg.bn.toFixed(1)} ppg/wk</div>
       <div style="max-height:220px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
+  // 🎯 your plan + 📊 scarcity — the SAME shared panels as the real Draft Room
+  h+=planPanelHTML(mkt,mv).html;
+  h+=scarcityPanelHTML(mkt);
   // draft log
   if(MD.log.length)h+=`<div class="dr-panel"><h3>📜 Results</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;font-size:12px">`+
     MD.log.slice(0,80).map(l=>`<div><span class="pos ${l.pos}" style="transform:scale(.8)">${l.pos}</span> ${l.name} → <b class="${l.mine?'maxbid':''}">${DR.teams[l.t]?DR.teams[l.t].name:'?'}</b> <b>$${l.price}</b>${l.ru!=null&&DR.teams[l.ru]?` <span class="muted">(over ${DR.teams[l.ru].name} $${l.rmax})</span>`:''}</div>`).join("")+`</div></div>`;
@@ -1657,9 +1672,9 @@ function renderMockDraft(){
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
-  const rd=avail.map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1},exp=mkt.price[id]||1,val=RV(id);
-    return {p,id,eav:espnAV(p),proj:PRJ(p)||0,val,exp,edge:val-exp,mymax:m.maxBid||1};});
-  const SKD={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,espn:r=>r.eav,mymax:r=>r.mymax,edge:r=>r.edge};
+  const rd=avail.map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1,surplus:0},exp=mkt.price[id]||1,val=RV(id);
+    return {p,id,eav:espnAV(p),proj:PRJ(p)||0,val,exp,edge:val-exp,mymax:m.maxBid||1,vona:m.surplus||0};});
+  const SKD={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,espn:r=>r.eav,mymax:r=>r.mymax,edge:r=>r.edge,vona:r=>r.vona};
   const kfd=SKD[mdPoolSort]||SKD.exp;
   rd.sort((a,b)=>{const x=kfd(a),y=kfd(b);return typeof x==="string"?mdPoolDir*x.localeCompare(y):mdPoolDir*((x||0)-(y||0));});
   document.getElementById("count").textContent=avail.length+" available";
@@ -1667,13 +1682,15 @@ function renderMockDraft(){
   const thd=(k,lab,cls,ttl)=>`<th class="mdh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowD(k)}</th>`;
   h+=`<div class="dr-panel"><h3>💰 Available — click a player to see what every owner would pay</h3>
     <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid: his <b>Value</b> × your budget aggression (above Exp $ on bargains — go get him; below it on overpriced names — let someone else pay), dropped to stash money (≤$8) when your starters there are filled · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i></div>
-    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${espnLoaded()?thd('espn','ESPN $','','sitewide average auction value from the uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (~$1 sitewide)'):''}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}<th class="l"></th></tr></thead><tbody>`+
-    rd.slice(0,300).map(r=>{const p=r.p,id=r.id;
-      return `<tr class="mdrow" data-id="${id}" style="cursor:pointer">
+    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${espnLoaded()?thd('espn','ESPN $','','sitewide average auction value from the uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (~$1 sitewide)'):''}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}${thd('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l"></th></tr></thead><tbody>`+
+    rd.slice(0,300).map((r,ri)=>{const p=r.p,id=r.id;
+      const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
+      return `<tr class="mdrow" data-id="${id}" style="cursor:pointer"${su?` title="likely bidders: ${su.tip}"`:''}>
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-        <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span></td>
+        <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${su?su.line:''}</td>
         <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td>${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}<td class="maxbid">$${r.mymax}</td>
         <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${r.edge>=0?'+':''}${r.edge}</td>
+        <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
         <td class="l">${MD.on&&!done&&!MD.block&&MD.nom===DR.me?`<button class="btn sm mdblock" data-id="${id}">⚡ Block</button>`:'<span class="muted" style="font-size:11px">👁 bids</span>'}</td></tr>`;}).join("")+`</tbody></table></div>`;
   host.innerHTML=h;
   const S=id=>document.getElementById(id);
@@ -1701,7 +1718,7 @@ function renderMockDraft(){
     if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean, elite-QB/pay-TE habits and <b>NFL-team fandom</b> (🏈 — mined from his own bids: e.g. the Raiders fan who paid $71 for Jeanty stretches ×1.3 on LV players), hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
     "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
-    "Click any row anytime for a bid preview without nominating. The pool is <b>sortable</b> and shows <b>Value</b>, <b>Exp $</b>"+(espnLoaded()?", <b>ESPN $</b> (the public price the bots bid from)":"")+", <b>My Max</b> and <b>Edge</b> on the same engine as the Draft Room. Team cards carry the <b>same grading as the real Draft Room</b> — ⚡ starter PPG · % of the predraft-optimal roster · surplus captured — so you can see how your team performs and which owners to watch. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft; 🏁 final grades rank everyone vs optimal. Keepers from 🧩 Mock Keepers are locked in 🔒.";
+    "Click any row anytime for a bid preview without nominating. This screen is the <b>real Draft Room with bots</b>: the same 🎯 Your plan knapsack (walk-aways, ★ priorities), 📊 scarcity panel, 🤖 bidder hints, and pool columns (Value / Exp $"+(espnLoaded()?" / ESPN $":"")+" / My Max / Edge / VONA pts) — only the winner-input differs (bots bid here; you record real winners there). Team cards carry the <b>same grading</b> — ⚡ starter PPG · % of the predraft-optimal roster · surplus captured — so you can see how your team performs and which owners to watch. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft; 🏁 final grades rank everyone vs optimal. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
 
 function render(){
