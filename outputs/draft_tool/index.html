@@ -981,6 +981,56 @@ function myVal(mkt,BVo){
     out[id]={market,value,maxBid,surplus:Math.round(surplus),needed:startNeed||benchOnly,startNeed};});
   return out;
 }
+// ---------- YOUR PLAN: live knapsack over the remaining pool at Exp $ ----------
+// Solves "best roster completion I can buy from here": maximize risk-adjusted starter points
+// + upside-weighted bench, subject to remaining budget, at each player's LIVE expected price.
+// Method: Lagrangian shadow-price search — at a $-price λ each slot takes argmax(utility − λ·Exp$);
+// bisect λ until the roster clears the budget, then pour any leftover into best-gain upgrades.
+// Bench = RB/WR ONLY (user streams K/DST and grabs bye-week QB2/TE2 off waivers) and is valued
+// on UPSIDE — 30% × ceiling-PPG season (+ lottery-ticket star odds), not median points — because
+// a bench slot only pays off in the world where the player breaks into your lineup.
+const ceilPts=p=>((p.ceiling!=null?p.ceiling:(p.proj_ppg||0)*1.15))*(NORMG[p.position]||15);
+const benchU=p=>{const l=(typeof LOTTERY_2026!=="undefined")?LOTTERY_2026[p.name]:null;
+  return 0.30*ceilPts(p)*(1+3*(l?l.p:0));};
+function optimalPlan(mkt){
+  const meS=teamState(DR.me), budget=meS.budget;
+  const price=p=>mkt.price[pid(p)]||1;
+  const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]);
+  const needs=[];                                          // ordered slot list to fill
+  ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:raPts});});
+  for(let k=0;k<(meS.need.FLEX||0);k++)needs.push({slot:"FLEX",elig:FLEXE,u:raPts});
+  ["K","DST"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:p=>(p.proj_pts||0)/100});});
+  for(let k=0;k<(meS.bench||0);k++)needs.push({slot:"BN",elig:["RB","WR"],u:benchU});
+  if(!needs.length)return {picks:[],spend:0,unspent:budget,lam:0,nslots:0};
+  const sel=lam=>{const used=new Set();let spend=0;const picks=[];
+    for(const nd of needs){let best=null,bn=-1e9,bu=0;
+      for(const p of avail){if(used.has(pid(p))||!nd.elig.includes(p.position))continue;
+        const u=nd.u(p),n=u-lam*price(p);
+        if(n>bn){bn=n;best=p;bu=u;}}
+      if(best){used.add(pid(best));spend+=price(best);picks.push({slot:nd.slot,p:best,cost:price(best),u:bu,elig:nd.elig,uf:nd.u});}}
+    return {picks,spend,used};};
+  let lo=0.02,hi=40,S=sel(lo),lam=lo;
+  if(S.spend>budget){for(let it=0;it<36;it++){const mid=(lo+hi)/2,T=sel(mid);
+    if(T.spend<=budget){hi=mid;S=T;}else lo=mid;}lam=hi;}
+  // leftover pass: pour remaining $ into the single best affordable upgrade, repeat
+  for(let it=0;it<24;it++){const un=budget-S.spend;let bi=-1,bp=null,bg=0;
+    S.picks.forEach((pk,i)=>{for(const p of avail){
+      if(S.used.has(pid(p))||!pk.elig.includes(p.position))continue;
+      const d$=price(p)-pk.cost,du=pk.uf(p)-pk.u;
+      if(du>bg&&d$<=un){bg=du;bi=i;bp=p;}}});
+    if(!bp)break;
+    const pk=S.picks[bi];S.used.delete(pid(pk.p));S.used.add(pid(bp));
+    S.spend+=price(bp)-pk.cost;pk.p=bp;pk.cost=price(bp);pk.u=pk.uf(bp);}
+  // walk-away per starter: the bid at which swapping to the next-best alternative breaks even
+  const cap=budget-(needs.length-1);
+  S.picks.forEach(pk=>{if(pk.slot==="BN"||pk.slot==="K"||pk.slot==="DST"){pk.wa=null;return;}
+    let altn=-1e9;pk.alt=null;
+    for(const p of avail){if(S.used.has(pid(p))||!pk.elig.includes(p.position))continue;
+      const n=pk.uf(p)-lam*price(p);if(n>altn){altn=n;pk.alt=p;}}
+    const self=pk.u-lam*pk.cost;
+    pk.wa=pk.alt?Math.max(pk.cost,Math.min(Math.round(pk.cost+(self-altn)/Math.max(lam,0.02)),cap)):cap;});
+  return {picks:S.picks,spend:S.spend,unspent:budget-S.spend,lam,nslots:needs.length};
+}
 // Import the JSON produced by scripts/fetch_espn.py: set league size/budget/roster, team
 // names, my team, and pre-load keepers (matched to our players by name+position).
 function importEspnLeague(txt){
@@ -1031,16 +1081,29 @@ function renderDraftRoom(){
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
       <div class="nd">${needs}</div><div style="margin-top:4px">${roster}</div></div>`;}).join("")+`</div>`;
-  // my plan / pivots
-  const myNeedPos=["QB","RB","WR","TE","K","DST"].filter(k=>meS.need[k]>0).concat(meS.need.FLEX>0?["FLEX"]:[]);
+  // my plan — LIVE KNAPSACK: the optimal completion of MY roster at current Exp $ (optimalPlan)
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p));
-  const pivotFor=pos=>{const elig=pos==="FLEX"?FLEXE:[pos];
-    return avail.filter(p=>elig.includes(p.position)).sort((a,b)=>(mv[pid(b)].surplus)-(mv[pid(a)].surplus)).slice(0,3);};
-  h+=`<div class="dr-panel"><h3>🎯 Your plan — $${meS.budget} for ${meS.spotsLeft} spots · spending power ×${mv._agg.toFixed(2)} ${mv._agg>1.15?'<span class="scarce">(be aggressive — money to spend)</span>':mv._agg<0.85?'<span class="scarce">(be thrifty — tight budget)</span>':''}</h3>`;
-  if(!myNeedPos.length) h+=`<div class="muted">All starters filled. Use remaining budget/bench on upside (sort the table by Surplus).</div>`;
-  myNeedPos.forEach(pos=>{const tops=pivotFor(pos);
-    h+=`<div style="margin-bottom:6px"><b>${pos}</b> need → `+tops.map(p=>`${p.name} <span class="muted">(mkt $${mv[pid(p)].market} · max <span class="maxbid">$${mv[pid(p)].maxBid}</span>)</span>`).join(" · &nbsp;")+`</div>`;});
-  h+=`<div class="muted" style="font-size:11px;margin-top:6px">Max bid = market × your spending power, capped so you can still fill every spot. Overbidding the top of a scarce, needed position is correct when your spending power is &gt;1; never pay up at deep positions (alternatives are close).</div></div>`;
+  const plan=optimalPlan(mkt);
+  const stP=plan.picks.filter(pk=>!["BN","K","DST"].includes(pk.slot));
+  const bnP=plan.picks.filter(pk=>pk.slot==="BN");
+  const kdP=plan.picks.filter(pk=>["K","DST"].includes(pk.slot));
+  h+=`<div class="dr-panel"><h3>🎯 Your plan — the optimal roster you can still buy: $${meS.budget} across ${plan.nslots} spots · spending power ×${mv._agg.toFixed(2)} ${mv._agg>1.15?'<span class="scarce">(money to spend)</span>':mv._agg<0.85?'<span class="scarce">(tight budget)</span>':''}</h3>`;
+  if(!plan.nslots) h+=`<div class="muted">Roster full.</div>`;
+  else{
+    const prow=pk=>`<div style="display:flex;gap:6px;font-size:12px;align-items:center;margin-bottom:1px">
+      <span class="muted" style="width:34px">${pk.slot}</span>
+      <span class="pos ${pk.p.position}" style="transform:scale(.75)">${pk.p.position}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name} <span class="muted" style="font-size:10px">${pk.p.team||""}</span></span>
+      <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
+      <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
+        ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
+        :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span></div>`;
+    h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:4px 24px">
+      <div><div class="muted" style="font-size:10px;margin-bottom:2px">STARTERS — buy at ≤ Exp $, walk away past the number</div>${stP.map(prow).join("")}${kdP.map(prow).join("")}</div>
+      <div><div class="muted" style="font-size:10px;margin-bottom:2px">BENCH — high-upside RB/WR only (K/DST streamed, QB2/TE2 off bye-week waivers)</div>${bnP.map(prow).join("")}</div></div>`;
+    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench is chosen on <b>ceiling + lottery odds</b>, not median projection.</div>`;
+  }
+  h+=`</div>`;
   // positional scarcity readout (value-over-next-available)
   h+=`<div class="dr-panel"><h3>📊 Positional scarcity — who to pay up for vs wait on</h3>`;
   ["QB","RB","WR","TE"].forEach(pos=>{const sc=mkt.scarce[pos]||{demand:0,edge:0};
@@ -1095,7 +1158,8 @@ function renderDraftRoom(){
     if(drSort===k)drDir*=-1; else{drSort=k;drDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🏟️ <b>Draft Room.</b> Pre-load each team's keepers (set <i>Assign next pick to</i>, type the salary, click Draft), set <i>My team</i>, then assign players live as they're won. "+
     "Columns match every other screen: <b>Value</b> (risk-adjusted worth in room dollars — worth has no historical price ceiling), <b>Exp $</b> (expected purchase price — reacts live to supply &amp; demand: as teams fill a position that market <b>collapses</b>, and cheap keepers inflate everything else; capped at the most the league has ever paid), <b>Edge</b> (Value − Exp $ in dollars), and <b>VONA pts</b> (points over the last startable — the scarcity signal). "+
-    "<b>My Max</b> = the most you should bid: the player's risk-adjusted <b>worth</b> shaded by your spending power — above market on bargains, below it on overpriced names, stretching past worth only when you're flush (unspent budget is worthless at the final gavel). Positions whose starters you already filled (kept QB etc.) drop to bench-stash price (&le;$8). If you're outbid, your plan above re-ranks instantly — pivot to the next name.";
+    "<b>My Max</b> = the most you should bid: the player's risk-adjusted <b>worth</b> shaded by your spending power — above market on bargains, below it on overpriced names, stretching past worth only when you're flush (unspent budget is worthless at the final gavel). Positions whose starters you already filled (kept QB etc.) drop to bench-stash price (&le;$8). "+
+    "🎯 <b>Your plan</b> is a live budget-knapsack at Exp $ — the best roster you can still buy. Its <b>walk-away</b> beats My Max when they disagree (it prices what overpaying costs the REST of your roster), and it re-solves after every pick, so being outbid just re-routes the money.";
 }
 
 // ================= MOCK KEEPERS =================
