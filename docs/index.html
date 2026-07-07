@@ -866,7 +866,7 @@ function dynamicMarket(){
       arr.forEach((p,r)=>{
         const slot=off+r, cv=anchored(p,slot<C.length?Math.max(1,C[slot]):1);
         if(r<nStart){price[pid(p)]=Math.max(1,Math.round(cv));}                    // real demand -> anchored curve slot
-        else{const ramp=Math.max(0,BENCH_CAP-(r-nStart)*1.2);                      // bench-only -> $6 -> $1
+        else{const ramp=benchRamp(pos,r-nStart);                                   // bench-only -> calibrated per-position fade to $1
           price[pid(p)]=Math.max(1,Math.round(Math.min(cv,ramp)));}
       });});
     _anchored=anchored;                                                            // for expIf() below
@@ -899,7 +899,7 @@ function dynamicMarket(){
   if(HP||H){
     const top=avail.map(p=>price[pid(p)]||1).sort((a,b)=>b-a).slice(0,Math.max(spots,0));
     const cs=top.reduce((a,b)=>a+b,0);
-    infl=cs>0?Math.max(0.8,Math.min(2.5,money/cs)):1;   // wide clamp: endgame one-position scarcity can legitimately spike
+    infl=cs>0?Math.max(0.8,Math.min(1.6,money/cs)):1;   // curve+anchors are already post-keeper EQUILIBRIUM prices, so infl only carries this room's money surplus (most ever brought: $196 vs $150/team = x1.31) plus modest endgame headroom
     if(Math.abs(infl-1)>0.02)avail.forEach(p=>{const id=pid(p);price[id]=Math.max(1,Math.round(1+((price[id]||1)-1)*infl));});
     avail.forEach(p=>{const id=pid(p);if(!isK(p))price[id]=Math.max(1,ceilExp(p.position,price[id]||1));});
   }
@@ -913,16 +913,25 @@ function dynamicMarket(){
     let r=0; while(r<A.length&&A[r]>v)r++;
     const ns=_nst[pos]||0, slot=(_off[pos]||0)+r;
     let cv=_anchored(p,slot<C.length?Math.max(1,C[slot]):1);                     // same per-player anchor as price[]
-    if(r>=ns)cv=Math.max(1,Math.min(cv,Math.max(0,BENCH_CAP-(r-ns)*1.2)));
+    if(r>=ns)cv=Math.max(1,Math.min(cv,benchRamp(pos,r-ns)));
     return Math.max(1,ceilExp(pos,Math.round(1+(cv-1)*infl)));};                 // same historical ceiling as price[]
   return {price,repl,per,open,money,spots,scarce,infl,expIf};
 }
 // intrinsic player value = clearing price in a NORMAL full-money auction (no keeper inflation),
 // independent of who's been kept. Same formula/calibration as dynamicMarket but full pool+budget.
-const BENCH_CAP=6;   // bubble/bench players (past the startable line) ramp $BENCH_CAP -> $1 (no cliff)
+const BENCH_CAP=6;   // my-team stash cap (myVal) / mock-bid depth cap / baseValue bench floor
 // per-position "last rosterable" depth (x startable cutoff), calibrated to where the league's real
 // auctions hit $1 (outputs/reports/position_auction_curves.md): WR/RB run deep, TE/QB are shallow.
 const DEEP_MULT={QB:1.4,RB:1.5,WR:1.5,TE:1.1};
+// bench-only EXPECTED-PRICE ramp, calibrated on the league's real 2023-25 auctions (espn_drafts,
+// scaled): the first bench-only RB/WR still fetches ~$12 (flex/injury stashes), QB ~$6, TE ~$4,
+// fading to $1 across the (DEEP_MULT-1) x starter-demand ranks the league actually rosters.
+// (The old flat $6->$1-in-5-ranks ramp starved the tail of its real 19-24% money share and the
+// inflation rescale then pushed that money onto the top 40 — Exp $ ran ~40% above any price the
+// league had ever paid at ranks 5-40.)
+const BENCH_TOP={QB:6,RB:12,WR:12,TE:4};
+const BENCH_SPAN={QB:5,RB:15,WR:15,TE:2};
+const benchRamp=(pos,k)=>Math.max(0,(BENCH_TOP[pos]||6)*(1-k/(BENCH_SPAN[pos]||5)));
 function baseValue(){
   const open={QB:cfg.teams,RB:cfg.teams*2,WR:cfg.teams*2,TE:cfg.teams,FLEX:cfg.teams},repl={},rdeep={},emarg={},within=new Set();
   ["QB","RB","WR","TE","K","DST"].forEach(pos=>{
