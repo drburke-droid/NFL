@@ -956,22 +956,28 @@ function baseValue(){
     val[id]=Math.round(Math.max(realistic(base),floor,1));});
   return val;
 }
-function myVal(mkt){
+function myVal(mkt,BVo){
   const meS=teamState(DR.me);
+  const BV=BVo||baseValue(), IF=mkt.infl||1;                      // player worth in ROOM dollars
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1, myAvg=meS.spotsLeft>0?meS.budget/meS.spotsLeft:1;
   const agg=leagueAvg>0?myAvg/leagueAvg:1, out={_agg:agg,_meS:meS};
   PLAYERS.filter(p=>!DR.owned[pid(p)]).forEach(p=>{const id=pid(p),pos=p.position;
     const market=mkt.price[id]||1, surplus=Math.max(raPts(p)-(mkt.repl[pos]||0),0);
+    const value=Math.max(1,Math.round((BV[id]||1)*IF));
+    // MY MAX anchors to VALUE, not market: never pay more than a player is WORTH, and gladly
+    // go past the expected price on a bargain (up to worth). agg>1 = I hold more $ per open
+    // slot than the room, so stretching above value is correct (unspent budget is worthless
+    // at the final gavel).
     // roster-aware: if my starters at this position are already filled (e.g. kept QB), another
-    // one is BENCH money — stash price (<= $8), never full market (no $34 backup QBs).
+    // one is BENCH money — stash price (<= $8), never full worth (no $34 backup QBs).
     const startNeed=(meS.need[pos]>0)||(FLEXE.includes(pos)&&meS.need.FLEX>0);
     const benchOnly=!startNeed&&(meS.bench>0&&surplus>2);
     const affordable=Math.max(1,meS.budget-(meS.spotsLeft-1));
-    let maxBid=startNeed?Math.round(market*Math.max(1,agg))
-             :benchOnly?Math.min(Math.max(1,Math.round(market*0.3)),BENCH_CAP+2)
+    let maxBid=startNeed?Math.round(value*Math.max(1,agg))
+             :benchOnly?Math.min(Math.max(1,Math.round(Math.max(value,market)*0.3)),BENCH_CAP+2)
              :1;
     maxBid=Math.max(1,Math.min(maxBid,affordable));
-    out[id]={market,maxBid,surplus:Math.round(surplus),needed:startNeed||benchOnly,startNeed};});
+    out[id]={market,value,maxBid,surplus:Math.round(surplus),needed:startNeed||benchOnly,startNeed};});
   return out;
 }
 // Import the JSON produced by scripts/fetch_espn.py: set league size/budget/roster, team
@@ -1077,7 +1083,7 @@ function renderDraftRoom(){
     DR.owned[id]={t,price,kept:false};saveDR();render();});
   document.getElementById("notes").innerHTML="🏟️ <b>Draft Room.</b> Pre-load each team's keepers (set <i>Assign next pick to</i>, type the salary, click Draft), set <i>My team</i>, then assign players live as they're won. "+
     "<b>Market $</b> reacts to supply &amp; demand: as teams fill a position the open slots shrink and that market <b>collapses</b> (e.g. once most teams have a QB, QBs get cheap); cheap keepers inflate everything else. "+
-    "<b>My Max</b> = the most you should bid given your needs, budget, and spending power. Positions whose starters you already filled (kept QB etc.) drop to bench-stash price (&le;$8). If you're outbid, your plan above re-ranks instantly — pivot to the next name.";
+    "<b>My Max</b> = the most you should bid: the player's risk-adjusted <b>worth</b> shaded by your spending power — above market on bargains, below it on overpriced names, stretching past worth only when you're flush (unspent budget is worthless at the final gavel). Positions whose starters you already filled (kept QB etc.) drop to bench-stash price (&le;$8). If you're outbid, your plan above re-ranks instantly — pivot to the next name.";
 }
 
 // ================= MOCK KEEPERS =================
@@ -1128,8 +1134,9 @@ function renderMockKeepers(){
   document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
   const host=document.getElementById("draftroom");host.style.display="block";
   if(!ensureKeeperLeague()){host.innerHTML='<div class="dr-panel">No keeper data. Run <code>scripts/predict_keepers.py</code> to generate <code>keepers_2026.js</code>, then reload.</div>';document.getElementById("notes").innerHTML="";return;}
-  const KT=KEEPERS_2026.teams, TS=DR.teams.map((_,i)=>teamState(i)), mkt=dynamicMarket(), mv=myVal(mkt);
+  const KT=KEEPERS_2026.teams, TS=DR.teams.map((_,i)=>teamState(i)), mkt=dynamicMarket();
   const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
+  const mv=myVal(mkt,BV);
   // ONE pricing engine for cards + pool: exp = live market price (mkt.expIf rank-inserts kept players)
   let totKept=0,totCost=0; KT.forEach((t,i)=>{const k=keptForTeam(i);totKept+=k.length;k.forEach(c=>totCost+=c.cost);});
   const mkDrafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
@@ -1356,7 +1363,9 @@ function renderMockDraft(){
   if(MD.block&&(!BYID[MD.block]||DR.owned[MD.block]))MD.block=null;
   if(MD.sel&&(!BYID[MD.sel]||DR.owned[MD.sel]))MD.sel=null;
   let guard=DR.teams.length+1; while(MD.on&&guard-->0&&teamState(MD.nom).spotsLeft<=0&&!DR.teams.every((_,t)=>teamState(t).spotsLeft<=0))mdAdvance();
-  const mkt=dynamicMarket(),TS=DR.teams.map((_,i)=>teamState(i)),mv=myVal(mkt);
+  const mkt=dynamicMarket(),TS=DR.teams.map((_,i)=>teamState(i));
+  const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
+  const mv=myVal(mkt,BV);
   const kc=Object.keys(DR.owned).filter(id=>DR.owned[id].kept).length;
   const drafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
   const done=TS.every(s=>s.spotsLeft<=0), onclk=DR.teams[MD.nom]?DR.teams[MD.nom].name:"—";
@@ -1412,7 +1421,6 @@ function renderMockDraft(){
     MD.log.slice(0,80).map(l=>`<div><span class="pos ${l.pos}" style="transform:scale(.8)">${l.pos}</span> ${l.name} → <b class="${l.mine?'maxbid':''}">${DR.teams[l.t]?DR.teams[l.t].name:'?'}</b> <b>$${l.price}</b>${l.ru!=null&&DR.teams[l.ru]?` <span class="muted">(over ${DR.teams[l.ru].name} $${l.rmax})</span>`:''}</div>`).join("")+`</div></div>`;
   // available pool — sortable, on the SAME engine as the other screens: Value (risk-adjusted
   // worth in room dollars), Exp $ (live expected purchase price), Edge (Value − Exp $), My Max
-  const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]).filter(p=>{
     if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
@@ -1427,8 +1435,8 @@ function renderMockDraft(){
   const arrowD=k=>mdPoolSort===k?(mdPoolDir<0?' ▼':' ▲'):'';
   const thd=(k,lab,cls,ttl)=>`<th class="mdh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowD(k)}</th>`;
   h+=`<div class="dr-panel"><h3>💰 Available — click a player to see what every owner would pay</h3>
-    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid (market × your budget aggression, roster-need gated) · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i></div>
-    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${thd('mymax','My Max','','the most you should bid: market price × your budget aggression, gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}<th class="l"></th></tr></thead><tbody>`+
+    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid: his <b>Value</b> × your budget aggression (above Exp $ on bargains — go get him; below it on overpriced names — let someone else pay), dropped to stash money (≤$8) when your starters there are filled · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i></div>
+    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}<th class="l"></th></tr></thead><tbody>`+
     rd.slice(0,300).map(r=>{const p=r.p,id=r.id;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer">
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
