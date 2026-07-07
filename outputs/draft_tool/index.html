@@ -1123,6 +1123,7 @@ function contenders(p,market,TS){const pos=p.position,list=[];
     list.push({i,d,starter:d>=1,interest:afford*(td[pos]||1)*Math.min(1,0.5+0.5*d)});}
   list.sort((a,b)=>(b.starter-a.starter)||(b.interest-a.interest)); return list;}
 let mkSort="value",mkDir=-1;   // Mock Keepers pool sort column + direction
+let mdPoolSort="exp",mdPoolDir=-1;   // Mock Draft pool sort column + direction
 function renderMockKeepers(){
   document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
   const host=document.getElementById("draftroom");host.style.display="block";
@@ -1409,21 +1410,31 @@ function renderMockDraft(){
   // draft log
   if(MD.log.length)h+=`<div class="dr-panel"><h3>📜 Results</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;font-size:12px">`+
     MD.log.slice(0,80).map(l=>`<div><span class="pos ${l.pos}" style="transform:scale(.8)">${l.pos}</span> ${l.name} → <b class="${l.mine?'maxbid':''}">${DR.teams[l.t]?DR.teams[l.t].name:'?'}</b> <b>$${l.price}</b>${l.ru!=null&&DR.teams[l.ru]?` <span class="muted">(over ${DR.teams[l.ru].name} $${l.rmax})</span>`:''}</div>`).join("")+`</div></div>`;
-  // available pool
+  // available pool — sortable, on the SAME engine as the other screens: Value (risk-adjusted
+  // worth in room dollars), Exp $ (live expected purchase price), Edge (Value − Exp $), My Max
+  const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]).filter(p=>{
     if(posFilter==="FLEX"){if(!FLEXE.includes(p.position))return false;}
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;return true;});
-  avail.sort((a,b)=>(mkt.price[pid(b)]||0)-(mkt.price[pid(a)]||0));
+  const rd=avail.map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1},exp=mkt.price[id]||1,val=RV(id);
+    return {p,id,proj:PRJ(p)||0,val,exp,edge:val-exp,mymax:m.maxBid||1};});
+  const SKD={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,mymax:r=>r.mymax,edge:r=>r.edge};
+  const kfd=SKD[mdPoolSort]||SKD.exp;
+  rd.sort((a,b)=>{const x=kfd(a),y=kfd(b);return typeof x==="string"?mdPoolDir*x.localeCompare(y):mdPoolDir*((x||0)-(y||0));});
   document.getElementById("count").textContent=avail.length+" available";
+  const arrowD=k=>mdPoolSort===k?(mdPoolDir<0?' ▼':' ▲'):'';
+  const thd=(k,lab,cls,ttl)=>`<th class="mdh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowD(k)}</th>`;
   h+=`<div class="dr-panel"><h3>💰 Available — click a player to see what every owner would pay</h3>
-    <table style="width:100%"><thead><tr><th class="l">Pos</th><th class="l">Player</th><th>Proj</th><th>Market $</th><th>My Max</th><th class="l"></th></tr></thead><tbody>`+
-    avail.slice(0,300).map(p=>{const id=pid(p),m=mv[id]||{market:1,maxBid:1};
+    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid (market × your budget aggression, roster-need gated) · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i></div>
+    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${thd('mymax','My Max','','the most you should bid: market price × your budget aggression, gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}<th class="l"></th></tr></thead><tbody>`+
+    rd.slice(0,300).map(r=>{const p=r.p,id=r.id;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer">
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
         <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span></td>
-        <td>${isK(p)?"—":Math.round(PRJ(p)||0)}</td><td class="base">$${mkt.price[id]||1}</td><td class="maxbid">$${m.maxBid}</td>
+        <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td><td class="maxbid">$${r.mymax}</td>
+        <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${r.edge>=0?'+':''}${r.edge}</td>
         <td class="l">${MD.on&&!done&&!MD.block&&MD.nom===DR.me?`<button class="btn sm mdblock" data-id="${id}">⚡ Block</button>`:'<span class="muted" style="font-size:11px">👁 bids</span>'}</td></tr>`;}).join("")+`</tbody></table></div>`;
   host.innerHTML=h;
   const S=id=>document.getElementById(id);
@@ -1446,9 +1457,11 @@ function renderMockDraft(){
   if(S("mdBlockBtn"))S("mdBlockBtn").onclick=()=>{MD.block=MD.sel;MD.sel=null;saveMD();render();};
   document.querySelectorAll(".mdblock").forEach(b=>b.onclick=ev=>{ev.stopPropagation();MD.block=b.dataset.id;MD.sel=null;saveMD();render();});
   document.querySelectorAll(".mdrow").forEach(r=>r.onclick=()=>{MD.sel=r.dataset.id;saveMD();render();});
+  document.querySelectorAll(".mdh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
+    if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean and elite-QB/pay-TE habits, hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
     "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
-    "Click any row anytime for a bid preview without nominating. Team cards show each roster taking shape with <b>projected PPG per week</b> for starters and bench. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft for you. Keepers from 🧩 Mock Keepers are locked in 🔒.";
+    "Click any row anytime for a bid preview without nominating. The pool is <b>sortable</b> (click any column) and shows <b>Value</b>, <b>Exp $</b>, <b>My Max</b> and <b>Edge</b> on the same engine as every other screen — sort by Edge to find the bargains to nominate late. Team cards show each roster taking shape with <b>projected PPG per week</b> for starters and bench. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft for you. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
 
 function render(){
