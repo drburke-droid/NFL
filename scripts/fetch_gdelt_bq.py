@@ -53,7 +53,7 @@ def player_names():
         ids.setdefault(norm(nm), pid_)
     return names, ids
 
-def queries(names, start, end, nfl_only):
+def queries(names, start, end, nfl_only, weekly=False):
     """(label, sql, params) per year - partition-pruned v2 queries + one v1 backfill."""
     from google.cloud import bigquery
     P = lambda: [bigquery.ArrayQueryParameter("names", "STRING", names)]
@@ -76,6 +76,22 @@ def queries(names, start, end, nfl_only):
             )
             WHERE person IN UNNEST(@names)
             GROUP BY person, ym""", P()))
+    if weekly:
+        # WEEKLY grain, in-season only (Sep 1 -> Jan 31 spanning the year boundary): the
+        # props/lineup tests need in-season weeks, and the date filter cuts scan ~60%
+        out2 = []
+        for yr in range(max(start, V2_START), end + 1):
+            out2.append((f"wk {yr} season", f"""
+            SELECT person, FORMAT_DATE('%Y-%m-%d', DATE_TRUNC(DATE(_PARTITIONTIME), WEEK(TUESDAY))) AS wk,
+                   COUNT(*) n,
+                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(0)] AS FLOAT64)) avg_tone,
+                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(1)] AS FLOAT64)) avg_pos,
+                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(2)] AS FLOAT64)) avg_neg
+            FROM `gdelt-bq.gdeltv2.gkg_partitioned`, UNNEST(SPLIT(LOWER(Persons),';')) person
+            WHERE _PARTITIONTIME >= TIMESTAMP('{yr}-09-01') AND _PARTITIONTIME < TIMESTAMP('{yr+1}-02-01')
+              AND person IN UNNEST(@names)
+            GROUP BY person, wk""", P()))
+        return out2
     for yr in range(max(start, V2_START), end + 1):
         out.append((f"v2 {yr}", f"""
             SELECT person, FORMAT_TIMESTAMP('%Y%m', _PARTITIONTIME) AS ym, COUNT(*) n,
@@ -110,6 +126,7 @@ def main():
     ap.add_argument("--end", type=int, default=2025)
     ap.add_argument("--nfl-only", action="store_true")
     ap.add_argument("--yes", action="store_true")
+    ap.add_argument("--weekly", action="store_true", help="weekly grain, in-season Sep-Jan, -> nflv_gdelt_wk")
     a = ap.parse_args()
 
     if a.cmd == "auth":
@@ -123,7 +140,7 @@ def main():
     bq = client()
     names, ids = player_names()
     print(f"matching {len(names)} distinct player names (nflv_season 2012+)")
-    qs = queries(names, a.start, a.end, a.nfl_only)
+    qs = queries(names, a.start, a.end, a.nfl_only, a.weekly)
     total = dry_run(bq, qs)
     if a.cmd == "check":
         return
@@ -131,6 +148,10 @@ def main():
         sys.exit(f"total scan {total:.0f} GB > {FREE_GUARD_GB} GB guard - rerun with --yes to proceed")
 
     con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
+    if a.weekly:
+        con.execute("""CREATE TABLE IF NOT EXISTS nflv_gdelt_wk
+            (name TEXT, player_id TEXT, wk TEXT, articles INTEGER,
+             avg_tone REAL, avg_pos REAL, avg_neg REAL, PRIMARY KEY(name, wk))""")
     con.execute("""CREATE TABLE IF NOT EXISTS nflv_gdelt_bq
         (name TEXT, player_id TEXT, ym TEXT, articles INTEGER,
          avg_tone REAL, avg_pos REAL, avg_neg REAL, source TEXT, PRIMARY KEY(name, ym, source))""")
@@ -139,9 +160,14 @@ def main():
     for label, sql, params in qs:
         print(f"running {label} ...", flush=True)
         job = bq.query(sql, job_config=bigquery.QueryJobConfig(query_parameters=params))
-        rows = [(r["person"], ids.get(r["person"]), r["ym"], r["n"],
-                 r["avg_tone"], r["avg_pos"], r["avg_neg"], r["source"]) for r in job.result()]
-        con.executemany("INSERT OR REPLACE INTO nflv_gdelt_bq VALUES (?,?,?,?,?,?,?,?)", rows)
+        if a.weekly:
+            rows = [(r["person"], ids.get(r["person"]), r["wk"], r["n"],
+                     r["avg_tone"], r["avg_pos"], r["avg_neg"]) for r in job.result()]
+            con.executemany("INSERT OR REPLACE INTO nflv_gdelt_wk VALUES (?,?,?,?,?,?,?)", rows)
+        else:
+            rows = [(r["person"], ids.get(r["person"]), r["ym"], r["n"],
+                     r["avg_tone"], r["avg_pos"], r["avg_neg"], r["source"]) for r in job.result()]
+            con.executemany("INSERT OR REPLACE INTO nflv_gdelt_bq VALUES (?,?,?,?,?,?,?,?)", rows)
         con.commit()
         wrote += len(rows)
         print(f"  {label}: {len(rows)} player-months (billed {job.total_bytes_billed/1e9:.1f} GB)")

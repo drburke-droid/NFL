@@ -43,3 +43,38 @@ robustness of UNDER tone<-2 & vol>=100:
    cell player_rush_attempts         n= 238  ROI +6.7%
    cell player_rush_yds              n= 329  ROI +6.9%
 ```
+
+
+## Weekly-grain sequel (`sentiment_props_weekly.py`)
+
+```
+props with prior-2-week sentiment: 13608 of 17178
+baseline resid (over result - market prob): -0.024
+
+L2 weekly — resid by prior-2wk tone bucket:
+   tone < -3  n=  404  resid -0.033 (±0.050)
+   -3..-2     n= 2746  resid -0.039 (±0.019)
+   -2..0      n=10074  resid -0.019 (±0.010)
+   tone > 0   n=  384  resid -0.029 (±0.051)
+   Spearman wk_tone vs resid: r=+0.014 (p=0.1042)
+
+L3 weekly — ROI (flat 1u, best price):
+   ALL unders baseline                      n=13608  ROI +1.3%
+   UNDER wk_tone < -2                       n= 3150  ROI +4.0%
+   UNDER wk_tone < -2 & wk_n>=25            n= 2853  ROI +3.5%
+   UNDER wk_tone < -3 & wk_n>=25            n=  340  ROI +6.3%
+   UNDER wk_tone < -2 & wk_n>=100           n= 1765  ROI +5.5%
+   OVER  wk_tone < -2 & wk_n>=25 (sanity)   n= 2853  ROI -10.5%
+
+season split for UNDER wk_tone<-2 & wk_n>=25:
+   2024: cell n=1369 ROI +2.1%   | all-unders n=6532 ROI +0.4%
+   2025: cell n=1484 ROI +4.8%   | all-unders n=7076 ROI +2.1%
+
+by market:
+   player_pass_completions      n=  69  ROI +21.0%
+   player_pass_yds              n=  50  ROI +19.5%
+   player_reception_yds         n= 949  ROI -1.6%
+   player_receptions            n= 960  ROI +2.3%
+   player_rush_attempts         n= 341  ROI +11.7%
+   player_rush_yds              n= 484  ROI +6.1%
+```
