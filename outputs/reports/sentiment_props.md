@@ -134,3 +134,37 @@ C. season split:
 
 vetoed bets (model-OVER on bad-news players, t=3%): n=557, their ROI would have been -18.0%
 ```
+
+
+## Prop-model calibration fix (`prop_model_calibration.py`)
+
+```
+=== fit 2024 -> test 2025 ===
+   params: shift b=+0.187 | platt a=0.026 b=-0.092 | blend w=0.00 (model weight)
+              brier  logloss
+   raw       0.2730   0.7747
+   shift     0.2718   0.7684
+   platt     0.2488   0.6908
+   blend     0.2483   0.6897
+   market    0.2483   0.6897
+   betting sims on 2025 (n, ROI at t=3/5/8%):
+     raw           n= 7810 +0.7%  n= 6948 +0.8%  n= 5820 +2.1%
+     raw +veto     n= 7514 +1.6%  n= 6711 +1.6%  n= 5644 +2.9%
+     blend         n=    0 +0.0%  n=    0 +0.0%  n=    0 +0.0%
+     blend +veto   n=    0 +0.0%  n=    0 +0.0%  n=    0 +0.0%
+
+=== fit 2025 -> test 2024 ===
+   params: shift b=+0.249 | platt a=0.076 b=-0.087 | blend w=0.43 (model weight)
+              brier  logloss
+   raw       0.2794   0.7998
+   shift     0.2798   0.7965
+   platt     0.2495   0.6922
+   blend     0.2472   0.6875
+   market    0.2469   0.6866
+   betting sims on 2024 (n, ROI at t=3/5/8%):
+     raw           n= 7026 -4.5%  n= 6303 -3.7%  n= 5254 -4.1%
+     raw +veto     n= 6765 -4.1%  n= 6084 -3.4%  n= 5086 -3.7%
+     blend         n= 1348 -2.0%  n=  336 -8.5%  n=   67 -38.2%
+     blend +veto   n= 1326 -0.8%  n=  331 -7.1%  n=   65 -36.3%
+
+```
