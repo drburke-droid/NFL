@@ -1130,37 +1130,77 @@ function optimalPlan(mkt){
     pk.wa=pk.alt?Math.max(pk.cost,Math.min(Math.round(pk.cost+(self-altn)/Math.max(lam,0.02)),cap)):cap;});
   return {picks:S.picks,spend:S.spend,unspent:budget-S.spend,lam,nslots:needs.length,infeasible};
 }
-// PREDRAFT OPTIMAL: starter PPG/wk of the best budget-feasible roster from the FULL pool at
-// intrinsic (baseValue) prices — the benchmark every team's draft is scored against. Cached.
-let _preopt=null;
-function preoptPPG(BV){
-  const key=projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded());
-  if(_preopt&&_preopt.k===key)return _preopt.v;
+// PER-OWNER OPTIMAL: starter PPG/wk of the best roster THIS owner could have built — his best
+// keeper choice (0-3 from his real keeper-eligible roster at true keeper costs) + the optimal
+// draft of everything else at intrinsic (baseValue) prices with the remaining budget. Every
+// owner is graded against his OWN ceiling, not a global one: a team holding cheap star keeper
+// rights has a higher bar than one with nothing worth keeping.
+function optRosterPPG(BV,kept){
   const val=BV||baseValue(), price=p=>Math.max(1,val[pid(p)]||1);
+  const slots={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1};
+  const NB=cfg.roster-9;                                   // bench slots
+  let budget=cfg.budget-NB, ppgSum=0;                      // bench reserves $1 each
+  const used=new Set();
+  for(const k of (kept||[])){const p=k.p,pos=p.position;   // seat keepers: slot > flex > bench
+    used.add(pid(p));budget-=k.cost;
+    if(slots[pos]>0){slots[pos]--;ppgSum+=(PRJ(p)||p.proj_pts||0)/17;}
+    else if(FLEXE.includes(pos)&&slots.FLEX>0){slots.FLEX--;ppgSum+=(PRJ(p)||p.proj_pts||0)/17;}
+    else budget+=1;}                                       // bench keeper releases that slot's $1 reserve
   const needs=[];
-  ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<({QB:1,RB:2,WR:2,TE:1})[pos];k++)needs.push({elig:[pos]});});
-  needs.push({elig:FLEXE});["K","DST"].forEach(pos=>needs.push({elig:[pos]}));
-  const budget=cfg.budget-(cfg.roster-needs.length);       // bench slots reserve $1 each
-  const sel=lam=>{const used=new Set();let spend=0;const ps=[];
-    for(const nd of needs){let best=null,bn=-1e9;
-      for(const p of PLAYERS){if(used.has(pid(p))||!nd.elig.includes(p.position))continue;
+  ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<slots[pos];k++)needs.push([pos]);});
+  for(let k=0;k<slots.FLEX;k++)needs.push(FLEXE);
+  ["K","DST"].forEach(pos=>{for(let k=0;k<slots[pos];k++)needs.push([pos]);});
+  const sel=lam=>{const u2=new Set(used);let spend=0;const ps=[];
+    for(const elig of needs){let best=null,bn=-1e9;
+      for(const p of PLAYERS){if(u2.has(pid(p))||!elig.includes(p.position))continue;
         const n=raPts(p)-lam*price(p);if(n>bn){bn=n;best=p;}}
-      if(best){used.add(pid(best));spend+=price(best);ps.push(best);}}
+      if(best){u2.add(pid(best));spend+=price(best);ps.push(best);}}
     return {ps,spend};};
   let lo=0.02,hi=40,S=sel(lo);
   if(S.spend>budget){for(let it=0;it<32;it++){const mid=(lo+hi)/2,T=sel(mid);
-    if(T.spend<=budget){hi=mid;S=T;}else lo=mid;}}
-  const v=S.ps.reduce((a,p)=>a+((PRJ(p)||p.proj_pts||0)/17),0);
-  _preopt={k:key,v};
-  return v;
+    if(T.spend<=budget){hi=mid;S=T;}else lo=mid;}
+    if(S.spend>budget)S=sel(1e6);}
+  return ppgSum+S.ps.reduce((a,p)=>a+((PRJ(p)||p.proj_pts||0)/17),0);
+}
+let _teamOpt={};
+function teamOptPPG(i,BV){
+  const key=i+"|"+projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded());
+  if(_teamOpt[key]!=null)return _teamOpt[key];
+  // optimal keeps chosen GREEDY-MARGINAL: start from keep-nothing, add (up to 3) the candidate
+  // whose keep most raises the achievable starter PPG, stop when nothing helps. Dollar savings
+  // alone over-keeps — a discounted mediocre player can block the slot a star should occupy —
+  // and this construction guarantees ceiling >= the keep-nothing optimal.
+  let kept=[],best=optRosterPPG(BV,kept);
+  if(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.teams&&KEEPERS_2026.teams[i]){
+    let pool=KEEPERS_2026.teams[i].candidates
+      .map(c=>({p:BYID[c.pid],cost:c.cost,sav:(BV[c.pid]||1)-c.cost}))
+      .filter(k=>k.p&&k.sav>0).sort((a,b)=>b.sav-a.sav).slice(0,8);
+    while(kept.length<3&&pool.length){
+      let bi=-1,bv=best;
+      pool.forEach((k,j)=>{const v=optRosterPPG(BV,kept.concat([k]));if(v>bv){bv=v;bi=j;}});
+      if(bi<0)break;
+      kept.push(pool[bi]);pool.splice(bi,1);best=bv;
+    }
+  }
+  return _teamOpt[key]=best;
 }
 // shared team-card grading — the Draft Room and the Mock Draft score every roster identically:
-// ⚡ current starter PPG/wk · % of the predraft-optimal roster · $ surplus captured, plus the
-// owner's next targets (open slots ordered by his positional lean + NFL fandom)
-function teamScoreHTML(i,BV,PREOPT){
-  const s=teamState(i),ppg=teamPPGwk(i),pct=PREOPT>0?Math.round(100*ppg.st/PREOPT):0;
+// ⚡ current starter PPG/wk · % of THIS OWNER's optimal (best keeps + optimal draft) · surplus
+function teamScoreHTML(i,BV){
+  const s=teamState(i),ppg=teamPPGwk(i),own=teamOptPPG(i,BV);
+  const pct=own>0?Math.round(100*ppg.st/own):0;
   const surplus=s.own.reduce((a,x)=>a+((BV[x.id]||1)-x.price),0);
-  return `<div style="font-size:10px" title="draft score: current starters' projected PPG/week vs the predraft-optimal roster (${PREOPT.toFixed(1)}); surplus = intrinsic value bought − $ paid (keepers included)">⚡ <b>${ppg.st.toFixed(1)}</b> ppg · <b class="${pct>=90?'upc':''}">${pct}%</b> of opt · <span class="${surplus>=0?'upc':'downc'}">${surplus>=0?'+':''}$${surplus}</span> surplus</div>`;
+  return `<div style="font-size:10px" title="draft score: current starters' projected PPG/week vs the best team THIS owner could have built — optimal keepers (0-3 from his real roster at true costs) + optimal draft with the rest of the $${cfg.budget} (his ceiling: ${own.toFixed(1)} ppg/wk). Surplus = intrinsic value bought − $ paid (keepers included).">⚡ <b>${ppg.st.toFixed(1)}</b> ppg · <b class="${pct>=90?'upc':''}">${pct}%</b> of own opt · <span class="${surplus>=0?'upc':'downc'}">${surplus>=0?'+':''}$${surplus}</span> surplus</div>`;
+}
+// 🏆 leaderboard — every team ranked by current starters' PPG/wk, with % of own optimal
+function rankingPanelHTML(BV){
+  const rows=DR.teams.map((t,i)=>{const ppg=teamPPGwk(i);
+    return {i,name:t.name,st:ppg.st,bn:ppg.bn,own:teamOptPPG(i,BV)};}).sort((a,b)=>b.st-a.st);
+  return `<div class="dr-panel"><h3>🏆 Team ranking — projected starters PPG/week</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2px 24px">`+
+    rows.map((r,k)=>{const pct=r.own>0?Math.round(100*r.st/r.own):0;
+      return `<div style="font-size:12px;display:flex;gap:6px;align-items:baseline"><span class="muted" style="width:18px">${k+1}.</span><b class="${r.i===DR.me?'maxbid':''}" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}${r.i===DR.me?' (YOU)':''}</b><b style="width:44px;text-align:right">${r.st.toFixed(1)}</b><span class="muted" style="width:30px;text-align:right;font-size:11px">${r.bn.toFixed(1)}</span><b class="${pct>=90?'upc':'muted'}" style="width:40px;text-align:right" title="vs this owner's own optimal (best keeps + optimal draft): ${r.own.toFixed(1)} ppg/wk">${pct}%</b></div>`;}).join("")+
+    `</div><div class="muted" style="font-size:10px;margin-top:4px">bold = starters PPG/wk · muted = bench · % = of that owner's OWN optimal (best 0-3 keeps from his roster + optimal draft)</div></div>`;
 }
 function teamTargetsHTML(i){
   const s=teamState(i),td=ownerTend(i);
@@ -1252,7 +1292,6 @@ function renderDraftRoom(){
   ensureKeeperLeague();                                    // keepers locked in 🧩 Mock Keepers persist here (shared DR.owned)
   const mkt=dynamicMarket(), BV=baseValue(), mv=myVal(mkt,BV), meS=mv._meS;
   const TS=DR.teams.map((_,i)=>teamState(i));
-  const PREOPT=preoptPPG(BV);                              // predraft-optimal starter PPG/wk benchmark
   const teamOpts=DR.teams.map((t,i)=>`<option value="${i}">${t.name}</option>`).join("");
   // controls
   let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
@@ -1275,8 +1314,9 @@ function renderDraftRoom(){
     return `<div class="dr-team ${i===DR.me?"me":""} ${s.spotsLeft<=0?"full":""}" data-setme="${i}">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
-      ${teamScoreHTML(i,BV,PREOPT)}${teamTargetsHTML(i)}
+      ${teamScoreHTML(i,BV)}${teamTargetsHTML(i)}
       <div class="nd">${needs}</div><div style="margin-top:4px;max-height:150px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
+  h+=rankingPanelHTML(BV);                                 // 🏆 who has the best team right now
   // my plan (shared knapsack panel) + positional scarcity — same panels as the Mock Draft
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p));
   const PP=planPanelHTML(mkt,mv), plan=PP.plan;
@@ -1671,7 +1711,6 @@ function renderMockDraft(){
   const mkt=dynamicMarket(),TS=DR.teams.map((_,i)=>teamState(i));
   const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
   const mv=myVal(mkt,BV);
-  const PREOPT=preoptPPG(BV);                              // same grading benchmark as the Draft Room
   const kc=Object.keys(DR.owned).filter(id=>DR.owned[id].kept).length;
   const drafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
   const done=TS.every(s=>s.spotsLeft<=0), onclk=DR.teams[MD.nom]?DR.teams[MD.nom].name:"—";
@@ -1696,8 +1735,9 @@ function renderMockDraft(){
       <span style="flex:1"></span><span class="muted" style="font-size:11px">${MD.log.length} sold · $${spentAll} spent</span></div>`;}
   if(done&&MD.log.length){
     const rank=DR.teams.map((t,i)=>Object.assign({i,name:t.name},teamPPGwk(i))).sort((a,b)=>b.st-a.st);
-    h+=`<div class="dr-panel"><h3>🏁 Draft complete — final grades (starter PPG/wk vs the predraft-optimal ${PREOPT.toFixed(1)})</h3>`+
-      rank.map((r,k)=>`<div style="font-size:12px">${k+1}. <b class="${r.i===DR.me?'maxbid':''}">${r.name}${r.i===DR.me?' (YOU)':''}</b> — <b>${r.st.toFixed(1)}</b> <span class="muted">starters</span> · <b class="${100*r.st/PREOPT>=90?'upc':''}">${Math.round(100*r.st/PREOPT)}%</b> <span class="muted">of optimal</span> · ${r.bn.toFixed(1)} <span class="muted">bench</span></div>`).join("")+`</div>`;}
+    h+=`<div class="dr-panel"><h3>🏁 Draft complete — final grades (starter PPG/wk vs each owner's OWN optimal: best keeps + optimal draft)</h3>`+
+      rank.map((r,k)=>{const own=teamOptPPG(r.i,BV),pct=own>0?Math.round(100*r.st/own):0;
+        return `<div style="font-size:12px">${k+1}. <b class="${r.i===DR.me?'maxbid':''}">${r.name}${r.i===DR.me?' (YOU)':''}</b> — <b>${r.st.toFixed(1)}</b> <span class="muted">starters</span> · <b class="${pct>=90?'upc':''}">${pct}%</b> <span class="muted" title="his ceiling: ${own.toFixed(1)} ppg/wk (optimal keepers + optimal draft)">of own optimal</span> · ${r.bn.toFixed(1)} <span class="muted">bench</span></div>`;}).join("")+`</div>`;}
   // bid panel (on the block, or preview of any clicked player)
   const selId=MD.block||MD.sel;
   if(selId&&BYID[selId]&&!DR.owned[selId]){
@@ -1723,9 +1763,10 @@ function renderMockDraft(){
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:232px${MD.on&&!done&&i===MD.nom?';outline:1px solid #e0a23c':''}">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max $${Math.max(1,s.budget-(s.spotsLeft-1))} · needs ${needs}</div>
-      ${teamScoreHTML(i,BV,PREOPT)}${teamTargetsHTML(i)}
+      ${teamScoreHTML(i,BV)}${teamTargetsHTML(i)}
       <div class="muted" style="font-size:10px">bench ${ppg.bn.toFixed(1)} ppg/wk</div>
       <div style="max-height:220px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
+  h+=rankingPanelHTML(BV);                                 // 🏆 who has the best team right now
   // 🎯 your plan + 📊 scarcity — the SAME shared panels as the real Draft Room
   h+=planPanelHTML(mkt,mv).html;
   h+=scarcityPanelHTML(mkt);
