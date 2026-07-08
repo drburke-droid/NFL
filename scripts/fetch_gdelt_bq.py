@@ -3,10 +3,10 @@ Player news sentiment at scale from GDELT on BigQuery (no rate limits, tone incl
 
 Replaces the drip-fed GDELT DOC API (fetch_gdelt_news.py: 570 players, 2017+) with the
 public BigQuery datasets:
-  - gdelt-bq.gdeltv2.gkg_partitioned  (Feb 2015 -> now; V2Persons + V2Tone, partitioned)
-  - gdelt-bq.full.gkg                 (Apr 2013 -> Feb 2015 backfill; PERSONS + TONE)
-Person-level tone does NOT exist before Apr 2013 (GKG 1.0 start) - that is the real floor
-for "since ~2012"; 2012 itself only exists in the events table without reliable person tags.
+  - gdelt-bq.gdeltv2.gkg_partitioned   (Feb 2015 -> now; V2Persons + V2Tone) [source='gkg']
+  - gdelt-bq.full.events_partitioned   (2012 -> Feb 2015 backfill via CAMEO actor names +
+    per-event article AvgTone) [source='events'] - noisier person tagging; GKG 1.0 was
+    never loaded into BigQuery, so this is the only pre-2015 person-ish signal.
 
 One-time setup (no gcloud SDK needed):
   1. console.cloud.google.com -> create a project (any name), note the PROJECT ID
@@ -28,7 +28,6 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CFG = os.path.join(ROOT, "config", "gdelt_bq.json")
 SCOPES = ["https://www.googleapis.com/auth/bigquery"]
 V2_START = 2015          # gkg_partitioned coverage begins 2015-02-19
-V1_SPAN = (20130401, 20150218)
 FREE_GUARD_GB = 400      # refuse to run past this without --yes (free tier = 1024 GB/mo)
 
 norm = lambda s: re.sub(r"\s+", " ", re.sub(r"\b(jr|sr|ii|iii|iv|v)\b", "",
@@ -59,25 +58,32 @@ def queries(names, start, end, nfl_only):
     from google.cloud import bigquery
     P = lambda: [bigquery.ArrayQueryParameter("names", "STRING", names)]
     out = []
-    org1 = "AND LOWER(ORGANIZATIONS) LIKE '%national football league%'" if nfl_only else ""
-    org2 = "AND LOWER(V2Organizations) LIKE '%national football league%'" if nfl_only else ""
+    org2 = "AND LOWER(Organizations) LIKE '%national football league%'" if nfl_only else ""
     if start < V2_START:
-        out.append((f"v1 {V1_SPAN[0]}-{V1_SPAN[1]}", f"""
-            SELECT person, CAST(CAST(DATE/100 AS INT64) AS STRING) AS ym, COUNT(*) n,
-                   AVG(CAST(SPLIT(TONE,',')[SAFE_OFFSET(0)] AS FLOAT64)) avg_tone,
-                   AVG(CAST(SPLIT(TONE,',')[SAFE_OFFSET(1)] AS FLOAT64)) avg_pos,
-                   AVG(CAST(SPLIT(TONE,',')[SAFE_OFFSET(2)] AS FLOAT64)) avg_neg
-            FROM `gdelt-bq.full.gkg`, UNNEST(SPLIT(LOWER(PERSONS),';')) person
-            WHERE DATE BETWEEN {max(V1_SPAN[0], start*10000+101)} AND {V1_SPAN[1]}
-              AND person IN UNNEST(@names) {org1}
+        d0 = f"{start}-01-01"
+        out.append((f"events {start}-2015/02", f"""
+            SELECT person, CAST(MonthYear AS STRING) AS ym, COUNT(*) n,
+                   AVG(AvgTone) avg_tone, CAST(NULL AS FLOAT64) avg_pos, CAST(NULL AS FLOAT64) avg_neg,
+                   'events' AS source
+            FROM (
+              SELECT MonthYear, LOWER(Actor1Name) AS person, AvgTone
+              FROM `gdelt-bq.full.events_partitioned`
+              WHERE _PARTITIONTIME >= TIMESTAMP('{d0}') AND _PARTITIONTIME < TIMESTAMP('2015-02-19')
+              UNION ALL
+              SELECT MonthYear, LOWER(Actor2Name), AvgTone
+              FROM `gdelt-bq.full.events_partitioned`
+              WHERE _PARTITIONTIME >= TIMESTAMP('{d0}') AND _PARTITIONTIME < TIMESTAMP('2015-02-19')
+            )
+            WHERE person IN UNNEST(@names)
             GROUP BY person, ym""", P()))
     for yr in range(max(start, V2_START), end + 1):
         out.append((f"v2 {yr}", f"""
             SELECT person, FORMAT_TIMESTAMP('%Y%m', _PARTITIONTIME) AS ym, COUNT(*) n,
                    AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(0)] AS FLOAT64)) avg_tone,
                    AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(1)] AS FLOAT64)) avg_pos,
-                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(2)] AS FLOAT64)) avg_neg
-            FROM `gdelt-bq.gdeltv2.gkg_partitioned`, UNNEST(SPLIT(LOWER(V2Persons),';')) person
+                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(2)] AS FLOAT64)) avg_neg,
+                   'gkg' AS source
+            FROM `gdelt-bq.gdeltv2.gkg_partitioned`, UNNEST(SPLIT(LOWER(Persons),';')) person
             WHERE _PARTITIONTIME >= TIMESTAMP('{yr}-01-01') AND _PARTITIONTIME < TIMESTAMP('{yr+1}-01-01')
               AND person IN UNNEST(@names) {org2}
             GROUP BY person, ym""", P()))
@@ -127,15 +133,15 @@ def main():
     con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
     con.execute("""CREATE TABLE IF NOT EXISTS nflv_gdelt_bq
         (name TEXT, player_id TEXT, ym TEXT, articles INTEGER,
-         avg_tone REAL, avg_pos REAL, avg_neg REAL, PRIMARY KEY(name, ym))""")
+         avg_tone REAL, avg_pos REAL, avg_neg REAL, source TEXT, PRIMARY KEY(name, ym, source))""")
     from google.cloud import bigquery
     wrote = 0
     for label, sql, params in qs:
         print(f"running {label} ...", flush=True)
         job = bq.query(sql, job_config=bigquery.QueryJobConfig(query_parameters=params))
         rows = [(r["person"], ids.get(r["person"]), r["ym"], r["n"],
-                 r["avg_tone"], r["avg_pos"], r["avg_neg"]) for r in job.result()]
-        con.executemany("INSERT OR REPLACE INTO nflv_gdelt_bq VALUES (?,?,?,?,?,?,?)", rows)
+                 r["avg_tone"], r["avg_pos"], r["avg_neg"], r["source"]) for r in job.result()]
+        con.executemany("INSERT OR REPLACE INTO nflv_gdelt_bq VALUES (?,?,?,?,?,?,?,?)", rows)
         con.commit()
         wrote += len(rows)
         print(f"  {label}: {len(rows)} player-months (billed {job.total_bytes_billed/1e9:.1f} GB)")
