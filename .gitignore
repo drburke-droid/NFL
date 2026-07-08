@@ -6,3 +6,6 @@ __pycache__/
 # commits the pulled data; never commit a local cookie file.
 data/espn_cookies.json
 data/espn/
+
+# transient run logs (top-level outputs/)
+outputs/*.log
