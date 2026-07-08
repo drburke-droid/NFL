@@ -168,3 +168,29 @@ vetoed bets (model-OVER on bad-news players, t=3%): n=557, their ROI would have 
      blend +veto   n= 1326 -0.8%  n=  331 -7.1%  n=   65 -36.3%
 
 ```
+
+
+## Pinnacle top-down + sentiment (`pinnacle_topdown_study.py`)
+
+```
+pinnacle-anchored props: {2023: 13909, 2024: 7792, 2025: 7936} | soft same-line quotes: 173165
+
+props with outcomes: 130378 soft quotes | bad-news cell quotes: 15992
+
+top-down ROI (bet soft book when EV vs Pinnacle-fair >= t):
+                                         t>=0%           t>=2%           t>=4%
+   baseline top-down            n= 11100 +0.5%  n=  4477 +2.0%  n=  1478 +5.8%
+   + sentiment VETO (overs)     n= 10418 +1.4%  n=  4200 +2.8%  n=  1402 +6.3%
+   sentiment-aligned unders only  n=   635 +7.0%  n=   229 +11.3%  n=    74 +16.7%
+
+by season (t>=2%):
+   2023 baseline   n=  1948  ROI +2.3%
+   2023 +veto      n=  1827  ROI +2.6%
+   2024 baseline   n=  1051  ROI +8.0%
+   2024 +veto      n=   984  ROI +9.8%
+   2025 baseline   n=  1478  ROI -2.8%
+   2025 +veto      n=  1389  ROI -1.9%
+
+sanity — ALL soft quotes both sides blind (juice floor):
+   n=260756  ROI -6.8%
+```
