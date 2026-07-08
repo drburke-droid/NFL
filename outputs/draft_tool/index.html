@@ -1054,7 +1054,10 @@ function myVal(mkt,BVo){
     // roster-aware: if my starters at this position are already filled (e.g. kept QB), another
     // one is BENCH money — stash price (<= $8), never full worth (no $34 backup QBs).
     const startNeed=(meS.need[pos]>0)||(FLEXE.includes(pos)&&meS.need.FLEX>0);
-    const benchOnly=!startNeed&&(meS.bench>0&&surplus>2);
+    // bench buys are RB/WR upside ONLY — never a 2nd K/DST (streamed) or a backup QB/TE
+    // (bye-week waivers). Without this gate the sim bot bid $1 on every late kicker
+    // nomination and won them all on the you-win-ties rule (the 8-kicker roster bug).
+    const benchOnly=!startNeed&&(meS.bench>0&&surplus>2)&&(pos==="RB"||pos==="WR");
     const affordable=Math.max(1,meS.budget-(meS.spotsLeft-1));
     let maxBid=startNeed?Math.round(value*Math.max(1,agg))
              :benchOnly?Math.min(Math.max(1,Math.round(Math.max(value,market)*0.3)),BENCH_CAP+2)
@@ -1601,8 +1604,10 @@ function mdNominee(i,mkt,TS){
   let best=null,bb=0;
   avail.forEach(p=>{const b=ownerBid(i,p,mkt,TS);
     if(b>bb||(b===bb&&b>0&&best&&raPts(p)>raPts(best))){bb=b;best=p;}});
-  // fallback: the best PRICED player left (never a 5th junk QB the room force-eats)
-  return best||avail.sort((a,b)=>(mkt.price[pid(b)]||0)-(mkt.price[pid(a)]||0))[0];}
+  // fallback: the best priced RB/WR left (always useful as bench depth somewhere) — never an
+  // unsellable junk QB/K the unsold rule would just cycle past
+  const byP=arr=>arr.sort((a,b)=>(mkt.price[pid(b)]||0)-(mkt.price[pid(a)]||0))[0];
+  return best||byP(avail.filter(p=>p.position==="RB"||p.position==="WR"))||byP(avail);}
 // run the bidding: highest max wins (ties: you), pays runner-up +$1; nobody in -> nominator, $1
 function mdResolve(id,myMax){
   const p=BYID[id]; if(!p||DR.owned[id])return;
@@ -1612,8 +1617,13 @@ function mdResolve(id,myMax){
   const bids=DR.teams.map((t,i)=>({i,max:i===DR.me?myEff:ownerBid(i,p,mkt,TS)}))
     .sort((a,b)=>b.max-a.max||((b.i===DR.me)?1:0)-((a.i===DR.me)?1:0));
   let w=bids[0],second=bids[1]?bids[1].max:0;
-  if(w.max<1){const t=TS[MD.nom]&&TS[MD.nom].spotsLeft>0?MD.nom:(bids.map(b=>b.i).find(i=>TS[i].spotsLeft>0));
-    if(t==null)return; w={i:t,max:1};second=0;}
+  if(w.max<1){
+    // nobody bid: force-feed only where the player has REAL use — a K/DST/QB/TE goes only to
+    // a team with that starter slot open (never an 8-kicker bench); RB/WR depth fits anywhere.
+    const useful=i=>TS[i].spotsLeft>0&&((isK(p)||p.position==="QB"||p.position==="TE")?TS[i].need[p.position]>0:true);
+    const t=(TS[MD.nom]&&useful(MD.nom))?MD.nom:bids.map(b=>b.i).find(useful);
+    if(t==null){MD.block=null;MD.sel=null;mdAdvance();saveMD();return;}   // unsold — next nomination
+    w={i:t,max:1};second=0;}
   // PRICE ENFORCEMENT: the room never lets a flush team steal — when the winner has clearly more
   // money-per-spot than the field, rivals bid him up toward his max (they know he must spend it).
   const lAvg=mkt.spots>0?mkt.money/mkt.spots:1,ws=TS[w.i];
