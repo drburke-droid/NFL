@@ -144,6 +144,8 @@
     <label class="btn sm up" for="ffaFile">📂 Upload 2026 FFA CSV</label>
     <input id="ffaFile" type="file" accept=".csv" style="display:none">
     <button class="btn sm" id="ffaClear" style="display:none">clear</button>
+    <button class="btn sm up" id="buzzBtn" title="Pull latest Wikipedia pageview buzz (camp risers), rescore darts, rebuild the board. Needs the local helper: python scripts/buzz_server.py">↻ Buzz</button>
+    <span class="muted" id="buzzStatus"></span>
     <span class="muted" id="ffaStatus">No FFA loaded — board is a prior-year model guess. Upload the FantasyFootballAnalytics preseason CSV to switch to market-anchored consensus.</span>
   </div>
   <div class="chips" id="scorechips"></div>
@@ -470,6 +472,38 @@ document.getElementById("ffaFile").onchange=e=>{
   rd.readAsText(f);
 };
 document.getElementById("ffaClear").onclick=()=>{ffaMap={};projMode="model";save();document.getElementById("srcFFA").disabled=true;document.getElementById("srcBlend").disabled=true;document.getElementById("ffaClear").style.display="none";setSrc("model");};
+
+// ---------- Buzz refresh: Wikipedia pageviews -> dart rescoring -> board rebuild ----------
+// Runs through a local helper (python scripts/buzz_server.py); the published page
+// can't run Python, so the button talks to http://127.0.0.1:8765.
+const BUZZ_API = (location.hostname==="127.0.0.1"||location.hostname==="localhost") ? "" : "http://127.0.0.1:8765";
+let buzzPolling=null;
+function buzzMsg(t){document.getElementById("buzzStatus").textContent=t;}
+async function buzzPoll(){
+  try{
+    const r=await fetch(BUZZ_API+"/api/refresh-status");
+    const s=await r.json();
+    if(s.state==="running"){buzzMsg("⏳ "+s.step+"…");}
+    else{
+      clearInterval(buzzPolling);buzzPolling=null;
+      document.getElementById("buzzBtn").disabled=false;
+      if(s.state==="done"){buzzMsg("✅ buzz updated — reloading…");setTimeout(()=>location.reload(),1200);}
+      else buzzMsg("❌ "+(s.error||"failed")+" (see helper console)");
+    }
+  }catch(e){clearInterval(buzzPolling);buzzPolling=null;document.getElementById("buzzBtn").disabled=false;buzzMsg("❌ lost helper connection");}
+}
+document.getElementById("buzzBtn").onclick=async()=>{
+  if(buzzPolling)return;
+  try{
+    const r=await fetch(BUZZ_API+"/api/refresh-buzz",{method:"POST"});
+    if(!r.ok)throw new Error();
+    document.getElementById("buzzBtn").disabled=true;
+    buzzMsg("⏳ starting…");
+    buzzPolling=setInterval(buzzPoll,3000);
+  }catch(e){
+    buzzMsg("helper not running — in a terminal: python scripts/buzz_server.py, then click again");
+  }
+};
 function setSrc(src){
   if((src==="ffa"||src==="blend")&&!ffaLoaded()) return;
   projMode=src; save();
@@ -681,16 +715,16 @@ function renderSleepers(){
   document.getElementById("tbl").style.display="";
   document.getElementById("scatter").style.display="none";
   let rows=PLAYERS.filter(p=>{
-    if(p.leap_prob==null)return false;
+    if(p.leap_prob==null&&p.dart_prob==null)return false;
     if(posFilter==="FLEX"){if(!["RB","WR","TE"].includes(p.position))return false;}
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;
     return true;
   });
-  rows.sort((a,b)=>b.leap_prob-a.leap_prob);
+  rows.sort((a,b)=>Math.max(b.leap_prob||0,b.dart_prob||0)-Math.max(a.leap_prob||0,a.dart_prob||0));
   document.getElementById("count").textContent=rows.length+" sleepers";
-  const head=["#","Pos","Player","Tm","'25 PPG","'26 Proj","$","Leap %","Why"];
+  const head=["#","Pos","Player","Tm","'25 PPG","'26 Proj","$","Leap %","Dart %","Why"];
   document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${(i>=2&&i<=3)||h==='Why'?'l':''}">${h}</th>`).join("");
   document.getElementById("body").innerHTML=rows.map((p,i)=>{
     const cost=ADJ.vals[pid(p)]??0;
@@ -704,7 +738,8 @@ function renderSleepers(){
       <td class="muted">${p.trend_h2!=null?((p.trend_h1*2+p.trend_h2*1)/3).toFixed(1):(p.prior_ppg==null?"—":p.prior_ppg.toFixed(1))}</td>
       <td>${PRJ(p)==null?"—":Math.round(PRJ(p))}</td>
       <td class="bid">$${cost}</td>
-      <td class="upc" style="font-weight:700">${Math.round(p.leap_prob*100)}%</td>
+      <td class="upc" style="font-weight:700">${p.leap_prob==null?"—":Math.round(p.leap_prob*100)+"%"}</td>
+      <td class="upc" style="font-weight:700">${p.dart_prob==null?"—":Math.round(p.dart_prob*100)+"%"}</td>
       <td class="l muted">${why.join(", ")||"profile + opportunity"}</td>
     </tr>`;
   }).join("");
@@ -712,6 +747,8 @@ function renderSleepers(){
   document.getElementById("notes").innerHTML="🚀 <b>Value-leap sleepers</b> — the season analog of the explosion model. "+
     "Among players who were CHEAP / undraftable-caliber in 2025 (below a startable line), these have the highest modeled probability of breaking out into a startable asset this year — i.e. the late-round darts who get <i>drafted much higher next season</i>. "+
     "Validated walk-forward: AUC 0.70, ~2.75× the base breakout rate in the top decile (precision 12% vs 4% base). Top drivers: vacated opportunity, draft capital, late-season touch/target surge. "+
+    "<b>Dart %</b> = the price-anchored late-breakout model (LATE_BREAKOUTS.md): P(finishing above replacement) for end-of-auction ($≤2) players — it also covers rookies, which Leap % can't. "+
+    "Top-grade darts (≥30%) hit ~25% historically; a 4-dart bench has ~68% odds of ≥1 hit, and a hit is a near-free keeper. "+
     "Breakouts from obscurity are genuinely rare, so most sit at a few %; the few standouts are the signal. These are upside dart-throws, not safe picks.";
 }
 
