@@ -15,3 +15,5 @@ outputs/*.log
 *.db-wal
 *.db-shm
 data/nfl_odds.db
+
+config/gdelt_bq.json
