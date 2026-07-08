@@ -9,6 +9,7 @@
 <script src="keepers_2026.js"></script>
 <script src="keeper_prob_2026.js"></script>
 <script src="owner_bias_2026.js"></script>
+<script src="gdelt_flags_2026.js"></script>
 <script src="price_anchor_2026.js"></script>
 <script src="healthy_ppg.js"></script>
 <script src="contract_status.js"></script>
@@ -274,12 +275,18 @@ const crowdTag=p=>{if(p.position!=="WR"||typeof CROWDING_2026==="undefined")retu
   return c.k==="crowded"
     ? ` <span class="tag muted" style="background:#2b1d1d;color:#d99a9a" title="${tip}">▼ crowded WR2</span>`
     : ` <span class="tag muted" style="background:#1d2b21;color:#9ad9ae" title="${tip}">▲ open WR2</span>`;};
+// 🚩 negative-news August (scripts/build_news_flags.py, GDELT tone): attention spike +
+// negative tone on a priced player = the holdout/injury/suspension pattern, historically
+// -20 VORP vs price peers (outputs/reports/tone_signal.md). Red flag, not an auto-fade.
+const newsFlagTag=p=>{if(typeof NEWS_FLAGS==="undefined")return "";
+  const f=NEWS_FLAGS[norm(p.name)];if(!f)return "";
+  return ` <span class="tag" style="background:#3a1620;color:#ff9aa8" title="🚩 NEGATIVE-NEWS AUGUST${typeof NEWS_FLAGS_YEAR!=='undefined'?' '+NEWS_FLAGS_YEAR:''}: news volume spiked (×${Math.exp(f.s).toFixed(1)} vs his own Jan–May baseline, ${f.n} articles) with NEGATIVE tone (${f.t}). 2016–25 priced players in this cell averaged −20 VORP vs price peers — the holdout/injury/suspension pattern (Charles '16, Golladay '20, Fournette '18, Etienne '24, Ekeler '25). Verify the story before paying up; not an auto-fade (CMC '22 survived it).">🚩 news</span>`;};
 const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasCtx(p); let t="";
   if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — validated +${c.bump} PPG bump (improves projection MAE; largest at RB)">📄 WALK YR</span>`;
   else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
   if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="${v.pos} inheriting a clean vacated role (${v.vac_share}% left by ${v.departed}, no ${v.pos} drafted rd1-2${v.ffa?'; teams from your FFA upload':''}). Validated -> +${v.bump} PPG.">↑ VACATED ${v.vac_share}%</span>`;
   if(Math.abs(vg)>=0.35)t+=` <span class="tag muted" style="background:${vg>0?'#2a2415':'#1e2228'};color:${vg>0?'#c9bd8a':'#8894a0'}" title="${team26(p)} 2026 Vegas implied team total is ${vg>0?'above':'below'} average — context only; the projection ALREADY prices team environment in (implied_team_total is a top-3 model feature), so no value change.">${vg>0?'○':'○'} ${team26(p)} ${vg>0?'high':'low'} total</span>`;
-  t+=archTag(p)+lotteryTag(p)+crowdTag(p);
+  t+=archTag(p)+lotteryTag(p)+crowdTag(p)+newsFlagTag(p);
   return t;};
 const effPts=p=>{const ng=NORMG[p.position]||0;
   // FFA mode: use the uploaded consensus points directly (they already reflect health/games/role),
@@ -1295,7 +1302,7 @@ function planPanelHTML(mkt,mv){
       <span style="width:14px;text-align:center">${pk.wa!=null?pri(pk):''}</span>
       <span class="muted" style="width:34px">${pk.slot}</span>
       <span class="pos ${pk.p.position}" style="transform:scale(.75)">${pk.p.position}</span>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name} <span class="muted" style="font-size:10px">${pk.p.team||""}</span></span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
       <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
       <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
         ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
@@ -1425,7 +1432,7 @@ function renderDraftRoom(){
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
     return `<tr${su?` title="likely bidders: ${su.tip}"`:''}>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
+      <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
       <td>${isK(p)?"—":Math.round(r.proj)}</td>
       <td style="font-weight:600">$${r.val}</td>
       <td class="base">$${r.exp}</td>
@@ -1917,7 +1924,7 @@ function renderMockDraft(){
       const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer"${su?` title="likely bidders: ${su.tip}"`:''}>
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-        <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${su?su.line:''}</td>
+        <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${su?su.line:''}</td>
         <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td>${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}<td class="maxbid">$${r.mymax}</td>
         <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${r.edge>=0?'+':''}${r.edge}</td>
         <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
