@@ -1,0 +1,146 @@
+"""
+Player news sentiment at scale from GDELT on BigQuery (no rate limits, tone included).
+
+Replaces the drip-fed GDELT DOC API (fetch_gdelt_news.py: 570 players, 2017+) with the
+public BigQuery datasets:
+  - gdelt-bq.gdeltv2.gkg_partitioned  (Feb 2015 -> now; V2Persons + V2Tone, partitioned)
+  - gdelt-bq.full.gkg                 (Apr 2013 -> Feb 2015 backfill; PERSONS + TONE)
+Person-level tone does NOT exist before Apr 2013 (GKG 1.0 start) - that is the real floor
+for "since ~2012"; 2012 itself only exists in the events table without reliable person tags.
+
+One-time setup (no gcloud SDK needed):
+  1. console.cloud.google.com -> create a project (any name), note the PROJECT ID
+     (BigQuery API is on by default; the free tier is 1 TiB of query per month)
+  2. python scripts/fetch_gdelt_bq.py auth --project YOUR_PROJECT_ID   (opens a browser)
+Then:
+  python scripts/fetch_gdelt_bq.py check          # FREE dry-run: exact bytes each query costs
+  python scripts/fetch_gdelt_bq.py fetch --yes    # runs the queries, writes db nflv_gdelt_bq
+
+Output table nflv_gdelt_bq: (name, player_id, ym, articles, avg_tone, avg_pos, avg_neg)
+per player-month. CAVEAT: GDELT persons are raw name strings - "Josh Allen" conflates the
+Bills QB with the Jaguars edge rusher; validate any single-player analysis. --nfl-only adds
+an NFL-organization co-mention filter (cleaner, but scans the organizations column too:
+roughly doubles bytes).
+"""
+import argparse, json, os, re, sqlite3, sys
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CFG = os.path.join(ROOT, "config", "gdelt_bq.json")
+SCOPES = ["https://www.googleapis.com/auth/bigquery"]
+V2_START = 2015          # gkg_partitioned coverage begins 2015-02-19
+V1_SPAN = (20130401, 20150218)
+FREE_GUARD_GB = 400      # refuse to run past this without --yes (free tier = 1024 GB/mo)
+
+norm = lambda s: re.sub(r"\s+", " ", re.sub(r"\b(jr|sr|ii|iii|iv|v)\b", "",
+                        re.sub(r"[^a-z ]", "", str(s).lower()))).strip()
+
+def creds():
+    import pydata_google_auth
+    return pydata_google_auth.get_user_credentials(SCOPES, use_local_webserver=True)
+
+def client():
+    if not os.path.exists(CFG):
+        sys.exit("No config/gdelt_bq.json - run:  python scripts/fetch_gdelt_bq.py auth --project YOUR_PROJECT_ID")
+    from google.cloud import bigquery
+    project = json.load(open(CFG))["project"]
+    return bigquery.Client(project=project, credentials=creds())
+
+def player_names():
+    con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
+    rows = con.execute("SELECT DISTINCT player_display_name FROM nflv_season WHERE season>=2012").fetchall()
+    names = sorted(set(norm(r[0]) for r in rows if r[0] and len(norm(r[0]).split()) >= 2))
+    ids = {}
+    for pid_, nm in con.execute("SELECT DISTINCT player_id, player_display_name FROM nflv_season"):
+        ids.setdefault(norm(nm), pid_)
+    return names, ids
+
+def queries(names, start, end, nfl_only):
+    """(label, sql, params) per year - partition-pruned v2 queries + one v1 backfill."""
+    from google.cloud import bigquery
+    P = lambda: [bigquery.ArrayQueryParameter("names", "STRING", names)]
+    out = []
+    org1 = "AND LOWER(ORGANIZATIONS) LIKE '%national football league%'" if nfl_only else ""
+    org2 = "AND LOWER(V2Organizations) LIKE '%national football league%'" if nfl_only else ""
+    if start < V2_START:
+        out.append((f"v1 {V1_SPAN[0]}-{V1_SPAN[1]}", f"""
+            SELECT person, CAST(CAST(DATE/100 AS INT64) AS STRING) AS ym, COUNT(*) n,
+                   AVG(CAST(SPLIT(TONE,',')[SAFE_OFFSET(0)] AS FLOAT64)) avg_tone,
+                   AVG(CAST(SPLIT(TONE,',')[SAFE_OFFSET(1)] AS FLOAT64)) avg_pos,
+                   AVG(CAST(SPLIT(TONE,',')[SAFE_OFFSET(2)] AS FLOAT64)) avg_neg
+            FROM `gdelt-bq.full.gkg`, UNNEST(SPLIT(LOWER(PERSONS),';')) person
+            WHERE DATE BETWEEN {max(V1_SPAN[0], start*10000+101)} AND {V1_SPAN[1]}
+              AND person IN UNNEST(@names) {org1}
+            GROUP BY person, ym""", P()))
+    for yr in range(max(start, V2_START), end + 1):
+        out.append((f"v2 {yr}", f"""
+            SELECT person, FORMAT_TIMESTAMP('%Y%m', _PARTITIONTIME) AS ym, COUNT(*) n,
+                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(0)] AS FLOAT64)) avg_tone,
+                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(1)] AS FLOAT64)) avg_pos,
+                   AVG(CAST(SPLIT(V2Tone,',')[SAFE_OFFSET(2)] AS FLOAT64)) avg_neg
+            FROM `gdelt-bq.gdeltv2.gkg_partitioned`, UNNEST(SPLIT(LOWER(V2Persons),';')) person
+            WHERE _PARTITIONTIME >= TIMESTAMP('{yr}-01-01') AND _PARTITIONTIME < TIMESTAMP('{yr+1}-01-01')
+              AND person IN UNNEST(@names) {org2}
+            GROUP BY person, ym""", P()))
+    return out
+
+def dry_run(bq, qs):
+    from google.cloud import bigquery
+    total = 0
+    print(f"{'query':<22}{'scans':>12}")
+    for label, sql, params in qs:
+        job = bq.query(sql, job_config=bigquery.QueryJobConfig(
+            dry_run=True, use_query_cache=False, query_parameters=params))
+        gb = job.total_bytes_processed / 1e9
+        total += gb
+        print(f"{label:<22}{gb:>10.1f} GB")
+    print(f"{'TOTAL':<22}{total:>10.1f} GB   (free tier: 1024 GB/month; on-demand ~$6.25/TiB beyond)")
+    return total
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("cmd", choices=["auth", "check", "fetch"])
+    ap.add_argument("--project")
+    ap.add_argument("--start", type=int, default=2013)
+    ap.add_argument("--end", type=int, default=2025)
+    ap.add_argument("--nfl-only", action="store_true")
+    ap.add_argument("--yes", action="store_true")
+    a = ap.parse_args()
+
+    if a.cmd == "auth":
+        if not a.project: sys.exit("need --project YOUR_PROJECT_ID")
+        creds()                                          # opens browser, caches token locally
+        os.makedirs(os.path.dirname(CFG), exist_ok=True)
+        json.dump({"project": a.project}, open(CFG, "w"))
+        print(f"authenticated; project '{a.project}' saved to config/gdelt_bq.json")
+        return
+
+    bq = client()
+    names, ids = player_names()
+    print(f"matching {len(names)} distinct player names (nflv_season 2012+)")
+    qs = queries(names, a.start, a.end, a.nfl_only)
+    total = dry_run(bq, qs)
+    if a.cmd == "check":
+        return
+    if total > FREE_GUARD_GB and not a.yes:
+        sys.exit(f"total scan {total:.0f} GB > {FREE_GUARD_GB} GB guard - rerun with --yes to proceed")
+
+    con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
+    con.execute("""CREATE TABLE IF NOT EXISTS nflv_gdelt_bq
+        (name TEXT, player_id TEXT, ym TEXT, articles INTEGER,
+         avg_tone REAL, avg_pos REAL, avg_neg REAL, PRIMARY KEY(name, ym))""")
+    from google.cloud import bigquery
+    wrote = 0
+    for label, sql, params in qs:
+        print(f"running {label} ...", flush=True)
+        job = bq.query(sql, job_config=bigquery.QueryJobConfig(query_parameters=params))
+        rows = [(r["person"], ids.get(r["person"]), r["ym"], r["n"],
+                 r["avg_tone"], r["avg_pos"], r["avg_neg"]) for r in job.result()]
+        con.executemany("INSERT OR REPLACE INTO nflv_gdelt_bq VALUES (?,?,?,?,?,?,?)", rows)
+        con.commit()
+        wrote += len(rows)
+        print(f"  {label}: {len(rows)} player-months (billed {job.total_bytes_billed/1e9:.1f} GB)")
+    n_named = con.execute("SELECT COUNT(DISTINCT name) FROM nflv_gdelt_bq").fetchone()[0]
+    print(f"done: {wrote} rows upserted; {n_named} distinct players in nflv_gdelt_bq")
+
+if __name__ == "__main__":
+    main()
