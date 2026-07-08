@@ -1079,11 +1079,16 @@ function myVal(mkt,BVo){
 // has no keeper future) and TRAJECTORY (H2-vs-H1 PPG trend + modeled breakout odds), plus the
 // lottery-ticket star odds (young tickets weighted over vet tickets, per the validated screen).
 const ceilPts=p=>((p.ceiling!=null?p.ceiling:(p.proj_ppg||0)*1.15))*(NORMG[p.position]||15);
-const benchU=p=>{const l=(typeof LOTTERY_2026!=="undefined")?LOTTERY_2026[p.name]:null;
+// bench slots are DART SLOTS: the strongest term is the modeled breakout signal — Dart %
+// (price-anchored late-breakout model, covers rookies) / Leap % (usage-trend value-leap) /
+// lottery star odds — a top-grade dart (~30-40%) roughly doubles a slot's utility.
+const dartSig=p=>{const l=(typeof LOTTERY_2026!=="undefined")?LOTTERY_2026[p.name]:null;
+  return Math.max(p.dart_prob||0,p.leap_prob||0,l?l.p:0);};
+const benchU=p=>{
   const age=p.age||26;
   const runway=age<=23?1.25:age<=25?1.15:age<=27?1.0:age<=29?0.8:0.6;
   const traj=1+Math.max(0,Math.min(0.30,(p.trend_dppg||0)/20+(p.breakout_prob||0)*0.5));
-  return 0.30*ceilPts(p)*runway*traj+(l?120*l.p*(age<=26?1.3:0.7):0);};
+  return 0.30*ceilPts(p)*runway*traj*(1+2.5*dartSig(p));};
 function optimalPlan(mkt){
   const meS=teamState(DR.me), budget=meS.budget;
   const price=p=>mkt.price[pid(p)]||1;
@@ -1165,12 +1170,12 @@ function optRosterPPG(BV,kept){
 let _teamOpt={};
 function teamOptPPG(i,BV){
   const key=i+"|"+projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded());
-  if(_teamOpt[key]!=null)return _teamOpt[key];
+  if(_teamOpt[key]!=null)return _teamOpt[key].v;
   // optimal keeps chosen GREEDY-MARGINAL: start from keep-nothing, add (up to 3) the candidate
   // whose keep most raises the achievable starter PPG, stop when nothing helps. Dollar savings
   // alone over-keeps — a discounted mediocre player can block the slot a star should occupy —
   // and this construction guarantees ceiling >= the keep-nothing optimal.
-  let kept=[],best=optRosterPPG(BV,kept);
+  let kept=[],best=optRosterPPG(BV,kept),base=best;
   if(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.teams&&KEEPERS_2026.teams[i]){
     let pool=KEEPERS_2026.teams[i].candidates
       .map(c=>({p:BYID[c.pid],cost:c.cost,sav:(BV[c.pid]||1)-c.cost}))
@@ -1182,8 +1187,14 @@ function teamOptPPG(i,BV){
       kept.push(pool[bi]);pool.splice(bi,1);best=bv;
     }
   }
-  return _teamOpt[key]=best;
+  _teamOpt[key]={v:best,kept:kept.map(k=>({pid:pid(k.p),name:k.p.name,cost:k.cost})),gain:best-base};
+  return best;
 }
+// which (0-3) keepers the knapsack picked for team i, and the starter-PPG they add vs keeping
+// nothing — the OPTIMAL keep set factoring opportunity cost, VONA and budget in one solve
+function teamOptKeeps(i,BV){teamOptPPG(i,BV);
+  const key=i+"|"+projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded());
+  return _teamOpt[key]||{kept:[],gain:0};}
 // shared team-card grading — the Draft Room and the Mock Draft score every roster identically:
 // ⚡ current starter PPG/wk · % of THIS OWNER's optimal (best keeps + optimal draft) · surplus
 function teamScoreHTML(i,BV){
@@ -1235,10 +1246,23 @@ function planPanelHTML(mkt,mv){
         :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span></div>`;
     h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:4px 24px">
       <div><div class="muted" style="font-size:10px;margin-bottom:2px">STARTERS — ordered by irreplaceability (★ must-get · ▲ high · ≈ replaceable); buy at ≤ Exp $, walk away past the number</div>${stP.map(prow).join("")}${kdP.map(prow).join("")}</div>
-      <div><div class="muted" style="font-size:10px;margin-bottom:2px">BENCH — high-upside RB/WR only (K/DST streamed, QB2/TE2 off bye-week waivers)</div>${bnP.map(prow).join("")}</div></div>`;
-    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench is chosen on <b>ceiling + lottery odds, tilted young-and-rising</b> (age runway × H2 trend × breakout odds — a $1-3 breakout is next year's keeper lock; an old vet's ceiling season has no keeper future), not median projection.</div>`;
+      <div><div class="muted" style="font-size:10px;margin-bottom:2px">BENCH — high-upside RB/WR only (K/DST streamed, QB2/TE2 off bye-week waivers)</div>${bnP.map(prow).join("")}
+        <div class="muted" style="font-size:10px;margin-top:5px" title="the running NOMINATION LIST: highest Dart %/Leap % players not already in the plan — pivots when a bench target gets sniped, and what your sim bot nominates from">🎯 next-up darts: ${myTargetList(plan).darts.slice(0,8).map(p=>`<span style="white-space:nowrap">${p.name} <b class="upc">${Math.round(dartSig(p)*100)}%</b></span>`).join(" · ")||'—'}</div></div></div>`;
+    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench slots are <b>dart slots</b>: chosen on <b>Dart %/Leap % breakout odds × ceiling, tilted young-and-rising</b> (a $1-3 breakout is next year's keeper lock; an old vet's ceiling season has no keeper future), not median projection.</div>`;
   }
   return {html:h+`</div>`,plan};
+}
+// 🎯 the running list of players I WANT, in nomination-priority order: plan starters by
+// irreplaceability, then the plan's bench darts, then next-up high Dart/Leap RB/WR pivots,
+// K/DST streams last. The sim bot nominates straight off this list on my turn.
+function myTargetList(plan,extra){
+  const inPlan=new Set(plan.picks.map(pk=>pid(pk.p)));
+  const starters=plan.picks.filter(pk=>pk.wa!=null).slice().sort((a,b)=>(b.du||0)-(a.du||0)).map(pk=>pk.p);
+  const bench=plan.picks.filter(pk=>pk.slot==="BN").map(pk=>pk.p);
+  const kd=plan.picks.filter(pk=>pk.slot==="K"||pk.slot==="DST").map(pk=>pk.p);
+  const darts=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!inPlan.has(pid(p))&&(p.position==="RB"||p.position==="WR")&&dartSig(p)>=0.15)
+    .sort((a,b)=>dartSig(b)-dartSig(a)).slice(0,extra||10);
+  return {starters,bench,darts,kd,all:[...starters,...bench,...darts,...kd]};
 }
 // 📊 positional scarcity panel — shared by the Draft Room and the Mock Draft
 function scarcityPanelHTML(mkt){
@@ -1434,10 +1458,16 @@ function tendLabel(td){const o=[];["RB","WR","QB","TE"].forEach(p=>{if(td[p]>=1.
 // realistic remaining demand for a MEANINGFUL (>$1) player at pos, given roster construction:
 // teams roster 2 QB but only 1 costs >$1; ~1 paid TE (backup is $1); K & DST are $1 streams;
 // the rest of the roster is split between RB/WR (starter + flex + bench depth).
+// HARD POSITIONAL CAPS from the league's real post-auction rosters (35 team-seasons 2023-25):
+// no team has EVER rostered >2 TE or >3 QB (31/35 carry exactly 2 QB), K/DST are singles,
+// RB tops at 6 and WR at 7. Without these caps payTE owners hoarded 4-6 TEs in sims.
+const POS_CAP={QB:2,RB:6,WR:7,TE:2,K:1,DST:1};
+const posCount=(s,pos)=>s.own.filter(x=>x.p.position===pos).length;
 function posDemand(s,pos,td){
+  if(posCount(s,pos)>=(POS_CAP[pos]||99)) return 0;
   if(pos==="K"||pos==="DST") return 0;
-  if(pos==="QB") return s.need.QB>0?1:0;                          // their one real QB; backup is $1
-  if(pos==="TE") return s.need.TE>0?1:(td.payTE&&s.bench>0?0.3:0);// one paid TE; 2nd only if they pay TE
+  if(pos==="QB") return s.need.QB>0?1:(s.bench>0?0.25:0);         // league norm IS a 2nd QB (31/35 rosters) — late, cheap
+  if(pos==="TE") return s.need.TE>0?1:(td.payTE&&s.bench>0?0.3:0);// one paid TE; a capped 2nd only if they pay TE
   return (s.need[pos]>0?1:0)+(s.need.FLEX>0?0.6:0)+(s.bench>0?0.4:0); // RB/WR: starter+flex+bench stockpile
 }
 // likely bidders for player p at its market price: must be ABLE to afford it (and still fill the
@@ -1469,7 +1499,7 @@ function renderMockKeepers(){
     <span>My team: <select class="drsel" id="mkMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
     <button class="btn sm up" id="mkPredict">↺ Reset to predicted</button>
     <button class="btn sm" id="mkClear">Clear all</button></div>
-    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. Each card is sorted by <b>keep %</b> — the modeled odds that owner keeps the player, fitted on the league's actual 2023–25 keeper decisions (<span class="upc" style="font-weight:700">green ≥75%</span> is near-lock, discounted young stars are 97%+). <b>Verdict</b> is the rational call: <span class="upc">+$N</span> = keeping saves \$N vs redrafting · <span style="color:#e3b57f">redraft</span> = good value but cheaper to re-buy · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked.</div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed. Each card is sorted by <b>keep %</b> — the modeled odds that owner keeps the player, fitted on the league's actual 2023–25 keeper decisions (<span class="upc" style="font-weight:700">green ≥75%</span> is near-lock, discounted young stars are 97%+). <b>Verdict</b> is the rational call: <span class="upc">+$N</span> = keeping saves \$N vs redrafting · <span style="color:#e3b57f">redraft</span> = good value but cheaper to re-buy · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked. <b>🏅 optimal</b> on each card = the mathematically best 0–3 keeps for that roster (greedy-marginal knapsack: a keep must raise achievable starter PPG vs redrafting — opportunity cost, VONA and budget in one solve).</div></div>`;
   // MOCK KEEPER CARDS — header and rows share ONE grid template so titles sit exactly over
   // their values: checkbox | pos | player | keep % (modeled likelihood, rows sorted by it) |
   // cost | exp $ | val | verdict
@@ -1479,6 +1509,7 @@ function renderMockKeepers(){
     const pc=Math.round(pr*100), col=pc>=75?"var(--good)":pc>=40?"#e3b57f":pc>=15?"var(--txt)":"var(--muted)";
     return `<span style="text-align:right;color:${col};font-weight:${pc>=75?700:400}" title="Modeled keep likelihood — fitted on this league's actual 2023-25 keeper decisions (savings, cost, prior PPG, games, age); young healthy discounted stars are 97%+ locks">${pc}%</span>`;};
   h+=`<div class="dr-teams">`+KT.map((t,i)=>{const s=TS[i],kc=keptForTeam(i).length,full=kc>=3;
+    const OK=teamOptKeeps(i,BV),okSet=new Set(OK.kept.map(k=>k.pid));
     const hd=`<div class="muted" style="font-size:9px;display:grid;grid-template-columns:${MKCOLS};gap:3px;align-items:center"><span></span><span></span><span></span><span style="text-align:right" title="modeled likelihood this owner keeps him, from the league's actual 2023-25 keeper behavior (players sorted by it)">keep %</span><span style="text-align:right" title="2026 keeper cost (true basis + this owner's bump)">cost</span><span style="text-align:right" title="expected auction price if he's thrown back to the draft">exp $</span><span style="text-align:right" title="our board value in room dollars">val</span><span style="text-align:right" title="rational verdict: +$N = keeping saves $N vs redrafting · redraft = cheaper to re-buy at auction · — = not worth a slot">verdict</span></div>`;
     const cands=Object.keys(KP).length?[...t.candidates].sort((a,b)=>(KP[a.pid]!=null||KP[b.pid]!=null)?(KP[b.pid]||0)-(KP[a.pid]||0):0):t.candidates;
     const rows=cands.map(c=>{const on=DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept,dis=!on&&full;
@@ -1490,7 +1521,7 @@ function renderMockKeepers(){
       return `<label class="mkc" style="display:grid;grid-template-columns:${MKCOLS};gap:3px;align-items:center;font-size:11px;${dis?'opacity:.35':''}">
         <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${dis?"disabled":""}>
         <span class="pos ${c.pos}" style="transform:scale(.8)">${c.pos}</span>
-        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.name}">${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
+        <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.name}${okSet.has(c.pid)?' — 🏅 OPTIMAL KEEP: the roster knapsack (keeper cost vs auction alternatives at intrinsic prices, VONA, budget — one solve) picks him in this team\'s best 0-3 keep set':''}">${okSet.has(c.pid)?'🏅':''}${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
         ${probCell(KP[c.pid])}
         <span style="text-align:right">$${c.cost}</span>
         <span class="muted" style="text-align:right">$${exp}</span>
@@ -1499,6 +1530,7 @@ function renderMockKeepers(){
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:330px">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">2026 bump +$${t.bump2026} · <b>${kc}/3</b> kept · ${s.spotsLeft} spots · ${t.candidates.length} keepable</div>
+      <div style="font-size:10px" title="the mathematically optimal 0-3 keeps for THIS team: greedy-marginal roster knapsack — each keep must RAISE the team's achievable starter PPG vs spending that money at auction (opportunity cost + VONA + budget in one solve)">🏅 optimal: ${OK.kept.length?OK.kept.map(k=>`${k.name} $${k.cost}`).join(" · ")+` <span class="upc">(+${OK.gain.toFixed(1)} ppg/wk)</span>`:'<span class="muted">keep nothing — no candidate beats redrafting</span>'}</div>
       <div class="muted" style="font-size:10px;font-style:italic" title="from 2023–25 auction spend by position (recency-weighted); 🏈 = NFL-team fandom mined from his bids (buys them far above pool share and/or pays over the curve)">${tendLabel(t.tend||{})}${(typeof OWNER_BIAS!=="undefined"&&OWNER_BIAS[t.owner]&&OWNER_BIAS[t.owner].fan)?' · 🏈 '+Object.entries(OWNER_BIAS[t.owner].fan).map(([tm,m])=>tm+" fan ×"+m).join(" · "):''}</div>
       ${hd}<div style="max-height:300px;overflow:auto">${rows}</div></div>`;}).join("")+`</div>`;
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).filter(p=>{
@@ -1682,17 +1714,39 @@ function mdResolve(id,myMax){
   MD.block=null;MD.sel=null;mdAdvance();saveDR();saveMD();
 }
 // sim n picks (or to the end): bots nominate & bid, YOUR bot bids your sheet's suggested max
-function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*cfg.roster*20;
+function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*cfg.roster*20,dry=0;
   while(MD.log.length<target&&g-->0){
     const TS=DR.teams.map((_,t)=>teamState(t));
     if(TS.every(s=>s.spotsLeft<=0))break;
     if(TS[MD.nom].spotsLeft<=0){mdAdvance();continue;}
     const mkt=dynamicMarket(),mv=myVal(mkt);
-    const p=(MD.block&&BYID[MD.block]&&!DR.owned[MD.block])?BYID[MD.block]:mdNominee(MD.nom,mkt,TS);
+    // MY nomination comes off MY target list (plan starters by priority, bench darts, Dart/Leap
+    // pivots) — bots nominate what their own boards like
+    const p=(MD.block&&BYID[MD.block]&&!DR.owned[MD.block])?BYID[MD.block]
+      :(MD.nom===DR.me?(myTargetList(optimalPlan(mkt)).all.find(x=>!DR.owned[pid(x)])||mdNominee(MD.nom,mkt,TS))
+      :mdNominee(MD.nom,mkt,TS));
     if(!p)break;
     const id=pid(p),m=mv[id];
+    const before=MD.log.length;
     mdResolve(id,m&&m.needed?m.maxBid:0);   // your bot bids your sheet — and passes on players you don't need
+    // DRY BREAK: nominations can deadlock (e.g. a pays-TE owner keeps nominating an unsellable
+    // 2nd TE once everyone else is full) — after 15 straight no-sales, hand off to the backstop
+    dry=MD.log.length===before?dry+1:0;
+    if(dry>=15)break;
   }
+  // BACKSTOP: a finished sim must never leave holes (n==null = sim-to-end). Any roster still
+  // open gets $1 fills from the best remaining USEFUL players — K/DST/QB/TE only into open
+  // starter slots, everything else = best remaining RB/WR by benchU (the young-upside doctrine).
+  if(n==null)DR.teams.forEach((_,i)=>{let s=teamState(i),guard2=cfg.roster+2;
+    while(s.spotsLeft>0&&guard2-->0){
+      const needPos=["K","DST","QB","TE"].find(pos=>s.need[pos]>0);
+      const pool=PLAYERS.filter(p=>!DR.owned[pid(p)]&&(needPos?p.position===needPos:(p.position==="RB"||p.position==="WR")));
+      const pick=pool.sort((a,b)=>(needPos?raPts(b)-raPts(a):benchU(b)-benchU(a)))[0];
+      if(!pick)break;
+      DR.owned[pid(pick)]={t:i,price:1,kept:false};
+      MD.log.unshift({name:pick.name,pos:pick.position,t:i,price:1,ru:null,rmax:0,mine:i===DR.me});
+      s=teamState(i);}});
+  saveDR();saveMD();
   render();}
 // projected PPG per week (season proj / 17), optimal starters vs bench
 function teamPPGwk(i){const s=teamState(i),slots={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1};let st=0,bn=0;
