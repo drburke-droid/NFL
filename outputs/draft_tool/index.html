@@ -1682,7 +1682,7 @@ function mdResolve(id,myMax){
   MD.block=null;MD.sel=null;mdAdvance();saveDR();saveMD();
 }
 // sim n picks (or to the end): bots nominate & bid, YOUR bot bids your sheet's suggested max
-function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*cfg.roster*20;
+function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*cfg.roster*20,dry=0;
   while(MD.log.length<target&&g-->0){
     const TS=DR.teams.map((_,t)=>teamState(t));
     if(TS.every(s=>s.spotsLeft<=0))break;
@@ -1691,8 +1691,26 @@ function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*
     const p=(MD.block&&BYID[MD.block]&&!DR.owned[MD.block])?BYID[MD.block]:mdNominee(MD.nom,mkt,TS);
     if(!p)break;
     const id=pid(p),m=mv[id];
+    const before=MD.log.length;
     mdResolve(id,m&&m.needed?m.maxBid:0);   // your bot bids your sheet — and passes on players you don't need
+    // DRY BREAK: nominations can deadlock (e.g. a pays-TE owner keeps nominating an unsellable
+    // 2nd TE once everyone else is full) — after 15 straight no-sales, hand off to the backstop
+    dry=MD.log.length===before?dry+1:0;
+    if(dry>=15)break;
   }
+  // BACKSTOP: a finished sim must never leave holes (n==null = sim-to-end). Any roster still
+  // open gets $1 fills from the best remaining USEFUL players — K/DST/QB/TE only into open
+  // starter slots, everything else = best remaining RB/WR by benchU (the young-upside doctrine).
+  if(n==null)DR.teams.forEach((_,i)=>{let s=teamState(i),guard2=cfg.roster+2;
+    while(s.spotsLeft>0&&guard2-->0){
+      const needPos=["K","DST","QB","TE"].find(pos=>s.need[pos]>0);
+      const pool=PLAYERS.filter(p=>!DR.owned[pid(p)]&&(needPos?p.position===needPos:(p.position==="RB"||p.position==="WR")));
+      const pick=pool.sort((a,b)=>(needPos?raPts(b)-raPts(a):benchU(b)-benchU(a)))[0];
+      if(!pick)break;
+      DR.owned[pid(pick)]={t:i,price:1,kept:false};
+      MD.log.unshift({name:pick.name,pos:pick.position,t:i,price:1,ru:null,rmax:0,mine:i===DR.me});
+      s=teamState(i);}});
+  saveDR();saveMD();
   render();}
 // projected PPG per week (season proj / 17), optimal starters vs bench
 function teamPPGwk(i){const s=teamState(i),slots={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1};let st=0,bn=0;
