@@ -1365,11 +1365,12 @@ function renderDraftRoom(){
     <div class="muted" style="font-size:11px;margin-top:4px">${espnStatusTxt()}</div>
     <div class="muted" id="espnStatus" style="font-size:11px;margin-top:2px"></div></div>`;
   // team strip — every owner's roster card: keepers 🔒, live draft score (starter PPG vs the
-  // predraft optimal), surplus captured (value bought − $ paid), and what they're targeting next
-  h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=TS[i];
+  // predraft optimal), surplus captured (value bought − $ paid), and what they're targeting next.
+  // 6-across grid → exactly two rows of 6 for the 12-team league (flex cards were too narrow)
+  h+=`<div class="dr-teams" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px">`+DR.teams.map((t,i)=>{const s=TS[i];
     const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`<span class="dr-need act">${s.need[k]>1?s.need[k]+" ":""}${k}</span>`).join("")||'<span class="dr-need">full</span>';
     const roster=rosterSlotsHTML(i,true);   // starting lineup (QB·RB·RB·WR·WR·FLX·TE·K·DST) + bench, ppg each
-    return `<div class="dr-team ${i===DR.me?"me":""} ${s.spotsLeft<=0?"full":""}" data-setme="${i}">
+    return `<div class="dr-team ${i===DR.me?"me":""} ${s.spotsLeft<=0?"full":""}" data-setme="${i}" style="width:auto;min-width:0">
       <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
       ${teamScoreHTML(i,BV)}${teamTargetsHTML(i)}
