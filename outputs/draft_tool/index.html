@@ -1148,8 +1148,8 @@ function optRosterPPG(BV,kept){
   const used=new Set();
   for(const k of (kept||[])){const p=k.p,pos=p.position;   // seat keepers: slot > flex > bench
     used.add(pid(p));budget-=k.cost;
-    if(slots[pos]>0){slots[pos]--;ppgSum+=(PRJ(p)||p.proj_pts||0)/17;}
-    else if(FLEXE.includes(pos)&&slots.FLEX>0){slots.FLEX--;ppgSum+=(PRJ(p)||p.proj_pts||0)/17;}
+    if(slots[pos]>0){slots[pos]--;ppgSum+=wkPts(p);}
+    else if(FLEXE.includes(pos)&&slots.FLEX>0){slots.FLEX--;ppgSum+=wkPts(p);}
     else budget+=1;}                                       // bench keeper releases that slot's $1 reserve
   const needs=[];
   ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<slots[pos];k++)needs.push([pos]);});
@@ -1165,7 +1165,17 @@ function optRosterPPG(BV,kept){
   if(S.spend>budget){for(let it=0;it<32;it++){const mid=(lo+hi)/2,T=sel(mid);
     if(T.spend<=budget){hi=mid;S=T;}else lo=mid;}
     if(S.spend>budget)S=sel(1e6);}
-  return ppgSum+S.ps.reduce((a,p)=>a+((PRJ(p)||p.proj_pts||0)/17),0);
+  // leftover pass (same as optimalPlan): pour unspent budget into best single-slot upgrades.
+  // Without it the discrete λ grid strands $20-40 in some scenarios and made a strictly
+  // dominant keep (Rice at $32 vs his $47 price) measure as a WORSE roster.
+  for(let it=0;it<20;it++){const un=budget-S.spend;let bi=-1,bp=null,bg=0;
+    S.ps.forEach((cur,ii)=>{const elig=needs[ii];
+      for(const p of PLAYERS){if(used.has(pid(p))||!elig.includes(p.position)||S.ps.some(x=>pid(x)===pid(p)))continue;
+        const d$=price(p)-price(cur),du=raPts(p)-raPts(cur);
+        if(du>bg&&d$<=un){bg=du;bi=ii;bp=p;}}});
+    if(!bp)break;
+    S.spend+=price(bp)-price(S.ps[bi]);S.ps[bi]=bp;}
+  return ppgSum+S.ps.reduce((a,p)=>a+wkPts(p),0);
 }
 let _teamOpt={};
 function teamOptPPG(i,BV){
@@ -1488,12 +1498,19 @@ function renderMockKeepers(){
   document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
   const host=document.getElementById("draftroom");host.style.display="block";
   if(!ensureKeeperLeague()){host.innerHTML='<div class="dr-panel">No keeper data. Run <code>scripts/predict_keepers.py</code> to generate <code>keepers_2026.js</code>, then reload.</div>';document.getElementById("notes").innerHTML="";return;}
-  const KT=KEEPERS_2026.teams, TS=DR.teams.map((_,i)=>teamState(i)), mkt=dynamicMarket();
-  const BV=baseValue(), IF=mkt.infl||1, RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
-  const mv=myVal(mkt,BV);
+  // KEEPER-DECISION PRICING: this screen answers a PRE-DRAFT question, so the market is
+  // computed as if ONLY keepers are rostered. Leftover mock/live picks in DR.owned drained
+  // the pool and collapsed every candidate's exp $ to the same bench-ramp number (~$19).
+  const _realOwned=DR.owned, mkDrafted=Object.keys(_realOwned).filter(id=>!_realOwned[id].kept).length;
+  let KT,TS,mkt,BV,IF,RV,mv;
+  try{
+    DR.owned={}; for(const id in _realOwned)if(_realOwned[id].kept)DR.owned[id]=_realOwned[id];
+    KT=KEEPERS_2026.teams; TS=DR.teams.map((_,i)=>teamState(i)); mkt=dynamicMarket();
+    BV=baseValue(); IF=mkt.infl||1; RV=id=>Math.round((BV[id]||0)*IF);   // value in ROOM dollars
+    mv=myVal(mkt,BV);
+  }finally{DR.owned=_realOwned;}                           // pricing captured — restore the real state
   // ONE pricing engine for cards + pool: exp = live market price (mkt.expIf rank-inserts kept players)
   let totKept=0,totCost=0; KT.forEach((t,i)=>{const k=keptForTeam(i);totKept+=k.length;k.forEach(c=>totCost+=c.cost);});
-  const mkDrafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
   let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
     <h3 style="margin:0">🧩 Mock Keepers — confirm each team's 0–3, watch the board react</h3><span style="flex:1"></span>
     <span>My team: <select class="drsel" id="mkMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
@@ -1748,9 +1765,13 @@ function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*
       s=teamState(i);}});
   saveDR();saveMD();
   render();}
-// projected PPG per week (season proj / 17), optimal starters vs bench
+// projected PPG per week — ONE canonical basis for every roster score: effPts (the same
+// healthy-rate-lifted expectation the whole value engine prices from), /17. Using the raw
+// games-penalized projection here while the knapsacks select on effPts made injury-lifted
+// players (Rashee Rice) look like TERRIBLE keeps: seated at 7.6 ppg while valued at 11+.
+const wkPts=p=>(isK(p)?(p.proj_pts||0):effPts(p))/17;
 function teamPPGwk(i){const s=teamState(i),slots={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1};let st=0,bn=0;
-  [...s.own].sort((a,b)=>(PRJ(b.p)||0)-(PRJ(a.p)||0)).forEach(x=>{const pos=x.p.position,w=(PRJ(x.p)||x.p.proj_pts||0)/17;
+  [...s.own].sort((a,b)=>wkPts(b.p)-wkPts(a.p)).forEach(x=>{const pos=x.p.position,w=wkPts(x.p);
     if(slots[pos]>0){slots[pos]--;st+=w;}
     else if(FLEXE.includes(pos)&&slots.FLEX>0){slots.FLEX--;st+=w;}
     else bn+=w;});
