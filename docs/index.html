@@ -1137,15 +1137,33 @@ function optimalPlan(mkt){
 }
 // PER-OWNER OPTIMAL: starter PPG/wk of the best roster THIS owner could have built — his best
 // keeper choice (0-3 from his real keeper-eligible roster at true keeper costs) + the optimal
-// draft of everything else at intrinsic (baseValue) prices with the remaining budget. Every
-// owner is graded against his OWN ceiling, not a global one: a team holding cheap star keeper
-// rights has a higher bar than one with nothing worth keeping.
-function optRosterPPG(BV,kept){
-  const val=BV||baseValue(), price=p=>Math.max(1,val[pid(p)]||1);
+// draft of everything else with the remaining budget. Every owner is graded against his OWN
+// ceiling, not a global one: cheap star keeper rights raise the bar.
+// CURRENCY: everything is in ROOM dollars, priced by the SAME engine the cards display —
+// the keepers-only market's Exp $ (curve × anchors × positional ceilings × inflation).
+// Flat intrinsic-$ pricing under-kept (thought it could re-buy Chase at $55 when the room
+// pays $66); flat ×inflation over-kept QBs (priced Allen's re-buy at $67 when the league
+// has never paid a QB more than ~$34). The real exp map is the only honest auction.
+let _kmkt=null;
+function keeperMkt(){
+  let kc=0,ks=0;for(const id in DR.owned)if(DR.owned[id].kept){kc++;ks+=DR.owned[id].price||0;}
+  const key=projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded())+"|"+kc+"|"+ks;
+  if(_kmkt&&_kmkt.k===key)return _kmkt;
+  const real=DR.owned;const m={};let infl=1.4;
+  try{
+    DR.owned={};for(const id in real)if(real[id].kept)DR.owned[id]=real[id];
+    const mkt=dynamicMarket();infl=mkt.infl||1;
+    PLAYERS.forEach(p=>{m[pid(p)]=isK(p)?1:Math.max(1,mkt.expIf(p));});   // expIf = price[] for avail, rank-inserted for kept
+  }finally{DR.owned=real;}
+  _kmkt={k:key,m,infl};return _kmkt;
+}
+const keeperInfl=()=>keeperMkt().infl;
+function optRosterPPG(BV,kept,excl){
+  const KM=keeperMkt().m, price=p=>KM[pid(p)]||1;
   const slots={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1};
   const NB=cfg.roster-9;                                   // bench slots
   let budget=cfg.budget-NB, ppgSum=0;                      // bench reserves $1 each
-  const used=new Set();
+  const used=new Set(excl||[]);                            // players kept by OTHER teams aren't buyable
   for(const k of (kept||[])){const p=k.p,pos=p.position;   // seat keepers: slot > flex > bench
     used.add(pid(p));budget-=k.cost;
     if(slots[pos]>0){slots[pos]--;ppgSum+=wkPts(p);}
@@ -1178,21 +1196,26 @@ function optRosterPPG(BV,kept){
   return ppgSum+S.ps.reduce((a,p)=>a+wkPts(p),0);
 }
 let _teamOpt={};
+const _toKey=i=>i+"|"+projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded())+"|"+keeperInfl().toFixed(2);
 function teamOptPPG(i,BV){
-  const key=i+"|"+projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded());
+  const key=_toKey(i);
   if(_teamOpt[key]!=null)return _teamOpt[key].v;
   // optimal keeps chosen GREEDY-MARGINAL: start from keep-nothing, add (up to 3) the candidate
   // whose keep most raises the achievable starter PPG, stop when nothing helps. Dollar savings
   // alone over-keeps — a discounted mediocre player can block the slot a star should occupy —
   // and this construction guarantees ceiling >= the keep-nothing optimal.
-  let kept=[],best=optRosterPPG(BV,kept),base=best;
+  // players kept by OTHER teams never reach this hypothetical auction; my own keeper
+  // candidates DO when thrown back (they re-enter the pool at their exp $)
+  const excl=[];for(const id in DR.owned)if(DR.owned[id].kept&&DR.owned[id].t!==i)excl.push(id);
+  let kept=[],best=optRosterPPG(BV,kept,excl),base=best;
   if(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.teams&&KEEPERS_2026.teams[i]){
+    const KM=keeperMkt().m;
     let pool=KEEPERS_2026.teams[i].candidates
-      .map(c=>({p:BYID[c.pid],cost:c.cost,sav:(BV[c.pid]||1)-c.cost}))
+      .map(c=>({p:BYID[c.pid],cost:c.cost,sav:(KM[c.pid]||1)-c.cost}))   // savings vs his REAL room exp $
       .filter(k=>k.p&&k.sav>0).sort((a,b)=>b.sav-a.sav).slice(0,8);
     while(kept.length<3&&pool.length){
       let bi=-1,bv=best;
-      pool.forEach((k,j)=>{const v=optRosterPPG(BV,kept.concat([k]));if(v>bv){bv=v;bi=j;}});
+      pool.forEach((k,j)=>{const v=optRosterPPG(BV,kept.concat([k]),excl);if(v>bv){bv=v;bi=j;}});
       if(bi<0)break;
       kept.push(pool[bi]);pool.splice(bi,1);best=bv;
     }
@@ -1203,8 +1226,7 @@ function teamOptPPG(i,BV){
 // which (0-3) keepers the knapsack picked for team i, and the starter-PPG they add vs keeping
 // nothing — the OPTIMAL keep set factoring opportunity cost, VONA and budget in one solve
 function teamOptKeeps(i,BV){teamOptPPG(i,BV);
-  const key=i+"|"+projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded());
-  return _teamOpt[key]||{kept:[],gain:0};}
+  return _teamOpt[_toKey(i)]||{kept:[],gain:0};}
 // shared team-card grading — the Draft Room and the Mock Draft score every roster identically:
 // ⚡ current starter PPG/wk · % of THIS OWNER's optimal (best keeps + optimal draft) · surplus
 function teamScoreHTML(i,BV){
