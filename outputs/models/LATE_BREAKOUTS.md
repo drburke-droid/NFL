@@ -196,6 +196,30 @@ exist yet, so current 2026 scores use buzz=NaN; **in draft week run
 `build_draft_tool.py`** — partial-August dailies are rate-scaled to a full month
 and the dart board picks up camp risers automatically.
 
+## 8. Does buzz generalize to PRICED players? Tested — no. (`buzz_priced_players.py`)
+
+Same buzz features, applied to the drafted pool (FFA ADP ≤ 120; 1,077 player-seasons,
+92% buzz coverage), outcomes measured as VORP vs same-season/bucket/position peers and
+actual − projected points, attention normalized within season × ADP bucket:
+
+- **Spike vs own baseline** (the dart signal): dead. Spearman **−0.01** vs peer-relative
+  VORP (p=0.67), −0.04 vs projection residual. No quintile pattern in any bucket.
+- **Attention level**: +0.05 vs VORP residual (p=0.10, n.s.); +0.089 vs projection
+  residual (p=0.003) — statistically real but tiny, and it reverses sign in the
+  ADP 73-120 bucket. Not actionable.
+
+**Why the asymmetry:** for an unlisted $1 player, a big August has essentially one
+cause — he's seizing a job in camp (Puka). For a priced player, August attention is
+ambiguous: the top-decile spikes are a mix of genuine risers (Chase Brown '24 +150
+VORP-Δ) and holdouts, injury sagas and hype (Jonathan Taylor '23 trade demand −67,
+Dalvin Cook '23 release −149, Jonathon Brooks '24 injury −98). Hype and havoc look
+identical in pageviews, so the signal's meaning is conditional on price tier.
+
+**Conclusion:** buzz stays in the late-breakout dart model only; it must NOT be wired
+into the main board values or Exp $. Possible future disambiguator: GDELT article
+*tone* alongside volume (positive camp reports vs negative injury/contract news) —
+current GDELT coverage (570 selected players) is too thin for the priced pool.
+
 ## Caveats
 
 - FFA ADP/AAV missing before 2016; 2015 partial. Study window 2016-2025.
