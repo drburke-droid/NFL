@@ -194,3 +194,46 @@ by season (t>=2%):
 sanity — ALL soft quotes both sides blind (juice floor):
    n=260756  ROI -6.8%
 ```
+
+
+## 2025 bet log + $500 Kelly sim (`kelly_2025_sim.py`)
+
+```
+=== SAMPLE BETS, 2025 season (EV>=4% vs Pinnacle fair, sentiment veto) ===
+ wk player                 market           side   line book          odds    EV res 
+  1 George Pickens         reception_yds    UNDER  56.5 bovada        +110   9% WIN
+  1 Ladd McConkey          receptions       OVER    5.5 draftkings    +115  19% WIN
+  1 Kyle Pitts             receptions       OVER    3.5 espnbet       +135   6% WIN
+  1 Theo Johnson           reception_yds    OVER   23.5 fanduel       -113   7% loss
+  1 Darius Slayton         receptions       UNDER   1.5 betmgm        +185   5% WIN
+  1 Malik Nabers           receptions       OVER    6.5 espnbet       +125   7% loss
+  1 TreVeyon Henderson     receptions       UNDER   2.5 hardrockbet   +125   5% loss
+  1 Chris Olave            receptions       OVER    4.5 betrivers     +102   4% WIN
+  1 Kaleb Johnson          rush_yds         OVER   24.5 bovada        +140   6% loss
+  1 Tua Tagovailoa         pass_completions UNDER  24.5 fanatics      -125   5% WIN
+  1 Daniel Jones           rush_yds         UNDER  24.5 bovada        +110   7% loss
+  1 Joe Burrow             pass_completions OVER   24.5 betrivers     -113   5% loss
+  1 Cedric Tillman         receptions       OVER    3.5 hardrockbet   +130  10% WIN
+  1 Bo Nix                 pass_yds         OVER  210.5 draftkings    -113   5% loss
+  1 Christian McCaffrey    receptions       OVER    3.5 draftkings    -111   5% WIN
+  1 George Kittle          receptions       OVER    4.5 hardrockbet   -125   6% loss
+  1 Christian McCaffrey    rush_yds         UNDER  64.5 draftkings    -112   5% loss
+  1 DJ Moore               reception_yds    UNDER  57.5 bovada        +105   6% loss
+  ... 300 bets total in 2025 | win rate 48% | avg odds 2.09 | flat-stake ROI +0.4%
+
+=== $500 bankroll, 2025, EV>=4% + veto (300 bets, chronological) ===
+   full Kelly     end $308   peak $934   trough $289
+   half Kelly     end $438   peak $772   trough $424
+   quarter Kelly  end $484   peak $627   trough $477
+   half-Kelly bankroll by week: w1:$507 w2:$727 w3:$678 w4:$562 w5:$666 w6:$561 w7:$508 w8:$575 w9:$635 w10:$622 w11:$702 w12:$630 w13:$599 w14:$540 w15:$525 w16:$463 w17:$450 w18:$438
+
+=== $500 bankroll, 2025, EV>=2% + veto (862 bets, chronological) ===
+   full Kelly     end $191   peak $979   trough $174
+   half Kelly     end $366   peak $785   trough $348
+   quarter Kelly  end $449   peak $647   trough $437
+   half-Kelly bankroll by week: w1:$505 w2:$618 w3:$611 w4:$519 w5:$651 w6:$525 w7:$530 w8:$640 w9:$661 w10:$625 w11:$640 w12:$547 w13:$534 w14:$496 w15:$423 w16:$368 w17:$371 w18:$366
+
+=== context: other seasons, EV>=4% + veto, half Kelly from $500 ===
+   2023: 373 bets -> end $1,163  (flat ROI +8.8%)
+   2024: 225 bets -> end $655  (flat ROI +4.8%)
+```
