@@ -105,3 +105,32 @@ FROZEN WEEKLY RULE on unseen 2023 (n 6576):
    UNDER wk_tone<-2 & wk_n>=25  [THE RULE]    n= 1315  ROI -2.0%
    OVER  same cell (sanity)                   n= 1315  ROI -4.7%
 ```
+
+
+## Sentiment × the existing prop model (`sentiment_prop_model_boost.py`)
+
+```
+props with model + sentiment: 13622 of 17178; bad-news cell: 1922
+
+A. tone vs MODEL residual (won_over − p_over): r=-0.014 (p=0.1085)
+   bad-news cell  n= 1922  model resid +0.024 (±0.024)  (negative = overs do worse than the model thinks)
+   rest           n=11700  model resid +0.050 (±0.010)  (negative = overs do worse than the model thinks)
+
+B. betting sims (bet model side at best price when |p_over − novig| ≥ t):
+                                  t=3%            t=5%            t=8%
+   baseline model       n=11760 -1.1%  n=10508 -0.8%  n= 8771 -0.8%
+   + tone VETO          n=11203 -0.2%  n=10052 -0.0%  n= 8427 +0.0%
+   + tone TILT (−.02)   n=11752 -0.8%  n=10509 -0.6%  n= 8773 -0.6%
+
+C. season split:
+  2024:
+   baseline model       n= 5628 -3.4%  n= 5059 -2.9%  n= 4215 -3.6%
+   + tone VETO          n= 5367 -2.9%  n= 4840 -2.4%  n= 4047 -3.1%
+   + tone TILT (−.02)   n= 5634 -3.1%  n= 5061 -2.8%  n= 4214 -3.5%
+  2025:
+   baseline model       n= 6132 +1.1%  n= 5449 +1.1%  n= 4556 +1.9%
+   + tone VETO          n= 5836 +2.3%  n= 5212 +2.2%  n= 4380 +2.9%
+   + tone TILT (−.02)   n= 6118 +1.3%  n= 5448 +1.3%  n= 4559 +2.0%
+
+vetoed bets (model-OVER on bad-news players, t=3%): n=557, their ROI would have been -18.0%
+```
