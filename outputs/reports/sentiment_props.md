@@ -78,3 +78,30 @@ by market:
    player_rush_attempts         n= 341  ROI +11.7%
    player_rush_yds              n= 484  ROI +6.1%
 ```
+
+
+## TRUE out-of-sample: 2023 (`sentiment_props_2023_oos.py`)
+
+```
+2023 frame: 15633 props (447 games, median books/prop 7)
+with outcomes (DNP/push dropped): 7997; overs hit 50.1% vs novig 49.8%
+
+FROZEN MONTHLY RULE on unseen 2023 (n with sentiment 6595):
+   ALL unders baseline                        n= 6595  ROI -4.8%
+   ALL overs baseline                         n= 6595  ROI -2.5%
+   UNDER prev_tone<-2 & n>=100  [THE RULE]    n= 1054  ROI -2.0%
+   OVER  same cell (sanity)                   n= 1054  ROI -5.6%
+   UNDER prev_tone<-2 (no vol floor)          n= 1194  ROI -2.9%
+   rule cell by market:
+     player_pass_completions      n=  54  ROI +5.0%
+     player_pass_yds              n=  49  ROI +4.0%
+     player_reception_yds         n= 334  ROI -0.5%
+     player_receptions            n= 316  ROI -2.6%
+     player_rush_attempts         n= 116  ROI -9.2%
+     player_rush_yds              n= 185  ROI -2.6%
+
+FROZEN WEEKLY RULE on unseen 2023 (n 6576):
+   ALL unders baseline                        n= 6576  ROI -4.8%
+   UNDER wk_tone<-2 & wk_n>=25  [THE RULE]    n= 1315  ROI -2.0%
+   OVER  same cell (sanity)                   n= 1315  ROI -4.7%
+```
