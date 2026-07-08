@@ -9,3 +9,9 @@ data/espn/
 
 # transient run logs (top-level outputs/)
 outputs/*.log
+
+# SQLite sidecars (WAL mode) + a stray empty file once created by a mistyped path;
+# the real DB is db/nfl_odds.db (LFS)
+*.db-wal
+*.db-shm
+data/nfl_odds.db

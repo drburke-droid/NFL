@@ -114,6 +114,13 @@ def build_skill(con):
     df = df.merge(vl, on="player_id", how="left")
     im = pd.read_sql("SELECT player_id, fade_prob FROM nflv_implosion", con).drop_duplicates("player_id")
     df = df.merge(im, on="player_id", how="left")
+    # late-breakout darts: price-anchored study (LATE_BREAKOUTS.md) — P(VORP+ this
+    # season) for end-of-auction players; unlike value-leap it covers rookies
+    try:
+        lb = pd.read_sql("SELECT player_id, p_hit AS dart_prob FROM nflv_late_breakout", con).drop_duplicates("player_id")
+        df = df.merge(lb, on="player_id", how="left")
+    except Exception:
+        df["dart_prob"] = np.nan
     # the vacancy is team-level; flag only the top returning RB with a real role
     # (not every backup on the team) so the tag points at the actual beneficiary
     df.loc[(df.vacated_role == 1) & (df.pred_ppg < 6), "vacated_role"] = 0
@@ -173,6 +180,7 @@ def build_kdst(con):
             s[c] = np.nan
         s["won_job"] = 0; s["vacated_role"] = 0; s["vac_rb_carries"] = 0
         s["archetype"] = ""; s["age_risk"] = 0; s["leap_prob"] = np.nan; s["fade_prob"] = np.nan
+        s["dart_prob"] = np.nan
         key = "name" if pos == "K" else "team"
         s = s.merge(a25, on=key, how="left"); s["actual_2025"] = s["a25"]
         out[pos] = (s, repl)
@@ -194,7 +202,7 @@ def main():
           "vorp","repl_pts","actual_2025","prior_ppg","is_flex_starter","conf",
           "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
           "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
-          "vacated_role","vac_rb_carries","archetype","age_risk","leap_prob","fade_prob"]
+          "vacated_role","vac_rb_carries","archetype","age_risk","leap_prob","fade_prob","dart_prob"]
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
@@ -212,7 +220,7 @@ def main():
 
     for c in ["proj_pts","proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","age"]:
         allp[c]=allp[c].round(1)
-    for c in ["breakout_prob","hit_prob","bust","boom","leap_prob","fade_prob"]:
+    for c in ["breakout_prob","hit_prob","bust","boom","leap_prob","fade_prob","dart_prob"]:
         allp[c]=allp[c].round(3)
     for c in ["floor","ceiling","trend_h1","trend_h2","trend_dppg","trend_dtch"]:
         allp[c]=allp[c].round(1)
@@ -222,7 +230,7 @@ def main():
               "proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg",
               "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
               "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
-              "vacated_role","vac_rb_carries","archetype","age_risk","leap_prob","fade_prob"]
+              "vacated_role","vac_rb_carries","archetype","age_risk","leap_prob","fade_prob","dart_prob"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]
