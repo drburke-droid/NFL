@@ -237,3 +237,17 @@ sanity — ALL soft quotes both sides blind (juice floor):
    2023: 373 bets -> end $1,163  (flat ROI +8.8%)
    2024: 225 bets -> end $655  (flat ROI +4.8%)
 ```
+
+
+## Book-level validity check (regulated vs offshore)
+
+Frozen config (EV>=4% vs Pinnacle fair, both sides, veto on overs), deduped, 898 bets 2023-25:
+```
+REGULATED books pooled: n=716  +6.2%   (DK +28.6%, HardRock +18.8%, BetRivers +14.2%,
+                                        FanDuel +7.0%, BetMGM +7.5%; ESPNBet/betparx negative)
+offshore pooled:        n=182  +0.2%
+regulated-only by season: 2023 +9.9% (n=306) | 2024 +4.0% (n=166) | 2025 +3.1% (n=244)
+```
+The edge lives at bettable regulated books and is positive in all three seasons; stale
+offshore quotes were diluting 2025, not driving the profit. Filter is execution-motivated
+(a priori), not performance-mined.
