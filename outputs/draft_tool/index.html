@@ -116,6 +116,17 @@
   .settings{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:10px;font-size:13px;color:var(--muted)}
   .ffabar{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:8px 12px;margin-top:10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px}
   .ffastat{color:var(--good);font-weight:600}
+  .wbcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+  .wbcard h3{margin:0 0 10px;font-size:14px}
+  .wbtbl{width:100%;border-collapse:collapse;font-size:12px}
+  .wbtbl th{text-align:left;color:var(--muted);border-bottom:1px solid var(--line);padding:5px 6px;font-weight:600}
+  .wbtbl td{padding:5px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .wbq{color:var(--good);font-weight:700} .wbbad{color:var(--bad);font-weight:700}
+  .wbin{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:6px;font-size:12px;padding:3px 5px;width:64px}
+  .wbin.wide{width:210px}
+  .wbig{font-size:24px;font-weight:800}
+  .wbstat{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:6px}
+  .wbstat .lb{color:var(--muted);font-size:11px}
 </style>
 </head>
 <body>
@@ -133,6 +144,7 @@
     <button class="btn" id="mKeep">🧩 Mock Keepers</button>
     <button class="btn" id="mMock">🤖 Mock Draft</button>
     <button class="btn" id="mDraft">🏟️ Draft Room</button>
+    <button class="btn" id="mWind">🌬️ Wind Bets</button>
     <span class="muted" id="count"></span>
   </div>
   <div class="ffabar">
@@ -170,6 +182,7 @@
     <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
     <div id="scatter" style="display:none"></div>
     <div id="draftroom" style="display:none"></div>
+    <div id="windtab" style="display:none"></div>
     <div class="foot" id="notes"></div>
   </div>
   <div class="side" id="side">
@@ -548,12 +561,16 @@ function setMode(m){
   document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
   document.getElementById("mKeep").classList.toggle("active",m==="mockkeep");
   document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
+  document.getElementById("mWind").classList.toggle("active",m==="wind");
   const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft");
   document.getElementById("settings").style.display=(m==="auction"||m==="draftroom")?"flex":"none";
-  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade")?"none":"flex";
+  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=host?"block":"none";
-  if(m!=="comps"&&!host){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
+  document.getElementById("windtab").style.display=m==="wind"?"block":"none";
+  document.querySelector(".controls").style.display=m==="wind"?"none":"";
+  if(m==="wind"){document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";}
+  if(m!=="comps"&&!host&&m!=="wind"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
 }
 document.getElementById("mCheat").onclick=()=>setMode("cheat");
@@ -566,6 +583,7 @@ document.getElementById("mFade").onclick=()=>setMode("fade");
 document.getElementById("mDraft").onclick=()=>setMode("draftroom");
 document.getElementById("mKeep").onclick=()=>setMode("mockkeep");
 document.getElementById("mMock").onclick=()=>setMode("mockdraft");
+document.getElementById("mWind").onclick=()=>setMode("wind");
 document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
 document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
@@ -1958,7 +1976,170 @@ function renderMockDraft(){
     "Click any row anytime for a bid preview without nominating. This screen is the <b>real Draft Room with bots</b>: the same 🎯 Your plan knapsack (walk-aways, ★ priorities), 📊 scarcity panel, 🤖 bidder hints, and pool columns (Value / Exp $"+(espnLoaded()?" / ESPN $":"")+" / My Max / Edge / VONA pts) — only the winner-input differs (bots bid here; you record real winners there). Team cards carry the <b>same grading</b> — ⚡ starter PPG · % of the predraft-optimal roster · surplus captured — so you can see how your team performs and which owners to watch. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft; 🏁 final grades rank everyone vs optimal. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
 
+// ---------- 🌬️ Wind Bets paper trading ----------
+// Strategy (validated in outputs/reports/sentiment_props.md): when the forecast game-window
+// (kickoff->+3h) sustained wind is 8-15 kn at an outdoor stadium, unders beat the closing
+// market: totals 55-58%, QB pass-yds 59%+ (2015-25 OOS + forecast-conditioned 2024-25).
+// 15+ kn is PRICED (no bet). Calm is no bet. Rain is watchlist-only (dead 2024-25).
+const WIND_STAD={BAL:[39.2780,-76.6227],BUF:[42.7738,-78.7870],CAR:[35.2258,-80.8528],
+  CHI:[41.8623,-87.6167],CIN:[39.0955,-84.5161],CLE:[41.5061,-81.6995],DEN:[39.7439,-105.0201],
+  GB:[44.5013,-88.0622],JAX:[30.3239,-81.6373],KC:[39.0489,-94.4839],MIA:[25.9580,-80.2389],
+  NE:[42.0909,-71.2643],NYG:[40.8128,-74.0742],NYJ:[40.8128,-74.0742],PHI:[39.9008,-75.1675],
+  PIT:[40.4468,-80.0158],SF:[37.4032,-121.9698],SEA:[47.5952,-122.3316],TB:[27.9759,-82.5033],
+  TEN:[36.1665,-86.7713],WAS:[38.9077,-76.8645]};
+let WB=JSON.parse(localStorage.getItem("windbets_v1")||'null')||{bank0:500,bets:[],scan:null};
+const saveWB=()=>localStorage.setItem("windbets_v1",JSON.stringify(WB));
+const amToDec=a=>{a=+a;if(!a||Math.abs(a)<100)return null;return a<0?1+100/Math.abs(a):1+a/100;};
+const wbKelly=(bank,dec,p)=>{const f=(p*dec-1)/(dec-1);return Math.max(0,Math.min(0.25*f,0.10))*bank;};
+const wbPnl=b=>{const d=amToDec(b.price)||1.909;return b.result==="won"?b.stake*(d-1):b.result==="lost"?-b.stake:0;};
+const wbBank=()=>WB.bank0+WB.bets.filter(b=>b.result).reduce((s,b)=>s+wbPnl(b),0);
+function etToUTC(dateStr,timeStr){ // nflverse gametime is Eastern wall time
+  const [hh,mm]=timeStr.split(":").map(Number);
+  const [Y,M,D]=dateStr.split("-").map(Number);
+  const want=Date.UTC(Y,M-1,D,hh,mm);
+  let guess=new Date(want);
+  for(let i=0;i<3;i++){
+    const parts=new Intl.DateTimeFormat("en-CA",{timeZone:"America/New_York",hour12:false,
+      year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit"}).formatToParts(guess);
+    const g={};parts.forEach(x=>g[x.type]=x.value);
+    const asET=Date.UTC(+g.year,+g.month-1,+g.day,g.hour==="24"?0:+g.hour,+g.minute);
+    if(asET===want)break;
+    guess=new Date(guess.getTime()+(want-asET));
+  }
+  return guess;
+}
+async function windScan(){
+  const st=document.getElementById("wbScanStat");
+  try{
+    if(st)st.textContent="fetching schedule…";
+    const r=await fetch("https://raw.githubusercontent.com/nflverse/nfldata/master/data/games.csv");
+    if(!r.ok)throw new Error("schedule HTTP "+r.status);
+    const lines=(await r.text()).split("\n");
+    const hd=lines[0].split(",");const ix={};hd.forEach((h,i)=>ix[h.trim()]=i);
+    const seasonNow=(d=>d.getMonth()>=2?d.getFullYear():d.getFullYear()-1)(new Date());
+    const now=Date.now(),rows=[];
+    for(let i=1;i<lines.length;i++){
+      const c=lines[i].split(/,(?=(?:[^"]*"[^"]*")*[^"]*$)/);
+      if(c.length<hd.length)continue;
+      if(+c[ix.season]!==seasonNow)continue;
+      const roof=(c[ix.roof]||"").trim();
+      if(roof!=="outdoors"&&roof!=="open")continue;
+      if((c[ix.location]||"").trim()!=="Home")continue;
+      const home=c[ix.home_team].trim();
+      if(!WIND_STAD[home])continue;
+      const gt=(c[ix.gametime]||"").trim();
+      if(!gt)continue;
+      const ko=etToUTC(c[ix.gameday].trim(),gt),t=ko.getTime();
+      if(t<now-4*36e5||t>now+8*864e5)continue;
+      rows.push({gid:c[ix.game_id],week:c[ix.week],away:c[ix.away_team].trim(),home,ko:ko.toISOString()});
+    }
+    if(st)st.textContent=rows.length?`fetching forecasts for ${rows.length} games…`:"";
+    const byStad={};rows.forEach(g=>{(byStad[g.home]=byStad[g.home]||[]).push(g);});
+    for(const tm of Object.keys(byStad)){
+      const [la,lo]=WIND_STAD[tm];
+      const fr=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&hourly=wind_speed_10m,wind_gusts_10m,precipitation&windspeed_unit=kn&timezone=UTC&forecast_days=16`);
+      if(!fr.ok)throw new Error("forecast HTTP "+fr.status);
+      const H=(await fr.json()).hourly,tIdx={};H.time.forEach((s,i)=>tIdx[s]=i);
+      byStad[tm].forEach(g=>{
+        const k=new Date(g.ko);k.setUTCMinutes(0,0,0);
+        const w=[],gu=[],pr=[];
+        for(let h=0;h<=3;h++){
+          const key=new Date(k.getTime()+h*36e5).toISOString().slice(0,13)+":00";
+          const i=tIdx[key];
+          if(i!==undefined&&H.wind_speed_10m[i]!=null){w.push(H.wind_speed_10m[i]);gu.push(H.wind_gusts_10m[i]);pr.push(H.precipitation[i]||0);}
+        }
+        if(!w.length){g.far=true;return;}
+        g.wind=+(w.reduce((a,b)=>a+b,0)/w.length).toFixed(1);
+        g.gust=Math.round(Math.max(...gu));
+        g.rain=+pr.reduce((a,b)=>a+b,0).toFixed(1);
+      });
+    }
+    WB.scan={ts:now,rows};saveWB();render();
+  }catch(e){if(st)st.textContent="scan failed: "+e.message;}
+}
+function wbAddTickets(g){
+  const bank=wbBank(),dec=1.909,date=g.ko.slice(0,10),game=`${g.away} @ ${g.home}`;
+  const mk=(kind,desc,p)=>({id:Date.now()+Math.random().toString(16).slice(2,6),date,game,kind,desc,
+    price:-110,stake:Math.max(1,Math.round(wbKelly(bank,dec,p))),result:null,
+    fc:`${g.wind}kn g${g.gust}${g.rain>=1?" 🌧"+g.rain+"mm":""}`});
+  WB.bets.push(mk("total","Game total UNDER ___",0.583),
+               mk("prop",`${g.home} QB pass yds UNDER ___`,0.55),
+               mk("prop",`${g.away} QB pass yds UNDER ___`,0.55));
+  saveWB();render();
+}
+function renderWind(){
+  const scan=WB.scan,pend=WB.bets.filter(b=>!b.result),done=WB.bets.filter(b=>b.result);
+  const bank=wbBank(),staked=done.reduce((s,b)=>s+b.stake,0),pnl=bank-WB.bank0;
+  const rec=k=>{const s=done.filter(b=>!k||b.kind===k);
+    return `${s.filter(b=>b.result==="won").length}-${s.filter(b=>b.result==="lost").length}-${s.filter(b=>b.result==="push").length}`;};
+  const scanRows=(scan?scan.rows:[]).slice().sort((a,b)=>a.ko<b.ko?-1:1).map(g=>{
+    const q=!g.far&&g.wind>=8&&g.wind<=15;
+    const stat=g.far?'<span class="muted">beyond 16-day forecast</span>'
+      :q?'<span class="wbq">✅ QUALIFIES — bet unders</span>'
+      :g.wind>15?'<span class="wbbad">⛔ 15+ kn — priced, no bet</span>'
+      :'<span class="muted">calm — no bet</span>';
+    const tags=(g.gust>=25&&!g.far?' <span title="gusty — historically supportive but not a solo trigger">💨</span>':"")
+      +(g.rain>=1&&!g.far?' <span title="rain: watchlist only, signal dead 2024-25 — do NOT bet on rain alone">🌧</span>':"");
+    const ko=new Date(g.ko);
+    return `<tr><td>wk${g.week}</td><td>${g.away} @ ${g.home}</td>
+      <td>${ko.toLocaleString([],{weekday:"short",month:"short",day:"numeric",hour:"numeric",minute:"2-digit"})}</td>
+      <td>${g.far?"—":g.wind+" kn"}</td><td>${g.far?"—":g.gust+" kn"}</td><td>${g.far?"—":g.rain+" mm"}</td>
+      <td>${stat}${tags}</td>
+      <td>${q?`<button class="btn sm up wbadd" data-gid="${g.gid}">＋ 3 tickets</button>`:""}</td></tr>`;}).join("");
+  const betRow=(b,settled)=>{
+    const d=amToDec(b.price);
+    return `<tr><td>${b.date}</td><td><input class="wbin wide wbf" data-id="${b.id}" data-f="desc" value="${String(b.desc).replace(/"/g,"&quot;")}"${settled?" disabled":""}></td>
+      <td>${b.game}</td><td>${b.kind}</td><td class="muted">${b.fc||""}</td>
+      <td><input class="wbin wbf" data-id="${b.id}" data-f="price" type="number" value="${b.price}"${settled?" disabled":""}></td>
+      <td><input class="wbin wbf" data-id="${b.id}" data-f="stake" type="number" value="${b.stake}"${settled?" disabled":""}></td>
+      ${settled?`<td class="${b.result==="won"?"wbq":b.result==="lost"?"wbbad":"muted"}">${b.result} ${wbPnl(b)>=0?"+":""}$${wbPnl(b).toFixed(0)}</td>
+        <td><button class="btn sm wbre" data-id="${b.id}" title="reopen">↺</button></td>`
+      :`<td><button class="btn sm up wbres" data-id="${b.id}" data-r="won">W</button>
+         <button class="btn sm wbres" data-id="${b.id}" data-r="lost">L</button>
+         <button class="btn sm wbres" data-id="${b.id}" data-r="push">P</button></td>
+        <td><button class="btn sm wbdel" data-id="${b.id}">✕</button></td>`}</tr>`;};
+  document.getElementById("windtab").innerHTML=`
+  <div class="wbcard"><div class="wbstat">
+    <div><div class="wbig">$${bank.toFixed(0)}</div><div class="lb">paper bankroll (start $<input class="wbin" id="wbBank0" type="number" value="${WB.bank0}" style="width:52px">)</div></div>
+    <div><div class="wbig">${rec()}</div><div class="lb">record W-L-P</div></div>
+    <div><div class="wbig">${staked?((pnl/staked)*100).toFixed(1)+"%":"—"}</div><div class="lb">ROI on $${staked.toFixed(0)} staked</div></div>
+    <div><div class="wbig">${rec("total")}</div><div class="lb">totals</div></div>
+    <div><div class="wbig">${rec("prop")}</div><div class="lb">QB props</div></div>
+    <div style="margin-left:auto"><button class="btn sm" id="wbExport">⬇ CSV</button> <button class="btn sm" id="wbReset">reset log</button></div>
+  </div></div>
+  <div class="wbcard"><h3>1 · This week's forecast scan <button class="btn sm up" id="wbScan" style="margin-left:8px">🔄 Check forecasts</button>
+    <span class="muted" id="wbScanStat" style="font-weight:400;font-size:12px;margin-left:8px">${scan?"last scan "+new Date(scan.ts).toLocaleString():"never scanned"}</span></h3>
+    ${scan&&scan.rows.length?`<table class="wbtbl"><tr><th>wk</th><th>game</th><th>kickoff (local)</th><th>wind</th><th>gust</th><th>rain</th><th>status</th><th></th></tr>${scanRows}</table>`
+      :`<div class="muted" style="font-size:13px">${scan?"No outdoor games in the next 8 days — season starts in September.":"Press <b>Check forecasts</b> — pulls the NFL schedule + hourly stadium forecasts (free open-meteo API) and flags games whose kickoff→+3h wind sits in the 8–15 kn band."}</div>`}
+  </div>
+  <div class="wbcard"><h3>2 · Pending tickets (${pend.length}) <button class="btn sm" id="wbCustom" style="margin-left:8px">＋ custom</button></h3>
+    ${pend.length?`<table class="wbtbl"><tr><th>date</th><th>bet</th><th>game</th><th>kind</th><th>fc</th><th>price</th><th>stake $</th><th>result</th><th></th></tr>${pend.map(b=>betRow(b,false)).join("")}</table>
+      <div class="muted" style="font-size:11px;margin-top:6px">Fill the actual closing line into the bet text and the real best <b>regulated-book</b> price (American). Stakes pre-sized at quarter-Kelly of current bankroll (totals p=.583, props p=.55, capped 10%) — resize freely. Mark W/L/P after the game.</div>`
+      :'<div class="muted" style="font-size:13px">none — add tickets from qualifying games above</div>'}
+  </div>
+  <div class="wbcard"><h3>3 · Settled (${done.length})</h3>
+    ${done.length?`<table class="wbtbl"><tr><th>date</th><th>bet</th><th>game</th><th>kind</th><th>fc</th><th>price</th><th>stake $</th><th>result</th><th></th></tr>${done.slice().reverse().map(b=>betRow(b,true)).join("")}</table>`
+      :'<div class="muted" style="font-size:13px">nothing settled yet</div>'}
+  </div>`;
+  document.getElementById("wbScan").onclick=windScan;
+  document.getElementById("wbBank0").onchange=e=>{WB.bank0=Math.max(1,+e.target.value||500);saveWB();render();};
+  document.getElementById("wbReset").onclick=()=>{if(confirm("Clear the entire paper-bet log?")){WB={bank0:500,bets:[],scan:WB.scan};saveWB();render();}};
+  document.getElementById("wbCustom").onclick=()=>{WB.bets.push({id:Date.now()+"",date:new Date().toISOString().slice(0,10),game:"",kind:"total",desc:"custom UNDER ___",price:-110,stake:15,result:null,fc:""});saveWB();render();};
+  document.getElementById("wbExport").onclick=()=>{
+    const csv=["date,game,kind,desc,forecast,price,stake,result,pnl",
+      ...WB.bets.map(b=>[b.date,b.game,b.kind,'"'+String(b.desc).replace(/"/g,'""')+'"',b.fc||"",b.price,b.stake,b.result||"pending",b.result?wbPnl(b).toFixed(2):""].join(","))].join("\n");
+    const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="wind_paper_bets.csv";a.click();};
+  document.querySelectorAll(".wbadd").forEach(x=>x.onclick=()=>{const g=WB.scan.rows.find(r=>r.gid===x.dataset.gid);if(g)wbAddTickets(g);});
+  document.querySelectorAll(".wbf").forEach(x=>x.onchange=()=>{const b=WB.bets.find(r=>r.id===x.dataset.id);if(!b)return;
+    b[x.dataset.f]=x.dataset.f==="desc"?x.value:+x.value;saveWB();render();});
+  document.querySelectorAll(".wbres").forEach(x=>x.onclick=()=>{const b=WB.bets.find(r=>r.id===x.dataset.id);if(b){b.result=x.dataset.r;saveWB();render();}});
+  document.querySelectorAll(".wbre").forEach(x=>x.onclick=()=>{const b=WB.bets.find(r=>r.id===x.dataset.id);if(b){b.result=null;saveWB();render();}});
+  document.querySelectorAll(".wbdel").forEach(x=>x.onclick=()=>{WB.bets=WB.bets.filter(r=>r.id!==x.dataset.id);saveWB();render();});
+  document.getElementById("notes").innerHTML="🌬️ <b>Wind-unders paper trading.</b> The one weather edge that survived every test (see <i>outputs/reports/sentiment_props.md</i>): when the <b>forecast kickoff→+3h wind is 8–15 kn</b> at an outdoor stadium, the market under-charges ~1–2 points — totals unders ran 55–58% and QB pass-yds unders ~59% (2015–25, incl. out-of-sample 2015–19 at 58.3% and forecast-conditioned 2024–25). <b>15+ kn is priced (no bet)</b> — the market learned headline wind around 2020. Calm: no bet (over side tested dead). 🌧 Rain: watchlist only — real 2015–23, absent 2024–25. "+
+    "<b>Weekly routine (game-day morning):</b> ① Check forecasts ② for ✅ games add the 3 tickets ③ paste each real closing line + best <b>regulated-book</b> price ④ mark W/L/P after the games. Expect ~130 tickets/season at ~58%; note the 3 tickets per game are <b>correlated</b> (one shootout loses all 3) and a 2024-style losing season is within normal variance — judge on the full season, quarter-Kelly only. Log lives in your browser (localStorage); ⬇ CSV to back it up.";
+}
 function render(){
+  if(mode==="wind"){ renderWind(); return; }
   if(mode==="mockkeep"){ renderMockKeepers(); return; }
   if(mode==="mockdraft"){ renderMockDraft(); return; }
   if(mode==="draftroom"){ renderDraftRoom(); return; }
