@@ -230,3 +230,27 @@ current GDELT coverage (570 selected players) is too thin for the priced pool.
   slightly relative to "hit while on YOUR roster"; stash discipline matters.
 - The 2026 pool uses our own price anchor + projections in place of unpublished
   market data; re-run `late_breakout_final.py` after the August FFA/ADP refresh.
+
+
+## 9. GEG salience-filtered buzz (`geg_buzz_study.py`)
+
+```
+Aug 2019: 3735 players (billed 30.3 GB)
+Aug 2020: 3220 players (billed 23.6 GB)
+Aug 2021: 3392 players (billed 18.7 GB)
+Aug 2022: 3474 players (billed 16.2 GB)
+Aug 2023: 3577 players (billed 22.0 GB)
+Aug 2024: 3448 players (billed 19.4 GB)
+Aug 2025: 3188 players (billed 16.6 GB)
+GEG August table: 24034 player-years, 2019-2025
+
+dart pool 2020-2025: n=3114, base hit rate 1.5%
+signal                     top decile hit   lift  top 3% hit   lift
+GEG high-salience docs               2.4%   1.6x        1.6%   1.0x  (pool n=2017, base 1.5%)
+GEG any-mention docs                 1.0%   0.6x        0.0%   0.0x  (pool n=2017, base 1.5%)
+GKG volume spike                     0.4%   0.3x        0.0%   0.0x  (pool n=2236, base 1.7%)
+wiki pageview spike                  1.1%   0.7x        0.0%   0.0x  (pool n=2647, base 1.6%)
+BOTH GEG-sal + wiki top-10%           0.0%   0.0x   (n=46)
+
+Puka 2023 check: GEG hi_docs=62 (pct 0.76) wiki spike pct 0.92
+```

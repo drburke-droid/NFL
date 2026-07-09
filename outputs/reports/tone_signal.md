@@ -40,3 +40,12 @@ extreme-cell check (high volume, prev_n>=100):
   prev tone -2..+2                   n= 6972  next-month PPG vs own mean: -0.08
   prev tone > +2 (good news month)   n=    9  next-month PPG vs own mean: +0.95
 ```
+
+
+## TV buzz (`tv_buzz_study.py`) — dead end: coverage gap
+
+GDELT's TV-news GKG (Internet Archive captions) stopped updating **2023-03**. Fetched
+42,645 player-months (2009-2023) for 0.5 GB, but there is zero overlap with our props
+window (2024-25) or the 2023+ auctions. TV-fame hypotheses (public over-shading,
+name-brand auction premium) are untestable with this source; the table stays in the db
+(nflv_tv_buzz) in case a historical question ever needs it.

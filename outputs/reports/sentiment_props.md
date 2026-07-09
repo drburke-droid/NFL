@@ -290,3 +290,44 @@ cross-line by distance (EV>=4%, both seasons):
    0.3-0.7σ       n=  948  ROI -1.8%
    0.7-1.5σ       n=  160  ROI -3.8%
 ```
+
+
+## Weather vs totals & passing props (`weather_props_study.py`)
+
+```
+fetched weather: 66072 station-days for 32 stadiums (scan was tiny)
+
+A. TOTALS vs wind — outdoor games with closing total + weather: 789
+   wind            n total line  actual actual-line P(under) under ROI
+   calm <8kn     557       45.0    45.1        +0.1      53%     34.1%
+   8-12          147       44.4    44.5        +0.1      53%     18.5%
+   12-15          44       43.7    43.9        +0.2      50%     14.8%
+   15+ kn         20       43.4    39.9        -3.5      60%     33.3%
+   domes         513       46.6    48.6        +2.0
+
+B. PASSING PROPS unders by wind (outdoor, 2023-25): n=1626
+   wind <8kn   n=  694  P(under) 50%  under ROI +6.3%
+   wind 8-12   n=  134  P(under) 46%  under ROI -2.2%
+   wind 12-15  n=   38  P(under) 61%  under ROI +41.7%
+   wind 15+    n=    8  P(under) 50%  under ROI +23.8%
+```
+
+
+## Weather vs totals & passing props (`weather_props_study.py`)
+
+```
+
+A. TOTALS vs wind — outdoor games with closing total + weather: 774
+   wind            n total line  actual actual-line P(under) under ROI
+   calm <8kn     547       45.0    45.0        -0.0      53%      4.6%
+   8-12          144       44.5    44.7        +0.2      52%      2.7%
+   12-15          43       43.7    44.2        +0.5      49%     -4.7%
+   15+ kn         20       43.4    39.9        -3.5      60%     17.3%
+   domes         501       46.6    48.6        +2.0   P(over) 51%  over ROI +0.5%
+
+B. PASSING PROPS unders by wind (outdoor, 2023-25): n=1597
+   wind <8kn   n=  682  P(under) 50%  under ROI +5.8%
+   wind 8-12   n=  130  P(under) 44%  under ROI -5.4%
+   wind 12-15  n=   34  P(under) 56%  under ROI +29.3%
+   wind 15+    n=    8  P(under) 50%  under ROI +23.8%
+```
