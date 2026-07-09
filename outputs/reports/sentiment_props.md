@@ -416,3 +416,14 @@ fetched game-time wind for 2074 games
 
 2015-19 pooled 8-15kn: n=290  act-line -1.9  P(under) 58.3%  (z vs coin flip: +2.8)
 ```
+
+
+## Calm-game overs? (negative result)
+
+<8kn overs, best consensus-line price, 2020-25: P(over) 50.2%, ROI -1.9% (n=618).
+By season: -2.4/-10.6/-20.7/-16.5/+10.9/+12.4 - four straight negative years then two
+positive; the calm bucket just tracks each season's market-wide over/under regime
+(2024-25 were league-wide over years). Forecast-calm +14.0% (2024-25) vs actual-calm
+same era +11.7% - identical, i.e. era effect, not a conditioning edge. 2015-19: calm
+overs 53.4%, barely at breakeven. Verdict: NO - calm is the default the line already
+prices; wind subtracts points the line under-charges, but absence-of-wind adds nothing.
