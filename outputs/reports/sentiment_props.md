@@ -469,3 +469,68 @@ $500 bankroll, chronological (274 bets):
    quarter-Kelly                366       665     33%
    half-Kelly                   251       772     58%
 ```
+
+
+## Other weather factors (`weather_effects_study.py`)
+
+```
+fetched temp/precip/humidity/snow for 2074 games
+
+2015-2025 outdoor, n=2052 [breakeven 52.4%] - overall P(under) 51.6%
+
+SOLO factors (all games / calm-only to strip wind confound):
+   freezing (temp<=0C)          n= 161  act-line  -1.1  P(under) 54.7%
+      ... calm games only       n= 101  act-line  -0.3  P(under) 52.5%
+   cold (0-5C)                  n= 261  act-line  +0.4  P(under) 50.6%
+      ... calm games only       n= 166  act-line  +1.6  P(under) 45.8%
+   hot (>27C)                   n= 195  act-line  +0.1  P(under) 50.3%
+      ... calm games only       n= 144  act-line  -0.5  P(under) 51.4%
+   rain 1-5mm                   n= 198  act-line  -2.0  P(under) 59.1%
+      ... calm games only       n= 108  act-line  -0.4  P(under) 57.4%
+   heavy rain 5mm+              n=  56  act-line  -5.1  P(under) 64.3%
+      ... calm games only       n=  27  act-line  -2.9  P(under) 55.6%
+   snow (>0.5cm)                n=  30  act-line  +0.4  P(under) 50.0%
+      ... calm games only       n=  12  (too small)
+   humid (rh>85%)               n= 282  act-line  -2.0  P(under) 57.1%
+      ... calm games only       n= 184  act-line  -0.8  P(under) 52.2%
+   dry air (rh<40%)             n= 211  act-line  -0.9  P(under) 52.1%
+      ... calm games only       n= 156  act-line  -0.3  P(under) 48.7%
+
+COMBINED with moderate wind (8-15kn, base 58.3%/56.6% by era):
+   windy alone (dry, >5C)       n= 418  act-line  -1.1  P(under) 57.4%
+   windy + rain 1mm+            n=  99  act-line  -4.3  P(under) 62.6%
+   windy + freezing             n=  57  act-line  -2.4  P(under) 57.9%
+   windy + hi gust (25+)        n= 159  act-line  -3.2  P(under) 62.3%
+
+real-price under ROI 2020-25 (best consensus-line price):
+   rain 1mm+ (any wind)         n= 119  P(under) 63.9%  ROI +25.0%
+   rain 1mm+, calm              n=  66  P(under) 65.2%  ROI +27.8%
+   freezing, calm               n=  52  P(under) 53.8%  ROI +5.7%
+   snowish (precip & <=1C)      n=  14  P(under) 35.7%  ROI -30.2%
+   wind 8-15 + rain             n=  38  P(under) 57.9%  ROI +13.2%
+   wind 8-15, dry               n= 254  P(under) 56.3%  ROI +10.2%
+```
+
+
+## Rain forecast-conditioning gate (`rain_forecast_test.py`)
+
+```
+fetched 24h-prior precip forecasts for 380 games (2024-25)
+forecast skill (n=380): rain>=1mm band agreement 92% (actual rain rate 9%, forecast rate 7%)
+
+unders at real prices, conditioned on 24h-prior FORECAST (2024-25):
+   fc rain >=1mm              n=  25  P(under) 44.0%  ROI -14.3%
+   fc rain >=1mm, fc calm     n=  16  P(under) 37.5%  ROI -27.4%
+   fc dry (<0.2mm)            n= 331  P(under) 45.3%  ROI -11.5%
+   ACTUAL rain >=1mm (ref)    n=  31  P(under) 48.4%  ROI -5.7%
+   fc rain 2024: n=11  P(under) 27.3%  ROI -47.1%
+   fc rain 2025: n=14  P(under) 57.1%  ROI +11.5%
+```
+
+rain>=1mm P(under) by season: 50/70/63/46/61/64/60/73/75 (2015-23, pooled 62.6% n=219)
+then 44/47 (2024-25, pooled 45.7% n=35). rain+wind 8-15kn: 65.5% 2015-23 -> 41.7% (n=12)
+2024-25. Rain was real for nine seasons and has been absent for two - including 2025,
+when wind worked (63.4%). Forecast skill is NOT the issue (92% band agreement).
+Verdict: rain stays OFF the live playbook (watchlist: possible market adaptation
+post-2023); wind remains the only deployed weather signal. Temp/snow/humidity: dead
+(fail calm-game control or tiny-n; snow may be over-shaded by the market).
