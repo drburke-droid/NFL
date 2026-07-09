@@ -1146,7 +1146,26 @@ function wireClass(p,exp){
   return null;
 }
 const wireBadge=m=>m&&m.wc?` <span title="${m.wc.note.replace(/"/g,'&quot;')}" style="cursor:help;font-size:11px">${m.wc.tag}</span>`:"";
-const WIRE_LEGEND=`<b>⭐ star</b> = pay up, unbuyable later · <b>⚠ trap</b> = mid-$ band, never stretch · <b>📶 wire-grade</b> = FAAB replaces him, My Max capped (*) · <b>🎯 dart</b> = free lottery ticket (hover any badge for the numbers)`;
+// ---------- ⏫ HEIR SIGNAL (scripts/backup_rb_signal_study.py: 421 starter/backup pairs 2011-25) ----------
+// Backups who out-ran their own starter on BOTH ypc and EPA/carry behind the same line become
+// lead backs the next year 35% of the time (vs 15% for backups who didn't), wash out less
+// (9% vs 14%), and when the starter vacates they deliver 10.9 ppg with 42% hitting startable
+// 12+ (vs 7.4 ppg / 17%). Historical hits: Bell'15, D.Johnson'15, Kamara'17, CMC'17, Achane'23.
+// The 2025 qualifiers (this is coach-revealed info the ADP market underprices):
+const HEIR_2026={
+ "Rachaad White":  {ypc:4.33,epa:"+0.079",car:132,s:"Bucky Irving",     sypc:3.40,sepa:"-0.206"},
+ "Tank Bigsby":    {ypc:5.93,epa:"+0.130",car:58, s:"Saquon Barkley",   sypc:4.07,sepa:"-0.086"},
+ "Blake Corum":    {ypc:5.14,epa:"+0.110",car:145,s:"Kyren Williams",   sypc:4.83,sepa:"+0.019"},
+ "Omarion Hampton":{ypc:4.40,epa:"-0.006",car:124,s:"Kimani Vidal",     sypc:4.15,sepa:"-0.091"},
+ "Devin Neal":     {ypc:3.61,epa:"-0.138",car:57, s:"Alvin Kamara",     sypc:3.60,sepa:"-0.220"},
+ "Brian Robinson": {ypc:4.35,epa:"-0.008",car:92, s:"Christian McCaffrey",sypc:3.86,sepa:"-0.068"},
+ "Nick Chubb":     {ypc:4.15,epa:"-0.112",car:122,s:"Woody Marks",      sypc:3.59,sepa:"-0.149"},
+ "Samaje Perine":  {ypc:4.55,epa:"-0.003",car:84, s:"Chase Brown",      sypc:4.39,sepa:"-0.018"},
+ "Keaton Mitchell":{ypc:5.78,epa:"+0.044",car:59, s:"Derrick Henry",    sypc:5.20,sepa:"+0.030"},
+};
+const heirBadge=p=>{const h=HEIR_2026[p.name];if(!h)return"";
+  return ` <span title="⏫ HEIR — out-ran his own starter behind the same line in 2025: ${h.ypc} ypc / ${h.epa} EPA-c on ${h.car} carries vs ${h.s} (${h.sypc} ypc / ${h.sepa}). Backups who beat their starter on BOTH metrics (2011-25, n=121): 35% become lead backs next year vs 15%, and when the starter vacates they average 10.9 ppg with 42% hitting startable 12+ (vs 7.4 / 17%). Bell, D.Johnson, Kamara, CMC and Achane all flashed this exact flag first. Target as a bench dart / contingency stash." style="cursor:help;font-size:11px">⏫</span>`;};
+const WIRE_LEGEND=`<b>⭐ star</b> = pay up, unbuyable later · <b>⚠ trap</b> = mid-$ band, never stretch · <b>📶 wire-grade</b> = FAAB replaces him, My Max capped (*) · <b>🎯 dart</b> = free lottery ticket · <b>⏫ heir</b> = backup who out-ran his starter in '25 (35% take the job next yr) (hover any badge for the numbers)`;
 function optimalPlan(mkt){
   const meS=teamState(DR.me), budget=meS.budget;
   const price=p=>mkt.price[pid(p)]||1;
@@ -1353,7 +1372,7 @@ function planPanelHTML(mkt,mv){
       <span style="width:14px;text-align:center">${pk.wa!=null?pri(pk):''}</span>
       <span class="muted" style="width:34px">${pk.slot}</span>
       <span class="pos ${pk.p.position}" style="transform:scale(.75)">${pk.p.position}</span>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name}${wireBadge(mv[pid(pk.p)])} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name}${wireBadge(mv[pid(pk.p)])}${heirBadge(pk.p)} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
       <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
       <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
         ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
@@ -1483,7 +1502,7 @@ function renderDraftRoom(){
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
     return `<tr${su?` title="likely bidders: ${su.tip}"`:''}>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l"><span class="name">${p.name}</span>${wireBadge(m)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
+      <td class="l"><span class="name">${p.name}</span>${wireBadge(m)}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
       <td>${isK(p)?"—":Math.round(r.proj)}</td>
       <td style="font-weight:600">$${r.val}</td>
       <td class="base">$${r.exp}</td>
@@ -1527,7 +1546,7 @@ function renderDraftRoom(){
   document.querySelectorAll(".drdraft").forEach(b=>b.onclick=()=>{const id=b.dataset.id,p=BYID[id];if(!p)return;
     drmId=id;
     const wa=(plan.picks.find(pk=>pk.p&&pid(pk.p)===id)||{}).wa;
-    document.getElementById("drmTitle").innerHTML=`<span class="pos ${p.position}">${p.position}</span> ${p.name}${wireBadge(mv[id])} <span class="muted" style="font-weight:400;font-size:12px">${p.team||""} · exp $${mkt.price[id]||1} · my max $${(mv[id]||{}).maxBid||1}${(mv[id]||{}).wcapped?'*':''}${wa!=null?` · walk-away $${wa}`:''}</span>`;
+    document.getElementById("drmTitle").innerHTML=`<span class="pos ${p.position}">${p.position}</span> ${p.name}${wireBadge(mv[id])}${heirBadge(p)} <span class="muted" style="font-weight:400;font-size:12px">${p.team||""} · exp $${mkt.price[id]||1} · my max $${(mv[id]||{}).maxBid||1}${(mv[id]||{}).wcapped?'*':''}${wa!=null?` · walk-away $${wa}`:''}</span>`;
     const su=DR.teams.map((t,ii)=>({n:t.name,b:ii===DR.me?0:ownerBid(ii,p,mkt,TS)})).filter(x=>x.b>1).sort((a,b)=>b.b-a.b);
     document.getElementById("drmHint").textContent=su.length?("bots: "+su.slice(0,3).map(x=>x.n+" $"+x.b).join(" · ")):"";
     document.getElementById("drmDef").textContent=DR.teams[+document.getElementById("drAssign").value].name;
@@ -1546,7 +1565,8 @@ function renderDraftRoom(){
     "Columns match every other screen: <b>Value</b> (risk-adjusted worth in room dollars — worth has no historical price ceiling), <b>Exp $</b> (expected purchase price — reacts live to supply &amp; demand: as teams fill a position that market <b>collapses</b>, and cheap keepers inflate everything else; capped at the most the league has ever paid), <b>Edge</b> (Value − Exp $ in dollars), and <b>VONA pts</b> (points over the last startable — the scarcity signal). "+
     "<b>My Max</b> = the most you should bid: the player's risk-adjusted <b>worth</b> shaded by your spending power — above market on bargains, below it on overpriced names, stretching past worth only when you're flush (unspent budget is worthless at the final gavel). Positions whose starters you already filled (kept QB etc.) drop to bench-stash price (&le;$8). "+
     "🎯 <b>Your plan</b> is a live budget-knapsack at Exp $ — the best roster you can still buy. Its <b>walk-away</b> beats My Max when they disagree (it prices what overpaying costs the REST of your roster), and it re-solves after every pick, so being outbid just re-routes the money. "+
-    "🌊 <b>Wire badges</b> on every player (mined from this league's actual 2023-25 waivers): ⭐ = pay-up star the wire can never hand you · ⚠ = the $8-30 RB/WR trap band (only 52-62% return 6+ starter weeks — never bid past worth) · 📶 = wire-grade (FAAB serves up ~5-7 startable players per position every year, 76% by week 5 — My Max is auto-capped at 55% of worth, marked *) · 🎯 = dart-slot lottery ticket. Hover any badge for the exact numbers.";
+    "🌊 <b>Wire badges</b> on every player (mined from this league's actual 2023-25 waivers): ⭐ = pay-up star the wire can never hand you · ⚠ = the $8-30 RB/WR trap band (only 52-62% return 6+ starter weeks — never bid past worth) · 📶 = wire-grade (FAAB serves up ~5-7 startable players per position every year, 76% by week 5 — My Max is auto-capped at 55% of worth, marked *) · 🎯 = dart-slot lottery ticket. "+
+    "⏫ <b>Heir badge</b> (scripts/backup_rb_signal_study.py, 421 starter/backup pairs 2011-25): a backup who out-ran his own starter on BOTH ypc and EPA/carry behind the same line — 35% become lead backs the next year (vs 15%), and when the starter vacates they average 10.9 ppg with 42% hitting startable 12+ (vs 7.4 / 17%). Bell, David Johnson, Kamara, CMC and Achane all flashed this flag the year before breaking out — prime bench-dart targets. Hover any badge for the exact numbers.";
 }
 
 // ================= MOCK KEEPERS =================
@@ -1976,7 +1996,7 @@ function renderMockDraft(){
       const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer"${su?` title="likely bidders: ${su.tip}"`:''}>
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-        <td class="l"><span class="name">${p.name}</span>${wireBadge(mv[id])} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${su?su.line:''}</td>
+        <td class="l"><span class="name">${p.name}</span>${wireBadge(mv[id])}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${su?su.line:''}</td>
         <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td>${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}<td class="maxbid">$${r.mymax}${(mv[id]||{}).wcapped?`<span class="downc" title="wire-capped from worth $${(mv[id]||{}).value}" style="cursor:help">*</span>`:''}</td>
         <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${r.edge>=0?'+':''}${r.edge}</td>
         <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
