@@ -356,3 +356,24 @@ B. PASSING PROPS unders by GAME-TIME wind (outdoor 2023-25): n=2114
 
 season-split (totals unders): wind 8-15kn: +3.7/+5.6/+25.5/+13.3/-10.4/+29.6 (2020-25,
 5 of 6 positive); gust25+: -1.8/+15.1/+30.9/+51.7/-18.3/+18.4 (4 of 6).
+
+
+## Forecast-conditioned wind test (`wind_forecast_test.py`)
+
+```
+fetched 24h-prior forecasts for 386 outdoor games (2022+)
+forecast skill (n=386): MAE 1.7 kn | band agreement 82%
+
+TOTALS unders conditioned on the 24h-PRIOR FORECAST (2022-25, n=372):
+   fc <8kn   n= 257  act-line +2.1  P(under) 42%  ROI -17.9%
+   fc 8-12   n=  81  act-line -1.1  P(under) 56%  ROI +8.0%
+   fc 12-15  n=  25  act-line -1.0  P(under) 52%  ROI +1.5%
+   fc 15+    n=   9  act-line +5.8  P(under) 44%  ROI -13.5%
+
+   forecast 8-15kn cell by season:
+     2023: n=  1  ROI -100.0%
+     2024: n= 52  ROI -10.2%
+     2025: n= 55  ROI +27.5%
+
+   (same window, ACTUAL 8-15kn: n=93 ROI +6.7%)
+```
