@@ -331,3 +331,28 @@ B. PASSING PROPS unders by wind (outdoor, 2023-25): n=1597
    wind 12-15  n=   34  P(under) 56%  under ROI +29.3%
    wind 15+    n=    8  P(under) 50%  under ROI +23.8%
 ```
+
+
+## GAME-TIME hourly wind (`hourly_wind_study.py`)
+
+```
+fetched game-time wind for 1162 outdoor games
+
+A. TOTALS vs GAME-TIME wind — outdoor games: 965
+   wind        n   line  actual act-line P(under) under ROI
+   <8kn      627   45.0    45.8     +0.8      50%     -2.6%
+   8-12      221   44.7    43.7     -1.0      57%     12.3%
+   12-15      72   44.3    42.4     -1.9      56%      8.5%
+   15+        45   42.4    42.0     -0.4      53%      3.8%
+   gust25+   125   44.1    41.9     -2.2      58%     12.5%
+
+B. PASSING PROPS unders by GAME-TIME wind (outdoor 2023-25): n=2114
+   wind <8kn   n= 1469  P(under) 49%  under ROI +2.4%
+   wind 8-12   n=  469  P(under) 55%  under ROI +20.0%
+   wind 12-15  n=  122  P(under) 49%  under ROI +3.7%
+   wind 15+    n=   54  P(under) 61%  under ROI +36.9%
+   gust25+     n=  207  P(under) 54%  under ROI +14.8%
+```
+
+season-split (totals unders): wind 8-15kn: +3.7/+5.6/+25.5/+13.3/-10.4/+29.6 (2020-25,
+5 of 6 positive); gust25+: -1.8/+15.1/+30.9/+51.7/-18.3/+18.4 (4 of 6).
