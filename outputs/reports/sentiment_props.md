@@ -377,3 +377,42 @@ TOTALS unders conditioned on the 24h-PRIOR FORECAST (2022-25, n=372):
 
    (same window, ACTUAL 8-15kn: n=93 ROI +6.7%)
 ```
+
+
+## Wind 2015-2019 out-of-sample (`wind_history_2015.py`)
+
+```
+nflverse outdoor home games with total_line 2015-2025: 2074
+fetched game-time wind for 2074 games
+
+2015-2019 (OUT-OF-SAMPLE): n=967  [breakeven at -110 = 52.4%]
+   wind         n   line  actual act-line P(under)
+   <8kn       654   45.1    46.3     +1.1    46.6%
+   8-12       238   44.8    42.6     -2.2    59.7%
+   12-15       51   44.2    43.6     -0.6    52.9%
+   15+         24   42.5    37.4     -5.1    62.5%
+   gust25+     94   43.4    40.4     -3.1    61.7%
+
+2020-2025 (continuity chk): n=1085  [breakeven at -110 = 52.4%]
+   wind         n   line  actual act-line P(under)
+   <8kn       703   44.9    45.6     +0.8    49.6%
+   8-12       259   44.3    43.2     -1.2    57.9%
+   12-15       81   43.9    41.1     -2.9    59.3%
+   15+         42   42.6    41.9     -0.6    54.8%
+   gust25+    132   43.9    41.2     -2.7    59.8%
+
+8-15kn cell by season (n / act-line / P(under)):
+   2015: n= 55  -1.9  61.8%
+   2016: n= 47  +0.8  42.6%
+   2017: n= 67  -4.4  61.2%
+   2018: n= 59  -1.9  57.6%
+   2019: n= 62  -1.1  64.5%
+   2020: n= 57  -0.1  52.6%
+   2021: n= 67  -2.4  56.7%
+   2022: n= 61  -3.2  67.2%
+   2023: n= 61  -2.5  60.7%
+   2024: n= 55  +1.2  47.3%
+   2025: n= 41  -1.6  63.4%
+
+2015-19 pooled 8-15kn: n=290  act-line -1.9  P(under) 58.3%  (z vs coin flip: +2.8)
+```
