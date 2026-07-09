@@ -1087,8 +1087,17 @@ function myVal(mkt,BVo){
     let maxBid=startNeed?Math.round(value*Math.max(1,agg))
              :benchOnly?Math.min(Math.max(1,Math.round(Math.max(value,market)*0.3)),BENCH_CAP+2)
              :1;
+    // 🌊 wire discipline: production the wire regenerates is never worth full price. WIRE-grade
+    // starters cap at 55% of worth (FAAB replaces them: 5-7 gems/yr/pos, 76% by wk5); the mid-$
+    // RB/WR trap band caps at worth (no aggression stretch on a 52-62% hit-rate tier).
+    const wc=wireClass(p,market);
+    let wcapped=false;
+    if(wc&&startNeed){
+      const cap=wc.c==="wire"?Math.max(2,Math.round(value*0.55)):wc.c==="trap"?value:null;
+      if(cap!=null&&maxBid>cap){maxBid=cap;wcapped=true;}
+    }
     maxBid=Math.max(1,Math.min(maxBid,affordable));
-    out[id]={market,value,maxBid,surplus:Math.round(surplus),needed:startNeed||benchOnly,startNeed};});
+    out[id]={market,value,maxBid,surplus:Math.round(surplus),needed:startNeed||benchOnly,startNeed,wc,wcapped};});
   return out;
 }
 // ---------- YOUR PLAN: live knapsack over the remaining pool at Exp $ ----------
@@ -1114,6 +1123,30 @@ const benchU=p=>{
   const runway=age<=23?1.25:age<=25?1.15:age<=27?1.0:age<=29?0.8:0.6;
   const traj=1+Math.max(0,Math.min(0.30,(p.trend_dppg||0)/20+(p.breakout_prob||0)*0.5));
   return 0.30*ceilPts(p)*runway*traj*(1+2.5*dartSig(p));};
+// ---------- 🌊 WAIVER-WIRE REPLACEABILITY (scripts/waiver_gems_study.py: THIS league 2023-25) ----------
+// Undrafted players who hit weekly starter level: gems/yr TE 7.3 · RB 6.0 · QB 5.7 · WR 5.0,
+// and 76% flash by week 5 (an aggressive FAAB bidder gets them). WIRE_PPG = what a pickup
+// realistically delivers (avg ppg-after-flash of the league's actual gems); STAR_PPG = the
+// tier neither the wire nor the mid-$ band replicates. Mid-$ ($8-30) picks that returned 6+
+// starter weeks: RB 62%, WR 52% — the mid-WR band is the league's worst purchase.
+// Thresholds are POSITION RANKS (the board's proj_ppg is risk-adjusted/compressed, so raw
+// ppg anchors from realized scoring don't transfer; rank is scale-free). The prose keeps the
+// study's realized-scoring numbers.
+const WIRE_RANK={QB:9,RB:28,WR:28,TE:5};   // at/past this rank the wire regenerates the tier in-season
+const STAR_RANK={QB:2,RB:8,WR:8,TE:2};     // the tier that never reaches waivers (1 sustained top-12 RB in 3 yrs)
+const WIRE_PPG={QB:22.5,RB:12.5,WR:13.5,TE:11.0};   // realized ppg-after-flash of the league's actual gems
+const WIRE_GEMS={QB:"5.7",RB:"6.0",WR:"5.0",TE:"7.3"};
+function wireClass(p,exp){
+  const pos=p.position;if(pos==="K"||pos==="DST")return null;
+  const rk=p.pos_rank||99;
+  if(rk<=STAR_RANK[pos])return {c:"star",tag:"⭐",note:`STAR — ${pos}${rk}: this tier never reaches waivers (the wire's best sustained ${pos} runs ~${WIRE_PPG[pos]} ppg in league scoring) and the mid-$ band misses half the time. Concentrate budget HERE.`};
+  if(dartSig(p)>=0.15&&exp<=4)return {c:"dart",tag:"🎯",note:`DART — $${exp} lottery ticket, ${Math.round(dartSig(p)*100)}% breakout signal. Costs nothing if he busts: the wire refills this tier (${WIRE_GEMS[pos]} ${pos} gems/yr).`};
+  if(rk>=WIRE_RANK[pos])return exp>=4?{c:"wire",tag:"📶",note:`WIRE-GRADE (${pos}${rk}) — waivers produced ${WIRE_GEMS[pos]} startable ${pos}s/yr at ~${WIRE_PPG[pos]} ppg (76% by wk5). You can FAAB this production: My Max is hard-capped, let someone else pay.`}:null;
+  if((pos==="WR"||pos==="RB")&&exp>=8&&exp<=30)return {c:"trap",tag:"⚠",note:`MID-$ ${pos} BAND — only ${pos==="WR"?"52%":"62%"} of this league's $8-30 ${pos}s returned 6+ starter weeks (2023-25). Pay Exp $ or less; My Max won't stretch above worth here.`};
+  return null;
+}
+const wireBadge=m=>m&&m.wc?` <span title="${m.wc.note.replace(/"/g,'&quot;')}" style="cursor:help;font-size:11px">${m.wc.tag}</span>`:"";
+const WIRE_LEGEND=`<b>⭐ star</b> = pay up, unbuyable later · <b>⚠ trap</b> = mid-$ band, never stretch · <b>📶 wire-grade</b> = FAAB replaces him, My Max capped (*) · <b>🎯 dart</b> = free lottery ticket (hover any badge for the numbers)`;
 function optimalPlan(mkt){
   const meS=teamState(DR.me), budget=meS.budget;
   const price=p=>mkt.price[pid(p)]||1;
@@ -1320,7 +1353,7 @@ function planPanelHTML(mkt,mv){
       <span style="width:14px;text-align:center">${pk.wa!=null?pri(pk):''}</span>
       <span class="muted" style="width:34px">${pk.slot}</span>
       <span class="pos ${pk.p.position}" style="transform:scale(.75)">${pk.p.position}</span>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name}${wireBadge(mv[pid(pk.p)])} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
       <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
       <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
         ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
@@ -1329,7 +1362,7 @@ function planPanelHTML(mkt,mv){
       <div><div class="muted" style="font-size:10px;margin-bottom:2px">STARTERS — ordered by irreplaceability (★ must-get · ▲ high · ≈ replaceable); buy at ≤ Exp $, walk away past the number</div>${stP.map(prow).join("")}${kdP.map(prow).join("")}</div>
       <div><div class="muted" style="font-size:10px;margin-bottom:2px">BENCH — high-upside RB/WR only (K/DST streamed, QB2/TE2 off bye-week waivers)</div>${bnP.map(prow).join("")}
         <div class="muted" style="font-size:10px;margin-top:5px" title="the running NOMINATION LIST: highest Dart %/Leap % players not already in the plan — pivots when a bench target gets sniped, and what your sim bot nominates from">🎯 next-up darts: ${myTargetList(plan).darts.slice(0,8).map(p=>`<span style="white-space:nowrap">${p.name} <b class="upc">${Math.round(dartSig(p)*100)}%</b></span>`).join(" · ")||'—'}</div></div></div>`;
-    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench slots are <b>dart slots</b>: chosen on <b>Dart %/Leap % breakout odds × ceiling, tilted young-and-rising</b> (a $1-3 breakout is next year's keeper lock; an old vet's ceiling season has no keeper future), not median projection.</div>`;
+    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench slots are <b>dart slots</b>: chosen on <b>Dart %/Leap % breakout odds × ceiling, tilted young-and-rising</b> (a $1-3 breakout is next year's keeper lock; an old vet's ceiling season has no keeper future), not median projection. <b>🌊 Wire discipline</b> (this league's 2023-25 waivers): FAAB regenerates ~6 startable RBs, 7 TEs, 6 QBs and 5 WRs a year — 76% by week 5 — so ⭐ stars get the concentrated money, 📶 wire-grade players are capped at 55% of worth, and the ⚠ $8-30 RB/WR band never gets a stretch (52-62% hit rate).</div>`;
   }
   return {html:h+`</div>`,plan};
 }
@@ -1443,19 +1476,19 @@ function renderDraftRoom(){
   document.getElementById("count").textContent=rows.length+" available";
   const arrowR=k=>drSort===k?(drDir<0?' ▼':' ▲'):'';
   const thr=(k,lab,cls,ttl)=>`<th class="drh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowR(k)}</th>`;
-  h+=`<div class="muted" style="font-size:11px;margin:6px 0"><b>Value</b> = what he's worth (risk-adjusted, in this room's dollars — worth has no historical ceiling, so elite players can be worth more than anyone has ever PAID) · <b>Exp $</b> = expected purchase price at his live curve rank (capped at the most this league has ever paid at the position) · <b>My Max</b> = the most YOU should bid: Value × your spending power, roster-need gated · <b>Edge</b> = Value − Exp $ in dollars (positive = expected bargain) · <b>VONA pts</b> = risk-adjusted points over the last startable player at his position. <i>Click any column to sort.</i></div>
+  h+=`<div class="muted" style="font-size:11px;margin:6px 0"><b>Value</b> = what he's worth (risk-adjusted, in this room's dollars — worth has no historical ceiling, so elite players can be worth more than anyone has ever PAID) · <b>Exp $</b> = expected purchase price at his live curve rank (capped at the most this league has ever paid at the position) · <b>My Max</b> = the most YOU should bid: Value × your spending power, roster-need gated <b>and wire-disciplined</b> · <b>Edge</b> = Value − Exp $ in dollars (positive = expected bargain) · <b>VONA pts</b> = risk-adjusted points over the last startable player at his position. <i>Click any column to sort.</i><br>${WIRE_LEGEND}</div>
     <table style="width:100%"><thead><tr>${thr('pos','Pos','l')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
   h+=drd.slice(0,300).map((r,ri)=>{const p=r.p,id=r.id,m=r.m;
     const over=m.maxBid>m.market;
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
     return `<tr${su?` title="likely bidders: ${su.tip}"`:''}>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
+      <td class="l"><span class="name">${p.name}</span>${wireBadge(m)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
       <td>${isK(p)?"—":Math.round(r.proj)}</td>
       <td style="font-weight:600">$${r.val}</td>
       <td class="base">$${r.exp}</td>
       ${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}
-      <td class="maxbid">$${r.mymax}${over?' <span class="upc" style="font-size:10px;font-weight:400">↑</span>':''}</td>
+      <td class="maxbid">$${r.mymax}${m.wcapped?`<span class="downc" title="wire-capped from worth $${m.value}: ${m.wc.c==="wire"?"FAAB replaces this tier — 55% of worth is the ceiling":"mid-$ trap band — no stretch above worth"}" style="cursor:help">*</span>`:''}${over?' <span class="upc" style="font-size:10px;font-weight:400">↑</span>':''}</td>
       <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${isK(p)?"—":(r.edge>=0?'+':'')+r.edge}</td>
       <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
       <td class="l"><button class="btn sm up drdraft" data-id="${id}" data-exp="${r.exp}">Draft</button></td>
@@ -1494,7 +1527,7 @@ function renderDraftRoom(){
   document.querySelectorAll(".drdraft").forEach(b=>b.onclick=()=>{const id=b.dataset.id,p=BYID[id];if(!p)return;
     drmId=id;
     const wa=(plan.picks.find(pk=>pk.p&&pid(pk.p)===id)||{}).wa;
-    document.getElementById("drmTitle").innerHTML=`<span class="pos ${p.position}">${p.position}</span> ${p.name} <span class="muted" style="font-weight:400;font-size:12px">${p.team||""} · exp $${mkt.price[id]||1} · my max $${(mv[id]||{}).maxBid||1}${wa!=null?` · walk-away $${wa}`:''}</span>`;
+    document.getElementById("drmTitle").innerHTML=`<span class="pos ${p.position}">${p.position}</span> ${p.name}${wireBadge(mv[id])} <span class="muted" style="font-weight:400;font-size:12px">${p.team||""} · exp $${mkt.price[id]||1} · my max $${(mv[id]||{}).maxBid||1}${(mv[id]||{}).wcapped?'*':''}${wa!=null?` · walk-away $${wa}`:''}</span>`;
     const su=DR.teams.map((t,ii)=>({n:t.name,b:ii===DR.me?0:ownerBid(ii,p,mkt,TS)})).filter(x=>x.b>1).sort((a,b)=>b.b-a.b);
     document.getElementById("drmHint").textContent=su.length?("bots: "+su.slice(0,3).map(x=>x.n+" $"+x.b).join(" · ")):"";
     document.getElementById("drmDef").textContent=DR.teams[+document.getElementById("drAssign").value].name;
@@ -1512,7 +1545,8 @@ function renderDraftRoom(){
   document.getElementById("notes").innerHTML="🏟️ <b>Draft Room.</b> Keepers locked in 🧩 Mock Keepers persist here (🔒 on the cards; Reset clears drafted players only). Live flow built for speed: <b>Draft</b> → type the winning bid (preselected) → click the owner (or Enter = default owner). Team cards show every roster, its <b>draft score</b> (⚡ starter PPG · % of the predraft-optimal roster · $ surplus captured) and what that owner <b>targets</b> next; 🤖 under a player = the bots' two likeliest bidders with their maxes (hover the row for the full board). "+
     "Columns match every other screen: <b>Value</b> (risk-adjusted worth in room dollars — worth has no historical price ceiling), <b>Exp $</b> (expected purchase price — reacts live to supply &amp; demand: as teams fill a position that market <b>collapses</b>, and cheap keepers inflate everything else; capped at the most the league has ever paid), <b>Edge</b> (Value − Exp $ in dollars), and <b>VONA pts</b> (points over the last startable — the scarcity signal). "+
     "<b>My Max</b> = the most you should bid: the player's risk-adjusted <b>worth</b> shaded by your spending power — above market on bargains, below it on overpriced names, stretching past worth only when you're flush (unspent budget is worthless at the final gavel). Positions whose starters you already filled (kept QB etc.) drop to bench-stash price (&le;$8). "+
-    "🎯 <b>Your plan</b> is a live budget-knapsack at Exp $ — the best roster you can still buy. Its <b>walk-away</b> beats My Max when they disagree (it prices what overpaying costs the REST of your roster), and it re-solves after every pick, so being outbid just re-routes the money.";
+    "🎯 <b>Your plan</b> is a live budget-knapsack at Exp $ — the best roster you can still buy. Its <b>walk-away</b> beats My Max when they disagree (it prices what overpaying costs the REST of your roster), and it re-solves after every pick, so being outbid just re-routes the money. "+
+    "🌊 <b>Wire badges</b> on every player (mined from this league's actual 2023-25 waivers): ⭐ = pay-up star the wire can never hand you · ⚠ = the $8-30 RB/WR trap band (only 52-62% return 6+ starter weeks — never bid past worth) · 📶 = wire-grade (FAAB serves up ~5-7 startable players per position every year, 76% by week 5 — My Max is auto-capped at 55% of worth, marked *) · 🎯 = dart-slot lottery ticket. Hover any badge for the exact numbers.";
 }
 
 // ================= MOCK KEEPERS =================
@@ -1936,14 +1970,14 @@ function renderMockDraft(){
   const arrowD=k=>mdPoolSort===k?(mdPoolDir<0?' ▼':' ▲'):'';
   const thd=(k,lab,cls,ttl)=>`<th class="mdh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowD(k)}</th>`;
   h+=`<div class="dr-panel"><h3>💰 Available — click a player to see what every owner would pay</h3>
-    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid: his <b>Value</b> × your budget aggression (above Exp $ on bargains — go get him; below it on overpriced names — let someone else pay), dropped to stash money (≤$8) when your starters there are filled · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i></div>
-    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${espnLoaded()?thd('espn','ESPN $','','sitewide average auction value from the uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (~$1 sitewide)'):''}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}${thd('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l"></th></tr></thead><tbody>`+
+    <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid: his <b>Value</b> × your budget aggression (above Exp $ on bargains — go get him; below it on overpriced names — let someone else pay), dropped to stash money (≤$8) when your starters there are filled · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i><br>${WIRE_LEGEND}</div>
+    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${espnLoaded()?thd('espn','ESPN $','','sitewide average auction value from the uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (~$1 sitewide)'):''}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs and wire-disciplined (* = capped because FAAB replaces the tier)')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}${thd('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l"></th></tr></thead><tbody>`+
     rd.slice(0,300).map((r,ri)=>{const p=r.p,id=r.id;
       const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer"${su?` title="likely bidders: ${su.tip}"`:''}>
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-        <td class="l"><span class="name">${p.name}</span> <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${su?su.line:''}</td>
-        <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td>${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}<td class="maxbid">$${r.mymax}</td>
+        <td class="l"><span class="name">${p.name}</span>${wireBadge(mv[id])} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${su?su.line:''}</td>
+        <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td>${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}<td class="maxbid">$${r.mymax}${(mv[id]||{}).wcapped?`<span class="downc" title="wire-capped from worth $${(mv[id]||{}).value}" style="cursor:help">*</span>`:''}</td>
         <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${r.edge>=0?'+':''}${r.edge}</td>
         <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
         <td class="l">${MD.on&&!done&&!MD.block&&MD.nom===DR.me?`<button class="btn sm mdblock" data-id="${id}">⚡ Block</button>`:'<span class="muted" style="font-size:11px">👁 bids</span>'}</td></tr>`;}).join("")+`</tbody></table></div>`;
@@ -1973,7 +2007,7 @@ function renderMockDraft(){
     if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean, elite-QB/pay-TE habits and <b>NFL-team fandom</b> (🏈 — mined from his own bids: e.g. the Raiders fan who paid $71 for Jeanty stretches ×1.3 on LV players), hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
     "Nominations rotate; on a bot's turn press <b>▶ nominate</b>, on yours click <b>⚡ Block</b> on any player. The panel shows <b>every owner's likely max</b> for that player and <b>what you should bid</b>; <b>Run the bidding</b> sells to the highest max at runner-up +$1. "+
-    "Click any row anytime for a bid preview without nominating. This screen is the <b>real Draft Room with bots</b>: the same 🎯 Your plan knapsack (walk-aways, ★ priorities), 📊 scarcity panel, 🤖 bidder hints, and pool columns (Value / Exp $"+(espnLoaded()?" / ESPN $":"")+" / My Max / Edge / VONA pts) — only the winner-input differs (bots bid here; you record real winners there). Team cards carry the <b>same grading</b> — ⚡ starter PPG · % of the predraft-optimal roster · surplus captured — so you can see how your team performs and which owners to watch. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft; 🏁 final grades rank everyone vs optimal. Keepers from 🧩 Mock Keepers are locked in 🔒.";
+    "Click any row anytime for a bid preview without nominating. This screen is the <b>real Draft Room with bots</b>: the same 🎯 Your plan knapsack (walk-aways, ★ priorities), 📊 scarcity panel, 🤖 bidder hints, and pool columns (Value / Exp $"+(espnLoaded()?" / ESPN $":"")+" / My Max / Edge / VONA pts) plus the 🌊 <b>wire badges</b> (⭐ pay-up star / ⚠ mid-$ trap / 📶 wire-replaceable, My Max capped / 🎯 dart) — only the winner-input differs (bots bid here; you record real winners there). Team cards carry the <b>same grading</b> — ⚡ starter PPG · % of the predraft-optimal roster · surplus captured — so you can see how your team performs and which owners to watch. <b>⏩ Sim</b> lets your bot (bidding your sheet's My Max) finish the draft; 🏁 final grades rank everyone vs optimal. Keepers from 🧩 Mock Keepers are locked in 🔒.";
 }
 
 // ---------- 🌬️ Wind Bets paper trading ----------
