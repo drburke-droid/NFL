@@ -427,3 +427,27 @@ positive; the calm bucket just tracks each season's market-wide over/under regim
 same era +11.7% - identical, i.e. era effect, not a conditioning edge. 2015-19: calm
 overs 53.4%, barely at breakeven. Verdict: NO - calm is the default the line already
 prices; wind subtracts points the line under-charges, but absence-of-wind adds nothing.
+
+
+## Wind-unders $500 bankroll sim 2024-25 (`wind_bankroll_sim.py`)
+
+```
+bets: 111 forecast-8-15kn games with a regulated under at the consensus line (2024: 53, 2025: 56)
+record 60-48-3 (55.6% ex-push, avg price 1.931, flat ROI +7.1%)
+
+$500 bankroll, chronological (111 bets):
+   sizing                  end 2024  end 2025  max DD
+   flat $25                     329       693     48%
+   quarter-Kelly (~3%)          377       595     32%
+   half-Kelly (~6%)             268       631     56%
+   2024: 24-28  flat ROI -11.2%
+   2025: 36-19  flat ROI +26.5%
+
+sample bets (first 3 of each season):
+   wk 1 2024 Baltimore Ravens @ Kansas City Chiefs: fc wind 11kn, U46.5 @1.95 (betmgm) - 47 pts, lost
+   wk 1 2024 Arizona Cardinals @ Buffalo Bills: fc wind 14kn, U46.0 @1.95 (hardrockbet) - 62 pts, lost
+   wk 1 2024 Minnesota Vikings @ New York Giants: fc wind 10kn, U41.0 @1.95 (hardrockbet) - 34 pts, WON
+   wk 1 2025 Dallas Cowboys @ Philadelphia Eagles: fc wind 8kn, U48.5 @1.93 (draftkings) - 44 pts, WON
+   wk 1 2025 Cincinnati Bengals @ Cleveland Browns: fc wind 8kn, U47.5 @2.00 (draftkings) - 33 pts, WON
+   wk 1 2025 Tennessee Titans @ Denver Broncos: fc wind 10kn, U42.5 @1.93 (draftkings) - 32 pts, WON
+```
