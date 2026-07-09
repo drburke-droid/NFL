@@ -251,3 +251,42 @@ regulated-only by season: 2023 +9.9% (n=306) | 2024 +4.0% (n=166) | 2025 +3.1% (
 The edge lives at bettable regulated books and is positive in all three seasons; stale
 offshore quotes were diluting 2025, not driving the profit. Filter is execution-motivated
 (a priori), not performance-mined.
+
+
+## Cross-line shopping (`crossline_study.py`)
+
+```
+sigma (fit on prior season):
+   2024 player_pass_completions      5.84
+   2024 player_pass_yds             74.83
+   2024 player_reception_yds        25.90
+   2024 player_receptions            1.99
+   2024 player_rush_yds             22.10
+   2025 player_pass_completions      5.80
+   2025 player_pass_yds             70.39
+   2025 player_reception_yds        24.51
+   2025 player_receptions            1.97
+   2025 player_rush_yds             23.18
+
+bridge reliability on cross-line quotes (pred p_over decile vs actual):
+   pred 0.35  actual 0.37  n=7398
+   pred 0.47  actual 0.45  n=7399
+   pred 0.48  actual 0.48  n=7406
+   pred 0.49  actual 0.48  n=7391
+   pred 0.50  actual 0.51  n=7395
+   pred 0.51  actual 0.50  n=7400
+   pred 0.53  actual 0.49  n=7396
+   pred 0.60  actual 0.56  n=7398
+
+ROI (regulated books, veto on overs; deduped best price per prop-side):
+                                              EV>=4%            EV>=8%
+   SAME-line (old strategy)     2024  n=  180 +5.6%  n=   25 -14.3%
+   SAME-line (old strategy)     2025  n=  221 +4.5%  n=   20 +18.9%
+   CROSS-line only (new)        2024  n= 1230 -2.2%  n=  538 -1.0%
+   CROSS-line only (new)        2025  n=  866 +0.8%  n=  262 +1.4%
+
+cross-line by distance (EV>=4%, both seasons):
+   tiny (<0.3σ)   n=  988  ROI +0.3%
+   0.3-0.7σ       n=  948  ROI -1.8%
+   0.7-1.5σ       n=  160  ROI -3.8%
+```
