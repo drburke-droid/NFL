@@ -451,3 +451,21 @@ sample bets (first 3 of each season):
    wk 1 2025 Cincinnati Bengals @ Cleveland Browns: fc wind 8kn, U47.5 @2.00 (draftkings) - 33 pts, WON
    wk 1 2025 Tennessee Titans @ Denver Broncos: fc wind 10kn, U42.5 @1.93 (draftkings) - 32 pts, WON
 ```
+
+
+## Wind unders incl. QB pass-yds props, $500 sim (`wind_props_bankroll.py`)
+
+```
+props: 163 bets, 97-66-0 (59.5%), flat ROI +12.0%
+totals: 111 bets, 60-48-3 (55.6%), flat ROI +7.1%
+COMBINED: 274 bets, 157-114-3 (57.9%), flat ROI +10.1%
+bets per qualifying game: mean 2.4, max 3 (correlated exposure)
+   2024: 72-64  flat ROI +0.2%
+   2025: 85-49  flat ROI +20.9%
+
+$500 bankroll, chronological (274 bets):
+   sizing                  end 2024  end 2025  max DD
+   flat $25                     483      1183     36%
+   quarter-Kelly                366       665     33%
+   half-Kelly                   251       772     58%
+```
