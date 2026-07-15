@@ -76,6 +76,17 @@
   .fn { font-size: 12px; color: var(--ink-3); max-width: 84ch; }
   details summary { cursor: pointer; font-size: 13px; color: var(--ink-2); margin: 6px 0; }
   .tblwrap { overflow-x: auto; }
+  .topgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 14px 18px; }
+  .topcol h3 { font-size: 12.5px; margin: 0 0 4px; color: var(--ink-2); text-transform: uppercase; letter-spacing: .05em; }
+  .topcol ol { list-style: none; margin: 0; padding: 0; }
+  .topcol li + li { border-top: 1px solid var(--grid); }
+  .tp { display: flex; align-items: center; gap: 7px; width: 100%; font: inherit; font-size: 13px;
+        padding: 4px 3px; border: 0; background: none; color: var(--ink-1); cursor: pointer;
+        text-align: left; border-radius: 4px; }
+  .tp:hover { background: var(--grid); }
+  .tp:focus-visible { outline: 2px solid var(--s1); outline-offset: 1px; }
+  .tp .rk { width: 17px; color: var(--ink-3); font-variant-numeric: tabular-nums; text-align: right; flex: none; }
+  .tp .tv { margin-left: auto; font-variant-numeric: tabular-nums; font-weight: 600; padding-left: 6px; }
   @media (max-width: 640px) { .card { overflow-x: visible; } .tblwrap table { min-width: 520px; } }
   @media (prefers-reduced-motion: no-preference) {
     .chart path.hl, .chart polyline.hl { transition: opacity .15s; }
@@ -122,6 +133,14 @@
     <p class="hint">Hover for values (tooltip shows both true and observed) &middot; click a line to pin/unpin &middot; values clamped to &plusmn;3z</p>
     <div class="tip" id="tip"></div>
     <details><summary>Pinned players as a table</summary><div class="tblwrap" id="pintbl"></div></details>
+  </div>
+
+  <div class="card">
+    <h2>2025 top 10 at every position</h2>
+    <p class="note">Ranked by the view selected above &mdash; currently <strong id="topview"></strong>. Qualifiers:
+      90 dropbacks / 48 carries / 24 targets in 2025; careers past year 15 age off the chart's axis and off this
+      list. Click a name to pin that career on the chart.</p>
+    <div class="topgrid" id="top10"></div>
   </div>
 
   <div class="card" id="cardCMC">
@@ -216,6 +235,28 @@ function bandPath(band) {
   return `M${up} L${dn} Z`;
 }
 
+const MINQ = {QB: 90, RB: 48, WR: 24, TE: 24};
+const VIEWNAME = {alpha: "Alpha (skill + volume)", true: "True skill (smoothed)", elo: "Elo (opponent-adj)", obs: "Observed"};
+function renderTop10() {
+  document.getElementById("topview").textContent = VIEWNAME[view];
+  document.getElementById("top10").innerHTML = POSN.map(P => {
+    const rows = [];
+    for (const pl of DATA[P].players) {
+      const q = pl.p[pl.p.length - 1];
+      if (q[3] !== 2025 || q[2] < MINQ[P]) continue;
+      const v = val(q);
+      if (v == null) continue;
+      rows.push([pl, v]);
+    }
+    rows.sort((a, b) => b[1] - a[1]);
+    const lis = rows.slice(0, 10).map((r, i) =>
+      `<li><button class="tp" data-tpos="${P}" data-tid="${r[0].id}" title="Pin ${esc(r[0].n)} on the chart">` +
+      `<span class="rk">${i + 1}</span><span>${esc(r[0].n)}</span>` +
+      `<span class="tv">${r[1] > 0 ? "+" : ""}${r[1].toFixed(2)}z</span></button></li>`).join("");
+    return `<div class="topcol"><h3>${P}</h3><ol>${lis}</ol></div>`;
+  }).join("");
+}
+
 function render() {
   const D = DATA[pos];
   // tabs
@@ -276,6 +317,7 @@ function render() {
     </svg>`;
   renderPinTable();
   wireHover();
+  renderTop10();
 }
 
 function renderPinTable() {
@@ -408,6 +450,11 @@ dd.addEventListener("click", e => {
   pinById(d.dataset.pid); q.value = ""; dd.style.display = "none";
 });
 document.addEventListener("click", e => { if (!e.target.closest(".search")) dd.style.display = "none"; });
+document.getElementById("top10").addEventListener("click", e => {
+  const b = e.target.closest("button[data-tid]"); if (!b) return;
+  if (pos !== b.dataset.tpos) { pos = b.dataset.tpos; pins = []; }
+  pinById(b.dataset.tid);
+});
 
 DEFAULTS[pos].forEach(pinByName);
 render();
