@@ -28,6 +28,7 @@ STEPS = [
     ("Ingest FFA consensus projections", "fetch_ffa.py", True),
     ("Ingest league-scored FFA (model anchor)", "fetch_ffa_league.py", True),
     ("Refresh ADP / ECR snapshot",       "fetch_adp.py", False),
+    ("FFC crowd ADP (live mocks)",       "fetch_ffc_adp.py", False),
     ("Fit projection + boom/bust models", "projection_overhaul.py", True),
     ("Build 2026 board (vets + rookies)", "build_2026_targets.py", True),
     ("Generate targets report",          "report_2026_targets.py", True),

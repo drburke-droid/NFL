@@ -160,6 +160,8 @@
     <label class="btn sm up" for="ffaFile">📂 Upload 2026 FFA CSV</label>
     <input id="ffaFile" type="file" accept=".csv" style="display:none">
     <button class="btn sm" id="ffaClear" style="display:none">clear</button>
+    <label class="btn sm" for="espnTrendFile2" title="Paste ESPN's Live Draft Trends page into a plain .txt and upload — sitewide ADP + average auction $ for the 💰 Auction $ market board and the draft-room bots">📈 ESPN trends</label>
+    <input id="espnTrendFile2" type="file" accept=".txt,text/plain" style="display:none">
     <button class="btn sm up" id="buzzBtn" title="Pull latest Wikipedia pageview buzz (camp risers), rescore darts, rebuild the board. Needs the local helper: python scripts/buzz_server.py">↻ Buzz</button>
     <span class="muted" id="buzzStatus"></span>
     <span class="muted" id="ffaStatus">No FFA loaded — board is a prior-year model guess. Upload the FantasyFootballAnalytics preseason CSV to switch to market-anchored consensus.</span>
@@ -365,7 +367,7 @@ const espnLoaded=()=>ESPNT.n>=30;
 const espnStatusTxt=()=>espnLoaded()
   ?`📈 ESPN trends: <b>${ESPNT.n}</b> players · ${new Date(ESPNT.ts).toLocaleDateString()} — bots benchmark on this public data (unlisted = $1 sitewide)`
   :`📈 ESPN trends <b>not loaded</b> — bots fall back to league history alone. Paste ESPN's Live Draft Trends page into a .txt and upload it.`;
-function wireEspnUpload(){const tf=document.getElementById("espnTrendFile");if(!tf)return;
+function wireEspnUpload(id){const tf=document.getElementById(id||"espnTrendFile");if(!tf)return;
   tf.onchange=e=>{const f=e.target.files[0];if(!f)return;
     f.text().then(t=>{const r=parseEspnTrends(t);
       if(r.n<10){alert("Couldn't parse that file ("+r.n+" players found). Paste the ESPN Live Draft Trends table (rank/name/team/pos/ADP/AVG $ blocks) into a plain .txt.");return;}
@@ -451,6 +453,7 @@ document.getElementById("scorechips").innerHTML=Object.entries(META.scoring).map
 function notes(){
   document.getElementById("notes").innerHTML=META.notes.map(n=>"• "+n).join("<br>")+
     "<br>• Auction $: VBD over a "+cfg.teams+"-team $"+cfg.budget+" budget. K/DST capped (streamed). Keepers inflate the remaining pool."+
+    (mode==="auction"?"<br>• 💰 <b>Market board:</b> <b>Exp $</b> = our algo (league 2023-25 bid curve × per-player anchors, keeper-aware — same engine as the draft rooms) · <b>ESPN $</b> = sitewide auction average (📈 upload above"+(espnLoaded()?", loaded":", <b>not loaded</b>")+") · <b>FFA AAV</b> = expert-consensus auction value (league scoring) · <b>Mkt Ø</b> = average of those $ sources · <b>Value</b> = risk-adjusted worth · <b>Edge</b> = Value − Mkt Ø (<span class='upc'>green = market underprices him</span>) · <b>FFC ADP</b> = live crowd mock-draft position (rerun scripts/fetch_ffc_adp.py to refresh). Sort by Edge to shop.":"")+
     (projActive()?"<br>• <b style='color:var(--gold)'>"+(projMode==="blend"?("Blend active ("+Math.round(BLEND_W*100)+"% FFA / "+Math.round((1-BLEND_W)*100)+"% model)"):"FFA consensus active")+"</b> — projections/ranks/$ across every tab <b>including the Draft Room &amp; Mock Keepers value engine</b> "+(projMode==="blend"?"blend the model with the uploaded FFA points (FFA rescaled per-position to the model's level). The blend injects FFA's current-season info (moves, rookies, injuries) the historical model lacks":"use the uploaded FantasyFootballAnalytics points + ADP")+". Model-only injury/manual overrides are bypassed; the validated contract-year / vacated-role bumps still apply. Breakout/rookie tags remain model-based.":"");
 }
 function cards(){
@@ -474,9 +477,11 @@ function parseCSV(text){
     const name=c[iP], pos=(c[iPos]||"").toUpperCase().replace(/[^A-Z]/g,"");
     if(!name||!["QB","RB","WR","TE"].includes(pos)) continue;
     const pts=parseFloat(c[iPts]); if(isNaN(pts)) continue;
+    const iAav=idx("aav");
     m[fkey(name,pos)]={pts:pts, adp:iAdp>=0?parseFloat(c[iAdp]):null, tier:iTier>=0?parseInt(c[iTier]):null,
       posrank:iPr>=0?parseInt(c[iPr]):null, ceil:iCe>=0?parseFloat(c[iCe]):null, floor:iFl>=0?parseFloat(c[iFl]):null,
-      unc:iUn>=0?parseFloat(c[iUn]):null, team:iTm>=0?(c[iTm]||"").toUpperCase().replace(/[^A-Z]/g,""):null};
+      unc:iUn>=0?parseFloat(c[iUn]):null, aav:iAav>=0?parseFloat(c[iAav]):null,
+      team:iTm>=0?(c[iTm]||"").toUpperCase().replace(/[^A-Z]/g,""):null};
     n++;
   }
   return {m,n};
@@ -503,6 +508,7 @@ document.getElementById("ffaFile").onchange=e=>{
   rd.readAsText(f);
 };
 document.getElementById("ffaClear").onclick=()=>{ffaMap={};projMode="model";save();document.getElementById("srcFFA").disabled=true;document.getElementById("srcBlend").disabled=true;document.getElementById("ffaClear").style.display="none";setSrc("model");};
+wireEspnUpload("espnTrendFile2");   // 📈 in the global toolbar — feeds the 💰 Auction $ board + room bots
 
 // ---------- Buzz refresh: Wikipedia pageviews -> dart rescoring -> board rebuild ----------
 // Runs through a local helper (python scripts/buzz_server.py); the published page
@@ -606,8 +612,9 @@ document.getElementById("clearK").onclick=()=>{kept={};save();recompute();render
 function cols(){
   const ffa=ffaOn();
   if(mode==="auction") return [["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
-    ["name","Player",1],["team","Tm",1],["proj","Proj",0],["vorp","VORP",0],["boom","Boom%",0],
-    ...(ffa?[["ffa_adp","ADP",0]]:[]),["base","$ Base",0],["bid","$ Bid",0],["keep","",1]];
+    ["name","Player",1],["team","Tm",1],["proj","Proj",0],
+    ["mexp","Exp $",0],...(espnLoaded()?[["espn$","ESPN $",0]]:[]),["aav","FFA AAV",0],["mavg","Mkt Ø",0],
+    ["mval","Value",0],["medge","Edge",0],["ffc","FFC ADP",0],["bid","$ Bid",0],["keep","",1]];
   return [["overall_rank","#",0],["position","Pos",1],["pos_rank","PosRk",0],["tier","Tier",0],
     ["name","Player",1],["team","Tm",1],["age","Age",0],["proj","Proj",0],["vorp","VORP",0],["bust","Bust%",0],["boom","Boom%",0],
     ...(ffa?[["ffa_adp","ADP",0],["ffa_tier","FFA Tr",0]]:[]),["actual_2025","2025",0]];
@@ -687,6 +694,25 @@ function renderScatter(){
     "Top-left (green) = high ceiling + low bust = smash; top-right = boom/bust; bottom-right (red) = avoid. Only non-overlapping names are labeled (highest ceiling first) — hover any dot for the rest. Filter by position/search above.";
 }
 function wireJump(){document.querySelectorAll(".jc").forEach(el=>el.onclick=()=>gotoComps(el.dataset.nm));}
+// ---------- 💰 Auction $ multi-source market board ----------
+// _AUC is rebuilt on every auction-mode render: exp = the algo's expected purchase price
+// (dynamicMarket: league 2023-25 bid curve × per-player anchors, keeper-aware), rv = worth
+// in room dollars. Alongside: ESPN trends $ (uploaded), FFA AAV (uploaded CSV or baked
+// data.js fallback), FFC crowd ADP (live 12-team PPR mocks, fetch_ffc_adp.py).
+let _AUC=null;
+function buildAuctionMkt(){
+  const mkt=dynamicMarket(),BV=baseValue(),IF=mkt.infl||1;
+  _AUC={exp:{},rv:{}};
+  PLAYERS.forEach(p=>{const id=pid(p);
+    _AUC.exp[id]=Math.max(1,Math.round(mkt.price[id]||1));
+    _AUC.rv[id]=Math.max(1,Math.round((BV[id]||0)*IF));});
+}
+const auctionAAV=p=>{const f=Object.keys(ffaMap).length?ffaMap[fkey(p.name,p.position)]:null;
+  return (f&&f.aav!=null&&!isNaN(f.aav))?f.aav:(p.ffa_aav!=null?p.ffa_aav:0);};
+const mktAvg=p=>{if(isK(p))return 0;
+  const src=[_AUC?_AUC.exp[pid(p)]:null,espnLoaded()?(espnAV(p)||null):null,auctionAAV(p)||null]
+    .filter(v=>v!=null&&v>0);
+  return src.length?src.reduce((a,b)=>a+b,0)/src.length:0;};
 function gv(p,k){
   if(k==="bid")return ADJ.vals[pid(p)]??0;
   if(k==="base")return BASE.vals[pid(p)]??0;
@@ -697,6 +723,13 @@ function gv(p,k){
   if(k==="ffa_tier")return p._ffa?(p._ffa.tier??99):99;
   if(k==="overall_rank")return ffaOn()?-VP(p):p.overall_rank;
   if(k==="pos_rank")return projActive()?(p._prk??p.pos_rank):p.pos_rank;
+  if(k==="mexp")return _AUC?(_AUC.exp[pid(p)]||1):0;
+  if(k==="espn$")return espnAV(p)||0;
+  if(k==="aav")return auctionAAV(p);
+  if(k==="mavg")return mktAvg(p);
+  if(k==="mval")return _AUC?(_AUC.rv[pid(p)]||1):0;
+  if(k==="medge")return (_AUC?(_AUC.rv[pid(p)]||1):0)-mktAvg(p);
+  if(k==="ffc")return p.ffc_adp!=null?-p.ffc_adp:-9999;   // negative: default desc sort puts earliest picks first
   return p[k];
 }
 
@@ -2253,9 +2286,17 @@ function render(){
   if(mode==="risers"){ renderRisers(); return; }
   if(mode==="comps"){ renderComps(); return; }
   if(mode==="targets"){ renderTargets(); return; }
+  if(mode==="auction")buildAuctionMkt();
   notes();
   const COLS=cols();
-  document.getElementById("hrow").innerHTML=COLS.map(c=>`<th class="${c[2]?'l':''}" data-k="${c[0]}">${c[1]}</th>`).join("");
+  const HTIP={mexp:"our algo's expected purchase price: the league's real 2023-25 winning-bid curve × a per-player anchor fitted on what this room paid HIM before, keeper-aware (same Exp $ as the draft rooms)",
+    "espn$":"ESPN sitewide average auction value from your uploaded Live Draft Trends (📈 button above)",
+    aav:"FantasyFootballAnalytics average auction value — league-scored expert consensus (from your uploaded FFA CSV, or the baked 2026 file)",
+    mavg:"market consensus: average of the available $ sources (Exp $, ESPN $, FFA AAV)",
+    mval:"what he's WORTH to a roster (risk-adjusted VBD in room dollars) — compare vs Mkt Ø to find bargains",
+    medge:"Value − Mkt Ø: positive = the market prices him below his worth (bargain), negative = priced above worth",
+    ffc:"FantasyFootballCalculator crowd ADP — live 12-team PPR mock drafts (refresh: python scripts/fetch_ffc_adp.py)"};
+  document.getElementById("hrow").innerHTML=COLS.map(c=>`<th class="${c[2]?'l':''}" data-k="${c[0]}"${HTIP[c[0]]?` title="${HTIP[c[0]]}" style="cursor:help"`:''}>${c[1]}</th>`).join("");
   document.querySelectorAll("#hrow th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(!k)return;
     if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=(k==="name"||k==="team"||k==="position")?1:-1;}render();});
   const keptSet=new Set(Object.keys(kept));
@@ -2301,6 +2342,14 @@ function render(){
       if(k==="ffa_adp")return `<td class="muted">${p._ffa&&p._ffa.adp?p._ffa.adp.toFixed(1):'—'}</td>`;
       if(k==="ffa_tier")return `<td class="muted">${p._ffa&&p._ffa.tier?p._ffa.tier:'—'}</td>`;
       if(k==="base")return `<td class="base">$${base}</td>`;
+      if(k==="mexp")return `<td class="base">${isK(p)?'—':'$'+(_AUC?(_AUC.exp[id]||1):1)}</td>`;
+      if(k==="espn$"){const v=espnAV(p);return `<td class="muted">${v?'$'+Math.round(v):'—'}</td>`;}
+      if(k==="aav"){const v=auctionAAV(p);return `<td class="muted">${v?'$'+Math.round(v):'—'}</td>`;}
+      if(k==="mavg"){const v=mktAvg(p);return `<td style="font-weight:600">${v?'$'+Math.round(v):'—'}</td>`;}
+      if(k==="mval")return `<td>${isK(p)?'—':'$'+(_AUC?(_AUC.rv[id]||1):1)}</td>`;
+      if(k==="medge"){if(isK(p))return `<td class="muted">—</td>`;const v=Math.round((_AUC?(_AUC.rv[id]||1):1)-mktAvg(p));
+        return `<td class="${v>0?'upc':(v<0?'downc':'muted')}" style="font-weight:600">${v>=0?'+':''}${v}</td>`;}
+      if(k==="ffc")return `<td class="muted">${p.ffc_adp!=null?p.ffc_adp.toFixed(1):'—'}</td>`;
       if(k==="bid"){const up=bid>base;return `<td class="bid">$${bid}${up?` <span class="upc" style="font-weight:400;font-size:11px">+${bid-base}</span>`:''}</td>`;}
       if(k==="keep")return `<td class="l"><span class="keepbtn" data-id="${id}">＋</span></td>`;
       if(k==="actual_2025")return `<td class="muted">${f(p.actual_2025)}</td>`;
