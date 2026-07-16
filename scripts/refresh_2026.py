@@ -26,6 +26,7 @@ FFA_2026 = os.path.join(ROOT, "data", "ffanalytics", "FFAn", "projections_2026_w
 # (label, script, required?) — ADP refresh is best-effort (network/source may vary)
 STEPS = [
     ("Ingest FFA consensus projections", "fetch_ffa.py", True),
+    ("Ingest league-scored FFA (model anchor)", "fetch_ffa_league.py", True),
     ("Refresh ADP / ECR snapshot",       "fetch_adp.py", False),
     ("Fit projection + boom/bust models", "projection_overhaul.py", True),
     ("Build 2026 board (vets + rookies)", "build_2026_targets.py", True),

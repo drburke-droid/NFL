@@ -4,8 +4,9 @@ Avenue 1 model: predict next-season PPG, then derive positional finish + VBD.
 Season-blocked walk-forward: for each target season T, train on all seasons < T
 (honest out-of-sample). LightGBM regression. The production feature set is
 FFA-ANCHORED: prior-year production/role/draft signals fused with the
-FantasyFootballAnalytics weighted-expert consensus (nflv_ffa_proj), which the
-value test showed is the best configuration. FFA features are NaN (-> -1) for
+FantasyFootballAnalytics weighted-expert consensus (nflv_ffa_league — our
+league's scoring: PPR + 6-pt pass TD), which the value tests showed is the
+best configuration (test_ffa_value.py, test_ffa_league_value.py). FFA features are NaN (-> -1) for
 players without a consensus projection, so all rows are still scored.
 Finish/VBD derived by projecting games and ranking projected season totals.
 
@@ -63,10 +64,16 @@ def add_injury_features(df):
 
 
 def attach_ffa(df, con):
-    """Left-join FFA consensus projections onto a (player_id, season) frame."""
-    ffa = pd.read_sql("SELECT * FROM nflv_ffa_proj WHERE player_id IS NOT NULL", con)
+    """Left-join FFA consensus projections onto a (player_id, season) frame.
+
+    Uses the LEAGUE-SCORED consensus (nflv_ffa_league: PPR + 6-pt pass TD,
+    2014-2026) — validated better than the standard-scored anchor
+    (walk-forward MAE 2.848 vs 2.876; biggest gains QB + WR, see
+    test_ffa_league_value.py). nflv_ffa_proj (standard, 2012-2025) remains
+    for studies that need the longer history."""
+    ffa = pd.read_sql("SELECT * FROM nflv_ffa_league WHERE player_id IS NOT NULL", con)
     ffa = ffa.sort_values("ffa_points", ascending=False).drop_duplicates(["season","player_id"])
-    ffa = ffa.drop(columns=[c for c in ["position","player"] if c in ffa.columns])
+    ffa = ffa.drop(columns=[c for c in ["position","player","team"] if c in ffa.columns])
     return df.merge(ffa, on=["season","player_id"], how="left")
 
 

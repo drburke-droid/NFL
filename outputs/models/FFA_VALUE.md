@@ -44,4 +44,21 @@ Output: `nflv_ffa_proj`, `season_ffa_predictions` (1,839 player-seasons, 2016–
 floor/ceiling/uncertainty for the explosion/ceiling work; and (when 2026 FFA + ADP publish)
 generate a market-anchored 2026 projection.
 
-*Scripts: `scripts/fetch_ffa.py`, `scripts/test_ffa_value.py`.*
+## Addendum (Jul 2026): LEAGUE-SCORED consensus is the better anchor
+
+The FFA history was regenerated in our league's actual scoring (full PPR + 6-pt pass TD
+/ −1 INT, 2014–2026 → `nflv_ffa_league`). Head-to-head on identical players, walk-forward
+test 2017–2025 (`test_ffa_league_value.py`):
+
+| Anchor | MAE | ρ(PPG) | rank-vs-finish |
+|---|---|---|---|
+| standard-scored (old) | 2.876 | 0.720 | 0.497 |
+| **league-scored** | **2.848** | **0.727** | **0.509** |
+| both feature sets | 2.854 | 0.726 | 0.505 |
+
+Per position (MAE): QB 2.97→2.92 (rank-finish 0.431→**0.471**), WR 2.86→**2.76**,
+TE ≈ tie, RB slightly worse (3.10→3.16). The QB gain is exactly where a 6-pt-pass-TD
+league needs it. **`attach_ffa` now reads `nflv_ffa_league`** — the production anchor.
+`nflv_ffa_proj` (standard, 2012–2025) is kept for longer-history studies.
+
+*Scripts: `scripts/fetch_ffa.py`, `scripts/test_ffa_value.py`, `scripts/fetch_ffa_league.py`, `scripts/test_ffa_league_value.py`.*
