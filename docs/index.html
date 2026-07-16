@@ -1104,10 +1104,13 @@ function myVal(mkt,BVo){
     // RB/WR trap band caps at worth (no aggression stretch on a 52-62% hit-rate tier).
     const wc=wireClass(p,market);
     let wcapped=false;
-    if(wc&&startNeed){
+    if(wc&&startNeed&&!isPinned(p)){        // 📌 pins lift the wire caps — you made the call
       const cap=wc.c==="wire"?Math.max(2,Math.round(value*0.55)):wc.c==="trap"?value:null;
       if(cap!=null&&maxBid>cap){maxBid=cap;wcapped=true;}
     }
+    // 🧭 fill discipline: the $1-3 bin regenerates elite QB production 80% of years (TE starter
+    // 100%), so aggression NEVER stretches a QB/TE bid past worth — unless pinned.
+    if((pos==="QB"||pos==="TE")&&startNeed&&!isPinned(p)&&maxBid>value)maxBid=value;
     maxBid=Math.max(1,Math.min(maxBid,affordable));
     out[id]={market,value,maxBid,surplus:Math.round(surplus),needed:startNeed||benchOnly,startNeed,wc,wcapped};});
   return out;
@@ -1177,7 +1180,29 @@ const HEIR_2026={
 };
 const heirBadge=p=>{const h=HEIR_2026[p.name];if(!h)return"";
   return ` <span title="⏫ HEIR — out-ran his own starter behind the same line in 2025: ${h.ypc} ypc / ${h.epa} EPA-c on ${h.car} carries vs ${h.s} (${h.sypc} ypc / ${h.sepa}). Backups who beat their starter on BOTH metrics (2011-25, n=121): 35% become lead backs next year vs 15%, and when the starter vacates they average 10.9 ppg with 42% hitting startable 12+ (vs 7.4 / 17%). Bell, D.Johnson, Kamara, CMC and Achane all flashed this exact flag first. Target as a bench dart / contingency stash." style="cursor:help;font-size:11px">⏫</span>`;};
-const WIRE_LEGEND=`<b>⭐ star</b> = pay up, unbuyable later · <b>⚠ trap</b> = mid-$ band, never stretch · <b>📶 wire-grade</b> = FAAB replaces him, My Max capped (*) · <b>🎯 dart</b> = free lottery ticket · <b>⏫ heir</b> = backup who out-ran his starter in '25 (35% take the job next yr) (hover any badge for the numbers)`;
+const WIRE_LEGEND=`<b>⭐ star</b> = pay up, unbuyable later · <b>⚠ trap</b> = mid-$ band, never stretch · <b>📶 wire-grade</b> = FAAB replaces him, My Max capped (*) · <b>🎯 dart</b> = free lottery ticket · <b>⏫ heir</b> = backup who out-ran his starter in '25 (35% take the job next yr) · <b>📌 pin</b> = YOUR guy: forced into the plan, wire caps lifted (hover any badge for the numbers)`;
+// ---------- 🧭 POSITIONAL FILL SCORE (scripts/positional_fill_study.py: FFA-ADP pools, 2016-25) ----------
+// P(filling a slot in-season WITHOUT paying up), from two pools: LATE-DRAFT ($1-3 picks, ADP
+// 100-170) and WAIVER (ADP>170/undrafted), requiring a week-1-4 flash (discoverable), scored on
+// weeks 5-17 PPG. opp = season pts you CANNOT recover from the wire if you skip tier-1 (elite bar
+// minus the competition-adjusted 3rd-best discoverable fill, over 13 ROS weeks). late = P(the
+// $1-3 bin produces >= 1 starter-level player that year); lateElite = same for an ELITE season.
+const FILL={QB:{opp:103,late:100,lateElite:80,wire3:17.2},RB:{opp:157,late:90,lateElite:20,wire3:6.3},
+            WR:{opp:109,late:100,lateElite:20,wire3:9.7},TE:{opp:98,late:100,lateElite:30,wire3:7.3}};
+const FILL_VERDICT={RB:"PAY UP — the un-fillable position; hoard $1-3 RB darts, the wire can't rescue you",
+                    WR:"one stud, then darts — the $1-3 WR bin hits a starter every year",
+                    QB:"one stud MAX and never stretch — the late bin found an ELITE QB 8 of 10 years",
+                    TE:"never pay tier-1 unless elite falls to you — most fillable slot in the game"};
+// ---------- 📌 PINS: YOUR guys — the plan force-includes them, nominations lead with them ----------
+// Pinned players claim their slot in the knapsack before anyone else (two pinned QBs = the plan
+// takes the better value and the other becomes the walk-away pivot — a natural either/or, since
+// the plan never rosters two QBs). Pins bypass the wire-discipline caps and the QB/TE no-stretch
+// rule: pinning means you've made the judgment call, the engine executes it.
+let PINS=JSON.parse(localStorage.getItem("draft_pins")||"{}");
+const savePins=()=>localStorage.setItem("draft_pins",JSON.stringify(PINS));
+const isPinned=p=>!!PINS[pid(p)];
+const pinBadge=p=>isPinned(p)?' <span title="📌 pinned — forced into 🎯 Your Plan; wire caps and the QB/TE no-stretch rule are lifted for him" style="font-size:11px">📌</span>':'';
+function togglePin(id){if(PINS[id])delete PINS[id];else PINS[id]=1;savePins();render();}
 function optimalPlan(mkt){
   const meS=teamState(DR.me), budget=meS.budget;
   const price=p=>mkt.price[pid(p)]||1;
@@ -1186,13 +1211,23 @@ function optimalPlan(mkt){
   ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:raPts});});
   for(let k=0;k<(meS.need.FLEX||0);k++)needs.push({slot:"FLEX",elig:FLEXE,u:raPts});
   ["K","DST"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:p=>(p.proj_pts||0)/100});});
-  for(let k=0;k<(meS.bench||0);k++)needs.push({slot:"BN",elig:["RB","WR"],u:benchU});
+  // 🧭 fill-score dart quota: RB in-season fill is 6.3 ppg (vs WR 9.7) and skipping tier-1 RB
+  // costs 157 unrecoverable pts — so HALF the bench slots are RB-only darts. The wire can
+  // regenerate a WR3; it has never regenerated an RB you'd start on purpose.
+  const _nb=meS.bench||0,_rbOnly=Math.floor(_nb/2);
+  for(let k=0;k<_nb;k++)needs.push({slot:"BN",elig:k<_rbOnly?["RB"]:["RB","WR"],u:benchU});
   if(!needs.length)return {picks:[],spend:0,unspent:budget,lam:0,nslots:0};
+  const anyPins=avail.some(isPinned);
   const sel=lam=>{const used=new Set();let spend=0;const picks=[];
     for(const nd of needs){let best=null,bn=-1e9,bu=0;
-      for(const p of avail){if(used.has(pid(p))||!nd.elig.includes(p.position))continue;
-        const u=nd.u(p),n=u-lam*price(p);
-        if(n>bn){bn=n;best=p;bu=u;}}
+      // 📌 pass 1: pinned players claim eligible slots first (two pinned QBs -> the better
+      // value takes the QB slot; the other is priced as the walk-away pivot). pass 2: everyone.
+      for(const pinPass of (anyPins?[true,false]:[false])){
+        for(const p of avail){if(used.has(pid(p))||!nd.elig.includes(p.position))continue;
+          if(pinPass&&!isPinned(p))continue;
+          const u=nd.u(p),n=u-lam*price(p);
+          if(n>bn){bn=n;best=p;bu=u;}}
+        if(best)break;}
       if(best){used.add(pid(best));spend+=price(best);picks.push({slot:nd.slot,p:best,cost:price(best),u:bu,elig:nd.elig,uf:nd.u});}}
     return {picks,spend,used};};
   let lo=0.02,hi=40,S=sel(lo),lam=lo;
@@ -1206,7 +1241,8 @@ function optimalPlan(mkt){
   const infeasible=S.spend>budget;
   // leftover pass: pour remaining $ into the single best affordable upgrade, repeat
   for(let it=0;it<24;it++){const un=budget-S.spend;let bi=-1,bp=null,bg=0;
-    S.picks.forEach((pk,i)=>{for(const p of avail){
+    S.picks.forEach((pk,i)=>{if(isPinned(pk.p))return;   // 📌 never upgrade away a pinned player
+      for(const p of avail){
       if(S.used.has(pid(p))||!pk.elig.includes(p.position))continue;
       const d$=price(p)-pk.cost,du=pk.uf(p)-pk.u;
       if(du>bg&&d$<=un){bg=du;bi=i;bp=p;}}});
@@ -1384,7 +1420,7 @@ function planPanelHTML(mkt,mv){
       <span style="width:14px;text-align:center">${pk.wa!=null?pri(pk):''}</span>
       <span class="muted" style="width:34px">${pk.slot}</span>
       <span class="pos ${pk.p.position}" style="transform:scale(.75)">${pk.p.position}</span>
-      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name}${wireBadge(mv[pid(pk.p)])}${heirBadge(pk.p)} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
+      <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name}${pinBadge(pk.p)}${wireBadge(mv[pid(pk.p)])}${heirBadge(pk.p)} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
       <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
       <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
         ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
@@ -1405,19 +1441,20 @@ function myTargetList(plan,extra){
   const starters=plan.picks.filter(pk=>pk.wa!=null).slice().sort((a,b)=>(b.du||0)-(a.du||0)).map(pk=>pk.p);
   const bench=plan.picks.filter(pk=>pk.slot==="BN").map(pk=>pk.p);
   const kd=plan.picks.filter(pk=>pk.slot==="K"||pk.slot==="DST").map(pk=>pk.p);
-  const darts=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!inPlan.has(pid(p))&&(p.position==="RB"||p.position==="WR")&&dartSig(p)>=0.15)
-    .sort((a,b)=>dartSig(b)-dartSig(a)).slice(0,extra||10);
+  const darts=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!inPlan.has(pid(p))&&(p.position==="RB"||p.position==="WR")&&(dartSig(p)>=0.15||isPinned(p)))
+    .sort((a,b)=>(isPinned(b)?1:0)-(isPinned(a)?1:0)||dartSig(b)-dartSig(a)).slice(0,extra||10);
   return {starters,bench,darts,kd,all:[...starters,...bench,...darts,...kd]};
 }
 // 📊 positional scarcity panel — shared by the Draft Room and the Mock Draft
 function scarcityPanelHTML(mkt){
-  let h=`<div class="dr-panel"><h3>📊 Positional scarcity — who to pay up for vs wait on</h3>`;
-  ["QB","RB","WR","TE"].forEach(pos=>{const sc=mkt.scarce[pos]||{demand:0,edge:0};
+  let h=`<div class="dr-panel"><h3>📊 Positional scarcity & 🧭 fill score — who to pay up for vs wait on</h3>`;
+  ["QB","RB","WR","TE"].forEach(pos=>{const sc=mkt.scarce[pos]||{demand:0,edge:0},F=FILL[pos];
     let lab;
     if(sc.edge===0) lab=`<span class="muted">abundant — every starter is ~replaceable; take the cheapest, don't overpay</span>`;
     else if(sc.edge<=2) lab=`<span class="scarce">SCARCE — only ${sc.edge} player${sc.edge>1?'s':''} with a real edge left for ${sc.demand} open slot${sc.demand>1?'s':''}; pay up or you're stuck with replacement</span>`;
     else lab=`${sc.edge} players with an edge for ${sc.demand} open slots — a few worth a premium, then it flattens`;
-    h+=`<div style="font-size:12px;margin-bottom:2px"><b>${pos}</b>: ${lab}</div>`;});
+    h+=`<div style="font-size:12px;margin-bottom:2px"><b>${pos}</b>: ${lab}
+      <div class="muted" style="font-size:10px;margin-left:8px" title="scripts/positional_fill_study.py (2016-25): opp = season pts you can't recover from cheap picks/waivers if you skip tier-1; late bin = P(a $1-3 pick, FFA ADP 100-170, that flashed by wk4 delivers starter-level weeks 5-17); wire fill = the competition-adjusted (3rd-best) PPG a pure waiver add delivers">🧭 skip tier-1 = <b>~${F.opp} pts unrecoverable</b> · $1-3 bin hits a starter ${F.late}% of yrs${F.lateElite>=50?` <b class="upc">(an ELITE one ${F.lateElite}%)</b>`:''} · pure-wire fill ≈${F.wire3} ppg → <b>${FILL_VERDICT[pos]}</b></div></div>`;});
   return h+`<div class="muted" style="font-size:11px;margin-top:4px">Prices use each player's edge over the <b>last startable</b> player (value-over-next-available, not raw VORP), on <b>risk-adjusted</b> points — a steady high-floor producer is worth more than a boom/bust, injury-prone one at the same projection. So 12 equal QBs for 12 teams price to ~$1 (guaranteed one), a lone elite RB commands the premium, and volatile RBs are nudged below safer WRs/QBs. Top compressed to observed clearing prices (~$70). The table's <b>VONA pts</b> column is this same points edge.</div></div>`;
 }
 // 🤖 background bots: top-2 likely bidders on a player (personality, fandom, ESPN benchmark,
@@ -1514,7 +1551,7 @@ function renderDraftRoom(){
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
     return `<tr${su?` title="likely bidders: ${su.tip}"`:''}>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l"><span class="name">${p.name}</span>${wireBadge(m)}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
+      <td class="l">${isK(p)?'':`<span class="drpin" data-id="${id}" title="${isPinned(p)?'📌 pinned — click to unpin':'pin: force him into 🎯 Your Plan (wire caps + QB/TE no-stretch lifted; pin BOTH your QB candidates and the plan takes whichever comes cheaper)'}" style="cursor:pointer;opacity:${isPinned(p)?'1':'.25'};margin-right:2px">📌</span>`}<span class="name">${p.name}</span>${wireBadge(m)}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
       <td>${isK(p)?"—":Math.round(r.proj)}</td>
       <td style="font-weight:600">$${r.val}</td>
       <td class="base">$${r.exp}</td>
@@ -1571,6 +1608,7 @@ function renderDraftRoom(){
     pi.onkeydown=e=>{if(e.key==="Enter")drmAssign(+document.getElementById("drAssign").value);if(e.key==="Escape")drmClose();};});
   document.getElementById("drmCancel").onclick=drmClose;
   modal.onclick=e=>{if(e.target===modal)drmClose();};
+  document.querySelectorAll(".drpin").forEach(el=>el.onclick=ev=>{ev.stopPropagation();togglePin(el.dataset.id);});
   document.querySelectorAll(".drh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(drSort===k)drDir*=-1; else{drSort=k;drDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🏟️ <b>Draft Room.</b> Keepers locked in 🧩 Mock Keepers persist here (🔒 on the cards; Reset clears drafted players only). Live flow built for speed: <b>Draft</b> → type the winning bid (preselected) → click the owner (or Enter = default owner). Team cards show every roster, its <b>draft score</b> (⚡ starter PPG · % of the predraft-optimal roster · $ surplus captured) and what that owner <b>targets</b> next; 🤖 under a player = the bots' two likeliest bidders with their maxes (hover the row for the full board). "+
