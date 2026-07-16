@@ -102,6 +102,11 @@ def build_skill(con):
     except Exception:
         df["ffa_aav"] = np.nan
     try:
+        esp = pd.read_sql("SELECT nm, position, av espn_av, adp espn_adp FROM nflv_espn_trends", con) \
+                .drop_duplicates(["nm", "position"])
+    except Exception:
+        esp = None
+    try:
         ffc = pd.read_sql("SELECT nm, position, adp ffc_adp FROM nflv_ffc_adp", con) \
                 .drop_duplicates(["nm", "position"])
         nmcol = "player_display_name" if "player_display_name" in df.columns else "name"
@@ -110,9 +115,14 @@ def build_skill(con):
                     .str.replace("-", " ", regex=False).str.replace(",", "", regex=False)
                     .str.replace(r"\b(jr|sr|ii|iii|iv|v)\b", "", regex=True)
                     .str.replace(r"\s+", " ", regex=True).str.strip())
-        df = df.merge(ffc, on=["nm", "position"], how="left").drop(columns=["nm"])
+        df = df.merge(ffc, on=["nm", "position"], how="left")
+        if esp is not None:
+            df = df.merge(esp, on=["nm", "position"], how="left")
+        df = df.drop(columns=["nm"])
     except Exception:
         df["ffc_adp"] = np.nan
+    for c in ["espn_av", "espn_adp"]:
+        if c not in df.columns: df[c] = np.nan
     df["vacated_role"] = df["vacated_role"].fillna(0).astype(int)
     df["vac_rb_carries"] = df["vac_rb_carries"].fillna(0).round(0)
     # archetype label + age-decline caution (display-only context; not a projection input,
@@ -224,8 +234,8 @@ def main():
           "breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
           "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
           "vacated_role","vac_rb_carries","archetype","age_risk","leap_prob","fade_prob","dart_prob",
-          "ffa_aav","ffc_adp"]
-    for c in ["ffa_aav","ffc_adp"]:
+          "ffa_aav","ffc_adp","espn_av","espn_adp"]
+    for c in ["ffa_aav","ffc_adp","espn_av","espn_adp"]:
         for frame in (kdf, ddf):
             if c not in frame.columns: frame[c]=np.nan
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
@@ -243,7 +253,7 @@ def main():
             if prev is not None and (prev-v)>gap: tier+=1
             allp.at[i,"tier"]=tier; prev=v
 
-    for c in ["proj_pts","proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","age","ffa_aav","ffc_adp"]:
+    for c in ["proj_pts","proj_games","proj_ppg","vorp","repl_pts","actual_2025","delta_ly","prior_ppg","age","ffa_aav","ffc_adp","espn_av","espn_adp"]:
         allp[c]=allp[c].round(1)
     for c in ["breakout_prob","hit_prob","bust","boom","leap_prob","fade_prob","dart_prob"]:
         allp[c]=allp[c].round(3)
@@ -256,7 +266,7 @@ def main():
               "is_flex_starter","conf","breakout_prob","hit_prob","is_rookie","bust","boom","floor","ceiling",
               "trend_h1","trend_h2","trend_dppg","trend_dsnap","trend_dtch","trend_dtgtsh","trend_g2","won_job",
               "vacated_role","vac_rb_carries","archetype","age_risk","leap_prob","fade_prob","dart_prob",
-              "ffa_aav","ffc_adp"]
+              "ffa_aav","ffc_adp","espn_av","espn_adp"]
     import math
     records = [{k: (None if isinstance(v, float) and math.isnan(v) else v) for k, v in r.items()}
                for r in allp[out_cols].to_dict(orient="records")]

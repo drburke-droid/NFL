@@ -362,10 +362,17 @@ function parseEspnTrends(txt){
   }
   return {map,n,ts:Date.now()};
 }
-const espnAV=p=>{const e=ESPNT.map[fkey(p.name,p.position)];return e?e.av:0;};
-const espnLoaded=()=>ESPNT.n>=30;
-const espnStatusTxt=()=>espnLoaded()
+// ESPN values: a browser upload (ESPNT, localStorage) wins; otherwise fall back to the
+// values BAKED into data.js (espn_av — data/espn_trends_2026.txt via fetch_espn_trends.py
+// + build_draft_tool.py), so the board works with no upload at all.
+const espnAV=p=>{const e=ESPNT.n>=30?ESPNT.map[fkey(p.name,p.position)]:null;
+  return e?e.av:(p.espn_av!=null?p.espn_av:0);};
+const espnBaked=()=>typeof PLAYERS!=="undefined"&&PLAYERS.some(p=>p.espn_av!=null);
+const espnLoaded=()=>ESPNT.n>=30||espnBaked();
+const espnStatusTxt=()=>ESPNT.n>=30
   ?`📈 ESPN trends: <b>${ESPNT.n}</b> players · ${new Date(ESPNT.ts).toLocaleDateString()} — bots benchmark on this public data (unlisted = $1 sitewide)`
+  :espnBaked()
+  ?`📈 ESPN trends: using the <b>baked snapshot</b> (data/espn_trends_2026.txt) — upload a fresher Live Draft Trends .txt any time to override`
   :`📈 ESPN trends <b>not loaded</b> — bots fall back to league history alone. Paste ESPN's Live Draft Trends page into a .txt and upload it.`;
 function wireEspnUpload(id){const tf=document.getElementById(id||"espnTrendFile");if(!tf)return;
   tf.onchange=e=>{const f=e.target.files[0];if(!f)return;
