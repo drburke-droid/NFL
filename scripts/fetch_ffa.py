@@ -40,6 +40,18 @@ def main():
     ffa["nm"] = ffa["player"].map(norm)
 
     merged = ffa.merge(xwalk, on=["nm","position","season"], how="left")
+
+    # Seasons with no nflv_season coverage yet (the upcoming season) can't match
+    # same-season; fall back to each player's most recent name->id mapping.
+    # Rookies stay unmatched — they have no gsis history and are handled separately.
+    played = set(seas["season"].unique())
+    latest = (seas.sort_values("season")
+              .drop_duplicates(["nm","position"], keep="last")
+              .set_index(["nm","position"])["player_id"])
+    future = merged["player_id"].isna() & ~merged["season"].isin(played)
+    merged.loc[future, "player_id"] = (
+        merged.loc[future].set_index(["nm","position"]).index.map(latest).values)
+
     rate = merged["player_id"].notna().mean()
 
     out = merged.rename(columns={

@@ -63,17 +63,26 @@ def main():
     cv=b.loc[vmask,"prior_cv"]; gp=b.loc[vmask,"prior_games"]
     b.loc[vmask,"certainty"]=(0.6*(1-(cv-cv.min())/(cv.max()-cv.min()))+0.4*(gp/17).clip(0,1))
 
-    con=sqlite3.connect(DB); b.to_sql("draft_board_2026",con,if_exists="replace",index=False); con.close()
+    con=sqlite3.connect(DB); b.to_sql("draft_board_2026",con,if_exists="replace",index=False)
+    n_ffa=con.execute("SELECT COUNT(*) FROM nflv_ffa_proj WHERE season=2026 AND player_id IS NOT NULL").fetchone()[0]
+    con.close()
+    market_anchored=n_ffa>=20
 
     def fmt(d,cols):
         return d[cols].to_string(index=False)
 
     L=[]
     L.append("# 2026 Draft-Day Targets — Deep Dive\n")
-    L.append("> **Big caveat:** 2026 ECR/ADP/FFA isn't published yet, so these are **model projections** "
-             "(prior-year-anchored, no market input) — a reasoned guess, not gospel. Keepers unknown, so the full "
-             "pool incl. all rookies is treated as available. Cost = base auction $ (12-team, $200, 16 roster, "
-             "K/DST ≈ $1). Scoring = your custom league (RB/WR/TE = PPR; QB 6-pt pass TD / −1 INT).\n")
+    if market_anchored:
+        L.append(f"> **Market-anchored:** 2026 FFA consensus is in ({n_ffa} players matched), so projections are "
+                 "**FFA-anchored** — the validated best season model. Keepers unknown, so the full "
+                 "pool incl. all rookies is treated as available. Cost = base auction $ (12-team, $200, 16 roster, "
+                 "K/DST ≈ $1). Scoring = your custom league (RB/WR/TE = PPR; QB 6-pt pass TD / −1 INT).\n")
+    else:
+        L.append("> **Big caveat:** 2026 ECR/ADP/FFA isn't published yet, so these are **model projections** "
+                 "(prior-year-anchored, no market input) — a reasoned guess, not gospel. Keepers unknown, so the full "
+                 "pool incl. all rookies is treated as available. Cost = base auction $ (12-team, $200, 16 roster, "
+                 "K/DST ≈ $1). Scoring = your custom league (RB/WR/TE = PPR; QB 6-pt pass TD / −1 INT).\n")
     L.append("Built from `board_2026`: 2026 model projection + **breakout probability** (P of ≥+4 PPG jump vs 2025) "
              "for veterans, **rookie-hit probability** for the 2026 class, and a **certainty** score "
              "(prior consistency + durability).\n")
@@ -123,8 +132,9 @@ def main():
     for _,r in fade.iterrows():
         L.append(f"| {r.position} | {r.player_display_name} | {r.team} | {r.age:.0f} | {r.proj_pts:.0f} | ${r.auction} | {r.certainty:.2f} |")
 
-    L.append("\n---\n*Scripts: `build_2026_targets.py` → `board_2026`; `report_2026_targets.py` → `draft_board_2026`. "
-             "Re-run once 2026 FFA/ADP publish for market-anchored numbers.*")
+    tail=("*" if market_anchored else " Re-run once 2026 FFA/ADP publish for market-anchored numbers.*")
+    L.append("\n---\n*Scripts: `build_2026_targets.py` → `board_2026`; `report_2026_targets.py` → `draft_board_2026`."
+             + tail)
     open(os.path.join(OUT,"DRAFT_2026_TARGETS.md"),"w",encoding="utf-8").write("\n".join(L))
     print("Wrote DRAFT_2026_TARGETS.md")
     print(f"Replacement $: {repl}")

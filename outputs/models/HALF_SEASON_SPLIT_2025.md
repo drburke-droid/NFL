@@ -24,11 +24,11 @@ A points jump *backed by* a snap/touch/target-share jump is a real role change ‚
 | WR | Jalen Coker | CAR | 3.0 | 2.8 | 8.0 | 10.2 | 7.4 | 18% | 2.2 | 7.8 |
 | QB | Jacoby Brissett | ARI | 5.0 | 15.7 | 9.0 | 23.0 | 7.3 | 38% | -0.4 | 0.0 |
 | WR | Jameson Williams | DET | 8.0 | 9.3 | 9.0 | 16.1 | 6.8 | 4% | 2.8 | 5.6 |
-| QB | Cam Ward | TEN | 9.0 | 10.8 | 8.0 | 17.3 | 6.6 | -11% | 0.6 | 0.0 |
 | WR | Devaughn Vele | NO | 4.0 | 3.7 | 5.0 | 10.3 | 6.6 | 46% | 3.3 | 13.1 |
-| RB | Derrick Henry | BAL | 8.0 | 12.9 | 9.0 | 19.3 | 6.4 | -1% | 3.9 | 0.0 |
-| RB | Ty Johnson | BUF | 8.0 | 2.5 | 9.0 | 8.9 | 6.4 | 5% | 3.1 | 5.5 |
+| QB | Cam Ward | TEN | 9.0 | 10.8 | 8.0 | 17.3 | 6.6 | -11% | 0.6 | 0.0 |
 | RB | Kenneth Gainwell | PIT | 8.0 | 9.6 | 9.0 | 16.0 | 6.4 | 12% | 2.5 | 5.1 |
+| RB | Ty Johnson | BUF | 8.0 | 2.5 | 9.0 | 8.9 | 6.4 | 5% | 3.1 | 5.5 |
+| RB | Derrick Henry | BAL | 8.0 | 12.9 | 9.0 | 19.3 | 6.4 | -1% | 3.9 | 0.0 |
 | WR | Luther Burden III | CHI | 7.0 | 5.2 | 8.0 | 11.4 | 6.2 |  | 3.7 | 11.1 |
 | WR | Parker Washington | JAX | 8.0 | 7.7 | 8.0 | 13.9 | 6.2 | 13% | 0.8 | 6.5 |
 | RB | Jahmyr Gibbs | DET | 8.0 | 18.2 | 9.0 | 24.3 | 6.1 | 9% | 3.4 | 6.1 |
@@ -61,9 +61,9 @@ A points jump *backed by* a snap/touch/target-share jump is a real role change ‚
 | WR | Devaughn Vele | NO | 4.0 | 3.7 | 5.0 | 10.3 | 6.6 | 46% | 3.3 | 13.1 |
 | RB | Chris Rodriguez Jr. | WAS | 6.0 | 5.1 | 6.0 | 10.3 | 5.2 |  | 6.3 | 2.7 |
 | WR | Jalen Coker | CAR | 3.0 | 2.8 | 8.0 | 10.2 | 7.4 | 18% | 2.2 | 7.8 |
+| WR | Chris Godwin Jr. | TB | 2.0 | 5.6 | 7.0 | 10.0 | 4.4 |  | -1.7 | -1.5 |
 | WR | Ryan Flournoy | DAL | 8.0 | 5.5 | 7.0 | 10.0 | 4.4 | 13% | 1.1 | 4.1 |
 | QB | Riley Leonard | IND | 1.0 | 0.1 | 4.0 | 10.0 | 9.9 | 35% | 0.2 | 0.0 |
-| WR | Chris Godwin Jr. | TB | 2.0 | 5.6 | 7.0 | 10.0 | 4.4 |  | -1.7 | -1.5 |
 | WR | Jayden Higgins | HOU | 8.0 | 5.2 | 9.0 | 9.7 | 4.5 | 8% | 2.4 | 8.1 |
 | RB | Audric Estim√© | NO | 0.0 | nan | 5.0 | 9.6 | 9.6 |  | nan | nan |
 | RB | Blake Corum | LA | 8.0 | 4.6 | 9.0 | 9.5 | 4.9 | 9% | 3.0 | -0.7 |
@@ -85,10 +85,10 @@ A points jump *backed by* a snap/touch/target-share jump is a real role change ‚
 | WR | Jordan Addison | MIN | 5.0 | 14.5 | 9.0 | 7.0 | -7.5 | -5% | -1.9 | -2.0 |
 | TE | Oronde Gadsden II | LAC | 7.0 | 12.8 | 8.0 | 5.5 | -7.2 | 1% | -1.6 | -0.5 |
 | WR | Emeka Egbuka | TB | 8.0 | 15.1 | 9.0 | 8.1 | -7.1 | -4% | -1.0 | -1.2 |
-| WR | Justin Jefferson | MIN | 8.0 | 15.5 | 9.0 | 8.6 | -7.0 | -2% | -1.3 | -1.6 |
 | TE | Jake Ferguson | DAL | 9.0 | 14.5 | 8.0 | 7.5 | -7.0 | -5% | -2.7 | -7.0 |
+| WR | Justin Jefferson | MIN | 8.0 | 15.5 | 9.0 | 8.6 | -7.0 | -2% | -1.3 | -1.6 |
 | WR | Dyami Brown | JAX | 7.0 | 7.1 | 4.0 | 0.0 | -7.0 | -37% | -4.6 | -10.7 |
-| WR | Kendrick Bourne | SF | 8.0 | 9.5 | 6.0 | 2.6 | -6.9 | -23% | -3.1 | -7.4 |
 | WR | Keenan Allen | LAC | 9.0 | 14.0 | 8.0 | 7.1 | -6.9 | -1% | -2.5 | -2.6 |
+| WR | Kendrick Bourne | SF | 8.0 | 9.5 | 6.0 | 2.6 | -6.9 | -23% | -3.1 | -7.4 |
 | RB | Bucky Irving | TB | 4.0 | 18.0 | 6.0 | 11.1 | -6.9 | -14% | -2.8 | -5.7 |
 | QB | Jalen Hurts | PHI | 8.0 | 25.6 | 8.0 | 18.8 | -6.8 | -3% | -1.4 | 0.0 |
