@@ -696,6 +696,7 @@ function gv(p,k){
   if(k==="ffa_adp")return p._ffa?(p._ffa.adp??999):999;
   if(k==="ffa_tier")return p._ffa?(p._ffa.tier??99):99;
   if(k==="overall_rank")return ffaOn()?-VP(p):p.overall_rank;
+  if(k==="pos_rank")return projActive()?(p._prk??p.pos_rank):p.pos_rank;
   return p[k];
 }
 
@@ -2240,6 +2241,7 @@ function render(){
     return "<tr>"+COLS.map(c=>{const k=c[0];
       if(k==="position")return `<td class="l"><span class="pos ${p.position}">${p.position}</span></td>`;
       if(k==="overall_rank")return `<td>${ovr[id]}</td>`;
+      if(k==="pos_rank")return `<td>${projActive()?(p._prk??p.pos_rank):p.pos_rank}</td>`;
       if(k==="tier")return `<td><span class="tier t${t}">${p.tier}</span></td>`;
       if(k==="name"){let tg=p.is_flex_starter?' <span class="flexstar">FLEX</span>':'';
         if(p.is_rookie===1)tg+=' <span class="tag rook">ROOK</span>';
