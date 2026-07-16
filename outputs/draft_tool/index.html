@@ -1551,7 +1551,7 @@ function renderDraftRoom(){
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
     return `<tr${su?` title="likely bidders: ${su.tip}"`:''}>
       <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-      <td class="l">${isK(p)?'':`<span class="drpin" data-id="${id}" title="${isPinned(p)?'📌 pinned — click to unpin':'pin: force him into 🎯 Your Plan (wire caps + QB/TE no-stretch lifted; pin BOTH your QB candidates and the plan takes whichever comes cheaper)'}" style="cursor:pointer;opacity:${isPinned(p)?'1':'.25'};margin-right:2px">📌</span>`}<span class="name">${p.name}</span>${wireBadge(m)}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
+      <td class="l">${isK(p)?'':`<span class="drpin" data-id="${id}" title="${isPinned(p)?'📌 pinned — click to unpin':'pin: force him into 🎯 Your Plan (wire caps + QB/TE no-stretch lifted; pin BOTH your QB candidates and the plan takes whichever comes cheaper)'}" style="cursor:pointer;opacity:${isPinned(p)?'1':'.45'};filter:${isPinned(p)?'none':'grayscale(1)'};font-size:13px;margin-right:2px">📌</span>`}<span class="name">${p.name}</span>${wireBadge(m)}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${m.needed?'':' <span class="muted" style="font-size:10px">(don\'t need)</span>'}${su?su.line:''}</td>
       <td>${isK(p)?"—":Math.round(r.proj)}</td>
       <td style="font-weight:600">$${r.val}</td>
       <td class="base">$${r.exp}</td>
@@ -2046,7 +2046,7 @@ function renderMockDraft(){
       const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer"${su?` title="likely bidders: ${su.tip}"`:''}>
         <td class="l"><span class="pos ${p.position}">${p.position}</span></td>
-        <td class="l"><span class="name">${p.name}</span>${wireBadge(mv[id])}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${su?su.line:''}</td>
+        <td class="l">${isK(p)?'':`<span class="drpin" data-id="${id}" title="${isPinned(p)?'📌 pinned — click to unpin':'pin: force him into 🎯 Your Plan (wire caps + QB/TE no-stretch lifted; pin BOTH your QB candidates and the plan takes whichever comes cheaper)'}" style="cursor:pointer;opacity:${isPinned(p)?'1':'.45'};filter:${isPinned(p)?'none':'grayscale(1)'};font-size:13px;margin-right:2px">📌</span>`}<span class="name">${p.name}</span>${wireBadge(mv[id])}${heirBadge(p)} <span class="muted" style="font-size:11px">${p.team||""}</span>${newsFlagTag(p)}${su?su.line:''}</td>
         <td>${isK(p)?"—":Math.round(r.proj)}</td><td style="font-weight:600">$${r.val}</td><td class="base">$${r.exp}</td>${espnLoaded()?`<td class="muted" style="font-size:11px">${r.eav?'$'+Math.round(r.eav):'—'}</td>`:''}<td class="maxbid">$${r.mymax}${(mv[id]||{}).wcapped?`<span class="downc" title="wire-capped from worth $${(mv[id]||{}).value}" style="cursor:help">*</span>`:''}</td>
         <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${r.edge>=0?'+':''}${r.edge}</td>
         <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
@@ -2072,6 +2072,7 @@ function renderMockDraft(){
   if(S("mdPassBtn"))S("mdPassBtn").onclick=()=>{mdResolve(MD.block,0);render();};
   if(S("mdBlockBtn"))S("mdBlockBtn").onclick=()=>{MD.block=MD.sel;MD.sel=null;saveMD();render();};
   document.querySelectorAll(".mdblock").forEach(b=>b.onclick=ev=>{ev.stopPropagation();MD.block=b.dataset.id;MD.sel=null;saveMD();render();});
+  document.querySelectorAll(".drpin").forEach(el=>el.onclick=ev=>{ev.stopPropagation();togglePin(el.dataset.id);});
   document.querySelectorAll(".mdrow").forEach(r=>r.onclick=()=>{MD.sel=r.dataset.id;saveMD();render();});
   document.querySelectorAll(".mdh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
