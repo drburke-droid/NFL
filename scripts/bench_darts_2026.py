@@ -137,6 +137,16 @@ d["score"] = ((2.5 * d.dart + 1.5 * d.upside_p
 
 d = d.sort_values("score", ascending=False)
 
+# emit the backtested composite as a JS map for the draft tool's live PIVOT LIST
+# (docs + outputs copies). Keyed exactly by data.js "name|POSITION" so the tool
+# looks it up with p.name+"|"+p.position. Regenerates whenever this script runs
+# (e.g. after the August buzz refresh).
+import json as _json
+_scores = {f"{r['name']}|{r.position}": round(float(r.score), 3) for _, r in d.iterrows()}
+_js = "const DART_SCORES = " + _json.dumps(_scores) + ";\n"
+for _dir in (os.path.join(ROOT, "docs"), os.path.join(ROOT, "outputs", "draft_tool")):
+    open(os.path.join(_dir, "dart_scores_2026.js"), "w", encoding="utf-8").write(_js)
+
 
 def why(r):
     w = []
