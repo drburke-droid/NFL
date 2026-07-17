@@ -720,6 +720,9 @@ const mktAvg=p=>{if(isK(p))return 0;
   const src=[_AUC?_AUC.exp[pid(p)]:null,espnLoaded()?(espnAV(p)||null):null,auctionAAV(p)||null]
     .filter(v=>v!=null&&v>0);
   return src.length?src.reduce((a,b)=>a+b,0)/src.length:0;};
+// keeper-locked (🧩 Mock Keepers / DR.owned) — not purchasable, so the market columns
+// show "K" / "—" instead of a meaningless $1 expected price
+const keptBy=p=>{const o=(typeof DR!=="undefined")&&DR.owned[pid(p)];return (o&&o.kept)?o:null;};
 function gv(p,k){
   if(k==="bid")return ADJ.vals[pid(p)]??0;
   if(k==="base")return BASE.vals[pid(p)]??0;
@@ -730,12 +733,12 @@ function gv(p,k){
   if(k==="ffa_tier")return p._ffa?(p._ffa.tier??99):99;
   if(k==="overall_rank")return ffaOn()?-VP(p):p.overall_rank;
   if(k==="pos_rank")return projActive()?(p._prk??p.pos_rank):p.pos_rank;
-  if(k==="mexp")return _AUC?(_AUC.exp[pid(p)]||1):0;
+  if(k==="mexp")return keptBy(p)?0:(_AUC?(_AUC.exp[pid(p)]||1):0);
   if(k==="espn$")return espnAV(p)||0;
   if(k==="aav")return auctionAAV(p);
-  if(k==="mavg")return mktAvg(p);
+  if(k==="mavg")return keptBy(p)?0:mktAvg(p);
   if(k==="mval")return _AUC?(_AUC.rv[pid(p)]||1):0;
-  if(k==="medge")return (_AUC?(_AUC.rv[pid(p)]||1):0)-mktAvg(p);
+  if(k==="medge")return keptBy(p)?-9999:(_AUC?(_AUC.rv[pid(p)]||1):0)-mktAvg(p);
   if(k==="ffc")return p.ffc_adp!=null?-p.ffc_adp:-9999;   // negative: default desc sort puts earliest picks first
   return p[k];
 }
@@ -2349,12 +2352,13 @@ function render(){
       if(k==="ffa_adp")return `<td class="muted">${p._ffa&&p._ffa.adp?p._ffa.adp.toFixed(1):'—'}</td>`;
       if(k==="ffa_tier")return `<td class="muted">${p._ffa&&p._ffa.tier?p._ffa.tier:'—'}</td>`;
       if(k==="base")return `<td class="base">$${base}</td>`;
-      if(k==="mexp")return `<td class="base">${isK(p)?'—':'$'+(_AUC?(_AUC.exp[id]||1):1)}</td>`;
+      if(k==="mexp"){const ko=keptBy(p);
+        return `<td class="base">${isK(p)?'—':(ko?`<span class="muted" style="cursor:help" title="KEEPER — locked by ${(DR.teams[ko.t]||{}).name||'?'} at $${ko.price} (🧩 Mock Keepers); not purchasable at auction">K</span>`:'$'+(_AUC?(_AUC.exp[id]||1):1))}</td>`;}
       if(k==="espn$"){const v=espnAV(p);return `<td class="muted">${v?'$'+Math.round(v):'—'}</td>`;}
       if(k==="aav"){const v=auctionAAV(p);return `<td class="muted">${v?'$'+Math.round(v):'—'}</td>`;}
-      if(k==="mavg"){const v=mktAvg(p);return `<td style="font-weight:600">${v?'$'+Math.round(v):'—'}</td>`;}
+      if(k==="mavg"){if(keptBy(p))return `<td class="muted">—</td>`;const v=mktAvg(p);return `<td style="font-weight:600">${v?'$'+Math.round(v):'—'}</td>`;}
       if(k==="mval")return `<td>${isK(p)?'—':'$'+(_AUC?(_AUC.rv[id]||1):1)}</td>`;
-      if(k==="medge"){if(isK(p))return `<td class="muted">—</td>`;const v=Math.round((_AUC?(_AUC.rv[id]||1):1)-mktAvg(p));
+      if(k==="medge"){if(isK(p)||keptBy(p))return `<td class="muted">—</td>`;const v=Math.round((_AUC?(_AUC.rv[id]||1):1)-mktAvg(p));
         return `<td class="${v>0?'upc':(v<0?'downc':'muted')}" style="font-weight:600">${v>=0?'+':''}${v}</td>`;}
       if(k==="ffc")return `<td class="muted">${p.ffc_adp!=null?p.ffc_adp.toFixed(1):'—'}</td>`;
       if(k==="bid"){const up=bid>base;return `<td class="bid">$${bid}${up?` <span class="upc" style="font-weight:400;font-size:11px">+${bid-base}</span>`:''}</td>`;}
