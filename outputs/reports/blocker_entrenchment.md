@@ -14,6 +14,16 @@ median starter-weeks 2, median first starter-week 3.
 - **newly-acquired blocker** (n=38): reliable 26%, star 7.9%, avg starter-wks 3.6 (early wks 1-9: 2.0), median first starter-week 2
 - **recent rd1-2 blocker** (n=22): reliable 27%, star 0.0%, avg starter-wks 3.2 (early wks 1-9: 2.0), median first starter-week 3
 
+## Real contract data (OTC via nflverse): does the paycheck cap the heir?
+
+- **BIG-PAID recent blocker (>=3% of cap, signed <=2yrs ago, not expiring)** (n=30): reliable 23%, star 3.3%, avg starter-wks 3.1 (early wks 1-9: 1.3), median first starter-week 4
+- **big-paid recent AND age 29+ (the Saquon-2026 cell)** (n=5): too small
+- **big-paid recent AND age <29** (n=25): reliable 20%, star 4.0%, avg starter-wks 2.7 (early wks 1-9: 1.2), median first starter-week 5
+- **cheap deal (<2% cap) or expiring** (n=105): reliable 30%, star 12.4%, avg starter-wks 3.7 (early wks 1-9: 1.9), median first starter-week 2
+- **cheap/expiring AND age 29+** (n=32): reliable 28%, star 18.8%, avg starter-wks 4.0 (early wks 1-9: 2.0), median first starter-week 2
+
+contract coverage: 99% of blockers matched
+
 ## Heirs who hit STAR — who was the blocker?
 ```
   2016 David Johnson          behind Chris Johnson          age 31 share 54% NEW -> first starter-wk 1

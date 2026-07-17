@@ -33,7 +33,21 @@ W = pd.read_sql("""SELECT player_id, season, week, fantasy_points_ppr pts
 DR = pd.read_sql("SELECT gsis_id player_id, season draft_season, round FROM nflv_draft", con) \
        .dropna().drop_duplicates("player_id")
 AGE = pd.read_sql("SELECT player_id, season, age FROM season_dataset", con).drop_duplicates(["player_id", "season"])
+try:
+    CT = pd.read_sql("""SELECT gsis_id player_id, year_signed, years, apy_cap_pct
+                        FROM nflv_contracts WHERE position='RB' AND gsis_id IS NOT NULL""", con)
+except Exception:
+    CT = pd.DataFrame(columns=["player_id", "year_signed", "years", "apy_cap_pct"])
 con.close()
+
+
+def blocker_contract(pid_, T):
+    """Latest contract signed on or before season T (real OTC data)."""
+    c = CT[(CT.player_id == pid_) & (CT.year_signed <= T)]
+    if not len(c): return None
+    c = c.sort_values(["year_signed", "apy_cap_pct"]).iloc[-1]
+    return dict(cap_pct=c.apy_cap_pct, yrs_into=T - c.year_signed,
+                expiring=(c.year_signed + (c.years or 1) - 1) <= T)
 
 W["wk_rank"] = W.groupby(["season", "week"])["pts"].rank(ascending=False)
 W["starter_wk"] = W.wk_rank <= 24
@@ -66,8 +80,12 @@ for T in range(2016, 2026):
             if len(ppgT):
                 pool = S[(S.season == T) & (S.games >= 10)].assign(ppg=lambda d: d.fantasy_points_ppr / d.games)
                 star = (pool.ppg > ppgT.iloc[0].fantasy_points_ppr / ppgT.iloc[0].games).sum() < 12
+            ct = blocker_contract(lead.player_id, T)
             rows.append(dict(season=T, heir=b["name"], blocker=lead["name"],
                              bl_age=bl_age, highpick=highpick, newly=newly, share=round(share, 2),
+                             cap_pct=ct["cap_pct"] if ct else np.nan,
+                             yrs_into=ct["yrs_into"] if ct else np.nan,
+                             expiring=ct["expiring"] if ct else np.nan,
                              starter_wks=len(swks), early_wks=sum(1 for w in swks if w <= 9),
                              first_wk=min(swks) if swks else None,
                              reliable=len(swks) >= 6, star=star))
@@ -96,6 +114,17 @@ for lab, m in [("ENTRENCHED blocker (recent rd1-2 pick, or newly-acquired prime-
                ("blocker share >= 65%", d.share >= 0.65), ("blocker share < 55%", d.share < 0.55),
                ("newly-acquired blocker", d.newly == 1), ("recent rd1-2 blocker", d.highpick == 1)]:
     L.append("- " + block(lab, m))
+
+L.append("\n## Real contract data (OTC via nflverse): does the paycheck cap the heir?\n")
+d["bigpaid"] = (d.cap_pct >= 0.03) & (d.yrs_into <= 2) & (d.expiring == 0)
+d["cheapdeal"] = (d.cap_pct < 0.02) | (d.expiring == 1)
+for lab, m in [("BIG-PAID recent blocker (>=3% of cap, signed <=2yrs ago, not expiring)", d.bigpaid),
+               ("big-paid recent AND age 29+ (the Saquon-2026 cell)", d.bigpaid & (d.bl_age >= 29)),
+               ("big-paid recent AND age <29", d.bigpaid & (d.bl_age < 29)),
+               ("cheap deal (<2% cap) or expiring", d.cheapdeal),
+               ("cheap/expiring AND age 29+", d.cheapdeal & (d.bl_age >= 29))]:
+    L.append("- " + block(lab, m))
+L.append(f"\ncontract coverage: {d.cap_pct.notna().mean():.0%} of blockers matched")
 
 L.append("\n## Heirs who hit STAR — who was the blocker?\n```")
 for _, r in d[d.star].sort_values("season").iterrows():

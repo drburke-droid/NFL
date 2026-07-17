@@ -26,11 +26,14 @@ DOCS = os.path.join(ROOT, "docs")
 pd.set_option("display.width", 240)
 
 # HEIR_2026 (index.html, backup_rb_signal_study.py): out-ran own starter on ypc AND EPA/c.
-# BLOCKER multiplier (blocker_entrenchment_study.py, 2016-25): heirs behind age-29+
-# blockers hit star 15.8% (Ingram->Kamara, Stewart->CMC...); behind <27 blockers 5.0%;
-# behind ENTRENCHED (recent rd1-2 pick / newly-paid prime-age, 55%+ share) 0.0% ever.
-# 2026 blockers: Saquon 29 / Kamara 31 / CMC 30 / Henry 32 -> x1.3; Bucky Irving 24 /
-# Kyren 26 / Vidal 24 / Woody Marks 24 / Chase Brown 26 -> x0.6.
+# BLOCKER multiplier (blocker_entrenchment_study.py, 2016-25 + real OTC contracts):
+#   BIG-PAID non-expiring blocker (>=3% cap, signed <=2yrs): 3.3% heir-star -> x0.4
+#   cheap-or-EXPIRING deal AND age 29+: 18.8% heir-star (Ingram/Stewart/Mostert) -> x1.3
+#   young (<27) blocker: 5.0% star -> x0.6
+# 2026: Saquon is 29 ON AN EXPIRING DEAL (2yr 2025 ext ends after 2026) -> Bigsby is in
+# the 18.8% cell, NOT capped. Kamara 31 / CMC 30 / Henry 32 (old deals) -> x1.3.
+# Bucky Irving 24 / Kyren 26 / Vidal 24 / Woody Marks 24 / Chase Brown 26 -> x0.6.
+# No 2026 heir sits behind a big-paid non-expiring blocker (the x0.4 cell).
 HEIR = {"Rachaad White": 0.6, "Tank Bigsby": 1.3, "Blake Corum": 0.6, "Omarion Hampton": 0.6,
         "Devin Neal": 1.3, "Brian Robinson": 1.3, "Nick Chubb": 0.6, "Samaje Perine": 0.6,
         "Keaton Mitchell": 1.3}
