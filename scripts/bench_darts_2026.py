@@ -84,11 +84,16 @@ d["run_x"] = d.age.fillna(26).map(runway)
 POS_X = {"RB": 1.15, "WR": 1.0, "TE": 0.85}
 d["pos_x"] = d.position.map(POS_X)
 
+# weights refit by the 2016-25 walk-forward backtest (bench_darts_backtest.py +
+# per-signal breakdown): buried ALPHA is the star-finder (26% reliable / 16% star,
+# 6.2x baseline) -> heaviest non-model weight; H2 trend was dead weight -> dropped;
+# HEIR makes reliable players, rarely stars -> kept moderate. Model layers (dart /
+# breakout / rookie-hit) keep their separately-validated weights.
 d["score"] = ((2.5 * d.dart + 1.5 * d.upside_p
-               + 0.35 * d.heir + 0.35 * d.tko
-               + 0.20 * (d.vacated_role.fillna(0)) + 0.15 * (d.won_job.fillna(0))
-               + 0.15 * d.crowd_open + 0.30 * d.alpha_hi + 0.15 * d.h2
-               + 0.50 * d.ceil_n)
+               + 1.00 * d.alpha_hi
+               + 0.45 * (d.vacated_role.fillna(0)) + 0.40 * d.heir + 0.35 * d.tko
+               + 0.15 * (d.won_job.fillna(0)) + 0.15 * d.crowd_open
+               + 0.35 * d.ceil_n)
               * d.run_x * d.pos_x)
 
 d = d.sort_values("score", ascending=False)
