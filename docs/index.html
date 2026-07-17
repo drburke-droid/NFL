@@ -2316,7 +2316,7 @@ function render(){
     else if(posFilter==="ROOK"){if(p.is_rookie!==1)return false;}
     else if(posFilter!=="ALL"&&p.position!==posFilter)return false;
     if(startersOnly&&VP(p)<0)return false;
-    if(draftableOnly&&p.overall_rank>cfg.teams*cfg.roster)return false;
+    if(draftableOnly&&(p.overall_rank>cfg.teams*cfg.roster||keptBy(p)))return false;   // keeper-locked = not draftable
     if(query&&!(p.name+" "+(p.team||"")).toLowerCase().includes(query))return false;
     return true;
   });
