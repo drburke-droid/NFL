@@ -973,6 +973,11 @@ function renderComps(){
 
 // ================= DRAFT ROOM =================
 const FLEXE=["RB","WR","TE"];
+// canonical positional-board order (QB→RB→WR→TE→K→DST) for the "Pos" column sort — groups by
+// position, then best-value-first within each, so it reads like a real positional draft board
+// (not alphabetical, which buried QBs behind DST/K). Used by both draft rooms.
+const POS_ORDER={QB:0,RB:1,WR:2,TE:3,K:4,DST:5};
+const posBoardCmp=(a,b,dir)=>dir*((POS_ORDER[a.p.position]??9)-(POS_ORDER[b.p.position]??9)||((b.val||0)-(a.val||0)));
 let DR=JSON.parse(localStorage.getItem("draftroom")||"null")||{teams:Array.from({length:12},(_,i)=>({name:"Team "+(i+1)})),me:0,owned:{}};
 const saveDR=()=>localStorage.setItem("draftroom",JSON.stringify(DR));
 function teamState(t){
@@ -1638,12 +1643,13 @@ function renderDraftRoom(){
     return {p,id,m,eav,proj:PRJ(p)||0,val:m.value||1,exp:m.market,mymax:m.maxBid,edge:(m.value||1)-m.market,vona:m.surplus};});
   const SKR={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,espn:r=>r.eav,mymax:r=>r.mymax,edge:r=>r.edge,vona:r=>r.vona};
   const kfr=SKR[drSort]||SKR.mymax;
-  drd.sort((a,b)=>{const x=kfr(a),y=kfr(b);return typeof x==="string"?drDir*x.localeCompare(y):drDir*((x||0)-(y||0));});
+  drd.sort((a,b)=>{if(drSort==="pos")return posBoardCmp(a,b,drDir);   // positional board, value-ranked within pos
+    const x=kfr(a),y=kfr(b);return typeof x==="string"?drDir*x.localeCompare(y):drDir*((x||0)-(y||0));});
   document.getElementById("count").textContent=rows.length+" available";
   const arrowR=k=>drSort===k?(drDir<0?' ▼':' ▲'):'';
   const thr=(k,lab,cls,ttl)=>`<th class="drh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowR(k)}</th>`;
   h+=`<div class="muted" style="font-size:11px;margin:6px 0"><b>Value</b> = what he's worth (risk-adjusted, in this room's dollars — worth has no historical ceiling, so elite players can be worth more than anyone has ever PAID) · <b>Exp $</b> = expected purchase price at his live curve rank (capped at the most this league has ever paid at the position) · <b>My Max</b> = the most YOU should bid: Value × your spending power, roster-need gated <b>and wire-disciplined</b> · <b>Edge</b> = Value − Exp $ in dollars (positive = expected bargain) · <b>VONA pts</b> = risk-adjusted points over the last startable player at his position. <i>Click any column to sort.</i><br>${WIRE_LEGEND}</div>
-    <table style="width:100%"><thead><tr>${thr('pos','Pos','l')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
+    <table style="width:100%"><thead><tr>${thr('pos','Pos','l','click to group into a positional board — QB→RB→WR→TE→K→DST, best value first within each')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
   h+=drd.slice(0,300).map((r,ri)=>{const p=r.p,id=r.id,m=r.m;
     const over=m.maxBid>m.market;
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
@@ -2215,13 +2221,14 @@ function renderMockDraft(){
     return {p,id,eav:espnAV(p),proj:PRJ(p)||0,val,exp,edge:val-exp,mymax:m.maxBid||1,vona:m.surplus||0};});
   const SKD={pos:r=>r.p.position,player:r=>r.p.name,proj:r=>r.proj,value:r=>r.val,exp:r=>r.exp,espn:r=>r.eav,mymax:r=>r.mymax,edge:r=>r.edge,vona:r=>r.vona};
   const kfd=SKD[mdPoolSort]||SKD.exp;
-  rd.sort((a,b)=>{const x=kfd(a),y=kfd(b);return typeof x==="string"?mdPoolDir*x.localeCompare(y):mdPoolDir*((x||0)-(y||0));});
+  rd.sort((a,b)=>{if(mdPoolSort==="pos")return posBoardCmp(a,b,mdPoolDir);   // positional board, value-ranked within pos
+    const x=kfd(a),y=kfd(b);return typeof x==="string"?mdPoolDir*x.localeCompare(y):mdPoolDir*((x||0)-(y||0));});
   document.getElementById("count").textContent=avail.length+" available";
   const arrowD=k=>mdPoolSort===k?(mdPoolDir<0?' ▼':' ▲'):'';
   const thd=(k,lab,cls,ttl)=>`<th class="mdh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowD(k)}</th>`;
   h+=`<div class="dr-panel"><h3>💰 Available — click a player to see what every owner would pay</h3>
     <div class="muted" style="font-size:11px;margin-bottom:6px"><b>Value</b> = risk-adjusted worth in this room's dollars · <b>Exp $</b> = expected purchase price at his live curve rank (keepers, demand and inflation included — same number as the other screens) · <b>My Max</b> = the most YOU should bid: his <b>Value</b> × your budget aggression (above Exp $ on bargains — go get him; below it on overpriced names — let someone else pay), dropped to stash money (≤$8) when your starters there are filled · <b>Edge</b> = Value − Exp $ (positive = expected bargain). <i>Click any column to sort.</i><br>${WIRE_LEGEND}</div>
-    <table style="width:100%"><thead><tr>${thd('pos','Pos','l')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${espnLoaded()?thd('espn','ESPN $','','sitewide average auction value from the uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (~$1 sitewide)'):''}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs and wire-disciplined (* = capped because FAAB replaces the tier)')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}${thd('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l"></th></tr></thead><tbody>`+
+    <table style="width:100%"><thead><tr>${thd('pos','Pos','l','click to group into a positional board — QB→RB→WR→TE→K→DST, best value first within each')}${thd('player','Player','l')}${thd('proj','Proj')}${thd('value','Value','','risk-adjusted worth in room dollars (keeper inflation applied)')}${thd('exp','Exp $','','expected purchase price: live league bid curve × per-player anchor at his current rank')}${espnLoaded()?thd('espn','ESPN $','','sitewide average auction value from the uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (~$1 sitewide)'):''}${thd('mymax','My Max','','the most you should bid: his VALUE × your budget aggression (never pay more than worth; stretch past worth only when flush), gated by your roster needs and wire-disciplined (* = capped because FAAB replaces the tier)')}${thd('edge','Edge','','Value − Exp $; positive = expected bargain')}${thd('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l"></th></tr></thead><tbody>`+
     rd.slice(0,300).map((r,ri)=>{const p=r.p,id=r.id;
       const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
       return `<tr class="mdrow" data-id="${id}" style="cursor:pointer"${su?` title="likely bidders: ${su.tip}"`:''}>
