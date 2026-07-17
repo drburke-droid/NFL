@@ -25,9 +25,15 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS = os.path.join(ROOT, "docs")
 pd.set_option("display.width", 240)
 
-# HEIR_2026 (index.html, backup_rb_signal_study.py): out-ran own starter on ypc AND EPA/c
-HEIR = ["Rachaad White", "Tank Bigsby", "Blake Corum", "Omarion Hampton", "Devin Neal",
-        "Brian Robinson", "Nick Chubb", "Samaje Perine", "Keaton Mitchell"]
+# HEIR_2026 (index.html, backup_rb_signal_study.py): out-ran own starter on ypc AND EPA/c.
+# BLOCKER multiplier (blocker_entrenchment_study.py, 2016-25): heirs behind age-29+
+# blockers hit star 15.8% (Ingram->Kamara, Stewart->CMC...); behind <27 blockers 5.0%;
+# behind ENTRENCHED (recent rd1-2 pick / newly-paid prime-age, 55%+ share) 0.0% ever.
+# 2026 blockers: Saquon 29 / Kamara 31 / CMC 30 / Henry 32 -> x1.3; Bucky Irving 24 /
+# Kyren 26 / Vidal 24 / Woody Marks 24 / Chase Brown 26 -> x0.6.
+HEIR = {"Rachaad White": 0.6, "Tank Bigsby": 1.3, "Blake Corum": 0.6, "Omarion Hampton": 0.6,
+        "Devin Neal": 1.3, "Brian Robinson": 1.3, "Nick Chubb": 0.6, "Samaje Perine": 0.6,
+        "Keaton Mitchell": 1.3}
 
 
 def load_js_const(fname, varname):
@@ -71,7 +77,7 @@ d = d[(d.mkt_cost.fillna(1) <= 8)]
 d["lot_p"] = d.name.map(lambda n: lottery.get(n, {}).get("p", 0) if isinstance(lottery.get(n), dict) else 0)
 d["dart"] = d[["dart_prob", "leap_prob", "lot_p"]].fillna(0).max(axis=1)
 d["upside_p"] = np.where(d.is_rookie == 1, d.hit_prob.fillna(0), d.breakout_prob.fillna(0))
-d["heir"] = d.name.isin(HEIR).astype(int)
+d["heir"] = d.name.map(HEIR).fillna(0)   # blocker-adjusted heir weight (0.6 / 1.3)
 d["tko"] = d.name.map(lambda n: 1 if n in takeover else 0)
 d["crowd_open"] = d.name.map(lambda n: 1 if (isinstance(crowding.get(n), dict) and "open" in str(crowding.get(n)).lower())
                              or crowding.get(n) == "open" else 0)
@@ -103,7 +109,7 @@ def why(r):
     w = []
     if r.dart >= 0.10: w.append(f"dart {r.dart:.0%}")
     if r.upside_p >= 0.30: w.append(("hit" if r.is_rookie == 1 else "breakout") + f" {r.upside_p:.0%}")
-    if r.heir: w.append("HEIR")
+    if r.heir: w.append("HEIR" + ("+" if r.heir > 1 else "-"))   # +: vulnerable blocker, -: young/entrenched
     if r.tko: w.append("TAKEOVER")
     if r.vacated_role == 1: w.append("VACATED")
     if r.won_job == 1: w.append("won-job")

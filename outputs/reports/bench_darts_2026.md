@@ -7,24 +7,24 @@ curve, x position fill-tilt (RB 1.15 — the wire can't rescue RB).
 
 | # | Pos | Player | Tm | Age | $ | Score | Why |
 |---|---|---|---|---|---|---|---|
-| 1 | RB | Tank Bigsby | PHI | 24 | $5 | 3.87 | dart 32% · breakout 80% · HEIR · TAKEOVER |
-| 2 | WR | Adonai Mitchell | NYJ | 24 | $3 | 2.71 | dart 32% · breakout 81% · WR2-open |
-| 3 | WR | Omar Cooper Jr. | NYJ | 22 | $1 | 2.67 | dart 38% · hit 65% |
-| 4 | RB | Brian Robinson | SF | 27 | $4 | 2.62 | dart 17% · breakout 63% · HEIR · TAKEOVER |
+| 1 | RB | Tank Bigsby | PHI | 24 | $5 | 4.03 | dart 32% · breakout 80% · HEIR+ · TAKEOVER |
+| 2 | RB | Brian Robinson | SF | 27 | $4 | 2.76 | dart 17% · breakout 63% · HEIR+ · TAKEOVER |
+| 3 | WR | Adonai Mitchell | NYJ | 24 | $3 | 2.71 | dart 32% · breakout 81% · WR2-open |
+| 4 | WR | Omar Cooper Jr. | NYJ | 22 | $1 | 2.67 | dart 38% · hit 65% |
 | 5 | WR | Matthew Golden | GB | 23 | $3 | 2.52 | dart 38% · breakout 59% |
 | 6 | RB | Mike Washington Jr. | LV | 23 | $1 | 2.51 | dart 18% · hit 75% |
 | 7 | WR | Chris Brazzell II | CAR | 22 | $1 | 2.36 | dart 26% · hit 74% |
 | 8 | RB | Kaleb Johnson | PIT | 23 | $1 | 2.36 | breakout 90% |
 | 9 | WR | Pat Bryant | DEN | 24 | $1 | 2.35 | dart 30% · breakout 75% · H2 +4.5ppg |
 | 10 | WR | Tre Harris | LAC | 24 | $2 | 2.29 | dart 34% · breakout 66% |
-| 11 | RB | Blake Corum | LA | 26 | $4 | 2.28 | dart 32% · breakout 38% · HEIR · H2 +4.9ppg |
-| 12 | WR | Travis Hunter | JAX | 23 | $4 | 2.25 | dart 29% · breakout 60% |
+| 11 | WR | Travis Hunter | JAX | 23 | $4 | 2.25 | dart 29% · breakout 60% |
+| 12 | RB | Devin Neal | NO | 23 | $1 | 2.23 | dart 20% · HEIR+ · H2 +8.7ppg |
 | 13 | RB | Dylan Sampson | CLE | 22 | $2 | 2.22 | dart 26% · breakout 49% |
 | 14 | WR | Germie Bernard | PIT | 22 | $1 | 2.12 | dart 34% · hit 43% |
-| 15 | TE | Will Kacmarek | MIA | 23 | $1 | 2.09 | dart 20% · hit 89% |
-| 16 | TE | Elijah Arroyo | SEA | 23 | $1 | 2.07 | dart 31% · breakout 69% |
-| 17 | WR | Xavier Legette | CAR | 25 | $1 | 2.07 | dart 36% · breakout 51% |
-| 18 | RB | Devin Neal | NO | 23 | $1 | 2.05 | dart 20% · HEIR · H2 +8.7ppg |
+| 15 | RB | Blake Corum | LA | 26 | $4 | 2.10 | dart 32% · breakout 38% · HEIR- · H2 +4.9ppg |
+| 16 | TE | Will Kacmarek | MIA | 23 | $1 | 2.09 | dart 20% · hit 89% |
+| 17 | TE | Elijah Arroyo | SEA | 23 | $1 | 2.07 | dart 31% · breakout 69% |
+| 18 | WR | Xavier Legette | CAR | 25 | $1 | 2.07 | dart 36% · breakout 51% |
 | 19 | RB | Isaiah Davis | NYJ | 24 | $1 | 2.00 | dart 17% · breakout 64% |
 | 20 | RB | Jaydon Blue | DAL | 22 | $1 | 1.99 | breakout 71% · H2 +10.9ppg |
 | 21 | WR | Caleb Douglas | MIA | 22 | $1 | 1.94 | dart 24% · hit 54% |
