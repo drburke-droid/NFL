@@ -18,6 +18,7 @@
 <script src="lottery_2026.js"></script>
 <script src="crowding_2026.js"></script>
 <script src="takeover_2026.js"></script>
+<script src="dart_scores_2026.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -1188,6 +1189,11 @@ const ceilPts=p=>((p.ceiling!=null?p.ceiling:(p.proj_ppg||0)*1.15))*(NORMG[p.pos
 // lottery star odds — a top-grade dart (~30-40%) roughly doubles a slot's utility.
 const dartSig=p=>{const l=(typeof LOTTERY_2026!=="undefined")?LOTTERY_2026[p.name]:null;
   return Math.max(p.dart_prob||0,p.leap_prob||0,l?l.p:0);};
+// backtested composite dart score (scripts/bench_darts_2026.py -> dart_scores_2026.js):
+// blocker-adjusted heir + buried alpha + vacated/takeover/small-school/college etc., refit
+// on the 2016-25 walk-forward. undefined for non-dart/expensive players -> fall back to dartSig.
+const DART_SCORES_MAP=(typeof DART_SCORES!=="undefined")?DART_SCORES:{};
+const dartScore=p=>DART_SCORES_MAP[p.name+"|"+p.position];
 const benchU=p=>{
   const age=p.age||26;
   const runway=age<=23?1.25:age<=25?1.15:age<=27?1.0:age<=29?0.8:0.6;
@@ -1507,11 +1513,17 @@ function planPanelHTML(mkt,mv){
       <span class="base" style="width:36px;text-align:right">$${pk.cost}</span>
       <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
         ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
-        :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span></div>`;
+        :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span>
+      <span class="planNom" data-id="${pid(pk.p)}" title="nominate ${pk.p.name} — put him up (mock: on your turn) / open the sold box (draft room)" style="cursor:pointer;color:var(--gold);flex:none;padding-left:2px">▶</span></div>`;
     h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:4px 24px">
       <div><div class="muted" style="font-size:10px;margin-bottom:2px">STARTERS — ordered by irreplaceability (★ must-get · ▲ high · ≈ replaceable); buy at ≤ Exp $, walk away past the number</div>${stP.map(prow).join("")}${kdP.map(prow).join("")}</div>
       <div><div class="muted" style="font-size:10px;margin-bottom:2px">BENCH — high-upside RB/WR only (K/DST streamed, QB2/TE2 off bye-week waivers)</div>${bnP.map(prow).join("")}
-        <div class="muted" style="font-size:10px;margin-top:5px" title="the running NOMINATION LIST: highest Dart %/Leap % players not already in the plan — pivots when a bench target gets sniped, and what your sim bot nominates from">🎯 next-up darts: ${myTargetList(plan).darts.slice(0,8).map(p=>`<span style="white-space:nowrap">${p.name} <b class="upc">${Math.round(dartSig(p)*100)}%</b></span>`).join(" · ")||'—'}</div></div></div>`;
+        <div class="muted" style="font-size:10px;margin-top:6px;border-top:1px solid var(--line);padding-top:4px" title="PIVOT LIST — your still-available dart targets, ranked by the backtested bench-dart score (bench_darts_2026: blocker-adjusted heir, buried alpha, vacated, small-school…). A grabbed dart drops off automatically, so the top name is always your best remaining pivot. Click ▶ to nominate.">🎯 PIVOT LIST — best available darts (▶ = nominate):</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:0 10px">${myTargetList(plan,14).darts.map(p=>`<div style="display:flex;gap:4px;align-items:center;font-size:11px">
+          <span class="planNom" data-id="${pid(p)}" title="nominate ${p.name}" style="cursor:pointer;color:var(--gold);flex:none">▶</span>
+          <span class="pos ${p.position}" style="transform:scale(.7);flex:none">${p.position}</span>
+          <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}${isPinned(p)?' 📌':''}</span>
+          <b class="upc" title="${dartScore(p)!=null?'backtested bench-dart score':'raw dart signal (no baked score)'}">${dartScore(p)!=null?dartScore(p).toFixed(1):Math.round(dartSig(p)*100)+'%'}</b></div>`).join("")||'<span class="muted">— none left</span>'}</div></div></div>`;
     h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench slots are <b>dart slots</b>: chosen on <b>Dart %/Leap % breakout odds × ceiling, tilted young-and-rising</b> (a $1-3 breakout is next year's keeper lock; an old vet's ceiling season has no keeper future), not median projection. <b>🌊 Wire discipline</b> (this league's 2023-25 waivers): FAAB regenerates ~6 startable RBs, 7 TEs, 6 QBs and 5 WRs a year — 76% by week 5 — so ⭐ stars get the concentrated money, 📶 wire-grade players are capped at 55% of worth, and the ⚠ $8-30 RB/WR band never gets a stretch (52-62% hit rate).</div>`;
   }
   return {html:h+`</div>`,plan};
@@ -1524,8 +1536,10 @@ function myTargetList(plan,extra){
   const starters=plan.picks.filter(pk=>pk.wa!=null).slice().sort((a,b)=>(b.du||0)-(a.du||0)).map(pk=>pk.p);
   const bench=plan.picks.filter(pk=>pk.slot==="BN").map(pk=>pk.p);
   const kd=plan.picks.filter(pk=>pk.slot==="K"||pk.slot==="DST").map(pk=>pk.p);
-  const darts=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!inPlan.has(pid(p))&&(p.position==="RB"||p.position==="WR")&&(dartSig(p)>=0.15||isPinned(p)))
-    .sort((a,b)=>(isPinned(b)?1:0)-(isPinned(a)?1:0)||dartSig(b)-dartSig(a)).slice(0,extra||10);
+  // PIVOT LIST: still-available dart targets, ranked by the backtested composite (dartScore)
+  // when present, else the raw dart signal. Broadened to TE (bench_darts includes TE darts).
+  const darts=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!inPlan.has(pid(p))&&["RB","WR","TE"].includes(p.position)&&(dartScore(p)!=null||dartSig(p)>=0.15||isPinned(p)))
+    .sort((a,b)=>(isPinned(b)?1:0)-(isPinned(a)?1:0)||((dartScore(b)??dartSig(b))-(dartScore(a)??dartSig(a)))).slice(0,extra||10);
   return {starters,bench,darts,kd,all:[...starters,...bench,...darts,...kd]};
 }
 // 📊 positional scarcity panel — shared by the Draft Room and the Mock Draft
@@ -1675,7 +1689,7 @@ function renderDraftRoom(){
     if(s.spotsLeft<=0){alert(DR.teams[t].name+" has no roster spots left.");return;}
     if(price>afford){alert(DR.teams[t].name+" can't pay $"+price+" — their max bid is $"+afford+" ($"+s.budget+" left, must keep $1 for each of their other "+(s.spotsLeft-1)+" spots).");return;}
     DR.owned[drmId]={t,price,kept:false};saveDR();drmClose();render();};
-  document.querySelectorAll(".drdraft").forEach(b=>b.onclick=()=>{const id=b.dataset.id,p=BYID[id];if(!p)return;
+  const openDrModal=id=>{const p=BYID[id];if(!p)return;
     drmId=id;
     const wa=(plan.picks.find(pk=>pk.p&&pid(pk.p)===id)||{}).wa;
     document.getElementById("drmTitle").innerHTML=`<span class="pos ${p.position}">${p.position}</span> ${p.name}${wireBadge(mv[id])}${heirBadge(p)} <span class="muted" style="font-weight:400;font-size:12px">${p.team||""} · exp $${mkt.price[id]||1} · my max $${(mv[id]||{}).maxBid||1}${(mv[id]||{}).wcapped?'*':''}${wa!=null?` · walk-away $${wa}`:''}</span>`;
@@ -1688,7 +1702,9 @@ function renderDraftRoom(){
     document.querySelectorAll("#drmOwners button").forEach(ob=>ob.onclick=()=>drmAssign(+ob.dataset.t));
     const pi=document.getElementById("drmPrice");pi.value=mkt.price[id]||1;
     modal.style.display="flex";pi.focus();pi.select();
-    pi.onkeydown=e=>{if(e.key==="Enter")drmAssign(+document.getElementById("drAssign").value);if(e.key==="Escape")drmClose();};});
+    pi.onkeydown=e=>{if(e.key==="Enter")drmAssign(+document.getElementById("drAssign").value);if(e.key==="Escape")drmClose();};};
+  // Draft button in the table AND ▶ nominate in the Your-plan card / pivot list open the sold box
+  document.querySelectorAll(".drdraft,.planNom").forEach(b=>b.onclick=e=>{e.stopPropagation();openDrModal(b.dataset.id);});
   document.getElementById("drmCancel").onclick=drmClose;
   modal.onclick=e=>{if(e.target===modal)drmClose();};
   document.querySelectorAll(".drpin").forEach(el=>el.onclick=ev=>{ev.stopPropagation();togglePin(el.dataset.id);});
@@ -2179,6 +2195,10 @@ function renderMockDraft(){
   document.querySelectorAll(".mdblock").forEach(b=>b.onclick=ev=>{ev.stopPropagation();MD.block=b.dataset.id;MD.sel=null;saveMD();render();});
   document.querySelectorAll(".drpin").forEach(el=>el.onclick=ev=>{ev.stopPropagation();togglePin(el.dataset.id);});
   document.querySelectorAll(".mdrow").forEach(r=>r.onclick=()=>{MD.sel=r.dataset.id;saveMD();render();});
+  // ▶ nominate from the Your-plan card / pivot list: on your nomination turn -> put on the block;
+  // otherwise -> select for the bid preview (so you still see what he'd go for)
+  document.querySelectorAll(".planNom").forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.id;
+    if(MD.on&&!done&&!MD.block&&MD.nom===DR.me){MD.block=id;MD.sel=null;}else{MD.sel=id;}saveMD();render();});
   document.querySelectorAll(".mdh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean, elite-QB/pay-TE habits and <b>NFL-team fandom</b> (🏈 — mined from his own bids: e.g. the Raiders fan who paid $71 for Jeanty stretches ×1.3 on LV players), hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
