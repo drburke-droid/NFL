@@ -2028,7 +2028,29 @@ function mdSim(n){const target=n!=null?MD.log.length+n:Infinity;let g=cfg.teams*
 // healthy-rate-lifted expectation the whole value engine prices from), /17. Using the raw
 // games-penalized projection here while the knapsacks select on effPts made injury-lifted
 // players (Rashee Rice) look like TERRIBLE keeps: seated at 7.6 ppg while valued at 11+.
-const wkPts=p=>(isK(p)?(p.proj_pts||0):effPts(p))/17;
+// 🎚 WEEKLY GRADING, realized-scoring basis (calibration audit 2026-07-17,
+// outputs/reports/team_ppg_calibration.md). Two fixes vs the old effPts/17:
+//  1. STREAMING BACKFILL — a projected missed game scores replacement-level (you stream
+//     the slot), not zero. Old way graded an optimally drafted MODEL-mode team at 112
+//     PPG/wk — below the league's actual AVERAGE team (118.7 in 2025), impossible.
+//  2. SCALE CALIBRATION — model proj_ppg is deliberately compressed for ranking; for
+//     absolute team grades each position is rescaled to the FFA consensus starter-pool
+//     scale (ex-ante, and empirically in line: FFA-mode optimal grades ~132 vs the real
+//     top team's 136.7). Multipliers = FFA top-N/17 ÷ model backfilled top-N.
+// Pure-FFA mode keeps the consensus points directly (already realized-scale). The VALUE
+// and Exp $ engines (raPts/effPts) are untouched — this is the grading layer only.
+const WK_CAL={QB:1.31,RB:1.12,WR:1.11,TE:1.13};
+const replWk=pos=>((META.replacement_points||{})[pos]||0)/17;
+const wkPts=p=>{
+  if(isK(p))return (p.proj_pts||0)/17;
+  if(projMode==="ffa"&&p._ffa)return effPts(p)/17;
+  const ng=NORMG[p.position]||15;
+  const g=Math.max(1,Math.min(p.proj_games||ng,17));
+  const hr=(typeof HEALTHY_PPG!=="undefined")?HEALTHY_PPG[p.name]:null;
+  const base=PRJ(p)||p.proj_pts||0;                 // model total, or blend total (model scale)
+  const ppg=hr||base/g;
+  return (ppg*g+replWk(p.position)*(17-g))/17*(WK_CAL[p.position]||1)+bonus(p)*ng/17;
+};
 function teamPPGwk(i){const s=teamState(i),slots={QB:1,RB:2,WR:2,TE:1,FLEX:1,K:1,DST:1};let st=0,bn=0;
   [...s.own].sort((a,b)=>wkPts(b.p)-wkPts(a.p)).forEach(x=>{const pos=x.p.position,w=wkPts(x.p);
     if(slots[pos]>0){slots[pos]--;st+=w;}
