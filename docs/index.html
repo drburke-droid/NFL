@@ -724,6 +724,17 @@ const mktAvg=p=>{if(isK(p))return 0;
 // keeper-locked (🧩 Mock Keepers / DR.owned) — not purchasable, so the market columns
 // show "K" / "—" instead of a meaningless $1 expected price
 const keptBy=p=>{const o=(typeof DR!=="undefined")&&DR.owned[pid(p)];return (o&&o.kept)?o:null;};
+// ⚠ market-gap flag (price audit 2026-07-17): when our Exp $ sits >= $12 from the mean of
+// ESPN $ + FFA AAV (both present), surface it with WHY — every audited outlier traced to a
+// deliberate mechanism, so the flag explains which number to trust rather than hiding it.
+const mktGap=p=>{if(isK(p)||keptBy(p)||!_AUC)return 0;
+  const es=espnAV(p),av=auctionAAV(p);if(!(es>3&&av>3))return 0;
+  const d=(_AUC.exp[pid(p)]||1)-(es+av)/2;return Math.abs(d)>=12?d:0;};
+const mktGapWhy=p=>{const why=[];
+  if(typeof HEALTHY_PPG!=="undefined"&&HEALTHY_PPG[p.name])why.push(`healthy-rate conviction — we price his HEALTHY per-game (${HEALTHY_PPG[p.name]} ppg) while the national market prices the injury risk`);
+  if(typeof PRICE_ANCHOR!=="undefined"&&Object.keys(PRICE_ANCHOR).some(k=>k.indexOf(p.name+"|"+p.position)===0))why.push("room anchor — fitted on what THIS league actually paid him (validated 20% sharper than the curve alone)");
+  if(p.is_rookie===1)why.push("rookie — our Exp $ stays on the league curve; national hype can run ahead of it");
+  return why.length?why.join(" · "):"model-vs-market disagreement — check for news before trusting either number";};
 function gv(p,k){
   if(k==="bid")return ADJ.vals[pid(p)]??0;
   if(k==="base")return BASE.vals[pid(p)]??0;
@@ -2382,7 +2393,10 @@ function render(){
       if(k==="ffa_tier")return `<td class="muted">${p._ffa&&p._ffa.tier?p._ffa.tier:'—'}</td>`;
       if(k==="base")return `<td class="base">$${base}</td>`;
       if(k==="mexp"){const ko=keptBy(p);
-        return `<td class="base">${isK(p)?'—':(ko?`<span class="muted" style="cursor:help" title="KEEPER — locked by ${(DR.teams[ko.t]||{}).name||'?'} at $${ko.price} (🧩 Mock Keepers); not purchasable at auction">K</span>`:'$'+(_AUC?(_AUC.exp[id]||1):1))}</td>`;}
+        if(isK(p))return `<td class="base">—</td>`;
+        if(ko)return `<td class="base"><span class="muted" style="cursor:help" title="KEEPER — locked by ${(DR.teams[ko.t]||{}).name||'?'} at $${ko.price} (🧩 Mock Keepers); not purchasable at auction">K</span></td>`;
+        const g=mktGap(p);
+        return `<td class="base">$${_AUC?(_AUC.exp[id]||1):1}${g?` <span style="cursor:help;font-size:10px" title="⚠ $${Math.abs(Math.round(g))} ${g>0?'ABOVE':'BELOW'} the external market mean (ESPN $${Math.round(espnAV(p))} / FFA AAV $${Math.round(auctionAAV(p))}). Why: ${mktGapWhy(p).replace(/"/g,'&quot;')}">⚠</span>`:''}</td>`;}
       if(k==="espn$"){const v=espnAV(p);return `<td class="muted">${v?'$'+Math.round(v):'—'}</td>`;}
       if(k==="aav"){const v=auctionAAV(p);return `<td class="muted">${v?'$'+Math.round(v):'—'}</td>`;}
       if(k==="mavg"){if(keptBy(p))return `<td class="muted">—</td>`;const v=mktAvg(p);return `<td style="font-weight:600">${v?'$'+Math.round(v):'—'}</td>`;}
