@@ -58,6 +58,21 @@ takeover = load_js_const("takeover_2026.js", "TAKEOVER_2026") if os.path.exists(
 
 # alpha skill percentile (2025) by name+pos
 con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
+# day-2 small-school flag (buzz_leadlag_study.py part B: rd3-4 non-P5 RB/WR hit 22%
+# vs 9% for P5 same rounds, 2016-25 — the Kupp/Diontae pattern). 2025-26 draftees.
+P5 = {"Alabama","Georgia","LSU","Florida","Tennessee","Auburn","Texas A&M","Ole Miss","Mississippi State",
+      "Arkansas","Kentucky","South Carolina","Missouri","Vanderbilt","Ohio State","Michigan","Penn State",
+      "Michigan State","Wisconsin","Iowa","Minnesota","Illinois","Indiana","Purdue","Northwestern","Nebraska",
+      "Maryland","Rutgers","Texas","Oklahoma","Oklahoma State","Baylor","TCU","Texas Tech","Kansas State",
+      "Kansas","Iowa State","West Virginia","Clemson","Florida State","Miami","North Carolina","NC State",
+      "Duke","Wake Forest","Virginia","Virginia Tech","Pittsburgh","Louisville","Syracuse","Boston College",
+      "Georgia Tech","USC","UCLA","Oregon","Washington","Stanford","California","Oregon State",
+      "Washington State","Arizona","Arizona State","Utah","Colorado","Notre Dame"}
+_dr = pd.read_sql("""SELECT pfr_player_name nm, college, round FROM nflv_draft
+                     WHERE season>=2025 AND position IN ('RB','WR') AND round IN (3,4)""", con)
+_FIX = {"Mississippi": "Ole Miss", "Miami (FL)": "Miami", "Southern California": "USC", "Pitt": "Pittsburgh"}
+_dr["college_n"] = _dr.college.str.replace(" St.", " State", regex=False).replace(_FIX)
+SMALL_SCHOOL = set(_dr[~_dr.college_n.isin(P5)].nm)
 alpha = pd.read_sql("""SELECT s.player_display_name name, s.position, a.alpha_skill
                        FROM player_skill_alpha a JOIN nflv_season s
                          ON s.player_id=a.player_id AND s.season=a.season
@@ -87,6 +102,7 @@ d["crowd_open"] = d.name.map(lambda n: 1 if (isinstance(crowding.get(n), dict) a
 d["alpha_hi"] = (d.apct.fillna(0) >= 0.80).astype(int)
 d["h2"] = ((d.trend_dppg.fillna(0) > 1.5) & (d.trend_dsnap.fillna(0) > 5)).astype(int)
 d["ceil_n"] = (d.ceiling.fillna(0) / 20).clip(0, 1)
+d["smallschool"] = d.name.isin(SMALL_SCHOOL).astype(int)   # day-2 small-school (22% vs 9% hit)
 
 runway = lambda a: 1.25 if a <= 23 else 1.15 if a <= 25 else 1.0 if a <= 27 else 0.8 if a <= 29 else 0.6
 d["run_x"] = d.age.fillna(26).map(runway)
@@ -102,6 +118,7 @@ d["score"] = ((2.5 * d.dart + 1.5 * d.upside_p
                + 1.00 * d.alpha_hi
                + 0.45 * (d.vacated_role.fillna(0)) + 0.40 * d.heir + 0.35 * d.tko
                + 0.15 * (d.won_job.fillna(0)) + 0.15 * d.crowd_open
+               + 0.25 * d.smallschool
                + 0.35 * d.ceil_n)
               * d.run_x * d.pos_x)
 
@@ -119,6 +136,7 @@ def why(r):
     if r.crowd_open: w.append("WR2-open")
     if r.alpha_hi: w.append(f"alpha {r.apct:.0%}")
     if r.h2: w.append(f"H2 +{r.trend_dppg:.1f}ppg")
+    if r.smallschool: w.append("small-school d2")
     if (r.ceiling or 0) >= 13: w.append(f"ceil {r.ceiling:.0f}")
     return " · ".join(w)
 
