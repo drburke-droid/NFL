@@ -569,7 +569,8 @@ document.getElementById("srcFFA").onclick=()=>setSrc("ffa");
 const POSES=["ALL","QB","RB","WR","TE","FLEX","ROOK","K","DST"];
 document.getElementById("posbtns").innerHTML=POSES.map(p=>`<button class="btn sm pf ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
 document.querySelectorAll(".pf").forEach(b=>b.onclick=()=>{posFilter=b.dataset.p;document.querySelectorAll(".pf").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
-document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();render();};
+let _qT=null;   // debounce: heavy screens re-render at ~9-110ms + DOM cost — don't do it per keystroke
+document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();clearTimeout(_qT);_qT=setTimeout(render,150);};
 document.getElementById("startersOnly").onchange=e=>{startersOnly=e.target.checked;render();};
 document.getElementById("draftableOnly").onchange=e=>{draftableOnly=e.target.checked;render();};
 
@@ -1181,6 +1182,29 @@ const benchU=p=>{
   const runway=age<=23?1.25:age<=25?1.15:age<=27?1.0:age<=29?0.8:0.6;
   const traj=1+Math.max(0,Math.min(0.30,(p.trend_dppg||0)/20+(p.breakout_prob||0)*0.5));
   return 0.30*ceilPts(p)*runway*traj*(1+2.5*dartSig(p));};
+// ---------- ⚡ pruned candidate pools for the roster knapsacks ----------
+// The solvers used to scan ALL ~680 players per slot per λ-iteration (teamOptPPG x12 cold
+// = ~5s of freeze). No legal roster ever uses a player outside the top of his position,
+// so each solve iterates a pruned pool instead: top-70 RB/WR / top-30 QB/TE/K/DST by
+// risk-adjusted points, UNION top-40 RB/WR by bench/dart utility (so cheap high-ceiling
+// darts stay in play). Cached per projection state; pinned players are appended by callers.
+let _optPool=null,_optPoolKey="";
+function optPool(){
+  const key=projMode+"|"+(typeof ffaLoaded==="function"&&ffaLoaded())+"|"+BLEND_W+"|"+Object.keys(ffaMap).length;
+  if(_optPool&&_optPoolKey===key)return _optPool;
+  const P={};
+  ["QB","RB","WR","TE","K","DST"].forEach(pos=>{
+    const arr=PLAYERS.filter(p=>p.position===pos);
+    const deep=(pos==="RB"||pos==="WR");
+    const byPts=[...arr].sort((a,b)=>raPts(b)-raPts(a)).slice(0,deep?70:30);
+    if(deep){
+      const s=new Set(byPts.map(pid));
+      [...arr].sort((a,b)=>benchU(b)-benchU(a)).slice(0,40)
+        .forEach(p=>{if(!s.has(pid(p))){byPts.push(p);s.add(pid(p));}});
+    }
+    P[pos]=byPts;});
+  _optPool=P;_optPoolKey=key;return P;
+}
 // ---------- 🌊 WAIVER-WIRE REPLACEABILITY (scripts/waiver_gems_study.py: THIS league 2023-25) ----------
 // Undrafted players who hit weekly starter level: gems/yr TE 7.3 · RB 6.0 · QB 5.7 · WR 5.0,
 // and 76% flash by week 5 (an aggressive FAAB bidder gets them). WIRE_PPG = what a pickup
@@ -1260,13 +1284,17 @@ function optimalPlan(mkt){
   const _nb=meS.bench||0,_rbOnly=Math.floor(_nb/2);
   for(let k=0;k<_nb;k++)needs.push({slot:"BN",elig:k<_rbOnly?["RB"]:["RB","WR"],u:benchU});
   if(!needs.length)return {picks:[],spend:0,unspent:budget,lam:0,nslots:0};
+  // ⚡ pruned per-position pools (owned removed, pinned always appended)
+  const OP=optPool(),pool={};
+  ["QB","RB","WR","TE","K","DST"].forEach(pos=>{pool[pos]=OP[pos].filter(p=>!DR.owned[pid(p)]);});
+  avail.forEach(p=>{if(isPinned(p)&&pool[p.position]&&!pool[p.position].some(x=>pid(x)===pid(p)))pool[p.position].push(p);});
   const anyPins=avail.some(isPinned);
   const sel=lam=>{const used=new Set();let spend=0;const picks=[];
     for(const nd of needs){let best=null,bn=-1e9,bu=0;
       // 📌 pass 1: pinned players claim eligible slots first (two pinned QBs -> the better
       // value takes the QB slot; the other is priced as the walk-away pivot). pass 2: everyone.
       for(const pinPass of (anyPins?[true,false]:[false])){
-        for(const p of avail){if(used.has(pid(p))||!nd.elig.includes(p.position))continue;
+        for(const pos of nd.elig)for(const p of pool[pos]||[]){if(used.has(pid(p)))continue;
           if(pinPass&&!isPinned(p))continue;
           const u=nd.u(p),n=u-lam*price(p);
           if(n>bn){bn=n;best=p;bu=u;}}
@@ -1285,8 +1313,8 @@ function optimalPlan(mkt){
   // leftover pass: pour remaining $ into the single best affordable upgrade, repeat
   for(let it=0;it<24;it++){const un=budget-S.spend;let bi=-1,bp=null,bg=0;
     S.picks.forEach((pk,i)=>{if(isPinned(pk.p))return;   // 📌 never upgrade away a pinned player
-      for(const p of avail){
-      if(S.used.has(pid(p))||!pk.elig.includes(p.position))continue;
+      for(const pos of pk.elig)for(const p of pool[pos]||[]){
+      if(S.used.has(pid(p)))continue;
       const d$=price(p)-pk.cost,du=pk.uf(p)-pk.u;
       if(du>bg&&d$<=un){bg=du;bi=i;bp=p;}}});
     if(!bp)break;
@@ -1296,7 +1324,7 @@ function optimalPlan(mkt){
   const cap=budget-(needs.length-1);
   S.picks.forEach(pk=>{if(pk.slot==="BN"||pk.slot==="K"||pk.slot==="DST"){pk.wa=null;return;}
     let altn=-1e9;pk.alt=null;
-    for(const p of avail){if(S.used.has(pid(p))||!pk.elig.includes(p.position))continue;
+    for(const pos of pk.elig)for(const p of pool[pos]||[]){if(S.used.has(pid(p)))continue;
       const n=pk.uf(p)-lam*price(p);if(n>altn){altn=n;pk.alt=p;}}
     const self=pk.u-lam*pk.cost;
     pk.du=pk.alt?Math.max(0,Math.round(pk.u-pk.uf(pk.alt))):999;   // irreplaceability: season pts lost to next-best alt
@@ -1341,9 +1369,10 @@ function optRosterPPG(BV,kept,excl){
   ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<slots[pos];k++)needs.push([pos]);});
   for(let k=0;k<slots.FLEX;k++)needs.push(FLEXE);
   ["K","DST"].forEach(pos=>{for(let k=0;k<slots[pos];k++)needs.push([pos]);});
+  const OP=optPool();   // ⚡ pruned per-position pools instead of all ~680 players
   const sel=lam=>{const u2=new Set(used);let spend=0;const ps=[];
     for(const elig of needs){let best=null,bn=-1e9;
-      for(const p of PLAYERS){if(u2.has(pid(p))||!elig.includes(p.position))continue;
+      for(const pos of elig)for(const p of OP[pos]||[]){if(u2.has(pid(p)))continue;
         const n=raPts(p)-lam*price(p);if(n>bn){bn=n;best=p;}}
       if(best){u2.add(pid(best));spend+=price(best);ps.push(best);}}
     return {ps,spend};};
@@ -1356,7 +1385,7 @@ function optRosterPPG(BV,kept,excl){
   // dominant keep (Rice at $32 vs his $47 price) measure as a WORSE roster.
   for(let it=0;it<20;it++){const un=budget-S.spend;let bi=-1,bp=null,bg=0;
     S.ps.forEach((cur,ii)=>{const elig=needs[ii];
-      for(const p of PLAYERS){if(used.has(pid(p))||!elig.includes(p.position)||S.ps.some(x=>pid(x)===pid(p)))continue;
+      for(const pos of elig)for(const p of OP[pos]||[]){if(used.has(pid(p))||S.ps.some(x=>pid(x)===pid(p)))continue;
         const d$=price(p)-price(cur),du=raPts(p)-raPts(cur);
         if(du>bg&&d$<=un){bg=du;bi=ii;bp=p;}}});
     if(!bp)break;
