@@ -73,6 +73,16 @@ _dr = pd.read_sql("""SELECT pfr_player_name nm, college, round FROM nflv_draft
 _FIX = {"Mississippi": "Ole Miss", "Miami (FL)": "Miami", "Southern California": "USC", "Pitt": "Pittsburgh"}
 _dr["college_n"] = _dr.college.str.replace(" St.", " State", regex=False).replace(_FIX)
 SMALL_SCHOOL = set(_dr[~_dr.college_n.isin(P5)].nm)
+# college dominator (college_dominator_study.py, classes 2018-24): WR share adds nothing
+# (draft capital prices it); RB-ONLY weak-but-directional — day-3 RBs with high final-
+# season scrimmage share star 11% vs 3%, low-share committee backs hit half as often.
+# Small weights, RB rookies only.
+_suf = re.compile(r"\b(jr|sr|ii|iii|iv|v)\b")
+_nrm = lambda s: re.sub(r"\s+", " ", _suf.sub("", str(s).lower().replace(".", "").replace("'", "")
+                        .replace("-", " ").replace(",", ""))).strip()
+_cp = pd.read_sql("SELECT player, dom_scrim FROM nflv_college_prod WHERE season=2025", con)
+_cp["nm"] = _cp.player.map(_nrm)
+DOM_SCRIM = _cp.drop_duplicates("nm").set_index("nm")["dom_scrim"]
 alpha = pd.read_sql("""SELECT s.player_display_name name, s.position, a.alpha_skill
                        FROM player_skill_alpha a JOIN nflv_season s
                          ON s.player_id=a.player_id AND s.season=a.season
@@ -102,7 +112,10 @@ d["crowd_open"] = d.name.map(lambda n: 1 if (isinstance(crowding.get(n), dict) a
 d["alpha_hi"] = (d.apct.fillna(0) >= 0.80).astype(int)
 d["h2"] = ((d.trend_dppg.fillna(0) > 1.5) & (d.trend_dsnap.fillna(0) > 5)).astype(int)
 d["ceil_n"] = (d.ceiling.fillna(0) / 20).clip(0, 1)
-d["smallschool"] = d.name.isin(SMALL_SCHOOL).astype(int)   # day-2 small-school (22% vs 9% hit)
+d["smallschool"] = d.name.isin(SMALL_SCHOOL).astype(int)   # day-2 small-school (24% vs 10% hit)
+_dom = d.name.map(lambda n: DOM_SCRIM.get(_nrm(n), np.nan))
+d["col_dom"] = np.where((d.position == "RB") & (d.is_rookie == 1) & (_dom >= 0.28), 1,
+                np.where((d.position == "RB") & (d.is_rookie == 1) & (_dom < 0.15), -1, 0))
 
 runway = lambda a: 1.25 if a <= 23 else 1.15 if a <= 25 else 1.0 if a <= 27 else 0.8 if a <= 29 else 0.6
 d["run_x"] = d.age.fillna(26).map(runway)
@@ -118,7 +131,7 @@ d["score"] = ((2.5 * d.dart + 1.5 * d.upside_p
                + 1.00 * d.alpha_hi
                + 0.45 * (d.vacated_role.fillna(0)) + 0.40 * d.heir + 0.35 * d.tko
                + 0.15 * (d.won_job.fillna(0)) + 0.15 * d.crowd_open
-               + 0.25 * d.smallschool
+               + 0.25 * d.smallschool + 0.15 * d.col_dom
                + 0.35 * d.ceil_n)
               * d.run_x * d.pos_x)
 
@@ -137,6 +150,8 @@ def why(r):
     if r.alpha_hi: w.append(f"alpha {r.apct:.0%}")
     if r.h2: w.append(f"H2 +{r.trend_dppg:.1f}ppg")
     if r.smallschool: w.append("small-school d2")
+    if r.col_dom == 1: w.append("college workhorse")
+    elif r.col_dom == -1: w.append("college committee")
     if (r.ceiling or 0) >= 13: w.append(f"ceil {r.ceiling:.0f}")
     return " · ".join(w)
 
