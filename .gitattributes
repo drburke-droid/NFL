@@ -1,1 +1,2 @@
-*.db filter=lfs diff=lfs merge=lfs -text
+# No Git LFS tracking. The odds DB is intentionally kept out of version control
+# (see .gitignore) after 32 pushed versions exhausted the LFS quota.
