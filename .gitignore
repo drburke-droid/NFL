@@ -10,10 +10,14 @@ data/espn/
 # transient run logs (top-level outputs/)
 outputs/*.log
 
-# SQLite sidecars (WAL mode) + a stray empty file once created by a mistyped path;
-# the real DB is db/nfl_odds.db (LFS)
+# SQLite sidecars (WAL mode) + a stray empty file once created by a mistyped path.
 *.db-wal
 *.db-shm
 data/nfl_odds.db
+
+# The mined-to-exhaustion odds DB is NO LONGER version-controlled: 32 pushed 1.2 GB
+# versions exhausted the 10 GB LFS quota. It lives locally only — back it up out-of-band
+# (Release asset / external drive), never re-add it to git or LFS.
+db/nfl_odds.db
 
 config/gdelt_bq.json
