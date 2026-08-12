@@ -19,8 +19,8 @@ High projected value **and** high production certainty (low week-to-week volatil
 | 7 | WR | Puka Nacua | LA | 253 | $64 | 0.55 |
 | 8 | RB | Jonathan Taylor | IND | 252 | $63 | 0.57 |
 | 9 | RB | Ashton Jeanty | LV | 252 | $63 | 0.57 |
-| 10 | RB | Chase Brown | CIN | 244 | $58 | 0.57 |
-| 11 | RB | James Cook | BUF | 244 | $58 | 0.57 |
+| 10 | RB | James Cook | BUF | 244 | $58 | 0.57 |
+| 11 | RB | Chase Brown | CIN | 244 | $58 | 0.57 |
 | 12 | RB | Josh Jacobs | GB | 237 | $54 | 0.52 |
 | 13 | TE | Trey McBride | ARI | 210 | $54 | 0.57 |
 | 15 | RB | Derrick Henry | BAL | 227 | $49 | 0.57 |
