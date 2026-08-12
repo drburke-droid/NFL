@@ -23,7 +23,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      redraft QB  Sam Darnold            value $ 3  cost $ 1  exp $ 1  (re-buy $1 < keep $1)
 
 [ 4] 3AM  No Limit               (2026 bump +$5)
-     KEEP    RB  Cam Skattebo           value $18  cost $ 8  exp $16  saves +$ 8
+     KEEP    RB  Cam Skattebo           value $17  cost $ 8  exp $16  saves +$ 8
      KEEP    RB  Jahmyr Gibbs           value $65  cost $45  exp $48  saves +$ 3 (kept 2yr)
      redraft RB  D'Andre Swift          value $32  cost $16  exp $15  (re-buy $15 < keep $16)
      redraft WR  Tee Higgins            value $25  cost $22  exp $18  (re-buy $18 < keep $22)
@@ -31,7 +31,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
 [ 5] Saja Boys                   <-- YOU  (2026 bump +$5)
      KEEP    WR  Alec Pierce            value $ 6  cost $ 1  exp $10  saves +$ 9
      redraft WR  Rashee Rice            value $36  cost $32  exp $32  (re-buy $32 < keep $32)
-     redraft QB  Josh Allen             value $36  cost $32  exp $27  (re-buy $27 < keep $32)
+     redraft QB  Josh Allen             value $37  cost $32  exp $27  (re-buy $27 < keep $32)
 
 [ 7] 65 Dolla Make You Holla     (2026 bump +$5)
      KEEP    WR  Puka Nacua             value $62  cost $16  exp $42  saves +$26 (kept 2yr)
@@ -43,7 +43,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      KEEP    TE  Kyle Pitts             value $19  cost $ 4  exp $12  saves +$ 8 (kept 1yr)
      KEEP    TE  Tyler Warren           value $17  cost $13  exp $14  saves +$ 1
      redraft WR  Brian Thomas Jr.       value $16  cost $15  exp $12  (re-buy $12 < keep $15)
-     redraft RB  Omarion Hampton        value $48  cost $45  exp $32  (re-buy $32 < keep $45)
+     redraft RB  Omarion Hampton        value $48  cost $45  exp $33  (re-buy $33 < keep $45)
 
 [ 9] State your name             (2026 bump +$3)
      KEEP    TE  Trey McBride           value $34  cost $ 9  exp $26  saves +$17 (kept 2yr)
@@ -71,8 +71,8 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      redraft RB  Kenneth Walker III     value $35  cost $32  exp $20  (re-buy $20 < keep $32)
 
 [14] Paul's Perfect Team         (2026 bump +$5)
-     KEEP    RB  Travis Etienne         value $19  cost $ 8  exp $13  saves +$ 5
-     KEEP    RB  James Cook             value $48  cost $26  exp $29  saves +$ 3
+     KEEP    RB  Travis Etienne         value $18  cost $ 8  exp $13  saves +$ 5
+     KEEP    RB  James Cook             value $47  cost $26  exp $27  saves +$ 1
      redraft WR  Amon-Ra St. Brown      value $61  cost $53  exp $44  (re-buy $44 < keep $53)
 
 ```

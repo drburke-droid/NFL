@@ -83,8 +83,52 @@ def resolve_ids(names_positions, con):
     return out
 
 
+def synth_id(name):
+    """Stable stand-in id for a player nflv_season has never seen (2026 rookies).
+
+    MUST be derived from the name alone so every table that mints one lands on the
+    same value and merges line up.
+    """
+    return "NOID-" + re.sub(r"\s+", "-", norm(name))
+
+
+def normalize_blank_ids(con):
+    """Give every blank player_id a unique stand-in.
+
+    pandas merges MATCH on NaN (SQL does not), so rows sharing a blank player_id
+    cross-join. build_draft_tool.py does `drop_duplicates("player_id")` on
+    nflv_late_breakout, which collapsed 6 rookies' distinct p_hit values down to
+    one and then merged that single value onto all of them -- e.g. Deion Burks
+    carried Stribling's 0.0355 instead of his own 0.0099, a 3.6x overstatement of
+    a signal that drives the $1-3 lottery tags. Naming them apart fixes the join
+    at the source, so real values attach to the right player and genuinely unknown
+    ones stay NULL instead of borrowing a neighbour's.
+    """
+    cur = con.cursor()
+    for table, namecol in (("board_2026", "player_display_name"),
+                           ("nflv_late_breakout", "name")):
+        cols = [r[1] for r in cur.execute(f"pragma table_info({table})")]
+        if namecol not in cols or "player_id" not in cols:
+            continue
+        rows = cur.execute(
+            f"SELECT DISTINCT {namecol} FROM {table} "
+            f"WHERE player_id IS NULL OR TRIM(player_id)=''").fetchall()
+        for (nm,) in rows:
+            if not nm:
+                continue
+            cur.execute(
+                f"UPDATE {table} SET player_id=? "
+                f"WHERE {namecol}=? AND (player_id IS NULL OR TRIM(player_id)='')",
+                (synth_id(nm), nm))
+        if rows:
+            print(f"  [ids] {table}: assigned stand-in ids to "
+                  f"{len(rows)} name(s) with blank player_id")
+    con.commit()
+
+
 def main():
     con = sqlite3.connect(DB)
+    normalize_blank_ids(con)
     board = pd.read_sql("SELECT * FROM board_2026", con)
     if "src" in board.columns:            # idempotent: strip a prior backfill
         board = board[board["src"] != "ffa"].drop(columns=["src"])
@@ -114,7 +158,7 @@ def main():
             got = ids.get((r.player, r.position))
             if got:
                 return got
-            return "FFA-" + re.sub(r"[^a-z]", "", norm(r.player))
+            return synth_id(r.player)
         miss["player_id"] = [pick(r) for r in miss.itertuples(index=False)]
 
         # Same constants build_draft_tool.py uses, so the QB inversion round-trips.
