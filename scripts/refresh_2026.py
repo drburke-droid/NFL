@@ -43,6 +43,9 @@ STEPS = [
     ("Lottery-ticket tags ($1-3 stars)", "build_lottery_tag.py", False),
     ("WR2 crowding tags",                "build_crowding_tag.py", False),
     ("Rebuild draft tool (data.js)",     "build_draft_tool.py", True),
+    # Bakes the FFA consensus into docs/ffa_2026.js so the Blend/FFA toggles work
+    # without a per-browser CSV upload.
+    ("Bake FFA consensus for the UI",    "build_ffa_js.py", True),
     ("Refresh career comps",             "comp_finder.py", False),
     ("Refresh rookie comps",             "rookie_comps.py", False),
 ]

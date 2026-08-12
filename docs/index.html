@@ -19,6 +19,7 @@
 <script src="crowding_2026.js"></script>
 <script src="takeover_2026.js"></script>
 <script src="dart_scores_2026.js"></script>
+<script src="ffa_2026.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -165,7 +166,7 @@
     <input id="espnTrendFile2" type="file" accept=".txt,text/plain" style="display:none">
     <button class="btn sm up" id="buzzBtn" title="Pull latest Wikipedia pageview buzz (camp risers), rescore darts, rebuild the board. Needs the local helper: python scripts/buzz_server.py">↻ Buzz</button>
     <span class="muted" id="buzzStatus"></span>
-    <span class="muted" id="ffaStatus">No FFA loaded — board is a prior-year model guess. Upload the FantasyFootballAnalytics preseason CSV to switch to market-anchored consensus.</span>
+    <span class="muted" id="ffaStatus"></span>
   </div>
   <div class="chips" id="scorechips"></div>
 </header>
@@ -205,7 +206,17 @@ let mode="cheat",posFilter="ALL",startersOnly=false,draftableOnly=false,sortKey=
 let projMode=localStorage.getItem("projMode")||"model";
 let cfg=JSON.parse(localStorage.getItem("draft_cfg")||'null')||{teams:12,budget:200,roster:16};
 let kept=JSON.parse(localStorage.getItem("draft_keepers")||'{}');
-let ffaMap=JSON.parse(localStorage.getItem("ffa2026")||'{}');
+// Seed from the baked league-scored consensus (docs/ffa_2026.js, built by
+// scripts/build_ffa_js.py) so Blend/FFA work on ANY machine with no upload —
+// they used to be dead unless you'd uploaded the CSV in *this* browser, which made
+// them silently unavailable on the draft-night PC.
+// An upload still wins. The "ffaUploaded" flag is what distinguishes the two, since
+// save() re-persists ffaMap on every state change and would otherwise make the
+// baked map look like an upload.
+const FFA_HAVE_BAKED=(typeof FFA_BAKED!=="undefined")&&Object.keys(FFA_BAKED).length>0;
+const ffaIsUpload=()=>localStorage.getItem("ffaUploaded")==="1";
+let ffaMap=ffaIsUpload()?(JSON.parse(localStorage.getItem("ffa2026")||'null')||{})
+                        :(FFA_HAVE_BAKED?FFA_BAKED:{});
 const pid=p=>p.name+"|"+p.position+"|"+(p.team||"");
 const BYID={}; PLAYERS.forEach(p=>BYID[pid(p)]=p);
 const isK=p=>p.position==="K"||p.position==="DST";
@@ -331,7 +342,13 @@ const norm=s=>String(s).toLowerCase().replace(/[^a-z ]/g,"").replace(/\b(jr|sr|i
 const fkey=(n,p)=>norm(n)+"|"+p;
 const PRJ=p=>p._proj!=null?p._proj:p.proj_pts;
 const VP=p=>p._vorp!=null?p._vorp:p.vorp;
-let BLEND_W=parseFloat(localStorage.getItem("blendW")||"0.5");        // FFA weight in Blend mode (0..1)
+// FFA weight in Blend mode (0..1). 0.65 from a walk-forward sweep (2016-2025,
+// rank-vs-actual-finish per season+position): pure model 0.519, blend@0.65 0.547,
+// pure FFA 0.545. Blend beats the model significantly (27/40 groups, p=0.0002) but
+// NOT pure FFA (p=0.50) — the curve is flat 0.60-1.00, so 0.65 sits at the top of
+// the plateau while keeping the model's magnitude calibration (it wins on MAE,
+// 2.859 vs 2.993, which is what the auction pricing layer needs).
+let BLEND_W=parseFloat(localStorage.getItem("blendW")||"0.65");
 const ffaLoaded=()=>Object.keys(ffaMap).length>0;
 const ffaOn=()=>projMode==="ffa"&&ffaLoaded();
 const projActive=()=>(projMode==="ffa"||projMode==="blend")&&ffaLoaded();   // using an alt projection (_proj set)
@@ -496,9 +513,15 @@ function parseCSV(text){
 }
 function ffaStatusText(){
   const ks=Object.keys(ffaMap);
-  if(!ks.length){return "No FFA loaded — board is a prior-year model guess. Upload the FantasyFootballAnalytics preseason CSV to switch to market-anchored consensus.";}
+  // NB: "Model" is NOT an unanchored prior-year guess — the season model is already
+  // FFA-anchored server-side (attach_ffa reads nflv_ffa_league). The toggle picks how
+  // much RAW consensus to layer on top, it does not decide whether FFA is used at all.
+  if(!ks.length){return "No FFA available — using the model only. The board itself is still FFA-anchored; upload the league-scored CSV to enable Blend/FFA.";}
   let matched=0; PLAYERS.forEach(p=>{if(!isK(p)&&ffaMap[fkey(p.name,p.position)])matched++;});
-  return `<span class="ffastat">FFA loaded: ${ks.length} players, ${matched} matched to the board.</span> Switch the "Projections" toggle to FFA consensus.`;
+  const baked=!ffaIsUpload();
+  return `<span class="ffastat">FFA ${baked?"built in":"loaded"}: ${ks.length} players, ${matched} matched.</span> `+
+    `Model is already FFA-anchored; <b>Blend</b> layers raw consensus on top — validated best at ~65% FFA `+
+    `(rank-vs-finish .547 vs .519 model-only, 2016-25 walk-forward).`;
 }
 document.getElementById("ffaFile").onchange=e=>{
   const f=e.target.files[0]; if(!f) return;
@@ -507,7 +530,7 @@ document.getElementById("ffaFile").onchange=e=>{
     try{
       const {m,n}=parseCSV(ev.target.result);
       if(!n){alert("Couldn't parse any QB/RB/WR/TE rows. Expecting an FFA projections CSV with player/position/points columns.");return;}
-      ffaMap=m; save();
+      ffaMap=m; localStorage.setItem("ffaUploaded","1"); save();
       document.getElementById("srcFFA").disabled=false; document.getElementById("srcBlend").disabled=false;
       document.getElementById("ffaClear").style.display="";
       setSrc("blend");                                   // default to Blend (model + FFA) on upload
@@ -515,7 +538,18 @@ document.getElementById("ffaFile").onchange=e=>{
   };
   rd.readAsText(f);
 };
-document.getElementById("ffaClear").onclick=()=>{ffaMap={};projMode="model";save();document.getElementById("srcFFA").disabled=true;document.getElementById("srcBlend").disabled=true;document.getElementById("ffaClear").style.display="none";setSrc("model");};
+// "clear" now drops an UPLOADED override and falls back to the baked consensus that
+// ships with the site — it no longer strands you with the toggles greyed out.
+document.getElementById("ffaClear").onclick=()=>{
+  localStorage.removeItem("ffaUploaded");
+  ffaMap=FFA_HAVE_BAKED?FFA_BAKED:{};
+  const has=Object.keys(ffaMap).length>0;
+  document.getElementById("srcFFA").disabled=!has;
+  document.getElementById("srcBlend").disabled=!has;
+  document.getElementById("ffaClear").style.display="none";
+  setSrc(has?(projMode==="model"?"model":projMode):"model");
+  document.getElementById("ffaStatus").innerHTML=ffaStatusText();
+};
 wireEspnUpload("espnTrendFile2");   // 📈 in the global toolbar — feeds the 💰 Auction $ board + room bots
 
 // ---------- Buzz refresh: Wikipedia pageviews -> dart rescoring -> board rebuild ----------
@@ -2549,7 +2583,9 @@ function renderSide(){
 }
 
 // ---------- init ----------
-if(Object.keys(ffaMap).length){document.getElementById("srcFFA").disabled=false;document.getElementById("srcBlend").disabled=false;document.getElementById("ffaClear").style.display="";}
+if(Object.keys(ffaMap).length){document.getElementById("srcFFA").disabled=false;document.getElementById("srcBlend").disabled=false;
+  // "clear" only makes sense against an upload — the baked consensus has nothing to revert to.
+  document.getElementById("ffaClear").style.display=ffaIsUpload()?"":"none";}
 document.getElementById("srcModel").classList.toggle("active",projMode==="model");
 document.getElementById("srcBlend").classList.toggle("active",projMode==="blend");
 document.getElementById("srcFFA").classList.toggle("active",projMode==="ffa");
