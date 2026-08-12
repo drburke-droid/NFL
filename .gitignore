@@ -16,8 +16,18 @@ outputs/*.log
 data/nfl_odds.db
 
 # The mined-to-exhaustion odds DB is NO LONGER version-controlled: 32 pushed 1.2 GB
-# versions exhausted the 10 GB LFS quota. It lives locally only — back it up out-of-band
-# (Release asset / external drive), never re-add it to git or LFS.
+# versions exhausted the 10 GB LFS quota. Sync it between PCs with
+# `python scripts/sync_data.py push|pull` — a Release asset, which does NOT count
+# against the LFS quota. Never re-add it to git or LFS.
 db/nfl_odds.db
 
+# Derived model/backtest caches: rebuilt from the odds DB by scripts/prop_*.py and
+# scripts/late_breakout_*.py, and shipped in the same Release bundle as the DB.
+# Tracking them put 41 MB of churn in git for artifacts nothing at draft time reads.
+outputs/*.pkl
+outputs/models/*.pkl
+
 config/gdelt_bq.json
+
+# Personal access token for scripts/sync_data.py — never commit.
+config/gh_token.txt
