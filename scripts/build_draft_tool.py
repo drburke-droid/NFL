@@ -185,7 +185,11 @@ def build_skill(con):
     df["repl_pts"] = df["position"].map(repl)
     df["vorp"] = df["proj_pts"] - df["repl_pts"]
     df["is_flex_starter"] = df["player_id"].isin(flex_starters["player_id"]).astype(int)
-    df["conf"] = np.where(df["is_rookie"]==1, "rookie", "model")
+    # src='ffa' rows are backfill_ffa_pool.py passthroughs — the FFA number itself,
+    # not a model output. Flag them so the board never overstates its confidence.
+    src = df["src"] if "src" in df.columns else pd.Series("", index=df.index)
+    df["conf"] = np.where(src == "ffa", "ffa",
+                          np.where(df["is_rookie"]==1, "rookie", "model"))
     return df, repl, starters
 
 

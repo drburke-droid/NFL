@@ -31,6 +31,9 @@ STEPS = [
     ("FFC crowd ADP (live mocks)",       "fetch_ffc_adp.py", False),
     ("Fit projection + boom/bust models", "projection_overhaul.py", True),
     ("Build 2026 board (vets + rookies)", "build_2026_targets.py", True),
+    # Must run after build_2026_targets (it replaces board_2026) and before the
+    # report + draft tool, so both see every FFA-projected player.
+    ("Backfill FFA-only players",        "backfill_ffa_pool.py", True),
     ("Generate targets report",          "report_2026_targets.py", True),
     ("2025 half-season split (Risers)",  "half_season_split.py", False),
     ("Half-season trend features",       "build_half_trend.py", False),
