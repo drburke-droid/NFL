@@ -203,7 +203,11 @@
 <script>
 // ---------- state ----------
 let mode="cheat",posFilter="ALL",startersOnly=false,draftableOnly=false,sortKey="overall_rank",sortDir=1,query="";
-let projMode=localStorage.getItem("projMode")||"model";
+// Default to BLEND. Walk-forward 2016-2025, rank-vs-actual-finish per season+position:
+// model-only .519, blend@0.65 .547, pure FFA .545 — blend beats model-only in 27/40
+// groups (p=0.0002). Ordering is what a draft actually consumes, so model-only is the
+// wrong default. Falls back to model if no FFA is available.
+let projMode=localStorage.getItem("projMode")||"blend";
 let cfg=JSON.parse(localStorage.getItem("draft_cfg")||'null')||{teams:12,budget:200,roster:16};
 let kept=JSON.parse(localStorage.getItem("draft_keepers")||'{}');
 // Seed from the baked league-scored consensus (docs/ffa_2026.js, built by
@@ -1115,7 +1119,33 @@ function dynamicMarket(){
   if(HP||H){
     const top=avail.map(p=>price[pid(p)]||1).sort((a,b)=>b-a).slice(0,Math.max(spots,0));
     const cs=top.reduce((a,b)=>a+b,0);
-    infl=cs>0?Math.max(0.8,Math.min(1.6,money/cs)):1;   // curve+anchors are already post-keeper EQUILIBRIUM prices, so infl only carries this room's money surplus (most ever brought: $196 vs $150/team = x1.31) plus modest endgame headroom
+    // Curve + anchors are already post-keeper EQUILIBRIUM prices (build_price_anchor.py
+    // fits this league's 2023-25 winning bids, two of which are keeper years), so infl
+    // must only carry THIS room's money surplus — not the keeper effect a second time.
+    //
+    // Measured on outputs/espn_drafts.csv against same-season FFA AAV, using 2023 as a
+    // keeper-free control (no keepers that year):
+    //   room baseline 2023 = 0.904x national AAV
+    //   keeper-era inflation = 1.153x, bootstrap 95% CI [1.08, 1.24]
+    //   OLS log(paid/AAV) ~ keeper_era*log(AAV): keeper coef p=0.0095 -> 1.173x
+    // The old 1.6 ceiling was far above anything this league has ever actually paid, so
+    // it let Exp $ run ~35% past the evidence. Capped at the top of the measured CI.
+    //
+    // Two hypotheses tested and REJECTED — do not re-add them without new data:
+    //   * per-position multipliers (TE 1.38 / WR 1.18 / RB 1.15 / QB 0.98): every CI
+    //     overlaps the global estimate, so the spread is noise on 14-52 picks/season.
+    //   * price-tier gradient (cheap inflating more): the binned 1.54x at $1-3 is an
+    //     artifact of bids being floored at $1 against sub-$1 AAVs; the continuous
+    //     interaction is insignificant (p=0.4984) and even flips sign.
+    // Keeper COMPOSITION also showed no effect — corr(share of a position kept,
+    // inflation on its survivors) = +0.13, p=0.76. Keeping WRs neither inflates nor
+    // deflates the remaining WRs measurably.
+    const INFL_CAP=1.25;
+    // Keeper drafts leave money on the table: 5.4% (2024) and 6.2% (2025) of open money
+    // went unspent, vs 1.9% in keeper-free 2023. Targeting 100% of nominal money assumes
+    // a fully-cleared auction this league does not run.
+    const INFL_LEAK=0.94;
+    infl=cs>0?Math.max(0.8,Math.min(INFL_CAP,(money*INFL_LEAK)/cs)):1;
     if(Math.abs(infl-1)>0.02)avail.forEach(p=>{const id=pid(p);price[id]=Math.max(1,Math.round(1+((price[id]||1)-1)*infl));});
     avail.forEach(p=>{const id=pid(p);if(!isK(p))price[id]=Math.max(1,ceilExp(p.position,price[id]||1));});
   }
