@@ -96,9 +96,31 @@ def build_skill(con):
     # FFA AAV (league-scored expert consensus) by player_id; FFC crowd ADP (live 12-team
     # PPR mocks, fetch_ffc_adp.py) by normalized name+position.
     try:
-        aav = pd.read_sql("""SELECT player_id, ffa_aav FROM nflv_ffa_league
-                             WHERE season=2026 AND player_id IS NOT NULL""", con).drop_duplicates("player_id")
-        df = df.merge(aav, on="player_id", how="left")
+        # Join on player_id FIRST, then fall back to normalized name+position. The
+        # id-only join silently dropped every 2026 rookie -- they have no prior
+        # nflv_season row, so player_id is NULL and `WHERE player_id IS NOT NULL`
+        # discarded them outright. That cost 19 players their AAV, including
+        # Jeremiyah Love ($57.50), Carnell Tate ($29.50) and Fernando Mendoza
+        # ($27.70), so the board showed no market price at all for exactly the
+        # rookies whose value is hardest to judge.
+        aav = pd.read_sql("""SELECT player_id, player, position, ffa_aav FROM nflv_ffa_league
+                             WHERE season=2026 AND ffa_aav IS NOT NULL""", con)
+        byid = (aav[aav.player_id.notna()][["player_id", "ffa_aav"]]
+                .drop_duplicates("player_id"))
+        df = df.merge(byid, on="player_id", how="left")
+        nmk = lambda s: (s.astype(str).str.lower()
+                         .str.replace(r"[^a-z ]", "", regex=True)
+                         .str.replace(r"\b(jr|sr|ii|iii|iv|v)\b", "", regex=True)
+                         .str.replace(r"\s+", " ", regex=True).str.strip())
+        aav["_k"] = nmk(aav["player"]) + "|" + aav["position"]
+        byname = aav.drop_duplicates("_k").set_index("_k")["ffa_aav"]
+        nmcol0 = "player_display_name" if "player_display_name" in df.columns else "name"
+        need = df["ffa_aav"].isna()
+        if need.any():
+            k = nmk(df.loc[need, nmcol0]) + "|" + df.loc[need, "position"]
+            df.loc[need, "ffa_aav"] = k.map(byname).values
+            print(f"  ffa_aav: {int(df.loc[need,'ffa_aav'].notna().sum())} recovered by name "
+                  f"(rookies with no player_id)")
     except Exception:
         df["ffa_aav"] = np.nan
     try:
