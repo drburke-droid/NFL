@@ -63,6 +63,36 @@ def main():
     })[["season","player_id","player","position","team","ffa_points","ffa_sd","ffa_floor",
         "ffa_ceiling","ffa_vor","ffa_rank","ffa_pos_rank","ffa_tier","ffa_adp","ffa_aav",
         "ffa_uncertainty","ffa_dropoff","ffa_age","ffa_exp"]]
+    # ---- age repair -------------------------------------------------------
+    # FFA's historical exports carry each player's CURRENT age on EVERY season:
+    # the 2019 and 2022 files both list Tom Brady at 48 and Travis Kelce at 36.
+    # Passed through raw, that made 58% of historical player-seasons look 31+ and
+    # silently wrecks any age-based study. The CSV age is only right for the
+    # upcoming season, so overwrite it with the true per-season age wherever we
+    # have one and keep the CSV value only where we don't.
+    truth = pd.read_sql("SELECT season, player_id, age FROM season_dataset "
+                        "WHERE age IS NOT NULL", con).drop_duplicates(["season", "player_id"])
+    before = out["ffa_age"].copy()
+    out = out.merge(truth, on=["season", "player_id"], how="left")
+    fixed = out["age"].notna() & (out["age"] != before)
+
+    # season_dataset has no row for a player's ROOKIE year, so those would keep the
+    # bad CSV age (Justin Jefferson showed 27 in 2020, his age-21 season). Anchor on
+    # any season we do know and walk the age back/forward a year at a time.
+    anchor = (truth.sort_values("season").drop_duplicates("player_id", keep="last")
+              .set_index("player_id")[["season", "age"]])
+    need = out["age"].isna() & out["player_id"].notna()
+    if need.any():
+        a_s = out.loc[need, "player_id"].map(anchor["season"])
+        a_a = out.loc[need, "player_id"].map(anchor["age"])
+        out.loc[need, "age"] = a_a - (a_s - out.loc[need, "season"])
+        print(f"age repair: extrapolated {int(out.loc[need,'age'].notna().sum()):,} "
+              f"seasons from each player's own age anchor (rookie years)")
+    out["ffa_age"] = out["age"].where(out["age"].notna(), out["ffa_age"])
+    out = out.drop(columns=["age"])
+    print(f"age repair: {int(fixed.sum()):,} player-seasons corrected from season_dataset "
+          f"({out['ffa_age'].notna().sum():,} of {len(out):,} have an age)")
+
     out.to_sql("nflv_ffa_league", con, if_exists="replace", index=False)
     con.close()
 
