@@ -679,6 +679,24 @@ function ageRiskNote(p){
   if(p.archetype==="Pass-catch RB")return `Pass-catching RBs historically cliff hardest at 29-30${a} (≈ −3.7 PPG/yr). Context only.`;
   return "Age-fragile archetype — historically declines at this age. Context only.";
 }
+// RB age tiebreaker. Validated 2016-25: take two RBs in the same season projected
+// within 10% of each other and 4+ years apart — the YOUNGER outscored the older
+// 59.0% of the time (510/864, p<0.0001), and 58.6% among draftable RBs (p=0.0006).
+// WR 52.6% and QB 54.0% are far weaker; TE shows nothing (52.4%, p=0.35), so this
+// is RB-only on purpose.
+//
+// Deliberately a TAG, not a projection edit. An explicit age multiplier on RB
+// projections was fitted walk-forward and REJECTED: it made MAE 4.8% worse at full
+// strength and no shrinkage dose beat the current board (best was +0.07%, noise).
+// The bias is real in aggregate but swamped by RB variance at the player level, so
+// it survives as a tiebreaker and dies as a number. Do not re-add the multiplier.
+function rbAgeTag(p){
+  if(p.position!=="RB"||p.age==null)return "";
+  const a=Math.round(p.age);
+  if(a<=24)return ` <span class="tag won" title="Young RB (age ${a}). At equal projection the younger RB beat the older one 59% of the time (2016-25, n=864, p<0.0001). Tiebreaker only — the projection itself is unchanged.">⬆ YOUTH</span>`;
+  if(a>=28)return ` <span class="tag agerisk" title="RB age ${a}. At equal projection the younger RB won 59% of head-to-heads (2016-25, n=864, p<0.0001). FFA also over-projects 28+ RBs by ~23% vs ~6% for 23-and-under. Tiebreaker only — the projection itself is unchanged.">⚠ RB AGE</span>`;
+  return "";
+}
 function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;setMode("comps");}
 let compView="table";
 const POSCOL={QB:"#e85d75",RB:"#39c08a",WR:"#4da3ff",TE:"#e0a23c"};
@@ -2551,6 +2569,7 @@ function render(){
         if(p.won_job===1)tg+=' <span class="tag won" title="Young (≤2 yr) player who ended 2025 entrenched after winning a role late — model runs slightly low (validated ~+0.7 PPG)">⬆ WON JOB</span>';
         if(p.vacated_role===1)tg+=` <span class="tag vac" title="Backfield lost its lead back (${p.vac_rb_carries||0} carries vacated, no real replacement) — returning RBs here beat projection ~+1.7 PPG (validated, both eras)">⬆ VACATED ROLE</span>`;
         if(p.age_risk===1)tg+=` <span class="tag agerisk" title="${ageRiskNote(p)}">⚠ AGE</span>`;
+        tg+=rbAgeTag(p);
         tg+=contractTag(p);
         if(p.conf==='low')tg+=' <span class="lowconf">stream</span>';
         if(p.archetype)tg+=` <span class="arch" title="Player archetype (from size/speed + usage)">${p.archetype}</span>`;
