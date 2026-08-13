@@ -697,6 +697,25 @@ function rbAgeTag(p){
   if(a>=28)return ` <span class="tag agerisk" title="RB age ${a}. At equal projection the younger RB won 59% of head-to-heads (2016-25, n=864, p<0.0001). FFA also over-projects 28+ RBs by ~23% vs ~6% for 23-and-under. Tiebreaker only — the projection itself is unchanged.">⚠ RB AGE</span>`;
   return "";
 }
+// KEEPER RISK on the main board. KEEPER_PROB used to be read ONLY inside the Mock
+// Keepers tab, so unless you opened that tab and hit "reset to predicted", the board
+// happily ranked players their owner almost never releases. This surfaces the odds
+// wherever a player is listed, so a 79%-kept star can't quietly top your target list.
+const KRISK=(()=>{const m={};
+  if(typeof KEEPERS_2026!=="undefined"&&typeof KEEPER_PROB!=="undefined")
+    for(const t of KEEPERS_2026.teams) for(const c of (t.candidates||[])){
+      const pr=KEEPER_PROB[c.pid];
+      if(pr!=null) m[norm(c.name)+"|"+c.pos]={p:pr,team:t.name,cost:c.cost};}
+  return m;})();
+function keeperRiskTag(p){
+  const r=KRISK[norm(p.name)+"|"+p.position];
+  if(!r||keptBy(p))return "";                    // already locked in the room: no warning needed
+  const pc=Math.round(r.p*100);
+  if(pc<30)return "";                            // realistically available — stay quiet
+  const cls=pc>=60?"agerisk":"arch";
+  const lbl=pc>=60?"LIKELY KEPT":"KEEP RISK";
+  return ` <span class="tag ${cls}" title="${r.team} holds him at $${r.cost} — modelled ${pc}% chance they keep him, fitted on this league's actual 2023-25 keeper decisions. He may never reach the auction, so do not build a plan around him. Confirm in 🧩 Mock Keepers.">🔒 ${lbl} ${pc}%</span>`;
+}
 function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;setMode("comps");}
 let compView="table";
 const POSCOL={QB:"#e85d75",RB:"#39c08a",WR:"#4da3ff",TE:"#e0a23c"};
@@ -1821,8 +1840,36 @@ function ensureKeeperLeague(){
 }
 const keptForTeam=i=>KEEPERS_2026.teams[i].candidates.filter(c=>DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept);
 function setKeeper(pid,i,cost,on){ if(on){DR.owned[pid]={t:i,price:cost,kept:true};} else {delete DR.owned[pid];} saveDR(); render(); }
+// "Reset to predicted" now ticks by MODELLED KEEP LIKELIHOOD, not by whether keeping is
+// +EV. Those disagree badly, and in both directions:
+//   * Bijan (P=0.79) and Drake Maye (0.75) were predicted=false — keeping them loses money
+//     — so the board left them in the pool and ranked players you can never actually buy.
+//   * Matthew Stafford (P=0.04), Christian Watson (0.12), Rico Dowdle (0.18) were
+//     predicted=true because keeping them is +EV, so the board REMOVED available bargains.
+// Owners keep stars at a loss and dump cheap value; behaviour predicts that, economics
+// does not. KEEPER_PROB is fitted on this league's real 2023-25 keeper decisions.
+// Still capped at the league's 3-keeper limit, highest likelihood first.
+const keepProbOf=c=>{const p=(typeof KEEPER_PROB!=="undefined")?KEEPER_PROB[c.pid]:null;
+  return p!=null?p:(c.predicted?0.9:0.1);};
+// Self-calibrating cutoff. The probabilities sum to the model's own expected keeper
+// count (~31.4 for 2026, against 31 kept in 2024 and 30 in 2025), so pick the threshold
+// whose ticked count lands closest to that expectation instead of hardcoding one. A
+// naive 0.60 cutoff ticks only 9 and would leave ~20 players who WILL be kept sitting
+// in your pool — the same bug in a smaller costume. Re-calibrates if the model is refit.
+function keepCount(th){let n=0;KEEPERS_2026.teams.forEach(t=>{
+  n+=(t.candidates||[]).filter(c=>keepProbOf(c)>=th).sort((a,b)=>keepProbOf(b)-keepProbOf(a)).slice(0,3).length;});
+  return n;}
+const KEEP_LIKELY=(()=>{
+  if(typeof KEEPERS_2026==="undefined")return 0.5;
+  let exp=0;KEEPERS_2026.teams.forEach(t=>(t.candidates||[]).forEach(c=>{exp+=keepProbOf(c);}));
+  let best=0.30,bd=Infinity;
+  for(let th=0.10;th<=0.85;th+=0.01){const d=Math.abs(keepCount(th)-exp);if(d<bd){bd=d;best=th;}}
+  return best;})();
 function resetPredicted(){ for(const id in DR.owned){if(DR.owned[id].kept)delete DR.owned[id];}
-  KEEPERS_2026.teams.forEach((t,i)=>t.candidates.filter(c=>c.predicted).forEach(c=>{DR.owned[c.pid]={t:i,price:c.cost,kept:true};}));
+  KEEPERS_2026.teams.forEach((t,i)=>{
+    (t.candidates||[]).filter(c=>keepProbOf(c)>=KEEP_LIKELY)
+      .sort((a,b)=>keepProbOf(b)-keepProbOf(a)).slice(0,3)
+      .forEach(c=>{DR.owned[c.pid]={t:i,price:c.cost,kept:true};});});
   saveDR(); render(); }
 function clearKeepers(){ for(const id in DR.owned){if(DR.owned[id].kept)delete DR.owned[id];} saveDR(); render(); }
 // per-owner historical positional spend tendencies (multipliers vs league) from keepers_2026.js
@@ -2570,6 +2617,7 @@ function render(){
         if(p.vacated_role===1)tg+=` <span class="tag vac" title="Backfield lost its lead back (${p.vac_rb_carries||0} carries vacated, no real replacement) — returning RBs here beat projection ~+1.7 PPG (validated, both eras)">⬆ VACATED ROLE</span>`;
         if(p.age_risk===1)tg+=` <span class="tag agerisk" title="${ageRiskNote(p)}">⚠ AGE</span>`;
         tg+=rbAgeTag(p);
+        tg+=keeperRiskTag(p);
         tg+=contractTag(p);
         if(p.conf==='low')tg+=' <span class="lowconf">stream</span>';
         if(p.archetype)tg+=` <span class="arch" title="Player archetype (from size/speed + usage)">${p.archetype}</span>`;
