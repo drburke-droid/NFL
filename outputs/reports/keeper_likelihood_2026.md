@@ -104,126 +104,127 @@ tool's own numbers from keepers_2026.js; * = predicted keep of the rational rule
 (base-rate calibration x1.19: raw expected 26.8 keeps -> 31.8 = the league's real 2.65 keeps/team incl. waiver keeps)
 
 [ 1] A Useless Johnson              (owner espn98580191, expected keeps 3.0)
-    82.1%   RB  Bijan Robinson         cost $73  exp $58  save -15  ppg 21.8     
-    40.0%   WR  Wan'Dale Robinson      cost $ 6  exp $14  save  +8  ppg 13.6      wvr
-    31.4%   WR  Drake London           cost $42  exp $34  save  -8  ppg 16.8     
-    30.4%   WR  Michael Wilson         cost $ 6  exp $11  save  +5  ppg 13.0      wvr
-    27.9% * QB  Justin Herbert         cost $10  exp $12  save  +2  ppg 17.9     
-    23.9%   QB  Jalen Hurts            cost $24  exp $15  save  -9  ppg 18.8     
-    16.6%   RB  Rico Dowdle            cost $ 6  exp $ 8  save  +2  ppg 12.7      wvr
-    11.2%   RB  Kyle Monangai          cost $ 6  exp $ 5  save  -1  ppg  8.6      wvr
-     9.7%   RB  Tyler Allgeier         cost $ 6  exp $ 1  save  -5  ppg  7.2      wvr
-     9.6%   RB  Blake Corum            cost $ 6  exp $ 1  save  -5  ppg  7.2      wvr
-     7.1%   WR  Jauan Jennings         cost $ 6  exp $ 4  save  -2  ppg 11.6      wvr
-     4.1%   RB  Chris Rodriguez Jr.    cost $ 6  exp $ 1  save  -5  ppg  7.7      wvr
+    83.2%   RB  Bijan Robinson         cost $73  exp $58  save -15  ppg 21.8     
+    38.9%   WR  Wan'Dale Robinson      cost $ 6  exp $13  save  +7  ppg 13.6      wvr
+    31.9%   WR  Drake London           cost $42  exp $34  save  -8  ppg 16.8     
+    29.4%   WR  Michael Wilson         cost $ 6  exp $10  save  +4  ppg 13.0      wvr
+    28.2% * QB  Justin Herbert         cost $10  exp $12  save  +2  ppg 17.9     
+    24.2%   QB  Jalen Hurts            cost $24  exp $15  save  -9  ppg 18.8     
+    16.0%   RB  Rico Dowdle            cost $ 6  exp $ 7  save  +1  ppg 12.7      wvr
+    11.4%   RB  Kyle Monangai          cost $ 6  exp $ 5  save  -1  ppg  8.6      wvr
+     9.8%   RB  Tyler Allgeier         cost $ 6  exp $ 1  save  -5  ppg  7.2      wvr
+     9.7%   RB  Blake Corum            cost $ 6  exp $ 1  save  -5  ppg  7.2      wvr
+     7.2%   WR  Jauan Jennings         cost $ 6  exp $ 4  save  -2  ppg 11.6      wvr
+     4.2%   RB  Chris Rodriguez Jr.    cost $ 6  exp $ 1  save  -5  ppg  7.7      wvr
      3.6%   TE  Darren Waller          cost $ 6  exp $ 1  save  -5  ppg  9.9      wvr
      2.3%   TE  George Kittle          cost $29  exp $18  save -11  ppg 14.7     
 
 [ 2] K-Pop and Lock                 (owner eyedocjj, expected keeps 1.8)
-    51.3% * WR  Chris Olave            cost $20  exp $24  save  +4  ppg 16.8     
-    28.7%   QB  Jaxson Dart            cost $ 6  exp $10  save  +4  ppg 17.3      wvr
-    23.9%   WR  Ladd McConkey          cost $12  exp $12  save  +0  ppg 11.3     
+    49.5% * WR  Chris Olave            cost $20  exp $23  save  +3  ppg 16.8     
+    27.3%   QB  Jaxson Dart            cost $ 6  exp $ 9  save  +3  ppg 17.3      wvr
+    25.2% * WR  Ladd McConkey          cost $12  exp $13  save  +1  ppg 11.3     
     21.5% * TE  Colston Loveland       cost $ 6  exp $14  save  +8  ppg 10.3      wvr
      9.4%   WR  Luther Burden III      cost $ 6  exp $ 5  save  -1  ppg  8.5     
+     9.1%   WR  Marvin Harrison Jr.    cost $50  exp $22  save -28  ppg 10.7     
+     8.8%   RB  Derrick Henry          cost $42  exp $28  save -14  ppg 16.4     
      8.7%   RB  Tank Bigsby            cost $ 6  exp $ 1  save  -5  ppg  3.6      wvr
-     8.6%   WR  Marvin Harrison Jr.    cost $50  exp $21  save -29  ppg 10.7     
-     8.3%   RB  Derrick Henry          cost $42  exp $27  save -15  ppg 16.4     
-     7.8%   RB  Saquon Barkley         cost $66  exp $33  save -33  ppg 14.5     
+     8.3%   RB  Saquon Barkley         cost $66  exp $34  save -32  ppg 14.5     
      6.8%   WR  Jerry Jeudy            cost $ 6  exp $ 1  save  -5  ppg  7.1      wvr
      3.0%   WR  Darnell Mooney         cost $ 6  exp $ 1  save  -5  ppg  5.5      wvr
      2.8%   QB  Jacoby Brissett        cost $ 6  exp $ 1  save  -5  ppg 16.2      wvr
 
 [ 3] Spitting away the chase        (owner funblood, expected keeps 2.5)
     97.0% * RB  De'Von Achane          cost $14  exp $33  save +19  ppg 20.2 LOCK
-    27.5% * TE  Harold Fannin Jr.      cost $ 4  exp $15  save +11  ppg 11.7      wvr
-    23.9%   WR  Rome Odunze            cost $16  exp $14  save  -2  ppg 12.2     
+    26.2% * TE  Harold Fannin Jr.      cost $ 4  exp $14  save +10  ppg 11.7      wvr
+    24.0%   WR  Rome Odunze            cost $16  exp $14  save  -2  ppg 12.2     
+    19.9%   WR  Nico Collins           cost $36  exp $25  save -11  ppg 15.1     
     18.9%   WR  Kayshon Boutte         cost $ 4  exp $ 5  save  +1  ppg  8.9      wvr
-    18.8%   WR  Nico Collins           cost $36  exp $24  save -12  ppg 15.1     
     13.2%   WR  Adonai Mitchell        cost $ 4  exp $ 1  save  -3  ppg  5.5      wvr
     11.7%   QB  Sam Darnold            cost $ 4  exp $ 1  save  -3  ppg 13.8      wvr
-    11.0%   WR  Christian Watson       cost $ 4  exp $ 8  save  +4  ppg 13.2      wvr
+    10.4%   WR  Christian Watson       cost $ 4  exp $ 7  save  +3  ppg 13.2      wvr
     10.4%   WR  Jayden Higgins         cost $ 4  exp $ 3  save  -1  ppg  7.6      wvr
      7.9%   TE  Juwan Johnson          cost $ 4  exp $ 5  save  +1  ppg 10.6      wvr
-     7.4%   QB  Baker Mayfield         cost $23  exp $ 8  save -15  ppg 16.0     
-     5.9%   RB  Chuba Hubbard          cost $12  exp $ 4  save  -8  ppg  8.4     
+     7.9%   QB  Baker Mayfield         cost $23  exp $ 9  save -14  ppg 16.0     
+     6.3%   RB  Chuba Hubbard          cost $12  exp $ 5  save  -7  ppg  8.4     
 
 [ 4] 3AM  No Limit                  (owner espn14211458, expected keeps 3.0)
-    89.2% * RB  Jahmyr Gibbs           cost $45  exp $48  save  +3  ppg 21.6     
-    75.4%   QB  Drake Maye             cost $ 6  exp $14  save  +8  ppg 20.7     
-    42.7%   QB  Trevor Lawrence        cost $ 6  exp $ 9  save  +3  ppg 19.9      wvr
-    20.3%   RB  D'Andre Swift          cost $16  exp $15  save  -1  ppg 14.3     
-    17.3%   WR  Tee Higgins            cost $22  exp $18  save  -4  ppg 14.1     
-    15.1% * RB  Cam Skattebo           cost $ 8  exp $16  save  +8  ppg 16.0     
-     8.8%   RB  Rhamondre Stevenson    cost $20  exp $11  save  -9  ppg 12.8     
-     6.7%   TE  Dalton Schultz         cost $ 6  exp $ 5  save  -1  ppg 10.5      wvr
+    89.6% * RB  Jahmyr Gibbs           cost $45  exp $49  save  +4  ppg 21.6     
+    74.8%   QB  Drake Maye             cost $ 6  exp $14  save  +8  ppg 20.7     
+    42.4%   QB  Trevor Lawrence        cost $ 6  exp $ 9  save  +3  ppg 19.9      wvr
+    20.1%   RB  D'Andre Swift          cost $16  exp $15  save  -1  ppg 14.3     
+    17.2%   WR  Tee Higgins            cost $22  exp $18  save  -4  ppg 14.1     
+    14.2% * RB  Cam Skattebo           cost $ 8  exp $15  save  +7  ppg 16.0     
+     8.7%   RB  Rhamondre Stevenson    cost $20  exp $11  save  -9  ppg 12.8     
+     6.7%   WR  Garrett Wilson         cost $28  exp $18  save -10  ppg 14.2     
+     6.2%   TE  Dalton Schultz         cost $ 6  exp $ 4  save  -2  ppg 10.5      wvr
      6.2%   WR  DK Metcalf             cost $31  exp $14  save -17  ppg 12.5     
+     5.3%   RB  Isiah Pacheco          cost $ 6  exp $ 8  save  +2  ppg  6.7      wvr
      5.2%   RB  Dylan Sampson          cost $ 6  exp $ 2  save  -4  ppg  5.8      wvr
-     5.0%   RB  Isiah Pacheco          cost $ 6  exp $ 7  save  +1  ppg  6.7      wvr
-     4.7%   WR  Garrett Wilson         cost $28  exp $12  save -16  ppg 14.2     
      3.1%   WR  Stefon Diggs           cost $16  exp $ 7  save  -9  ppg 12.4     
 
 [ 5] Saja Boys                      (owner BobbyeddyB, expected keeps 2.9)
-    58.0%   WR  Ja'Marr Chase          cost $61  exp $48  save -13  ppg 19.6     
-    56.5%   RB  Christian McCaffrey    cost $54  exp $48  save  -6  ppg 24.5     
+    58.1%   WR  Ja'Marr Chase          cost $61  exp $48  save -13  ppg 19.6     
+    54.6%   RB  Christian McCaffrey    cost $54  exp $47  save  -7  ppg 24.5     
     36.5%   QB  Josh Allen             cost $32  exp $27  save  -5  ppg 22.8     
-    26.6%   WR  Rashee Rice            cost $32  exp $32  save  +0  ppg 18.8     
-    23.7%   WR  Alec Pierce            cost $ 6  exp $10  save  +4  ppg 12.2      wvr
-    18.7%   WR  Khalil Shakir          cost $ 6  exp $ 7  save  +1  ppg 10.4      wvr
+    25.3%   WR  Rashee Rice            cost $32  exp $31  save  -1  ppg 18.8     
+    22.6%   WR  Alec Pierce            cost $ 6  exp $ 9  save  +3  ppg 12.2      wvr
+    18.8%   WR  Khalil Shakir          cost $ 6  exp $ 7  save  +1  ppg 10.4      wvr
     17.1%   TE  Jake Ferguson          cost $ 6  exp $ 6  save  +0  ppg 11.1     
     15.2%   RB  Josh Jacobs            cost $61  exp $34  save -27  ppg 15.8     
-    11.4%   WR  Justin Jefferson       cost $62  exp $32  save -30  ppg 11.9     
-     8.1%   QB  Jayden Daniels         cost $ 6  exp $ 3  save  -3  ppg 16.3      wvr
+    12.1%   WR  Justin Jefferson       cost $62  exp $33  save -29  ppg 11.9     
+     9.7%   QB  Jayden Daniels         cost $ 6  exp $ 6  save  +0  ppg 16.3      wvr
      6.7%   RB  Emanuel Wilson         cost $ 6  exp $ 1  save  -5  ppg  5.6      wvr
      6.5% * QB  Joe Burrow             cost $ 6  exp $10  save  +4  ppg 16.8      wvr
-     2.7%   WR  Travis Hunter          cost $ 6  exp $ 1  save  -5  ppg  9.1      wvr
+     3.5%   WR  Travis Hunter          cost $ 6  exp $ 5  save  -1  ppg  9.1      wvr
+     2.1%   RB  Alvin Kamara           cost $ 6  exp $ 8  save  +2  ppg  9.2      wvr
 
 [ 7] 65 Dolla Make You Holla        (owner silverandblack.2, expected keeps 3.0)
-    97.0% * WR  Puka Nacua             cost $16  exp $42  save +26  ppg 23.4 LOCK
-    39.8%   WR  Troy Franklin          cost $ 6  exp $ 9  save  +3  ppg 10.4      wvr
-    35.0%   RB  Javonte Williams       cost $18  exp $18  save  +0  ppg 15.2     
+    97.0% * WR  Puka Nacua             cost $16  exp $41  save +25  ppg 23.4 LOCK
+    39.7%   WR  Troy Franklin          cost $ 6  exp $ 9  save  +3  ppg 10.4      wvr
+    34.9%   RB  Javonte Williams       cost $18  exp $18  save  +0  ppg 15.2     
     32.2% * TE  Brock Bowers           cost $19  exp $21  save  +2  ppg 14.7     
     25.5%   TE  AJ Barner              cost $ 6  exp $ 7  save  +1  ppg  8.7      wvr
     21.0%   RB  Ashton Jeanty          cost $71  exp $41  save -30  ppg 14.4     
-    19.7%   WR  Jordan Addison         cost $ 7  exp $ 7  save  +0  ppg  9.7     
+    19.6%   WR  Jordan Addison         cost $ 7  exp $ 7  save  +0  ppg  9.7     
     11.4%   WR  CeeDee Lamb            cost $70  exp $39  save -31  ppg 15.5     
-     9.2%   QB  Jordan Love            cost $16  exp $ 4  save -12  ppg 15.7     
+     9.7%   QB  Jordan Love            cost $16  exp $ 5  save -11  ppg 15.7     
      5.2%   WR  Tez Johnson            cost $ 6  exp $ 1  save  -5  ppg  6.2      wvr
      4.2%   RB  Devin Singletary       cost $ 6  exp $ 1  save  -5  ppg  6.4      wvr
      3.4%   QB  Matthew Stafford       cost $ 6  exp $ 7  save  +1  ppg 20.6      wvr
 
-[ 8] Rectify this                   (owner CBPainTrain, expected keeps 2.3)
-    48.7%   QB  Caleb Williams         cost $25  exp $18  save  -7  ppg 18.7     
+[ 8] Rectify this                   (owner CBPainTrain, expected keeps 2.4)
+    50.6%   QB  Caleb Williams         cost $25  exp $19  save  -6  ppg 18.7     
     30.2% * TE  Kyle Pitts             cost $ 4  exp $12  save  +8  ppg 12.4     
     23.9%   RB  Zach Charbonnet        cost $14  exp $10  save  -4  ppg 11.3     
     21.3% * TE  Tyler Warren           cost $13  exp $14  save  +1  ppg 11.1     
     19.1%   QB  Brock Purdy            cost $ 6  exp $ 8  save  +2  ppg 19.7     
-    18.7%   WR  Brian Thomas Jr.       cost $15  exp $12  save  -3  ppg  9.9     
-    18.7%   WR  Romeo Doubs            cost $ 4  exp $ 6  save  +2  ppg 10.3      wvr
-    16.5%   RB  RJ Harvey              cost $34  exp $19  save -15  ppg 12.2     
+    18.8%   WR  Brian Thomas Jr.       cost $15  exp $12  save  -3  ppg  9.9     
+    17.8%   WR  Romeo Doubs            cost $ 4  exp $ 5  save  +1  ppg 10.3      wvr
+    17.4%   RB  RJ Harvey              cost $34  exp $20  save -14  ppg 12.2     
     13.4%   RB  Omarion Hampton        cost $45  exp $33  save -12  ppg 15.1     
-     8.3%   RB  Jacory Croskey-Merritt cost $20  exp $ 7  save -13  ppg  8.3     
-     7.3%   WR  Courtland Sutton       cost $21  exp $13  save  -8  ppg 12.9     
-     5.1%   WR  DJ Moore               cost $28  exp $11  save -17  ppg 10.1     
+     8.8%   RB  Jacory Croskey-Merritt cost $20  exp $ 8  save -12  ppg  8.3     
+     7.4%   WR  Courtland Sutton       cost $21  exp $13  save  -8  ppg 12.9     
+     5.4%   WR  DJ Moore               cost $28  exp $12  save -16  ppg 10.1     
      3.7%   RB  Kareem Hunt            cost $ 4  exp $ 1  save  -3  ppg  8.6      wvr
 
 [ 9] State your name                (owner espn19238790, expected keeps 2.8)
     97.0% * TE  Trey McBride           cost $ 9  exp $26  save +17  ppg 18.6 LOCK
-    44.3%   RB  Kyren Williams         cost $12  exp $19  save  +7  ppg 15.5     
-    42.1% * WR  Jameson Williams       cost $ 9  exp $17  save  +8  ppg 12.9     
-    30.3% * WR  Quentin Johnston       cost $ 4  exp $12  save  +8  ppg 13.2      wvr
+    44.4% * RB  Kyren Williams         cost $12  exp $19  save  +7  ppg 15.5     
+    42.2% * WR  Jameson Williams       cost $ 9  exp $17  save  +8  ppg 12.9     
+    28.9%   WR  Quentin Johnston       cost $ 4  exp $11  save  +7  ppg 13.2      wvr
     15.4%   WR  Xavier Worthy          cost $25  exp $11  save -14  ppg  7.9     
-    11.5%   WR  A.J. Brown             cost $51  exp $30  save -21  ppg 14.7     
+    11.6%   WR  A.J. Brown             cost $51  exp $30  save -21  ppg 14.7     
     10.2%   QB  Jared Goff             cost $ 6  exp $ 5  save  -1  ppg 17.5     
      9.3%   WR  Rashid Shaheed         cost $ 4  exp $ 1  save  -3  ppg  8.7     
-     7.9%   RB  Tony Pollard           cost $18  exp $ 8  save -10  ppg 10.9     
+     8.3%   RB  Tony Pollard           cost $18  exp $ 9  save  -9  ppg 10.9     
      5.5%   RB  Michael Carter         cost $ 4  exp $ 1  save  -3  ppg  7.6      wvr
      4.4%   TE  Hunter Henry           cost $ 4  exp $ 4  save  +0  ppg 10.5      wvr
      3.1%   WR  Jayden Reed            cost $ 4  exp $ 1  save  -3  ppg  9.7     
 
 [11] Maple Maulers                  (owner Rohabhabibo, expected keeps 2.3)
     49.7% * QB  Bo Nix                 cost $12  exp $14  save  +2  ppg 17.9     
-    36.4% * WR  Zay Flowers            cost $16  exp $19  save  +3  ppg 14.3     
-    30.2%   RB  Breece Hall            cost $22  exp $19  save  -3  ppg 13.0     
+    36.5% * WR  Zay Flowers            cost $16  exp $19  save  +3  ppg 14.3     
+    30.3%   RB  Breece Hall            cost $22  exp $19  save  -3  ppg 13.0     
     26.8%   QB  Bryce Young            cost $ 4  exp $ 2  save  -2  ppg 13.6      wvr
     25.0% * WR  Malik Nabers           cost $34  exp $37  save  +3  ppg 14.3     
     18.6%   RB  Jaylen Warren          cost $ 8  exp $10  save  +2  ppg 13.6     
@@ -235,42 +236,42 @@ tool's own numbers from keepers_2026.js; * = predicted keep of the rational rule
      4.4%   TE  Luke Musgrave          cost $ 4  exp $ 1  save  -3  ppg  3.8      wvr
 
 [12] Micahroni and Cheese           (owner RPT0777, expected keeps 2.9)
-    75.2% * WR  George Pickens         cost $12  exp $25  save +13  ppg 17.2     
-    74.2% * RB  Jonathan Taylor        cost $34  exp $40  save  +6  ppg 21.3     
+    74.3% * RB  Jonathan Taylor        cost $34  exp $40  save  +6  ppg 21.3     
+    73.5% * WR  George Pickens         cost $12  exp $24  save +12  ppg 17.2     
     27.1%   WR  Tetairoa McMillan      cost $24  exp $22  save  -2  ppg 12.6     
     22.1%   QB  C.J. Stroud            cost $ 4  exp $ 3  save  -1  ppg 14.9      wvr
     20.2%   RB  TreVeyon Henderson     cost $29  exp $20  save  -9  ppg 12.1     
     19.2%   WR  Emeka Egbuka           cost $25  exp $18  save  -7  ppg 11.5     
     11.6%   TE  Oronde Gadsden II      cost $ 4  exp $ 7  save  +3  ppg  8.8      wvr
     10.8%   RB  Woody Marks            cost $ 4  exp $ 3  save  -1  ppg  9.1      wvr
-     8.7%   RB  Tyrone Tracy Jr.       cost $ 9  exp $ 4  save  -5  ppg 10.7     
+     9.3%   RB  Tyrone Tracy Jr.       cost $ 9  exp $ 5  save  -4  ppg 10.7     
      8.6%   QB  Dak Prescott           cost $ 7  exp $ 5  save  -2  ppg 18.5     
+     7.8% * RB  Bhayshul Tuten         cost $ 4  exp $ 6  save  +2  ppg  5.9      wvr
      7.5%   TE  Dalton Kincaid         cost $10  exp $ 6  save  -4  ppg 10.5     
-     6.1%   RB  Bhayshul Tuten         cost $ 4  exp $ 2  save  -2  ppg  5.9      wvr
 
 [13] Ugh...Yeah...What...Football!  (owner kdoggs80, expected keeps 2.7)
-    99.0% * WR  Jaxon Smith-Njigba     cost $13  exp $36  save +23  ppg 21.2 LOCK
-    59.2% * RB  Chase Brown            cost $16  exp $27  save +11  ppg 16.6     
+    99.0% * WR  Jaxon Smith-Njigba     cost $13  exp $35  save +22  ppg 21.2 LOCK
+    61.2% * RB  Chase Brown            cost $16  exp $28  save +12  ppg 16.6     
     26.1%   RB  Bucky Irving           cost $ 6  exp $14  save  +8  ppg 13.8     
-    21.1%   RB  Kenneth Walker III     cost $32  exp $20  save -12  ppg 11.3     
     20.6% * RB  Quinshon Judkins       cost $ 1  exp $11  save +10  ppg 12.1     
-    13.2%   WR  Jaylen Waddle          cost $19  exp $13  save  -6  ppg 12.1     
-     9.8%   QB  Lamar Jackson          cost $32  exp $17  save -15  ppg 16.5     
+    16.1%   RB  Kenneth Walker III     cost $32  exp $15  save -17  ppg 11.3     
+    12.5%   WR  Jaylen Waddle          cost $19  exp $12  save  -7  ppg 12.1     
+    12.3%   QB  Lamar Jackson          cost $32  exp $21  save -11  ppg 16.5     
      7.9%   TE  Michael Mayer          cost $ 1  exp $ 1  save  +0  ppg  5.7      wvr
      4.6%   RB  Trey Benson            cost $ 1  exp $ 1  save  +0  ppg  8.9      wvr
-     3.4%   TE  T.J. Hockenson         cost $17  exp $ 5  save -12  ppg  7.5     
+     3.6%   TE  T.J. Hockenson         cost $17  exp $ 6  save -11  ppg  7.5     
 
 [14] Paul's Perfect Team            (owner ESPNFAN25233150, expected keeps 2.1)
     53.1%   WR  Amon-Ra St. Brown      cost $53  exp $44  save  -9  ppg 19.1     
-    50.6% * RB  James Cook             cost $26  exp $27  save  +1  ppg 17.8     
-    34.1% * RB  Travis Etienne         cost $ 8  exp $13  save  +5  ppg 14.9     
-    15.2%   TE  Theo Johnson           cost $ 6  exp $ 5  save  -1  ppg  8.5      wvr
+    50.7% * RB  James Cook             cost $26  exp $27  save  +1  ppg 17.8     
+    34.2% * RB  Travis Etienne         cost $ 8  exp $13  save  +5  ppg 14.9     
+    15.3%   TE  Theo Johnson           cost $ 6  exp $ 5  save  -1  ppg  8.5      wvr
     11.4%   QB  Patrick Mahomes        cost $23  exp $13  save -10  ppg 20.4     
      8.9%   QB  Tyler Shough           cost $ 6  exp $ 1  save  -5  ppg 14.4      wvr
-     6.3%   RB  David Montgomery       cost $15  exp $ 5  save -10  ppg  9.8     
+     6.7%   RB  David Montgomery       cost $15  exp $ 6  save  -9  ppg  9.8     
      6.3%   QB  J.J. McCarthy          cost $ 6  exp $ 1  save  -5  ppg 12.5      wvr
      6.2%   WR  Deebo Samuel Sr.       cost $15  exp $ 7  save  -8  ppg 11.8     
-     5.8%   TE  Dallas Goedert         cost $ 6  exp $ 6  save  +0  ppg 12.3     
+     5.4%   TE  Dallas Goedert         cost $ 6  exp $ 5  save  -1  ppg 12.3     
      4.2%   WR  Ricky Pearsall         cost $22  exp $ 7  save -15  ppg  9.8     
      3.0%   WR  Davante Adams          cost $36  exp $20  save -16  ppg 15.9     
      2.6%   RB  Devin Neal             cost $ 6  exp $ 1  save  -5  ppg  6.7      wvr
