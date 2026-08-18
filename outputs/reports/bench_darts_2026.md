@@ -7,33 +7,33 @@ curve, x position fill-tilt (RB 1.15 — the wire can't rescue RB).
 
 | # | Pos | Player | Tm | Age | $ | Score | Why |
 |---|---|---|---|---|---|---|---|
-| 1 | RB | Tank Bigsby | PHI | 24 | $5 | 4.03 | dart 32% · breakout 80% · HEIR+ · TAKEOVER |
-| 2 | RB | Brian Robinson | SF | 27 | $4 | 2.76 | dart 17% · breakout 63% · HEIR+ · TAKEOVER |
-| 3 | WR | Adonai Mitchell | NYJ | 24 | $3 | 2.71 | dart 32% · breakout 81% · WR2-open |
-| 4 | WR | Omar Cooper Jr. | NYJ | 22 | $1 | 2.67 | dart 38% · hit 65% |
-| 5 | WR | Matthew Golden | GB | 23 | $3 | 2.52 | dart 38% · breakout 59% |
-| 6 | RB | Mike Washington Jr. | LV | 23 | $1 | 2.51 | dart 18% · hit 75% |
-| 7 | WR | Chris Brazzell II | CAR | 22 | $1 | 2.36 | dart 26% · hit 74% |
-| 8 | RB | Kaleb Johnson | PIT | 23 | $1 | 2.36 | breakout 90% |
-| 9 | WR | Pat Bryant | DEN | 24 | $1 | 2.35 | dart 30% · breakout 75% · H2 +4.5ppg |
-| 10 | WR | Tre Harris | LAC | 24 | $2 | 2.29 | dart 34% · breakout 66% |
-| 11 | WR | Travis Hunter | JAX | 23 | $4 | 2.25 | dart 29% · breakout 60% |
-| 12 | RB | Devin Neal | NO | 23 | $1 | 2.23 | dart 20% · HEIR+ · H2 +8.7ppg |
-| 13 | RB | Dylan Sampson | CLE | 22 | $2 | 2.22 | dart 26% · breakout 49% |
-| 14 | WR | Germie Bernard | PIT | 22 | $1 | 2.12 | dart 34% · hit 43% |
-| 15 | RB | Blake Corum | LA | 26 | $4 | 2.10 | dart 32% · breakout 38% · HEIR- · H2 +4.9ppg |
-| 16 | TE | Will Kacmarek | MIA | 23 | $1 | 2.09 | dart 20% · hit 89% |
-| 17 | TE | Elijah Arroyo | SEA | 23 | $1 | 2.07 | dart 31% · breakout 69% |
-| 18 | WR | Xavier Legette | CAR | 25 | $1 | 2.07 | dart 36% · breakout 51% |
-| 19 | RB | Isaiah Davis | NYJ | 24 | $1 | 2.00 | dart 17% · breakout 64% |
-| 20 | RB | Jaydon Blue | DAL | 22 | $1 | 1.99 | breakout 71% · H2 +10.9ppg |
-| 21 | WR | Caleb Douglas | MIA | 22 | $1 | 1.94 | dart 24% · hit 54% |
-| 22 | WR | Jordyn Tyson | NO | 22 | $3 | 1.93 | hit 87% · ceil 13 |
+| 1 | RB | Tank Bigsby | PHI | 24 | $3 | 4.07 | dart 33% · breakout 80% · HEIR+ · TAKEOVER |
+| 2 | WR | Adonai Mitchell | NYJ | 24 | $2 | 2.88 | dart 37% · breakout 81% · WR2-open |
+| 3 | RB | Brian Robinson | SF | 27 | $6 | 2.87 | dart 21% · breakout 63% · HEIR+ · TAKEOVER |
+| 4 | RB | Mike Washington Jr. | LV | 23 | $2 | 2.59 | dart 20% · hit 75% |
+| 5 | WR | Matthew Golden | GB | 23 | $4 | 2.51 | dart 37% · breakout 59% |
+| 6 | WR | Chris Brazzell II | CAR | 22 | $1 | 2.43 | dart 28% · hit 74% |
+| 7 | RB | Kaleb Johnson | PIT | 23 | $1 | 2.36 | breakout 90% |
+| 8 | WR | Tre Harris | LAC | 24 | $1 | 2.31 | dart 34% · breakout 66% |
+| 9 | WR | Pat Bryant | DEN | 24 | $1 | 2.31 | dart 29% · breakout 75% · H2 +4.5ppg |
+| 10 | RB | Blake Corum | LA | 26 | $5 | 2.27 | dart 37% · breakout 38% · HEIR- · H2 +4.9ppg |
+| 11 | RB | Dylan Sampson | CLE | 22 | $1 | 2.20 | dart 26% · breakout 49% |
+| 12 | TE | Will Kacmarek | MIA | 23 | $1 | 2.16 | dart 23% · hit 89% |
+| 13 | TE | Elijah Arroyo | SEA | 23 | $1 | 2.06 | dart 31% · breakout 69% |
+| 14 | WR | Xavier Legette | CAR | 25 | $1 | 2.03 | dart 34% · breakout 51% |
+| 15 | WR | Caleb Douglas | MIA | 22 | $1 | 2.01 | dart 26% · hit 54% |
+| 16 | RB | Jaydon Blue | DAL | 22 | $1 | 2.00 | breakout 71% · H2 +10.9ppg |
+| 17 | RB | Ollie Gordon II | MIA | 22 | $1 | 1.93 | dart 19% · breakout 51% |
+| 18 | RB | Devin Neal | NO | 23 | $1 | 1.92 | dart 12% · HEIR+ · H2 +8.7ppg |
+| 19 | RB | Isaiah Davis | NYJ | 24 | $1 | 1.91 | dart 14% · breakout 64% |
+| 20 | RB | Trevor Etienne | CAR | 22 | $1 | 1.89 | breakout 68% |
+| 21 | WR | Jack Bech | LV | 24 | $1 | 1.86 | dart 24% · breakout 60% · H2 +2.0ppg |
+| 22 | WR | Chris Bell | MIA | 22 | $8 | 1.82 | dart 12% · hit 68% |
 | 23 | RB | Dameon Pierce | KC | 26 | $1 | 1.81 | breakout 87% |
-| 24 | RB | Michael Carter | ARI | 27 | $1 | 1.81 | dart 16% · breakout 66% |
-| 25 | RB | Trevor Etienne | CAR | 22 | $1 | 1.80 | breakout 68% |
-| 26 | RB | Ollie Gordon II | MIA | 22 | $1 | 1.80 | dart 15% · breakout 51% |
-| 27 | WR | KC Concepcion | CLE | 21 | $3 | 1.74 | hit 77% · ceil 13 |
-| 28 | WR | Chris Bell | MIA | 22 | $1 | 1.74 | hit 68% |
-| 29 | WR | Jack Bech | LV | 24 | $1 | 1.74 | dart 20% · breakout 60% · H2 +2.0ppg |
-| 30 | RB | DJ Giddens | IND | 23 | $1 | 1.71 | breakout 61% |
+| 24 | WR | Isaiah Bond | CLE | 22 | $1 | 1.80 | dart 20% · breakout 55% |
+| 25 | WR | Rashod Bateman | BAL | 27 | $2 | 1.80 | dart 36% · breakout 49% |
+| 26 | RB | Michael Carter | ARI | 27 | $2 | 1.77 | dart 15% · breakout 66% |
+| 27 | RB | Keaton Mitchell | BAL | 24 | $2 | 1.73 | breakout 31% · HEIR+ · H2 +2.5ppg |
+| 28 | RB | DJ Giddens | IND | 23 | $1 | 1.71 | breakout 61% |
+| 29 | WR | Bryce Lance | NO | 24 | $1 | 1.70 | dart 13% · hit 51% · small-school d2 |
+| 30 | WR | Jerry Jeudy | CLE | 27 | $4 | 1.68 | dart 41% |
