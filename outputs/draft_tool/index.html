@@ -888,7 +888,7 @@ function renderTargets(){
   document.getElementById("count").textContent=rows.length+" upside targets"+(ffa?" · FFA":"");
   const head=["#","Pos","Player","Tm","Proj","$","Exceed %",...(ffa?["FFA ADP"]:[]),"Why"];
   document.getElementById("hrow").innerHTML=head.map((h,i)=>`<th class="${(i>=2&&i<=3)||h==='Why'?'l':''}">${h}</th>`).join("");
-  const why={ROOK:"Rookie hit prob (startable yr-1)",SLEEPER:"Cheap (≤$8) breakout",BREAK:"Breakout prob (≥+4 PPG vs '25)"};
+  const why={ROOK:"Rookie hit prob (startable yr-1)",SLEEPER:"Cheap (≤$8) breakout",BREAK:"Breakout SCORE (≥+4 PPG vs '25 model) — walk-forward AUC 0.68; a top-20% score hits ≈24% of the time (2.15× base), so read 0.80 as 'top of the pool', NOT an 80% probability"};
   document.getElementById("body").innerHTML=rows.map((r,i)=>{
     const p=r.p,tcls=r.type==="ROOK"?"rook":"brk";
     return `<tr>
@@ -905,7 +905,7 @@ function renderTargets(){
   }).join("");
   wireJump();
   document.getElementById("notes").innerHTML="🎯 <b>Players most likely to EXCEED expectations.</b> "+
-    "Veterans ranked by model breakout probability (P of a ≥+4 PPG jump vs 2025; filtered to ascending players age ≤27 with a projected role). "+
+    "Veterans ranked by model breakout SCORE (a ≥+4 PPG jump vs 2025; walk-forward AUC 0.68 — the top-20% of scores hits ≈24%, 2.15× base, so a 0.80 score means top-of-pool, not an 80% chance; filtered to ascending players age ≤27 with a projected role). "+
     "Rookies ranked by year-1 hit probability. <b>SLEEPER</b> = cheap (≤$8) with high breakout odds. "+
     (ffa?"FFA ADP shown for cost context.":"Upload FFA to add consensus ADP context.")+
     " Use the position buttons / search to filter.";

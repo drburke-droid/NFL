@@ -151,7 +151,9 @@ for _dir in (os.path.join(ROOT, "docs"), os.path.join(ROOT, "outputs", "draft_to
 def why(r):
     w = []
     if r.dart >= 0.10: w.append(f"dart {r.dart:.0%}")
-    if r.upside_p >= 0.30: w.append(("hit" if r.is_rookie == 1 else "breakout") + f" {r.upside_p:.0%}")
+    # breakout/hit are SCORES, not calibrated probabilities (walk-forward top-20% of
+    # breakout scores hits ~24%, 2.15x base) — label them as scores to avoid over-reading
+    if r.upside_p >= 0.30: w.append(("hit scr " if r.is_rookie == 1 else "brk scr ") + f"{r.upside_p:.2f}")
     if r.heir: w.append("HEIR" + ("+" if r.heir > 1 else "-"))   # +: vulnerable blocker, -: young/entrenched
     if r.tko: w.append("TAKEOVER")
     if r.vacated_role == 1: w.append("VACATED")
@@ -167,7 +169,9 @@ def why(r):
 
 
 L = ["# 🎯 Bench darts 2026 — ranked (cheap now, startable/keeper later)\n",
-     "Cost gate: market <= $8 (max of FFA AAV / ESPN $ / board $). Score = validated breakout",
+     "Cost gate: market <= $8 (max of FFA AAV / ESPN $ / board $). NOTE: 'brk scr'/'hit scr'",
+     "are model SCORES, not probabilities — top-20% of breakout scores hits ~24% (2.15x base),",
+     "walk-forward 2016-25. Score = validated breakout",
      "signals (dart/leap/lottery x2.5, breakout-hit x1.5) + role mechanisms (HEIR, TAKEOVER,",
      "vacated, won-job, open WR2) + buried alpha + H2 trend + ceiling, x keeper-runway age",
      "curve, x position fill-tilt (RB 1.15 — the wire can't rescue RB).\n",
