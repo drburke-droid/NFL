@@ -70,7 +70,10 @@ def main():
             kval = ppe.get("keeperValue") or ppe.get("keeperValueFuture") or 0
             rost.append({"name": p.get("fullName"), "pos": POS.get(p.get("defaultPositionId"), "?"),
                          "slot": SLOT.get(e.get("lineupSlotId"), str(e.get("lineupSlotId"))),
-                         "keeper": bool(kval or e.get("keeper")), "keeper_price": kval})
+                         "keeper": bool(kval or e.get("keeper")), "keeper_price": kval,
+                         # DRAFT / ADD (waiver-FA pickup) / TRADE — a mid-season drop+ADD resets
+                         # the keeper salary to $1 + inflation (league rule tweak, Aug 2026)
+                         "acq": e.get("acquisitionType")})
         teams.append({"id": t.get("id"), "name": (t.get("name") or f"{t.get('location','')} {t.get('nickname','')}").strip(),
                       "abbrev": t.get("abbrev"), "owner": owner, "roster": rost})
     out = {"leagueId": LEAGUE_ID, "season": SEASON, "myTeamId": TEAM_ID,
