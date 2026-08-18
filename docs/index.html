@@ -1198,7 +1198,61 @@ function dynamicMarket(){
     let cv=_anchored(p,slot<C.length?Math.max(1,C[slot]):1);                     // same per-player anchor as price[]
     if(r>=ns)cv=Math.max(1,Math.min(cv,benchRamp(pos,r-ns)));
     return Math.max(1,ceilExp(pos,Math.round(1+(cv-1)*infl)));};                 // same historical ceiling as price[]
-  return {price,repl,per,open,money,spots,scarce,infl,expIf};
+  // PROJECTION-SOURCE-AWARE PRICING — Exp $ follows the Model/Blend/FFA toggle:
+  //   FFA   -> a LIVE FFA-AAV MARKET: the consensus AAV re-priced for THIS room right now.
+  //            Three live adjustments, mirroring the engine's own machinery:
+  //            (1) DEMAND — rank the pool by AAV per position; past the remaining
+  //                starter+flex slots the same bench ramp applies (a QB3 is a $1 stash
+  //                once every team has its starter, whatever national AAV says);
+  //            (2) MONEY — keepers are discounts: they remove more AAV from the pool than
+  //                they cost the budgets, so G = remaining money (leak-adjusted 0.94, the
+  //                measured 6% this room leaves unspent) / AAV left in the rosterable
+  //                pool, capped at the measured 1.25 — spending power rises as keeps lock;
+  //            (3) SCARCITY — remaining money is allocated across positions by the
+  //                league's own revealed spend shares (recency-weighted bid curves) net
+  //                of $ already committed there; a position whose cheap stars were kept
+  //                away keeps its budget share but lost its value -> tilts up (mild,
+  //                clamped 0.85-1.2). ceilExp still caps at league all-time maxima.
+  //   Blend -> engine price pulled toward the FFA-market price at BLEND_W.
+  //   Model -> the league curve+anchor engine untouched. K/DST always engine ($1).
+  let priceOut=price, expIfOut=expIf;
+  if(projActive()){
+    const W=ffaOn()?1:BLEND_W, SKP=["QB","RB","WR","TE"];
+    // (1) demand gate on the AAV ranking
+    const fRank={},fN={};
+    SKP.forEach(pos=>{fRank[pos]=avail.filter(p=>p.position===pos).map(p=>auctionAAV(p)||0).sort((a,b)=>b-a);
+      fN[pos]=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));});
+    const aavRamp=(p,a)=>{const pos=p.position,R=fRank[pos]||[];
+      let r=0;while(r<R.length&&R[r]>a)r++;
+      return r>=fN[pos]?Math.min(a,Math.max(1,benchRamp(pos,r-fN[pos]))):a;};
+    // (2) global money factor over the ramped rosterable pool
+    const pre=avail.map(p=>{const a=auctionAAV(p);
+      return (isK(p)||!(a>0))?(price[pid(p)]||1):aavRamp(p,a);}).sort((a,b)=>b-a);
+    const csf=pre.slice(0,Math.max(spots,0)).reduce((s,v)=>s+v,0);
+    const G=csf>0?Math.max(0.8,Math.min(1.25,(money*0.94)/csf)):1;
+    // (3) positional scarcity tilt from the league's revealed spend shares
+    const HPS={};let hT=0;SKP.forEach(pos=>{const c=(HP&&HP[pos])||[];
+      HPS[pos]=c.reduce((a,b)=>a+b,0);hT+=HPS[pos];});
+    const spentPos={QB:0,RB:0,WR:0,TE:0};let spentSk=0;
+    Object.keys(DR.owned||{}).forEach(id=>{const o=DR.owned[id],pl=BYID[id];
+      if(pl&&o&&spentPos[pl.position]!=null){const c=+o.price||0;spentPos[pl.position]+=c;spentSk+=c;}});
+    const skillMoney=Math.max(money-spots,0), Apos={};
+    SKP.forEach(pos=>{Apos[pos]=Math.max((fRank[pos]||[]).slice(0,fN[pos]).reduce((s,v)=>s+Math.max(v,1),0),1);});
+    const tilt={};
+    SKP.forEach(pos=>{const target=hT>0?(HPS[pos]/hT)*(skillMoney+spentSk):0;
+      tilt[pos]=Math.max(target-spentPos[pos],1)/Apos[pos];});
+    const nA=SKP.reduce((s,pos)=>s+Apos[pos]*tilt[pos],0), dA=SKP.reduce((s,pos)=>s+Apos[pos],0);
+    const nz=nA>0?dA/nA:1;                              // renormalize: tilt is a pure skew, mean 1
+    SKP.forEach(pos=>{tilt[pos]=Math.max(0.85,Math.min(1.2,tilt[pos]*nz));});
+    const ffaPrice=(p,eng)=>{if(isK(p))return eng;const a=auctionAAV(p);if(!(a>0))return eng;
+      const v=aavRamp(p,a), out=Math.max(1,Math.round(1+(v-1)*G*(tilt[p.position]||1)));
+      return Math.max(1,ceilExp(p.position,out));};
+    const mix=(p,eng)=>{const f=ffaPrice(p,eng);
+      return f===eng?eng:Math.max(1,Math.round(W*f+(1-W)*eng));};
+    priceOut={}; avail.forEach(p=>{const id=pid(p);priceOut[id]=mix(p,price[id]||1);});
+    expIfOut=p=>mix(p,expIf(p));
+  }
+  return {price:priceOut,repl,per,open,money,spots,scarce,infl,expIf:expIfOut};
 }
 // intrinsic player value = clearing price in a NORMAL full-money auction (no keeper inflation),
 // independent of who's been kept. Same formula/calibration as dynamicMarket but full pool+budget.
