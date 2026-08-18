@@ -1,0 +1,404 @@
+Rank,Player,AVG PICK,7 DAY +/-,AVG SALARY,7 DAY +/-,%ROST
+1,"Jahmyr Gibbs
+DETRB",1.5,0,64.4,0.6,99.9
+2,"Bijan Robinson
+ATLRB",2.6,0,62.8,0.9,99.9
+3,"Ja'Marr Chase
+CINWR",4.3,0.1,58.3,0.7,99.9
+4,"Puka Nacua
+LARWR",4.4,-0.1,57.4,0.1,99.9
+5,"Jaxon Smith-Njigba
+SEAWR",5.9,0,55.1,0.4,99.9
+6,"Christian McCaffrey
+SFRB",6.6,0,52.8,0.4,99.9
+7,"Jonathan Taylor
+INDRB",8.1,0,51.7,0.6,99.8
+8,"Amon-Ra St. Brown
+DETWR",8.4,0,52.4,0.5,99.9
+9,"CeeDee Lamb
+DALWR",10.7,0,47.8,0.5,99.8
+10,"De'Von Achane
+MIARB",12.1,0,46.1,0.5,99.8
+11,"Justin Jefferson
+MINWR",12.2,0,46.6,0.4,99.8
+12,"James Cook III
+BUFRB",12.9,0,44.8,0.6,99.8
+13,"Saquon Barkley
+PHIRB",16.4,0.1,38.4,0.4,99.7
+14,"Ashton Jeanty
+LVRB",17.5,0.2,39.1,0.6,99.6
+15,"Jeremiyah Love
+ARIRB",18.5,-0.2,38.1,0.3,99.2
+16,"Drake London
+ATLWR",18.9,0,37.2,0.4,99.6
+17,"Trey McBride
+ARITE",19.9,0,34.7,0.4,99.8
+18,"Derrick Henry
+BALRB",20,0.1,34.7,0.6,99.6
+19,"Josh Allen
+BUFQB",22.2,0.1,30.3,0.7,99.9
+20,"Rashee Rice
+KCWR",22.3,0,33.3,0.4,99.2
+21,"Kenneth Walker III
+KCRB",23.6,0.2,32,0.5,99.3
+22,"Brock Bowers
+LVTE",24,0,30.8,0.3,99.8
+23,"Chase Brown
+CINRB",24.2,0.3,33.3,0.6,98.9
+24,"A.J. Brown
+NEWR",27.1,-0.1,28.8,0.2,99.4
+25,"Omarion Hampton
+LACRB",27.5,-0.6,32.4,-0.1,99
+26,"Nico Collins
+HOUWR",27.7,0,28.2,0.3,99.4
+27,"George Pickens
+DALWR",29.2,-0.3,26.4,0.1,99.6
+28,"Breece Hall
+NYJRB",32.2,0.8,25.8,0.8,98.2
+29,"Josh Jacobs
+GBRB",33.2,-0.6,25,-0.2,99
+30,"Chris Olave
+NOWR",35.5,0.4,24.3,0.4,98.4
+31,"Garrett Wilson
+NYJWR",36.1,-0.1,23.7,0.2,98.2
+32,"Malik NabersQ
+NYGWR",36.4,0.3,23.9,0.5,98.3
+33,"Javonte Williams
+DALRB",38.2,0.2,23.4,0.3,97.8
+34,"Lamar Jackson
+BALQB",38.8,0.1,15.9,0.2,99.6
+35,"DeVonta Smith
+PHIWR",39.3,0,19.8,0.1,98.7
+36,"Zay Flowers
+BALWR",42.3,0.1,19.1,0.2,97.9
+37,"Tetairoa McMillan
+CARWR",42.4,-0.1,19.3,0,97.9
+38,"Kyren Williams
+LARRB",43,-0.2,20.6,0.1,97.4
+39,"Cam Skattebo
+NYGRB",43.3,-0.1,18.6,0.2,98
+40,"Emeka Egbuka
+TBWR",44.7,-0.1,18.4,0,97.3
+41,"Colston Loveland
+CHITE",45.3,0,13.7,0.1,99.2
+42,"Tyler Warren
+INDTE",47.1,0,13.1,0.2,99
+43,"Drake Maye
+NEQB",47.4,0,12.1,0.3,99
+44,"Davante Adams
+LARWR",47.6,0,15.7,0.1,97.8
+45,"Travis Etienne Jr.
+NORB",48.7,0.4,17,0.3,95.9
+46,"Jayden Daniels
+WSHQB",50.8,0,11.2,0.4,98.5
+47,"Jalen Hurts
+PHIQB",52.4,0.2,10.4,0.2,97.3
+48,"Ladd McConkey
+LACWR",52.8,0,15.1,0.1,95.5
+49,"Quinshon Judkins
+CLERB",54.7,0.1,16,0.1,94.5
+50,"Bucky Irving
+TBRB",56.1,0,14.8,0.1,94.6
+Rank,Player,AVG PICK,7 DAY +/-,AVG SALARY,7 DAY +/-,%ROST
+51,"Tee Higgins
+CINWR",58.1,0.1,12.7,0.1,95.4
+52,"Joe Burrow
+CINQB",60,0,9.1,0.3,96.2
+53,"Jaylen Waddle
+DENWR",60.5,0.1,11.7,0,94.3
+54,"Terry McLaurin
+WSHWR",61.9,0,11.8,0.1,94
+55,"Sam LaPorta
+DETTE",65.7,0.1,6,0,94.6
+56,"Kyle Pitts Sr.
+ATLTE",65.8,0,6.3,0.1,95.1
+57,"DJ Moore
+BUFWR",67.8,0.8,9.3,0.3,91.9
+58,"Jameson Williams
+DETWR",68.2,-0.3,9.7,-0.1,93
+59,"D'Andre Swift
+CHIRB",69.8,0.4,8.9,0.2,90.9
+60,"Rome Odunze
+CHIWR",70,0.5,8.9,0.3,91.6
+61,"Carnell Tate
+TENWR",72.9,-1,8.1,-0.2,92.3
+62,"David Montgomery
+HOURB",74.8,0.2,8,0,90.4
+63,"Jaxson Dart
+NYGQB",76.2,-0.1,5.6,0.2,92.9
+64,"TreVeyon Henderson
+NERB",76.4,-0.9,7.4,0,90.8
+65,"Harold Fannin Jr.
+CLETE",77.1,0,4.9,0,92
+66,"Luther Burden III
+CHIWR",77.2,0,7.9,0,90.1
+67,"Bhayshul Tuten
+JAXRB",77.7,0.4,8.4,0.1,88.3
+68,"Matthew Stafford
+LARQB",79.4,-0.2,5,0.1,92.4
+69,"Jadarian Price
+SEARB",80.8,0.2,8.5,0.2,89.2
+70,"Courtland Sutton
+DENWR",84.6,0.2,4.9,0.1,88.4
+71,"Brandon Aubrey
+DALK",84.7,0,5.1,-0.1,99.7
+72,"Texans D/ST
+HOUD/ST",86.6,0.4,3.6,0,98.7
+73,"Dak Prescott
+DALQB",87,0.2,5.2,0.2,89
+74,"DK Metcalf
+PITWR",87.5,0.1,4.7,0,89
+75,"Bo Nix
+DENQB",89.7,0.1,4.2,0.2,87.4
+76,"Michael Pittman Jr.
+PITWR",90.7,0.1,4.2,0,87.4
+77,"Marvin Harrison Jr.
+ARIWR",91.2,0.2,4.6,0,87.3
+78,"Caleb Williams
+CHIQB",92.1,0,4.5,0.3,88.3
+79,"Broncos D/ST
+DEND/ST",94.2,-0.5,3.2,0,98.4
+80,"Mike Evans
+SFWR",95,0.6,4.5,0,86.6
+81,"Trevor Lawrence
+JAXQB",95,0.1,4.1,0.2,86.1
+82,"Tony Pollard
+TENRB",97.9,-2.3,4.2,-0.3,85.5
+83,"Tucker KraftQ
+GBTE",98,0.6,3,0,86.3
+84,"Alec PierceO
+INDWR",98.1,0.1,4.1,0.1,84
+85,"George KittleO
+SFTE",99.2,-0.3,2.8,0,87.8
+86,"Parker Washington
+JAXWR",100.1,0.7,3.6,0.1,83.2
+87,"Travis Kelce
+KCTE",100.4,0.3,2.4,0.1,87.3
+88,"Rams D/ST
+LARD/ST",100.5,-0.5,3.5,-0.1,94.8
+89,"Dallas Goedert
+PHITE",100.9,0,2,0,87.7
+90,"Christian Watson
+GBWR",101.7,0.3,3.3,0,84.1
+91,"Rhamondre Stevenson
+NERB",102,2.8,3.1,0.4,82.7
+92,"Jaylen Warren
+PITRB",103.5,0.2,2.9,0,84.6
+93,"Brock Purdy
+SFQB",104.8,0.2,3.3,0.1,83.6
+94,"Cameron Dicker
+LACK",105.2,0,2.2,0,99.2
+95,"Brian Thomas Jr.
+JAXWR",106.7,0.2,2.7,0,83.1
+96,"Michael Wilson
+ARIWR",107.1,0.2,2.6,0,82.1
+97,"Jordyn Tyson
+NOWR",107.1,-6.7,3,-0.3,80.2
+98,"Matthew Golden
+GBWR",107.4,0.2,2.3,0,81.9
+99,"Seahawks D/ST
+SEAD/ST",107.4,-0.1,2.4,0,97.3
+100,"Justin Herbert
+LACQB",109,0.1,3.6,0.1,
+Rank,Player,AVG PICK,7 DAY +/-,AVG SALARY,7 DAY +/-,%ROST
+101,"Patrick MahomesQ
+KCQB",109.3,0.2,3.8,0.1,84.4
+102,"Rico Dowdle
+PITRB",109.5,0.4,2.4,0.1,83.6
+103,"Jake Ferguson
+DALTE",112.4,-0.1,1.9,0.1,84.6
+104,"Steelers D/ST
+PITD/ST",115.1,-0.1,1.5,0,94.5
+105,"Jason Myers
+SEAK",115.9,-0.1,1.8,0,97.4
+106,"Jakobi Meyers
+JAXWR",116.6,0.6,1.6,0,79.8
+107,"Chuba Hubbard
+CARRB",117.5,-0.5,1.8,-0.1,82.5
+108,"Wan'Dale Robinson
+TENWR",118.2,0.3,1.8,0,79.6
+109,"Travis Hunter
+JAXWR, CB",118.9,-0.2,1.6,0,72.5
+110,"Josh Downs
+INDWR",121.2,0.6,1.7,0,76.2
+111,"Jordan Addison
+MINWR",122.5,0.6,1.7,0,77.6
+112,"Kenny Gainwell
+TBRB",122.7,0.3,1.6,0,79
+113,"Mark Andrews
+BALTE",123.1,0.1,1.3,0,79.4
+114,"J.K. Dobbins
+DENRB",123.3,0.5,1.9,0,79.2
+115,"Jonathon Brooks
+CARRB",126.4,1,2.1,0,74.7
+116,"Aaron Jones Sr.
+MINRB",128.3,-1.3,1.5,0,78.5
+117,"Khalil Shakir
+BUFWR",128.6,1.4,1.2,0,72.4
+118,"Isaiah Likely
+NYGTE",130.1,0.2,1.4,0,77.6
+119,"Harrison Mevis
+LARK",130.4,-0.1,1.3,0,92
+120,"Kyle Monangai
+CHIRB",131.2,0.8,1.5,0,76.3
+121,"Stefon Diggs
+WSHWR",131.3,0.3,1.8,0,65.3
+122,"Ravens D/ST
+BALD/ST",131.7,0,1.2,0,86.4
+123,"Rachaad White
+WSHRB",131.8,-0.6,1.3,0,75.3
+124,"Ka'imi Fairbairn
+HOUK",133.2,-0.1,1.4,0,91.4
+125,"T.J. Hockenson
+MINTE",133.6,0.1,1,0,70.1
+126,"RJ Harvey
+DENRB",134.3,-1.3,1.5,0,75.6
+127,"Eagles D/ST
+PHID/ST",134.7,-0.1,1.2,0,84.8
+128,"Makai LemonQ
+PHIWR",135.3,-2.6,1.6,-0.1,76.9
+129,"Dalton Kincaid
+BUFTE",135.6,0.4,1.2,0,65.4
+130,"Cam Little
+JAXK",137,-0.3,1.3,0,86.9
+131,"Xavier WorthyQ
+KCWR",137.4,0.3,1.1,0,71.5
+132,"Deebo Samuel Sr.
+SFWR",137.7,0.4,1.2,0,66.2
+133,"Jacory Croskey-Merritt
+WSHRB",138.8,1.2,1.3,0,68.4
+134,"Jayden Reed
+GBWR",138.9,1.4,1.1,0,68
+135,"Jared Goff
+DETQB",138.9,0.1,1.7,0.1,62.6
+136,"Kenyon Sadiq
+NYJTE",140.1,-0.7,1.1,0,68.9
+137,"Blake Corum
+LARRB",141.1,0.1,1.4,0,72.2
+138,"Quentin Johnston
+LACWR",142.4,0.9,1.2,0,70.4
+139,"Hunter Henry
+NETE",142.9,-0.1,0.9,0,57.7
+140,"Harrison Butker
+KCK",147.6,0,0.9,0,74.3
+141,"Kyler Murray
+MINQB",147.8,0.4,1.6,0.1,54.6
+142,"Chris Godwin Jr.
+TBWR",148.2,0.3,1.3,0,68.9
+143,"Eddy Pineiro
+SFK",148.8,0.1,0.9,0,79.7
+144,"Baker Mayfield
+TBQB",148.8,-0.1,1.2,0.1,46.6
+145,"Patriots D/ST
+NED/ST",149.1,-0.1,0.9,0,72.8
+146,"KC ConcepcionQ
+CLEWR",150.9,0.2,1,0,62.4
+147,"Jordan Mason
+MINRB",151.3,1.6,1.1,0.1,52.7
+148,"Lions D/ST
+DETD/ST",151.4,-0.1,0.8,0,65.2
+149,"Woody Marks
+HOURB",152.6,-0.2,0.9,0,58.4
+150,"Romeo Doubs
+NEWR",153.3,0,0.9,0,
+Rank,Player,AVG PICK,7 DAY +/-,AVG SALARY,7 DAY +/-,%ROST
+151,"Browns D/ST
+CLED/ST",153.3,-0.1,0.8,0,59.1
+152,"Zach CharbonnetO
+SEARB",153.4,-0.9,1,-0.1,57.9
+153,"Jake Bates
+DETK",155,-0.1,0.8,0,70.4
+154,"Tyler Shough
+NOQB",155.5,-0.1,1.1,0.1,41.2
+155,"Alvin Kamara
+NORB",156.5,0,0.6,0,48
+156,"Jordan Love
+GBQB",159.3,-0.1,0.8,0,27.9
+157,"Rashid Shaheed
+SEAWR",159.4,0.4,0.4,0,37.2
+158,"Daniel Jones
+INDQB",159.5,0,0.8,0.1,29.6
+159,"Isiah Pacheco
+DETRB",159.6,-0.5,0.6,0,44.1
+160,"Jayden Higgins
+HOUWR",159.7,0,0.7,0,37.8
+161,"Jalen Coker
+CARWR",161.2,0,0.7,0,36.9
+162,"Chris Boswell
+PITK",162.3,-0.1,0.3,0,38.2
+163,"Sam Darnold
+SEAQB",162.5,0.1,0.6,0.1,19
+164,"Chiefs D/ST
+KCD/ST",163,0,0.5,0,34.6
+165,"Chargers D/ST
+LACD/ST",163.2,0,0.5,0,47
+166,"De'Zhaun StriblingQ
+SFWR",163.4,1.5,0.5,0.1,22
+167,"Jerry Jeudy
+CLEWR",163.6,-0.5,0.4,0,28.3
+168,"Tyler Loop
+BALK",163.6,0,0.6,0,49.1
+169,"Juwan Johnson
+NOTE",164.4,0.1,0.3,0,25.9
+170,"C.J. Stroud
+HOUQB",166.1,0,0.4,0,17
+171,"Terrance Ferguson
+LARTE",166.2,0.1,0.2,0,17.3
+172,"Will Reichard
+MINK",166.2,0,0.4,0,29.7
+173,"Tyjae Spears
+TENRB",166.3,0.6,0.3,0,32.5
+174,"Cowboys D/ST
+DALD/ST",166.4,0.1,0.1,0,9.7
+175,"Brian Robinson Jr.
+ATLRB",166.4,0,0.8,0,17.3
+176,"Tyrone Tracy Jr.
+NYGRB",166.5,0.3,0.2,0,17.3
+177,"Fernando Mendoza
+LVQB",166.6,0,0.3,0,12.1
+178,"Denzel Boston
+CLEWR",166.7,0.1,0.2,0,18.5
+179,"Ja'Kobi Lane
+BALWR",166.9,0.4,0.2,0,13.8
+180,"Malik Willis
+MIAQB",167,0,0.4,0,14.7
+181,"Chris Rodriguez Jr.
+JAXRB",167.3,0,0.4,0,17.5
+182,"Cairo Santos
+CHIK",167.3,0,0.4,0,32
+183,"Jaguars D/ST
+JAXD/ST",167.4,0.1,0.3,0,52.3
+184,"Brenton Strange
+JAXTE",167.8,0,0.2,0,15.7
+185,"Dalton Schultz
+HOUTE",167.8,0,0.1,0,13.2
+186,"Calvin Ridley
+TENWR",167.9,-0.1,0.2,0,20.6
+187,"Jalen McMillan
+TBWR",167.9,-0.1,0.2,0,18.5
+188,"Packers D/ST
+GBD/ST",168.1,-0.1,0.1,0,14.9
+189,"Tank Bigsby
+PHIRB",168.2,-0.2,0.2,0,15.5
+190,"Tre Tucker
+LVWR",168.3,0,0.2,0,17
+191,"Cam Ward
+TENQB",168.4,-0.2,0.4,0.1,10.5
+192,"Vikings D/ST
+MIND/ST",168.5,0,0.2,0,19.8
+193,"49ers D/ST
+SFD/ST",168.6,0,0.1,0,7.4
+194,"Jake Elliott
+PHIK",168.7,0,0.1,0,8.2
+195,"Bryce Young
+CARQB",168.8,-0.1,0.4,0,8.3
+196,"Evan McPherson
+CINK",168.8,0,0.1,0,14.4
+197,"Pat Freiermuth
+PITTE",168.8,0,0.3,0,10.8
+198,"Trey Smack
+GBK",168.8,0.1,0.1,0,6.7
+199,"Bills D/ST
+BUFD/ST",168.9,0,0.1,0,4.8
+200,"Cooper Kupp
+SEAWR",168.9,0.1,0.2,0,
