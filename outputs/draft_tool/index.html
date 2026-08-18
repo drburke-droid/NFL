@@ -20,6 +20,7 @@
 <script src="takeover_2026.js"></script>
 <script src="dart_scores_2026.js"></script>
 <script src="ffa_2026.js"></script>
+<script src="espn_salary_2026.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -157,6 +158,9 @@
     <button class="btn sm active" id="srcModel">Model</button>
     <button class="btn sm" id="srcBlend" disabled>Blend</button>
     <button class="btn sm" id="srcFFA" disabled>FFA</button>
+    <button class="btn sm" id="srcESPN" disabled title="ESPN sitewide average auction salaries (Live Draft Trends CSV) as the live price market; projections stay Model">ESPN</button>
+    <button class="btn sm" id="srcFE" disabled title="FFA AAV + ESPN salary averaged as the price market; FFA points as projections">FFA+ESPN</button>
+    <button class="btn sm" id="srcAll" disabled title="Equal three-way price blend (Model engine / FFA AAV / ESPN salary); blended projections">All 3</button>
     <span id="blendWrap" style="display:none;font-size:11px" class="muted">FFA weight <input id="blendW" type="range" min="0" max="100" step="5" style="vertical-align:middle;width:90px"> <b id="blendWv">50%</b></span>
     <span style="flex:1"></span>
     <label class="btn sm up" for="ffaFile">📂 Upload 2026 FFA CSV</label>
@@ -315,12 +319,26 @@ const crowdTag=p=>{if(p.position!=="WR"||typeof CROWDING_2026==="undefined")retu
 const newsFlagTag=p=>{if(typeof NEWS_FLAGS==="undefined")return "";
   const f=NEWS_FLAGS[norm(p.name)];if(!f)return "";
   return ` <span class="tag" style="background:#3a1620;color:#ff9aa8" title="🚩 NEGATIVE-NEWS AUGUST${typeof NEWS_FLAGS_YEAR!=='undefined'?' '+NEWS_FLAGS_YEAR:''}: news volume spiked (×${Math.exp(f.s).toFixed(1)} vs his own Jan–May baseline, ${f.n} articles) with NEGATIVE tone (${f.t}). 2016–25 priced players in this cell averaged −20 VORP vs price peers — the holdout/injury/suspension pattern (Charles '16, Golladay '20, Fournette '18, Etienne '24, Ekeler '25). Verify the story before paying up; not an auto-fade (CMC '22 survived it).">🚩 news</span>`;};
+// ⚠ PRICE DISAGREEMENT: the three price sources (our engine Exp $, FFA consensus AAV,
+// ESPN sitewide salary) disagree substantially on this player — spread >= $8 AND >= 35%
+// of the highest quote. One market is wrong: if our engine is the LOW one, the room
+// (anchoring on public prices) will make him expensive; if the engine is HIGH, he may be
+// a this-room-only bargain the public boards ignore.
+const priceDivTag=p=>{if(isK(p))return "";
+  const eng=(typeof _AUC!=="undefined"&&_AUC&&_AUC.eng)?_AUC.eng[pid(p)]:null;
+  const vals=[["Engine",eng],["FFA",auctionAAV(p)||null],["ESPN",(espnLoaded()?espnAV(p):0)||null]]
+    .filter(x=>x[1]!=null&&x[1]>0);
+  if(vals.length<2)return "";
+  const hi=Math.max(...vals.map(v=>v[1])),lo=Math.min(...vals.map(v=>v[1])),sp=hi-lo;
+  if(sp<8||sp<0.35*hi)return "";
+  const lbl=vals.map(v=>v[0]+" $"+Math.round(v[1])).join(" · ");
+  return ` <span class="tag" style="background:#33202b;color:#ff9ad5" title="⚠ PRICE DISAGREEMENT — sources are $${Math.round(sp)} apart: ${lbl}. One market is wrong. Engine low -> the public-anchored room will overpay him; Engine high -> possible room-only bargain. Decide which price YOUR room bids from before the nomination.">Δ$${Math.round(sp)}</span>`;};
 const contractTag=p=>{const c=cstat(p),v=vstat(p),vg=vegasCtx(p); let t="";
   if(c&&c.status==="walk")t+=` <span class="tag" style="background:#123524;color:#7fe3a6" title="Contract/walk year — validated +${c.bump} PPG bump (improves projection MAE; largest at RB)">📄 WALK YR</span>`;
   else if(c&&c.status==="fade")t+=` <span class="tag" style="background:#352612;color:#e3b57f" title="Just signed a new multi-year deal. Tested for a post-contract fade: none survives (no value change).">📄 just paid</span>`;
   if(v)t+=` <span class="tag" style="background:#1a2b3d;color:#8fb8e3" title="${v.pos} inheriting a clean vacated role (${v.vac_share}% left by ${v.departed}, no ${v.pos} drafted rd1-2${v.ffa?'; teams from your FFA upload':''}). Validated -> +${v.bump} PPG.">↑ VACATED ${v.vac_share}%</span>`;
   if(Math.abs(vg)>=0.35)t+=` <span class="tag muted" style="background:${vg>0?'#2a2415':'#1e2228'};color:${vg>0?'#c9bd8a':'#8894a0'}" title="${team26(p)} 2026 Vegas implied team total is ${vg>0?'above':'below'} average — context only; the projection ALREADY prices team environment in (implied_team_total is a top-3 model feature), so no value change.">${vg>0?'○':'○'} ${team26(p)} ${vg>0?'high':'low'} total</span>`;
-  t+=archTag(p)+lotteryTag(p)+crowdTag(p)+newsFlagTag(p)+takeoverTag(p);
+  t+=archTag(p)+lotteryTag(p)+crowdTag(p)+newsFlagTag(p)+takeoverTag(p)+priceDivTag(p);
   return t;};
 // RB takeover targets (scripts/depth_takeover_study.py): stable/rising Kalman true skill
 // blocked by a fading-skill workload leader. Healthy-benching rate 40% vs 15% baseline
@@ -354,8 +372,9 @@ const VP=p=>p._vorp!=null?p._vorp:p.vorp;
 // 2.859 vs 2.993, which is what the auction pricing layer needs).
 let BLEND_W=parseFloat(localStorage.getItem("blendW")||"0.65");
 const ffaLoaded=()=>Object.keys(ffaMap).length>0;
+const FFA_PROJ_MODES={ffa:1,blend:1,fe:1,all:1};   // modes whose POINT projections use FFA (espn keeps Model points)
 const ffaOn=()=>projMode==="ffa"&&ffaLoaded();
-const projActive=()=>(projMode==="ffa"||projMode==="blend")&&ffaLoaded();   // using an alt projection (_proj set)
+const projActive=()=>!!FFA_PROJ_MODES[projMode]&&ffaLoaded();   // using an alt projection (_proj set)
 
 // ---------- ESPN live draft trends (PUBLIC sitewide ADP + average auction $) ----------
 // Pasted from ESPN's Live Draft Trends page into a .txt and uploaded (📈 button in the Draft
@@ -387,10 +406,16 @@ function parseEspnTrends(txt){
 // ESPN values: a browser upload (ESPNT, localStorage) wins; otherwise fall back to the
 // values BAKED into data.js (espn_av — data/espn_trends_2026.txt via fetch_espn_trends.py
 // + build_draft_tool.py), so the board works with no upload at all.
+// fresh CSV salary export (espn_salary_2026.js, scripts/import_espn_salaries.py) — sits
+// between a live browser upload and the older espn_av snapshot baked into data.js
+const ESPN_SAL=(()=>{const m={};if(typeof ESPN_SALARY_RAW!=="undefined")
+  ESPN_SALARY_RAW.forEach(r=>{m[fkey(r[0],r[1])]=r[2];});return m;})();
 const espnAV=p=>{const e=ESPNT.n>=30?ESPNT.map[fkey(p.name,p.position)]:null;
-  return e?e.av:(p.espn_av!=null?p.espn_av:0);};
+  if(e)return e.av;
+  const s=ESPN_SAL[fkey(p.name,p.position)];if(s!=null)return s;
+  return p.espn_av!=null?p.espn_av:0;};
 const espnBaked=()=>typeof PLAYERS!=="undefined"&&PLAYERS.some(p=>p.espn_av!=null);
-const espnLoaded=()=>ESPNT.n>=30||espnBaked();
+const espnLoaded=()=>ESPNT.n>=30||Object.keys(ESPN_SAL).length>=30||espnBaked();
 const espnStatusTxt=()=>ESPNT.n>=30
   ?`📈 ESPN trends: <b>${ESPNT.n}</b> players · ${new Date(ESPNT.ts).toLocaleDateString()} — bots benchmark on this public data (unlisted = $1 sitewide)`
   :espnBaked()
@@ -422,7 +447,7 @@ function recomputeSkillVorp(){
 }
 function applyProjection(){
   if(projActive()){
-    const blend=projMode==="blend", st={};
+    const blend=(projMode==="blend"||projMode==="all"), st={};
     if(blend){   // per-position rescale FFA to the model's scale (robust to different scoring) before blending
       ["QB","RB","WR","TE"].forEach(pos=>{
         const a=PLAYERS.filter(p=>p.position===pos&&ffaMap[fkey(p.name,p.position)]);
@@ -536,6 +561,7 @@ document.getElementById("ffaFile").onchange=e=>{
       if(!n){alert("Couldn't parse any QB/RB/WR/TE rows. Expecting an FFA projections CSV with player/position/points columns.");return;}
       ffaMap=m; localStorage.setItem("ffaUploaded","1"); save();
       document.getElementById("srcFFA").disabled=false; document.getElementById("srcBlend").disabled=false;
+      document.getElementById("srcFE").disabled=!espnLoaded(); document.getElementById("srcAll").disabled=!espnLoaded();
       document.getElementById("ffaClear").style.display="";
       setSrc("blend");                                   // default to Blend (model + FFA) on upload
     }catch(err){alert("Parse error: "+err.message);}
@@ -550,6 +576,8 @@ document.getElementById("ffaClear").onclick=()=>{
   const has=Object.keys(ffaMap).length>0;
   document.getElementById("srcFFA").disabled=!has;
   document.getElementById("srcBlend").disabled=!has;
+  document.getElementById("srcFE").disabled=!(has&&espnLoaded());
+  document.getElementById("srcAll").disabled=!(has&&espnLoaded());
   document.getElementById("ffaClear").style.display="none";
   setSrc(has?(projMode==="model"?"model":projMode):"model");
   document.getElementById("ffaStatus").innerHTML=ffaStatusText();
@@ -587,19 +615,23 @@ document.getElementById("buzzBtn").onclick=async()=>{
     buzzMsg("helper not running — in a terminal: python scripts/buzz_server.py, then click again");
   }
 };
+const SRC_BTN={model:"srcModel",blend:"srcBlend",ffa:"srcFFA",espn:"srcESPN",fe:"srcFE",all:"srcAll"};
 function setSrc(src){
-  if((src==="ffa"||src==="blend")&&!ffaLoaded()) return;
+  if(FFA_PROJ_MODES[src]&&!ffaLoaded()) return;
+  if({espn:1,fe:1,all:1}[src]&&!espnLoaded()) return;
   projMode=src; save();
-  document.getElementById("srcModel").classList.toggle("active",src==="model");
-  document.getElementById("srcBlend").classList.toggle("active",src==="blend");
-  document.getElementById("srcFFA").classList.toggle("active",src==="ffa");
-  document.getElementById("blendWrap").style.display=src==="blend"?"":"none";
+  Object.keys(SRC_BTN).forEach(m=>{const el=document.getElementById(SRC_BTN[m]);
+    if(el)el.classList.toggle("active",src===m);});
+  document.getElementById("blendWrap").style.display=(src==="blend"||src==="all")?"":"none";
   document.getElementById("ffaStatus").innerHTML=ffaStatusText();
   recompute(); notes(); render();
 }
-document.getElementById("srcModel").onclick=()=>setSrc("model");
-document.getElementById("srcBlend").onclick=()=>setSrc("blend");
-document.getElementById("srcFFA").onclick=()=>setSrc("ffa");
+Object.keys(SRC_BTN).forEach(m=>{const el=document.getElementById(SRC_BTN[m]);
+  if(el)el.onclick=()=>setSrc(m);});
+(function(){const en=(id,on)=>{const el=document.getElementById(id);if(el)el.disabled=!on;};
+  en("srcESPN",espnLoaded());en("srcFE",ffaLoaded()&&espnLoaded());en("srcAll",ffaLoaded()&&espnLoaded());
+  const el=document.getElementById(SRC_BTN[projMode]);   // restore the saved mode's active chip
+  if(el&&!el.disabled){document.getElementById("srcModel").classList.toggle("active",projMode==="model");el.classList.add("active");}})();
 (function(){const s=document.getElementById("blendW"),v=document.getElementById("blendWv");
   s.value=Math.round(BLEND_W*100); v.textContent=Math.round(BLEND_W*100)+"%";
   s.oninput=()=>{BLEND_W=(+s.value)/100; v.textContent=s.value+"%"; save(); if(projMode==="blend"){recompute();render();}};})();
@@ -786,9 +818,10 @@ function wireJump(){document.querySelectorAll(".jc").forEach(el=>el.onclick=()=>
 let _AUC=null;
 function buildAuctionMkt(){
   const mkt=dynamicMarket(),BV=baseValue(),IF=mkt.infl||1;
-  _AUC={exp:{},rv:{}};
+  _AUC={exp:{},rv:{},eng:{}};
   PLAYERS.forEach(p=>{const id=pid(p);
     _AUC.exp[id]=Math.max(1,Math.round(mkt.price[id]||1));
+    _AUC.eng[id]=Math.max(1,Math.round(mkt.engine[id]||1));
     _AUC.rv[id]=Math.max(1,Math.round((BV[id]||0)*IF));});
 }
 const auctionAAV=p=>{const f=Object.keys(ffaMap).length?ffaMap[fkey(p.name,p.position)]:null;
@@ -1216,17 +1249,24 @@ function dynamicMarket(){
   //   Blend -> engine price pulled toward the FFA-market price at BLEND_W.
   //   Model -> the league curve+anchor engine untouched. K/DST always engine ($1).
   let priceOut=price, expIfOut=expIf;
-  if(projActive()){
-    const W=ffaOn()?1:BLEND_W, SKP=["QB","RB","WR","TE"];
+  const MSRC=({blend:{w:BLEND_W,src:"ffa"},ffa:{w:1,src:"ffa"},espn:{w:1,src:"espn"},
+               fe:{w:1,src:"avg"},all:{w:2/3,src:"avg"}})[projMode];
+  const consActive=MSRC&&((FFA_PROJ_MODES[projMode]?ffaLoaded():true)&&
+                          ({espn:1,fe:1,all:1}[projMode]?espnLoaded():true));
+  if(consActive){
+    const W=MSRC.w, SKP=["QB","RB","WR","TE"];
+    // consensus $ for the active mode: FFA AAV, ESPN sitewide salary, or their average
+    const consVal=p=>{const a=auctionAAV(p)||0,e=espnAV(p)||0;
+      return MSRC.src==="ffa"?a:MSRC.src==="espn"?e:(a>0&&e>0?(a+e)/2:(a||e));};
     // (1) demand gate on the AAV ranking
     const fRank={},fN={};
-    SKP.forEach(pos=>{fRank[pos]=avail.filter(p=>p.position===pos).map(p=>auctionAAV(p)||0).sort((a,b)=>b-a);
+    SKP.forEach(pos=>{fRank[pos]=avail.filter(p=>p.position===pos).map(p=>consVal(p)||0).sort((a,b)=>b-a);
       fN[pos]=Math.max(0,Math.round((open[pos]||0)+flexAdd(pos,open)));});
     const aavRamp=(p,a)=>{const pos=p.position,R=fRank[pos]||[];
       let r=0;while(r<R.length&&R[r]>a)r++;
       return r>=fN[pos]?Math.min(a,Math.max(1,benchRamp(pos,r-fN[pos]))):a;};
     // (2) global money factor over the ramped rosterable pool
-    const pre=avail.map(p=>{const a=auctionAAV(p);
+    const pre=avail.map(p=>{const a=consVal(p);
       return (isK(p)||!(a>0))?(price[pid(p)]||1):aavRamp(p,a);}).sort((a,b)=>b-a);
     const csf=pre.slice(0,Math.max(spots,0)).reduce((s,v)=>s+v,0);
     const G=csf>0?Math.max(0.8,Math.min(1.25,(money*0.94)/csf)):1;
@@ -1244,7 +1284,7 @@ function dynamicMarket(){
     const nA=SKP.reduce((s,pos)=>s+Apos[pos]*tilt[pos],0), dA=SKP.reduce((s,pos)=>s+Apos[pos],0);
     const nz=nA>0?dA/nA:1;                              // renormalize: tilt is a pure skew, mean 1
     SKP.forEach(pos=>{tilt[pos]=Math.max(0.85,Math.min(1.2,tilt[pos]*nz));});
-    const ffaPrice=(p,eng)=>{if(isK(p))return eng;const a=auctionAAV(p);if(!(a>0))return eng;
+    const ffaPrice=(p,eng)=>{if(isK(p))return eng;const a=consVal(p);if(!(a>0))return eng;
       const v=aavRamp(p,a), out=Math.max(1,Math.round(1+(v-1)*G*(tilt[p.position]||1)));
       return Math.max(1,ceilExp(p.position,out));};
     const mix=(p,eng)=>{const f=ffaPrice(p,eng);
@@ -1252,7 +1292,7 @@ function dynamicMarket(){
     priceOut={}; avail.forEach(p=>{const id=pid(p);priceOut[id]=mix(p,price[id]||1);});
     expIfOut=p=>mix(p,expIf(p));
   }
-  return {price:priceOut,repl,per,open,money,spots,scarce,infl,expIf:expIfOut};
+  return {price:priceOut,repl,per,open,money,spots,scarce,infl,expIf:expIfOut,engine:price};
 }
 // intrinsic player value = clearing price in a NORMAL full-money auction (no keeper inflation),
 // independent of who's been kept. Same formula/calibration as dynamicMarket but full pool+budget.
