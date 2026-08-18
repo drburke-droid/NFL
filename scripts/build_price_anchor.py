@@ -19,6 +19,8 @@ import numpy as np
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SKILL = ("QB", "RB", "WR", "TE")
+MIN_GAMES = 6   # "representative prior season" gate (was 8): owners price a 6-7 game
+                # half-season too — they saw the tape (e.g. Daniels 2025: 7 gms, 16.3 ppg)
 
 def norm(s):
     s = re.sub(r"[^a-z ]", "", str(s).lower())
@@ -118,7 +120,7 @@ for (nm, s), bid in auction.items():
     y = int(s)
     if y < 2024 or pos_of[(nm, s)] not in SKILL:
         continue
-    if games.get((nm, y - 1), 0) < 8:
+    if games.get((nm, y - 1), 0) < MIN_GAMES:
         continue    # anchor domain = players whose prior season was REPRESENTATIVE; injury
                     # returns / breakouts are priced forward by the room -> curve handles them
     f = feats(nm, pos_of[(nm, s)], y, age_by_name.get((nm, y)))
@@ -175,7 +177,7 @@ for p in P:
     nm = norm(p["name"])
     # anchor domain only: 2025 must be representative (>=8 games) and the 2026 projection must
     # not scream "he's back / breaking out" (room prices those FORWARD; the curve handles them)
-    if games.get((nm, 2025), 0) < 8:
+    if games.get((nm, 2025), 0) < MIN_GAMES:
         skipped += 1; continue
     if (p.get("proj_ppg") or 0) - (p.get("prior_ppg") or 0) > 3:
         skipped += 1; continue
