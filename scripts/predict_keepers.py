@@ -10,8 +10,14 @@ Keep the 3 best-surplus players per team (the rational keep).
 ICO keeper rule (real, from league PDF — see fetch_espn_standings.py):
   inflation bump = +$5 default, -$2 if the owner MISSED the top-6 playoffs, -$3 more if a
   non-playoff owner DRAFTED THE EVENTUAL CHAMPION (so playoff +$5 / non-playoff +$3 / picked
-  champ +$0). Undrafted/waiver keepers floor at $1 (and a first-time waiver keep is $1, no
-  inflation). The 2025 draft FORGOT to apply inflation, so a 2025 keeper's TRUE cost = its
+  champ +$0). Undrafted/waiver keepers floor at $1. RULE TWEAK (Aug 2026): ANY mid-season
+  waiver pickup — including a drafted player who was dropped and added by a new team —
+  resets to $1 + the owner's inflation bump. Classified by ESPN acquisitionType on the
+  roster entry (ADD = waiver reset; TRADE = the drafted salary travels with the player;
+  DRAFT = normal). Re-run fetch_espn.py first so espn_league.json carries the acq field.
+  BASIS: the 2025 draft forgot to apply inflation; the commissioner is retroactively fixing
+  it, so a 2025 keeper's TRUE basis = its recorded price + the keeping owner's 2024 bump.
+  ESPN's homepage keeper prices show the UNCORRECTED raw 2025 bids — do not trust them. The 2025 draft FORGOT to apply inflation, so a 2025 keeper's TRUE cost = its
   recorded base + the keeping owner's 2024 bump. The 2026 cost then adds the current owner's
   2025 bump on top of that true basis. 3-yr cap doesn't bind for 2026 (keepers started 2024).
 """
@@ -119,7 +125,8 @@ for r in drafts:
     if kept: keptyrs[k] = keptyrs.get(k, 0) + 1
     if r["season"] == "2025":
         base = max(fbid(r), 1)                         # undrafted/$0 floors at $1 (league rule)
-        # a 2025 keeper was entered at base but OWED its keeper-owner's 2024 bump -> add it back
+        # a 2025 keeper was entered at base but OWED its keeper-owner's 2024 bump — the
+        # commissioner retro-applies it, so add it back (ESPN's homepage shows the raw number)
         basis25[k] = base + (bump.get(("2024", r["owner"]), 0) if kept else 0)
 
 # ---- league bid curves: typical non-keeper auction $ by rank (recency-weighted) ----
@@ -233,14 +240,17 @@ for t in sorted(L.get("teams", []), key=lambda x: x["id"]):
         k = norm(p.get("name") or ""); val = VAL.get((k, p.get("pos")))
         if val is None: continue
         pl = PMAP[(k, p.get("pos"))]; cid = pidof(pl)      # canonical board player
-        basis = basis25.get(k); waiver = basis is None     # not in 2025 draft -> waiver pickup
-        cost = 1 if waiver else round(basis + b26)
+        basis = basis25.get(k); acq = p.get("acq")     # corrected basis follows the player (trades incl.)
+        # ADD = mid-season waiver pickup -> salary resets to $1 (even if drafted, then dropped);
+        # TRADE carries the drafted basis to the new owner; no acq data falls back to not-drafted
+        waiver = (acq == "ADD") or (basis is None)
+        cost = round((1 if waiver else basis) + b26)       # every keep owes the current owner's bump (rule tweak Aug 2026)
         exp = exp_price.get(cid, 1); savings = exp - cost; good = val > cost
         decision = "keep" if (good and savings > 0) else ("redraft" if good else "pass")
         cand.append({"pid": cid, "name": pl["name"], "pos": pl["position"], "team": pl.get("team") or "",
                      "value": val, "cost": cost, "exp": exp, "savings": savings, "surplus": val - cost,
                      "decision": decision, "basis": round(basis or 0), "bump": b26,
-                     "waiver": waiver, "keptyrs": keptyrs.get(k, 0)})
+                     "waiver": waiver, "acq": acq, "keptyrs": keptyrs.get(k, 0)})
     keep = sorted([c for c in cand if c["decision"] == "keep"], key=lambda c: -c["savings"])[:3]
     keepids = {c["pid"] for c in keep}
     for c in cand: c["predicted"] = c["pid"] in keepids    # the model's recommended keeps
