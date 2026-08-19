@@ -21,6 +21,7 @@
 <script src="dart_scores_2026.js"></script>
 <script src="ffa_2026.js"></script>
 <script src="espn_salary_2026.js"></script>
+<script src="playoff_sos_2026.js"></script>
 <style>
   :root{
     --bg:#0f1419;--panel:#1a2230;--panel2:#222d3d;--line:#2c3a4d;--txt:#e6edf3;--muted:#8b9bb0;
@@ -1728,6 +1729,19 @@ function planPanelHTML(mkt,mv){
         ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
         :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span>
       <span class="planNom" data-id="${pid(pk.p)}" title="nominate ${pk.p.name} — put him up (mock: on your turn) / open the sold box (draft room)" style="cursor:pointer;color:var(--gold);flex:none;padding-left:2px">▶</span></div>`;
+    // 📅 BYE-COLLISION + PLAYOFF-SLATE advisories on the planned starters (playoff_sos_2026.js)
+    if(typeof BYES_2026!=="undefined"){
+      const starters=stP.map(pk=>pk.p).concat(PLAYERS.filter(p=>{const o=DR.owned[pid(p)];return o&&o.t===DR.me&&o.kept&&!isK(p);}));
+      const byPosWk={},adv=[];
+      starters.forEach(p=>{const b=BYES_2026[team26(p)];if(b==null)return;
+        const k=p.position+"|"+b;(byPosWk[k]=byPosWk[k]||[]).push(p.name);});
+      Object.entries(byPosWk).forEach(([k,names])=>{if(names.length>1){const [pos,wk]=k.split("|");
+        adv.push(`📅 <b>bye collision</b>: ${names.join(" + ")} (${pos}, wk ${wk}) — you lose both the same week`);}});
+      if(typeof PLAYOFF_SOS!=="undefined")starters.forEach(p=>{const z=(PLAYOFF_SOS[team26(p)]||{})[p.position];
+        if(z!=null&&z<=-0.5)adv.push(`🥶 ${p.name}: tough wks-14-17 slate (${team26(p)} ${p.position} z ${z.toFixed(1)} — 2025-FPA tiebreaker only)`);
+        else if(z!=null&&z>=0.6)adv.push(`🔥 ${p.name}: soft playoff slate (${team26(p)} ${p.position} z +${z.toFixed(1)})`);});
+      if(adv.length)h+=`<div class="muted" style="font-size:11px;margin:2px 0">${adv.join(" · ")}</div>`;
+    }
     const nwif=Object.keys(WHATIF).length;
     if(nwif)h+=`<div class="muted" style="font-size:11px;margin:2px 0">🧮 <b>${nwif} what-if price${nwif>1?'s':''} active</b> — the plan below is solved around YOUR numbers, not live Exp $. <button class="btn sm" id="wifClear" style="font-size:10px;padding:0 6px">✕ clear what-ifs</button></div>`;
     h+=`<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:4px 24px">
