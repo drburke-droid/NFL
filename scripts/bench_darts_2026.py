@@ -102,6 +102,27 @@ d["mkt_cost"] = d[["mkt_cost", "auction"]].max(axis=1)
 d = d[(d.mkt_cost.fillna(1) <= 8)]
 
 # ---- signals ----
+# HYBRID TIER inputs (hybrid_darts_backtest.py, 24/100 walk-forward, 2022-25 10/40 vs
+# composite 5/40): August wiki buzz spike (top quartile of the cheap board) + 2025 FLASH
+con2 = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
+_ids = pd.read_sql("SELECT DISTINCT player_id, player_display_name nm FROM nflv_season WHERE season>=2024", con2)
+_aug = pd.read_sql("""SELECT player_id, SUM(views)*1.0/COUNT(*)*31 aug FROM nflv_wiki_buzz_daily
+                      WHERE date>='20260801' GROUP BY player_id""", con2)
+_base = pd.read_sql("""SELECT player_id, views, ym FROM nflv_wiki_buzz
+                       WHERE substr(ym,1,4)='2026'
+                         AND CAST(substr(ym,-2,2) AS INT) BETWEEN 1 AND 5""", con2)         .groupby("player_id").views.median().rename("basev").reset_index()
+_fl = pd.read_sql("""SELECT player_id, fantasy_points_ppr pts, week FROM nflv_weekly
+                     WHERE season=2025 AND season_type='REG'""", con2)
+con2.close()
+_w4 = _fl.sort_values("pts", ascending=False).groupby("player_id").head(4).groupby("player_id")["pts"].mean()
+_bz = _aug.merge(_base, on="player_id", how="left")
+_bz["spike"] = np.log((_bz.aug.astype(float) + 100) / (_bz.basev.fillna(0).astype(float) + 100))
+_byid = _ids.merge(_bz[["player_id", "spike"]], on="player_id", how="left")             .merge(_w4.rename("w4"), on="player_id", how="left").drop_duplicates("nm").set_index("nm")
+d["spike"] = d.name.map(_byid["spike"])
+d["flash"] = (d.name.map(_byid["w4"]).fillna(0) >= 12).astype(int)
+_q = d.spike.quantile(0.75)
+d["buzz"] = ((d.spike >= _q) & d.spike.notna()).astype(int)
+
 d["lot_p"] = d.name.map(lambda n: lottery.get(n, {}).get("p", 0) if isinstance(lottery.get(n), dict) else 0)
 d["dart"] = d[["dart_prob", "leap_prob", "lot_p"]].fillna(0).max(axis=1)
 d["upside_p"] = np.where(d.is_rookie == 1, d.hit_prob.fillna(0), d.breakout_prob.fillna(0))
@@ -135,21 +156,31 @@ d["score"] = ((2.5 * d.dart + 1.5 * d.upside_p
                + 0.35 * d.ceil_n)
               * d.run_x * d.pos_x)
 
-d = d.sort_values("score", ascending=False)
+# HYBRID TIERS (walk-forward validated pick order — see hybrid_darts_backtest.md):
+#   1 HEIR+BUZZ (the one synergy pair) · 2 young buried ALPHA (age<=27)
+#   3 young FLASH (age<=26) · 4 everything else (composite order within tier)
+d["tier"] = np.where((d.heir > 0) & (d.buzz == 1), 1,
+             np.where((d.alpha_hi == 1) & (d.age.fillna(99) <= 27), 2,
+              np.where((d.flash == 1) & (d.age.fillna(99) <= 26), 3, 4)))
+d = d.sort_values(["tier", "score"], ascending=[True, False])
 
-# emit the backtested composite as a JS map for the draft tool's live PIVOT LIST
-# (docs + outputs copies). Keyed exactly by data.js "name|POSITION" so the tool
-# looks it up with p.name+"|"+p.position. Regenerates whenever this script runs
-# (e.g. after the August buzz refresh).
+# emit for the draft tool's live PIVOT LIST (docs + outputs copies), keyed by
+# data.js "name|POSITION". The exported value = composite score + a HYBRID TIER
+# bonus (t1 +2.0 / t2 +1.0 / t3 +0.5) so the tool's ordering matches the
+# walk-forward-validated hybrid pick order without any index.html change.
+# Regenerates whenever this script runs (e.g. after the August buzz refresh).
 import json as _json
-_scores = {f"{r['name']}|{r.position}": round(float(r.score), 3) for _, r in d.iterrows()}
+_TIER_BONUS = {1: 2.0, 2: 1.0, 3: 0.5, 4: 0.0}
+_scores = {f"{r['name']}|{r.position}": round(float(r.score) + _TIER_BONUS[int(r.tier)], 3)
+           for _, r in d.iterrows()}
 _js = "const DART_SCORES = " + _json.dumps(_scores) + ";\n"
 for _dir in (os.path.join(ROOT, "docs"), os.path.join(ROOT, "outputs", "draft_tool")):
     open(os.path.join(_dir, "dart_scores_2026.js"), "w", encoding="utf-8").write(_js)
 
 
+TIER_LBL = {1: "T1 H+B", 2: "T2 ALPHA", 3: "T3 yFLASH", 4: ""}
 def why(r):
-    w = []
+    w = [TIER_LBL[int(r.tier)]] if r.tier < 4 else []
     if r.dart >= 0.10: w.append(f"dart {r.dart:.0%}")
     # breakout/hit are SCORES, not calibrated probabilities (walk-forward top-20% of
     # breakout scores hits ~24%, 2.15x base) — label them as scores to avoid over-reading
@@ -169,6 +200,10 @@ def why(r):
 
 
 L = ["# 🎯 Bench darts 2026 — ranked (cheap now, startable/keeper later)\n",
+     "Ordered by walk-forward-validated HYBRID TIERS (hybrid_darts_backtest.md: 24/100",
+     "reliable 2016-25, 10/40 in 2022-25 vs the composite's 5/40): T1 HEIR+BUZZ (the one",
+     "synergy pair) > T2 young buried ALPHA (age<=27) > T3 young FLASH (age<=26) > rest,",
+     "composite score within tier.",
      "Cost gate: market <= $8 (max of FFA AAV / ESPN $ / board $). NOTE: 'brk scr'/'hit scr'",
      "are model SCORES, not probabilities — top-20% of breakout scores hits ~24% (2.15x base),",
      "walk-forward 2016-25. Score = validated breakout",
