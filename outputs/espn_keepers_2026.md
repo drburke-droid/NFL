@@ -28,7 +28,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
 [ 5] Saja Boys                   <-- YOU  (2026 bump +$5)
      KEEP    QB  Joe Burrow             value $19  cost $ 6  exp $10  saves +$ 4
      redraft WR  Rashee Rice            value $36  cost $32  exp $31  (re-buy $31 < keep $32)
-     redraft QB  Josh Allen             value $37  cost $32  exp $27  (re-buy $27 < keep $32)
+     redraft QB  Josh Allen             value $36  cost $32  exp $27  (re-buy $27 < keep $32)
 
 [ 7] 65 Dolla Make You Holla     (2026 bump +$5)
      KEEP    WR  Puka Nacua             value $62  cost $16  exp $41  saves +$25 (kept 2yr)
