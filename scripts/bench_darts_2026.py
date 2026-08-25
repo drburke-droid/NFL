@@ -162,6 +162,31 @@ d["score"] = ((2.5 * d.dart + 1.5 * d.upside_p
 d["tier"] = np.where((d.heir > 0) & (d.buzz == 1), 1,
              np.where((d.alpha_hi == 1) & (d.age.fillna(99) <= 27), 2,
               np.where((d.flash == 1) & (d.age.fillna(99) <= 26), 3, 4)))
+
+# ---- 🚨 HANDCUFF STORM tier (gdelt_buzz_interaction_study.py, 2016-25) -------------
+# RB1 with bottom-quartile August news tone (>=20 articles) x same-team RB dart with a
+# top-quartile wiki spike -> the dart hit 33% vs 19-21% base, +22 pts over FFA (24
+# pairs/decade; boot p=0.008 raw, ~0.02-0.05 after multiplicity). The flip cell is the
+# nuance that makes this usable: RB1 bad news with NO dart buzz hit 8% — the buzz does
+# the work, the RB1 storm only says where it has stakes. So the flag REQUIRES buzz==1.
+# Aug-2026 RB1 tone comes from fetch_gdelt_doc_2026.py (free GDELT DOC API; the GKG
+# BigQuery table ends 2025). Missing table -> no storms, tiers unchanged.
+STORM_RB1 = {}
+try:
+    _dcon = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
+    _doc = pd.read_sql("SELECT team, name, articles, avg_tone FROM nflv_gdelt_doc2026 "
+                       "WHERE avg_tone IS NOT NULL", _dcon)
+    _dcon.close()
+    if len(_doc) >= 8:
+        _tq1 = _doc.avg_tone.quantile(0.25)
+        for _, _r in _doc[(_doc.avg_tone <= _tq1) & (_doc.articles >= 20)].iterrows():
+            STORM_RB1[_r["team"]] = {"rb1": _r["name"], "tone": round(float(_r.avg_tone), 2),
+                                     "articles": int(_r.articles)}
+except Exception as e:
+    print(f"(no GDELT DOC 2026 storm data: {e})")
+d["storm"] = ((d.position == "RB") & d.team.isin(STORM_RB1) & (d.buzz == 1)
+              & (d.name != d.team.map(lambda t: STORM_RB1.get(t, {}).get("rb1", "")))).astype(int)
+d.loc[d.storm == 1, "tier"] = 0
 d = d.sort_values(["tier", "score"], ascending=[True, False])
 
 # emit for the draft tool's live PIVOT LIST (docs + outputs copies), keyed by
@@ -170,17 +195,43 @@ d = d.sort_values(["tier", "score"], ascending=[True, False])
 # walk-forward-validated hybrid pick order without any index.html change.
 # Regenerates whenever this script runs (e.g. after the August buzz refresh).
 import json as _json
-_TIER_BONUS = {1: 2.0, 2: 1.0, 3: 0.5, 4: 0.0}
+_TIER_BONUS = {0: 3.0, 1: 2.0, 2: 1.0, 3: 0.5, 4: 0.0}
 _scores = {f"{r['name']}|{r.position}": round(float(r.score) + _TIER_BONUS[int(r.tier)], 3)
            for _, r in d.iterrows()}
 _js = "const DART_SCORES = " + _json.dumps(_scores) + ";\n"
 for _dir in (os.path.join(ROOT, "docs"), os.path.join(ROOT, "outputs", "draft_tool")):
     open(os.path.join(_dir, "dart_scores_2026.js"), "w", encoding="utf-8").write(_js)
 
-
-TIER_LBL = {1: "T1 H+B", 2: "T2 ALPHA", 3: "T3 yFLASH", 4: ""}
+# ---- darts_2026.js: 🚨 storms + top-10 per dart-finding lens (for the 🚨 Darts tab) ----
+d["w4"] = d.name.map(_byid["w4"])
+def _rows(sub, stat):
+    return [{"n": r["name"], "p": r.position, "t": r.team, "c": round(float(r.mkt_cost or 1), 1),
+             "s": stat(r), "y": why(r)} for _, r in sub.head(10).iterrows()]
+LENSES = [
+    ("storm", "🚨 Handcuff storm", "RB1 in an August news storm + this backup already buzzing. 2016-25: 33% hit vs 19-21% base, +22 pts over FFA (24 pairs). Backups WITHOUT buzz behind a storm hit 8% — buzz is required, this cell only.",
+     d[d.storm == 1].sort_values("score", ascending=False), lambda r: f"RB1 {STORM_RB1.get(r.team,{}).get('rb1','?')} tone {STORM_RB1.get(r.team,{}).get('tone','?')}"),
+    ("dart", "🎯 Model dart", "Price-anchored late-breakout / value-leap / lottery screen — the top decile hits ~25% (validated walk-forward).",
+     d[d.dart > 0].sort_values("dart", ascending=False), lambda r: f"dart {r.dart:.0%}"),
+    ("alpha", "🧠 Buried alpha", "Top-20% opponent-adjusted per-play skill, age ≤27, priced ≤$8 — 26% reliable / 16% star (6.2× base), the best star-finder lens.",
+     d[(d.alpha_hi == 1) & (d.age.fillna(99) <= 27)].sort_values("apct", ascending=False), lambda r: f"alpha {r.apct:.0%}"),
+    ("heir", "⏫ Heir / takeover", "Backup who out-ran his starter (35% take the job) or skill-gap TAKEOVER (58%) — blocker-contract adjusted.",
+     d[(d.heir > 0) | (d.tko == 1)].sort_values("score", ascending=False), lambda r: "TAKEOVER" if r.tko else ("HEIR+" if r.heir > 1 else "HEIR-")),
+    ("buzz", "📈 Aug wiki buzz", "Top-quartile August pageview spike — works in the CHEAP pool only (~12-19× in $1 darts; Puka '23 = 98th pctl). Hype on priced players is noise.",
+     d[d.spike.notna()].sort_values("spike", ascending=False), lambda r: f"spike {r.spike:+.2f}"),
+    ("flash", "⚡ 2025 flash", "Best-4-week avg ≥12 PPG last season, age ≤26 — the yFLASH tier of the walk-forward hybrid (10/40 recent hits).",
+     d[(d.flash == 1) & (d.age.fillna(99) <= 26)].sort_values("w4", ascending=False), lambda r: f"best4 {r.w4:.1f} ppg"),
+]
+STORMS_OUT = {}
+for _tm, _info in STORM_RB1.items():
+    _team_darts = d[(d.team == _tm) & (d.position == "RB") & (d.name != _info["rb1"])]
+    STORMS_OUT[_tm] = {**_info,
+                       "darts": [{"n": r["name"], "c": round(float(r.mkt_cost or 1), 1)}
+                                 for _, r in _team_darts[_team_darts.storm == 1].iterrows()],
+                       "nobuzz": [r["name"] for _, r in _team_darts[_team_darts.storm == 0].iterrows()]}
+TIER_LBL = {0: "🚨 STORM", 1: "T1 H+B", 2: "T2 ALPHA", 3: "T3 yFLASH", 4: ""}
 def why(r):
     w = [TIER_LBL[int(r.tier)]] if r.tier < 4 else []
+    if r.storm: w.append(f"behind {STORM_RB1.get(r.team,{}).get('rb1','?')} (news tone {STORM_RB1.get(r.team,{}).get('tone','?')}, {STORM_RB1.get(r.team,{}).get('articles','?')} art)")
     if r.dart >= 0.10: w.append(f"dart {r.dart:.0%}")
     # breakout/hit are SCORES, not calibrated probabilities (walk-forward top-20% of
     # breakout scores hits ~24%, 2.15x base) — label them as scores to avoid over-reading
@@ -197,6 +248,13 @@ def why(r):
     elif r.col_dom == -1: w.append("college committee")
     if (r.ceiling or 0) >= 13: w.append(f"ceil {r.ceiling:.0f}")
     return " · ".join(w)
+
+
+_lens_js = ("const DART_LENSES = " + _json.dumps(
+                [{"key": k, "title": t, "note": nt, "rows": _rows(sub, st)} for k, t, nt, sub, st in LENSES])
+            + ";\nconst HANDCUFF_STORMS = " + _json.dumps(STORMS_OUT) + ";\n")
+for _dir in (os.path.join(ROOT, "docs"), os.path.join(ROOT, "outputs", "draft_tool")):
+    open(os.path.join(_dir, "darts_2026.js"), "w", encoding="utf-8").write(_lens_js)
 
 
 L = ["# 🎯 Bench darts 2026 — ranked (cheap now, startable/keeper later)\n",

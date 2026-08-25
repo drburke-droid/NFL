@@ -20,6 +20,7 @@
 <script src="crowding_2026.js"></script>
 <script src="takeover_2026.js"></script>
 <script src="dart_scores_2026.js"></script>
+<script src="darts_2026.js"></script>
 <script src="ffa_2026.js"></script>
 <script src="espn_salary_2026.js"></script>
 <script src="playoff_sos_2026.js"></script>
@@ -147,6 +148,7 @@
     <button class="btn" id="mComps">🧬 Career Comps</button>
     <button class="btn" id="mRisers">📈 Late Risers</button>
     <button class="btn" id="mSleep">🚀 Sleepers</button>
+    <button class="btn" id="mDarts">🚨 Darts</button>
     <button class="btn" id="mFade">💣 Fade Risk</button>
     <button class="btn" id="mKeep">🧩 Mock Keepers</button>
     <button class="btn" id="mMock">🤖 Mock Draft</button>
@@ -655,12 +657,13 @@ function setMode(m){
   document.getElementById("mComps").classList.toggle("active",m==="comps");
   document.getElementById("mRisers").classList.toggle("active",m==="risers");
   document.getElementById("mSleep").classList.toggle("active",m==="sleepers");
+  document.getElementById("mDarts").classList.toggle("active",m==="darts");
   document.getElementById("mFade").classList.toggle("active",m==="fade");
   document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
   document.getElementById("mKeep").classList.toggle("active",m==="mockkeep");
   document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
   document.getElementById("mWind").classList.toggle("active",m==="wind");
-  const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft");
+  const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts");
   document.getElementById("settings").style.display=(m==="auction"||m==="draftroom")?"flex":"none";
   document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
@@ -677,6 +680,7 @@ document.getElementById("mTargets").onclick=()=>setMode("targets");
 document.getElementById("mComps").onclick=()=>setMode("comps");
 document.getElementById("mRisers").onclick=()=>setMode("risers");
 document.getElementById("mSleep").onclick=()=>setMode("sleepers");
+document.getElementById("mDarts").onclick=()=>setMode("darts");
 document.getElementById("mFade").onclick=()=>setMode("fade");
 document.getElementById("mDraft").onclick=()=>setMode("draftroom");
 document.getElementById("mKeep").onclick=()=>setMode("mockkeep");
@@ -1429,6 +1433,18 @@ const dartSig=p=>{const l=(typeof LOTTERY_2026!=="undefined")?LOTTERY_2026[p.nam
 // on the 2016-25 walk-forward. undefined for non-dart/expensive players -> fall back to dartSig.
 const DART_SCORES_MAP=(typeof DART_SCORES!=="undefined")?DART_SCORES:{};
 const dartScore=p=>DART_SCORES_MAP[p.name+"|"+p.position];
+// 🚨 HANDCUFF STORM (gdelt_buzz_interaction_study 2016-25): RB1 bottom-quartile Aug news
+// tone x same-team dart with top-quartile buzz -> 33% hit vs 19-21% base, +22 pts over
+// FFA. Elevated per user request: loud tag on every board row + its own 🚨 Darts tab.
+const STORM_DARTS=(()=>{const m={};
+  if(typeof HANDCUFF_STORMS!=="undefined")
+    for(const t in HANDCUFF_STORMS) for(const dd of (HANDCUFF_STORMS[t].darts||[]))
+      m[dd.n+"|RB"]={...HANDCUFF_STORMS[t],team:t};
+  return m;})();
+function stormTag(p){
+  const s=STORM_DARTS[p.name+"|"+p.position]; if(!s)return "";
+  return ` <span class="tag" style="background:#7a1f1f;color:#ffd9d9;font-weight:700" title="🚨 HANDCUFF STORM — ${s.rb1} is in an August news storm (avg tone ${s.tone}, ${s.articles} articles) and ${p.name} already has top-quartile camp buzz. In 2016-25 this exact combination hit 33% vs the 19-21% dart base and beat FFA by +22 pts (24 pairs). Priority dart — see the 🚨 Darts tab.">🚨 STORM</span>`;
+}
 const benchU=p=>{
   const age=p.age||26;
   const runway=age<=23?1.25:age<=25?1.15:age<=27?1.0:age<=29?0.8:0.6;
@@ -2750,12 +2766,40 @@ function renderWind(){
   document.getElementById("notes").innerHTML="🌬️ <b>Wind-unders paper trading.</b> The one weather edge that survived every test (see <i>outputs/reports/sentiment_props.md</i>): when the <b>forecast kickoff→+3h wind is 8–15 kn</b> at an outdoor stadium, the market under-charges ~1–2 points — totals unders ran 55–58% and QB pass-yds unders ~59% (2015–25, incl. out-of-sample 2015–19 at 58.3% and forecast-conditioned 2024–25). <b>15+ kn is priced (no bet)</b> — the market learned headline wind around 2020. Calm: no bet (over side tested dead). 🌧 Rain: watchlist only — real 2015–23, absent 2024–25. "+
     "<b>Weekly routine (game-day morning):</b> ① Check forecasts ② for ✅ games add the 3 tickets ③ paste each real closing line + best <b>regulated-book</b> price ④ mark W/L/P after the games. Expect ~130 tickets/season at ~58%; note the 3 tickets per game are <b>correlated</b> (one shootout loses all 3) and a 2024-style losing season is within normal variance — judge on the full season, quarter-Kelly only. Log lives in your browser (localStorage); ⬇ CSV to back it up.";
 }
+// ---------- 🚨 Darts tab: handcuff storms + top-10 per dart-finding lens ----------
+function renderDartLenses(){
+  document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
+  const host=document.getElementById("draftroom");host.style.display="block";
+  const L=(typeof DART_LENSES!=="undefined")?DART_LENSES:[];
+  const S=(typeof HANDCUFF_STORMS!=="undefined")?HANDCUFF_STORMS:{};
+  const storms=Object.entries(S);
+  let h=`<div class="dr-panel" style="border:1px solid #a33">
+    <h3 style="margin:0 0 6px">🚨 Handcuff storms — RB1s in an August news storm (bottom-quartile tone, ≥20 articles)</h3>
+    <div class="muted" style="font-size:12px;margin-bottom:6px">Backtest 2016-25: storm RB1 × <b>buzzing</b> backup → the backup hit <b>33%</b> vs the 19-21% dart base and beat FFA by <b>+22 pts</b> (24 pairs; boot p=0.008 raw, ~0.02-0.05 after multiplicity). The flip cell matters just as much: a backup behind a storm <b>without</b> his own buzz hit <b>8%</b> — worse than baseline. Only 🚨 rows are the signal; quiet backups listed for context are NOT buys.</div>`;
+  if(!storms.length)h+=`<div class="muted">No storm teams in the current pull (fetch_gdelt_doc_2026.py refreshes this).</div>`;
+  storms.forEach(([tm,s])=>{
+    h+=`<div style="padding:5px 0;border-top:1px solid var(--line)"><b>${tm}</b> — ${s.rb1} <span class="muted">(avg tone ${s.tone}, ${s.articles} articles since Aug 1)</span><div style="margin-top:3px">`+
+      (s.darts&&s.darts.length
+        ?s.darts.map(dd=>`<span class="tag" style="background:#7a1f1f;color:#ffd9d9;font-weight:700;cursor:pointer" onclick="gotoComps('${dd.n.replace(/'/g,"\\'")}')" title="buzzing backup behind a storm RB1 — the 33%-hit cell; click for career comps">🚨 ${dd.n} $${dd.c}</span>`).join(" ")
+        :`<span class="muted" style="font-size:11px">no buzzing backup — not a signal${s.nobuzz&&s.nobuzz.length?` (quiet: ${s.nobuzz.slice(0,4).join(", ")})`:""}</span>`)+`</div></div>`;});
+  h+=`</div><div class="dr-teams">`+L.map(l=>
+    `<div class="dr-team" style="min-width:330px"><div class="nm">${l.title}</div>
+     <div class="muted" style="font-size:10px;margin:4px 0 6px">${l.note}</div>`+
+    (l.rows.length
+      ?l.rows.map((r,i)=>`<div class="pivot" title="${(r.y||"").replace(/"/g,"&quot;")}"><span>${i+1}. <span class="pos ${r.p}" style="transform:scale(.85)">${r.p}</span> <span class="name" style="cursor:pointer" onclick="gotoComps('${r.n.replace(/'/g,"\\'")}')">${r.n}</span> <span class="muted">${r.t}</span></span><span><span class="muted">$${r.c}</span> · ${r.s}</span></div>`).join("")
+      :`<div class="muted" style="font-size:11px">— none currently —</div>`)+`</div>`).join("")+`</div>`;
+  host.innerHTML=h;
+  document.getElementById("count").textContent="";
+  document.getElementById("notes").innerHTML="🚨 <b>Dart lenses.</b> Top-10 cheap players (market ≤$8) per validated dart-finding criterion — each card's header states the backtested hit rate that lens actually carries, so weight them accordingly. The 🚨 storm card is the only cross-player signal and needs BOTH halves: the RB1's news storm and the backup's own buzz. Hover a row for its full dart résumé; click a name for career comps.";
+}
+
 function render(){
   if(mode==="wind"){ renderWind(); return; }
   if(mode==="mockkeep"){ renderMockKeepers(); return; }
   if(mode==="mockdraft"){ renderMockDraft(); return; }
   if(mode==="draftroom"){ renderDraftRoom(); return; }
   if(mode==="sleepers"){ renderSleepers(); return; }
+  if(mode==="darts"){ renderDartLenses(); return; }
   if(mode==="fade"){ renderFade(); return; }
   if(mode==="risers"){ renderRisers(); return; }
   if(mode==="comps"){ renderComps(); return; }
@@ -2797,7 +2841,7 @@ function render(){
       if(k==="overall_rank")return `<td>${ovr[id]}</td>`;
       if(k==="pos_rank")return `<td>${projActive()?(p._prk??p.pos_rank):p.pos_rank}</td>`;
       if(k==="tier")return `<td><span class="tier t${t}">${p.tier}</span></td>`;
-      if(k==="name"){let tg=p.is_flex_starter?' <span class="flexstar">FLEX</span>':'';
+      if(k==="name"){let tg=stormTag(p)+(p.is_flex_starter?' <span class="flexstar">FLEX</span>':'');
         if(p.is_rookie===1)tg+=' <span class="tag rook">ROOK</span>';
         else if((p.breakout_prob||0)>=0.5)tg+=' <span class="tag brk">BREAK</span>';
         if(p.won_job===1)tg+=' <span class="tag won" title="Young (≤2 yr) player who ended 2025 entrenched after winning a role late — model runs slightly low (validated ~+0.7 PPG)">⬆ WON JOB</span>';
