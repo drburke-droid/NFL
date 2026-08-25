@@ -103,7 +103,7 @@ tool's own numbers from keepers_2026.js; * = predicted keep of the rational rule
 ==========================================================================
 (base-rate calibration x1.19: raw expected 26.8 keeps -> 31.8 = the league's real 2.65 keeps/team incl. waiver keeps)
 
-[ 1] A Useless Johnson              (owner espn98580191, expected keeps 3.0)
+[ 1] I Dowdle win                   (owner espn98580191, expected keeps 3.0)
     83.2%   RB  Bijan Robinson         cost $73  exp $58  save -15  ppg 21.8     
     38.9%   WR  Wan'Dale Robinson      cost $ 6  exp $13  save  +7  ppg 13.6      wvr
     31.9%   WR  Drake London           cost $42  exp $34  save  -8  ppg 16.8     
@@ -162,7 +162,7 @@ tool's own numbers from keepers_2026.js; * = predicted keep of the rational rule
      5.2%   RB  Dylan Sampson          cost $ 6  exp $ 2  save  -4  ppg  5.8      wvr
      3.1%   WR  Stefon Diggs           cost $16  exp $ 7  save  -9  ppg 12.4     
 
-[ 5] Saja Boys                      (owner BobbyeddyB, expected keeps 2.9)
+[ 5] Kid Dynamite                   (owner BobbyeddyB, expected keeps 2.9)
     58.1%   WR  Ja'Marr Chase          cost $61  exp $48  save -13  ppg 19.6     
     54.6%   RB  Christian McCaffrey    cost $54  exp $47  save  -7  ppg 24.5     
     36.5%   QB  Josh Allen             cost $32  exp $27  save  -5  ppg 22.8     
@@ -207,7 +207,7 @@ tool's own numbers from keepers_2026.js; * = predicted keep of the rational rule
      5.4%   WR  DJ Moore               cost $28  exp $12  save -16  ppg 10.1     
      3.7%   RB  Kareem Hunt            cost $ 4  exp $ 1  save  -3  ppg  8.6      wvr
 
-[ 9] State your name                (owner espn19238790, expected keeps 2.8)
+[ 9] Von Kaiser                     (owner espn19238790, expected keeps 2.8)
     97.0% * TE  Trey McBride           cost $ 9  exp $26  save +17  ppg 18.6 LOCK
     44.4% * RB  Kyren Williams         cost $12  exp $19  save  +7  ppg 15.5     
     42.2% * WR  Jameson Williams       cost $ 9  exp $17  save  +8  ppg 12.9     
@@ -235,7 +235,7 @@ tool's own numbers from keepers_2026.js; * = predicted keep of the rational rule
      4.4%   RB  J.K. Dobbins           cost $21  exp $10  save -11  ppg 11.6     
      4.4%   TE  Luke Musgrave          cost $ 4  exp $ 1  save  -3  ppg  3.8      wvr
 
-[12] Micahroni and Cheese           (owner RPT0777, expected keeps 2.9)
+[12] Empty Nesters                  (owner RPT0777, expected keeps 2.9)
     74.3% * RB  Jonathan Taylor        cost $34  exp $40  save  +6  ppg 21.3     
     73.5% * WR  George Pickens         cost $12  exp $24  save +12  ppg 17.2     
     27.1%   WR  Tetairoa McMillan      cost $24  exp $22  save  -2  ppg 12.6     
