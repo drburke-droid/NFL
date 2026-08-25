@@ -742,7 +742,7 @@ const KRISK=(()=>{const m={};
       if(pr!=null) m[norm(c.name)+"|"+c.pos]={p:pr,team:t.name,cost:c.cost};}
   return m;})();
 function keeperRiskTag(p){
-  if(typeof KEEPERS_FINAL!=="undefined")return ""; // selections are final: kept players are locked in the room, everyone else is genuinely available — no odds to warn about
+  if(finalKeepers())return ""; // selections are final: kept players are locked in the room, everyone else is genuinely available — no odds to warn about
   const r=KRISK[norm(p.name)+"|"+p.position];
   if(!r||keptBy(p))return "";                    // already locked in the room: no warning needed
   const pc=Math.round(r.p*100);
@@ -1091,19 +1091,38 @@ const POS_ORDER={QB:0,RB:1,WR:2,TE:3,K:4,DST:5};
 const posBoardCmp=(a,b,dir)=>dir*((POS_ORDER[a.p.position]??9)-(POS_ORDER[b.p.position]??9)||((b.val||0)-(a.val||0)));
 let DR=JSON.parse(localStorage.getItem("draftroom")||"null")||{teams:Array.from({length:12},(_,i)=>({name:"Team "+(i+1)})),me:0,owned:{}};
 const saveDR=()=>localStorage.setItem("draftroom",JSON.stringify(DR));
-// FINAL keepers (keepers_final_2026.js) are the league's ACTUAL locked selections and
-// outrank anything in this browser: every load wipes the kept flags and re-applies the
-// file, so cleared storage, a second device, or a stray "Clear all" can't lose them.
-// In-session what-ifs (un-tick a keeper, see the market react) still work — they just
-// revert on reload. A real change has to be made in keepers_final_2026.js itself.
+// ---- FINAL keepers: confirm each team → 🔒 LOCK → they re-apply on every load ----
+// Two sources, strongest first:
+//  (1) the 🔒 lock snapshot saved from the Keepers tab (localStorage "keepers_final_lock").
+//      Every page load wipes ALL kept flags and re-applies it, so "Clear all", resets,
+//      mock chaos and un-ticks can never lose the real list; only 🔓 Unlock removes it.
+//  (2) keepers_final_2026.js — the same list baked into the repo (via ⬇ Export finals)
+//      so a wiped browser or a second device starts locked too.
+let KLOCK=JSON.parse(localStorage.getItem("keepers_final_lock")||"null");
+let KCONF=JSON.parse(localStorage.getItem("keepers_confirm_teams")||"{}");  // per-team ✓ verified (pre-lock scratch)
+const finalKeepers=()=>(KLOCK&&KLOCK.keepers)||((typeof KEEPERS_FINAL!=="undefined"&&KEEPERS_FINAL&&KEEPERS_FINAL.keepers)||null);
 function applyFinalKeepers(){
-  if(typeof KEEPERS_FINAL==="undefined"||!KEEPERS_FINAL.keepers)return false;
+  const K=finalKeepers(); if(!K)return false;
   for(const id in DR.owned)if(DR.owned[id].kept)delete DR.owned[id];
-  for(const id in KEEPERS_FINAL.keepers){const k=KEEPERS_FINAL.keepers[id];
-    DR.owned[id]={t:k.t,price:k.price,kept:true};}
+  for(const id in K){DR.owned[id]={t:K[id].t,price:K[id].price,kept:true};}
   saveDR(); return true;
 }
 applyFinalKeepers();
+function lockFinalKeepers(){
+  const K={}; for(const id in DR.owned){const o=DR.owned[id];if(o.kept)K[id]={t:o.t,price:o.price};}
+  KLOCK={version:new Date().toISOString().slice(0,10),keepers:K};
+  localStorage.setItem("keepers_final_lock",JSON.stringify(KLOCK));
+  KCONF={}; localStorage.removeItem("keepers_confirm_teams");
+}
+function unlockFinalKeepers(){KLOCK=null;localStorage.removeItem("keepers_final_lock");}
+function exportFinalKeepers(){ if(!KLOCK)return;
+  const s="// FINAL 2026 keeper selections — locked in the draft tool on "+KLOCK.version+".\n"+
+    "// Replace docs/keepers_final_2026.js (and outputs/draft_tool/) with this file so the\n"+
+    "// lock is baked into the site itself for every browser and device.\n"+
+    "const KEEPERS_FINAL = "+JSON.stringify({version:KLOCK.version,keepers:KLOCK.keepers},null,1)+";\n";
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([s],{type:"text/javascript"}));
+  a.download="keepers_final_2026.js";a.click();URL.revokeObjectURL(a.href);
+}
 function teamState(t){
   const own=Object.keys(DR.owned).filter(id=>DR.owned[id].t===t).map(id=>({id,price:+DR.owned[id].price||0,p:BYID[id]})).filter(x=>x.p);
   const spent=own.reduce((a,x)=>a+x.price,0), budget=cfg.budget-spent;
@@ -1981,7 +2000,9 @@ function ensureKeeperLeague(){
   save(); saveDR(); return true;
 }
 const keptForTeam=i=>KEEPERS_2026.teams[i].candidates.filter(c=>DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept);
-function setKeeper(pid,i,cost,on){ if(on){DR.owned[pid]={t:i,price:cost,kept:true};} else {delete DR.owned[pid];} saveDR(); render(); }
+function setKeeper(pid,i,cost,on){
+  if(KLOCK){alert("🔒 Keepers are locked as FINAL. Hit 🔓 Unlock in the 🧩 Keepers tab if you absolutely need to change one.");render();return;}
+  if(on){DR.owned[pid]={t:i,price:cost,kept:true};} else {delete DR.owned[pid];} saveDR(); render(); }
 // "Reset to predicted" now ticks by MODELLED KEEP LIKELIHOOD, not by whether keeping is
 // +EV. Those disagree badly, and in both directions:
 //   * Bijan (P=0.79) and Drake Maye (0.75) were predicted=false — keeping them loses money
@@ -2015,7 +2036,9 @@ function resetPredicted(){
       .sort((a,b)=>keepProbOf(b)-keepProbOf(a)).slice(0,3)
       .forEach(c=>{DR.owned[c.pid]={t:i,price:c.cost,kept:true};});});
   saveDR(); render(); }
-function clearKeepers(){ for(const id in DR.owned){if(DR.owned[id].kept)delete DR.owned[id];} saveDR(); render(); }
+function clearKeepers(){
+  if(KLOCK){alert("🔒 Keepers are locked as FINAL — clearing is blocked. 🔓 Unlock first if you absolutely must.");return;}
+  for(const id in DR.owned){if(DR.owned[id].kept)delete DR.owned[id];} saveDR(); render(); }
 // per-owner historical positional spend tendencies (multipliers vs league) from keepers_2026.js
 function ownerTend(i){return (KEEPERS_2026.teams[i]&&KEEPERS_2026.teams[i].tend)||{QB:1,RB:1,WR:1,TE:1,payTE:false,eliteQB:false,top:0};}
 function tendLabel(td){const o=[];["RB","WR","QB","TE"].forEach(p=>{if(td[p]>=1.3)o.push("loves "+p);else if(td[p]<=0.65)o.push("light "+p);});
@@ -2069,11 +2092,14 @@ function renderMockKeepers(){
   // ONE pricing engine for cards + pool: exp = live market price (mkt.expIf rank-inserts kept players)
   let totKept=0,totCost=0; KT.forEach((t,i)=>{const k=keptForTeam(i);totKept+=k.length;k.forEach(c=>totCost+=c.cost);});
   let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
-    <h3 style="margin:0">🧩 ${typeof KEEPERS_FINAL!=="undefined"?"Keepers — FINAL selections locked":"Mock Keepers — confirm each team's 0–3, watch the board react"}</h3><span style="flex:1"></span>
+    <h3 style="margin:0">${KLOCK?`🔒 Keepers — FINAL (locked ${KLOCK.version})`:"🧩 Keepers — set each team's ACTUAL keeps, ✓ verify, then lock"}</h3><span style="flex:1"></span>
     <span>My team: <select class="drsel" id="mkMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
-    <button class="btn sm up" id="mkPredict" title="${typeof KEEPERS_FINAL!=="undefined"?"restore the league's actual locked selections from keepers_final_2026.js":"tick each team's modeled most-likely keeps"}">↺ ${typeof KEEPERS_FINAL!=="undefined"?"Reset to ACTUAL (final)":"Reset to predicted"}</button>
-    <button class="btn sm" id="mkClear">Clear all</button></div>
-    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed.${typeof KEEPERS_FINAL!=="undefined"?` <b style="color:var(--good)">📌 FINAL keepers are baked into the site</b> (keepers_final_2026.js, v${KEEPERS_FINAL.version}) — they re-apply on every page load, on any device. Un-ticking here is a what-if that lasts until the next reload; a real change means editing that file.`:""} Each card is sorted by <b>keep %</b> — the modeled odds that owner keeps the player, fitted on the league's actual 2023–25 keeper decisions (<span class="upc" style="font-weight:700">green ≥75%</span> is near-lock, discounted young stars are 97%+). <b>Verdict</b> is the rational call: <span class="upc">+$N</span> = keeping saves \$N vs redrafting · <span style="color:#e3b57f">redraft</span> = good value but cheaper to re-buy · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked. <b>🏅 optimal</b> on each card = the mathematically best 0–3 keeps for that roster (greedy-marginal knapsack: a keep must raise achievable starter PPG vs redrafting — opportunity cost, VONA and budget in one solve).</div></div>`;
+    ${KLOCK?`<button class="btn sm" id="mkExport" title="download keepers_final_2026.js — commit it (or hand it to Claude) to bake the lock into the site for every browser and device">⬇ Export finals</button>
+      <button class="btn sm" id="mkUnlock" title="removes the FINAL lock so the list can be edited — only if a selection genuinely changed">🔓 Unlock</button>`
+    :`<button class="btn sm up" id="mkLock" title="freeze the ticked keepers as the league's FINAL selections: they re-apply on every page load and can't be edited or cleared until you 🔓 Unlock">🔒 LOCK as FINAL (${Object.keys(KCONF).length}/${KT.length} ✓)</button>
+      <button class="btn sm up" id="mkPredict" title="tick each team's modeled most-likely keeps as a starting point">↺ Reset to predicted</button>
+      <button class="btn sm" id="mkClear">Clear all</button>`}</div>
+    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed.${KLOCK?` <b style="color:var(--good)">🔒 FINAL — locked ${KLOCK.version}.</b> Re-applied on every page load: "Clear all", resets, mocks and stray clicks can't erase these. 🔓 Unlock only if a selection genuinely changed. ⬇ Export finals + commit bakes the lock into the site for a wiped browser or another device.`:` <b class="scarce">⚠ NOT LOCKED — scratch ticks only.</b> Set each team's real keepers, tick <b>✓ verified</b> on its card, then hit <b>🔒 LOCK as FINAL</b> to freeze them.`} Each card is sorted by <b>keep %</b> — the modeled odds that owner keeps the player, fitted on the league's actual 2023–25 keeper decisions (<span class="upc" style="font-weight:700">green ≥75%</span> is near-lock, discounted young stars are 97%+). <b>Verdict</b> is the rational call: <span class="upc">+$N</span> = keeping saves \$N vs redrafting · <span style="color:#e3b57f">redraft</span> = good value but cheaper to re-buy · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked. <b>🏅 optimal</b> on each card = the mathematically best 0–3 keeps for that roster (greedy-marginal knapsack: a keep must raise achievable starter PPG vs redrafting — opportunity cost, VONA and budget in one solve).</div></div>`;
   // MOCK KEEPER CARDS — header and rows share ONE grid template so titles sit exactly over
   // their values: checkbox | pos | player | keep % (modeled likelihood, rows sorted by it) |
   // cost | exp $ | val | verdict
@@ -2093,7 +2119,7 @@ function renderMockKeepers(){
         :decision==="redraft"?`<span style="color:#e3b57f" title="Good value, but you can redraft him for ~$${exp} < the $${c.cost} keeper cost — don't waste a slot">redraft</span>`
         :`<span class="muted" title="Not worth a keeper slot (value $${val} ≤ cost $${c.cost})">—</span>`;
       return `<label class="mkc" style="display:grid;grid-template-columns:${MKCOLS};gap:3px;align-items:center;font-size:11px;${dis?'opacity:.35':''}">
-        <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${dis?"disabled":""}>
+        <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${(dis||KLOCK)?"disabled":""}>
         <span class="pos ${c.pos}" style="transform:scale(.8)">${c.pos}</span>
         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.name}${okSet.has(c.pid)?' — 🏅 OPTIMAL KEEP: the roster knapsack (keeper cost vs auction alternatives at intrinsic prices, VONA, budget — one solve) picks him in this team\'s best 0-3 keep set':''}">${okSet.has(c.pid)?'🏅':''}${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
         ${probCell(KP[c.pid])}
@@ -2102,7 +2128,7 @@ function renderMockKeepers(){
         <span class="muted" style="text-align:right">$${val}</span>
         <span style="text-align:right">${badge}</span></label>`;}).join("");
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:330px">
-      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
+      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}${KLOCK?' <span title="locked as FINAL">🔒</span>':` <label style="font-size:10px;font-weight:400;cursor:pointer;margin-left:6px" title="tick once this card shows this team's ACTUAL keepers — the lock button counts verified teams"><input type="checkbox" class="mkconf" data-i="${i}" ${KCONF[i]?"checked":""}> <span class="${KCONF[i]?'upc':'scarce'}">✓ verified</span></label>`}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">2026 bump +$${t.bump2026} · <b>${kc}/3</b> kept · ${s.spotsLeft} spots · ${t.candidates.length} keepable</div>
       <div style="font-size:10px" title="the mathematically optimal 0-3 keeps for THIS team: greedy-marginal roster knapsack — each keep must RAISE the team's achievable starter PPG vs spending that money at auction (opportunity cost + VONA + budget in one solve)">🏅 optimal: ${OK.kept.length?OK.kept.map(k=>`${k.name} $${k.cost}`).join(" · ")+` <span class="upc">(+${OK.gain.toFixed(1)} ppg/wk)</span>`:'<span class="muted">keep nothing — no candidate beats redrafting</span>'}</div>
       <div class="muted" style="font-size:10px;font-style:italic" title="from 2023–25 auction spend by position (recency-weighted); 🏈 = NFL-team fandom mined from his bids (buys them far above pool share and/or pays over the curve)">${tendLabel(t.tend||{})}${(typeof OWNER_BIAS!=="undefined"&&OWNER_BIAS[t.owner]&&OWNER_BIAS[t.owner].fan)?' · 🏈 '+Object.entries(OWNER_BIAS[t.owner].fan).map(([tm,m])=>tm+" fan ×"+m).join(" · "):''}</div>
@@ -2139,12 +2165,28 @@ function renderMockKeepers(){
     mdBackup();
     for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
     MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();};
-  document.getElementById("mkPredict").onclick=resetPredicted;
-  document.getElementById("mkClear").onclick=()=>{if(confirm(typeof KEEPERS_FINAL!=="undefined"?"Clear all locked keepers for this session? The FINAL selections re-apply on the next page load (they live in keepers_final_2026.js).":"Clear all locked keepers?"))clearKeepers();};
+  if(KLOCK){
+    document.getElementById("mkExport").onclick=exportFinalKeepers;
+    document.getElementById("mkUnlock").onclick=()=>{
+      if(!confirm(`🔓 Unlock FINAL keepers?\n\nThe saved FINAL list (locked ${KLOCK.version}) is removed and the ticks become editable scratch again — nothing re-applies on reload until you re-lock. Only do this if a selection genuinely changed.`))return;
+      unlockFinalKeepers();render();};
+  }else{
+    document.getElementById("mkLock").onclick=()=>{
+      const confN=Object.keys(KCONF).length;
+      if(confN<KT.length&&!confirm(`Only ${confN}/${KT.length} team cards are marked ✓ verified. Lock anyway?`))return;
+      const per=KT.map((t,i)=>{const k=keptForTeam(i);return `  ${t.name}: ${k.length?k.map(c=>`${c.name} $${c.cost}`).join(", "):"— none"}`;}).join("\n");
+      if(!confirm(`🔒 Lock these as the league's FINAL keepers?\n\n${per}\n\nAfter locking they re-apply on every page load and can't be edited, cleared or reset until you 🔓 Unlock.`))return;
+      lockFinalKeepers();render();};
+    document.getElementById("mkPredict").onclick=resetPredicted;
+    document.getElementById("mkClear").onclick=()=>{if(confirm("Clear all ticked keepers?"))clearKeepers();};
+    document.querySelectorAll(".mkconf").forEach(cb=>cb.onchange=()=>{
+      if(cb.checked)KCONF[cb.dataset.i]=1;else delete KCONF[cb.dataset.i];
+      localStorage.setItem("keepers_confirm_teams",JSON.stringify(KCONF));render();});
+  }
   document.querySelectorAll(".mkchk").forEach(cb=>cb.onchange=()=>setKeeper(cb.dataset.pid,+cb.dataset.t,+cb.dataset.cost,cb.checked));
   document.querySelectorAll(".mkh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(mkSort===k)mkDir*=-1; else{mkSort=k;mkDir=(k==="player"||k==="pos")?1:-1;} render();});
-  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card), sorted by <b>keep %</b> — the modeled likelihood that owner keeps the player, fitted on the league's actual 2023–25 keeper behavior — then the <b>keeper cost</b>, <b>exp $</b> (redraft price), our <b>value</b>, and the rational <b>verdict</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick 0–3 per team to lock keepers. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price from your league's <b>2023–25 bid history</b>: rank curve × per-player anchor fitted on what the room paid him before — the best remaining players shift up the curve as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
+  document.getElementById("notes").innerHTML="🧩 <b>Mock Keepers.</b> Each team shows its <b>full keepable roster</b> (scroll within a card), sorted by <b>keep %</b> — the modeled likelihood that owner keeps the player, fitted on the league's actual 2023–25 keeper behavior — then the <b>keeper cost</b>, <b>exp $</b> (redraft price), our <b>value</b>, and the rational <b>verdict</b>; predicted top-3 pre-ticked, and the italic line is that owner's historical lean (e.g. <i>loves RB</i>, <i>pays QB</i>) from 2023–25 spend. Tick each team's ACTUAL 0–3 keeps, mark the card <b>✓ verified</b>, then <b>🔒 LOCK as FINAL</b> — locked keepers re-apply on every page load and only 🔓 Unlock can change them. The pool below then shows each player's <b>Value</b> (true worth) vs <b>Exp $</b> (expected purchase price from your league's <b>2023–25 bid history</b>: rank curve × per-player anchor fitted on what the room paid him before — the best remaining players shift up the curve as studs get kept), the <b>Edge</b> (bargains), your Max bid, and the <b>likely bidders</b> (roster-construction demand × each owner's tendencies). Carry the same keepers into 🏟️ Draft Room for the live auction.";
 }
 
 // ================= MOCK DRAFT (every owner is a bot) =================
