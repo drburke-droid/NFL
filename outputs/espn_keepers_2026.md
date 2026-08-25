@@ -4,7 +4,7 @@
 price anchors loaded: 424 players, blend W=0.8
 Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper cost + this team's 2026 bump. KEEP only if keeping beats redrafting (exp > cost) AND good value (value > cost); rank by $ saved. 'redraft' = good value but cheaper to re-buy.
 
-[ 1] A Useless Johnson           (2026 bump +$5)
+[ 1] I Dowdle win                (2026 bump +$5)
      KEEP    QB  Justin Herbert         value $26  cost $10  exp $12  saves +$ 2
      redraft TE  George Kittle          value $33  cost $29  exp $18  (re-buy $18 < keep $29)
 
@@ -25,7 +25,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      redraft RB  D'Andre Swift          value $32  cost $16  exp $15  (re-buy $15 < keep $16)
      redraft WR  Tee Higgins            value $25  cost $22  exp $18  (re-buy $18 < keep $22)
 
-[ 5] Saja Boys                   <-- YOU  (2026 bump +$5)
+[ 5] Kid Dynamite                <-- YOU  (2026 bump +$5)
      KEEP    QB  Joe Burrow             value $19  cost $ 6  exp $10  saves +$ 4
      redraft WR  Rashee Rice            value $36  cost $32  exp $31  (re-buy $31 < keep $32)
      redraft QB  Josh Allen             value $36  cost $32  exp $27  (re-buy $27 < keep $32)
@@ -41,7 +41,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      redraft WR  Brian Thomas Jr.       value $16  cost $15  exp $12  (re-buy $12 < keep $15)
      redraft RB  Omarion Hampton        value $48  cost $45  exp $33  (re-buy $33 < keep $45)
 
-[ 9] State your name             (2026 bump +$3)
+[ 9] Von Kaiser                  (2026 bump +$3)
      KEEP    TE  Trey McBride           value $34  cost $ 9  exp $26  saves +$17 (kept 2yr)
      KEEP    WR  Jameson Williams       value $32  cost $ 9  exp $17  saves +$ 8 (kept 1yr)
      KEEP    RB  Kyren Williams         value $29  cost $12  exp $19  saves +$ 7 (kept 2yr)
@@ -55,7 +55,7 @@ Predicted 2026 keepers — Kuhn and Friends (12 teams). cost = true 2025 keeper 
      redraft RB  Breece Hall            value $38  cost $22  exp $19  (re-buy $19 < keep $22)
      redraft WR  DeVonta Smith          value $26  cost $20  exp $14  (re-buy $14 < keep $20)
 
-[12] Micahroni and Cheese        (2026 bump +$3)
+[12] Empty Nesters               (2026 bump +$3)
      KEEP    WR  George Pickens         value $29  cost $12  exp $24  saves +$12
      KEEP    RB  Jonathan Taylor        value $52  cost $34  exp $40  saves +$ 6 (kept 2yr)
      KEEP    RB  Bhayshul Tuten         value $ 6  cost $ 4  exp $ 6  saves +$ 2
