@@ -207,6 +207,8 @@
  ],
  "draft": {
   "auctionBudget": 200,
+  "availableDate": 1788912900000,
+  "date": 1788916500000,
   "isTradingEnabled": false,
   "keeperCount": 3,
   "keeperCountFuture": 3,
@@ -233,8 +235,8 @@
  "teams": [
   {
    "id": 1,
-   "name": "A Useless Johnson",
-   "abbrev": "ED",
+   "name": "I Dowdle win",
+   "abbrev": "Loss",
    "owner": "espn98580191",
    "roster": [
     {
@@ -266,7 +268,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 11,
+     "keeper_price": 6,
      "acq": "ADD"
     },
     {
@@ -274,7 +276,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 13,
+     "keeper_price": 6,
      "acq": "ADD"
     },
     {
@@ -305,8 +307,8 @@
      "name": "Michael Wilson",
      "pos": "WR",
      "slot": "WR",
-     "keeper": false,
-     "keeper_price": 0,
+     "keeper": true,
+     "keeper_price": 6,
      "acq": "ADD"
     },
     {
@@ -400,7 +402,7 @@
     {
      "name": "Travis Kelce",
      "pos": "TE",
-     "slot": "TE",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 7,
      "acq": "DRAFT"
@@ -426,7 +428,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 15,
+     "keeper_price": 25,
      "acq": "DRAFT"
     },
     {
@@ -442,7 +444,7 @@
      "pos": "WR",
      "slot": "FLEX",
      "keeper": true,
-     "keeper_price": 1,
+     "keeper_price": 11,
      "acq": "DRAFT"
     },
     {
@@ -464,9 +466,9 @@
     {
      "name": "Colston Loveland",
      "pos": "TE",
-     "slot": "BENCH",
+     "slot": "TE",
      "keeper": true,
-     "keeper_price": 15,
+     "keeper_price": 11,
      "acq": "ADD"
     },
     {
@@ -602,7 +604,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 6,
+     "keeper_price": 14,
      "acq": "TRADE"
     },
     {
@@ -610,7 +612,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 28,
+     "keeper_price": 36,
      "acq": "TRADE"
     },
     {
@@ -618,7 +620,7 @@
      "pos": "TE",
      "slot": "TE",
      "keeper": true,
-     "keeper_price": 7,
+     "keeper_price": 4,
      "acq": "TRADE"
     },
     {
@@ -650,7 +652,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 35,
+     "keeper_price": 45,
      "acq": "DRAFT"
     },
     {
@@ -690,7 +692,7 @@
      "pos": "RB",
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 3,
+     "keeper_price": 8,
      "acq": "DRAFT"
     },
     {
@@ -698,7 +700,7 @@
      "pos": "QB",
      "slot": "QB",
      "keeper": true,
-     "keeper_price": 1,
+     "keeper_price": 6,
      "acq": "DRAFT"
     },
     {
@@ -777,8 +779,8 @@
   },
   {
    "id": 5,
-   "name": "Saja Boys",
-   "abbrev": "KPOP",
+   "name": "Kid Dynamite",
+   "abbrev": "IRON",
    "owner": "BobbyeddyB",
    "roster": [
     {
@@ -802,7 +804,7 @@
      "pos": "WR",
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 27,
+     "keeper_price": 32,
      "acq": "DRAFT"
     },
     {
@@ -825,8 +827,8 @@
      "name": "Joe Burrow",
      "pos": "QB",
      "slot": "QB",
-     "keeper": false,
-     "keeper_price": 0,
+     "keeper": true,
+     "keeper_price": 6,
      "acq": "ADD"
     },
     {
@@ -850,7 +852,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 53,
+     "keeper_price": 61,
      "acq": "TRADE"
     },
     {
@@ -922,7 +924,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 6,
+     "keeper_price": 16,
      "acq": "DRAFT"
     },
     {
@@ -938,7 +940,7 @@
      "pos": "TE",
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 9,
+     "keeper_price": 19,
      "acq": "DRAFT"
     },
     {
@@ -1082,7 +1084,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 42,
+     "keeper_price": 45,
      "acq": "DRAFT"
     },
     {
@@ -1090,7 +1092,7 @@
      "pos": "TE",
      "slot": "FLEX",
      "keeper": true,
-     "keeper_price": 10,
+     "keeper_price": 13,
      "acq": "DRAFT"
     },
     {
@@ -1130,7 +1132,7 @@
      "pos": "TE",
      "slot": "TE",
      "keeper": true,
-     "keeper_price": 1,
+     "keeper_price": 4,
      "acq": "DRAFT"
     },
     {
@@ -1185,7 +1187,7 @@
   },
   {
    "id": 9,
-   "name": "State your name",
+   "name": "Von Kaiser",
    "abbrev": "SCHI",
    "owner": "espn19238790",
    "roster": [
@@ -1194,7 +1196,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 6,
+     "keeper_price": 12,
      "acq": "DRAFT"
     },
     {
@@ -1202,7 +1204,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 3,
+     "keeper_price": 9,
      "acq": "DRAFT"
     },
     {
@@ -1314,7 +1316,7 @@
      "pos": "TE",
      "slot": "TE",
      "keeper": true,
-     "keeper_price": 6,
+     "keeper_price": 9,
      "acq": "TRADE"
     }
    ]
@@ -1330,7 +1332,7 @@
      "pos": "WR",
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 28,
+     "keeper_price": 34,
      "acq": "DRAFT"
     },
     {
@@ -1354,7 +1356,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 19,
+     "keeper_price": 22,
      "acq": "DRAFT"
     },
     {
@@ -1394,7 +1396,7 @@
      "pos": "WR",
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 17,
+     "keeper_price": 20,
      "acq": "DRAFT"
     },
     {
@@ -1457,8 +1459,8 @@
   },
   {
    "id": 12,
-   "name": "Micahroni and Cheese",
-   "abbrev": "CHZ",
+   "name": "Empty Nesters",
+   "abbrev": "RPT",
    "owner": "RPT0777",
    "roster": [
     {
@@ -1482,7 +1484,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 26,
+     "keeper_price": 34,
      "acq": "DRAFT"
     },
     {
@@ -1498,7 +1500,7 @@
      "pos": "WR",
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 22,
+     "keeper_price": 25,
      "acq": "DRAFT"
     },
     {
@@ -1514,7 +1516,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 9,
+     "keeper_price": 12,
      "acq": "DRAFT"
     },
     {
@@ -1610,7 +1612,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 8,
+     "keeper_price": 13,
      "acq": "DRAFT"
     },
     {
@@ -1690,7 +1692,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 11,
+     "keeper_price": 6,
      "acq": "TRADE"
     },
     {
@@ -1738,7 +1740,7 @@
      "pos": "WR",
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 31,
+     "keeper_price": 36,
      "acq": "DRAFT"
     },
     {
@@ -1746,7 +1748,7 @@
      "pos": "WR",
      "slot": "WR",
      "keeper": true,
-     "keeper_price": 48,
+     "keeper_price": 53,
      "acq": "DRAFT"
     },
     {
@@ -1754,7 +1756,7 @@
      "pos": "RB",
      "slot": "RB",
      "keeper": true,
-     "keeper_price": 21,
+     "keeper_price": 26,
      "acq": "DRAFT"
     },
     {
