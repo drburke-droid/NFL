@@ -1815,6 +1815,20 @@ function planPanelHTML(mkt,mv){
 // starters by irreplaceability. Everything re-renders on every pick, so sold players
 // drop off, prices are the live market's, and rows you can no longer afford dim.
 // ▶ uses the same .planNom handler as the plan panel (nominate / open sold box).
+// ⚡ NOMINATION TICKER — best available by FFA consensus ADP (fallback ESPN/FFC), one
+// horizontal scroll strip above the team cards; every chip nominates via .planNom
+// (Draft Room: opens the sold box · Mock: on your turn puts him on the block, else
+// bid preview). Shared by both rooms so they look and work identically.
+function nomTickerHTML(mv){
+  const adp=p=>{const f=(typeof ffaMap!=="undefined"&&ffaMap)?ffaMap[fkey(p.name,p.position)]:null;
+    return (f&&f.adp)||p.espn_adp||p.ffc_adp||9999;};
+  const tick=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).map(p=>({p,a:adp(p)}))
+    .filter(x=>x.a<9999).sort((x,y)=>x.a-y.a).slice(0,60);
+  return `<div class="dr-panel" style="padding:3px 8px"><div style="display:flex;gap:5px;overflow-x:auto;align-items:center;scrollbar-width:thin">
+    <b class="muted" style="font-size:9px;flex:none;line-height:1.2" title="best available, sorted by FFA consensus ADP (fallback ESPN/FFC) — click any chip to nominate; drafted players drop off">⚡ BEST<br>AVAIL</b>
+    ${tick.map(x=>{const m=mv[pid(x.p)]||{};return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}<b class="base">$${m.market||1}</b></span>`;}).join("")}
+  </div></div>`;
+}
 let DOCK_HIDDEN=localStorage.getItem("dartdock_hide")==="1";
 function dartDockHTML(mkt,mv,plan){
   const meS=mv._meS, afford=Math.max(1,meS.budget-(meS.spotsLeft-1));
@@ -1936,16 +1950,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     <button class="btn sm" id="drReset" title="clears drafted players; keepers stay (managed in 🧩 Mock Keepers)">↺</button>
     ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩</button>`:""}
     <span id="espnStatus" style="display:none"></span></div></div>`;
-  // ⚡ NOMINATION TICKER — best available by FFA ADP (fallback ESPN/FFC ADP), one
-  // horizontal scroll strip above the team cards; every chip nominates via .planNom.
-  {const adp=p=>{const f=(typeof ffaMap!=="undefined"&&ffaMap)?ffaMap[fkey(p.name,p.position)]:null;
-     return (f&&f.adp)||p.espn_adp||p.ffc_adp||9999;};
-   const tick=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).map(p=>({p,a:adp(p)}))
-     .filter(x=>x.a<9999).sort((x,y)=>x.a-y.a).slice(0,60);
-   h+=`<div class="dr-panel" style="padding:3px 8px"><div style="display:flex;gap:5px;overflow-x:auto;align-items:center;scrollbar-width:thin">
-     <b class="muted" style="font-size:9px;flex:none;line-height:1.2" title="best available, sorted by FFA consensus ADP (fallback ESPN/FFC) — click any chip to nominate; drafted players drop off">⚡ BEST<br>AVAIL</b>
-     ${tick.map(x=>{const m=mv[pid(x.p)]||{};return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}<b class="base">$${m.market||1}</b></span>`;}).join("")}
-   </div></div>`;}
+  h+=nomTickerHTML(mv);
   // team strip — every owner's roster card: keepers 🔒, live draft score (starter PPG vs the
   // predraft optimal), surplus captured (value bought − $ paid), and what they're targeting next.
   // 6-across grid → exactly two rows of 6 for the 12-team league (flex cards were too narrow)
@@ -2539,18 +2544,24 @@ function renderMockDraft(){
   const drafted=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
   const done=TS.every(s=>s.spotsLeft<=0), onclk=DR.teams[MD.nom]?DR.teams[MD.nom].name:"—";
   const spentAll=MD.log.reduce((a,l)=>a+l.price,0);
-  // controls
-  let h=`<div class="dr-panel"><div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-    <h3 style="margin:0">🤖 Mock Draft — every owner bids like himself</h3><span style="flex:1"></span>
-    <span>My team: <select class="drsel" id="mdMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
-    ${MD.on&&!done?`<button class="btn sm" id="mdSim10">⏩ Sim 10 picks</button><button class="btn sm" id="mdSimEnd">⏭ Sim to end</button>`
-      :`<button class="btn sm up" id="mdStart">▶ Start mock draft</button>`}
-    <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $. The bots benchmark their bids on this public data; re-upload any time as the draft nears.">📈 ESPN trends</label>
+  // controls — same slim one-row style as the real Draft Room; the bot-behavior
+  // explainer, keeper count and ESPN status all live in the ❓ tooltip.
+  const mdHelp=(`🤖 MOCK: every owner bids like himself. ${kc} keepers locked (🧩 Mock Keepers, honored here). `
+    +(espnLoaded()?`Bot maxes anchor 65% on ESPN's public average auction $ and 35% on the league's own 2023-25 curve. `
+                  :`Bot maxes sit on the league's real 2023-25 winning-bid curve at the player's live rank. `)
+    +`Shaded by owner personality (positional lean, elite-QB/pay-TE, fandom), capped at his biggest-ever buy, gated by live need + budget. Winner pays runner-up +$1; in sims YOUR bot bids your sheet's max. `
+    +espnStatusTxt().replace(/<[^>]+>/g,"")).replace(/"/g,"&quot;");
+  let h=`<div class="dr-panel" style="padding:4px 8px"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px">
+    <span>Me: <select class="drsel" id="mdMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
+    <span class="muted" style="cursor:help" title="${mdHelp}">❓</span>
+    <span style="flex:1"></span>
+    ${MD.on&&!done?`<button class="btn sm" id="mdSim10" title="sim the next 10 picks">⏩ 10</button><button class="btn sm" id="mdSimEnd" title="sim to the end of the draft">⏭ end</button>`
+      :`<button class="btn sm up" id="mdStart">▶ Start mock</button>`}
+    <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $">📈</label>
     <input id="espnTrendFile" type="file" accept=".txt,text/plain" style="display:none">
-    ${drafted?`<button class="btn sm" id="mdReset">↺ Reset to keepers (clears ${drafted} drafted)</button>`:MD.on?`<button class="btn sm" id="mdReset">✕ End mock</button>`:""}
-    ${localStorage.getItem(MD_SNAP)?`<button class="btn sm" id="mdRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩ Restore pre-mock picks</button>`:""}</div>
-    <div class="muted" style="font-size:11px;margin-top:4px">${espnStatusTxt()}</div>
-    <div class="muted" style="font-size:12px;margin-top:6px"><b>${kc}</b> keepers locked (set them in 🧩 Mock Keepers — honored here). ${espnLoaded()?`Bot maxes anchor <b>65% on ESPN's public average auction $</b> (what the room actually sees) and 35% on the league's own curve — unlisted players go ~$1 to bots while OUR board may still like them (the proprietary edge). Curve part:`:`Bot maxes sit ON the league's <b>real 2023–25 winning-bid curve</b> at the player's live rank`} (WR has never gone past ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.WR)?KEEPERS_2026.bidcurve_pos.WR[0]:64}, QB ~$${(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos&&KEEPERS_2026.bidcurve_pos.QB)?KEEPERS_2026.bidcurve_pos.QB[0]:34} — bots won't either), shaded by each owner's personality (positional lean · elite-QB/pay-TE habits) and capped at his own biggest-ever buy. Live roster need and remaining budget gate everything. Winner pays runner-up's max +$1. In sims, <b>your</b> bot bids your sheet's suggested max.</div></div>`;
+    ${drafted?`<button class="btn sm" id="mdReset" title="Reset to keepers — clears ${drafted} drafted players">↺</button>`:MD.on?`<button class="btn sm" id="mdReset" title="end this mock">✕</button>`:""}
+    ${localStorage.getItem(MD_SNAP)?`<button class="btn sm" id="mdRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩</button>`:""}</div></div>`;
+  h+=nomTickerHTML(mv);   // ⚡ same nomination ticker as the real Draft Room
   // on the clock
   if(MD.on&&!done){
     h+=`<div class="dr-panel" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
@@ -2581,16 +2592,16 @@ function renderMockDraft(){
     else if(MD.on&&!MD.block&&MD.nom===DR.me)h+=`<div style="margin-top:8px"><button class="btn sm up" id="mdBlockBtn">⚡ Put him on the block</button></div>`;
     h+=`</div>`;
     h+=whatIfPanelHTML(p,mkt);}   // 🔮 price sensitivity for the on-block / previewed player
-  // rosters taking shape + weekly PPG
-  h+=`<div class="dr-teams">`+DR.teams.map((t,i)=>{const s=TS[i],ppg=teamPPGwk(i);
-    const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`${s.need[k]>1?s.need[k]:""}${k}`).join(" ")||"full";
-    const roster=rosterSlotsHTML(i,false);  // starting lineup (QB·RB·RB·WR·WR·FLX·TE·K·DST) + bench, ppg each
-    return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:232px${MD.on&&!done&&i===MD.nom?';outline:1px solid #e0a23c':''}">
-      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}<span class="bud">$${s.budget}</span></div>
-      <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max $${Math.max(1,s.budget-(s.spotsLeft-1))} · needs ${needs}</div>
+  // team strip — IDENTICAL cards to the real Draft Room (6-across grid, priced roster
+  // slots, need chips); the only mock extra is the gold outline on the nominating team.
+  h+=`<div class="dr-teams" style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px">`+DR.teams.map((t,i)=>{const s=TS[i];
+    const needs=["QB","RB","WR","TE","FLEX","K","DST"].filter(k=>s.need[k]>0).map(k=>`<span class="dr-need act">${s.need[k]>1?s.need[k]+" ":""}${k}</span>`).join("")||'<span class="dr-need">full</span>';
+    const roster=rosterSlotsHTML(i,true);   // starting lineup (QB·RB·RB·WR·WR·FLX·TE·K·DST) + bench, ppg each
+    return `<div class="dr-team ${i===DR.me?"me":""} ${s.spotsLeft<=0?"full":""}" style="width:auto;min-width:0${MD.on&&!done&&i===MD.nom?';outline:1px solid var(--gold)':''}">
+      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}${MD.on&&!done&&i===MD.nom?' <span title="on the clock — nominating next">🕐</span>':''}<span class="bud">$${s.budget}</span></div>
+      <div class="muted" style="font-size:10px">${s.spotsLeft} spots · max bid $${Math.max(1,s.budget-(s.spotsLeft-1))}</div>
       ${teamScoreHTML(i,BV)}${teamTargetsHTML(i)}
-      <div class="muted" style="font-size:10px">bench ${ppg.bn.toFixed(1)} ppg/wk</div>
-      <div style="max-height:290px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
+      <div class="nd">${needs}</div><div style="margin-top:4px;max-height:290px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
   h+=rankingPanelHTML(BV);                                 // 🏆 who has the best team right now
   // 🎯 your plan + 📊 scarcity — the SAME shared panels as the real Draft Room
   const MPP=planPanelHTML(mkt,mv);
