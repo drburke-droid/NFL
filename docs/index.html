@@ -1841,7 +1841,8 @@ function nomTickerHTML(mv){
     .filter(x=>x.a<9999).sort((x,y)=>x.a-y.a).slice(0,60);
   return `<div class="dr-panel" style="padding:3px 8px"><div class="thinscroll" style="display:flex;gap:5px;overflow-x:auto;align-items:center;padding-bottom:2px">
     <b class="muted" style="font-size:9px;flex:none;line-height:1.2" title="best available, sorted by FFA consensus ADP (fallback ESPN/FFC) — click any chip to nominate; drafted players drop off">⚡ BEST<br>AVAIL</b>
-    ${tick.map(x=>{const m=mv[pid(x.p)]||{};return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}<b class="base">$${m.market||1}</b></span>`;}).join("")}
+    ${tick.map(x=>{const m=mv[pid(x.p)]||{};const fl=(typeof NEWS_FLAGS!=="undefined")&&NEWS_FLAGS[norm(x.p.name)]&&(x.p.age??26)>=28;
+      return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid ${fl?'#7a2a35':'var(--line)'};border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1}${fl?' · 🚩 NEGATIVE-NEWS 28+ (−36-pt fade cell) — nominate to drain rivals, don’t pay up':''} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}${fl?'🚩':''}<b class="base">$${m.market||1}</b></span>`;}).join("")}
   </div></div>`;
 }
 // 🔎 SEARCH DROPDOWN — in the Draft Room / Mock Draft the pool table lives far below
@@ -1881,6 +1882,19 @@ function dartDockHTML(mkt,mv,plan){
   cols+=col("⭐ DRAFT NOW","Your plan's starters, most irreplaceable first — the players to land BEFORE the dart phase. $ shown is the walk-away (bid ceiling); re-solves after every pick.",
     stars.map(pk=>prow(pid(pk.p),pk.p.name,pk.p.position,`<span class="maxbid">$${pk.wa}</span>`,false,
       `${pk.p.name} — plan ${pk.slot} at exp $${pk.cost} · walk-away $${pk.wa}${pk.alt?' · fallback '+pk.alt.name:''}`)).join(""));
+  // ⛔ AVOID — news-flagged PRICED players still available (the age-tiered 🚩 cell:
+  // 28+ ran −36 pts vs price peers, 26-27 the pooled −20). Sorted worst-first. These
+  // are also your best NOMINATIONS: put them up early and let rivals drain budget.
+  if(typeof NEWS_FLAGS!=="undefined"&&Object.keys(NEWS_FLAGS).length){
+    const av=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)&&NEWS_FLAGS[norm(p.name)]&&(p.age??26)>=26)
+      .map(p=>({p,m:mv[pid(p)]||{},f:NEWS_FLAGS[norm(p.name)]}))
+      .filter(x=>(x.m.market||1)>=9||(x.p.ffa_aav||0)>=10)   // the −36-pt evidence is from PRICED ($10+) players; dart-priced flagged names keep their 🚩 row tags but aren't "avoids" — there's no price left to fade
+      .sort((a,b)=>(((b.p.age>=28)?1:0)-((a.p.age>=28)?1:0))||(a.f.t-b.f.t)).slice(0,12);
+    cols+=col("⛔ AVOID / nominate","Priced players carrying the 🚩 negative-August-news flag, worst first. 28+ (bold red age) ran −36 pts vs price peers (2016-25, 7/9 seasons) — decline/injury smoke; 26-27 the pooled −20 VORP cell. Don't pay up — DO nominate them early so rivals spend their budgets here.",
+      av.map(x=>prow(pid(x.p),x.p.name,x.p.position,
+        `<span class="${x.p.age>=28?'downc':'muted'}" style="font-weight:${x.p.age>=28?700:400}">${Math.round(x.p.age)}y</span> <span class="base">$${Math.max(1,Math.round(x.m.market||1))}</span>`,false,
+        `${x.p.name} — 🚩 tone ${x.f.t} (${x.f.n} articles, spike ×${Math.exp(x.f.s).toFixed(1)}) · age ${Math.round(x.p.age)} → ${x.p.age>=28?'−36-pt fade cell: let someone else pay':'pooled −20 VORP cell: verify the story'} · Exp $${Math.round(x.m.market||1)} — nominate him to drain rival budgets`)).join(""));
+  }
   const L=(typeof DART_LENSES!=="undefined")?DART_LENSES:[];
   for(const l of L){
     if(!l.rows.length)continue;                            // buried alpha: empty in 2026 — dropped
