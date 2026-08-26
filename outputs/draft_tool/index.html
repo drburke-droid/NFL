@@ -664,7 +664,9 @@ function setMode(m){
   document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
   document.getElementById("mWind").classList.toggle("active",m==="wind");
   const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts");
-  document.getElementById("settings").style.display=(m==="auction"||m==="draftroom")?"flex":"none";
+  document.getElementById("settings").style.display=(m==="auction")?"flex":"none";   // draft room: settings are set pre-draft — reclaim the row
+  document.getElementById("scorechips").style.display=(m==="draftroom")?"none":"";   // draft-night declutter: scoring chips
+  document.getElementById("leaguesub").style.display=(m==="draftroom")?"none":"";    //  + league subtitle off in the Draft Room
   document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=host?"block":"none";
@@ -1919,19 +1921,31 @@ function renderDraftRoom(){
   const mkt=dynamicMarket(), BV=baseValue(), mv=myVal(mkt,BV), meS=mv._meS;
   const TS=DR.teams.map((_,i)=>teamState(i));
   const teamOpts=DR.teams.map((t,i)=>`<option value="${i}">${t.name}</option>`).join("");
-  // controls
-  let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
-    <span>My team: <select class="drsel" id="drMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
-    <span class="muted"><b>Draft</b> on a player → type winning bid → click the owner. Enter = <select class="drsel" id="drAssign">${teamOpts}</select> · ✕ on a roster spot to undo</span>
+  // controls — ONE slim row (draft-night hyper-efficiency): the long how-to text and
+  // ESPN status lines live in the ❓ tooltip; import/reset are compact icon buttons.
+  let h=`<div class="dr-panel" style="padding:4px 8px"><div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:12px">
+    <span>Me: <select class="drsel" id="drMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
+    <span class="muted">Enter = <select class="drsel" id="drAssign">${teamOpts}</select></span>
+    <span class="muted" style="cursor:help" title="HOW TO: Draft on a player → type winning bid → click the owner (Enter assigns to the selected team) · ✕ on a roster spot to undo · ▶ anywhere nominates (opens the sold box).
+${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     <span style="flex:1"></span>
-    <label class="btn sm up" for="espnFile" title="Import outputs/espn_league.json produced by scripts/fetch_espn.py">📥 Import ESPN league</label>
+    <label class="btn sm" for="espnFile" title="Import outputs/espn_league.json produced by scripts/fetch_espn.py">📥</label>
     <input id="espnFile" type="file" accept=".json" style="display:none">
-    <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $. The bots benchmark their bids on this public data; re-upload any time as the draft nears.">📈 ESPN trends</label>
+    <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $">📈</label>
     <input id="espnTrendFile" type="file" accept=".txt,text/plain" style="display:none">
-    <button class="btn sm" id="drReset" title="clears drafted players; keepers stay (manage those in 🧩 Mock Keepers)">Reset draft (keepers stay)</button>
-    ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩ Restore pre-mock picks</button>`:""}</div>
-    <div class="muted" style="font-size:11px;margin-top:4px">${espnStatusTxt()}</div>
-    <div class="muted" id="espnStatus" style="font-size:11px;margin-top:2px"></div></div>`;
+    <button class="btn sm" id="drReset" title="clears drafted players; keepers stay (managed in 🧩 Mock Keepers)">↺</button>
+    ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩</button>`:""}
+    <span id="espnStatus" style="display:none"></span></div></div>`;
+  // ⚡ NOMINATION TICKER — best available by FFA ADP (fallback ESPN/FFC ADP), one
+  // horizontal scroll strip above the team cards; every chip nominates via .planNom.
+  {const adp=p=>{const f=(typeof ffaMap!=="undefined"&&ffaMap)?ffaMap[fkey(p.name,p.position)]:null;
+     return (f&&f.adp)||p.espn_adp||p.ffc_adp||9999;};
+   const tick=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).map(p=>({p,a:adp(p)}))
+     .filter(x=>x.a<9999).sort((x,y)=>x.a-y.a).slice(0,60);
+   h+=`<div class="dr-panel" style="padding:3px 8px"><div style="display:flex;gap:5px;overflow-x:auto;align-items:center;scrollbar-width:thin">
+     <b class="muted" style="font-size:9px;flex:none;line-height:1.2" title="best available, sorted by FFA consensus ADP (fallback ESPN/FFC) — click any chip to nominate; drafted players drop off">⚡ BEST<br>AVAIL</b>
+     ${tick.map(x=>{const m=mv[pid(x.p)]||{};return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}<b class="base">$${m.market||1}</b></span>`;}).join("")}
+   </div></div>`;}
   // team strip — every owner's roster card: keepers 🔒, live draft score (starter PPG vs the
   // predraft optimal), surplus captured (value bought − $ paid), and what they're targeting next.
   // 6-across grid → exactly two rows of 6 for the 12-team league (flex cards were too narrow)
