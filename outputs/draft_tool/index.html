@@ -1835,6 +1835,25 @@ function nomTickerHTML(mv){
     ${tick.map(x=>{const m=mv[pid(x.p)]||{};return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}<b class="base">$${m.market||1}</b></span>`;}).join("")}
   </div></div>`;
 }
+// 🔎 SEARCH DROPDOWN — in the Draft Room / Mock Draft the pool table lives far below
+// the fold, so typing in the search box shows the top matches in a floating panel
+// right under the input instead: available players are one click from nomination
+// (.planNom — same handler as everywhere), sold/kept players show greyed with owner.
+function updateSearchDrop(mv){
+  let dd=document.getElementById("searchdrop");
+  const q=document.getElementById("q");
+  if(!query||!q){if(dd)dd.remove();return;}
+  const ql=query.toLowerCase();
+  const hits=PLAYERS.filter(p=>(p.name+" "+(p.team||"")).toLowerCase().includes(ql))
+    .sort((a,b)=>(DR.owned[pid(a)]?1:0)-(DR.owned[pid(b)]?1:0)||(b.proj_pts||0)-(a.proj_pts||0)).slice(0,12);
+  if(!dd){dd=document.createElement("div");dd.id="searchdrop";document.body.appendChild(dd);}
+  const r=q.getBoundingClientRect();
+  dd.style.cssText=`position:absolute;left:${Math.round(r.left+scrollX)}px;top:${Math.round(r.bottom+scrollY+3)}px;min-width:${Math.max(Math.round(r.width),300)}px;max-width:420px;z-index:55;background:var(--panel);border:1px solid var(--line);border-radius:6px;box-shadow:0 8px 24px rgba(0,0,0,.55);padding:3px`;
+  dd.innerHTML=(hits.map(p=>{const id=pid(p),o=DR.owned[id],m=mv[id]||{};
+    return o?`<div style="display:flex;gap:6px;align-items:center;font-size:12px;padding:2px 6px;opacity:.45"><span style="width:12px"></span><span class="pos ${p.position}" style="transform:scale(.75)">${p.position}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}</span><span class="muted" style="font-size:10px;white-space:nowrap">${o.kept?"🔒 kept":"sold $"+o.price} — ${DR.teams[o.t]?DR.teams[o.t].name:"?"}</span></div>`
+    :`<div class="planNom" data-id="${id}" style="display:flex;gap:6px;align-items:center;font-size:12px;padding:2px 6px;cursor:pointer;border-radius:4px" onmouseover="this.style.background='var(--panel2)'" onmouseout="this.style.background=''" title="${p.name} — Exp $${m.market||1} · My Max $${m.maxBid||1} — click to nominate"><span style="color:var(--gold)">▶</span><span class="pos ${p.position}" style="transform:scale(.75)">${p.position}</span><span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name} <span class="muted" style="font-size:10px">${p.team||""}</span></span><b class="base">$${m.market||1}</b><b class="maxbid">$${m.maxBid||1}</b></div>`;})
+    .join(""))||`<div class="muted" style="font-size:11px;padding:4px 6px">no matches</div>`;
+}
 let DOCK_HIDDEN=localStorage.getItem("dartdock_hide")==="1";
 function dartDockHTML(mkt,mv,plan){
   const meS=mv._meS, afford=Math.max(1,meS.budget-(meS.spotsLeft-1));
@@ -2019,6 +2038,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     <div style="margin-top:10px;display:flex;justify-content:flex-end"><button class="btn sm" id="drmCancel">Esc — cancel</button></div>
   </div></div>`;
   host.innerHTML=h;
+  updateSearchDrop(mv);                                    // 🔎 floating search matches under the box
   document.getElementById("drMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   document.getElementById("espnFile").onchange=e=>{const f=e.target.files[0]; if(f) f.text().then(importEspnLeague);};
   wireEspnUpload();
@@ -2646,6 +2666,7 @@ function renderMockDraft(){
         <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
         <td class="l">${MD.on&&!done&&!MD.block&&MD.nom===DR.me?`<button class="btn sm mdblock" data-id="${id}">⚡ Block</button>`:'<span class="muted" style="font-size:11px">👁 bids</span>'}</td></tr>`;}).join("")+`</tbody></table></div>`;
   host.innerHTML=h;
+  updateSearchDrop(mv);                                    // 🔎 floating search matches under the box
   const S=id=>document.getElementById(id);
   wireEspnUpload();
   S("mdMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
@@ -2871,6 +2892,8 @@ function renderDartLenses(){
 }
 
 function render(){
+  // the floating search dropdown only lives in the two draft rooms — clear it elsewhere
+  if(!query||!["draftroom","mockdraft"].includes(mode)){const _sd=document.getElementById("searchdrop");if(_sd)_sd.remove();}
   if(mode==="wind"){ renderWind(); return; }
   if(mode==="mockkeep"){ renderMockKeepers(); return; }
   if(mode==="mockdraft"){ renderMockDraft(); return; }
