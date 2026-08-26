@@ -206,7 +206,7 @@ for _dir in (os.path.join(ROOT, "docs"), os.path.join(ROOT, "outputs", "draft_to
 d["w4"] = d.name.map(_byid["w4"])
 def _rows(sub, stat):
     return [{"n": r["name"], "p": r.position, "t": r.team, "c": round(float(r.mkt_cost or 1), 1),
-             "s": stat(r), "y": why(r)} for _, r in sub.head(10).iterrows()]
+             "s": stat(r), "y": why(r)} for _, r in sub.head(14).iterrows()]
 LENSES = [
     ("storm", "🚨 Handcuff storm", "RB1 in an August news storm + this backup already buzzing. 2016-25: 33% hit vs 19-21% base, +22 pts over FFA (24 pairs). Backups WITHOUT buzz behind a storm hit 8% — buzz is required, this cell only.",
      d[d.storm == 1].sort_values("score", ascending=False), lambda r: f"RB1 {STORM_RB1.get(r.team,{}).get('rb1','?')} tone {STORM_RB1.get(r.team,{}).get('tone','?')}"),

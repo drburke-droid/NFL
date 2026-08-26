@@ -1807,6 +1807,47 @@ function planPanelHTML(mkt,mv){
   }
   return {html:h+`</div>`,plan};
 }
+// 🎯 DART DOCK — persistent overlay pinned to the bottom quarter of the Draft Room /
+// Mock Draft screens: one live column per dart-finding lens (🚨 storm first, empty
+// lenses dropped — buried alpha is empty in 2026) plus ⭐ DRAFT NOW, the plan's
+// starters by irreplaceability. Everything re-renders on every pick, so sold players
+// drop off, prices are the live market's, and rows you can no longer afford dim.
+// ▶ uses the same .planNom handler as the plan panel (nominate / open sold box).
+let DOCK_HIDDEN=localStorage.getItem("dartdock_hide")==="1";
+function dartDockHTML(mkt,mv,plan){
+  const meS=mv._meS, afford=Math.max(1,meS.budget-(meS.spotsLeft-1));
+  if(DOCK_HIDDEN)
+    return `<div id="dartdock" style="position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--panel);border-top:2px solid var(--gold);padding:2px 10px;font-size:11px;display:flex;gap:10px;align-items:center"><b>🎯 DART DOCK</b><span class="muted">budget $${meS.budget} · max bid $${afford}</span><span style="flex:1"></span><span id="dockHide" style="cursor:pointer;color:var(--gold)">▲ show</span></div>`;
+  const prow=(id,name,pos,right,dim,ttl)=>`<div style="display:flex;gap:3px;align-items:center;font-size:11px;line-height:1.5;${dim?'opacity:.35':''}" title="${(ttl||'').replace(/"/g,'&quot;')}">
+    <span class="planNom" data-id="${id}" title="nominate ${name}" style="cursor:pointer;color:var(--gold);flex:none">▶</span>
+    <span class="pos ${pos}" style="transform:scale(.7);flex:none">${pos}</span>
+    <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
+    <span style="flex:none">${right}</span></div>`;
+  const col=(title,tip,rows)=>`<div style="flex:1;min-width:148px;overflow-y:auto;border-right:1px solid var(--line);padding:0 6px 4px">
+    <div style="font-size:10px;font-weight:700;position:sticky;top:0;background:var(--panel);padding:2px 0;cursor:help" title="${tip.replace(/"/g,'&quot;')}">${title}</div>
+    ${rows||'<div class="muted" style="font-size:10px">— none left —</div>'}</div>`;
+  let cols="";
+  const stars=plan?plan.picks.filter(pk=>pk.wa!=null).slice().sort((a,b)=>(b.du||0)-(a.du||0)).slice(0,12):[];
+  cols+=col("⭐ DRAFT NOW","Your plan's starters, most irreplaceable first — the players to land BEFORE the dart phase. $ shown is the walk-away (bid ceiling); re-solves after every pick.",
+    stars.map(pk=>prow(pid(pk.p),pk.p.name,pk.p.position,`<span class="maxbid">$${pk.wa}</span>`,false,
+      `${pk.p.name} — plan ${pk.slot} at exp $${pk.cost} · walk-away $${pk.wa}${pk.alt?' · fallback '+pk.alt.name:''}`)).join(""));
+  const L=(typeof DART_LENSES!=="undefined")?DART_LENSES:[];
+  for(const l of L){
+    if(!l.rows.length)continue;                            // buried alpha: empty in 2026 — dropped
+    const live=l.rows.map(r=>{const p=BYID[r.n+"|"+r.p+"|"+r.t]||PLAYERS.find(x=>x.name===r.n&&x.position===r.p);
+      if(!p||DR.owned[pid(p)])return null;
+      const m=mv[pid(p)]||{};return {p,exp:Math.max(1,Math.round(m.market||r.c||1)),y:r.y,s:r.s};}).filter(Boolean);
+    cols+=col(l.title,l.note,live.map(x=>prow(pid(x.p),x.p.name,x.p.position,
+      `<span class="base">$${x.exp}</span>`,x.exp>afford,
+      `${x.p.name} — ${x.s} · ${x.y} · live Exp $${x.exp}${x.exp>afford?' — ABOVE your max affordable $'+afford:''}`)).join(""));
+  }
+  return `<div style="height:27vh"></div>
+    <div id="dartdock" style="position:fixed;left:0;right:0;bottom:0;height:25vh;z-index:60;background:var(--panel);border-top:2px solid var(--gold);display:flex;flex-direction:column;box-shadow:0 -6px 20px rgba(0,0,0,.55)">
+    <div class="muted" style="display:flex;align-items:center;gap:10px;padding:2px 8px;font-size:10px;flex:none">
+      🎯 <b>DART DOCK</b> — live: sold players drop off, prices track the room, dimmed = above your max affordable · your budget <b class="maxbid">$${meS.budget}</b> · max bid <b>$${afford}</b> · ▶ = nominate
+      <span style="flex:1"></span><span id="dockHide" style="cursor:pointer;color:var(--gold)">▼ hide</span></div>
+    <div style="flex:1;display:flex;overflow:hidden">${cols}</div></div>`;
+}
 // 🎯 the running list of players I WANT, in nomination-priority order: plan starters by
 // irreplaceability, then the plan's bench darts, then next-up high Dart/Leap RB/WR pivots,
 // K/DST streams last. The sim bot nominates straight off this list on my turn.
@@ -1909,6 +1950,7 @@ function renderDraftRoom(){
   h+=PP.html;
   if(considerId&&BYID[considerId]&&!DR.owned[considerId])h+=whatIfPanelHTML(BYID[considerId],mkt);   // 🔮 price what-if (📊 on a row)
   h+=scarcityPanelHTML(mkt);
+  h+=dartDockHTML(mkt,mv,plan);                            // 🎯 persistent bottom-quarter dart dock
   // available table — same Value / Exp $ / My Max / Edge($) engine and labels as every other
   // screen, plus VONA pts (the POINTS edge the scarcity panel above talks about). Sortable.
   let rows=avail.concat(PLAYERS.filter(p=>!DR.owned[pid(p)]&&isK(p))).filter(p=>{
@@ -1989,6 +2031,7 @@ function renderDraftRoom(){
     pi.onkeydown=e=>{if(e.key==="Enter")drmAssign(+document.getElementById("drAssign").value);if(e.key==="Escape")drmClose();};};
   // Draft button in the table AND ▶ nominate in the Your-plan card / pivot list open the sold box
   document.querySelectorAll(".drdraft,.planNom").forEach(b=>b.onclick=e=>{e.stopPropagation();openDrModal(b.dataset.id);});
+  {const _dh=document.getElementById("dockHide");if(_dh)_dh.onclick=()=>{DOCK_HIDDEN=!DOCK_HIDDEN;localStorage.setItem("dartdock_hide",DOCK_HIDDEN?"1":"0");render();};}
   wireWhatif();
   document.getElementById("drmCancel").onclick=drmClose;
   modal.onclick=e=>{if(e.target===modal)drmClose();};
@@ -2536,8 +2579,10 @@ function renderMockDraft(){
       <div style="max-height:290px;overflow:auto">${roster}</div></div>`;}).join("")+`</div>`;
   h+=rankingPanelHTML(BV);                                 // 🏆 who has the best team right now
   // 🎯 your plan + 📊 scarcity — the SAME shared panels as the real Draft Room
-  h+=planPanelHTML(mkt,mv).html;
+  const MPP=planPanelHTML(mkt,mv);
+  h+=MPP.html;
   h+=scarcityPanelHTML(mkt);
+  h+=dartDockHTML(mkt,mv,MPP.plan);                        // 🎯 same bottom-quarter dart dock as the Draft Room
   // draft log
   if(MD.log.length)h+=`<div class="dr-panel"><h3>📜 Results</h3><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:2px;font-size:12px">`+
     MD.log.slice(0,80).map(l=>`<div><span class="pos ${l.pos}" style="transform:scale(.8)">${l.pos}</span> ${l.name} → <b class="${l.mine?'maxbid':''}">${DR.teams[l.t]?DR.teams[l.t].name:'?'}</b> <b>$${l.price}</b>${l.ru!=null&&DR.teams[l.ru]?` <span class="muted">(over ${DR.teams[l.ru].name} $${l.rmax})</span>`:''}</div>`).join("")+`</div></div>`;
@@ -2597,6 +2642,7 @@ function renderMockDraft(){
   wireWhatif();
   document.querySelectorAll(".planNom").forEach(b=>b.onclick=e=>{e.stopPropagation();const id=b.dataset.id;
     if(MD.on&&!done&&!MD.block&&MD.nom===DR.me){MD.block=id;MD.sel=null;}else{MD.sel=id;}saveMD();render();});
+  {const _dh=document.getElementById("dockHide");if(_dh)_dh.onclick=()=>{DOCK_HIDDEN=!DOCK_HIDDEN;localStorage.setItem("dartdock_hide",DOCK_HIDDEN?"1":"0");render();};}
   document.querySelectorAll(".mdh").forEach(th=>th.onclick=()=>{const k=th.dataset.k;
     if(mdPoolSort===k)mdPoolDir*=-1; else{mdPoolSort=k;mdPoolDir=(k==="player"||k==="pos")?1:-1;} render();});
   document.getElementById("notes").innerHTML="🤖 <b>Mock Draft.</b> Press <b>Start</b> — every other team becomes a bot that bids like its owner. Bot maxes are anchored to the league's <b>actual winning-bid distribution</b> (every non-keeper price paid 2023–25, rank-ordered per position), shaded by that owner's positional lean, elite-QB/pay-TE habits and <b>NFL-team fandom</b> (🏈 — mined from his own bids: e.g. the Raiders fan who paid $71 for Jeanty stretches ×1.3 on LV players), hard-capped at his biggest-ever buy and the position's all-time top price, and gated by live roster need and remaining budget. Nobody leaves money on the table: flush teams bid over curve on players they need, pay up for late stashes (surplus-clearing floor), and the room price-enforces them near their max. "+
@@ -2782,7 +2828,7 @@ function renderDartLenses(){
       (s.darts&&s.darts.length
         ?s.darts.map(dd=>`<span class="tag" style="background:#7a1f1f;color:#ffd9d9;font-weight:700;cursor:pointer" onclick="gotoComps('${dd.n.replace(/'/g,"\\'")}')" title="buzzing backup behind a storm RB1 — the 33%-hit cell; click for career comps">🚨 ${dd.n} $${dd.c}</span>`).join(" ")
         :`<span class="muted" style="font-size:11px">no buzzing backup — not a signal${s.nobuzz&&s.nobuzz.length?` (quiet: ${s.nobuzz.slice(0,4).join(", ")})`:""}</span>`)+`</div></div>`;});
-  h+=`</div><div class="dr-teams">`+L.map(l=>
+  h+=`</div><div class="dr-teams">`+L.filter(l=>l.rows.length).map(l=>
     `<div class="dr-team" style="min-width:330px"><div class="nm">${l.title}</div>
      <div class="muted" style="font-size:10px;margin:4px 0 6px">${l.note}</div>`+
     (l.rows.length
