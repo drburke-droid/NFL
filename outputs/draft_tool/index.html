@@ -33,6 +33,12 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.45 -apple-system,Segoe UI,Roboto,sans-serif}
+  /* slim palette-matched scrollbars (nomination ticker, dart-dock columns) */
+  .thinscroll{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+  .thinscroll::-webkit-scrollbar{height:5px;width:5px}
+  .thinscroll::-webkit-scrollbar-track{background:transparent}
+  .thinscroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+  .thinscroll::-webkit-scrollbar-thumb:hover{background:var(--muted)}
   header{padding:16px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
   h1{margin:0 0 6px;font-size:19px}
   .sub{color:var(--muted);font-size:13px}
@@ -1824,7 +1830,7 @@ function nomTickerHTML(mv){
     return (f&&f.adp)||p.espn_adp||p.ffc_adp||9999;};
   const tick=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).map(p=>({p,a:adp(p)}))
     .filter(x=>x.a<9999).sort((x,y)=>x.a-y.a).slice(0,60);
-  return `<div class="dr-panel" style="padding:3px 8px"><div style="display:flex;gap:5px;overflow-x:auto;align-items:center;scrollbar-width:thin">
+  return `<div class="dr-panel" style="padding:3px 8px"><div class="thinscroll" style="display:flex;gap:5px;overflow-x:auto;align-items:center;padding-bottom:2px">
     <b class="muted" style="font-size:9px;flex:none;line-height:1.2" title="best available, sorted by FFA consensus ADP (fallback ESPN/FFC) — click any chip to nominate; drafted players drop off">⚡ BEST<br>AVAIL</b>
     ${tick.map(x=>{const m=mv[pid(x.p)]||{};return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid var(--line);border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}<b class="base">$${m.market||1}</b></span>`;}).join("")}
   </div></div>`;
@@ -1839,7 +1845,7 @@ function dartDockHTML(mkt,mv,plan){
     <span class="pos ${pos}" style="transform:scale(.7);flex:none">${pos}</span>
     <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
     <span style="flex:none">${right}</span></div>`;
-  const col=(title,tip,rows)=>`<div style="flex:1;min-width:148px;overflow-y:auto;border-right:1px solid var(--line);padding:0 6px 4px">
+  const col=(title,tip,rows)=>`<div class="thinscroll" style="flex:1;min-width:148px;overflow-y:auto;border-right:1px solid var(--line);padding:0 6px 4px">
     <div style="font-size:10px;font-weight:700;position:sticky;top:0;background:var(--panel);padding:2px 0;cursor:help" title="${tip.replace(/"/g,'&quot;')}">${title}</div>
     ${rows||'<div class="muted" style="font-size:10px">— none left —</div>'}</div>`;
   let cols="";
