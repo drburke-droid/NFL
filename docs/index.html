@@ -325,10 +325,19 @@ const crowdTag=p=>{if(p.position!=="WR"||typeof CROWDING_2026==="undefined")retu
     : ` <span class="tag muted" style="background:#1d2b21;color:#9ad9ae" title="${tip}">▲ open WR2</span>`;};
 // 🚩 negative-news August (scripts/build_news_flags.py, GDELT tone): attention spike +
 // negative tone on a priced player = the holdout/injury/suspension pattern, historically
-// -20 VORP vs price peers (outputs/reports/tone_signal.md). Red flag, not an auto-fade.
+// -20 VORP vs price peers (outputs/reports/tone_signal.md). AGE-AWARE since 2026-08-26
+// (buzz_subset_sweep.py test 8): the damage concentrates in OLDER players — priced 28+
+// in this cell ran −36 pts (p=.048, 7/9 seasons); ≤25 ran −4.7, indistinguishable from
+// noise (negativity about a young player is usually contract noise, about an old vet
+// it's decline/injury smoke). 28+ = loud flag, 26–27 = standard, ≤25 = muted note.
 const newsFlagTag=p=>{if(typeof NEWS_FLAGS==="undefined")return "";
   const f=NEWS_FLAGS[norm(p.name)];if(!f)return "";
-  return ` <span class="tag" style="background:#3a1620;color:#ff9aa8" title="🚩 NEGATIVE-NEWS AUGUST${typeof NEWS_FLAGS_YEAR!=='undefined'?' '+NEWS_FLAGS_YEAR:''}: news volume spiked (×${Math.exp(f.s).toFixed(1)} vs his own Jan–May baseline, ${f.n} articles) with NEGATIVE tone (${f.t}). 2016–25 priced players in this cell averaged −20 VORP vs price peers — the holdout/injury/suspension pattern (Charles '16, Golladay '20, Fournette '18, Etienne '24, Ekeler '25). Verify the story before paying up; not an auto-fade (CMC '22 survived it).">🚩 news</span>`;};
+  const yr=typeof NEWS_FLAGS_YEAR!=="undefined"?" "+NEWS_FLAGS_YEAR:"";
+  const base=`news volume spiked (×${Math.exp(f.s).toFixed(1)} vs his own Jan–May baseline, ${f.n} articles) with NEGATIVE tone (${f.t}).`;
+  const a=p.age??26;
+  if(a>=28)return ` <span class="tag" style="background:#4a1016;color:#ff8898;font-weight:700" title="🚩 NEGATIVE-NEWS AUGUST${yr} — AGE ${Math.round(a)}: ${base} On priced players 28+ this cell ran −36 pts vs price peers (2016–25, 7/9 seasons) — at this age August negativity is usually decline/injury smoke that proves real. Strong fade signal; verify the story, then let someone else pay.">🚩 news 28+</span>`;
+  if(a<=25)return ` <span class="tag" style="background:#242b36;color:#8b9bb0" title="🚩 negative August news${yr}: ${base} At age ≤25 this historically did NOT hurt (−4.7 pts, ns — usually contract/hype noise, not decline). Informational only.">🚩</span>`;
+  return ` <span class="tag" style="background:#3a1620;color:#ff9aa8" title="🚩 NEGATIVE-NEWS AUGUST${yr}: ${base} 2016–25 priced players in this cell averaged −20 VORP vs price peers — the holdout/injury/suspension pattern (Charles '16, Golladay '20, Fournette '18, Etienne '24, Ekeler '25). Verify the story before paying up; not an auto-fade (CMC '22 survived it).">🚩 news</span>`;};
 // ⚠ PRICE DISAGREEMENT: the three price sources (our engine Exp $, FFA consensus AAV,
 // ESPN sitewide salary) disagree substantially on this player — spread >= $8 AND >= 35%
 // of the highest quote. One market is wrong: if our engine is the LOW one, the room
