@@ -19,12 +19,12 @@ curve, x position fill-tilt (RB 1.15 — the wire can't rescue RB).
 | 4 | RB | Will Shipley | PHI | 24 | $1 | 1.13 | 🚨 STORM · behind Saquon Barkley (news tone -0.73, 77 art) · brk scr 0.44 |
 | 5 | RB | AJ Dillon | PHI | 28 | $1 | 1.02 | 🚨 STORM · behind Saquon Barkley (news tone -0.73, 77 art) · brk scr 0.58 |
 | 6 | RB | Terrell Jennings | NE | 25 | $1 | 0.97 | 🚨 STORM · behind TreVeyon Henderson (news tone -0.75, 27 art) · brk scr 0.31 |
-| 7 | RB | Robbie Ouzts | SEA | 24 | $1 | 0.97 | 🚨 STORM · behind Kenneth Walker III (news tone -0.81, 24 art) · brk scr 0.31 |
-| 8 | RB | D'Ernest Johnson | NE | 30 | $1 | 0.92 | 🚨 STORM · behind TreVeyon Henderson (news tone -0.75, 27 art) · brk scr 0.74 |
-| 9 | RB | Devin Singletary | NYG | 29 | $1 | 0.82 | 🚨 STORM · behind Cam Skattebo (news tone -0.59, 123 art) · dart 15% · H2 +8.3ppg |
-| 10 | RB | Tyrone Tracy Jr. | NYG | 27 | $3 | 0.70 | 🚨 STORM · behind Cam Skattebo (news tone -0.59, 123 art) · H2 +8.2ppg |
-| 11 | RB | Blake Corum | LA | 26 | $5 | 2.25 | T1 H+B · dart 37% · brk scr 0.38 · HEIR- · H2 +4.9ppg |
-| 12 | RB | Nick Chubb | HOU | 31 | $1 | 1.18 | T1 H+B · dart 25% · brk scr 0.46 · HEIR- |
+| 7 | RB | Audric Estimé | NO | 23 | $1 | 0.97 | 🚨 STORM · behind Alvin Kamara (news tone -0.63, 91 art) |
+| 8 | RB | Robbie Ouzts | SEA | 24 | $1 | 0.97 | 🚨 STORM · behind Kenneth Walker III (news tone -0.81, 24 art) · brk scr 0.31 |
+| 9 | RB | D'Ernest Johnson | NE | 30 | $1 | 0.92 | 🚨 STORM · behind TreVeyon Henderson (news tone -0.75, 27 art) · brk scr 0.74 |
+| 10 | RB | Devin Singletary | NYG | 29 | $1 | 0.82 | 🚨 STORM · behind Cam Skattebo (news tone -0.59, 123 art) · dart 15% · H2 +8.3ppg |
+| 11 | RB | Tyrone Tracy Jr. | NYG | 27 | $3 | 0.70 | 🚨 STORM · behind Cam Skattebo (news tone -0.59, 123 art) · H2 +8.2ppg |
+| 12 | RB | Blake Corum | LA | 26 | $5 | 2.25 | T1 H+B · dart 37% · brk scr 0.38 · HEIR- · H2 +4.9ppg |
 | 13 | WR | Adonai Mitchell | NYJ | 24 | $1 | 2.86 | T3 yFLASH · dart 37% · brk scr 0.81 · WR2-open |
 | 14 | RB | Dylan Sampson | CLE | 22 | $1 | 2.20 | T3 yFLASH · dart 26% · brk scr 0.49 |
 | 15 | WR | Xavier Legette | CAR | 25 | $1 | 2.05 | T3 yFLASH · dart 35% · brk scr 0.51 |

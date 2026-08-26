@@ -265,6 +265,10 @@ def main():
         for frame in (kdf, ddf):
             if c not in frame.columns: frame[c]=np.nan
     allp = pd.concat([skill[cols], kdf[cols], ddf[cols]], ignore_index=True)
+    # RETIRED — announced after the data pipelines ran; drop from the board entirely so
+    # the ticker / dart dock / pool can't surface an undraftable player.
+    RETIRED = {"Nick Chubb"}          # retired 2026-08-26
+    allp = allp[~allp["name"].isin(RETIRED)]
     allp["delta_ly"] = allp["proj_pts"] - allp["actual_2025"]
     allp = allp.sort_values("vorp", ascending=False).reset_index(drop=True)
     allp["overall_rank"] = np.arange(1, len(allp)+1)
