@@ -2370,15 +2370,19 @@ function ownerBid(i,p,mkt,TS){
   // the adjustment bots systematically underbid the mid class ($10-24 band ran ~15 sales
   // vs the league's real 26-45) and arrive at the endgame flush. Unlisted players keep a
   // shaded 55% of curve instead of a hard $2 cap for the same reason.
-  if(espnLoaded()){const eav=espnAV(p),infl=Math.min(1.3,Math.max(1,mkt.infl||1));
-    raw=eav>0?(0.65*eav+0.35*raw)*infl:Math.max(Math.min(raw,2),0.55*raw);}
+  if(espnLoaded()){const eav=espnAV(p),infl=Math.min(1.35,Math.max(1,mkt.infl||1));
+    // public weight is price-dependent: elite prices track the public market closely, but
+    // the $8-30 middle class is where THIS room's curve diverges most from sitewide AAVs
+    // (mid-band sales ran ~25/draft vs the real 46 with a flat 0.65 anchor)
+    const wPub=eav>=30?0.65:0.45;
+    raw=eav>0?(wPub*eav+(1-wPub)*raw)*infl:Math.max(Math.min(raw,2),0.55*raw);}
   const fan=ownerFan(i,p);                                              // fandom stretches the whole bid
   const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1;
   // flushness: money-per-spot vs the room. Nobody leaves cash on the table — a flush team bids
   // well OVER curve on players it needs (the hard star ceilings below still hold, so the surplus
   // flows DOWN the curve into mid-tier starters and bench stashes, like the real room does).
-  const agg=Math.max(0.85,Math.min(2.2,(s.spotsLeft>0?s.budget/s.spotsLeft:1)/(leagueAvg||1)));
+  const agg=Math.max(0.9,Math.min(2.6,(s.spotsLeft>0?s.budget/s.spotsLeft:1)/(leagueAvg||1)));
   let lean=Math.max(0.8,Math.min(1.2,td[pos]||1));
   if(raw>=25){if(pos==="QB"&&!td.eliteQB)lean=Math.min(lean,0.7);       // never paid up for a QB — won't start now
     if(pos==="TE"&&!td.payTE)lean=Math.min(lean,0.75);}
@@ -2387,11 +2391,12 @@ function ownerBid(i,p,mkt,TS){
   // squashing it to $2-9 hollowed the sim's middle class vs the actual bid history.
   let bid=raw*lean*agg*(starter?1:0.65)*mdJit(i,id)*fan;
   if(!starter)bid=Math.min(bid,Math.round(14*Math.max(1,agg)*fan));    // fans overpay even for their team's stashes
-  // SPEND IT DOWN: nobody leaves money on the table. A flush team's bid is floored at its exact
-  // surplus-clearing price — spots × (1 + surplus/spot) = budget — so late money dumps into the
-  // best remaining players instead of $1 steals (the hard history ceilings below still apply).
+  // SPEND IT DOWN — on QUALITY only. A flush team's bid is floored at its surplus-clearing
+  // price (spots × (1+surplus/spot) = budget) but ONLY for players the market prices >= $4:
+  // flooring every bid pushed junk to $5-9 and hollowed the league's real $1-4 tail
+  // (history 2023-25 per draft: 48× $1 and 34× $2-4 — junk goes cheap even to rich teams).
   const perSur=s.spotsLeft>0?(s.budget-s.spotsLeft)/s.spotsLeft:0;
-  if(perSur>2)bid=Math.max(bid,1+perSur);
+  if(perSur>2&&raw>=4)bid=Math.max(bid,1+perSur);
   const HPc=(typeof KEEPERS_2026!=="undefined"&&KEEPERS_2026.bidcurve_pos)?KEEPERS_2026.bidcurve_pos[pos]:null;
   const posTop=HPc&&HPc.length?HPc[0]:66;                               // league's top $ at this position
   // RB/WR records get nudged (+8% — the league's raw maxes run above the smoothed curve top:
@@ -2455,7 +2460,8 @@ function mdResolve(id,myMax){
     // the wallet-stranding leak: force-feeds at $1 left teams $50+ at the end).
     const fs=TS[t],fSur=fs.spotsLeft>0?(fs.budget-fs.spotsLeft)/fs.spotsLeft:0;
     const fmax=Math.max(1,fs.budget-(fs.spotsLeft-1));
-    w={i:t,max:fSur>2?Math.min(fmax,Math.round(1+fSur)):1};second=0;}
+    // clearing charge only when the player has real market value — junk is $1 in every room
+    w={i:t,max:(fSur>2&&(mkt.price[id]||1)>=4)?Math.min(fmax,Math.round(1+fSur)):1};second=0;}
   // PRICE ENFORCEMENT: the room never lets a flush team steal — when the winner has clearly more
   // money-per-spot than the field, rivals bid him up toward his max (they know he must spend it).
   const lAvg=mkt.spots>0?mkt.money/mkt.spots:1,ws=TS[w.i];
@@ -2465,7 +2471,7 @@ function mdResolve(id,myMax){
   // (everyone else broke -> flushW≈1) — a winner with absolute surplus pays at least his own
   // surplus-clearing price (spots × (1+surplus/spot) = budget), so the last wallet drains too
   const perSurW=ws.spotsLeft>0?(ws.budget-ws.spotsLeft)/ws.spotsLeft:0;
-  const clearing=perSurW>2?Math.round(1+perSurW):0;
+  const clearing=(perSurW>2&&(mkt.price[id]||1)>=4)?Math.round(1+perSurW):0;   // quality only — junk stays $1-3
   const price=Math.max(1,Math.min(w.max,Math.max(second+1,enforce,clearing)));
   DR.owned[id]={t:w.i,price,kept:false};
   const ru=bids.find(b=>b.i!==w.i);
