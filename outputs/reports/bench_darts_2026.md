@@ -25,21 +25,21 @@ curve, x position fill-tilt (RB 1.15 — the wire can't rescue RB).
 | 10 | RB | Devin Singletary | NYG | 29 | $1 | 0.82 | 🚨 STORM · behind Cam Skattebo (news tone -0.59, 123 art) · dart 15% · H2 +8.3ppg |
 | 11 | RB | Tyrone Tracy Jr. | NYG | 27 | $3 | 0.70 | 🚨 STORM · behind Cam Skattebo (news tone -0.59, 123 art) · H2 +8.2ppg |
 | 12 | RB | Blake Corum | LA | 26 | $5 | 2.25 | T1 H+B · dart 37% · brk scr 0.38 · HEIR- · H2 +4.9ppg |
-| 13 | WR | Adonai Mitchell | NYJ | 24 | $1 | 2.86 | T3 yFLASH · dart 37% · brk scr 0.81 · WR2-open |
-| 14 | RB | Dylan Sampson | CLE | 22 | $1 | 2.20 | T3 yFLASH · dart 26% · brk scr 0.49 |
-| 15 | WR | Xavier Legette | CAR | 25 | $1 | 2.05 | T3 yFLASH · dart 35% · brk scr 0.51 |
-| 16 | WR | Marvin Mims Jr. | DEN | 24 | $1 | 1.59 | T3 yFLASH · dart 27% · brk scr 0.36 |
-| 17 | TE | Michael Mayer | LV | 25 | $1 | 1.55 | T3 yFLASH · dart 30% · brk scr 0.47 |
-| 18 | WR | Marvin Harrison Jr. | ARI | 24 | $8 | 1.52 | T3 yFLASH · brk scr 0.73 |
-| 19 | WR | Xavier Worthy | KC | 23 | $3 | 1.51 | T3 yFLASH · brk scr 0.54 · WR2-open · ceil 14 |
-| 20 | RB | Tyler Allgeier | ATL | 26 | $4 | 1.50 | T3 yFLASH · dart 25% · brk scr 0.37 |
-| 21 | WR | Jayden Higgins | HOU | 24 | $2 | 1.44 | T3 yFLASH · brk scr 0.71 · H2 +4.5ppg |
-| 22 | WR | Dontayvion Wicks | GB | 25 | $3 | 1.39 | T3 yFLASH · dart 12% · brk scr 0.51 |
-| 23 | WR | DeMario Douglas | NE | 26 | $1 | 1.38 | T3 yFLASH · dart 26% · brk scr 0.40 |
-| 24 | WR | Travis Hunter | JAX | 23 | $2 | 1.37 | T3 yFLASH · brk scr 0.60 |
-| 25 | RB | Kyle Monangai | CHI | 24 | $5 | 1.31 | T3 yFLASH · brk scr 0.51 · ceil 13 |
-| 26 | WR | Isaac TeSlaa | DET | 24 | $1 | 1.28 | T3 yFLASH · dart 23% · H2 +2.1ppg |
-| 27 | WR | Tyquan Thornton | KC | 26 | $1 | 1.23 | T3 yFLASH · dart 21% · brk scr 0.37 |
-| 28 | WR | Tez Johnson | TB | 24 | $1 | 1.16 | T3 yFLASH · dart 29% |
-| 29 | RB | Sean Tucker | TB | 25 | $1 | 1.11 | T3 yFLASH · dart 12% · H2 +4.9ppg |
-| 30 | RB | Tyjae Spears | TEN | 25 | $5 | 1.03 | T3 yFLASH · brk scr 0.38 |
+| 13 | TE | Sam LaPorta | DET | 25 | $9 | 1.39 | T2 ALPHA · alpha 91% |
+| 14 | TE | Tucker Kraft | GB | 26 | $10 | 1.08 | T2 ALPHA · alpha 82% |
+| 15 | WR | Adonai Mitchell | NYJ | 24 | $1 | 2.86 | T3 yFLASH · dart 37% · brk scr 0.81 · WR2-open |
+| 16 | RB | Dylan Sampson | CLE | 22 | $1 | 2.20 | T3 yFLASH · dart 26% · brk scr 0.49 |
+| 17 | WR | Xavier Legette | CAR | 25 | $1 | 2.05 | T3 yFLASH · dart 35% · brk scr 0.51 |
+| 18 | WR | Marvin Mims Jr. | DEN | 24 | $1 | 1.59 | T3 yFLASH · dart 27% · brk scr 0.36 |
+| 19 | TE | Michael Mayer | LV | 25 | $1 | 1.55 | T3 yFLASH · dart 30% · brk scr 0.47 |
+| 20 | WR | Marvin Harrison Jr. | ARI | 24 | $8 | 1.52 | T3 yFLASH · brk scr 0.73 |
+| 21 | WR | Xavier Worthy | KC | 23 | $3 | 1.51 | T3 yFLASH · brk scr 0.54 · WR2-open · ceil 14 |
+| 22 | RB | Tyler Allgeier | ATL | 26 | $4 | 1.50 | T3 yFLASH · dart 25% · brk scr 0.37 |
+| 23 | WR | Jayden Higgins | HOU | 24 | $2 | 1.44 | T3 yFLASH · brk scr 0.71 · H2 +4.5ppg |
+| 24 | WR | Dontayvion Wicks | GB | 25 | $3 | 1.39 | T3 yFLASH · dart 12% · brk scr 0.51 |
+| 25 | WR | DeMario Douglas | NE | 26 | $1 | 1.38 | T3 yFLASH · dart 26% · brk scr 0.40 |
+| 26 | WR | Travis Hunter | JAX | 23 | $2 | 1.37 | T3 yFLASH · brk scr 0.60 |
+| 27 | RB | Kyle Monangai | CHI | 24 | $5 | 1.31 | T3 yFLASH · brk scr 0.51 · ceil 13 |
+| 28 | WR | Isaac TeSlaa | DET | 24 | $1 | 1.28 | T3 yFLASH · dart 23% · H2 +2.1ppg |
+| 29 | WR | Tyquan Thornton | KC | 26 | $1 | 1.23 | T3 yFLASH · dart 21% · brk scr 0.37 |
+| 30 | WR | Tez Johnson | TB | 24 | $1 | 1.16 | T3 yFLASH · dart 29% |

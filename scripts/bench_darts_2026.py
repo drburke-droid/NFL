@@ -96,10 +96,13 @@ d = players[players.position.isin(["RB", "WR", "TE"])].copy()
 d = d.merge(alpha[["name", "position", "apct"]], on=["name", "position"], how="left") \
      .merge(board, on=["name", "position"], how="left")
 
-# ---- cost gate: market must price him cheap (<= $8 across available sources) ----
+# ---- cost gate: market must price him cheap. The VALIDATED fill bin is <= $8, but a
+# hard cut silently drops boundary cases the hype just re-priced (Omar Cooper Jr.:
+# FFA AAV 8.0 -> 8.4 in the Aug-25 refresh = our top young dart vanished from the
+# board). Display gate is <= $10; every row shows its $ so $8-10 reads as "stretch".
 d["mkt_cost"] = d[["ffa_aav", "espn_av"]].max(axis=1)
 d["mkt_cost"] = d[["mkt_cost", "auction"]].max(axis=1)
-d = d[(d.mkt_cost.fillna(1) <= 8)]
+d = d[(d.mkt_cost.fillna(1) <= 10)]
 
 # ---- signals ----
 # HYBRID TIER inputs (hybrid_darts_backtest.py, 24/100 walk-forward, 2022-25 10/40 vs
