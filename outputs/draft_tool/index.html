@@ -21,6 +21,7 @@
 <script src="takeover_2026.js"></script>
 <script src="dart_scores_2026.js"></script>
 <script src="darts_2026.js"></script>
+<script src="claude_darts_2026.js"></script>
 <script src="ffa_2026.js"></script>
 <script src="espn_salary_2026.js"></script>
 <script src="playoff_sos_2026.js"></script>
@@ -1882,6 +1883,20 @@ function dartDockHTML(mkt,mv,plan){
   cols+=col("⭐ DRAFT NOW","Your plan's starters, most irreplaceable first — the players to land BEFORE the dart phase. $ shown is the walk-away (bid ceiling); re-solves after every pick.",
     stars.map(pk=>prow(pid(pk.p),pk.p.name,pk.p.position,`<span class="maxbid">$${pk.wa}</span>`,false,
       `${pk.p.name} — plan ${pk.slot} at exp $${pk.cost} · walk-away $${pk.wa}${pk.alt?' · fallback '+pk.alt.name:''}`)).join(""));
+  // 🧠 CLAUDE'S RANK — the hand-synthesized ranking of every dart (screens' numbers +
+  // judgment overrides for crowded rooms, sunk draft capital, depth-chart ordering and
+  // the quiet-buzz storm cell). Live-filtered like every other column.
+  if(typeof CLAUDE_DARTS!=="undefined"){
+    const TIER_EST={1:"40-55%",2:"25-40%",3:"12-25%",4:"<10%"};
+    const TIER_COL={1:"var(--good)",2:"var(--accent)",3:"var(--gold)",4:"var(--muted)"};
+    const live=CLAUDE_DARTS.map(cd=>{const p=BYID[cd.n+"|"+cd.p+"|"+cd.t]||PLAYERS.find(x=>x.name===cd.n&&x.position===cd.p);
+      if(!p||DR.owned[pid(p)])return null;
+      const m=mv[pid(p)]||{};return {cd,p,exp:Math.max(1,Math.round(m.market||1))};}).filter(Boolean);
+    cols+=col("🧠 CLAUDE'S RANK","Claude's opinionated synthesis of ALL six screens, re-ranked with judgment: crowded backfields dilute (one ticket per room), sunk draft capital forces volume, screens can't see depth-chart ordering, and quiet-buzz storm backups hit <10%. Tier 1 ≈ 40-55% · T2 25-40% · T3 12-25% · T4 <10%. Hover any row for the reasoning.",
+      live.map(x=>prow(pid(x.p),`${x.cd.r}. ${x.p.name}`,x.p.position,
+        `<span style="color:${TIER_COL[x.cd.tier]};font-weight:700">T${x.cd.tier}</span> <span class="base">$${x.exp}</span>`,x.exp>afford,
+        `#${x.cd.r} · Tier ${x.cd.tier} (≈${TIER_EST[x.cd.tier]} to hit) · ${x.cd.w} · live Exp $${x.exp}`)).join(""));
+  }
   // ⛔ AVOID — news-flagged PRICED players still available (the age-tiered 🚩 cell:
   // 28+ ran −36 pts vs price peers, 26-27 the pooled −20). Sorted worst-first. These
   // are also your best NOMINATIONS: put them up early and let rivals drain budget.
@@ -2926,7 +2941,24 @@ function renderDartLenses(){
       (s.darts&&s.darts.length
         ?s.darts.map(dd=>`<span class="tag" style="background:#7a1f1f;color:#ffd9d9;font-weight:700;cursor:pointer" onclick="gotoComps('${dd.n.replace(/'/g,"\\'")}')" title="buzzing backup behind a storm RB1 — the 33%-hit cell; click for career comps">🚨 ${dd.n} $${dd.c}</span>`).join(" ")
         :`<span class="muted" style="font-size:11px">no buzzing backup — not a signal${s.nobuzz&&s.nobuzz.length?` (quiet: ${s.nobuzz.slice(0,4).join(", ")})`:""}</span>`)+`</div></div>`;});
-  h+=`</div><div class="dr-teams">`+L.filter(l=>l.rows.length).map(l=>
+  h+=`</div>`;   // close the storm panel
+  // 🧠 Claude's ranked board — full list with reasoning, grouped by tier
+  if(typeof CLAUDE_DARTS!=="undefined"){
+    const TIER_LBLS={1:"TIER 1 — bet on these (≈40-55%)",2:"TIER 2 — clearly live (≈25-40%)",3:"TIER 3 — real but conflicted (≈12-25%)",4:"TIER 4 — lottery tickets (<10%)"};
+    h+=`<div class="dr-panel"><h3 style="margin:0 0 4px">🧠 Claude's ranked board — all darts, one opinionated order</h3>
+      <div class="muted" style="font-size:11px;margin-bottom:6px">The six screens' numbers first, then judgment: crowded backfields dilute, sunk draft capital forces volume, screens can't see depth-chart ordering, quiet-buzz storm backups hit &lt;10%. Sold players grey out live.</div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2px 20px">`;
+    let curTier=0;
+    for(const cd of CLAUDE_DARTS){
+      const p=BYID[cd.n+"|"+cd.p+"|"+cd.t]||PLAYERS.find(x=>x.name===cd.n&&x.position===cd.p);
+      const sold=p&&DR.owned[pid(p)];
+      if(cd.tier!==curTier){curTier=cd.tier;h+=`<div style="grid-column:1/-1;font-size:10px;font-weight:700;color:var(--gold);margin-top:4px">${TIER_LBLS[curTier]}</div>`;}
+      h+=`<div style="font-size:11.5px;line-height:1.45;${sold?'opacity:.35':''}" title="${cd.w.replace(/"/g,'&quot;')}">
+        <b>${cd.r}.</b> <span class="pos ${cd.p}" style="transform:scale(.75)">${cd.p}</span> <span class="name" style="cursor:pointer" onclick="gotoComps('${cd.n.replace(/'/g,"\\'")}')">${cd.n}</span> <span class="muted" style="font-size:10px">${cd.t}${sold?' — gone':''}</span></div>`;
+    }
+    h+=`</div></div>`;
+  }
+  h+=`<div class="dr-teams">`+L.filter(l=>l.rows.length).map(l=>
     `<div class="dr-team" style="min-width:330px"><div class="nm">${l.title}</div>
      <div class="muted" style="font-size:10px;margin:4px 0 6px">${l.note}</div>`+
     (l.rows.length
