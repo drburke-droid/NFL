@@ -34,9 +34,9 @@ curve, x position fill-tilt (RB 1.15 — the wire can't rescue RB).
 | 19 | TE | Michael Mayer | LV | 25 | $1 | 1.55 | T3 yFLASH · dart 30% · brk scr 0.47 |
 | 20 | WR | Marvin Harrison Jr. | ARI | 24 | $8 | 1.52 | T3 yFLASH · brk scr 0.73 |
 | 21 | WR | Xavier Worthy | KC | 23 | $3 | 1.51 | T3 yFLASH · brk scr 0.54 · WR2-open · ceil 14 |
-| 22 | RB | Tyler Allgeier | ATL | 26 | $4 | 1.50 | T3 yFLASH · dart 25% · brk scr 0.37 |
+| 22 | RB | Tyler Allgeier | ARI | 26 | $4 | 1.50 | T3 yFLASH · dart 25% · brk scr 0.37 |
 | 23 | WR | Jayden Higgins | HOU | 24 | $2 | 1.44 | T3 yFLASH · brk scr 0.71 · H2 +4.5ppg |
-| 24 | WR | Dontayvion Wicks | GB | 25 | $3 | 1.39 | T3 yFLASH · dart 12% · brk scr 0.51 |
+| 24 | WR | Dontayvion Wicks | PHI | 25 | $3 | 1.39 | T3 yFLASH · dart 12% · brk scr 0.51 |
 | 25 | WR | DeMario Douglas | NE | 26 | $1 | 1.38 | T3 yFLASH · dart 26% · brk scr 0.40 |
 | 26 | WR | Travis Hunter | JAX | 23 | $2 | 1.37 | T3 yFLASH · brk scr 0.60 |
 | 27 | RB | Kyle Monangai | CHI | 24 | $5 | 1.31 | T3 yFLASH · brk scr 0.51 · ceil 13 |

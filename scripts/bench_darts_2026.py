@@ -34,9 +34,12 @@ pd.set_option("display.width", 240)
 # the 18.8% cell, NOT capped. Kamara 31 / CMC 30 / Henry 32 (old deals) -> x1.3.
 # Bucky Irving 24 / Kyren 26 / Vidal 24 / Woody Marks 24 / Chase Brown 26 -> x0.6.
 # No 2026 heir sits behind a big-paid non-expiring blocker (the x0.4 cell).
-HEIR = {"Rachaad White": 0.6, "Tank Bigsby": 1.3, "Blake Corum": 0.6, "Omarion Hampton": 0.6,
-        "Devin Neal": 1.3, "Brian Robinson": 1.3, "Nick Chubb": 0.6, "Samaje Perine": 0.6,
-        "Keaton Mitchell": 1.3}
+# (2026-08-27 roster-move audit vs fresh FFA teams: Brian Robinson removed — ATL behind
+#  Bijan, stale SF/CMC pairing; Rachaad White removed — now WAS, Bucky pairing dead;
+#  Keaton Mitchell 1.3 -> 0.6 — now LAC behind rookie Hampton (young blocker cell), his
+#  old 1.3 was the Henry-in-BAL case. Nick Chubb removed — retired.)
+HEIR = {"Tank Bigsby": 1.3, "Blake Corum": 0.6, "Omarion Hampton": 0.6,
+        "Devin Neal": 1.3, "Samaje Perine": 0.6, "Keaton Mitchell": 0.6}
 
 
 def load_js_const(fname, varname):
@@ -93,6 +96,16 @@ con.close()
 alpha["apct"] = alpha.groupby("position")["alpha_skill"].rank(pct=True)
 
 d = players[players.position.isin(["RB", "WR", "TE"])].copy()
+# CURRENT team from the fresh FFA export — data.js `team` is last season's roster and
+# goes stale on offseason moves (Brian Robinson showed as SF months after his ATL move),
+# which corrupts both the lens display and the handcuff-storm team matching.
+_ffa_team = pd.read_csv(os.path.join(ROOT, "data", "ffanalytics", "FFAn_league",
+                                     "projections_2026_wk0.csv"))[["player", "position", "team"]]
+_ffa_team["nm"] = _ffa_team.player.map(_nrm) + "|" + _ffa_team.position
+_tmap = _ffa_team.drop_duplicates("nm").set_index("nm")["team"] \
+    .replace({"JAC": "JAX", "LAR": "LA", "LVR": "LV"})   # FFA codes -> board codes
+_cur = (d.name.map(_nrm) + "|" + d.position).map(_tmap)
+d["team"] = _cur.fillna(d.team)
 d = d.merge(alpha[["name", "position", "apct"]], on=["name", "position"], how="left") \
      .merge(board, on=["name", "position"], how="left")
 
