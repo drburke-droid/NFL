@@ -2366,7 +2366,12 @@ function ownerBid(i,p,mkt,TS){
   // average auction $ (what the room actually sees) and 35% on this league's own curve.
   // Unlisted players go ~$1 in public drafts, so bots won't pay up for them — while OUR
   // board (league history + anchors + FFA) still can: that asymmetry is the edge.
-  if(espnLoaded()){const eav=espnAV(p);raw=eav>0?0.65*eav+0.35*raw:Math.min(raw,2);}
+  // Public $ don't include THIS room's keeper inflation (measured 1.15-1.25x) — without
+  // the adjustment bots systematically underbid the mid class ($10-24 band ran ~15 sales
+  // vs the league's real 26-45) and arrive at the endgame flush. Unlisted players keep a
+  // shaded 55% of curve instead of a hard $2 cap for the same reason.
+  if(espnLoaded()){const eav=espnAV(p),infl=Math.min(1.3,Math.max(1,mkt.infl||1));
+    raw=eav>0?(0.65*eav+0.35*raw)*infl:Math.max(Math.min(raw,2),0.55*raw);}
   const fan=ownerFan(i,p);                                              // fandom stretches the whole bid
   const starter=(s.need[pos]>0)||(FLEXE.includes(pos)&&s.need.FLEX>0);
   const leagueAvg=mkt.spots>0?mkt.money/mkt.spots:1;
@@ -2435,10 +2440,22 @@ function mdResolve(id,myMax){
   if(w.max<1){
     // nobody bid: force-feed only where the player has REAL use — a K/DST/QB/TE goes only to
     // a team with that starter slot open (never an 8-kicker bench); RB/WR depth fits anywhere.
-    const useful=i=>TS[i].spotsLeft>0&&((isK(p)||p.position==="QB"||p.position==="TE")?TS[i].need[p.position]>0:true);
-    const t=(TS[MD.nom]&&useful(MD.nom))?MD.nom:bids.map(b=>b.i).find(useful);
+    const useful=i=>TS[i].spotsLeft>0&&((isK(p)||p.position==="QB"||p.position==="TE")?TS[i].need[p.position]>0
+      :posCount(TS[i],p.position)<(POS_CAP[p.position]||99));   // respect RB6/WR7 — no 9-WR benches
+    // feed the FLUSHEST eligible wallet (it pays its clearing price below) — feeding the
+    // first team in order let the rich wallets dodge every $1 round and finish $50+ up
+    const surOf=i=>TS[i].spotsLeft>0?(TS[i].budget-TS[i].spotsLeft)/TS[i].spotsLeft:-1;
+    const flushest=arr=>arr.length?arr.sort((a,b)=>surOf(b)-surOf(a))[0]:null;
+    let t=flushest(bids.map(b=>b.i).filter(useful));
+    if(t==null&&!isK(p)&&p.position!=="QB"&&p.position!=="TE")   // last resort: rosters must fill
+      t=flushest(bids.map(b=>b.i).filter(i=>TS[i].spotsLeft>0));
     if(t==null){MD.block=null;MD.sel=null;mdAdvance();saveMD();return;}   // unsold — next nomination
-    w={i:t,max:1};second=0;}
+    // a FLUSH team never gets a $1 steal in a real room — rivals bid it up knowing the
+    // money must spend. Charge the fed team its surplus-clearing price, not $1 (this was
+    // the wallet-stranding leak: force-feeds at $1 left teams $50+ at the end).
+    const fs=TS[t],fSur=fs.spotsLeft>0?(fs.budget-fs.spotsLeft)/fs.spotsLeft:0;
+    const fmax=Math.max(1,fs.budget-(fs.spotsLeft-1));
+    w={i:t,max:fSur>2?Math.min(fmax,Math.round(1+fSur)):1};second=0;}
   // PRICE ENFORCEMENT: the room never lets a flush team steal — when the winner has clearly more
   // money-per-spot than the field, rivals bid him up toward his max (they know he must spend it).
   const lAvg=mkt.spots>0?mkt.money/mkt.spots:1,ws=TS[w.i];
@@ -3043,6 +3060,22 @@ document.getElementById("srcFFA").classList.toggle("active",projMode==="ffa");
 document.getElementById("blendWrap").style.display=projMode==="blend"?"":"none";
 document.getElementById("ffaStatus").innerHTML=ffaStatusText();
 cards();notes();recompute();render();
+// 🔄 STALE-TAB GUARD — a draft-prep tab pinned open for days keeps running old code and
+// old data (the "$50 left on every team" mock traced to exactly this: its log length
+// exceeded the current 300 cap, proving an outdated build). Poll the deployed build's
+// ETag every 10 min and drop a one-click reload banner when a newer build ships.
+(async()=>{try{
+  const et=async()=>{try{const r=await fetch("index.html",{method:"HEAD",cache:"no-store"});
+    return r.headers.get("etag")||r.headers.get("last-modified")||"";}catch(e){return "";}};
+  const first=await et(); if(!first)return;
+  setInterval(async()=>{const now=await et();
+    if(now&&now!==first&&!document.getElementById("staleBar")){
+      const d=document.createElement("div");d.id="staleBar";
+      d.style.cssText="position:fixed;top:0;left:0;right:0;z-index:300;background:var(--gold);color:#1a1206;font-weight:700;text-align:center;padding:5px;cursor:pointer;font-size:13px";
+      d.textContent="🔄 A newer build of the draft tool is live — click to reload (keepers, picks and settings are saved)";
+      d.onclick=()=>location.reload();
+      document.body.prepend(d);}},600000);
+}catch(e){}})();
 </script>
 </body>
 </html>
