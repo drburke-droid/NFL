@@ -44,13 +44,21 @@ def lineup_points(players, col):
 def eval_roster(rows, col):
     return lineup_points(list(zip(rows.position, rows[col])), col)
 
-def build(pool, price_ok, seed_order="proj"):
+def build(pool, price_ok, seed_idx=None):
     """Greedy: fill starter needs by projection among price-eligible, then bench;
-    then 2-opt swaps to improve projected lineup within budget."""
+    then 2-opt swaps to improve projected lineup within budget. Optional seed_idx
+    are bought first and protected from swaps; any unfilled slots at the end are
+    filled with $1 bodies (real drafts never leave slots empty)."""
     pool = pool.copy()
     elig = pool[pool.apply(price_ok, axis=1)].sort_values("ffa_points", ascending=False)
     roster_idx, spent = [], 0
     need = dict(SLOTS); need["FLEX"] = 1
+    seed_idx = list(seed_idx or [])
+    for i in seed_idx:
+        r = pool.loc[i]
+        if need.get(r.position, 0) > 0: need[r.position] -= 1
+        elif need["FLEX"] > 0 and r.position in FLEXP: need["FLEX"] -= 1
+        roster_idx.append(i); spent += r.price
     def rem_slots(): return NROSTER - len(roster_idx)
     # starters
     for _, r in elig.iterrows():
@@ -67,6 +75,14 @@ def build(pool, price_ok, seed_order="proj"):
         if r.name in roster_idx: continue
         if spent + r.price > BUDGET - (rem_slots() - 1): continue
         roster_idx.append(r.name); spent += r.price
+    # backfill any open slots with $1 bodies by projection
+    if len(roster_idx) < NROSTER:
+        ones = pool[(pool.price == 1) & ~pool.index.isin(roster_idx)].sort_values(
+            "ffa_points", ascending=False)
+        for _, r in ones.iterrows():
+            if len(roster_idx) >= NROSTER: break
+            if spent + 1 > BUDGET: break
+            roster_idx.append(r.name); spent += 1
     # 2-opt improvement on projected lineup
     improved = True
     while improved:
@@ -74,6 +90,7 @@ def build(pool, price_ok, seed_order="proj"):
         cur = pool.loc[roster_idx]
         base = eval_roster(cur, "ffa_points")
         for out_i in list(roster_idx):
+            if out_i in seed_idx: continue
             for _, cand in elig.head(150).iterrows():
                 if cand.name in roster_idx: continue
                 new_spent = spent - pool.loc[out_i, "price"] + cand.price
@@ -87,11 +104,19 @@ def build(pool, price_ok, seed_order="proj"):
             if improved: break
     return pool.loc[roster_idx], spent
 
+STARTER_TIER = {"QB": 12, "RB": 24, "WR": 30, "TE": 12}   # cheap_stars.md class
+
 results = []
 detail = {}
 for yr, g in d.groupby("season"):
     g = g.reset_index(drop=True)
-    pos_avg = g[g.price > 1].groupby("position").price.mean().to_dict()
+    # cheap_stars.md conventions: pool = top 168 by AAV, positional MEAN inside it
+    pool168 = g.nlargest(168, "ffa_aav")
+    pos_avg = pool168.groupby("position").price.mean().to_dict()
+    g["pos_rank"] = g.groupby("position").ffa_points.rank(ascending=False, method="first")
+    g["in_class"] = g.apply(
+        lambda r: 0.5 * pos_avg.get(r.position, 10) <= r.price < pos_avg.get(r.position, 10)
+        and r.pos_rank <= STARTER_TIER[r.position], axis=1)
 
     strategies = {
         # the user's strategy: NEVER pay >= position-average price
@@ -107,12 +132,37 @@ for yr, g in d.groupby("season"):
         "mid_band": lambda r: 6 <= r.price <= 25,
         # softer cap: allowed up to 1.25x position average
         "value_125": lambda r, pa=pos_avg: r.price <= 1.25 * pa.get(r.position, 10),
+        # cheap_stars.md class ONLY (50-100% of pos avg + starter-tier proj);
+        # unfilled slots become $1 bodies
+        "class_fill": lambda r: bool(r.in_class),
+        # class + 1-2 anchors >=$50
+        "class_anchor": lambda r: bool(r.in_class) or r.price >= 50,
     }
+    seeds = {}
+    # the report's actual advice: force 4 class buys (~$40), rest unconstrained.
+    # Seed by VORP (proj minus positional starter-tier replacement), max 2 per
+    # position — raw projection would seed 4 QBs.
+    repl = {p: g[g.position == p].ffa_points.nlargest(STARTER_TIER[p]).min()
+            for p in STARTER_TIER}
+    cls = g[g.in_class].copy()
+    cls["vorp"] = cls.ffa_points - cls.position.map(repl)
+    picked, per_pos = [], {}
+    for i, r in cls.sort_values("vorp", ascending=False).iterrows():
+        if per_pos.get(r.position, 0) >= 2: continue
+        picked.append(i); per_pos[r.position] = per_pos.get(r.position, 0) + 1
+        if len(picked) == 4: break
+    seeds["class_x4_free"] = picked
+    strategies["class_x4_free"] = lambda r: True
+    # same but seeded by raw projection — lands on 3-4 cheap class QBs, i.e. the
+    # league's validated cheap-QB stack (6-pt pass TDs compress QB pricing)
+    seeds["class_x4_qb"] = list(g[g.in_class].sort_values(
+        "ffa_points", ascending=False).head(4).index)
+    strategies["class_x4_qb"] = lambda r: True
     if yr == 2025:
         print("2025 position-average prices:", {k: round(v, 1) for k, v in pos_avg.items()})
     row = {"season": yr}
     for nm, ok in strategies.items():
-        ros, spent = build(g, ok)
+        ros, spent = build(g, ok, seed_idx=seeds.get(nm))
         row[nm] = eval_roster(ros, "pts")
         row[nm + "_proj"] = eval_roster(ros, "ffa_points")
         if yr in (2024, 2025):
@@ -122,7 +172,8 @@ for yr, g in d.groupby("season"):
     results.append(row)
 
 res = pd.DataFrame(results).set_index("season")
-strat_cols = ["value_fill", "value_125", "optimizer", "stars_scrubs", "anchor_value", "mid_band"]
+strat_cols = ["value_fill", "value_125", "optimizer", "stars_scrubs", "anchor_value",
+              "mid_band", "class_fill", "class_anchor", "class_x4_free", "class_x4_qb"]
 print("REALIZED lineup points by strategy (ex-post optimal QB/2RB/2WR/TE/FLEX from 12-man roster):")
 print(res[strat_cols].round(0).to_string())
 print("\nmean:"); print(res[strat_cols].mean().round(1).to_string())
