@@ -1,13 +1,9 @@
-// CLAUDE'S RANKED DART BOARD — updated 2026-09-01 (final Aug buzz pull + new FFA file).
-// Hand-authored synthesis, NOT model output: the six screens' numbers first, then
-// judgment overrides for crowded-backfield dilution (one ticket per room), sunk draft
-// capital forcing volume, depth-chart ordering the screens can't see, and the
-// quiet-buzz storm cell (sub-10% hit). New this update: complete-August buzz (90
-// missing wiki titles patched — Jeudy/Cooper/Bernard were scored buzz-blind before),
-// FFA 8/31 refresh (Jacobs −60, Lloyd +56), and the franchise-environment lens
-// (DET/PHI factories; NYG/CAR/NYJ/CLE deserts — tiebreaker weight only).
-// Removed: Nathaniel Dell (dropped from FFA — roster status), Matthew Golden (priced
-// to ~$5, no longer a dart), and the sub-1% buzz-churn tail (Goodson, Laube, etc.).
+// CLAUDE'S RANKED DART BOARD — updated 2026-09-02 (FFA 9/2 file: Najee->NYG joins
+// the Skattebo storm room, Malachi Fields dropped from FFA, Nathaniel Dell back).
+// Prior update 2026-09-01: final Aug buzz (90 wiki titles patched), FFA 8/31,
+// franchise-environment lens. Hand-authored synthesis, NOT model output — screens
+// first, then judgment: crowded rooms dilute (one ticket per room), sunk capital
+// forces volume, quiet-buzz storm backups hit <10%.
 // tier 1 ≈ 40-55% · tier 2 ≈ 25-40% · tier 3 ≈ 12-25% · tier 4 < 10%.
 const CLAUDE_DARTS = [
  {r:1, n:"Sam LaPorta", p:"TE", t:"DET", tier:1, w:"Mispriced PROVEN talent — 91st-pctl per-play skill, was TE3 overall two years ago; the market is punishing one mediocre season. Detroit is also the league's top startable-producer 2021-25. Safest dart we own."},
@@ -28,24 +24,24 @@ const CLAUDE_DARTS = [
  {r:16, n:"Eli Stowers", p:"TE", t:"PHI", tier:3, w:"NEW: 2nd-highest raw model prob in the pool (0.45) and the Eagles are a co-best environment — but he's a rookie TE behind Goedert, and rookie TEs almost never hit year 1. Keeper-league gem, redraft reach."},
  {r:17, n:"Malik Washington", p:"WR", t:"MIA", tier:3, w:"UP from 27: 35% dart + 239 vacated targets — the biggest vacancy number in the pool."},
  {r:18, n:"Chig Okonkwo", p:"TE", t:"TEN", tier:3, w:"NEW: 34% dart, real target share (0.149); the Titans offense is the whole discount."},
- {r:19, n:"Najee Harris", p:"RB", t:"LAC", tier:3, w:"DOWN from 6: the storm cell is intact but the model walked away (dart 16%→11%, proj collapsed). The 'coaches reach for the proven vet' theory now leans against the data — floor play, thin ceiling."},
+ {r:19, n:"Najee Harris", p:"RB", t:"NYG", tier:3, w:"Moved to NYG (FFA 9/2) — now the proven-vet ticket in the Skattebo storm room (123 articles, loudest in the league). Dart 11% and the projection is thin, but vet-volume in a storm backfield is exactly the 33% cell's shape. One ticket per room: he replaces Singletary as the vet side, Tracy stays the talent side."},
  {r:20, n:"Zach Charbonnet", p:"RB", t:"SEA", tier:3, w:"Cleanest talent-gap case + Walker in the league's worst news storm — BUT his own buzz stayed dead quiet through the final pull, and quiet-buzz storm backups hit <1-in-10. Eye test vs data, still unresolved."},
  {r:21, n:"Keaton Mitchell", p:"RB", t:"LAC", tier:3, w:"Most electric athlete on the list, now in the most negative-news backfield — but 3rd-4th in a crowded room. One lottery ticket per backfield cashes."},
- {r:22, n:"Tyrone Tracy Jr.", p:"RB", t:"NYG", tier:3, w:"Skattebo's 123-article storm is the loudest in the league; Tracy is the talent side of the hedge. NYG being the league's worst current environment cuts both ways — nobody there is priced."},
+ {r:22, n:"Tyrone Tracy Jr.", p:"RB", t:"NYG", tier:3, w:"Skattebo's 123-article storm is the loudest in the league; Tracy is the talent side of the hedge — but Najee's arrival (9/2) crowds the room to three tickets. Buy Tracy OR Najee, never both."},
  {r:23, n:"Devin Neal", p:"RB", t:"NO", tier:3, w:"Perfect on paper (heir behind 31yo stormy Kamara, +8.7 H2) but quiet buzz + crowded room."},
  {r:24, n:"Tre Harris", p:"WR", t:"LAC", tier:3, w:"Solid model dart (30%) with 152 vacated targets; still no second signal."},
  {r:25, n:"Xavier Legette", p:"WR", t:"CAR", tier:3, w:"34% dart + flash tier + 95th-pctl buzz in the final pull; the talent question is real, and Carolina is a bottom-3 environment."},
  {r:26, n:"Chris Godwin Jr.", p:"WR", t:"TB", tier:3, w:"NEW: 34% dart at $1 in a top-5 environment — but he's 30 coming off injury, so this is a floor dart; darts are usually for ceilings."},
  {r:27, n:"Emmett Johnson", p:"RB", t:"KC", tier:3, w:"NEW: 32% rookie dart in a backfield KC keeps refusing to settle; Reid-offense RB touches are the cheapest points in football when they land."},
- {r:28, n:"Malachi Fields", p:"WR", t:"NYG", tier:3, w:"NEW: 33% rookie dart — docked hard for landing in the league's worst startable-producer of the last 5 years (6 in 5 seasons)."},
- {r:29, n:"Romeo Doubs", p:"WR", t:"NE", tier:3, w:"Traded to NE — a clearer target lane than the GB lottery wheel ever gave him; FFA nudged him UP post-move."},
- {r:30, n:"Rashid Shaheed", p:"WR", t:"SEA", tier:3, w:"32% model dart; 28 years old caps the keeper upside, and his attention profile is fading, not rising."},
- {r:31, n:"Quentin Johnston", p:"WR", t:"LAC", tier:3, w:"21.2 ppg best month; the drops are the eye test's counter-case."},
- {r:32, n:"Troy Franklin", p:"WR", t:"DEN", tier:3, w:"21.7 ppg best month with his college QB; year-3 leap profile."},
- {r:33, n:"Jacory Croskey-Merritt", p:"RB", t:"WAS", tier:3, w:"19.8 ppg best month; Washington backfield is winnable but crowded."},
- {r:34, n:"Kayshon Boutte", p:"WR", t:"HOU", tier:3, w:"Now in Houston, and FFA moved him UP on the trade (+12). Quiet riser with a real QB for the first time."},
+ {r:28, n:"Romeo Doubs", p:"WR", t:"NE", tier:3, w:"Traded to NE — a clearer target lane than the GB lottery wheel ever gave him; FFA nudged him UP post-move."},
+ {r:29, n:"Rashid Shaheed", p:"WR", t:"SEA", tier:3, w:"32% model dart; 28 years old caps the keeper upside, and his attention profile is fading, not rising."},
+ {r:30, n:"Quentin Johnston", p:"WR", t:"LAC", tier:3, w:"21.2 ppg best month; the drops are the eye test's counter-case."},
+ {r:31, n:"Troy Franklin", p:"WR", t:"DEN", tier:3, w:"21.7 ppg best month with his college QB; year-3 leap profile."},
+ {r:32, n:"Jacory Croskey-Merritt", p:"RB", t:"WAS", tier:3, w:"19.8 ppg best month; Washington backfield is winnable but crowded."},
+ {r:33, n:"Kayshon Boutte", p:"WR", t:"HOU", tier:3, w:"Now in Houston, and FFA moved him UP on the trade (+12). Quiet riser with a real QB for the first time."},
+ {r:34, n:"Nathaniel Dell", p:"WR", t:"HOU", tier:4, w:"Back in the FFA pool (9/2, $2.70) after being dropped last week — was a 38% model dart and electric pre-injury; the knee plus the roster scare IS the price. Last-nomination flier only."},
  {r:35, n:"Zach Ertz", p:"TE", t:"WAS", tier:4, w:"The model still loves the floor (34%) — but it's over-crediting a 36-year-old. Darts are for ceilings."},
- {r:36, n:"Devin Singletary", p:"RB", t:"NYG", tier:4, w:"The vet-trust side of the Skattebo hedge (15% dart); Tracy is the better ticket."},
+ {r:36, n:"Devin Singletary", p:"RB", t:"NYG", tier:4, w:"Was the vet-trust side of the Skattebo hedge — Najee's arrival (9/2) makes him the THIRD wheel in that room. FFA cut him 17 pts on the news. Pass."},
  {r:37, n:"Andrei Iosivas", p:"WR", t:"CIN", tier:4, w:"29% model dart; CIN's WR3 role is real but small."},
  {r:38, n:"Zachariah Branch", p:"WR", t:"ATL", tier:4, w:"NEW: 30% rookie dart; return-ace profile — the fantasy role needs an injury in front of him."},
  {r:39, n:"Michael Mayer", p:"TE", t:"LV", tier:4, w:"NEW: 29% dart + flash lens; Bowers owns the room — this is a pure contingency ticket."},
