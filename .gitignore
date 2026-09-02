@@ -31,3 +31,7 @@ config/gdelt_bq.json
 
 # Personal access token for scripts/sync_data.py — never commit.
 config/gh_token.txt
+
+# nflverse parquet mirror pulled by scripts/cheap_stars_build.py when db/nfl_odds.db
+# isn't synced locally. Rebuildable from the nflverse-data releases; ~30 MB of churn.
+data/nflverse_cache/
