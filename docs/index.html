@@ -55,6 +55,15 @@
     .dockexp{display:none}          /* the explainer eats a third of the dock on a phone */
     .dockswipe{display:inline}      /* ...replaced by the one hint that only applies here */
   }
+  /* 🔎 search box with a clear ✕ — the native WebKit cancel button doesn't exist on
+     iOS/Android, and a stale query silently filters the whole board. */
+  .searchwrap{position:relative;display:inline-flex;align-items:center}
+  .searchwrap input[type=search]{width:100%;padding-right:30px}
+  input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+  .qx{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:transparent;
+      color:var(--muted);font-size:13px;line-height:1;cursor:pointer;padding:4px 6px;border-radius:50%}
+  .qx:hover{color:var(--txt);background:var(--panel)}
+  .tblwrap{min-width:0}        /* becomes the board table's scroll box at touch widths */
   header{padding:16px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
   h1{margin:0 0 6px;font-size:19px}
   .sub{color:var(--muted);font-size:13px}
@@ -157,6 +166,59 @@
   .wbig{font-size:24px;font-weight:800}
   .wbstat{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:6px}
   .wbstat .lb{color:var(--muted);font-size:11px}
+  /* Wide content scrolls in its own box rather than by dragging the page sideways —
+     a page that slides also unpins the dart dock and every other fixed element. Touch
+     widths only (phone + tablet portrait): a scroll container captures the sticky table
+     header, and on a mouse-and-keyboard screen that header is worth more than the
+     containment, which is why this stops at 900px. */
+  @media (max-width:900px){
+    .tblwrap,.dr-panel,.wbcard{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  }
+  /* ======================= 📱 MOBILE ======================= */
+  /* The board is a desktop tool first; under 700px it has to survive a phone. The rules
+     below only kick in there: chrome shrinks, the two button bars become one-line swipe
+     strips (they wrapped into 218px + 255px of header — a whole screen before any data),
+     side panels stack, and the board drops to the columns a pick is actually made on. */
+  @media (max-width:700px){
+    header{padding:9px 11px}
+    h1{font-size:16px;margin-bottom:3px}
+    .sub{font-size:11px}
+    .main{padding:10px 11px}
+    /* one-line swipe strips instead of six wrapped rows of buttons */
+    .modebar,.ffabar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+                     scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+    .modebar::-webkit-scrollbar,.ffabar::-webkit-scrollbar{height:4px}
+    .modebar::-webkit-scrollbar-thumb,.ffabar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+    .modebar>*,.ffabar>*{flex:none}
+    .modebar{margin-top:7px;padding-bottom:3px}
+    .ffabar{margin-top:7px;padding:6px 9px}
+    #ffaStatus{display:none}        /* a fixed paragraph of explainer, not live state */
+    /* scoring reference + replacement-point cards: swipe strips, not five stacked rows */
+    .chips,.cards{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .chips>*,.cards>*{flex:none}
+    .chips{margin-top:7px;gap:4px;padding-bottom:3px}
+    .chip{font-size:11px;padding:2px 8px}
+    /* keeper rail stacks under the board instead of stealing 330px of a 390px screen */
+    .layout{flex-direction:column}
+    .side{width:auto;max-height:none;position:static;border-left:0;border-top:1px solid var(--line)}
+    /* the two draft rooms lay owners out on a fixed 6-wide grid (inline style, hence
+       the !important) — two per row is what fits a phone */
+    .dr-teams{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .dr-teams[style]>.dr-team{width:auto}
+    .drmodal .box{min-width:0;width:94vw;padding:13px}
+    .cards{gap:7px}
+    .card{min-width:104px;padding:7px 10px}
+    .card .val{font-size:15px}
+    /* search fills the row; 16px keeps iOS from zooming the page on focus */
+    .searchwrap{flex:1 0 100%;min-width:0}
+    input[type=search]{min-width:0;font-size:16px}
+    .qx{padding:7px 9px;font-size:15px}
+    tbody td,thead th{padding:6px 7px}
+    /* the Player cell carries every context badge; let it wrap and cap it, so the
+       numbers that decide a pick stay on screen instead of being pushed off-canvas */
+    #tbl tbody td.l,#tbl thead th.l{white-space:normal}
+    #tbl tbody td.l{max-width:54vw}
+  }
 </style>
 </head>
 <body>
@@ -211,12 +273,13 @@
     <div class="cards" id="replcards"></div>
     <div class="controls">
       <div id="posbtns"></div>
-      <input type="search" id="q" placeholder="Search player / team…"/>
+      <span class="searchwrap"><input type="search" id="q" placeholder="Search player / team…"/><button type="button" class="qx" id="qClear" hidden aria-label="Clear search" title="Clear search (Esc)">✕</button></span>
       <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only</label>
       <label class="tgl"><input type="checkbox" id="draftableOnly"/> Draftable only</label>
       <span id="compToggle" style="display:none"><button class="btn sm active" id="cvTable">▦ Table</button><button class="btn sm" id="cvScatter">⊕ Risk/Reward</button></span>
     </div>
-    <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
+    <div class="tblwrap"><table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table></div>
+    <style id="mobcols"></style>
     <div id="scatter" style="display:none"></div>
     <div id="draftroom" style="display:none"></div>
     <div id="windtab" style="display:none"></div>
@@ -676,7 +739,16 @@ const POSES=["ALL","QB","RB","WR","TE","FLEX","ROOK","K","DST"];
 document.getElementById("posbtns").innerHTML=POSES.map(p=>`<button class="btn sm pf ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
 document.querySelectorAll(".pf").forEach(b=>b.onclick=()=>{posFilter=b.dataset.p;document.querySelectorAll(".pf").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
 let _qT=null;   // debounce: heavy screens re-render at ~9-110ms + DOM cost — don't do it per keystroke
-document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();clearTimeout(_qT);_qT=setTimeout(render,150);};
+const qEl=document.getElementById("q"),qClearEl=document.getElementById("qClear");
+// ✕ shows only when there's something to clear. The native type=search cancel button is
+// desktop-WebKit-only, so on a phone a leftover query quietly filters the whole board.
+function syncQClear(){qClearEl.hidden=!qEl.value;}
+function clearQuery(){qEl.value="";query="";syncQClear();
+  const sd=document.getElementById("searchdrop");if(sd)sd.remove();
+  qEl.focus();render();}
+qEl.oninput=e=>{query=e.target.value.toLowerCase();syncQClear();clearTimeout(_qT);_qT=setTimeout(render,150);};
+qEl.onkeydown=e=>{if(e.key==="Escape"){e.preventDefault();clearQuery();}};
+qClearEl.onclick=clearQuery;
 document.getElementById("startersOnly").onchange=e=>{startersOnly=e.target.checked;render();};
 document.getElementById("draftableOnly").onchange=e=>{draftableOnly=e.target.checked;render();};
 
@@ -788,7 +860,7 @@ function keeperRiskTag(p){
   const lbl=pc>=60?"LIKELY KEPT":"KEEP RISK";
   return ` <span class="tag ${cls}" title="${r.team} holds him at $${r.cost} — modelled ${pc}% chance they keep him, fitted on this league's actual 2023-25 keeper decisions. He may never reach the auction, so do not build a plan around him. Confirm in 🧩 Mock Keepers.">🔒 ${lbl} ${pc}%</span>`;
 }
-function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;setMode("comps");}
+function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;syncQClear();setMode("comps");}
 let compView="table";
 const POSCOL={QB:"#e85d75",RB:"#39c08a",WR:"#4da3ff",TE:"#e0a23c"};
 function compFilter(){
@@ -2065,7 +2137,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
   const arrowR=k=>drSort===k?(drDir<0?' ▼':' ▲'):'';
   const thr=(k,lab,cls,ttl)=>`<th class="drh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowR(k)}</th>`;
   h+=`<div class="muted" style="font-size:11px;margin:6px 0"><b>Value</b> = what he's worth (risk-adjusted, in this room's dollars — worth has no historical ceiling, so elite players can be worth more than anyone has ever PAID) · <b>Exp $</b> = expected purchase price at his live curve rank (capped at the most this league has ever paid at the position) · <b>My Max</b> = the most YOU should bid: Value × your spending power, roster-need gated <b>and wire-disciplined</b> · <b>Edge</b> = Value − Exp $ in dollars (positive = expected bargain) · <b>VONA pts</b> = risk-adjusted points over the last startable player at his position. <i>Click any column to sort.</i><br>${WIRE_LEGEND}</div>
-    <table style="width:100%"><thead><tr>${thr('pos','Pos','l','click to group into a positional board — QB→RB→WR→TE→K→DST, best value first within each')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
+    <div class="tblwrap"><table style="width:100%"><thead><tr>${thr('pos','Pos','l','click to group into a positional board — QB→RB→WR→TE→K→DST, best value first within each')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
   h+=drd.map((r,ri)=>{const p=r.p,id=r.id,m=r.m;   // ALL filtered players (deep darts findable); suitor calc still capped at ri<90
     const over=m.maxBid>m.market;
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
@@ -2080,7 +2152,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
       <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${isK(p)?"—":(r.edge>=0?'+':'')+r.edge}</td>
       <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
       <td class="l">${isK(p)?'':`<button class="btn sm drwhatif${considerId===id?' up':''}" data-id="${id}" title="🔮 what-if: your optimal team at each price for ${p.name}">📊</button> `}<button class="btn sm up drdraft" data-id="${id}" data-exp="${r.exp}">Draft</button></td>
-    </tr>`;}).join("")+`</tbody></table>`;
+    </tr>`;}).join("")+`</tbody></table></div>`;
   // SOLD modal — built for speed: click Draft → price is prefilled+selected → click the winning
   // owner (or Enter = the default owner in the header dropdown). Esc cancels.
   h+=`<div class="drmodal" id="drModal" style="display:none"><div class="box">
@@ -2987,6 +3059,11 @@ function renderDartLenses(){
 function render(){
   // the floating search dropdown only lives in the two draft rooms — clear it elsewhere
   if(!query||!["draftroom","mockdraft"].includes(mode)){const _sd=document.getElementById("searchdrop");if(_sd)_sd.remove();}
+  // 📱 every mode writes its own column set into #hrow, so the phone column filter is
+  // cleared here and re-armed below only for the two boards that declare theirs via
+  // cols(). Modes that don't (Targets, Sleepers, Darts, Fade, Risers, Comps) keep all
+  // their columns and scroll sideways inside .tblwrap instead.
+  document.getElementById("mobcols").textContent="";
   if(mode==="wind"){ renderWind(); return; }
   if(mode==="mockkeep"){ renderMockKeepers(); return; }
   if(mode==="mockdraft"){ renderMockDraft(); return; }
@@ -3000,6 +3077,15 @@ function render(){
   if(mode==="auction")buildAuctionMkt();
   notes();
   const COLS=cols();
+  // 📱 On a phone 12 columns is 1,100px of table. Keep the ones a draft actually reads
+  // — who he is, what he projects, what he costs — and hide the rest under 700px.
+  const MOB=new Set(mode==="auction"
+    ? ["overall_rank","position","name","mexp","mval","medge","keep"]
+    : ["overall_rank","position","name","proj","vorp"]);
+  const dropped=COLS.map((c,i)=>MOB.has(c[0])?null:i+1).filter(Boolean);
+  document.getElementById("mobcols").textContent=dropped.length
+    ? `@media(max-width:700px){${dropped.map(i=>`#tbl>thead>tr>th:nth-child(${i}),#tbl>tbody>tr>td:nth-child(${i})`).join(",")}{display:none}}`
+    : "";
   const HTIP={mexp:"our algo's expected purchase price: the league's real 2023-25 winning-bid curve × a per-player anchor fitted on what this room paid HIM before, keeper-aware (same Exp $ as the draft rooms)",
     "espn$":"ESPN sitewide average auction value from your uploaded Live Draft Trends (📈 button above)",
     aav:"FantasyFootballAnalytics average auction value — league-scored expert consensus (from your uploaded FFA CSV, or the baked 2026 file)",
