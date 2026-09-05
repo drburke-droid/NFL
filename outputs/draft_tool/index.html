@@ -3125,11 +3125,12 @@ function mdcSheet(mkt,mv,plan,TS,guide){
       <span class="mdc-vd">${verdict[0]}</span></div>
     <div class="mdc-why">${verdict[2]} ${b.exact?"<b>Exact</b> — full roster re-solve at every price.":"<b>Estimate</b> — tap 🔮 Oracle for the exact number."}</div>
     <div class="mdc-meta">
-      <div><span>expected price</span><b>$${exp}</b></div>
-      <div><span>your max bid</span><b>$${afford}</b></div>
-      <div><span>worth to you</span><b>$${m.value||1}</b></div>
-      <div><span>dart grade</span><b>${d?d.t:"—"}</b></div>
+      <div title="What this room is expected to pay for him — the league's own 2023-25 bid curve times a per-player anchor, inflated for keepers."><span>expected price</span><b>$${exp}</b></div>
+      <div title="The most you could physically bid: your budget minus $1 held back for each of your other open spots."><span>your max bid</span><b>$${afford}</b></div>
+      <div title="FAIR VALUE, not a bid ceiling. His risk-adjusted points over replacement, priced at ONE league-wide exchange rate (all the room's money over all the value in the pool), inflated for keepers. It knows nothing about your roster, your budget or your alternatives — so it says what he is worth to A roster, while BID UP TO says what he is worth to YOURS. Fair value minus expected price is the market edge; the bid ceiling is the number you actually bid to."><span>fair value <i style="opacity:.6;font-style:normal">(league-wide)</i></span><b>$${m.value||1}</b>${(m.value||1)>exp+2?`<span class="upc" style="font-size:10px;margin-left:4px">+$${(m.value||1)-exp} vs market</span>`:((m.value||1)<exp-2?`<span class="downc" style="font-size:10px;margin-left:4px">−$${exp-(m.value||1)} vs market</span>`:"")}</div>
+      <div title="How hard a dart he is: 🚨 storm pair, Claude's T1-T4 dart board, or the modelled breakout signal."><span>dart grade</span><b>${d?d.t:"—"}</b></div>
     </div>
+    <div class="mdc-note" style="border-left-color:var(--accent)"><b>Fair value ≠ bid ceiling.</b> Fair value is his price tag in the abstract; <b>bid up to</b> is what he adds to <i>your</i> roster once you account for the next-best player you would take instead and what those dollars buy elsewhere. When a cheap substitute exists, the ceiling drops far below fair value — that gap is the whole point of the number.</div>
     ${d?`<div class="mdc-note">${d.tip}</div>`:""}
     ${m.wc?`<div class="mdc-note warn">${m.wc.tag} ${m.wc.note}</div>`:""}
     ${su.length?`<div class="mdc-note">🤖 likely bidders: ${su.map(x=>x.n+" ~$"+x.b).join(" · ")}</div>`:""}
