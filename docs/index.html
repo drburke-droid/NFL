@@ -241,8 +241,36 @@
   .mdc-note{background:var(--panel2);border-left:3px solid var(--line);border-radius:5px;
             padding:7px 9px;font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:6px}
   .mdc-note.warn{border-left-color:var(--gold)}
-  .mdc-sold{margin:9px 0 6px;font-size:12px;font-weight:700;color:var(--muted)}
-  .mdc-sold input{width:62px;font-size:16px;padding:5px}
+  /* 💵 price dial — a number input is unusable mid-auction: the price ticks in $1s while
+     you are holding a phone. Big steppers for the ticks, a drag wheel for a jump, presets
+     for the three numbers that actually matter, and the readout still types if you want. */
+  .mdc-sold{margin:10px 0 5px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em}
+  .mdc-dial{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:6px}
+  .mdc-step{flex:none;width:54px;height:54px;border-radius:14px;border:1px solid var(--line);
+            background:var(--panel2);color:var(--txt);font-size:23px;font-weight:700;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;
+            touch-action:manipulation}
+  .mdc-step:active{background:var(--accent);color:#06121f;border-color:var(--accent)}
+  .mdc-step.sm{width:44px;height:44px;font-size:14px}
+  .mdc-step:disabled{opacity:.3}
+  .mdc-price{width:112px;text-align:center;font-size:31px;font-weight:800;color:var(--gold);
+             background:transparent;border:0;border-bottom:2px solid var(--line);padding:2px 0;
+             -moz-appearance:textfield}
+  .mdc-price::-webkit-outer-spin-button,.mdc-price::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .mdc-price:focus{outline:none;border-bottom-color:var(--gold)}
+  .mdc-wheel{position:relative;display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;
+             -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;padding:2px 0 5px;
+             mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
+             -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+  .mdc-tick{flex:none;width:44px;scroll-snap-align:center;text-align:center;font-size:13px;
+            color:var(--muted);cursor:pointer;padding:5px 0;border-radius:7px}
+  .mdc-tick.on{color:var(--gold);font-weight:800;background:var(--panel2)}
+  .mdc-tick.pad{width:calc(50% - 22px);pointer-events:none}
+  .mdc-presets{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:9px}
+  .mdc-preset{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;
+              padding:7px 11px;font-size:12px;cursor:pointer;min-height:38px}
+  .mdc-preset:active{border-color:var(--gold)}
+  .mdc-owners button.cant{opacity:.3}
   .mdc-owners{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
   .mdc-owners button{background:var(--panel2);border:1px solid var(--line);color:var(--txt);
                      border-radius:8px;padding:9px 7px;font-size:12px;cursor:pointer;min-height:46px;
@@ -2962,7 +2990,7 @@ function refineWalkAways(plan,mkt){
 // Every price here is the ORACLE break-even (exact re-solve of my optimal roster at each
 // price) when it fits the render's time budget, and the λ estimate (~) when it doesn't;
 // 🔮 forces the exact number for everything on screen.
-let MDC_Q="", MDC_SEL=null, MDC_TEAM=null, MDC_FULL=false;
+let MDC_Q="", MDC_SEL=null, MDC_TEAM=null, MDC_FULL=false, MDC_PRICE=null;
 let _oracleBudget=0;
 const CLAUDE_DART_MAP=(()=>{const m={};
   if(typeof CLAUDE_DARTS!=="undefined")for(const cd of CLAUDE_DARTS)m[cd.n+"|"+cd.p]=cd;
@@ -3093,7 +3121,7 @@ function renderMobileCompanion(){
   if(qx)qx.onclick=()=>{MDC_Q="";renderMobileCompanion();document.getElementById("mdcQ").focus();};
   document.getElementById("mdcOracle").onclick=()=>{MDC_FULL=true;renderMobileCompanion();};
   document.querySelectorAll(".mdcPick").forEach(el=>el.onclick=e=>{e.stopPropagation();
-    MDC_SEL=el.dataset.id;renderMobileCompanion();});
+    MDC_SEL=el.dataset.id;MDC_PRICE=null;renderMobileCompanion();});   // fresh player -> dial back to his market price
   document.querySelectorAll(".mdc-team").forEach(el=>el.onclick=()=>{
     MDC_TEAM=MDC_TEAM===+el.dataset.t?null:+el.dataset.t;renderMobileCompanion();});
   wireMdcSheet(mkt);
@@ -3111,6 +3139,9 @@ function mdcSheet(mkt,mv,plan,TS,guide){
   const b=(()=>{const t0=performance.now();_oracleBudget=Math.max(_oracleBudget,400);
     const r=mdcBid(p,mkt,guide);_oracleBudget-=performance.now()-t0;return r;})();
   const d=mdcDart(p),meS=teamState(DR.me),afford=Math.max(1,meS.budget-(meS.spotsLeft-1));
+  // the dial spans every price any team in the room could actually pay
+  const dialMax=Math.max(2,...TS.map(s=>Math.max(1,s.budget-(s.spotsLeft-1))));
+  if(MDC_PRICE==null||MDC_PRICE>dialMax)MDC_PRICE=Math.min(Math.max(1,exp),dialMax);
   const su=DR.teams.map((t,i)=>({n:t.name,b:i===DR.me?0:ownerBid(i,p,mkt,TS)})).filter(x=>x.b>1)
     .sort((a,b2)=>b2.b-a.b).slice(0,3);
   const verdict=b.v<=0?["PASS","x","He does not improve your roster at any price — let the room have him."]
@@ -3134,7 +3165,24 @@ function mdcSheet(mkt,mv,plan,TS,guide){
     ${d?`<div class="mdc-note">${d.tip}</div>`:""}
     ${m.wc?`<div class="mdc-note warn">${m.wc.tag} ${m.wc.note}</div>`:""}
     ${su.length?`<div class="mdc-note">🤖 likely bidders: ${su.map(x=>x.n+" ~$"+x.b).join(" · ")}</div>`:""}
-    <div class="mdc-sold">SOLD FOR $<input id="mdcPrice" class="drnum" type="number" min="1" value="${exp}"> TO:</div>
+    <div class="mdc-sold">SOLD FOR</div>
+    <div class="mdc-dial">
+      <button class="mdc-step sm" id="mdcM5" title="−$5">−5</button>
+      <button class="mdc-step" id="mdcM1" title="−$1">−</button>
+      <input id="mdcPrice" class="mdc-price" type="number" inputmode="numeric" min="1" max="${dialMax}" value="${MDC_PRICE}">
+      <button class="mdc-step" id="mdcP1" title="+$1">+</button>
+      <button class="mdc-step sm" id="mdcP5" title="+$5">+5</button>
+    </div>
+    <div class="mdc-wheel thinscroll" id="mdcWheel"><span class="mdc-tick pad"></span>${
+      Array.from({length:dialMax},(_,k)=>k+1).map(v=>`<span class="mdc-tick${v===MDC_PRICE?" on":""}" data-v="${v}">${v}</span>`).join("")
+    }<span class="mdc-tick pad"></span></div>
+    <div class="mdc-presets">
+      <button class="mdc-preset mdcPre" data-v="${exp}">market $${exp}</button>
+      ${b.v>0?`<button class="mdc-preset mdcPre" data-v="${b.v}">your ceiling $${b.v}</button>`:""}
+      <button class="mdc-preset mdcPre" data-v="1">$1</button>
+      <button class="mdc-preset" id="mdcReset" title="back to the expected price">↺ reset</button>
+    </div>
+    <div class="mdc-sold">TO:</div>
     <div class="mdc-owners">${DR.teams.map((t,i)=>{const s=TS[i],aff=Math.max(1,s.budget-(s.spotsLeft-1));
       return `<button class="mdcSold${i===DR.me?" me":""}" data-t="${i}"${s.spotsLeft<=0?" disabled":""}
         title="$${s.budget} left · ${s.spotsLeft} spots · max $${aff}">${t.name}${i===DR.me?" (YOU)":""}<span>$${aff}</span></button>`;}).join("")}</div>
@@ -3144,12 +3192,50 @@ function wireMdcSheet(mkt){
   const w=document.getElementById("mdcSheetWrap");if(!w)return;
   document.getElementById("mdcClose").onclick=()=>{MDC_SEL=null;renderMobileCompanion();};
   w.onclick=e=>{if(e.target===w){MDC_SEL=null;renderMobileCompanion();}};
+  // 💵 the dial updates IN PLACE — a full re-render is ~350ms and would throw away the
+  // wheel's scroll position on every tap, which is unusable while the bidding is live.
+  const inp=document.getElementById("mdcPrice"),wheel=document.getElementById("mdcWheel");
+  if(inp&&wheel){
+    const ticks=[...wheel.querySelectorAll(".mdc-tick[data-v]")];
+    const lo=1,hi=ticks.length;
+    let selfScroll=false,scrollT=null;
+    const centre=(v,smooth)=>{const el=ticks[v-1];if(!el)return;selfScroll=true;
+      wheel.scrollTo({left:el.offsetLeft-(wheel.clientWidth/2)+(el.offsetWidth/2),behavior:smooth?"smooth":"auto"});
+      clearTimeout(scrollT);scrollT=setTimeout(()=>{selfScroll=false;},smooth?420:60);};
+    const paint=()=>{
+      inp.value=MDC_PRICE;
+      ticks.forEach((t,i)=>t.classList.toggle("on",i+1===MDC_PRICE));
+      // a team that cannot afford this price can't be the winner — grey it live
+      document.querySelectorAll(".mdcSold").forEach(bt=>{const s=teamState(+bt.dataset.t);
+        const aff=Math.max(1,s.budget-(s.spotsLeft-1));
+        bt.classList.toggle("cant",MDC_PRICE>aff||s.spotsLeft<=0);});};
+    const set=(v,scroll)=>{MDC_PRICE=Math.max(lo,Math.min(hi,Math.round(v)||lo));paint();if(scroll)centre(MDC_PRICE,true);};
+    const step=(d)=>set(MDC_PRICE+d,true);
+    document.getElementById("mdcM1").onclick=()=>step(-1);
+    document.getElementById("mdcP1").onclick=()=>step(1);
+    document.getElementById("mdcM5").onclick=()=>step(-5);
+    document.getElementById("mdcP5").onclick=()=>step(5);
+    document.querySelectorAll(".mdcPre").forEach(b=>b.onclick=()=>set(+b.dataset.v,true));
+    const rs=document.getElementById("mdcReset");
+    if(rs)rs.onclick=()=>{set(Math.max(1,Math.round(mkt.price[MDC_SEL]||1)),true);};
+    ticks.forEach((t,i)=>t.onclick=()=>set(i+1,true));
+    inp.onfocus=()=>inp.select();                               // tap the number, type over it
+    inp.oninput=()=>{const v=parseInt(inp.value,10);if(!isNaN(v)&&v>=lo&&v<=hi){MDC_PRICE=v;
+      ticks.forEach((t,k)=>t.classList.toggle("on",k+1===v));centre(v,false);}};
+    inp.onblur=()=>set(parseInt(inp.value,10)||MDC_PRICE,true);
+    wheel.onscroll=()=>{if(selfScroll)return;clearTimeout(scrollT);
+      scrollT=setTimeout(()=>{const c=wheel.scrollLeft+wheel.clientWidth/2;
+        let best=1,bd=1e9;ticks.forEach((t,i)=>{const d=Math.abs(t.offsetLeft+t.offsetWidth/2-c);
+          if(d<bd){bd=d;best=i+1;}});
+        if(best!==MDC_PRICE){MDC_PRICE=best;paint();}},90);};
+    paint();centre(MDC_PRICE,false);
+  }
   document.querySelectorAll(".mdcSold").forEach(bt=>bt.onclick=()=>{
-    const t=+bt.dataset.t,price=Math.max(1,Math.round(+document.getElementById("mdcPrice").value||1));
+    const t=+bt.dataset.t,price=Math.max(1,Math.round(MDC_PRICE||1));
     const s=teamState(t),aff=Math.max(1,s.budget-(s.spotsLeft-1));
     if(s.spotsLeft<=0){alert(DR.teams[t].name+" has no roster spots left.");return;}
     if(price>aff){alert(DR.teams[t].name+" can't pay $"+price+" — max bid $"+aff+".");return;}
-    DR.owned[MDC_SEL]={t,price,kept:false};saveDR();MDC_SEL=null;MDC_Q="";renderMobileCompanion();});
+    DR.owned[MDC_SEL]={t,price,kept:false};saveDR();MDC_SEL=null;MDC_PRICE=null;MDC_Q="";renderMobileCompanion();});
 }
 
 function renderMockDraft(){
