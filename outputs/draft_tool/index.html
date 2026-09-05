@@ -213,12 +213,14 @@
   .mdc-row:last-child{border-bottom:0}
   .mdc-row:active{background:var(--panel2)}
   .mdc-row.gone{opacity:.45;cursor:default}
+  .mdc-lead{flex:none;width:17px;text-align:center;font-size:12px;font-weight:800;color:var(--muted)}
   .mdc-nm{flex:1;min-width:0;font-size:14px;line-height:1.35}
   .mdc-dart{font-size:10px;font-weight:700;border-radius:4px;padding:1px 5px;margin-left:3px;white-space:nowrap}
   .mdc-bid{font-weight:800;font-size:17px;flex:none}
   .mdc-bid.go{color:var(--good)} .mdc-bid.no{color:var(--gold)} .mdc-bid.x{color:var(--bad);font-size:13px}
   .mdc-bid i{font-style:normal;opacity:.55;font-size:12px}
   .mdc-none{padding:11px;color:var(--muted);font-size:13px}
+  .mdc-tsum{color:var(--muted);font-size:11px;margin-top:4px;text-align:center}
   .mdc-teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
   .mdc-team{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px;font-size:12px;cursor:pointer}
   .mdc-team.me{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
@@ -1943,13 +1945,21 @@ function optimalPlan(mkt){
 let _oracleCache={k:"",v:{}};
 function oracleKey(){const s=teamState(DR.me);
   return s.budget+"|"+s.spotsLeft+"|"+Object.keys(DR.owned).length+"|"+projMode+"|"+BLEND_W+"|"+JSON.stringify(WHATIF)+"|"+Object.keys(PINS).sort().join(",");}
-function planStarterPts(mkt){                       // the planner's own objective, re-solved
+// The planner's own objective, re-solved: starters at risk-adjusted points PLUS the bench
+// valued the way the knapsack values it. Starters alone was wrong — a bench dart never
+// cracks the starting lineup, so buying one moved starter points by exactly zero and the
+// Oracle priced EVERY dart as "PASS, he doesn't improve your team at any price". A dart's
+// whole return is the world where he breaks into the lineup, which is what benchU prices.
+function planObjective(mkt){
   const pl=optimalPlan(mkt), own=teamState(DR.me).own.map(x=>x.p);
-  const slots={QB:1,RB:2,WR:2,TE:1,FLEX:1};let s=0;
-  [...own,...pl.picks.map(pk=>pk.p)].filter(Boolean).sort((a,b)=>raPts(b)-raPts(a)).forEach(p=>{
-    const q=p.position;
+  const all=[...own,...pl.picks.map(pk=>pk.p)].filter(Boolean);
+  const slots={QB:1,RB:2,WR:2,TE:1,FLEX:1};let s=0;const rest=[];
+  [...all].sort((a,b)=>raPts(b)-raPts(a)).forEach(p=>{const q=p.position;
     if(slots[q]>0){slots[q]--;s+=raPts(p);}
-    else if(FLEXE.includes(q)&&slots.FLEX>0){slots.FLEX--;s+=raPts(p);}});
+    else if(FLEXE.includes(q)&&slots.FLEX>0){slots.FLEX--;s+=raPts(p);}
+    else rest.push(p);});
+  rest.sort((a,b)=>benchU(b)-benchU(a)).slice(0,Math.max(0,cfg.roster-9))
+      .forEach(p=>{if(!isK(p))s+=benchU(p);});      // K/DST are streamed, not bench assets
   return s;}
 function oracleBid(player,mkt){
   if(!player||DR.owned[pid(player)])return null;
@@ -1965,7 +1975,7 @@ function oracleBid(player,mkt){
     try{
       DR.owned[id]=(p==null)?{t:(DR.me+1)%Math.max(2,DR.teams.length),price:1,kept:false}
                             :{t:DR.me,price:p,kept:false};
-      return planStarterPts(mkt);
+      return planObjective(mkt);
     } finally { if(sv===undefined)delete DR.owned[id];else DR.owned[id]=sv; }
   };
   const base=at(null);
@@ -3033,25 +3043,48 @@ const CLAUDE_DART_MAP=(()=>{const m={};
 // instant fallback: the λ shadow-price break-even against the best OTHER eligible player
 function mdcGuide(plan){
   const lam=Math.max(plan.lam||1,0.02),CAND=plan.cand||[];
+  // A slot GROUP can hold several slots — seven bench darts, two RBs. The player you would
+  // take instead is not the best one left, it is the LAST ONE THAT MAKES THE ROSTER: with 7
+  // bench slots you compare a dart against the 7th-best dart, not the 1st. Comparing against
+  // the best is why every dart the plan itself wanted priced out at PASS.
   const groups={};
   (plan.needs||[]).forEach(nd=>{const k=nd.uk+"|"+nd.elig.join(",");
-    if(groups[k])return;
-    let b1=-1e9,b1i=-1,b2=-1e9;
-    for(const j of nd.idx){const c=CAND[j],n=c[nd.uk]-lam*c.price;
-      if(n>b1){b2=b1;b1=n;b1i=j;}else if(n>b2)b2=n;}
-    groups[k]={uk:nd.uk,elig:nd.elig,b1,b1i,b2};});
-  const G=Object.values(groups),meS=teamState(DR.me);
-  const maxF=Math.max(1,meS.budget-(meS.spotsLeft-1));
-  return p=>{const id=pid(p);let best=0;
+    if(groups[k]){groups[k].n++;return;}
+    groups[k]={uk:nd.uk,elig:nd.elig,idx:nd.idx,n:1};});
+  const G=Object.values(groups);
+  G.forEach(g=>{const arr=[];
+    for(const j of g.idx){const c=CAND[j];arr.push({id:c.id,v:c[g.uk]-lam*c.price});}
+    arr.sort((a,b)=>b.v-a.v); g.top=arr.slice(0,g.n+1);});
+  const meS=teamState(DR.me),maxF=Math.max(1,meS.budget-(meS.spotsLeft-1));
+  const guide=p=>{const id=pid(p);let best=0;
     for(const g of G){if(!g.elig.includes(p.position))continue;
       const u=g.uk==="uRA"?raPts(p):g.uk==="uBN"?benchU(p):(p.proj_pts||0)/100;
-      const altn=(g.b1i>=0&&CAND[g.b1i].id===id)?g.b2:g.b1;
+      const t=g.top.filter(x=>x.id!==id);                 // the man he has to beat
+      const altn=t.length?t[Math.min(g.n,t.length)-1].v:-1e9;
       const w=(u-altn)/lam; if(w>best)best=w;}
     return Math.max(0,Math.min(Math.round(best),maxF));};
+  // anyone the plan seats as a STARTER is Oracle-priced regardless of where the market's
+  // replacement line sits (a FLEX body can be under his own position's line and still start)
+  guide.starters=new Set((plan.picks||[]).filter(pk=>pk.wa!=null&&pk.p).map(pk=>pid(pk.p)));
+  return guide;
 }
 // exact where affordable, estimate where not — never blocks the render
 function mdcBid(p,mkt,guide){
   const id=pid(p);
+  // ⚠ teamState fills STARTER needs greedily by projection, so a $1 dart bought while an
+  // RB slot is still open "occupies" that slot in the accounting — and the Oracle's
+  // re-solve then reports him as making the roster worse at any price, i.e. PASS on every
+  // dart the plan itself wants. Below the replacement line a player can only ever be a
+  // bench asset, so price him where the decision actually lives: against the NEXT dart,
+  // which is the λ break-even over the plan's bench slot. Above that line the Oracle's
+  // full re-solve is the right tool and is used unchanged.
+  if(!(guide.starters&&guide.starters.has(id))
+     &&Math.max(raPts(p)-((mkt.repl||{})[p.position]||0),0)<=0){
+    // benchU is a SELECTION utility (0.3 x ceiling x keeper runway x trajectory) tuned to make
+    // the knapsack pick darts, not a price — converting its gaps through λ hands back $25-30
+    // ceilings on $1 lottery tickets. Capped at the same stash ceiling myVal uses for bench
+    // buys, which is also where the dart price-band study put the validated bin.
+    return {v:Math.min(guide(p),BENCH_CAP+2),exact:false,bench:true};}
   if(_oracleCache.k===oracleKey()&&_oracleCache.v[id]!=null)return{v:_oracleCache.v[id],exact:true};
   if(_oracleBudget>0){const t0=performance.now();const v=oracleBid(p,mkt);
     _oracleBudget-=performance.now()-t0;return{v,exact:true};}
@@ -3072,17 +3105,18 @@ function mdcDart(p){
   if(s>=0.10)return{t:"🎯",c:"#c9b6ef",b:"#2a2436",tip:`${Math.round(s*100)}% modelled breakout signal`};
   return null;
 }
-function mdcRow(p,mkt,mv,guide,ctx){
+function mdcRow(p,mkt,mv,guide,ctx,lead){
   const id=pid(p),m=mv[id]||{},exp=Math.max(1,Math.round(mkt.price[id]||1));
   const b=mdcBid(p,mkt,guide),d=mdcDart(p),wc=m.wc;
   const good=b.v>=exp, dead=b.v<=0;
   return `<div class="mdc-row mdcPick" data-id="${id}">
+    ${lead?`<span class="mdc-lead">${lead}</span>`:""}
     <span class="pos ${p.position}">${p.position}</span>
     <span class="mdc-nm"><b>${p.name}</b> <span class="muted">${p.team||""}</span>
       ${d?`<span class="mdc-dart" style="background:${d.b};color:${d.c}" title="${d.tip.replace(/"/g,'&quot;')}">${d.t}</span>`:""}
       ${wc?`<span class="mdc-dart" style="background:#2a2016;color:#e0a23c" title="${wc.note.replace(/"/g,'&quot;')}">${wc.tag}</span>`:""}
       <span class="mdc-sub">exp $${exp}${ctx||""}</span></span>
-    <span class="mdc-bid ${dead?'x':(good?'go':'no')}" title="${b.exact?'ORACLE: exact break-even — re-solved your whole roster at each price':'λ estimate — tap for the exact number'}">
+    <span class="mdc-bid ${dead?'x':(good?'go':'no')}" title="${b.exact?'ORACLE: exact break-even — re-solved your whole roster at each price':(b.bench?'Bench dart — priced against the last dart that still makes your roster, capped at the $'+(BENCH_CAP+2)+' stash ceiling. Darts are near-substitutes: take the grade, not the extra dollars.':'λ estimate — tap for the exact number')}">
       ${dead?"PASS":"$"+b.v}${b.exact?"":"<i>~</i>"}</span></div>`;
 }
 function renderMobileCompanion(){
@@ -3105,7 +3139,19 @@ function renderMobileCompanion(){
     .sort((a,b)=>(mkt.price[pid(b)]||1)-(mkt.price[pid(a)]||1)).slice(0,8):[];
   const gone=q?PLAYERS.filter(p=>DR.owned[pid(p)]&&(p.name+" "+(p.team||"")).toLowerCase().includes(q)).slice(0,3):[];
   const hitRows=hits.map(p=>mdcRow(p,mkt,mv,guide)).join("");
-  // ---- 2. best-available ticker (consensus ADP, drafted players fall off) ----
+  // ---- 2. YOUR TARGETS: the live plan, in the order to go get it. Starters ranked by
+  //         IRREPLACEABILITY (season points lost to the next-best at that slot), because
+  //         that — not price — is what decides who you cannot afford to lose. Re-solves
+  //         after every sale you record, so a target you miss drops off and its
+  //         replacement moves up. ----
+  const tgtS=plan.picks.filter(pk=>pk.wa!=null&&pk.p&&!DR.owned[pid(pk.p)])
+    .slice().sort((a,b)=>(b.du||0)-(a.du||0));
+  const tgtB=plan.picks.filter(pk=>pk.slot==="BN"&&pk.p&&!DR.owned[pid(pk.p)]).slice(0,6);
+  const tgtRows=tgtS.map((pk,i)=>mdcRow(pk.p,mkt,mv,guide,
+      ` · plan ${pk.slot}${pk.du&&pk.du<999?` · −${pk.du} pts if you lose him`:""}`,String(i+1)))
+    .concat(tgtB.map(pk=>mdcRow(pk.p,mkt,mv,guide," · bench dart","🎯"))).join("");
+  const tgtCost=tgtS.reduce((a,pk)=>a+pk.cost,0),benchCost=tgtB.reduce((a,pk)=>a+pk.cost,0);
+  // ---- 3. best-available ticker (consensus ADP, drafted players fall off) ----
   const adp=p=>{const f=(typeof ffaMap!=="undefined"&&ffaMap)?ffaMap[fkey(p.name,p.position)]:null;
     return (f&&f.adp)||p.espn_adp||p.ffc_adp||9999;};
   const tick=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).map(p=>({p,a:adp(p)}))
@@ -3144,6 +3190,10 @@ function renderMobileCompanion(){
     ${q?`<div class="mdc-list">${hitRows||"<div class='mdc-none'>no available player matches</div>"}
       ${gone.map(p=>{const o=DR.owned[pid(p)];return `<div class="mdc-row gone"><span class="pos ${p.position}">${p.position}</span>
         <span class="mdc-nm"><b>${p.name}</b><span class="mdc-sub">${o.kept?"🔒 kept":"sold $"+o.price} — ${(DR.teams[o.t]||{}).name||"?"}</span></span></div>`;}).join("")}</div>`:""}
+    <div class="mdc-lbl" title="Your live plan: the best roster you can still buy at expected prices. Starters are ordered by how much you lose by missing them, not by price — number 1 is the one to go get. Bench darts follow. It re-solves after every sale you record.">🎯 YOUR TARGETS — in the order to go get them</div>
+    ${tgtRows?`<div class="mdc-list">${tgtRows}</div>
+      <div class="mdc-tsum">${tgtS.length} starter${tgtS.length===1?"":"s"} ≈ <b>$${tgtCost}</b> · ${tgtB.length} dart${tgtB.length===1?"":"s"} ≈ <b>$${benchCost}</b> · you hold <b class="maxbid">$${meS.budget}</b></div>`
+      :`<div class="mdc-none">roster full — nothing left to target</div>`}
     <div class="mdc-lbl">🏟️ THE ROOM — tap a team for their roster</div>
     <div class="mdc-teams">${teamCards}</div>
     <div class="mdc-foot">$ = the most you should pay: an exact re-solve of your best remaining roster at every price, so it already counts what the money would buy elsewhere. <b>PASS</b> = he does not improve your roster at any price. <i>~</i> = fast estimate, tap 🔮 for exact. Re-solves after every sale you record.</div>
