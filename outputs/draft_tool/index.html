@@ -189,6 +189,12 @@
   .mdc-oracle{background:var(--gold);border:0;color:#06121f;font-weight:700;font-size:13px;
               padding:9px 13px;border-radius:9px;cursor:pointer;min-height:40px}
   .mdc-oracle:active{transform:translateY(1px)}
+  .mdc-undo{display:flex;align-items:center;gap:8px;width:100%;margin-top:6px;background:var(--panel2);
+            border:1px solid var(--line);border-radius:9px;padding:8px 11px;color:var(--txt);
+            font-size:12px;cursor:pointer;min-height:44px;text-align:left}
+  .mdc-undo:active{border-color:var(--gold)}
+  .mdc-undo b{color:var(--gold);flex:none}
+  .mdc-undo span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
   .mdc-lbl{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.05em;margin:11px 0 4px}
   .mdc-tick{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px;scroll-snap-type:x proximity}
   .mdc-chip{flex:none;display:inline-flex;align-items:center;gap:4px;background:var(--panel);
@@ -1385,6 +1391,31 @@ function withKeeperBanner(fn){
   const host=document.getElementById("draftroom");
   if(host&&host.style.display!=="none"){host.insertAdjacentHTML("afterbegin",b);wireKeeperBanner();}
 }
+// ↩ UNDO — recording a sale is the one irreversible action in a live draft, and the two
+// ways to get it wrong (right player wrong team, right team wrong price) both look fine
+// until somebody's budget stops making sense three nominations later. Every sale recorded
+// in the Draft Room or the 📱 Companion goes on a stack with whatever the player's state
+// was before it, so undo puts back exactly that — including a keeper, if a sale ever
+// overwrote one. Survives a reload (a phone reloading mid-draft must not lose it).
+// The mock draft deliberately does NOT push here: it has its own snapshot restore, and a
+// simulation should never fill the real undo history.
+let DRUNDO=(()=>{try{return JSON.parse(localStorage.getItem("dr_undo")||"[]")}catch(e){return[]}})();
+const saveUndo=()=>{try{localStorage.setItem("dr_undo",JSON.stringify(DRUNDO.slice(-40)))}catch(e){}};
+const lastSale=()=>DRUNDO.length?DRUNDO[DRUNDO.length-1]:null;
+function recordSale(id,t,price){
+  const p=BYID[id];
+  DRUNDO.push({id,name:p?p.name:String(id).split("|")[0],pos:p?p.position:"",
+               t,price,prev:DR.owned[id]||null});
+  if(DRUNDO.length>40)DRUNDO.shift();
+  DR.owned[id]={t,price,kept:false};
+  saveDR();saveUndo();
+}
+function undoLastSale(){
+  const u=DRUNDO.pop(); if(!u)return null;
+  if(u.prev)DR.owned[u.id]=u.prev; else delete DR.owned[u.id];
+  saveDR();saveUndo(); return u;
+}
+const undoLabel=u=>`${u.pos?u.pos+" ":""}${u.name} $${u.price} → ${(DR.teams[u.t]||{}).name||"?"}`;
 function lockFinalKeepers(){
   const K={}; for(const id in DR.owned){const o=DR.owned[id];if(o.kept)K[id]={t:o.t,price:o.price};}
   KLOCK={version:new Date().toISOString().slice(0,10),keepers:K};
@@ -2368,6 +2399,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $">📈</label>
     <input id="espnTrendFile" type="file" accept=".txt,text/plain" style="display:none">
     <button class="btn sm" id="drReset" title="clears drafted players; keepers stay (managed in 🧩 Mock Keepers)">↺</button>
+    ${lastSale()?`<button class="btn sm" id="drUndo" title="Undo the last recorded sale — puts ${undoLabel(lastSale()).replace(/"/g,'&quot;')} back in the pool and refunds the money. Tap again to keep stepping back (${DRUNDO.length} recorded).">↩ undo</button>`:""}
     ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩</button>`:""}
     <span id="espnStatus" style="display:none"></span></div></div>`;
   h+=nomTickerHTML(mv,mkt);
@@ -2437,10 +2469,13 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
   document.getElementById("drMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   document.getElementById("espnFile").onchange=e=>{const f=e.target.files[0]; if(f) f.text().then(importEspnLeague);};
   wireEspnUpload();
+  {const ub=document.getElementById("drUndo");
+   if(ub)ub.onclick=()=>{const u=undoLastSale();if(u)render();};}
   document.getElementById("drReset").onclick=()=>{const n=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
     if(!n){alert("No drafted players to clear (keepers are managed in 🧩 Mock Keepers).");return;}
     if(!confirm(`Clear ${n} drafted player${n>1?"s":""}? Keepers stay locked.`))return;
     for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
+    DRUNDO=[];saveUndo();                                  // the stack would resurrect what we just cleared
     saveDR();render();};
   if(document.getElementById("drRestore"))document.getElementById("drRestore").onclick=mdRestore;
   document.querySelectorAll(".dr-team[data-setme]").forEach(el=>el.onclick=ev=>{if(ev.target.closest(".drundo"))return;DR.me=+el.dataset.setme;saveDR();render();});
@@ -2454,7 +2489,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     const s=teamState(t),afford=Math.max(1,s.budget-(s.spotsLeft-1));
     if(s.spotsLeft<=0){alert(DR.teams[t].name+" has no roster spots left.");return;}
     if(price>afford){alert(DR.teams[t].name+" can't pay $"+price+" — their max bid is $"+afford+" ($"+s.budget+" left, must keep $1 for each of their other "+(s.spotsLeft-1)+" spots).");return;}
-    DR.owned[drmId]={t,price,kept:false};saveDR();drmClose();render();};
+    recordSale(drmId,t,price);drmClose();render();};
   const openDrModal=id=>{const p=BYID[id];if(!p)return;
     drmId=id;
     const wa=(plan.picks.find(pk=>pk.p&&pid(pk.p)===id)||{}).wa;
@@ -3098,6 +3133,8 @@ function renderMobileCompanion(){
       <div class="mdc-needs">${needChips}</div>
       <button class="mdc-oracle" id="mdcOracle" title="Re-run the EXACT break-even (full roster re-solve at every price) for everything on screen, using the live game state. ~25ms a player.">🔮 Oracle</button>
     </div>
+    ${lastSale()?`<button class="mdc-undo" id="mdcUndo" title="Undo the last sale you recorded — he goes back in the pool and the money is refunded. Tap again to keep stepping back.">
+      <b>↩ undo</b><span>${undoLabel(lastSale())}</span></button>`:""}
     <div class="mdc-lbl">⚡ BEST AVAILABLE — tap to price &amp; record</div>
     <div class="mdc-tick thinscroll">${chips||"<span class='muted'>nobody left</span>"}</div>
     <div class="mdc-search">
@@ -3120,6 +3157,8 @@ function renderMobileCompanion(){
   const qx=document.getElementById("mdcQx");
   if(qx)qx.onclick=()=>{MDC_Q="";renderMobileCompanion();document.getElementById("mdcQ").focus();};
   document.getElementById("mdcOracle").onclick=()=>{MDC_FULL=true;renderMobileCompanion();};
+  {const ub=document.getElementById("mdcUndo");
+   if(ub)ub.onclick=()=>{undoLastSale();renderMobileCompanion();};}
   document.querySelectorAll(".mdcPick").forEach(el=>el.onclick=e=>{e.stopPropagation();
     MDC_SEL=el.dataset.id;MDC_PRICE=null;renderMobileCompanion();});   // fresh player -> dial back to his market price
   document.querySelectorAll(".mdc-team").forEach(el=>el.onclick=()=>{
@@ -3235,7 +3274,7 @@ function wireMdcSheet(mkt){
     const s=teamState(t),aff=Math.max(1,s.budget-(s.spotsLeft-1));
     if(s.spotsLeft<=0){alert(DR.teams[t].name+" has no roster spots left.");return;}
     if(price>aff){alert(DR.teams[t].name+" can't pay $"+price+" — max bid $"+aff+".");return;}
-    DR.owned[MDC_SEL]={t,price,kept:false};saveDR();MDC_SEL=null;MDC_PRICE=null;MDC_Q="";renderMobileCompanion();});
+    recordSale(MDC_SEL,t,price);MDC_SEL=null;MDC_PRICE=null;MDC_Q="";renderMobileCompanion();});
 }
 
 function renderMockDraft(){
