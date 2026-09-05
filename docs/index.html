@@ -1299,6 +1299,53 @@ function applyFinalKeepers(){
   saveDR(); return true;
 }
 applyFinalKeepers();
+// ⚠ A browser lock SILENTLY OUTRANKS the baked official list (finalKeepers() reads KLOCK
+// first), and it never expires. That is correct when this device holds the newest
+// selections, and a trap when it holds a stale scratch lock: the phone reads the repo, the
+// laptop reads its own lock, and the two rooms quietly disagree on who is even draftable.
+// This surfaces the disagreement everywhere the draft is run, instead of only in the
+// 🧩 Keepers tab, and offers the one-tap resolution in both directions.
+let KBANNER_HIDE=false;
+function keeperLockDiff(){
+  if(KBANNER_HIDE||!KLOCK||!KLOCK.keepers)return null;
+  const B=(typeof KEEPERS_FINAL!=="undefined"&&KEEPERS_FINAL&&KEEPERS_FINAL.keepers)||null;
+  if(!B)return null;
+  const L=KLOCK.keepers,nm=id=>(BYID[id]?BYID[id].name:id.split("|")[0]);
+  const only=(a,b)=>Object.keys(a).filter(k=>!b[k]).map(nm);
+  const chg=Object.keys(L).filter(k=>B[k]&&(B[k].price!==L[k].price||B[k].t!==L[k].t))
+    .map(k=>`${nm(k)} $${L[k].price}→$${B[k].price}`);
+  const mine=only(L,B),theirs=only(B,L);
+  if(!mine.length&&!theirs.length&&!chg.length)return null;
+  return {lockVer:KLOCK.version,bakedVer:KEEPERS_FINAL.version,mine,theirs,chg};
+}
+function keeperLockBannerHTML(){
+  const d=keeperLockDiff(); if(!d)return "";
+  const li=(lab,arr)=>arr.length?`<div style="margin-top:2px"><b>${lab}</b> ${arr.slice(0,6).join(" · ")}${arr.length>6?` +${arr.length-6} more`:""}</div>`:"";
+  return `<div class="dr-panel" id="kbanner" style="border-color:var(--bad);background:#2a1519">
+    <div style="font-weight:700;font-size:13px">⚠ This browser is using its OWN keeper lock, not the league's official list</div>
+    <div class="muted" style="font-size:11.5px;line-height:1.55;margin-top:3px">
+      Locked on this device <b>${d.lockVer}</b> · official list baked into the site <b>${d.bakedVer}</b>.
+      A device lock always wins, so this browser can disagree with your phone and with everyone else's copy.
+      ${li("only on this device:",d.mine)}${li("missing here, in the official list:",d.theirs)}${li("different price/team:",d.chg)}
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:7px">
+      <button class="btn sm up" id="kbUseOfficial" title="Drop this browser's lock and use the official list baked into the site — what every other device sees.">✅ Use the official list</button>
+      <button class="btn sm" id="kbKeepMine" title="Keep this device's lock for now. If these are the real selections, open 🧩 Mock Keepers → ⬇ Export finals and commit the file so every device gets them.">Keep this device's · hide</button>
+    </div></div>`;
+}
+function wireKeeperBanner(){
+  const a=document.getElementById("kbUseOfficial"); if(!a)return;
+  a.onclick=()=>{if(!confirm("Drop this browser's keeper lock and use the official list baked into the site?"))return;
+    unlockFinalKeepers();applyFinalKeepers();render();};
+  document.getElementById("kbKeepMine").onclick=()=>{KBANNER_HIDE=true;render();};
+}
+// runs a draft-surface renderer, then floats the mismatch warning above whatever it drew
+function withKeeperBanner(fn){
+  fn();
+  const b=keeperLockBannerHTML(); if(!b)return;
+  const host=document.getElementById("draftroom");
+  if(host&&host.style.display!=="none"){host.insertAdjacentHTML("afterbegin",b);wireKeeperBanner();}
+}
 function lockFinalKeepers(){
   const K={}; for(const id in DR.owned){const o=DR.owned[id];if(o.kept)K[id]={t:o.t,price:o.price};}
   KLOCK={version:new Date().toISOString().slice(0,10),keepers:K};
@@ -3450,11 +3497,11 @@ function render(){
   // cols(). Modes that don't (Targets, Sleepers, Darts, Fade, Risers, Comps) keep all
   // their columns and scroll sideways inside .tblwrap instead.
   document.getElementById("mobcols").textContent="";
-  if(mode==="mobile"){ renderMobileCompanion(); return; }
+  if(mode==="mobile"){ withKeeperBanner(renderMobileCompanion); return; }
   if(mode==="wind"){ renderWind(); return; }
-  if(mode==="mockkeep"){ renderMockKeepers(); return; }
-  if(mode==="mockdraft"){ renderMockDraft(); return; }
-  if(mode==="draftroom"){ renderDraftRoom(); return; }
+  if(mode==="mockkeep"){ withKeeperBanner(renderMockKeepers); return; }
+  if(mode==="mockdraft"){ withKeeperBanner(renderMockDraft); return; }
+  if(mode==="draftroom"){ withKeeperBanner(renderDraftRoom); return; }
   if(mode==="sleepers"){ renderSleepers(); return; }
   if(mode==="darts"){ renderDartLenses(); return; }
   if(mode==="fade"){ renderFade(); return; }
