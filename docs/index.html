@@ -174,6 +174,48 @@
   @media (max-width:900px){
     .tblwrap,.dr-panel,.wbcard{overflow-x:auto;-webkit-overflow-scrolling:touch}
   }
+  /* ================= ⚖️ DUEL ================= */
+  .duel{max-width:900px;margin:0 auto}
+  .duel-pick{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+  .duel-pick select{flex:1;min-width:0;font-size:13px;padding:7px}
+  .duel-dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .duel-price{display:flex;align-items:center;gap:5px;flex:none}
+  .duel-price b{min-width:40px;text-align:center;color:var(--gold);font-size:15px}
+  .duel-step{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);
+             color:var(--txt);font-size:17px;cursor:pointer;line-height:1}
+  .duel-step:active{background:var(--accent);color:#06121f}
+  .duel-opts{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+  .duel-seg{border:1px solid var(--line);background:var(--panel2);color:var(--txt);border-radius:7px;
+            padding:5px 9px;font-size:12px;cursor:pointer;margin-left:3px;min-width:30px}
+  .duel-seg.on{background:var(--accent);border-color:var(--accent);color:#06121f;font-weight:700}
+  .duel-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+  .duel-tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .duel-tl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+  .duel-tv{font-size:21px;font-weight:800;margin:2px 0 1px}
+  .duel-tv.a{color:#358ada} .duel-tv.b{color:#c2861f}
+  .duel-ts{color:var(--muted);font-size:10px;line-height:1.35}
+  .duel-leg{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:4px}
+  .duel-leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .duel-svg{width:100%;height:250px;display:block}
+  .duel-grid{stroke:var(--line);stroke-width:1;opacity:.45}
+  .duel-axis{stroke:var(--line);stroke-width:1}
+  .duel-ax{fill:var(--muted);font-size:10px}
+  .duel-dl{fill:var(--txt);font-size:11px;font-weight:600}
+  .duel-cross{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+  .duel-tip{position:absolute;background:var(--panel2);border:1px solid var(--line);border-radius:7px;
+            padding:6px 9px;font-size:11px;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.5);z-index:5}
+  .duel-tip i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+  .duel-tip div{color:var(--muted);margin-top:2px}
+  .duel-cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .duel-rh{display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:5px}
+  .duel-row{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0;border-bottom:1px solid var(--line)}
+  .duel-rn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:700px){
+    .duel-hero{grid-template-columns:repeat(2,1fr)}
+    .duel-cmp{grid-template-columns:1fr}
+    .duel-svg{height:210px}
+    .duel-pick select{font-size:16px}
+  }
   /* ================= 📱 MOBILE DRAFT COMPANION ================= */
   /* Thumb-first: 44px tap targets, one column, no hover-only information. Capped and
      centred so it is also usable on a laptop without becoming a stretched phone page. */
@@ -350,6 +392,7 @@
     <button class="btn" id="mKeep">🧩 Mock Keepers</button>
     <button class="btn" id="mMock">🤖 Mock Draft</button>
     <button class="btn" id="mDraft">🏟️ Draft Room</button>
+    <button class="btn" id="mDuel" title="Simulate two ways to spend the same budget: pick two players and two prices, and see the full season-outcome distribution of each completed roster.">⚖️ Duel</button>
     <button class="btn" id="mMobile" title="One-thumb live-auction view: best-available ticker, search, the room's money, and ONE number per player — the Oracle break-even (your whole roster re-solved at every price).">📱 Mobile Companion</button>
     <button class="btn" id="mWind">🌬️ Wind Bets</button>
     <a class="btn" href="https://claude.ai/code/artifact/9b6157c6-a8c0-466e-9968-8c025c9348c0" target="_blank" rel="noopener" title="Career skill curves for every QB/RB/WR/TE since 2011 — default Alpha view blends opponent-adjusted per-play skill with earned volume (validated: 2.4× the forward signal at WR; Chase WR25→WR2), plus true-skill / Elo / observed views — opens the Claude artifact; requires your claude.ai login">📉 Skill Curves ↗</a>
@@ -878,20 +921,21 @@ function setMode(m){
   document.getElementById("mFade").classList.toggle("active",m==="fade");
   document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
   document.getElementById("mMobile").classList.toggle("active",m==="mobile");
+  document.getElementById("mDuel").classList.toggle("active",m==="duel");
   document.getElementById("mKeep").classList.toggle("active",m==="mockkeep");
   document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
   document.getElementById("mWind").classList.toggle("active",m==="wind");
-  const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts"||m==="mobile");
+  const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts"||m==="mobile"||m==="duel");
   document.getElementById("settings").style.display=(m==="auction")?"flex":"none";   // draft room: settings are set pre-draft — reclaim the row
-  document.getElementById("scorechips").style.display=(m==="draftroom"||m==="mobile")?"none":"";   // draft-night declutter: scoring chips
-  document.getElementById("leaguesub").style.display=(m==="draftroom"||m==="mobile")?"none":"";    //  + league subtitle off in the Draft Room
+  document.getElementById("scorechips").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";   // draft-night declutter: scoring chips
+  document.getElementById("leaguesub").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";    //  + league subtitle off in the Draft Room
   document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=host?"block":"none";
   document.getElementById("windtab").style.display=m==="wind"?"block":"none";
   // 📱 the Companion carries its own search + needs bar; the desktop filter row would
   // just eat a third of a phone screen.
-  document.querySelector(".controls").style.display=(m==="wind"||m==="mobile")?"none":"";
+  document.querySelector(".controls").style.display=(m==="wind"||m==="mobile"||m==="duel")?"none":"";
   if(m==="wind"){document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";}
   if(m!=="comps"&&!host&&m!=="wind"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
@@ -906,6 +950,7 @@ document.getElementById("mDarts").onclick=()=>setMode("darts");
 document.getElementById("mFade").onclick=()=>setMode("fade");
 document.getElementById("mDraft").onclick=()=>setMode("draftroom");
 document.getElementById("mMobile").onclick=()=>setMode("mobile");
+document.getElementById("mDuel").onclick=()=>setMode("duel");
 document.getElementById("mKeep").onclick=()=>setMode("mockkeep");
 document.getElementById("mMock").onclick=()=>setMode("mockdraft");
 document.getElementById("mWind").onclick=()=>setMode("wind");
@@ -3028,6 +3073,272 @@ function refineWalkAways(plan,mkt){
     const o=oracleBid(pk.p,mkt); if(o!=null)pk.wa=o;});
   return plan;
 }
+// ================= ⚖️ DUEL — two ways to spend the same budget =================
+// Buying player A instead of player B does not change one slot, it changes the whole
+// roster: the plan re-solves around whatever money is left. This tab builds BOTH
+// completed rosters at the prices you set and simulates the season 4,000 times to show
+// what each shape actually pays — floor, ceiling, and how often one beats the other.
+// Paired (common random numbers): every player shared by the two rosters gets identical
+// draws in every season, so the difference is the decision and not simulation noise.
+const DUEL_A_C="#358ada", DUEL_B_C="#c2861f";   // dark-band steps of the board's accent/gold;
+                                                // CVD ΔE 25.5 protan / 22.8 tritan, ≥3:1 on panel
+let DUEL={a:null,b:null,pa:0,pb:0,wire:2,age:false,n:4000,res:null,busy:false};
+const D_WIRE={QB:22.5,RB:12.5,WR:13.5,TE:11.0}, D_SIG={QB:.35,RB:.55,WR:.55,TE:.55};
+const D_WK=17, D_WFROM=5, D_KAPPA=6, D_ADDS=["RB","WR","TE"];
+function d_rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function d_norm(r){let u=0,v=0;while(!u)u=r();while(!v)v=r();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function d_gamma(r,k){                                    // Marsaglia-Tsang
+  if(k<1){const u=r();return d_gamma(r,k+1)*Math.pow(u,1/k);}
+  const d=k-1/3,c=1/Math.sqrt(9*d);
+  for(;;){let x,v;do{x=d_norm(r);v=1+c*x;}while(v<=0);v=v*v*v;const u=r();
+    if(u<1-0.0331*x*x*x*x)return d*v;
+    if(Math.log(u)<0.5*x*x+d*(1-v+Math.log(v)))return d*v;}}
+function d_beta(r,a,b){const x=d_gamma(r,a);return x/(x+d_gamma(r,b));}
+// the completed roster if you win `nm` at $p — the plan re-solves with what is left
+function duelRoster(nm,price,mkt){
+  const p=PLAYERS.find(x=>x.name===nm); if(!p)return null;
+  const id=pid(p), sv=DR.owned[id];
+  DR.owned[id]={t:DR.me,price:Math.max(1,price),kept:false};
+  let out;
+  try{
+    const pl=optimalPlan(mkt), st=teamState(DR.me);
+    out={own:st.own.map(x=>x.p), plan:pl.picks.filter(k=>k.slot!=="K"&&k.slot!=="DST"),
+         spend:pl.spend, unspent:pl.unspent};
+  } finally { if(sv===undefined)delete DR.owned[id]; else DR.owned[id]=sv; }
+  const mem=out.own.concat(out.plan.map(k=>k.p)).filter(Boolean);
+  return {members:mem, plan:out.plan, unspent:out.unspent};
+}
+const D_SLOTS=[["QB"],["RB"],["RB"],["WR"],["WR"],["TE"],["RB","WR","TE"]];
+function duelSim(memA,memB,nwire,ageBias,N){
+  const uni=new Map();
+  const add=p=>{if(p&&!uni.has(p.name))uni.set(p.name,p);};
+  memA.forEach(add); memB.forEach(add);
+  const wire=[];
+  for(let i=0;i<nwire;i++){const q=D_ADDS[i%D_ADDS.length];
+    wire.push({name:"__wire"+i,position:q,proj_ppg:D_WIRE[q],_sd:3,_g:D_WK,_wire:true});}
+  const P=[...uni.values()].map(p=>{
+    let ppg=p.proj_ppg||0;
+    // rb_age.md: our RB relative error drifts −1.87%/yr of age (p=0.011) — young under-,
+    // 28+ over-projected. Applied as a shade, centred on 26; RB only, as the study is.
+    if(ageBias&&p.position==="RB"&&p.age)ppg*=1-0.0187*(p.age-26);
+    const fl=p.floor||0,ce=p.ceiling||0;
+    return {name:p.name,pos:p.position,ppg,
+      sd:Math.max((ce-fl)/2.563,0.15*Math.max(ppg,1)),
+      g:Math.min(17,Math.max(1,p.proj_games||15))};}).concat(
+    wire.map(w=>({name:w.name,pos:w.position,ppg:w.proj_ppg,sd:w._sd,g:D_WK,wire:true})));
+  const ix={}; P.forEach((p,i)=>ix[p.name]=i);
+  const colsA=memA.map(p=>ix[p.name]).concat(wire.map(w=>ix[w.name]));
+  const colsB=memB.map(p=>ix[p.name]).concat(wire.map(w=>ix[w.name]));
+  const M=P.length, r=d_rng(20260905);
+  const tru=new Float64Array(M), st0=new Int32Array(M), st1=new Int32Array(M);
+  const noise=new Float64Array(M*D_WK), score=new Float64Array(M*D_WK);
+  const A=new Float64Array(N), B=new Float64Array(N), hurtA=new Uint8Array(N), hurtB=new Uint8Array(N);
+  const evaluate=cols=>{let tot=0;
+    for(let w=0;w<D_WK;w++){
+      const used={};
+      for(const ok of D_SLOTS){
+        let best=-1e9,bi=-1;
+        for(const j of cols){ if(used[j])continue;
+          if(ok.indexOf(P[j].pos)<0)continue;
+          const v=score[j*D_WK+w]; if(v>best){best=v;bi=j;} }
+        if(bi>=0){used[bi]=1; if(best>0)tot+=best;} }
+    } return tot;};
+  for(let s=0;s<N;s++){
+    for(let j=0;j<M;j++){
+      const p=P[j];
+      tru[j]=Math.max(0,p.ppg+p.sd*d_norm(r));
+      let gp;
+      if(p.wire){gp=D_WK;st0[j]=0;st1[j]=D_WFROM-1;}     // not yours until he flashes
+      else{const m=p.g/D_WK;
+        gp=Math.round(d_beta(r,m*D_KAPPA,Math.max((1-m)*D_KAPPA,1e-3))*D_WK);
+        gp=Math.min(D_WK,Math.max(0,gp));
+        const miss=D_WK-gp, s0=miss>0?Math.floor(r()*(D_WK-miss+1)):0;
+        st0[j]=s0; st1[j]=s0+miss;}
+      const sg=D_SIG[p.pos]||0.5;
+      for(let w=0;w<D_WK;w++){
+        const out=p.wire?(w<D_WFROM-1):(w>=st0[j]&&w<st1[j]);
+        score[j*D_WK+w]= out ? -1e9 : tru[j]*Math.exp(sg*d_norm(r)-sg*sg/2);}
+    }
+    A[s]=evaluate(colsA); B[s]=evaluate(colsB);
+    const ja=ix[memA[0]?memA[0].name:""],jb=ix[memB[0]?memB[0].name:""];
+    hurtA[s]=0;hurtB[s]=0;
+  }
+  return {A,B};
+}
+const d_pct=(arr,p)=>{const a=Float64Array.from(arr).sort();return a[Math.min(a.length-1,Math.floor(p/100*a.length))];};
+// ---- density overlay: two simulated season distributions, one x-axis, direct-labelled ----
+function duelChart(A,B,nmA,nmB){
+  const W=720,H=250,PADL=34,PADR=14,PADT=26,PADB=30, NB=34;
+  const all=[...A,...B];
+  let lo=d_pct(all,0.5), hi=d_pct(all,99.5);            // the body, not the far tails
+  lo=Math.floor(lo/25)*25; hi=Math.ceil(hi/25)*25;
+  const bw=(hi-lo)/NB;
+  const hist=arr=>{const h=new Array(NB).fill(0);
+    for(const v of arr){let k=Math.floor((v-lo)/bw); if(k<0)k=0; if(k>=NB)k=NB-1; h[k]++;}
+    const sm=h.map((_,i)=>(h[Math.max(0,i-1)]+h[i]+h[Math.min(NB-1,i+1)])/3);   // light smoothing
+    return sm.map(v=>v/arr.length);};
+  const ha=hist(A), hb=hist(B), peak=Math.max(...ha,...hb)||1;
+  const X=v=>PADL+(v-lo)/(hi-lo)*(W-PADL-PADR), Y=d=>H-PADB-(d/peak)*(H-PADT-PADB);
+  const path=h=>{let d=`M ${X(lo).toFixed(1)} ${Y(0).toFixed(1)}`;
+    h.forEach((v,i)=>{d+=` L ${X(lo+(i+0.5)*bw).toFixed(1)} ${Y(v).toFixed(1)}`;});
+    return d+` L ${X(hi).toFixed(1)} ${Y(0).toFixed(1)}`;};
+  const line=h=>h.map((v,i)=>`${i?"L":"M"} ${X(lo+(i+0.5)*bw).toFixed(1)} ${Y(v).toFixed(1)}`).join(" ");
+  const ticks=[]; for(let t=lo;t<=hi;t+=Math.max(50,Math.round((hi-lo)/6/50)*50))ticks.push(t);
+  const shoulder=(h,side)=>{const mx=Math.max(...h),th=0.45*mx;
+    if(side<0){for(let i=0;i<h.length;i++)if(h[i]>=th)return i;}
+    else{for(let i=h.length-1;i>=0;i--)if(h[i]>=th)return i;}
+    return Math.floor(h.length/2);};
+  const lab=(h,nm,c,side)=>{const i=shoulder(h,side),x=X(lo+(i+0.5)*bw),y=Y(h[i]);
+    const tx=side<0?x-9:x+9, an=side<0?"end":"start";
+    return `<g><circle cx="${x.toFixed(1)}" cy="${(y-11).toFixed(1)}" r="3.5" fill="${c}"/>
+      <text x="${tx.toFixed(1)}" y="${(y-7).toFixed(1)}" class="duel-dl" text-anchor="${an}">${nm}</text></g>`;};
+  const mA=d_pct(A,50),mB=d_pct(B,50);
+  return `<svg viewBox="0 0 ${W} ${H}" class="duel-svg" id="duelSvg" preserveAspectRatio="none" role="img"
+      aria-label="Simulated season points: ${nmA} versus ${nmB}">
+    ${ticks.map(t=>`<line x1="${X(t).toFixed(1)}" x2="${X(t).toFixed(1)}" y1="${PADT-6}" y2="${H-PADB}" class="duel-grid"/>
+      <text x="${X(t).toFixed(1)}" y="${H-PADB+15}" class="duel-ax" text-anchor="middle">${t}</text>`).join("")}
+    <line x1="${PADL}" x2="${W-PADR}" y1="${H-PADB}" y2="${H-PADB}" class="duel-axis"/>
+    <path d="${path(ha)}" fill="${DUEL_A_C}" opacity=".14"/>
+    <path d="${path(hb)}" fill="${DUEL_B_C}" opacity=".14"/>
+    <path d="${line(ha)}" fill="none" stroke="${DUEL_A_C}" stroke-width="2" stroke-linejoin="round"/>
+    <path d="${line(hb)}" fill="none" stroke="${DUEL_B_C}" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="${X(mA).toFixed(1)}" x2="${X(mA).toFixed(1)}" y1="${H-PADB}" y2="${(H-PADB-9)}" stroke="${DUEL_A_C}" stroke-width="2"/>
+    <line x1="${X(mB).toFixed(1)}" x2="${X(mB).toFixed(1)}" y1="${H-PADB}" y2="${(H-PADB-9)}" stroke="${DUEL_B_C}" stroke-width="2"/>
+    ${lab(ha,nmA,DUEL_A_C,-1)}${lab(hb,nmB,DUEL_B_C,1)}
+    <text x="${PADL}" y="${PADT-12}" class="duel-ax">share of seasons</text>
+    <text x="${W-PADR}" y="${H-2}" class="duel-ax" text-anchor="end">season starter points →</text>
+    <line id="duelCross" x1="0" x2="0" y1="${PADT-6}" y2="${H-PADB}" class="duel-cross" style="opacity:0"/>
+    <rect id="duelHit" x="${PADL}" y="${PADT-6}" width="${W-PADL-PADR}" height="${H-PADB-PADT+6}"
+          fill="transparent" style="cursor:crosshair"/>
+  </svg>
+  <div class="duel-tip" id="duelTip" hidden></div>`;
+}
+function renderDuel(){
+  document.getElementById("tbl").style.display="none";
+  document.getElementById("scatter").style.display="none";
+  const host=document.getElementById("draftroom"); host.style.display="block";
+  if(!ensureKeeperLeague()){host.innerHTML='<div class="dr-panel">No keeper data.</div>';return;}
+  const mkt=dynamicMarket(), plan=optimalPlan(mkt), meS=teamState(DR.me);
+  const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p))
+    .map(p=>({p,x:Math.round(mkt.price[pid(p)]||1)})).filter(x=>x.x>=4)
+    .sort((a,b)=>b.x-a.x).slice(0,160);
+  if(!DUEL.a){                                            // default: your plan's most irreplaceable
+    const st=plan.picks.filter(k=>k.wa!=null&&k.p).sort((x,y)=>(y.du||0)-(x.du||0))[0];
+    if(st){DUEL.a=st.p.name;DUEL.pa=st.cost;
+      const rival=avail.find(x=>x.p.position===st.p.position&&x.p.name!==st.p.name);
+      if(rival){DUEL.b=rival.p.name;DUEL.pb=rival.x;}}
+  }
+  const opt=sel=>avail.map(x=>`<option value="${x.p.name.replace(/"/g,'')}"${x.p.name===sel?" selected":""}>${x.p.name} · ${x.p.position} · $${x.x}</option>`).join("");
+  const seg=(id,vals,cur)=>vals.map(v=>`<button class="duel-seg${v===cur?" on":""}" data-${id}="${v}">${v}</button>`).join("");
+  let h=`<div class="duel">
+    <div class="dr-panel">
+      <h3 style="margin:0 0 3px">⚖️ Duel — two ways to spend the same $${meS.budget}</h3>
+      <div class="muted" style="font-size:11px;margin-bottom:8px">Winning a player does not change one slot — the plan re-solves around what is left. Both rosters below are completed at the prices you set, then the season is simulated ${DUEL.n.toLocaleString()} times with the same luck applied to both.</div>
+      <div class="duel-pick"><span class="duel-dot" style="background:${DUEL_A_C}"></span>
+        <select class="drsel duel-selA">${opt(DUEL.a)}</select>
+        <span class="duel-price"><button class="duel-step" data-pa="-1">−</button><b id="duelPA">$${DUEL.pa}</b><button class="duel-step" data-pa="1">+</button></span></div>
+      <div class="duel-pick"><span class="duel-dot" style="background:${DUEL_B_C}"></span>
+        <select class="drsel duel-selB">${opt(DUEL.b)}</select>
+        <span class="duel-price"><button class="duel-step" data-pb="-1">−</button><b id="duelPB">$${DUEL.pb}</b><button class="duel-step" data-pb="1">+</button></span></div>
+      <div class="duel-opts">
+        <label title="Waiver adds you keep from week 5. Your league's own 2023-25 wire produced 6.0 startable RBs, 5.0 WRs, 7.3 TEs and 5.7 QBs a year at RB 12.5 / WR 13.5 / TE 11.0 ppg, 76% of them flashing by week 5.">wire adds ${seg("wire",[0,1,2,3],DUEL.wire)}</label>
+        <label class="tgl" title="rb_age.md: our RB projections carry a relative-error drift of −1.87% per year of age (p=0.011) — young backs under-projected, 28+ over-projected. The study rejected a blanket multiplier (it did not cut MAE) but shipped the age tiebreaker: same projection ±10%, 4+ years apart, the younger RB outscores the older 58.7% of the time (501/854, p<0.0001). This shades every RB by that drift, centred on 26.">
+          <input type="checkbox" id="duelAge"${DUEL.age?" checked":""}> shade RBs for the age bias</label>
+        <button class="btn sm up" id="duelRun">${DUEL.busy?"running…":"▶ run "+DUEL.n.toLocaleString()+" seasons"}</button>
+        <button class="btn sm" id="duelN">${DUEL.n===4000?"precision ×5":"faster"}</button>
+      </div>
+    </div>`;
+  const R=DUEL.res;
+  if(R){
+    const {A,B,rosA,rosB,nmA,nmB}=R;
+    const mA=A.reduce((a,b)=>a+b,0)/A.length, mB=B.reduce((a,b)=>a+b,0)/B.length;
+    let win=0; for(let i=0;i<A.length;i++)if(B[i]>A[i])win++;
+    win=100*win/A.length;
+    const tile=(lab,val,sub,cls)=>`<div class="duel-tile"><div class="duel-tl">${lab}</div>
+      <div class="duel-tv ${cls||''}">${val}</div><div class="duel-ts">${sub}</div></div>`;
+    const gap=mB-mA, f=d_pct(B,10)-d_pct(A,10), c=d_pct(B,90)-d_pct(A,90);
+    h+=`<div class="duel-hero">
+      ${tile("who wins more seasons",(win>=50?nmB:nmA).split(" ").slice(-1)[0]+" "+Math.round(win>=50?win:100-win)+"%",
+             (Math.abs(win-50)<3?"a coin flip":"a real edge")+" over "+A.length.toLocaleString()+" seasons",win>=50?"b":"a")}
+      ${tile("season points",(gap>=0?"+":"")+Math.round(gap),(gap>=0?nmB:nmA).split(" ").slice(-1)[0]+" ahead · "+(Math.abs(gap)/17).toFixed(2)+" a week",gap>=0?"b":"a")}
+      ${tile("floor (p10)",(f>=0?"+":"")+Math.round(f),"the bad-luck seasons",f>=0?"b":"a")}
+      ${tile("ceiling (p90)",(c>=0?"+":"")+Math.round(c),"the good-luck seasons",c>=0?"b":"a")}
+    </div>
+    <div class="dr-panel">
+      <div class="duel-leg"><span><i style="background:${DUEL_A_C}"></i>${nmA} $${DUEL.pa}</span>
+        <span><i style="background:${DUEL_B_C}"></i>${nmB} $${DUEL.pb}</span>
+        <span class="muted" style="font-size:10px">tick on the axis = median · hover for the odds</span></div>
+      ${duelChart(A,B,nmA,nmB)}
+    </div>
+    <div class="duel-cmp">${[[nmA,rosA,DUEL_A_C,DUEL.pa],[nmB,rosB,DUEL_B_C,DUEL.pb]].map(([nm,ro,col,pp])=>
+      `<div class="dr-panel"><div class="duel-rh"><span class="duel-dot" style="background:${col}"></span><b>${nm}</b> at $${pp}</div>
+        ${ro.plan.filter(k=>k.slot!=="BN").map(k=>`<div class="duel-row"><span class="pos ${k.p.position}">${k.p.position}</span>
+          <span class="duel-rn">${k.p.name}</span><span class="base">$${k.cost}</span></div>`).join("")}
+        <div class="duel-row muted"><span class="duel-rn" style="font-size:11px">+ ${ro.plan.filter(k=>k.slot==="BN").length} bench darts</span>
+          <span class="base">$${ro.plan.filter(k=>k.slot==="BN").reduce((a,k)=>a+k.cost,0)}</span></div></div>`).join("")}</div>
+    <div class="dr-panel"><div class="muted" style="font-size:10px;font-weight:700;letter-spacing:.05em;margin-bottom:5px">THE SAME NUMBERS AS A TABLE</div>
+      <table class="wbtbl"><tr><th>percentile</th><th>${nmA}</th><th>${nmB}</th><th>gap</th></tr>
+      ${[10,25,50,75,90].map(q=>{const a=d_pct(A,q),b=d_pct(B,q);
+        return `<tr><td>p${q}${q===10?" (floor)":q===90?" (ceiling)":""}</td><td>${Math.round(a)}</td><td>${Math.round(b)}</td>
+          <td class="${b>=a?'upc':'downc'}">${b>=a?"+":""}${Math.round(b-a)}</td></tr>`;}).join("")}
+      </table></div>`;
+  }
+  h+=`<div class="muted" style="font-size:11px;line-height:1.6;margin-top:10px">
+    <b>How to read it.</b> Each curve is where that roster's season lands across ${DUEL.n.toLocaleString()} simulated years — wider means less predictable, further right means better. The two rosters share every player they have in common, and in every simulated season those shared players get identical luck, so the gap you see is the decision and not noise.<br>
+    <b>What is modelled.</b> Each player's season level is drawn from his floor/ceiling band (read as p10/p90), games played from a Beta centred on his projected games (so injuries vary — a 15-game projection lands at 12 games or fewer about one year in six), and week-to-week scoring lognormally. Every week the best legal lineup is started. Waiver adds arrive week 5 at your league's own realised gem levels and are kept.<br>
+    <b>What is not.</b> Season starter points, not head-to-head record — schedule luck decides matchups and is not here. Keeper value beyond this season is not priced. And the whole thing inherits the board's projections: if you think one of these two is mis-projected, that matters more than anything on this page.</div></div>`;
+  host.innerHTML=h;
+  document.getElementById("notes").innerHTML="⚖️ <b>Duel.</b> Pick two players and two prices; the plan completes each roster with the money left and the season is simulated with common random numbers. Use it on the one or two buys that eat a quarter of your budget — that is where the roster shape actually turns.";
+  wireDuel(mkt);
+}
+function duelRun(mkt){
+  const rosA=duelRoster(DUEL.a,DUEL.pa,mkt), rosB=duelRoster(DUEL.b,DUEL.pb,mkt);
+  if(!rosA||!rosB){DUEL.busy=false;renderDuel();return;}
+  const {A,B}=duelSim(rosA.members,rosB.members,DUEL.wire,DUEL.age,DUEL.n);
+  DUEL.res={A:Array.from(A),B:Array.from(B),rosA,rosB,nmA:DUEL.a,nmB:DUEL.b};
+  DUEL.busy=false; renderDuel();
+}
+function wireDuel(mkt){
+  const go=()=>{DUEL.busy=true;renderDuel();setTimeout(()=>duelRun(mkt),30);};
+  const sa=document.querySelector(".duel-selA"), sb=document.querySelector(".duel-selB");
+  const priceOf=n=>{const p=PLAYERS.find(x=>x.name===n);return p?Math.max(1,Math.round(mkt.price[pid(p)]||1)):1;};
+  if(sa)sa.onchange=e=>{DUEL.a=e.target.value;DUEL.pa=priceOf(DUEL.a);go();};
+  if(sb)sb.onchange=e=>{DUEL.b=e.target.value;DUEL.pb=priceOf(DUEL.b);go();};
+  document.querySelectorAll(".duel-step").forEach(b=>b.onclick=()=>{
+    const d=+(b.dataset.pa||b.dataset.pb);
+    if(b.dataset.pa!=null)DUEL.pa=Math.max(1,DUEL.pa+d); else DUEL.pb=Math.max(1,DUEL.pb+d);
+    const el=document.getElementById(b.dataset.pa!=null?"duelPA":"duelPB");
+    if(el)el.textContent="$"+(b.dataset.pa!=null?DUEL.pa:DUEL.pb);
+    clearTimeout(window._duelT); window._duelT=setTimeout(go,320);});   // let you hold a step
+  document.querySelectorAll("[data-wire]").forEach(b=>b.onclick=()=>{DUEL.wire=+b.dataset.wire;go();});
+  const ag=document.getElementById("duelAge"); if(ag)ag.onchange=e=>{DUEL.age=e.target.checked;go();};
+  const rb=document.getElementById("duelRun"); if(rb)rb.onclick=go;
+  const nb=document.getElementById("duelN"); if(nb)nb.onclick=()=>{DUEL.n=DUEL.n===4000?20000:4000;go();};
+  if(!DUEL.res&&!DUEL.busy&&DUEL.a&&DUEL.b)go();
+  // hover: the decision-relevant readout is "how often does each roster clear this number"
+  const svg=document.getElementById("duelSvg"),hit=document.getElementById("duelHit"),
+        cross=document.getElementById("duelCross"),tip=document.getElementById("duelTip");
+  if(svg&&hit&&DUEL.res){
+    const A=DUEL.res.A,B=DUEL.res.B,all=A.concat(B);
+    let lo=Math.floor(Math.min(...all)/25)*25, hi=Math.ceil(Math.max(...all)/25)*25;
+    const move=ev=>{
+      const r=svg.getBoundingClientRect(), px=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+      const vb=720, sx=px/r.width*vb, PADL=34,PADR=14;
+      const v=lo+Math.min(1,Math.max(0,(sx-PADL)/(vb-PADL-PADR)))*(hi-lo);
+      cross.setAttribute("x1",sx);cross.setAttribute("x2",sx);cross.style.opacity=1;
+      const pa=100*A.filter(x=>x>=v).length/A.length, pb=100*B.filter(x=>x>=v).length/B.length;
+      tip.hidden=false;
+      tip.style.left=Math.min(r.width-160,Math.max(0,px-70))+"px";
+      tip.innerHTML=`<b>${Math.round(v)} pts or better</b>
+        <div><i style="background:${DUEL_A_C}"></i>${DUEL.res.nmA} <b>${pa.toFixed(0)}%</b></div>
+        <div><i style="background:${DUEL_B_C}"></i>${DUEL.res.nmB} <b>${pb.toFixed(0)}%</b></div>`;};
+    hit.onmousemove=move; hit.ontouchmove=e=>{e.preventDefault();move(e);};
+    hit.onmouseleave=()=>{cross.style.opacity=0;tip.hidden=true;};
+  }
+}
+
 // ================= 📱 MOBILE DRAFT COMPANION =================
 // One thumb, 30 seconds, one number. Everything else on this page is a desktop
 // analysis surface; this tab is the live-auction surface: what is up, how hard a dart
@@ -3688,6 +3999,7 @@ function render(){
   // their columns and scroll sideways inside .tblwrap instead.
   document.getElementById("mobcols").textContent="";
   if(mode==="mobile"){ withKeeperBanner(renderMobileCompanion); return; }
+  if(mode==="duel"){ withKeeperBanner(renderDuel); return; }
   if(mode==="wind"){ renderWind(); return; }
   if(mode==="mockkeep"){ withKeeperBanner(renderMockKeepers); return; }
   if(mode==="mockdraft"){ withKeeperBanner(renderMockDraft); return; }
