@@ -2081,7 +2081,10 @@ function nomTickerHTML(mv,mkt){
   // roster (the plan knapsack's break-even). Plan members: their walk-away (bid where
   // swapping to the next-best alternative breaks even). Non-members: the entry price at
   // which they'd displace the weakest occupant of an eligible slot; $0 = never optimal.
-  const plan=(mkt&&typeof optimalPlan==="function")?optimalPlan(mkt):null;
+  // 🔮 same Oracle ceiling the plan card and the 📱 Companion show, so a player's number is
+  // identical everywhere on the page (cached per roster state — this costs ~0 after the
+  // first solve of the turn).
+  const plan=(mkt&&typeof optimalPlan==="function")?refineWalkAways(optimalPlan(mkt),mkt):null;
   const lam=plan?Math.max(plan.lam,0.02):null;
   const cap=plan&&mv._meS?Math.max(1,mv._meS.budget-(plan.nslots-1)):1;
   const inPlan={};if(plan)plan.picks.forEach(pk=>{inPlan[pid(pk.p)]=pk;});
