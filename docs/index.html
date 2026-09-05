@@ -40,6 +40,21 @@
   .thinscroll::-webkit-scrollbar-track{background:transparent}
   .thinscroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
   .thinscroll::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+  /* 🎯 DART DOCK — the lens columns are a SIDEWAYS-scrolling strip. On a desktop the
+     lenses fit, so flex:1 spreads them across the bar and nothing scrolls; on a phone
+     they hold their width and you swipe across them, instead of every lens past the
+     second being clipped off by the dock's overflow. */
+  .dockcols{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+            overscroll-behavior-x:contain;scroll-snap-type:x proximity}
+  .dockcol{flex:1;min-width:148px;overflow-y:auto;border-right:1px solid var(--line);
+           padding:0 6px 4px;scroll-snap-align:start}
+  .dockswipe{display:none}
+  @media (max-width:700px){
+    /* wide enough to read a name at arm's length; ~1.5 lenses on screen, swipe for the rest */
+    .dockcol{flex:0 0 min(64vw,240px)}
+    .dockexp{display:none}          /* the explainer eats a third of the dock on a phone */
+    .dockswipe{display:inline}      /* ...replaced by the one hint that only applies here */
+  }
   header{padding:16px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
   h1{margin:0 0 6px;font-size:19px}
   .sub{color:var(--muted);font-size:13px}
@@ -1875,7 +1890,7 @@ function dartDockHTML(mkt,mv,plan){
     <span class="pos ${pos}" style="transform:scale(.7);flex:none">${pos}</span>
     <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
     <span style="flex:none">${right}</span></div>`;
-  const col=(title,tip,rows)=>`<div class="thinscroll" style="flex:1;min-width:148px;overflow-y:auto;border-right:1px solid var(--line);padding:0 6px 4px">
+  const col=(title,tip,rows)=>`<div class="thinscroll dockcol">
     <div style="font-size:10px;font-weight:700;position:sticky;top:0;background:var(--panel);padding:2px 0;cursor:help" title="${tip.replace(/"/g,'&quot;')}">${title}</div>
     ${rows||'<div class="muted" style="font-size:10px">— none left —</div>'}</div>`;
   let cols="";
@@ -1923,9 +1938,9 @@ function dartDockHTML(mkt,mv,plan){
   return `<div style="height:27vh"></div>
     <div id="dartdock" style="position:fixed;left:0;right:0;bottom:0;height:25vh;z-index:60;background:var(--panel);border-top:2px solid var(--gold);display:flex;flex-direction:column;box-shadow:0 -6px 20px rgba(0,0,0,.55)">
     <div class="muted" style="display:flex;align-items:center;gap:10px;padding:2px 8px;font-size:10px;flex:none">
-      🎯 <b>DART DOCK</b> — live: sold players drop off, prices track the room, dimmed = above your max affordable · your budget <b class="maxbid">$${meS.budget}</b> · max bid <b>$${afford}</b> · ▶ = nominate
-      <span style="flex:1"></span><span id="dockHide" style="cursor:pointer;color:var(--gold)">▼ hide</span></div>
-    <div style="flex:1;display:flex;overflow:hidden">${cols}</div></div>`;
+      <span style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">🎯 <b>DART DOCK</b><span class="dockexp"> — live: sold players drop off, prices track the room, dimmed = above your max affordable</span> · budget <b class="maxbid">$${meS.budget}</b> · max bid <b>$${afford}</b><span class="dockexp"> · ▶ = nominate</span><span class="dockswipe"> · swipe →</span></span>
+      <span id="dockHide" style="flex:none;cursor:pointer;color:var(--gold)">▼ hide</span></div>
+    <div class="thinscroll dockcols">${cols}</div></div>`;
 }
 // 🎯 the running list of players I WANT, in nomination-priority order: plan starters by
 // irreplaceability, then the plan's bench darts, then next-up high Dart/Leap RB/WR pivots,
