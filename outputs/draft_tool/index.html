@@ -1835,15 +1835,44 @@ function planPanelHTML(mkt,mv){
 // horizontal scroll strip above the team cards; every chip nominates via .planNom
 // (Draft Room: opens the sold box · Mock: on your turn puts him on the block, else
 // bid preview). Shared by both rooms so they look and work identically.
-function nomTickerHTML(mv){
+function nomTickerHTML(mv,mkt){
   const adp=p=>{const f=(typeof ffaMap!=="undefined"&&ffaMap)?ffaMap[fkey(p.name,p.position)]:null;
     return (f&&f.adp)||p.espn_adp||p.ffc_adp||9999;};
   const tick=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).map(p=>({p,a:adp(p)}))
     .filter(x=>x.a<9999).sort((x,y)=>x.a-y.a).slice(0,60);
+  // 💰 ROSTER MAX: the bid above which this player no longer appears on YOUR optimal
+  // roster (the plan knapsack's break-even). Plan members: their walk-away (bid where
+  // swapping to the next-best alternative breaks even). Non-members: the entry price at
+  // which they'd displace the weakest occupant of an eligible slot; $0 = never optimal.
+  const plan=(mkt&&typeof optimalPlan==="function")?optimalPlan(mkt):null;
+  const lam=plan?Math.max(plan.lam,0.02):null;
+  const cap=plan&&mv._meS?Math.max(1,mv._meS.budget-(plan.nslots-1)):1;
+  const inPlan={};if(plan)plan.picks.forEach(pk=>{inPlan[pid(pk.p)]=pk;});
+  const price=p=>(mkt&&mkt.price[pid(p)])||1;
+  const rosterMax=p=>{
+    if(!plan||plan.infeasible)return null;
+    const pk=inPlan[pid(p)];
+    if(pk){
+      if(pk.wa!=null)return pk.wa;                       // starters: solver's walk-away
+      let altn=-1e9;                                     // bench/K/DST member: same break-even
+      for(const q of PLAYERS){if(DR.owned[pid(q)]||inPlan[pid(q)]||!pk.elig.includes(q.position))continue;
+        const n=pk.uf(q)-lam*price(q);if(n>altn)altn=n;}
+      if(altn<=-1e9)return cap;
+      return Math.max(1,Math.min(Math.round(pk.cost+((pk.u-lam*pk.cost)-altn)/lam),cap));
+    }
+    let best=null;                                       // outsider: best displacement price
+    for(const pk2 of plan.picks){if(!pk2.elig.includes(p.position))continue;
+      const x=pk2.cost+(pk2.uf(p)-pk2.u)/lam;if(best==null||x>best)best=x;}
+    if(best==null)return null;
+    return Math.max(0,Math.min(Math.round(best),cap));
+  };
   return `<div class="dr-panel" style="padding:3px 8px"><div class="thinscroll" style="display:flex;gap:5px;overflow-x:auto;align-items:center;padding-bottom:2px">
-    <b class="muted" style="font-size:9px;flex:none;line-height:1.2" title="best available, sorted by FFA consensus ADP (fallback ESPN/FFC) — click any chip to nominate; drafted players drop off">⚡ BEST<br>AVAIL</b>
+    <b class="muted" style="font-size:9px;flex:none;line-height:1.2" title="best available, sorted by FFA consensus ADP (fallback ESPN/FFC) — click any chip to nominate; drafted players drop off. Grey $ = expected price · gold $ = YOUR MAX (bid above it and he no longer makes your optimal roster)">⚡ BEST<br>AVAIL</b>
     ${tick.map(x=>{const m=mv[pid(x.p)]||{};const fl=(typeof NEWS_FLAGS!=="undefined")&&NEWS_FLAGS[norm(x.p.name)]&&(x.p.age??26)>=28;
-      return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid ${fl?'#7a2a35':'var(--line)'};border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1} · My Max $${m.maxBid||1}${fl?' · 🚩 NEGATIVE-NEWS 28+ (−36-pt fade cell) — nominate to drain rivals, don’t pay up':''} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}${fl?'🚩':''}<b class="base">$${m.market||1}</b></span>`;}).join("")}
+      const rm=rosterMax(x.p);
+      const rmChip=rm==null?'':rm<1?`<span class="muted" title="never on your optimal roster at any price">–</span>`:`<b class="maxbid">$${rm}</b>`;
+      const rmTip=rm==null?'':rm<1?' · never on your optimal roster':` · my max $${rm} (above that he’s off your best roster)`;
+      return `<span class="planNom" data-id="${pid(x.p)}" style="cursor:pointer;flex:none;display:inline-flex;gap:4px;align-items:center;border:1px solid ${fl?'#7a2a35':'var(--line)'};border-radius:4px;padding:1px 6px;font-size:11px;background:var(--panel2);white-space:nowrap" title="${x.p.name} — ADP ${(+x.a).toFixed(1)} · Exp $${m.market||1}${rmTip}${fl?' · 🚩 NEGATIVE-NEWS 28+ (−36-pt fade cell) — nominate to drain rivals, don’t pay up':''} — click to nominate">▶<span class="pos ${x.p.position}" style="transform:scale(.75)">${x.p.position}</span>${x.p.name}${fl?'🚩':''}<b class="base">$${m.market||1}</b>${rmChip}</span>`;}).join("")}
   </div></div>`;
 }
 // 🔎 SEARCH DROPDOWN — in the Draft Room / Mock Draft the pool table lives far below
@@ -2013,7 +2042,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     <button class="btn sm" id="drReset" title="clears drafted players; keepers stay (managed in 🧩 Mock Keepers)">↺</button>
     ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩</button>`:""}
     <span id="espnStatus" style="display:none"></span></div></div>`;
-  h+=nomTickerHTML(mv);
+  h+=nomTickerHTML(mv,mkt);
   // team strip — every owner's roster card: keepers 🔒, live draft score (starter PPG vs the
   // predraft optimal), surplus captured (value bought − $ paid), and what they're targeting next.
   // 6-across grid → exactly two rows of 6 for the 12-team league (flex cards were too narrow)
@@ -2648,7 +2677,7 @@ function renderMockDraft(){
     <input id="espnTrendFile" type="file" accept=".txt,text/plain" style="display:none">
     ${drafted?`<button class="btn sm" id="mdReset" title="Reset to keepers — clears ${drafted} drafted players">↺</button>`:MD.on?`<button class="btn sm" id="mdReset" title="end this mock">✕</button>`:""}
     ${localStorage.getItem(MD_SNAP)?`<button class="btn sm" id="mdRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩</button>`:""}</div></div>`;
-  h+=nomTickerHTML(mv);   // ⚡ same nomination ticker as the real Draft Room
+  h+=nomTickerHTML(mv,mkt);   // ⚡ same nomination ticker as the real Draft Room
   // on the clock
   if(MD.on&&!done){
     h+=`<div class="dr-panel" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">

@@ -30,9 +30,9 @@ rounding error: they supplied a quarter of all elite seasons, and at QB nearly h
 | pos | star = top | pos. avg $ | cheap buys | cheap stars | P(star) if cheap | P(star) if at/above | % of elite seasons bought cheap |
 |---|---|---|---|---|---|---|---|
 | QB | 3 | 8.5 | 212 | 12 | 5.7 | 20.2 | 40 |
-| RB | 6 | 17.2 | 367 | 11 | 3.0 | 26.1 | 19 |
+| RB | 6 | 17.2 | 368 | 11 | 3.0 | 26.1 | 19 |
 | WR | 9 | 14.1 | 415 | 22 | 5.3 | 31.7 | 25 |
-| TE | 3 | 8.3 | 148 | 8 | 5.4 | 34.5 | 30 |
+| TE | 3 | 8.4 | 147 | 8 | 5.4 | 34.5 | 30 |
 
 Pooled: **53 of 204 elite seasons (26%) were bought below the positional average**, at 4.6% per buy.
 
@@ -79,22 +79,22 @@ price already says:
 
 | draft-day feature | n with it | raw P(star) | odds ratio | p (vs price + position) |
 |---|---|---|---|---|
-| projected inside starter tier | 256 | 12.5 | 3.94 | 0.0002 |
-| price ranks worse than projection (gap>=5) | 267 | 6.4 | 2.98 | 0.0019 |
-| changed teams | 249 | 2.4 | 0.5 | 0.0873 |
-| age <= 25 and NFL round 1-2 | 307 | 6.5 | 1.43 | 0.2389 |
-| prior year: missed 4+ games | 330 | 3.3 | 0.69 | 0.2728 |
-| age >= 30 | 224 | 4.0 | 0.71 | 0.3686 |
-| new team vacated 100+ targets | 887 | 4.4 | 0.76 | 0.4175 |
-| years 1-3 of career | 411 | 5.1 | 1.25 | 0.4564 |
-| prior year: target share >= 18% | 249 | 7.2 | 1.23 | 0.6009 |
-| FFA ceiling premium (continuous) | 1142 |  | 1.86 | 0.6150 |
-| new team vacated 120+ carries | 567 | 5.1 | 1.15 | 0.6239 |
-| prior year: starter-tier PPG | 255 | 7.1 | 1.09 | 0.7872 |
-| NFL round 1-2 (any age) | 615 | 5.5 | 1.06 | 0.8515 |
-| prior year: snap share >= 60% | 581 | 5.9 | 1.07 | 0.8518 |
-| FFA uncertainty below median | 580 | 5.7 | 1.05 | 0.8662 |
-| rookie with round 1-2 capital | 122 | 4.9 | 0.97 | 0.9496 |
+| projected inside starter tier | 256 | 12.5 | 3.93 | 0.0002 |
+| price ranks worse than projection (gap>=5) | 269 | 6.3 | 2.93 | 0.0021 |
+| changed teams | 249 | 2.4 | 0.5 | 0.0872 |
+| age <= 25 and NFL round 1-2 | 307 | 6.5 | 1.43 | 0.2395 |
+| prior year: missed 4+ games | 331 | 3.3 | 0.69 | 0.2703 |
+| age >= 30 | 224 | 4.0 | 0.71 | 0.3685 |
+| new team vacated 100+ targets | 887 | 4.4 | 0.76 | 0.4177 |
+| years 1-3 of career | 411 | 5.1 | 1.25 | 0.4572 |
+| prior year: target share >= 18% | 250 | 7.2 | 1.23 | 0.6068 |
+| FFA ceiling premium (continuous) | 1142 |  | 1.85 | 0.6168 |
+| new team vacated 120+ carries | 568 | 5.1 | 1.15 | 0.6255 |
+| prior year: starter-tier PPG | 255 | 7.1 | 1.09 | 0.7882 |
+| prior year: snap share >= 60% | 582 | 5.8 | 1.07 | 0.8571 |
+| NFL round 1-2 (any age) | 616 | 5.5 | 1.06 | 0.8572 |
+| FFA uncertainty below median | 579 | 5.7 | 1.05 | 0.8654 |
+| rookie with round 1-2 capital | 122 | 4.9 | 0.97 | 0.9480 |
 
 Two rows clear the bar (they are the same finding, and §4 takes them apart);
 with 16 tests and 53 events nothing else survives a multiplicity correction.
@@ -194,9 +194,9 @@ alternative definition:
 | variant | class n | class stars | class star % | same price, weaker proj. % | p |
 |---|---|---|---|---|---|
 | as reported: top 168 pool, mean, top 3/6/9/3 | 183 | 26 | 14.2 | 4.0 | 0.0035 |
-| pool = top 192 (every drafted body) | 165 | 21 | 12.7 | 3.8 | 0.0044 |
+| pool = top 192 (every drafted body) | 166 | 22 | 13.3 | 3.8 | 0.0027 |
 | pool = top 140 (tighter) | 207 | 32 | 15.5 | 4.1 | 0.0038 |
-| centre = positional MEDIAN, not mean | 56 | 3 | 5.4 | 2.7 | 0.3931 |
+| centre = positional MEDIAN, not mean | 56 | 3 | 5.4 | 2.7 | 0.3939 |
 | star = top 2/4/6/2 (tighter) | 183 | 17 | 9.3 | 2.4 | 0.0179 |
 | star = top 4/8/12/4 (looser) | 183 | 32 | 17.5 | 4.0 | 0.0003 |
 | star = top 20% (6/12/18/6) | 183 | 51 | 27.9 | 8.9 | <0.0001 |
@@ -252,33 +252,35 @@ exist per auction, so budgeting **$30-40 for three or four of them** is the whol
 ## 8. The 2026 slate
 
 Same rule applied to `projections_2026_wk0.csv` (league-scored FFA). Positional
-averages inside the 2026 pool: QB $9, RB $20, TE $10, WR $17.
+averages inside the 2026 pool: QB $9, RB $20, TE $9, WR $16.
 
 | player | pos | team | FFA $ | pos. avg $ | proj pts | proj pos. rank | ADP |
 |---|---|---|---|---|---|---|---|
-| Caleb Williams | QB | CHI | 9.0 | 9.1 | 377.0 | 9.0 | 72.0 |
-| Bo Nix | QB | DEN | 7.1 | 9.1 | 373.0 | 12.0 | 96.7 |
-| Cam Skattebo | RB | NYG | 19.1 | 20.4 | 233.0 | 19.0 | 40.7 |
-| Quinshon Judkins | RB | CLE | 17.5 | 20.4 | 222.0 | 21.0 | 50.6 |
-| Bucky Irving | RB | TB | 15.5 | 20.4 | 230.0 | 20.0 | 50.0 |
-| Bhayshul Tuten | RB | JAC | 14.1 | 20.4 | 208.0 | 23.0 | 60.4 |
-| TreVeyon Henderson | RB | NE | 12.4 | 20.4 | 205.0 | 24.0 | 64.6 |
-| Tucker Kraft | TE | GB | 9.2 | 10.0 | 177.0 | 8.0 | 73.8 |
-| Sam LaPorta | TE | DET | 9.0 | 10.0 | 169.0 | 12.0 | 76.7 |
-| George Kittle | TE | SF | 8.7 | 10.0 | 172.0 | 9.0 | 98.8 |
-| Kyle Pitts | TE | ATL | 8.5 | 10.0 | 190.0 | 6.0 | 77.1 |
-| Harold Fannin | TE | CLE | 6.8 | 10.0 | 195.0 | 5.0 | 77.7 |
-| Travis Kelce | TE | KC | 5.9 | 10.0 | 180.0 | 7.0 | 102.0 |
-| Mark Andrews | TE | BAL | 5.1 | 10.0 | 171.0 | 10.0 | 118.0 |
-| Dallas Goedert | TE | PHI | 5.1 | 10.0 | 171.0 | 11.0 | 105.0 |
-| Mike Evans | WR | SF | 13.0 | 16.9 | 206.0 | 29.0 | 75.6 |
-| Luther Burden | WR | CHI | 12.6 | 16.9 | 211.0 | 25.0 | 66.4 |
-| Jameson Williams | WR | DET | 11.4 | 16.9 | 222.0 | 21.0 | 63.8 |
-| Rome Odunze | WR | CHI | 10.6 | 16.9 | 209.0 | 27.0 | 66.6 |
-| DK Metcalf | WR | PIT | 8.8 | 16.9 | 197.0 | 30.0 | 89.2 |
-| Courtland Sutton | WR | DEN | 8.5 | 16.9 | 206.0 | 28.0 | 90.1 |
+| Trevor Lawrence | QB | JAC | 8.5 | 8.5 | 378.0 | 9.0 | 83.2 |
+| Matthew Stafford | QB | LAR | 8.1 | 8.5 | 376.0 | 10.0 | 92.7 |
+| Matthew Stafford | QB | LAR | 8.1 | 8.5 | 376.0 | 11.0 | 92.7 |
+| Bo Nix | QB | DEN | 6.4 | 8.5 | 372.0 | 12.0 | 101.0 |
+| David Montgomery | RB | HOU | 19.4 | 19.9 | 201.0 | 24.0 | 53.0 |
+| Cam Skattebo | RB | NYG | 18.4 | 19.9 | 233.0 | 18.0 | 41.5 |
+| Quinshon Judkins | RB | CLE | 16.2 | 19.9 | 224.0 | 20.0 | 49.6 |
+| Bucky Irving | RB | TB | 15.6 | 19.9 | 227.0 | 19.0 | 49.2 |
+| Bhayshul Tuten | RB | JAC | 15.1 | 19.9 | 208.0 | 22.0 | 56.7 |
+| TreVeyon Henderson | RB | NE | 10.1 | 19.9 | 205.0 | 23.0 | 68.4 |
+| George Kittle | TE | SF | 8.3 | 8.8 | 179.0 | 8.0 | 86.9 |
+| Tucker Kraft | TE | GB | 8.2 | 8.8 | 175.0 | 11.0 | 75.4 |
+| Kyle Pitts | TE | ATL | 7.4 | 8.8 | 188.0 | 7.0 | 77.6 |
+| Sam LaPorta | TE | DET | 7.3 | 8.8 | 177.0 | 10.0 | 79.3 |
+| Harold Fannin | TE | CLE | 6.1 | 8.8 | 200.0 | 4.0 | 75.6 |
+| Travis Kelce | TE | KC | 5.6 | 8.8 | 179.0 | 9.0 | 99.8 |
+| Terry McLaurin | WR | WAS | 14.8 | 15.6 | 213.0 | 25.0 | 59.7 |
+| Jameson Williams | WR | DET | 12.4 | 15.6 | 222.0 | 20.0 | 61.4 |
+| Luther Burden | WR | CHI | 12.2 | 15.6 | 213.0 | 24.0 | 64.4 |
+| Mike Evans | WR | SF | 11.1 | 15.6 | 201.0 | 29.0 | 76.6 |
+| Rome Odunze | WR | CHI | 11.0 | 15.6 | 209.0 | 27.0 | 66.5 |
+| Christian Watson | WR | GB | 10.4 | 15.6 | 198.0 | 30.0 | 72.6 |
+| Courtland Sutton | WR | DEN | 7.8 | 15.6 | 206.0 | 28.0 | 87.4 |
 
-21 names, ~$218 to buy the lot — obviously you take three or four,
+23 names, ~$249 to buy the lot — obviously you take three or four,
 not twenty. Two health warnings on this list:
 
 - **FFA AAV is the national market, not this room.** Keeper inflation runs this
