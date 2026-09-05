@@ -196,7 +196,7 @@
   .mdc-undo b{color:var(--gold);flex:none}
   .mdc-undo span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
   .mdc-lbl{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.05em;margin:11px 0 4px}
-  .mdc-tick{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px;scroll-snap-type:x proximity}
+  .mdc-ticker{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px;scroll-snap-type:x proximity}
   .mdc-chip{flex:none;display:inline-flex;align-items:center;gap:4px;background:var(--panel);
             border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px;
             white-space:nowrap;cursor:pointer;scroll-snap-align:start;min-height:44px}
@@ -268,10 +268,10 @@
              -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;padding:2px 0 5px;
              mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
              -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
-  .mdc-tick{flex:none;width:44px;scroll-snap-align:center;text-align:center;font-size:13px;
+  .mdc-wtick{flex:none;width:44px;scroll-snap-align:center;text-align:center;font-size:13px;
             color:var(--muted);cursor:pointer;padding:5px 0;border-radius:7px}
-  .mdc-tick.on{color:var(--gold);font-weight:800;background:var(--panel2)}
-  .mdc-tick.pad{width:calc(50% - 22px);pointer-events:none}
+  .mdc-wtick.on{color:var(--gold);font-weight:800;background:var(--panel2)}
+  .mdc-wtick.pad{width:calc(50% - 22px);pointer-events:none}
   .mdc-presets{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:9px}
   .mdc-preset{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;
               padding:7px 11px;font-size:12px;cursor:pointer;min-height:38px}
@@ -3136,7 +3136,7 @@ function renderMobileCompanion(){
     ${lastSale()?`<button class="mdc-undo" id="mdcUndo" title="Undo the last sale you recorded — he goes back in the pool and the money is refunded. Tap again to keep stepping back.">
       <b>↩ undo</b><span>${undoLabel(lastSale())}</span></button>`:""}
     <div class="mdc-lbl">⚡ BEST AVAILABLE — tap to price &amp; record</div>
-    <div class="mdc-tick thinscroll">${chips||"<span class='muted'>nobody left</span>"}</div>
+    <div class="mdc-ticker thinscroll">${chips||"<span class='muted'>nobody left</span>"}</div>
     <div class="mdc-search">
       <input id="mdcQ" type="search" placeholder="Search the player on the block…" value="${MDC_Q.replace(/"/g,'&quot;')}" autocomplete="off">
       ${MDC_Q?`<button class="qx" id="mdcQx" aria-label="Clear">✕</button>`:""}
@@ -3212,9 +3212,9 @@ function mdcSheet(mkt,mv,plan,TS,guide){
       <button class="mdc-step" id="mdcP1" title="+$1">+</button>
       <button class="mdc-step sm" id="mdcP5" title="+$5">+5</button>
     </div>
-    <div class="mdc-wheel thinscroll" id="mdcWheel"><span class="mdc-tick pad"></span>${
-      Array.from({length:dialMax},(_,k)=>k+1).map(v=>`<span class="mdc-tick${v===MDC_PRICE?" on":""}" data-v="${v}">${v}</span>`).join("")
-    }<span class="mdc-tick pad"></span></div>
+    <div class="mdc-wheel thinscroll" id="mdcWheel"><span class="mdc-wtick pad"></span>${
+      Array.from({length:dialMax},(_,k)=>k+1).map(v=>`<span class="mdc-wtick${v===MDC_PRICE?" on":""}" data-v="${v}">${v}</span>`).join("")
+    }<span class="mdc-wtick pad"></span></div>
     <div class="mdc-presets">
       <button class="mdc-preset mdcPre" data-v="${exp}">market $${exp}</button>
       ${b.v>0?`<button class="mdc-preset mdcPre" data-v="${b.v}">your ceiling $${b.v}</button>`:""}
@@ -3235,7 +3235,7 @@ function wireMdcSheet(mkt){
   // wheel's scroll position on every tap, which is unusable while the bidding is live.
   const inp=document.getElementById("mdcPrice"),wheel=document.getElementById("mdcWheel");
   if(inp&&wheel){
-    const ticks=[...wheel.querySelectorAll(".mdc-tick[data-v]")];
+    const ticks=[...wheel.querySelectorAll(".mdc-wtick[data-v]")];
     const lo=1,hi=ticks.length;
     let selfScroll=false,scrollT=null;
     const centre=(v,smooth)=>{const el=ticks[v-1];if(!el)return;selfScroll=true;
