@@ -194,6 +194,11 @@
   .duel-tv{font-size:21px;font-weight:800;margin:2px 0 1px}
   .duel-tv.a{color:#358ada} .duel-tv.b{color:#c2861f}
   .duel-ts{color:var(--muted);font-size:10px;line-height:1.35}
+  .duel-rec{background:var(--panel);border:1px solid var(--gold);border-left-width:3px;border-radius:9px;
+            padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.55}
+  .duel-rec.ok{border-color:var(--good)}
+  .duel-rec .duel-rw{color:var(--muted);font-size:11.5px;margin-top:5px}
+  .duel-rec button{margin-top:8px}
   .duel-leg{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:4px}
   .duel-leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
   .duel-svg{width:100%;height:250px;display:block}
@@ -3266,6 +3271,18 @@ function renderDuel(){
       ${tile("floor (p10)",(f>=0?"+":"")+Math.round(f),"the bad-luck seasons",f>=0?"b":"a")}
       ${tile("ceiling (p90)",(c>=0?"+":"")+Math.round(c),"the good-luck seasons",c>=0?"b":"a")}
     </div>
+    ${(()=>{
+      const oA=R.objA,oB=R.objB; if(oA==null||oB==null)return "";
+      const simB=gap>=0, planB=oB>oA;                       // does each model prefer B?
+      const simW=simB?nmB:nmA, planW=planB?nmB:nmA;
+      const pA=PLAYERS.find(x=>x.name===simW), pinned=pA&&isPinned(pA);
+      const pctSim=Math.abs(gap)/Math.max(mA,1)*100, pctPlan=Math.abs(oB-oA)/Math.max(oA,1)*100;
+      if(simB===planB) return `<div class="duel-rec ok">✓ <b>🎯 Your Targets agrees</b> — the plan also completes the better roster around <b>${planW}</b>. Nothing to reconcile.</div>`;
+      return `<div class="duel-rec">
+        <div><b>⚠ The two tabs disagree.</b> 🎯 Your Targets buys <b>${planW}</b> (by ${Math.abs(oB-oA).toFixed(0)} pts on its scale, ${pctPlan.toFixed(1)}%); this simulation prefers <b>${simW}</b> (by ${Math.abs(gap).toFixed(0)} pts, ${pctSim.toFixed(1)}%).</div>
+        <div class="duel-rw">They optimise different things, and neither is wrong. The plan maximises a <b>risk-discounted season total over fixed lineup slots</b>, which rewards the balanced roster. This tab <b>plays the season out</b> — you set the best lineup every week and seven bench bodies cover a bad stretch — which converts a stud's wider outcome band into upside instead of penalising it (${nmB}'s floor-to-ceiling band is ${(()=>{const x=PLAYERS.find(y=>y.name===nmB),z=PLAYERS.find(y=>y.name===nmA);return x&&z?((x.ceiling-x.floor).toFixed(1)+" vs "+(z.ceiling-z.floor).toFixed(1)):"wider";})()}). Both verdicts are ~1% of a season, so treat this as a tie and break it on what neither model sees — age, situation, your read of the room.</div>
+        ${pA?`<button class="btn sm ${pinned?"":"up"}" id="duelPin">${pinned?"📌 unpin "+simW:"📌 pin "+simW+" — make the plan buy him"}</button>`:""}
+      </div>`;})()}
     <div class="dr-panel">
       <div class="duel-leg"><span><i style="background:${DUEL_A_C}"></i>${nmA} $${DUEL.pa}</span>
         <span><i style="background:${DUEL_B_C}"></i>${nmB} $${DUEL.pb}</span>
@@ -3293,11 +3310,18 @@ function renderDuel(){
   document.getElementById("notes").innerHTML="⚖️ <b>Duel.</b> Pick two players and two prices; the plan completes each roster with the money left and the season is simulated with common random numbers. Use it on the one or two buys that eat a quarter of your budget — that is where the roster shape actually turns.";
   wireDuel(mkt);
 }
+function duelPlanObj(nm,price,mkt){        // what 🎯 Your Targets is maximising, for this branch
+  const p=PLAYERS.find(x=>x.name===nm); if(!p)return null;
+  const id=pid(p), sv=DR.owned[id];
+  try{ DR.owned[id]={t:DR.me,price:Math.max(1,price),kept:false}; return planObjective(mkt); }
+  finally{ if(sv===undefined)delete DR.owned[id]; else DR.owned[id]=sv; }
+}
 function duelRun(mkt){
   const rosA=duelRoster(DUEL.a,DUEL.pa,mkt), rosB=duelRoster(DUEL.b,DUEL.pb,mkt);
   if(!rosA||!rosB){DUEL.busy=false;renderDuel();return;}
   const {A,B}=duelSim(rosA.members,rosB.members,DUEL.wire,DUEL.age,DUEL.n);
-  DUEL.res={A:Array.from(A),B:Array.from(B),rosA,rosB,nmA:DUEL.a,nmB:DUEL.b};
+  DUEL.res={A:Array.from(A),B:Array.from(B),rosA,rosB,nmA:DUEL.a,nmB:DUEL.b,
+            objA:duelPlanObj(DUEL.a,DUEL.pa,mkt), objB:duelPlanObj(DUEL.b,DUEL.pb,mkt)};
   DUEL.busy=false; renderDuel();
 }
 function wireDuel(mkt){
@@ -3316,6 +3340,10 @@ function wireDuel(mkt){
   const ag=document.getElementById("duelAge"); if(ag)ag.onchange=e=>{DUEL.age=e.target.checked;go();};
   const rb=document.getElementById("duelRun"); if(rb)rb.onclick=go;
   const nb=document.getElementById("duelN"); if(nb)nb.onclick=()=>{DUEL.n=DUEL.n===4000?20000:4000;go();};
+  const pb=document.getElementById("duelPin");
+  if(pb&&DUEL.res){const w=(DUEL.res.B.reduce((a,b)=>a+b,0)>=DUEL.res.A.reduce((a,b)=>a+b,0))?DUEL.res.nmB:DUEL.res.nmA;
+    const pp=PLAYERS.find(x=>x.name===w);
+    if(pp)pb.onclick=()=>{togglePin(pid(pp));};}   // togglePin re-renders; 🎯 Your Targets follows
   if(!DUEL.res&&!DUEL.busy&&DUEL.a&&DUEL.b)go();
   // hover: the decision-relevant readout is "how often does each roster clear this number"
   const svg=document.getElementById("duelSvg"),hit=document.getElementById("duelHit"),
