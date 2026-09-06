@@ -2029,11 +2029,28 @@ function oracleBid(player,mkt){
     } finally { if(sv===undefined)delete DR.owned[id];else DR.owned[id]=sv; }
   };
   const base=at(null);
-  if(at(1)-base<=0.001)return _oracleCache.v[id]=0;          // never worth a roster spot
-  if(at(maxF)-base>0.001)return _oracleCache.v[id]=maxF;     // worth everything you have
-  let lo=1,hi=maxF;
-  for(let it=0;it<10&&hi-lo>1;it++){const m=Math.round((lo+hi)/2);
-    if(at(m)-base>0.001)lo=m;else hi=m;}
+  const better=p=>at(p)-base>0.001;
+  // ⚠ THE OBJECTIVE IS NOT MONOTONE IN THE PROBE PRICE. When a cheap buy leaves a big
+  // budget across few remaining slots, optimalPlan's λ bisection bottoms out at its 0.02
+  // floor, where money is nearly free and a BENCH slot buys a stud; planObjective then
+  // re-seats everyone by raPts and scores the displaced starter at benchU, so the objective
+  // DROPS. Measured 2026-09: Bijan at $1 scored 1907.9 and at $40 scored 1958.8 — paying
+  // less looked worse. The old code probed at(1) first and returned 0 the instant it hit
+  // that dip, which is how the board's #1 target came back "PASS" while its own walk-away
+  // said $135 (6 of 13 planned picks displayed PASS, Bijan and London among them).
+  // A bisection cannot be trusted on a non-monotone curve, so scan a price ladder from the
+  // top and take the HIGHEST price that still beats passing — which is what a break-even
+  // actually is — then refine inside that bracket.
+  const STEPS=10,ladder=[1];
+  for(let k=1;k<=STEPS;k++){const v=Math.max(1,Math.round(maxF*k/STEPS));
+    if(v>ladder[ladder.length-1])ladder.push(v);}
+  let gi=-1;
+  for(let i=ladder.length-1;i>=0;i--){if(better(ladder[i])){gi=i;break;}}
+  if(gi<0)return _oracleCache.v[id]=0;                       // no price at all beats passing
+  if(gi===ladder.length-1)return _oracleCache.v[id]=maxF;    // worth everything you have
+  let lo=ladder[gi],hi=ladder[gi+1];
+  for(let it=0;it<8&&hi-lo>1;it++){const m=Math.round((lo+hi)/2);
+    if(better(m))lo=m;else hi=m;}
   return _oracleCache.v[id]=lo;
 }
 // PER-OWNER OPTIMAL: starter PPG/wk of the best roster THIS owner could have built — his best
@@ -3405,11 +3422,19 @@ function mdcGuide(plan){
   // anyone the plan seats as a STARTER is Oracle-priced regardless of where the market's
   // replacement line sits (a FLEX body can be under his own position's line and still start)
   guide.starters=new Set((plan.picks||[]).filter(pk=>pk.wa!=null&&pk.p).map(pk=>pid(pk.p)));
+  // everyone the plan seats at all — bench darts included. The plan buying him is itself
+  // proof he is worth a roster spot, so his displayed price is floored at $1: a target list
+  // that says "go get him" next to "PASS" is telling you two opposite things at once.
+  guide.planned=new Set((plan.picks||[]).filter(pk=>pk.p).map(pk=>pid(pk.p)));
   return guide;
 }
 // exact where affordable, estimate where not — never blocks the render
 function mdcBid(p,mkt,guide){
   const id=pid(p);
+  const planned=!!(guide.planned&&guide.planned.has(id));
+  // K/DST are streamed, and planObjective deliberately scores them zero — so the Oracle can
+  // only ever answer PASS for them. Price them as the $1 fillers they are instead.
+  if(isK(p))return {v:1,exact:true,stream:true};
   // ⚠ teamState fills STARTER needs greedily by projection, so a $1 dart bought while an
   // RB slot is still open "occupies" that slot in the accounting — and the Oracle's
   // re-solve then reports him as making the roster worse at any price, i.e. PASS on every
@@ -3423,11 +3448,12 @@ function mdcBid(p,mkt,guide){
     // the knapsack pick darts, not a price — converting its gaps through λ hands back $25-30
     // ceilings on $1 lottery tickets. Capped at the same stash ceiling myVal uses for bench
     // buys, which is also where the dart price-band study put the validated bin.
-    return {v:Math.min(guide(p),BENCH_CAP+2),exact:false,bench:true};}
-  if(_oracleCache.k===oracleKey()&&_oracleCache.v[id]!=null)return{v:_oracleCache.v[id],exact:true};
+    return {v:Math.max(planned?1:0,Math.min(guide(p),BENCH_CAP+2)),exact:false,bench:true};}
+  const fl=v=>Math.max(planned?1:0,v);
+  if(_oracleCache.k===oracleKey()&&_oracleCache.v[id]!=null)return{v:fl(_oracleCache.v[id]),exact:true};
   if(_oracleBudget>0){const t0=performance.now();const v=oracleBid(p,mkt);
-    _oracleBudget-=performance.now()-t0;return{v,exact:true};}
-  return {v:guide(p),exact:false};
+    _oracleBudget-=performance.now()-t0;return{v:fl(v),exact:true};}
+  return {v:fl(guide(p)),exact:false};
 }
 // how hard a dart is he — one glance, no hovering
 function mdcDart(p){
@@ -3466,7 +3492,11 @@ function renderMobileCompanion(){
   const mkt=dynamicMarket(),plan=optimalPlan(mkt),mv=myVal(mkt),meS=mv._meS;
   const TS=DR.teams.map((_,i)=>teamState(i)),guide=mdcGuide(plan);
   const afford=Math.max(1,meS.budget-(meS.spotsLeft-1));
-  _oracleBudget=MDC_FULL?5000:220;   // 🔮 forces exact for the whole screen
+  // 🔮 forces exact for the whole screen. The non-monotone-safe Oracle costs ~68ms a player
+  // (a ladder scan, not a bisection — see oracleBid), so the per-render budget buys ~6 exact
+  // numbers: enough to cover 🎯 YOUR TARGETS, which is the list actually being read. Everything
+  // below it falls back to the λ estimate and is marked ~.
+  _oracleBudget=MDC_FULL?5000:400;
   MDC_FULL=false;
   const needChips=["QB","RB","WR","TE","FLEX"].map(k=>meS.need[k]>0
     ?`<span class="mdc-need">${k}${meS.need[k]>1?"×"+meS.need[k]:""}</span>`:"").join("")
