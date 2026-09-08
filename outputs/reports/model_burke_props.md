@@ -116,3 +116,25 @@ v1's monotone curve, same pocket. ~15–25 bets a season.
   close, the hardest possible benchmark.
 - rush-yds v2 never engaged (calibration needs 400 prior rows; the scored
   frame is too thin after burn-in).
+
+## v3: early-vs-close, with the data we hold (`scripts` scratch: props_early.py)
+
+We do NOT hold true openers — snapshots are 1–2 per event, median first capture
+2.1h pre-kickoff. Both Odds API keys are DEACTIVATED (cancelled plans), so
+re-querying historical opener snapshots needs a reactivated paid plan. What we
+could test: the ~350 events/market whose first snapshot leads by ≥5h (median
+5.6h — an evening-before market). Model rebuilt with the EARLY line as baseline
+(close-as-baseline would be lookahead), bet at early prices, vs the same-events
+close sim:
+
+| market | thr | EARLY bets/roi | CLOSE bets/roi |
+|---|---|---|---|
+| reception yds | 5% | 18 / **+18.8%** | 35 / −0.6% |
+| reception yds | 8% | 4 / +94% | 5 / +56% |
+| receptions | 5% | 666 / −3.6% | 676 / −2.1% |
+
+Weak directional support where the model already had edge (rec-yds overs do
+better against the softer evening-before price) and no rescue where it didn't
+(receptions loses either way — earlier prices don't fix a wrong model). n=18/4
+in the interesting cells: suggestive only. A real opener test (T-3 to T-5 days)
+remains the right experiment and requires restored API access.
