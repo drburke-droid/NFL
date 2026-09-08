@@ -252,35 +252,31 @@ exist per auction, so budgeting **$30-40 for three or four of them** is the whol
 ## 8. The 2026 slate
 
 Same rule applied to `projections_2026_wk0.csv` (league-scored FFA). Positional
-averages inside the 2026 pool: QB $9, RB $20, TE $9, WR $16.
+averages inside the 2026 pool: QB $8, RB $19, TE $9, WR $16.
 
 | player | pos | team | FFA $ | pos. avg $ | proj pts | proj pos. rank | ADP |
 |---|---|---|---|---|---|---|---|
-| Trevor Lawrence | QB | JAC | 8.5 | 8.5 | 378.0 | 9.0 | 83.2 |
-| Matthew Stafford | QB | LAR | 8.1 | 8.5 | 376.0 | 10.0 | 92.7 |
-| Matthew Stafford | QB | LAR | 8.1 | 8.5 | 376.0 | 11.0 | 92.7 |
-| Bo Nix | QB | DEN | 6.4 | 8.5 | 372.0 | 12.0 | 101.0 |
-| David Montgomery | RB | HOU | 19.4 | 19.9 | 201.0 | 24.0 | 53.0 |
-| Cam Skattebo | RB | NYG | 18.4 | 19.9 | 233.0 | 18.0 | 41.5 |
-| Quinshon Judkins | RB | CLE | 16.2 | 19.9 | 224.0 | 20.0 | 49.6 |
-| Bucky Irving | RB | TB | 15.6 | 19.9 | 227.0 | 19.0 | 49.2 |
-| Bhayshul Tuten | RB | JAC | 15.1 | 19.9 | 208.0 | 22.0 | 56.7 |
-| TreVeyon Henderson | RB | NE | 10.1 | 19.9 | 205.0 | 23.0 | 68.4 |
-| George Kittle | TE | SF | 8.3 | 8.8 | 179.0 | 8.0 | 86.9 |
-| Tucker Kraft | TE | GB | 8.2 | 8.8 | 175.0 | 11.0 | 75.4 |
-| Kyle Pitts | TE | ATL | 7.4 | 8.8 | 188.0 | 7.0 | 77.6 |
-| Sam LaPorta | TE | DET | 7.3 | 8.8 | 177.0 | 10.0 | 79.3 |
-| Harold Fannin | TE | CLE | 6.1 | 8.8 | 200.0 | 4.0 | 75.6 |
-| Travis Kelce | TE | KC | 5.6 | 8.8 | 179.0 | 9.0 | 99.8 |
-| Terry McLaurin | WR | WAS | 14.8 | 15.6 | 213.0 | 25.0 | 59.7 |
-| Jameson Williams | WR | DET | 12.4 | 15.6 | 222.0 | 20.0 | 61.4 |
-| Luther Burden | WR | CHI | 12.2 | 15.6 | 213.0 | 24.0 | 64.4 |
-| Mike Evans | WR | SF | 11.1 | 15.6 | 201.0 | 29.0 | 76.6 |
-| Rome Odunze | WR | CHI | 11.0 | 15.6 | 209.0 | 27.0 | 66.5 |
-| Christian Watson | WR | GB | 10.4 | 15.6 | 198.0 | 30.0 | 72.6 |
-| Courtland Sutton | WR | DEN | 7.8 | 15.6 | 206.0 | 28.0 | 87.4 |
+| Trevor Lawrence | QB | JAC | 7.4 | 8.1 | 378.0 | 8.0 | 84.1 |
+| Matthew Stafford | QB | LAR | 7.2 | 8.1 | 375.0 | 10.0 | 93.6 |
+| Matthew Stafford | QB | LAR | 7.2 | 8.1 | 375.0 | 11.0 | 93.6 |
+| Bo Nix | QB | DEN | 6.2 | 8.1 | 372.0 | 12.0 | 102.0 |
+| Quinshon Judkins | RB | CLE | 16.8 | 19.0 | 224.0 | 20.0 | 48.4 |
+| Bucky Irving | RB | TB | 16.2 | 19.0 | 227.0 | 19.0 | 47.9 |
+| Bhayshul Tuten | RB | JAC | 15.4 | 19.0 | 208.0 | 22.0 | 56.2 |
+| George Kittle | TE | SF | 7.9 | 8.6 | 188.0 | 6.0 | 82.2 |
+| Tucker Kraft | TE | GB | 7.2 | 8.6 | 175.0 | 10.0 | 75.3 |
+| Kyle Pitts | TE | ATL | 7.2 | 8.6 | 186.0 | 7.0 | 78.0 |
+| Sam LaPorta | TE | DET | 6.9 | 8.6 | 178.0 | 9.0 | 79.0 |
+| Harold Fannin | TE | CLE | 5.8 | 8.6 | 200.0 | 4.0 | 76.0 |
+| Travis Kelce | TE | KC | 5.4 | 8.6 | 179.0 | 8.0 | 100.0 |
+| Terry McLaurin | WR | WAS | 13.8 | 15.8 | 213.0 | 25.0 | 59.8 |
+| Jameson Williams | WR | DET | 12.7 | 15.8 | 222.0 | 20.0 | 60.4 |
+| Luther Burden | WR | CHI | 12.7 | 15.8 | 216.0 | 24.0 | 63.0 |
+| Christian Watson | WR | GB | 10.7 | 15.8 | 198.0 | 30.0 | 71.6 |
+| Rome Odunze | WR | CHI | 10.0 | 15.8 | 209.0 | 27.0 | 67.5 |
+| Mike Evans | WR | SF | 10.0 | 15.8 | 201.0 | 29.0 | 77.6 |
 
-23 names, ~$249 to buy the lot — obviously you take three or four,
+19 names, ~$187 to buy the lot — obviously you take three or four,
 not twenty. Two health warnings on this list:
 
 - **FFA AAV is the national market, not this room.** Keeper inflation runs this

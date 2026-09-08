@@ -7,7 +7,7 @@ fetch_espn_trends.py and the draft tool's in-browser upload both parse
 
     python scripts/convert_espn_trends_csv.py "C:\\path\\to\\export.csv"
 """
-import csv, os, sys
+import csv, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "espn_trends_2026.txt")
@@ -33,6 +33,10 @@ def main():
         if len(r) < 7 or not r[0].strip().isdigit() or "\n" not in r[1]:
             continue                                   # page-break header rows etc.
         name, teampos = r[1].split("\n", 1)
+        # ESPN appends the injury-status letter(s) to the name ("Ja'Marr ChaseQ",
+        # "Tyreek HillIR") — strip a trailing status tag that follows a lowercase
+        # letter, period or apostrophe so real names (III, CJ, ...) survive.
+        name = re.sub(r"(?<=[a-z.'])(?:IR|SSPD|PUP|NFI|[QODP])$", "", name.strip())
         team, pos = split_teampos(teampos)
         pick, sal = r[2].strip(), r[4].strip()
         if not (team and _num(pick) and _num(sal)):

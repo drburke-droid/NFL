@@ -1,9 +1,9 @@
-// CLAUDE'S RANKED DART BOARD — updated 2026-09-02 (FFA 9/2 file: Najee->NYG joins
-// the Skattebo storm room, Malachi Fields dropped from FFA, Nathaniel Dell back).
-// Prior update 2026-09-01: final Aug buzz (90 wiki titles patched), FFA 8/31,
-// franchise-environment lens. Hand-authored synthesis, NOT model output — screens
-// first, then judgment: crowded rooms dilute (one ticket per room), sunk capital
-// forces volume, quiet-buzz storm backups hit <10%.
+// CLAUDE'S RANKED DART BOARD — DRAFT NIGHT FINAL, updated 2026-09-08 (FFA 9/8 +
+// ESPN sitewide trends). News in this file: Tyreek Hill released (Malik Washington's
+// vacancy thesis maxed), Nathaniel Dell dropped from FFA again (removed), Jacobs AAV
+// down to $13 (Lloyd thesis holds). Keepers confirmed flat: Burrow 396 / Chase 335 /
+// Rice 257. Prior updates: 9/02 (Najee->NYG), 9/01 (final Aug buzz, 90 titles patched).
+// Hand-authored synthesis, NOT model output — screens first, then judgment.
 // tier 1 ≈ 40-55% · tier 2 ≈ 25-40% · tier 3 ≈ 12-25% · tier 4 < 10%.
 const CLAUDE_DARTS = [
  {r:1, n:"Sam LaPorta", p:"TE", t:"DET", tier:1, w:"Mispriced PROVEN talent — 91st-pctl per-play skill, was TE3 overall two years ago; the market is punishing one mediocre season. Detroit is also the league's top startable-producer 2021-25. Safest dart we own."},
@@ -22,7 +22,7 @@ const CLAUDE_DARTS = [
  {r:14, n:"Woody Marks", p:"RB", t:"HOU", tier:2, w:"The path keeps clearing: Mixon gone, Chubb retired. Murky backfields are where cheap RB value lives."},
  {r:15, n:"RJ Harvey", p:"RB", t:"DEN", tier:2, w:"22.4 ppg best month; Denver's backfield is winnable."},
  {r:16, n:"Eli Stowers", p:"TE", t:"PHI", tier:3, w:"NEW: 2nd-highest raw model prob in the pool (0.45) and the Eagles are a co-best environment — but he's a rookie TE behind Goedert, and rookie TEs almost never hit year 1. Keeper-league gem, redraft reach."},
- {r:17, n:"Malik Washington", p:"WR", t:"MIA", tier:3, w:"UP from 27: 35% dart + 239 vacated targets — the biggest vacancy number in the pool."},
+ {r:17, n:"Malik Washington", p:"WR", t:"MIA", tier:3, w:"UP from 27: 35% dart + the biggest vacancy in the pool — and the 9/8 FFA file now shows Tyreek Hill CUT outright (FA). Miami's target tree is wide open."},
  {r:18, n:"Chig Okonkwo", p:"TE", t:"TEN", tier:3, w:"NEW: 34% dart, real target share (0.149); the Titans offense is the whole discount."},
  {r:19, n:"Najee Harris", p:"RB", t:"NYG", tier:3, w:"Moved to NYG (FFA 9/2) — now the proven-vet ticket in the Skattebo storm room (123 articles, loudest in the league). Dart 11% and the projection is thin, but vet-volume in a storm backfield is exactly the 33% cell's shape. One ticket per room: he replaces Singletary as the vet side, Tracy stays the talent side."},
  {r:20, n:"Zach Charbonnet", p:"RB", t:"SEA", tier:3, w:"Cleanest talent-gap case + Walker in the league's worst news storm — BUT his own buzz stayed dead quiet through the final pull, and quiet-buzz storm backups hit <1-in-10. Eye test vs data, still unresolved."},
@@ -39,22 +39,21 @@ const CLAUDE_DARTS = [
  {r:31, n:"Troy Franklin", p:"WR", t:"DEN", tier:3, w:"21.7 ppg best month with his college QB; year-3 leap profile."},
  {r:32, n:"Jacory Croskey-Merritt", p:"RB", t:"WAS", tier:3, w:"19.8 ppg best month; Washington backfield is winnable but crowded."},
  {r:33, n:"Kayshon Boutte", p:"WR", t:"HOU", tier:3, w:"Now in Houston, and FFA moved him UP on the trade (+12). Quiet riser with a real QB for the first time."},
- {r:34, n:"Nathaniel Dell", p:"WR", t:"HOU", tier:4, w:"Back in the FFA pool (9/2, $2.70) after being dropped last week — was a 38% model dart and electric pre-injury; the knee plus the roster scare IS the price. Last-nomination flier only."},
- {r:35, n:"Zach Ertz", p:"TE", t:"WAS", tier:4, w:"The model still loves the floor (34%) — but it's over-crediting a 36-year-old. Darts are for ceilings."},
- {r:36, n:"Devin Singletary", p:"RB", t:"NYG", tier:4, w:"Was the vet-trust side of the Skattebo hedge — Najee's arrival (9/2) makes him the THIRD wheel in that room. FFA cut him 17 pts on the news. Pass."},
- {r:37, n:"Andrei Iosivas", p:"WR", t:"CIN", tier:4, w:"29% model dart; CIN's WR3 role is real but small."},
- {r:38, n:"Zachariah Branch", p:"WR", t:"ATL", tier:4, w:"NEW: 30% rookie dart; return-ace profile — the fantasy role needs an injury in front of him."},
- {r:39, n:"Michael Mayer", p:"TE", t:"LV", tier:4, w:"NEW: 29% dart + flash lens; Bowers owns the room — this is a pure contingency ticket."},
- {r:40, n:"Caleb Douglas", p:"WR", t:"MIA", tier:4, w:"NEW: 29% rookie dart in a churning WR room; no preseason corroboration yet."},
- {r:41, n:"Malik Davis", p:"RB", t:"DAL", tier:4, w:"The model jumped him to 27% on the final buzz — but he's a 28-year-old 4th on the depth chart. When a screen's case has no depth-chart support, respect the base rate."},
- {r:42, n:"Kaleb Johnson", p:"RB", t:"PIT", tier:4, w:"NEW: 98th-pctl August spike (attention is real) but the model says 6% — last year's disappointment isn't priced to zero yet."},
- {r:43, n:"Evan Hull", p:"RB", t:"NO", tier:4, w:"Still the storm screen's top score — and I still don't fully believe it. When a screen's best case has no depth-chart support, respect the base rate."},
- {r:44, n:"Will Shipley", p:"RB", t:"PHI", tier:4, w:"Storm-adjacent but SECOND handcuff in his own backfield — Bigsby stands in front."},
- {r:45, n:"Audric Estimé", p:"RB", t:"NO", tier:4, w:"Storm-flagged; third ticket in one backfield."},
- {r:46, n:"Malachi Corley", p:"WR", t:"CLE", tier:4, w:"Huge attention spike again in the final pull (99th pctl) — still zero production corroboration. Pure buzz."},
- {r:47, n:"Corey Kiner", p:"RB", t:"ARI", tier:4, w:"The single biggest August spike in the entire pool — and the model still says 2.6%. Some cut-week attention is rubbernecking, not opportunity."},
- {r:48, n:"Jimmy Horn Jr.", p:"WR", t:"CAR", tier:4, w:"Buzz + 16% dart; camp-riser lottery in a desert environment."},
- {r:49, n:"Hassan Haskins", p:"RB", t:"LAC", tier:4, w:"Storm + buzz (two screens!) but 3rd-4th in the room behind Najee and Mitchell."},
- {r:50, n:"D'Ernest Johnson", p:"RB", t:"NE", tier:4, w:"Teams don't hand feature roles to 30-year-old journeymen, whatever the storm math says."},
- {r:51, n:"Robbie Ouzts", p:"RB", t:"SEA", tier:4, w:"The screen mislabeled the beneficiary: if Walker goes down, Charbonnet profits, not the blocking back."}
+ {r:34, n:"Zach Ertz", p:"TE", t:"WAS", tier:4, w:"The model still loves the floor (34%) — but it's over-crediting a 36-year-old. Darts are for ceilings."},
+ {r:35, n:"Devin Singletary", p:"RB", t:"NYG", tier:4, w:"Was the vet-trust side of the Skattebo hedge — Najee's arrival (9/2) makes him the THIRD wheel in that room. FFA cut him 17 pts on the news. Pass."},
+ {r:36, n:"Andrei Iosivas", p:"WR", t:"CIN", tier:4, w:"29% model dart; CIN's WR3 role is real but small."},
+ {r:37, n:"Zachariah Branch", p:"WR", t:"ATL", tier:4, w:"NEW: 30% rookie dart; return-ace profile — the fantasy role needs an injury in front of him."},
+ {r:38, n:"Michael Mayer", p:"TE", t:"LV", tier:4, w:"NEW: 29% dart + flash lens; Bowers owns the room — this is a pure contingency ticket."},
+ {r:39, n:"Caleb Douglas", p:"WR", t:"MIA", tier:4, w:"NEW: 29% rookie dart in a churning WR room; no preseason corroboration yet."},
+ {r:40, n:"Malik Davis", p:"RB", t:"DAL", tier:4, w:"The model jumped him to 27% on the final buzz — but he's a 28-year-old 4th on the depth chart. When a screen's case has no depth-chart support, respect the base rate."},
+ {r:41, n:"Kaleb Johnson", p:"RB", t:"PIT", tier:4, w:"NEW: 98th-pctl August spike (attention is real) but the model says 6% — last year's disappointment isn't priced to zero yet."},
+ {r:42, n:"Evan Hull", p:"RB", t:"NO", tier:4, w:"Still the storm screen's top score — and I still don't fully believe it. When a screen's best case has no depth-chart support, respect the base rate."},
+ {r:43, n:"Will Shipley", p:"RB", t:"PHI", tier:4, w:"Storm-adjacent but SECOND handcuff in his own backfield — Bigsby stands in front."},
+ {r:44, n:"Audric Estimé", p:"RB", t:"NO", tier:4, w:"Storm-flagged; third ticket in one backfield."},
+ {r:45, n:"Malachi Corley", p:"WR", t:"CLE", tier:4, w:"Huge attention spike again in the final pull (99th pctl) — still zero production corroboration. Pure buzz."},
+ {r:46, n:"Corey Kiner", p:"RB", t:"ARI", tier:4, w:"The single biggest August spike in the entire pool — and the model still says 2.6%. Some cut-week attention is rubbernecking, not opportunity."},
+ {r:47, n:"Jimmy Horn Jr.", p:"WR", t:"CAR", tier:4, w:"Buzz + 16% dart; camp-riser lottery in a desert environment."},
+ {r:48, n:"Hassan Haskins", p:"RB", t:"LAC", tier:4, w:"Storm + buzz (two screens!) but 3rd-4th in the room behind Najee and Mitchell."},
+ {r:49, n:"D'Ernest Johnson", p:"RB", t:"NE", tier:4, w:"Teams don't hand feature roles to 30-year-old journeymen, whatever the storm math says."},
+ {r:50, n:"Robbie Ouzts", p:"RB", t:"SEA", tier:4, w:"The screen mislabeled the beneficiary: if Walker goes down, Charbonnet profits, not the blocking back."}
 ];
