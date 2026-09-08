@@ -153,6 +153,23 @@ hist = hist[[c for c in hist.columns if c in histcols or c.endswith(("_l1", "_r3
              or c in ("games_played", "fp_trend")]]
 old_watch = pd.read_parquet(WATCHROWS) if os.path.exists(WATCHROWS) else pd.DataFrame()
 
+# weekly FFA (news-bearing consensus): data/ffanalytics/FFAn_weekly/projections_{S}_wk{W}.csv
+# Captured + displayed now; becomes a trained feature once the 2016+ weekly history
+# (home-PC pull) lands. Same schema as the season files, points are PER WEEK.
+ffa_wk = None
+fwp = os.path.join(ROOT, "data", "ffanalytics", "FFAn_weekly",
+                   f"projections_2026_wk{cur_week_2026}.csv")
+if os.path.exists(fwp):
+    fw = pd.read_csv(fwp, na_values=["NA"])
+    fw["nname"] = fw.player.map(norm)
+    ffa_wk = fw[["nname", "points", "floor", "ceiling", "uncertainty"]].rename(
+        columns={"points": "ffa_wk_pts", "floor": "ffa_wk_floor",
+                 "ceiling": "ffa_wk_ceiling", "uncertainty": "ffa_wk_unc"})
+    ffa_wk = ffa_wk.drop_duplicates("nname")
+    print(f"  weekly FFA loaded: {len(ffa_wk)} players (wk{cur_week_2026})")
+else:
+    print(f"  no weekly FFA file at {os.path.relpath(fwp, ROOT)} — drop it there when you have it")
+
 cur = line.copy()
 cur["nname"] = cur.player_name.map(norm)
 ids = wk[["nname", "player_id", "player_display_name", "position"]].drop_duplicates("nname")
@@ -195,6 +212,12 @@ pred = ev[(ev.season == 2026) & (ev.week == cur_week_2026)].dropna(
 pred = pred.merge(cur[["player_id", "event"]].drop_duplicates("player_id"),
                   on="player_id", how="left")
 pred["event"] = pred.event.fillna("")
+if ffa_wk is not None:
+    pred["nname"] = pred.player.map(norm)
+    pred = pred.merge(ffa_wk, on="nname", how="left")
+else:
+    for c in ("ffa_wk_pts", "ffa_wk_floor", "ffa_wk_ceiling", "ffa_wk_unc"):
+        pred[c] = np.nan
 pred["p_over"] = lr.predict_proba(pred[["z", "baseline_proj"]].values)[:, 1]
 
 # empirical residuals for alternate rungs, CONDITIONED on line size: the outcome
@@ -241,6 +264,8 @@ for _, r in pred.iterrows():
                      "mb": round(float(r.Model_Burke_mean), 1),
                      "p_over": round(float(r.p_over), 3), "fair": round(fair, 3),
                      "edge": round(float(edge), 3), "flag": flag,
+                     "ffa_wk": (round(float(r.ffa_wk_pts), 1)
+                                if pd.notna(r.get("ffa_wk_pts", np.nan)) else None),
                      "alts": sorted(arows, key=lambda x: x["point"])})
 
 # ---------- 5. ledger ----------
@@ -267,8 +292,12 @@ lsum = {"bets": int(len(led)), "graded": int(len(graded)),
         "wins": int((graded.result == "win").sum()),
         "units": round(float(graded.profit.sum()), 2)}
 
-# persist current-week rows for next run's grading/training
-keepcols = [c for c in cur.columns if c in hist.columns]
+# persist current-week rows for next run's grading/training (+ weekly FFA so the
+# news feature has history the day the 2016+ backfill lands)
+if ffa_wk is not None:
+    cur = cur.merge(ffa_wk, on="nname", how="left")
+keepcols = [c for c in cur.columns if c in hist.columns
+            or c.startswith("ffa_wk_")]
 allwatch = pd.concat([old_watch[keepcols] if len(old_watch) else pd.DataFrame(columns=keepcols),
                       cur[keepcols]], ignore_index=True).drop_duplicates(
     ["player_id", "season", "week"], keep="last")
