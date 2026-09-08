@@ -157,18 +157,27 @@ old_watch = pd.read_parquet(WATCHROWS) if os.path.exists(WATCHROWS) else pd.Data
 # Captured + displayed now; becomes a trained feature once the 2016+ weekly history
 # (home-PC pull) lands. Same schema as the season files, points are PER WEEK.
 ffa_wk = None
-fwp = os.path.join(ROOT, "data", "ffanalytics", "FFAn_weekly",
-                   f"projections_2026_wk{cur_week_2026}.csv")
-if os.path.exists(fwp):
-    fw = pd.read_csv(fwp, na_values=["NA"])
+fdir = os.path.join(ROOT, "data", "ffanalytics", "FFAn_weekly")
+raw_p = os.path.join(fdir, f"raw_stats_2026_wk{cur_week_2026}.csv")
+pts_p = os.path.join(fdir, f"projections_2026_wk{cur_week_2026}.csv")
+if os.path.exists(raw_p):
+    # stat-level consensus: rec_yds is a DIRECT second projection of the priced stat,
+    # rec_yds_sd is analyst disagreement, injury_status is the news channel
+    fw = pd.read_csv(raw_p, na_values=["NA"])
+    fw = fw[fw.avg_type == "weighted"] if "avg_type" in fw.columns else fw
     fw["nname"] = fw.player.map(norm)
-    ffa_wk = fw[["nname", "points", "floor", "ceiling", "uncertainty"]].rename(
-        columns={"points": "ffa_wk_pts", "floor": "ffa_wk_floor",
-                 "ceiling": "ffa_wk_ceiling", "uncertainty": "ffa_wk_unc"})
-    ffa_wk = ffa_wk.drop_duplicates("nname")
-    print(f"  weekly FFA loaded: {len(ffa_wk)} players (wk{cur_week_2026})")
-else:
-    print(f"  no weekly FFA file at {os.path.relpath(fwp, ROOT)} — drop it there when you have it")
+    fw = fw.drop_duplicates("nname")             # source carries dup rows per player
+    ffa_wk = fw[["nname", "rec_yds", "rec_yds_sd", "injury_status"]].rename(
+        columns={"rec_yds": "ffa_wk_yds", "rec_yds_sd": "ffa_wk_yds_sd",
+                 "injury_status": "ffa_wk_inj"})
+    print(f"  weekly FFA raw stats loaded: {len(ffa_wk)} players (wk{cur_week_2026})")
+if os.path.exists(pts_p):
+    fp = pd.read_csv(pts_p, na_values=["NA"])
+    fp["nname"] = fp.player.map(norm)
+    fp = fp[["nname", "points"]].rename(columns={"points": "ffa_wk_pts"}).drop_duplicates("nname")
+    ffa_wk = fp if ffa_wk is None else ffa_wk.merge(fp, on="nname", how="outer")
+if ffa_wk is None:
+    print(f"  no weekly FFA files in {os.path.relpath(fdir, ROOT)} — drop them there when you have them")
 
 cur = line.copy()
 cur["nname"] = cur.player_name.map(norm)
@@ -212,11 +221,11 @@ pred = ev[(ev.season == 2026) & (ev.week == cur_week_2026)].dropna(
 pred = pred.merge(cur[["player_id", "event"]].drop_duplicates("player_id"),
                   on="player_id", how="left")
 pred["event"] = pred.event.fillna("")
+pred["nname"] = pred.player.map(norm)
 if ffa_wk is not None:
-    pred["nname"] = pred.player.map(norm)
     pred = pred.merge(ffa_wk, on="nname", how="left")
-else:
-    for c in ("ffa_wk_pts", "ffa_wk_floor", "ffa_wk_ceiling", "ffa_wk_unc"):
+for c in ("ffa_wk_yds", "ffa_wk_yds_sd", "ffa_wk_inj", "ffa_wk_pts"):
+    if c not in pred.columns:
         pred[c] = np.nan
 pred["p_over"] = lr.predict_proba(pred[["z", "baseline_proj"]].values)[:, 1]
 
@@ -264,8 +273,12 @@ for _, r in pred.iterrows():
                      "mb": round(float(r.Model_Burke_mean), 1),
                      "p_over": round(float(r.p_over), 3), "fair": round(fair, 3),
                      "edge": round(float(edge), 3), "flag": flag,
-                     "ffa_wk": (round(float(r.ffa_wk_pts), 1)
-                                if pd.notna(r.get("ffa_wk_pts", np.nan)) else None),
+                     "ffa_yds": (round(float(r.ffa_wk_yds), 1)
+                                 if pd.notna(r.get("ffa_wk_yds", np.nan)) else None),
+                     "ffa_sd": (round(float(r.ffa_wk_yds_sd), 1)
+                                if pd.notna(r.get("ffa_wk_yds_sd", np.nan)) else None),
+                     "inj": (str(r.ffa_wk_inj)
+                             if pd.notna(r.get("ffa_wk_inj", np.nan)) else None),
                      "alts": sorted(arows, key=lambda x: x["point"])})
 
 # ---------- 5. ledger ----------

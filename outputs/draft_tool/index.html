@@ -3941,7 +3941,7 @@ function renderProps(){
     <tr class="muted" style="text-align:left"><th>player</th><th>game</th><th style="text-align:right">line</th>
       <th style="text-align:right">O / U</th><th style="text-align:right">model yds</th>
       <th style="text-align:right">P(over)</th><th style="text-align:right">fair</th>
-      <th style="text-align:right">edge</th><th style="text-align:right" title="FFA weekly consensus fantasy points — the news-bearing signal; becomes a trained model feature once the 2016+ weekly history lands">FFA wk</th><th>best alt EV</th></tr>
+      <th style="text-align:right">edge</th><th style="text-align:right" title="FFA weekly consensus PROJECTED RECEIVING YARDS (±sd) — a direct second projection of the priced stat, injury tag from the same scrape; becomes a trained model feature once the 2016+ weekly history lands">FFA yds</th><th>best alt EV</th></tr>
     ${P.rows.map(r=>{
       const ba=(r.alts||[]).filter(a=>a.ev>0).sort((x,y)=>y.ev-x.ev)[0];
       const ecol=r.edge>=0.05?"#7fe3a6":r.edge<=-0.05?"#ff9c9c":"var(--muted)";
@@ -3954,7 +3954,7 @@ function renderProps(){
         <td style="text-align:right">${(r.p_over*100).toFixed(0)}%</td>
         <td style="text-align:right" class="muted">${(r.fair*100).toFixed(0)}%</td>
         <td style="text-align:right;color:${ecol};font-weight:700">${r.edge>0?"+":""}${(r.edge*100).toFixed(1)}%</td>
-        <td style="text-align:right" class="muted">${r.ffa_wk!=null?r.ffa_wk:"—"}</td>
+        <td style="text-align:right" class="muted">${r.ffa_yds!=null?`${r.ffa_yds}${r.ffa_sd!=null?"±"+Math.round(r.ffa_sd):""}`:"—"}${r.inj?` <b style="color:#ff9c9c">${r.inj}</b>`:""}</td>
         <td class="muted" style="font-size:11px">${ba?`${ba.point}+ @ ${ba.price>0?"+":""}${ba.price} (EV ${ba.ev>0?"+":""}${(ba.ev*100).toFixed(0)}%)`:"—"}</td></tr>`;}).join("")}
     </table></div></div>`;
   if((P.ledger||[]).length)
