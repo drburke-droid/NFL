@@ -37,3 +37,4 @@ config/gh_token.txt
 data/nflverse_cache/
 
 data/odds_api_key.txt
+data/props_frames/lines_cache.json

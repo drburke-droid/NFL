@@ -22,6 +22,7 @@
 <script src="dart_scores_2026.js"></script>
 <script src="darts_2026.js"></script>
 <script src="claude_darts_2026.js"></script>
+<script src="props_watch_2026.js"></script>
 <script src="ffa_2026.js"></script>
 <script src="espn_salary_2026.js"></script>
 <script src="playoff_sos_2026.js"></script>
@@ -400,6 +401,7 @@
     <button class="btn" id="mDuel" title="Simulate two ways to spend the same budget: pick two players and two prices, and see the full season-outcome distribution of each completed roster.">⚖️ Duel</button>
     <button class="btn" id="mMobile" title="One-thumb live-auction view: best-available ticker, search, the room's money, and ONE number per player — the Oracle break-even (your whole roster re-solved at every price).">📱 Mobile Companion</button>
     <button class="btn" id="mWind">🌬️ Wind Bets</button>
+    <button class="btn" id="mProps" title="Weekly Model_Burke evaluation of DraftKings reception-yards lines — the validated pocket is OVERS at ≥5% calibrated edge. Refresh with: python scripts/props_watch.py">📡 Props</button>
     <a class="btn" href="https://claude.ai/code/artifact/9b6157c6-a8c0-466e-9968-8c025c9348c0" target="_blank" rel="noopener" title="Career skill curves for every QB/RB/WR/TE since 2011 — default Alpha view blends opponent-adjusted per-play skill with earned volume (validated: 2.4× the forward signal at WR; Chase WR25→WR2), plus true-skill / Elo / observed views — opens the Claude artifact; requires your claude.ai login">📉 Skill Curves ↗</a>
     <span class="muted" id="count"></span>
   </div>
@@ -445,6 +447,7 @@
     <div id="scatter" style="display:none"></div>
     <div id="draftroom" style="display:none"></div>
     <div id="windtab" style="display:none"></div>
+    <div id="propstab" style="display:none"></div>
     <div class="foot" id="notes"></div>
   </div>
   <div class="side" id="side">
@@ -930,19 +933,21 @@ function setMode(m){
   document.getElementById("mKeep").classList.toggle("active",m==="mockkeep");
   document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
   document.getElementById("mWind").classList.toggle("active",m==="wind");
+  document.getElementById("mProps").classList.toggle("active",m==="props");
   const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts"||m==="mobile"||m==="duel");
   document.getElementById("settings").style.display=(m==="auction")?"flex":"none";   // draft room: settings are set pre-draft — reclaim the row
   document.getElementById("scorechips").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";   // draft-night declutter: scoring chips
   document.getElementById("leaguesub").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";    //  + league subtitle off in the Draft Room
-  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind")?"none":"flex";
+  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind"||m==="props")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=host?"block":"none";
   document.getElementById("windtab").style.display=m==="wind"?"block":"none";
+  document.getElementById("propstab").style.display=m==="props"?"block":"none";
   // 📱 the Companion carries its own search + needs bar; the desktop filter row would
   // just eat a third of a phone screen.
-  document.querySelector(".controls").style.display=(m==="wind"||m==="mobile"||m==="duel")?"none":"";
-  if(m==="wind"){document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";}
-  if(m!=="comps"&&!host&&m!=="wind"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
+  document.querySelector(".controls").style.display=(m==="wind"||m==="mobile"||m==="duel"||m==="props")?"none":"";
+  if(m==="wind"||m==="props"){document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";}
+  if(m!=="comps"&&!host&&m!=="wind"&&m!=="props"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
 }
 document.getElementById("mCheat").onclick=()=>setMode("cheat");
@@ -959,6 +964,7 @@ document.getElementById("mDuel").onclick=()=>setMode("duel");
 document.getElementById("mKeep").onclick=()=>setMode("mockkeep");
 document.getElementById("mMock").onclick=()=>setMode("mockdraft");
 document.getElementById("mWind").onclick=()=>setMode("wind");
+document.getElementById("mProps").onclick=()=>setMode("props");
 document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
 document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
@@ -3903,6 +3909,67 @@ function wbAddTickets(g){
                mk("prop",`${g.away} QB pass yds UNDER ___`,0.55));
   saveWB();render();
 }
+// 📡 PROPS WATCH — weekly Model_Burke read on DK reception-yds lines. Data baked by
+// scripts/props_watch.py into props_watch_2026.js; the validated pocket is OVERS at
+// >=5% calibrated edge (backtest: +14% ROI @8% edge; early lines beat late).
+function renderProps(){
+  const host=document.getElementById("propstab");
+  if(typeof PROPS_WATCH==="undefined"){
+    host.innerHTML=`<div class="dr-panel"><h3>📡 Props Watch</h3>
+      <div class="muted">No data baked yet. Run <code>python scripts/props_watch.py &lt;model_burke-pkg&gt;</code>
+      when this week's DraftKings lines post (Wed/Thu), then commit+push docs/props_watch_2026.js.</div></div>`;
+    return;
+  }
+  const P=PROPS_WATCH, weak=P.rows.filter(r=>r.flag==="WEAK_OVER");
+  const ls=P.ledger_summary||{};
+  let h="";
+  if(weak.length)
+    h+=`<div class="dr-panel" style="border:2px solid #7a1f1f;background:#2a1215">
+      <h3 style="margin:0 0 4px;color:#ffd9d9">🚨 ${weak.length} WEAK LINE${weak.length>1?"S":""} — week ${P.week}</h3>
+      ${weak.map(r=>`<div style="font-size:13px;padding:2px 0"><b>${r.player}</b> Over ${r.line}
+        @ ${r.over>0?"+":""}${r.over} — model P(over) <b>${(r.p_over*100).toFixed(0)}%</b> vs fair
+        ${(r.fair*100).toFixed(0)}% (edge <b style="color:#7fe3a6">+${(r.edge*100).toFixed(1)}%</b>)
+        <span class="muted">${r.event}</span></div>`).join("")}</div>`;
+  else
+    h+=`<div class="dr-panel"><h3 style="margin:0">📡 no weak lines at ≥${5}% edge — week ${P.week}</h3></div>`;
+  h+=`<div class="dr-panel"><div class="muted" style="font-size:11px">
+    Generated ${P.generated} · API credits left ${P.credits_left} ·
+    paper ledger: ${ls.graded||0} graded of ${ls.bets||0} bets, ${ls.wins||0} wins, ${(ls.units??0)>=0?"+":""}${ls.units??0}u
+    · strategy: reception-yds OVERS ≥5% edge (validated pocket, model_burke_props.md)</div></div>`;
+  h+=`<div class="dr-panel"><h3 style="margin:0 0 6px">All lines, model vs DraftKings</h3>
+    <div style="overflow-x:auto"><table style="font-size:12px;border-collapse:collapse;width:100%">
+    <tr class="muted" style="text-align:left"><th>player</th><th>game</th><th style="text-align:right">line</th>
+      <th style="text-align:right">O / U</th><th style="text-align:right">model yds</th>
+      <th style="text-align:right">P(over)</th><th style="text-align:right">fair</th>
+      <th style="text-align:right">edge</th><th>best alt EV</th></tr>
+    ${P.rows.map(r=>{
+      const ba=(r.alts||[]).filter(a=>a.ev>0).sort((x,y)=>y.ev-x.ev)[0];
+      const ecol=r.edge>=0.05?"#7fe3a6":r.edge<=-0.05?"#ff9c9c":"var(--muted)";
+      return `<tr style="border-top:1px solid var(--line);${r.flag==="WEAK_OVER"?"background:#251317":""}">
+        <td><b>${r.player}</b>${r.flag==="WEAK_OVER"?" 🚨":""}</td>
+        <td class="muted" style="font-size:10px">${r.event.replace(/ (@|vs) /," $1 ")}</td>
+        <td style="text-align:right">${r.line}</td>
+        <td style="text-align:right" class="muted">${r.over>0?"+":""}${r.over} / ${r.under>0?"+":""}${r.under}</td>
+        <td style="text-align:right">${r.mb}</td>
+        <td style="text-align:right">${(r.p_over*100).toFixed(0)}%</td>
+        <td style="text-align:right" class="muted">${(r.fair*100).toFixed(0)}%</td>
+        <td style="text-align:right;color:${ecol};font-weight:700">${r.edge>0?"+":""}${(r.edge*100).toFixed(1)}%</td>
+        <td class="muted" style="font-size:11px">${ba?`${ba.point}+ @ ${ba.price>0?"+":""}${ba.price} (EV ${ba.ev>0?"+":""}${(ba.ev*100).toFixed(0)}%)`:"—"}</td></tr>`;}).join("")}
+    </table></div></div>`;
+  if((P.ledger||[]).length)
+    h+=`<div class="dr-panel"><h3 style="margin:0 0 6px">Paper-trade ledger</h3>
+      <div style="overflow-x:auto"><table style="font-size:11px;border-collapse:collapse;width:100%">
+      <tr class="muted" style="text-align:left"><th>wk</th><th>player</th><th>bet</th><th>price</th><th>P</th><th>result</th><th>u</th></tr>
+      ${P.ledger.slice().reverse().map(l=>`<tr style="border-top:1px solid var(--line)">
+        <td>${l.week}</td><td>${l.player}</td><td>Over ${l.line}</td><td>${l.price>0?"+":""}${l.price}</td>
+        <td>${(l.p_model*100).toFixed(0)}%</td>
+        <td style="color:${l.result==="win"?"#7fe3a6":l.result==="loss"?"#ff9c9c":"var(--muted)"}">${l.result||"open"}</td>
+        <td>${l.profit!==""&&l.profit!=null?(+l.profit).toFixed(2):""}</td></tr>`).join("")}
+      </table></div></div>`;
+  host.innerHTML=h;
+  document.getElementById("count").textContent="";
+  document.getElementById("notes").innerHTML="📡 <b>Props Watch.</b> Model_Burke (walk-forward, conformal-calibrated) vs DraftKings closing reception-yds lines. Backtest evidence: bet ONLY high-conviction OVERS — pooled 5%-edge betting loses; the over pocket ran +14% @8% edge. Refresh weekly: <code>python scripts/props_watch.py</code>.";
+}
 function renderWind(){
   const scan=WB.scan,pend=WB.bets.filter(b=>!b.result),done=WB.bets.filter(b=>b.result);
   const bank=wbBank(),staked=done.reduce((s,b)=>s+b.stake,0),pnl=bank-WB.bank0;
@@ -4029,6 +4096,7 @@ function render(){
   if(mode==="mobile"){ withKeeperBanner(renderMobileCompanion); return; }
   if(mode==="duel"){ withKeeperBanner(renderDuel); return; }
   if(mode==="wind"){ renderWind(); return; }
+  if(mode==="props"){ renderProps(); return; }
   if(mode==="mockkeep"){ withKeeperBanner(renderMockKeepers); return; }
   if(mode==="mockdraft"){ withKeeperBanner(renderMockDraft); return; }
   if(mode==="draftroom"){ withKeeperBanner(renderDraftRoom); return; }
