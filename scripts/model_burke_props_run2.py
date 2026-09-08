@@ -15,7 +15,12 @@ warnings.filterwarnings("ignore")
 from sklearn.linear_model import LogisticRegression
 
 SCRATCH = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(SCRATCH, "model_burke", "pkg"))
+# argv[1] = path to the model_burke package dir (the folder CONTAINING model_burke/)
+PKG = sys.argv[1] if len(sys.argv) > 1 else os.environ.get("MODEL_BURKE_PKG", "")
+if not PKG or not os.path.isdir(PKG):
+    raise SystemExit("pass the model_burke package dir as argv[1] "
+                     "(unzip model_burke_pkg.zip and point at its pkg/ folder)")
+sys.path.insert(0, PKG)
 from model_burke import pipeline
 
 MARKETS = ["player_receptions", "player_reception_yds", "player_rush_yds"]
