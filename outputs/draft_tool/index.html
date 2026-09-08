@@ -40,6 +40,30 @@
   .thinscroll::-webkit-scrollbar-track{background:transparent}
   .thinscroll::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
   .thinscroll::-webkit-scrollbar-thumb:hover{background:var(--muted)}
+  /* 🎯 DART DOCK — the lens columns are a SIDEWAYS-scrolling strip. On a desktop the
+     lenses fit, so flex:1 spreads them across the bar and nothing scrolls; on a phone
+     they hold their width and you swipe across them, instead of every lens past the
+     second being clipped off by the dock's overflow. */
+  .dockcols{flex:1;display:flex;overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;
+            overscroll-behavior-x:contain;scroll-snap-type:x proximity}
+  .dockcol{flex:1;min-width:148px;overflow-y:auto;border-right:1px solid var(--line);
+           padding:0 6px 4px;scroll-snap-align:start}
+  .dockswipe{display:none}
+  @media (max-width:700px){
+    /* wide enough to read a name at arm's length; ~1.5 lenses on screen, swipe for the rest */
+    .dockcol{flex:0 0 min(64vw,240px)}
+    .dockexp{display:none}          /* the explainer eats a third of the dock on a phone */
+    .dockswipe{display:inline}      /* ...replaced by the one hint that only applies here */
+  }
+  /* 🔎 search box with a clear ✕ — the native WebKit cancel button doesn't exist on
+     iOS/Android, and a stale query silently filters the whole board. */
+  .searchwrap{position:relative;display:inline-flex;align-items:center}
+  .searchwrap input[type=search]{width:100%;padding-right:30px}
+  input[type=search]::-webkit-search-cancel-button{-webkit-appearance:none;appearance:none}
+  .qx{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:0;background:transparent;
+      color:var(--muted);font-size:13px;line-height:1;cursor:pointer;padding:4px 6px;border-radius:50%}
+  .qx:hover{color:var(--txt);background:var(--panel)}
+  .tblwrap{min-width:0}        /* becomes the board table's scroll box at touch widths */
   header{padding:16px 24px;border-bottom:1px solid var(--line);background:var(--panel)}
   h1{margin:0 0 6px;font-size:19px}
   .sub{color:var(--muted);font-size:13px}
@@ -142,6 +166,219 @@
   .wbig{font-size:24px;font-weight:800}
   .wbstat{display:flex;gap:22px;flex-wrap:wrap;margin-bottom:6px}
   .wbstat .lb{color:var(--muted);font-size:11px}
+  /* Wide content scrolls in its own box rather than by dragging the page sideways —
+     a page that slides also unpins the dart dock and every other fixed element. Touch
+     widths only (phone + tablet portrait): a scroll container captures the sticky table
+     header, and on a mouse-and-keyboard screen that header is worth more than the
+     containment, which is why this stops at 900px. */
+  @media (max-width:900px){
+    .tblwrap,.dr-panel,.wbcard{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  }
+  /* ================= ⚖️ DUEL ================= */
+  .duel{max-width:900px;margin:0 auto}
+  .duel-pick{display:flex;align-items:center;gap:7px;margin-bottom:6px}
+  .duel-pick select{flex:1;min-width:0;font-size:13px;padding:7px}
+  .duel-dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .duel-price{display:flex;align-items:center;gap:5px;flex:none}
+  .duel-price b{min-width:40px;text-align:center;color:var(--gold);font-size:15px}
+  .duel-step{width:36px;height:36px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);
+             color:var(--txt);font-size:17px;cursor:pointer;line-height:1}
+  .duel-step:active{background:var(--accent);color:#06121f}
+  .duel-opts{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px;font-size:12px;color:var(--muted)}
+  .duel-seg{border:1px solid var(--line);background:var(--panel2);color:var(--txt);border-radius:7px;
+            padding:5px 9px;font-size:12px;cursor:pointer;margin-left:3px;min-width:30px}
+  .duel-seg.on{background:var(--accent);border-color:var(--accent);color:#06121f;font-weight:700}
+  .duel-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
+  .duel-tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .duel-tl{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.04em}
+  .duel-tv{font-size:21px;font-weight:800;margin:2px 0 1px}
+  .duel-tv.a{color:#358ada} .duel-tv.b{color:#c2861f}
+  .duel-ts{color:var(--muted);font-size:10px;line-height:1.35}
+  .duel-rec{background:var(--panel);border:1px solid var(--gold);border-left-width:3px;border-radius:9px;
+            padding:10px 12px;margin-bottom:12px;font-size:12px;line-height:1.55}
+  .duel-rec.ok{border-color:var(--good)}
+  .duel-rec .duel-rw{color:var(--muted);font-size:11.5px;margin-top:5px}
+  .duel-rec button{margin-top:8px}
+  .duel-leg{display:flex;gap:14px;align-items:center;flex-wrap:wrap;font-size:12px;margin-bottom:4px}
+  .duel-leg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+  .duel-svg{width:100%;height:250px;display:block}
+  .duel-grid{stroke:var(--line);stroke-width:1;opacity:.45}
+  .duel-axis{stroke:var(--line);stroke-width:1}
+  .duel-ax{fill:var(--muted);font-size:10px}
+  .duel-dl{fill:var(--txt);font-size:11px;font-weight:600}
+  .duel-cross{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+  .duel-tip{position:absolute;background:var(--panel2);border:1px solid var(--line);border-radius:7px;
+            padding:6px 9px;font-size:11px;pointer-events:none;box-shadow:0 4px 14px rgba(0,0,0,.5);z-index:5}
+  .duel-tip i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+  .duel-tip div{color:var(--muted);margin-top:2px}
+  .duel-cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .duel-rh{display:flex;align-items:center;gap:6px;font-size:13px;margin-bottom:5px}
+  .duel-row{display:flex;align-items:center;gap:6px;font-size:12px;padding:3px 0;border-bottom:1px solid var(--line)}
+  .duel-rn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:700px){
+    .duel-hero{grid-template-columns:repeat(2,1fr)}
+    .duel-cmp{grid-template-columns:1fr}
+    .duel-svg{height:210px}
+    .duel-pick select{font-size:16px}
+  }
+  /* ================= 📱 MOBILE DRAFT COMPANION ================= */
+  /* Thumb-first: 44px tap targets, one column, no hover-only information. Capped and
+     centred so it is also usable on a laptop without becoming a stretched phone page. */
+  .mdc{max-width:560px;margin:0 auto;padding-bottom:70px}
+  .mdc-bar{position:sticky;top:0;z-index:20;background:var(--panel);border:1px solid var(--line);
+           border-radius:10px;padding:7px 10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+           box-shadow:0 3px 12px rgba(0,0,0,.4)}
+  .mdc-me>b{font-size:19px} .mdc-me .mdc-sub{display:block}
+  .mdc-sub{color:var(--muted);font-size:11px}
+  .mdc-needs{display:flex;gap:3px;flex-wrap:wrap;flex:1}
+  .mdc-need{background:#2f5e7e;color:#fff;border-radius:4px;padding:1px 6px;font-size:11px;font-weight:700}
+  .mdc-need.bn{background:var(--panel2);color:var(--muted)}
+  .mdc-oracle{background:var(--gold);border:0;color:#06121f;font-weight:700;font-size:13px;
+              padding:9px 13px;border-radius:9px;cursor:pointer;min-height:40px}
+  .mdc-oracle:active{transform:translateY(1px)}
+  .mdc-undo{display:flex;align-items:center;gap:8px;width:100%;margin-top:6px;background:var(--panel2);
+            border:1px solid var(--line);border-radius:9px;padding:8px 11px;color:var(--txt);
+            font-size:12px;cursor:pointer;min-height:44px;text-align:left}
+  .mdc-undo:active{border-color:var(--gold)}
+  .mdc-undo b{color:var(--gold);flex:none}
+  .mdc-undo span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
+  .mdc-lbl{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.05em;margin:11px 0 4px}
+  .mdc-ticker{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px;scroll-snap-type:x proximity}
+  .mdc-chip{flex:none;display:inline-flex;align-items:center;gap:4px;background:var(--panel);
+            border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px;
+            white-space:nowrap;cursor:pointer;scroll-snap-align:start;min-height:44px}
+  .mdc-chip:active{border-color:var(--gold)}
+  .mdc-chip .pos{transform:scale(.8)} .mdc-flag{font-style:normal;font-size:11px}
+  .mdc-cb{font-weight:800;font-size:13px} .mdc-cb.go{color:var(--good)} .mdc-cb.no{color:var(--muted)}
+  .mdc-search{position:relative;display:flex;margin-top:4px}
+  .mdc-search input{flex:1;min-width:0;background:var(--panel2);border:1px solid var(--line);
+                    color:var(--txt);border-radius:10px;padding:12px 34px 12px 13px;font-size:16px}
+  .mdc-search .qx{font-size:15px;padding:8px 11px}
+  .mdc-list{margin-top:5px;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .mdc-row{display:flex;align-items:center;gap:8px;padding:10px;border-bottom:1px solid var(--line);
+           cursor:pointer;min-height:52px;background:var(--panel)}
+  .mdc-row:last-child{border-bottom:0}
+  .mdc-row:active{background:var(--panel2)}
+  .mdc-row.gone{opacity:.45;cursor:default}
+  .mdc-lead{flex:none;width:17px;text-align:center;font-size:12px;font-weight:800;color:var(--muted)}
+  .mdc-nm{flex:1;min-width:0;font-size:14px;line-height:1.35}
+  .mdc-dart{font-size:10px;font-weight:700;border-radius:4px;padding:1px 5px;margin-left:3px;white-space:nowrap}
+  .mdc-bid{font-weight:800;font-size:17px;flex:none}
+  .mdc-bid.go{color:var(--good)} .mdc-bid.no{color:var(--gold)} .mdc-bid.x{color:var(--bad);font-size:13px}
+  .mdc-bid i{font-style:normal;opacity:.55;font-size:12px}
+  .mdc-none{padding:11px;color:var(--muted);font-size:13px}
+  .mdc-tsum{color:var(--muted);font-size:11px;margin-top:4px;text-align:center}
+  .mdc-teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+  .mdc-team{background:var(--panel);border:1px solid var(--line);border-radius:9px;padding:8px;font-size:12px;cursor:pointer}
+  .mdc-team.me{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .mdc-team.full{opacity:.5} .mdc-team.open{grid-column:1/-1}
+  .mdc-tn{display:flex;justify-content:space-between;gap:5px;align-items:baseline}
+  .mdc-bud{color:var(--good);font-weight:800}
+  .mdc-ts{color:var(--muted);font-size:11px;margin-top:1px}
+  .mdc-tn2{margin-top:3px;font-size:11px;color:var(--accent)}
+  .mdc-roster{margin-top:6px;border-top:1px solid var(--line);padding-top:5px;line-height:1.9}
+  .mdc-foot{color:var(--muted);font-size:11px;line-height:1.55;margin-top:14px}
+  /* the tap-through card */
+  .mdc-sheetwrap{position:fixed;inset:0;background:rgba(5,10,18,.72);z-index:70;display:flex;
+                 align-items:flex-end;justify-content:center}
+  .mdc-sheet{background:var(--panel);border:1px solid var(--line);border-radius:14px 14px 0 0;
+             width:100%;max-width:560px;max-height:92vh;overflow:auto;padding:14px 14px 20px;
+             box-shadow:0 -8px 30px rgba(0,0,0,.6);position:relative}
+  .mdc-sx{position:absolute;right:10px;top:8px;color:var(--muted);font-size:19px;cursor:pointer;padding:5px 9px}
+  .mdc-h{font-size:17px;font-weight:700;display:flex;align-items:center;gap:7px;padding-right:34px}
+  .mdc-big{font-size:27px;font-weight:800;margin:9px 0 3px;display:flex;align-items:baseline;gap:9px;flex-wrap:wrap}
+  .mdc-big.go{color:var(--good)} .mdc-big.no{color:var(--gold)} .mdc-big.x{color:var(--bad)}
+  .mdc-vd{font-size:11px;font-weight:800;letter-spacing:.08em;border:1px solid currentColor;border-radius:4px;padding:1px 6px}
+  .mdc-why{color:var(--muted);font-size:12px;line-height:1.5}
+  .mdc-meta{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin:11px 0}
+  .mdc-meta div{background:var(--panel2);border-radius:7px;padding:6px 9px;display:flex;justify-content:space-between;font-size:12px}
+  .mdc-meta span{color:var(--muted)}
+  .mdc-note{background:var(--panel2);border-left:3px solid var(--line);border-radius:5px;
+            padding:7px 9px;font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:6px}
+  .mdc-note.warn{border-left-color:var(--gold)}
+  /* 💵 price dial — a number input is unusable mid-auction: the price ticks in $1s while
+     you are holding a phone. Big steppers for the ticks, a drag wheel for a jump, presets
+     for the three numbers that actually matter, and the readout still types if you want. */
+  .mdc-sold{margin:10px 0 5px;font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.05em}
+  .mdc-dial{display:flex;align-items:center;gap:8px;justify-content:center;margin-bottom:6px}
+  .mdc-step{flex:none;width:54px;height:54px;border-radius:14px;border:1px solid var(--line);
+            background:var(--panel2);color:var(--txt);font-size:23px;font-weight:700;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none;
+            touch-action:manipulation}
+  .mdc-step:active{background:var(--accent);color:#06121f;border-color:var(--accent)}
+  .mdc-step.sm{width:44px;height:44px;font-size:14px}
+  .mdc-step:disabled{opacity:.3}
+  .mdc-price{width:112px;text-align:center;font-size:31px;font-weight:800;color:var(--gold);
+             background:transparent;border:0;border-bottom:2px solid var(--line);padding:2px 0;
+             -moz-appearance:textfield}
+  .mdc-price::-webkit-outer-spin-button,.mdc-price::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+  .mdc-price:focus{outline:none;border-bottom-color:var(--gold)}
+  .mdc-wheel{position:relative;display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;
+             -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;padding:2px 0 5px;
+             mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);
+             -webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+  .mdc-wtick{flex:none;width:44px;scroll-snap-align:center;text-align:center;font-size:13px;
+            color:var(--muted);cursor:pointer;padding:5px 0;border-radius:7px}
+  .mdc-wtick.on{color:var(--gold);font-weight:800;background:var(--panel2)}
+  .mdc-wtick.pad{width:calc(50% - 22px);pointer-events:none}
+  .mdc-presets{display:flex;gap:5px;flex-wrap:wrap;justify-content:center;margin-bottom:9px}
+  .mdc-preset{background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;
+              padding:7px 11px;font-size:12px;cursor:pointer;min-height:38px}
+  .mdc-preset:active{border-color:var(--gold)}
+  .mdc-owners button.cant{opacity:.3}
+  .mdc-owners{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+  .mdc-owners button{background:var(--panel2);border:1px solid var(--line);color:var(--txt);
+                     border-radius:8px;padding:9px 7px;font-size:12px;cursor:pointer;min-height:46px;
+                     display:flex;flex-direction:column;align-items:center;gap:1px;line-height:1.2}
+  .mdc-owners button span{color:var(--muted);font-size:10px}
+  .mdc-owners button.me{border-color:var(--accent)}
+  .mdc-owners button:disabled{opacity:.35}
+  @media (max-width:700px){ .mdc-meta{grid-template-columns:1fr} .mdc-big{font-size:24px} }
+  /* ======================= 📱 MOBILE ======================= */
+  /* The board is a desktop tool first; under 700px it has to survive a phone. The rules
+     below only kick in there: chrome shrinks, the two button bars become one-line swipe
+     strips (they wrapped into 218px + 255px of header — a whole screen before any data),
+     side panels stack, and the board drops to the columns a pick is actually made on. */
+  @media (max-width:700px){
+    header{padding:9px 11px}
+    h1{font-size:16px;margin-bottom:3px}
+    .sub{font-size:11px}
+    .main{padding:10px 11px}
+    /* one-line swipe strips instead of six wrapped rows of buttons */
+    .modebar,.ffabar{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;
+                     scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+    .modebar::-webkit-scrollbar,.ffabar::-webkit-scrollbar{height:4px}
+    .modebar::-webkit-scrollbar-thumb,.ffabar::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px}
+    .modebar>*,.ffabar>*{flex:none}
+    .modebar{margin-top:7px;padding-bottom:3px}
+    .ffabar{margin-top:7px;padding:6px 9px}
+    #ffaStatus{display:none}        /* a fixed paragraph of explainer, not live state */
+    /* scoring reference + replacement-point cards: swipe strips, not five stacked rows */
+    .chips,.cards{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch}
+    .chips>*,.cards>*{flex:none}
+    .chips{margin-top:7px;gap:4px;padding-bottom:3px}
+    .chip{font-size:11px;padding:2px 8px}
+    /* keeper rail stacks under the board instead of stealing 330px of a 390px screen */
+    .layout{flex-direction:column}
+    .side{width:auto;max-height:none;position:static;border-left:0;border-top:1px solid var(--line)}
+    /* the two draft rooms lay owners out on a fixed 6-wide grid (inline style, hence
+       the !important) — two per row is what fits a phone */
+    .dr-teams{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+    .dr-teams[style]>.dr-team{width:auto}
+    .drmodal .box{min-width:0;width:94vw;padding:13px}
+    .cards{gap:7px}
+    .card{min-width:104px;padding:7px 10px}
+    .card .val{font-size:15px}
+    /* search fills the row; 16px keeps iOS from zooming the page on focus */
+    .searchwrap{flex:1 0 100%;min-width:0}
+    input[type=search]{min-width:0;font-size:16px}
+    .qx{padding:7px 9px;font-size:15px}
+    tbody td,thead th{padding:6px 7px}
+    /* the Player cell carries every context badge; let it wrap and cap it, so the
+       numbers that decide a pick stay on screen instead of being pushed off-canvas */
+    #tbl tbody td.l,#tbl thead th.l{white-space:normal}
+    #tbl tbody td.l{max-width:54vw}
+  }
 </style>
 </head>
 <body>
@@ -160,6 +397,8 @@
     <button class="btn" id="mKeep">🧩 Mock Keepers</button>
     <button class="btn" id="mMock">🤖 Mock Draft</button>
     <button class="btn" id="mDraft">🏟️ Draft Room</button>
+    <button class="btn" id="mDuel" title="Simulate two ways to spend the same budget: pick two players and two prices, and see the full season-outcome distribution of each completed roster.">⚖️ Duel</button>
+    <button class="btn" id="mMobile" title="One-thumb live-auction view: best-available ticker, search, the room's money, and ONE number per player — the Oracle break-even (your whole roster re-solved at every price).">📱 Mobile Companion</button>
     <button class="btn" id="mWind">🌬️ Wind Bets</button>
     <a class="btn" href="https://claude.ai/code/artifact/9b6157c6-a8c0-466e-9968-8c025c9348c0" target="_blank" rel="noopener" title="Career skill curves for every QB/RB/WR/TE since 2011 — default Alpha view blends opponent-adjusted per-play skill with earned volume (validated: 2.4× the forward signal at WR; Chase WR25→WR2), plus true-skill / Elo / observed views — opens the Claude artifact; requires your claude.ai login">📉 Skill Curves ↗</a>
     <span class="muted" id="count"></span>
@@ -196,12 +435,13 @@
     <div class="cards" id="replcards"></div>
     <div class="controls">
       <div id="posbtns"></div>
-      <input type="search" id="q" placeholder="Search player / team…"/>
+      <span class="searchwrap"><input type="search" id="q" placeholder="Search player / team…"/><button type="button" class="qx" id="qClear" hidden aria-label="Clear search" title="Clear search (Esc)">✕</button></span>
       <label class="tgl"><input type="checkbox" id="startersOnly"/> Startable only</label>
       <label class="tgl"><input type="checkbox" id="draftableOnly"/> Draftable only</label>
       <span id="compToggle" style="display:none"><button class="btn sm active" id="cvTable">▦ Table</button><button class="btn sm" id="cvScatter">⊕ Risk/Reward</button></span>
     </div>
-    <table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table>
+    <div class="tblwrap"><table id="tbl"><thead><tr id="hrow"></tr></thead><tbody id="body"></tbody></table></div>
+    <style id="mobcols"></style>
     <div id="scatter" style="display:none"></div>
     <div id="draftroom" style="display:none"></div>
     <div id="windtab" style="display:none"></div>
@@ -661,7 +901,16 @@ const POSES=["ALL","QB","RB","WR","TE","FLEX","ROOK","K","DST"];
 document.getElementById("posbtns").innerHTML=POSES.map(p=>`<button class="btn sm pf ${p==='ALL'?'active':''}" data-p="${p}">${p}</button>`).join("");
 document.querySelectorAll(".pf").forEach(b=>b.onclick=()=>{posFilter=b.dataset.p;document.querySelectorAll(".pf").forEach(x=>x.classList.remove("active"));b.classList.add("active");render();});
 let _qT=null;   // debounce: heavy screens re-render at ~9-110ms + DOM cost — don't do it per keystroke
-document.getElementById("q").oninput=e=>{query=e.target.value.toLowerCase();clearTimeout(_qT);_qT=setTimeout(render,150);};
+const qEl=document.getElementById("q"),qClearEl=document.getElementById("qClear");
+// ✕ shows only when there's something to clear. The native type=search cancel button is
+// desktop-WebKit-only, so on a phone a leftover query quietly filters the whole board.
+function syncQClear(){qClearEl.hidden=!qEl.value;}
+function clearQuery(){qEl.value="";query="";syncQClear();
+  const sd=document.getElementById("searchdrop");if(sd)sd.remove();
+  qEl.focus();render();}
+qEl.oninput=e=>{query=e.target.value.toLowerCase();syncQClear();clearTimeout(_qT);_qT=setTimeout(render,150);};
+qEl.onkeydown=e=>{if(e.key==="Escape"){e.preventDefault();clearQuery();}};
+qClearEl.onclick=clearQuery;
 document.getElementById("startersOnly").onchange=e=>{startersOnly=e.target.checked;render();};
 document.getElementById("draftableOnly").onchange=e=>{draftableOnly=e.target.checked;render();};
 
@@ -676,18 +925,22 @@ function setMode(m){
   document.getElementById("mDarts").classList.toggle("active",m==="darts");
   document.getElementById("mFade").classList.toggle("active",m==="fade");
   document.getElementById("mDraft").classList.toggle("active",m==="draftroom");
+  document.getElementById("mMobile").classList.toggle("active",m==="mobile");
+  document.getElementById("mDuel").classList.toggle("active",m==="duel");
   document.getElementById("mKeep").classList.toggle("active",m==="mockkeep");
   document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
   document.getElementById("mWind").classList.toggle("active",m==="wind");
-  const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts");
+  const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts"||m==="mobile"||m==="duel");
   document.getElementById("settings").style.display=(m==="auction")?"flex":"none";   // draft room: settings are set pre-draft — reclaim the row
-  document.getElementById("scorechips").style.display=(m==="draftroom")?"none":"";   // draft-night declutter: scoring chips
-  document.getElementById("leaguesub").style.display=(m==="draftroom")?"none":"";    //  + league subtitle off in the Draft Room
+  document.getElementById("scorechips").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";   // draft-night declutter: scoring chips
+  document.getElementById("leaguesub").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";    //  + league subtitle off in the Draft Room
   document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=host?"block":"none";
   document.getElementById("windtab").style.display=m==="wind"?"block":"none";
-  document.querySelector(".controls").style.display=m==="wind"?"none":"";
+  // 📱 the Companion carries its own search + needs bar; the desktop filter row would
+  // just eat a third of a phone screen.
+  document.querySelector(".controls").style.display=(m==="wind"||m==="mobile"||m==="duel")?"none":"";
   if(m==="wind"){document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";}
   if(m!=="comps"&&!host&&m!=="wind"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
@@ -701,6 +954,8 @@ document.getElementById("mSleep").onclick=()=>setMode("sleepers");
 document.getElementById("mDarts").onclick=()=>setMode("darts");
 document.getElementById("mFade").onclick=()=>setMode("fade");
 document.getElementById("mDraft").onclick=()=>setMode("draftroom");
+document.getElementById("mMobile").onclick=()=>setMode("mobile");
+document.getElementById("mDuel").onclick=()=>setMode("duel");
 document.getElementById("mKeep").onclick=()=>setMode("mockkeep");
 document.getElementById("mMock").onclick=()=>setMode("mockdraft");
 document.getElementById("mWind").onclick=()=>setMode("wind");
@@ -773,7 +1028,7 @@ function keeperRiskTag(p){
   const lbl=pc>=60?"LIKELY KEPT":"KEEP RISK";
   return ` <span class="tag ${cls}" title="${r.team} holds him at $${r.cost} — modelled ${pc}% chance they keep him, fitted on this league's actual 2023-25 keeper decisions. He may never reach the auction, so do not build a plan around him. Confirm in 🧩 Mock Keepers.">🔒 ${lbl} ${pc}%</span>`;
 }
-function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;setMode("comps");}
+function gotoComps(nm){query=String(nm).toLowerCase();document.getElementById("q").value=nm;syncQClear();setMode("comps");}
 let compView="table";
 const POSCOL={QB:"#e85d75",RB:"#39c08a",WR:"#4da3ff",TE:"#e0a23c"};
 function compFilter(){
@@ -1122,7 +1377,18 @@ const saveDR=()=>localStorage.setItem("draftroom",JSON.stringify(DR));
 //      so a wiped browser or a second device starts locked too.
 let KLOCK=JSON.parse(localStorage.getItem("keepers_final_lock")||"null");
 let KCONF=JSON.parse(localStorage.getItem("keepers_confirm_teams")||"{}");  // per-team ✓ verified (pre-lock scratch)
-const finalKeepers=()=>(KLOCK&&KLOCK.keepers)||((typeof KEEPERS_FINAL!=="undefined"&&KEEPERS_FINAL&&KEEPERS_FINAL.keepers)||null);
+// A device that has never locked anything still runs the official list — it comes from the
+// baked file. The lock UI used to key off KLOCK alone, so such a device (a phone, a private
+// window, a wiped browser) correctly APPLIED the official keepers while announcing
+// "⚠ NOT LOCKED — scratch ticks only", and left the edit/clear guards off: a stray tap could
+// silently drop a real keeper there while the same tap was blocked on the laptop.
+// lockState() is the single source of truth: a device lock outranks the site's baked list,
+// and KSITE_OFF is how "🔓 Unlock" releases the baked list on this device.
+let KSITE_OFF=localStorage.getItem("keepers_site_off")==="1";
+const bakedKeepers=()=>(!KSITE_OFF&&typeof KEEPERS_FINAL!=="undefined"&&KEEPERS_FINAL&&KEEPERS_FINAL.keepers)||null;
+const finalKeepers=()=>(KLOCK&&KLOCK.keepers)||bakedKeepers()||null;
+const lockState=()=>KLOCK&&KLOCK.keepers?{on:true,src:"device",ver:KLOCK.version}
+  :bakedKeepers()?{on:true,src:"site",ver:(KEEPERS_FINAL&&KEEPERS_FINAL.version)||"baked"}:{on:false,src:null,ver:null};
 function applyFinalKeepers(){
   const K=finalKeepers(); if(!K)return false;
   for(const id in DR.owned)if(DR.owned[id].kept)delete DR.owned[id];
@@ -1130,13 +1396,87 @@ function applyFinalKeepers(){
   saveDR(); return true;
 }
 applyFinalKeepers();
+// ⚠ A browser lock SILENTLY OUTRANKS the baked official list (finalKeepers() reads KLOCK
+// first), and it never expires. That is correct when this device holds the newest
+// selections, and a trap when it holds a stale scratch lock: the phone reads the repo, the
+// laptop reads its own lock, and the two rooms quietly disagree on who is even draftable.
+// This surfaces the disagreement everywhere the draft is run, instead of only in the
+// 🧩 Keepers tab, and offers the one-tap resolution in both directions.
+let KBANNER_HIDE=false;
+function keeperLockDiff(){
+  if(KBANNER_HIDE||!KLOCK||!KLOCK.keepers)return null;
+  const B=(typeof KEEPERS_FINAL!=="undefined"&&KEEPERS_FINAL&&KEEPERS_FINAL.keepers)||null;
+  if(!B)return null;
+  const L=KLOCK.keepers,nm=id=>(BYID[id]?BYID[id].name:id.split("|")[0]);
+  const only=(a,b)=>Object.keys(a).filter(k=>!b[k]).map(nm);
+  const chg=Object.keys(L).filter(k=>B[k]&&(B[k].price!==L[k].price||B[k].t!==L[k].t))
+    .map(k=>`${nm(k)} $${L[k].price}→$${B[k].price}`);
+  const mine=only(L,B),theirs=only(B,L);
+  if(!mine.length&&!theirs.length&&!chg.length)return null;
+  return {lockVer:KLOCK.version,bakedVer:KEEPERS_FINAL.version,mine,theirs,chg};
+}
+function keeperLockBannerHTML(){
+  const d=keeperLockDiff(); if(!d)return "";
+  const li=(lab,arr)=>arr.length?`<div style="margin-top:2px"><b>${lab}</b> ${arr.slice(0,6).join(" · ")}${arr.length>6?` +${arr.length-6} more`:""}</div>`:"";
+  return `<div class="dr-panel" id="kbanner" style="border-color:var(--bad);background:#2a1519">
+    <div style="font-weight:700;font-size:13px">⚠ This browser is using its OWN keeper lock, not the league's official list</div>
+    <div class="muted" style="font-size:11.5px;line-height:1.55;margin-top:3px">
+      Locked on this device <b>${d.lockVer}</b> · official list baked into the site <b>${d.bakedVer}</b>.
+      A device lock always wins, so this browser can disagree with your phone and with everyone else's copy.
+      ${li("only on this device:",d.mine)}${li("missing here, in the official list:",d.theirs)}${li("different price/team:",d.chg)}
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:7px">
+      <button class="btn sm up" id="kbUseOfficial" title="Drop this browser's lock and use the official list baked into the site — what every other device sees.">✅ Use the official list</button>
+      <button class="btn sm" id="kbKeepMine" title="Keep this device's lock for now. If these are the real selections, open 🧩 Mock Keepers → ⬇ Export finals and commit the file so every device gets them.">Keep this device's · hide</button>
+    </div></div>`;
+}
+function wireKeeperBanner(){
+  const a=document.getElementById("kbUseOfficial"); if(!a)return;
+  a.onclick=()=>{if(!confirm("Drop this browser's keeper lock and use the official list baked into the site?"))return;
+    unlockFinalKeepers();applyFinalKeepers();render();};
+  document.getElementById("kbKeepMine").onclick=()=>{KBANNER_HIDE=true;render();};
+}
+// runs a draft-surface renderer, then floats the mismatch warning above whatever it drew
+function withKeeperBanner(fn){
+  fn();
+  const b=keeperLockBannerHTML(); if(!b)return;
+  const host=document.getElementById("draftroom");
+  if(host&&host.style.display!=="none"){host.insertAdjacentHTML("afterbegin",b);wireKeeperBanner();}
+}
+// ↩ UNDO — recording a sale is the one irreversible action in a live draft, and the two
+// ways to get it wrong (right player wrong team, right team wrong price) both look fine
+// until somebody's budget stops making sense three nominations later. Every sale recorded
+// in the Draft Room or the 📱 Companion goes on a stack with whatever the player's state
+// was before it, so undo puts back exactly that — including a keeper, if a sale ever
+// overwrote one. Survives a reload (a phone reloading mid-draft must not lose it).
+// The mock draft deliberately does NOT push here: it has its own snapshot restore, and a
+// simulation should never fill the real undo history.
+let DRUNDO=(()=>{try{return JSON.parse(localStorage.getItem("dr_undo")||"[]")}catch(e){return[]}})();
+const saveUndo=()=>{try{localStorage.setItem("dr_undo",JSON.stringify(DRUNDO.slice(-40)))}catch(e){}};
+const lastSale=()=>DRUNDO.length?DRUNDO[DRUNDO.length-1]:null;
+function recordSale(id,t,price){
+  const p=BYID[id];
+  DRUNDO.push({id,name:p?p.name:String(id).split("|")[0],pos:p?p.position:"",
+               t,price,prev:DR.owned[id]||null});
+  if(DRUNDO.length>40)DRUNDO.shift();
+  DR.owned[id]={t,price,kept:false};
+  saveDR();saveUndo();
+}
+function undoLastSale(){
+  const u=DRUNDO.pop(); if(!u)return null;
+  if(u.prev)DR.owned[u.id]=u.prev; else delete DR.owned[u.id];
+  saveDR();saveUndo(); return u;
+}
+const undoLabel=u=>`${u.pos?u.pos+" ":""}${u.name} $${u.price} → ${(DR.teams[u.t]||{}).name||"?"}`;
 function lockFinalKeepers(){
   const K={}; for(const id in DR.owned){const o=DR.owned[id];if(o.kept)K[id]={t:o.t,price:o.price};}
   KLOCK={version:new Date().toISOString().slice(0,10),keepers:K};
   localStorage.setItem("keepers_final_lock",JSON.stringify(KLOCK));
+  KSITE_OFF=false;localStorage.removeItem("keepers_site_off");
   KCONF={}; localStorage.removeItem("keepers_confirm_teams");
 }
-function unlockFinalKeepers(){KLOCK=null;localStorage.removeItem("keepers_final_lock");}
+function unlockFinalKeepers(){KLOCK=null;localStorage.removeItem("keepers_final_lock");
+  KSITE_OFF=true;localStorage.setItem("keepers_site_off","1");}   // also releases the baked list, else it re-applies on reload
 function exportFinalKeepers(){ if(!KLOCK)return;
   const s="// FINAL 2026 keeper selections — locked in the draft tool on "+KLOCK.version+".\n"+
     "// Replace docs/keepers_final_2026.js (and outputs/draft_tool/) with this file so the\n"+
@@ -1566,35 +1906,50 @@ function optimalPlan(mkt){
   const price=p=>{const w=WHATIF[pid(p)];return w!=null?Math.max(1,w):(mkt.price[pid(p)]||1);};
   const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]);
   const needs=[];                                          // ordered slot list to fill
-  ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:raPts});});
-  for(let k=0;k<(meS.need.FLEX||0);k++)needs.push({slot:"FLEX",elig:FLEXE,u:raPts});
-  ["K","DST"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:p=>(p.proj_pts||0)/100});});
+  ["QB","RB","WR","TE"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:raPts,uk:"uRA"});});
+  for(let k=0;k<(meS.need.FLEX||0);k++)needs.push({slot:"FLEX",elig:FLEXE,u:raPts,uk:"uRA"});
+  ["K","DST"].forEach(pos=>{for(let k=0;k<(meS.need[pos]||0);k++)needs.push({slot:pos,elig:[pos],u:p=>(p.proj_pts||0)/100,uk:"uKD"});});
   // 🧭 fill-score dart quota: RB in-season fill is 6.3 ppg (vs WR 9.7) and skipping tier-1 RB
   // costs 157 unrecoverable pts — so HALF the bench slots are RB-only darts. The wire can
   // regenerate a WR3; it has never regenerated an RB you'd start on purpose.
   const _nb=meS.bench||0,_rbOnly=Math.floor(_nb/2);
-  for(let k=0;k<_nb;k++)needs.push({slot:"BN",elig:k<_rbOnly?["RB"]:["RB","WR"],u:benchU});
-  if(!needs.length)return {picks:[],spend:0,unspent:budget,lam:0,nslots:0};
+  for(let k=0;k<_nb;k++)needs.push({slot:"BN",elig:k<_rbOnly?["RB"]:["RB","WR"],u:benchU,uk:"uBN"});
+  if(!needs.length)return {picks:[],spend:0,unspent:budget,lam:0,nslots:0,cand:[],needs:[]};
   // ⚡ pruned per-position pools (owned removed, pinned always appended)
   const OP=optPool(),pool={};
   ["QB","RB","WR","TE","K","DST"].forEach(pos=>{pool[pos]=OP[pos].filter(p=>!DR.owned[pid(p)]);});
   avail.forEach(p=>{if(isPinned(p)&&pool[p.position]&&!pool[p.position].some(x=>pid(x)===pid(p)))pool[p.position].push(p);});
   const anyPins=avail.some(isPinned);
-  const sel=lam=>{const used=new Set();let spend=0;const picks=[];
-    for(const nd of needs){let best=null,bn=-1e9,bu=0;
+  // ⚡ FLATTEN ONCE. The λ-bisection re-scans every candidate ~36 times; doing pid()/raPts()/
+  // benchU() inside that loop cost ~80ms a solve, which is why the walk-away could never
+  // afford an exact re-solve. Precomputing to a flat numeric table drops it to ~2ms and pays
+  // for the Oracle's exact break-even search below.
+  const CAND=[],byPos={};
+  ["QB","RB","WR","TE","K","DST"].forEach(pos=>{const ix=[];
+    for(const p of (pool[pos]||[])){ix.push(CAND.length);
+      CAND.push({p,id:pid(p),price:price(p),pin:isPinned(p)?1:0,
+                 uRA:raPts(p),uBN:benchU(p),uKD:(p.proj_pts||0)/100});}
+    byPos[pos]=ix;});
+  needs.forEach(nd=>{const s=new Set();nd.idx=[];
+    for(const pos of nd.elig)for(const i of (byPos[pos]||[]))if(!s.has(i)){s.add(i);nd.idx.push(i);}});
+  const usedF=new Uint8Array(CAND.length);
+  const passes=anyPins?[1,0]:[0];
+  const sel=lam=>{usedF.fill(0);let spend=0;const picks=[];
+    for(const nd of needs){let bi=-1,bn=-1e9;
       // 📌 pass 1: pinned players claim eligible slots first (two pinned QBs -> the better
       // value takes the QB slot; the other is priced as the walk-away pivot). pass 2: everyone.
-      for(const pinPass of (anyPins?[true,false]:[false])){
-        for(const pos of nd.elig)for(const p of pool[pos]||[]){if(used.has(pid(p)))continue;
-          if(pinPass&&!isPinned(p))continue;
-          const u=nd.u(p),n=u-lam*price(p);
-          if(n>bn){bn=n;best=p;bu=u;}}
-        if(best)break;}
-      if(best){used.add(pid(best));spend+=price(best);picks.push({slot:nd.slot,p:best,cost:price(best),u:bu,elig:nd.elig,uf:nd.u});}}
-    return {picks,spend,used};};
+      for(const pinPass of passes){
+        for(const i of nd.idx){if(usedF[i])continue;const c=CAND[i];
+          if(pinPass&&!c.pin)continue;
+          const n=c[nd.uk]-lam*c.price;
+          if(n>bn){bn=n;bi=i;}}
+        if(bi>=0)break;}
+      if(bi>=0){usedF[bi]=1;const c=CAND[bi];spend+=c.price;
+        picks.push({slot:nd.slot,p:c.p,cost:c.price,u:c[nd.uk],elig:nd.elig,uf:nd.u,uk:nd.uk,idx:bi,nd});}}
+    return {picks,spend,used:new Set(picks.map(k=>k.idx))};};
   let lo=0.02,hi=40,S=sel(lo),lam=lo;
   if(S.spend>budget){for(let it=0;it<36;it++){const mid=(lo+hi)/2,T=sel(mid);
-    if(T.spend<=budget){hi=mid;S=T;}else lo=mid;}lam=hi;}
+    if(T.spend<=budget){hi=mid;S=T;}else lo=mid;}lam=hi;S=sel(hi);}
   // FEASIBILITY GUARD: if no λ produced an affordable roster (bisection kept the λ=0.02 luxury
   // plan — this is how a $10-left / 8-spot state once "recommended" a $6 Derrick Henry), fall
   // back to the strict cheapest-per-slot roster. If even THAT overspends, the budget is below
@@ -1602,25 +1957,84 @@ function optimalPlan(mkt){
   if(S.spend>budget){S=sel(1e6);lam=hi;}
   const infeasible=S.spend>budget;
   // leftover pass: pour remaining $ into the single best affordable upgrade, repeat
-  for(let it=0;it<24;it++){const un=budget-S.spend;let bi=-1,bp=null,bg=0;
-    S.picks.forEach((pk,i)=>{if(isPinned(pk.p))return;   // 📌 never upgrade away a pinned player
-      for(const pos of pk.elig)for(const p of pool[pos]||[]){
-      if(S.used.has(pid(p)))continue;
-      const d$=price(p)-pk.cost,du=pk.uf(p)-pk.u;
-      if(du>bg&&d$<=un){bg=du;bi=i;bp=p;}}});
-    if(!bp)break;
-    const pk=S.picks[bi];S.used.delete(pid(pk.p));S.used.add(pid(bp));
-    S.spend+=price(bp)-pk.cost;pk.p=bp;pk.cost=price(bp);pk.u=pk.uf(bp);}
-  // walk-away per starter: the bid at which swapping to the next-best alternative breaks even
+  for(let it=0;it<24;it++){const un=budget-S.spend;let bi=-1,bp=-1,bg=0;
+    S.picks.forEach((pk,i)=>{if(pk.p&&isPinned(pk.p))return;   // 📌 never upgrade away a pinned player
+      for(const j of pk.nd.idx){if(S.used.has(j))continue;const c=CAND[j];
+        const d$=c.price-pk.cost,du=c[pk.uk]-pk.u;
+        if(du>bg&&d$<=un){bg=du;bi=i;bp=j;}}});
+    if(bp<0)break;
+    const pk=S.picks[bi],c=CAND[bp];
+    S.used.delete(pk.idx);S.used.add(bp);
+    S.spend+=c.price-pk.cost;pk.p=c.p;pk.cost=c.price;pk.u=c[pk.uk];pk.idx=bp;}
+  // WALK-AWAY per starter: the price at which swapping to the next-best alternative breaks even.
+  //   wa = (his utility − best alternative's λ-adjusted utility) / λ
+  // NOT floored at his expected price any more. The old floor (max(cost, …)) silently rewrote
+  // "the math says $36, he costs $48 — take the pivot" into "bid up to $48", so the number could
+  // never warn you a player was overpriced at his own expected price; audited 2026-09 against a
+  // full re-solve, that floor was the single largest error in the displayed ceiling. When wa
+  // lands under cost it is a PASS signal and the UI shows it as one.
   const cap=budget-(needs.length-1);
   S.picks.forEach(pk=>{if(pk.slot==="BN"||pk.slot==="K"||pk.slot==="DST"){pk.wa=null;return;}
     let altn=-1e9;pk.alt=null;
-    for(const pos of pk.elig)for(const p of pool[pos]||[]){if(S.used.has(pid(p)))continue;
-      const n=pk.uf(p)-lam*price(p);if(n>altn){altn=n;pk.alt=p;}}
-    const self=pk.u-lam*pk.cost;
+    for(const j of pk.nd.idx){if(S.used.has(j))continue;const c=CAND[j];
+      const n=c[pk.uk]-lam*c.price;if(n>altn){altn=n;pk.alt=c.p;}}
     pk.du=pk.alt?Math.max(0,Math.round(pk.u-pk.uf(pk.alt))):999;   // irreplaceability: season pts lost to next-best alt
-    pk.wa=pk.alt?Math.max(pk.cost,Math.min(Math.round(pk.cost+(self-altn)/Math.max(lam,0.02)),cap)):cap;});
-  return {picks:S.picks,spend:S.spend,unspent:budget-S.spend,lam,nslots:needs.length,infeasible};
+    pk.wa=pk.alt?Math.max(1,Math.min(Math.round((pk.u-altn)/Math.max(lam,0.02)),cap)):cap;
+    pk.waRaw=pk.wa;});
+  return {picks:S.picks,spend:S.spend,unspent:budget-S.spend,lam,nslots:needs.length,infeasible,
+          cand:CAND,needs,used:S.used,cap,budget};
+}
+// ---------- 🔮 ORACLE: the EXACT break-even, by re-solving the roster at each price ----------
+// The λ walk-away above is an LP shadow-price approximation: it prices a player against ONE
+// pivot at a linear points-per-dollar rate. Audited against a full re-solve (2026-09) it is
+// within ~$3 when the budget has slack and off by $2-$10 when it is tight and lumpy — which is
+// exactly the post-keeper state this league drafts in. This does the real thing: bisect the
+// price at which "win him at $p" stops beating "he goes to somebody else", re-solving the whole
+// optimal completion at every probe. ~9 solves ≈ 20ms after the flatten above, so it can run
+// live on the clock. Cached per roster state.
+let _oracleCache={k:"",v:{}};
+function oracleKey(){const s=teamState(DR.me);
+  return s.budget+"|"+s.spotsLeft+"|"+Object.keys(DR.owned).length+"|"+projMode+"|"+BLEND_W+"|"+JSON.stringify(WHATIF)+"|"+Object.keys(PINS).sort().join(",");}
+// The planner's own objective, re-solved: starters at risk-adjusted points PLUS the bench
+// valued the way the knapsack values it. Starters alone was wrong — a bench dart never
+// cracks the starting lineup, so buying one moved starter points by exactly zero and the
+// Oracle priced EVERY dart as "PASS, he doesn't improve your team at any price". A dart's
+// whole return is the world where he breaks into the lineup, which is what benchU prices.
+function planObjective(mkt){
+  const pl=optimalPlan(mkt), own=teamState(DR.me).own.map(x=>x.p);
+  const all=[...own,...pl.picks.map(pk=>pk.p)].filter(Boolean);
+  const slots={QB:1,RB:2,WR:2,TE:1,FLEX:1};let s=0;const rest=[];
+  [...all].sort((a,b)=>raPts(b)-raPts(a)).forEach(p=>{const q=p.position;
+    if(slots[q]>0){slots[q]--;s+=raPts(p);}
+    else if(FLEXE.includes(q)&&slots.FLEX>0){slots.FLEX--;s+=raPts(p);}
+    else rest.push(p);});
+  rest.sort((a,b)=>benchU(b)-benchU(a)).slice(0,Math.max(0,cfg.roster-9))
+      .forEach(p=>{if(!isK(p))s+=benchU(p);});      // K/DST are streamed, not bench assets
+  return s;}
+function oracleBid(player,mkt){
+  if(!player||DR.owned[pid(player)])return null;
+  const key=oracleKey();
+  if(_oracleCache.k!==key)_oracleCache={k:key,v:{}};
+  const id=pid(player);
+  if(_oracleCache.v[id]!=null)return _oracleCache.v[id];
+  const meS=teamState(DR.me), maxF=Math.max(1,meS.budget-(meS.spotsLeft-1));
+  if(meS.spotsLeft<=0)return _oracleCache.v[id]=0;
+  // the probe temporarily hands him to a team; try/finally so a throw can never leave the
+  // live draft state holding a hypothetical sale.
+  const at=p=>{const sv=DR.owned[id];
+    try{
+      DR.owned[id]=(p==null)?{t:(DR.me+1)%Math.max(2,DR.teams.length),price:1,kept:false}
+                            :{t:DR.me,price:p,kept:false};
+      return planObjective(mkt);
+    } finally { if(sv===undefined)delete DR.owned[id];else DR.owned[id]=sv; }
+  };
+  const base=at(null);
+  if(at(1)-base<=0.001)return _oracleCache.v[id]=0;          // never worth a roster spot
+  if(at(maxF)-base>0.001)return _oracleCache.v[id]=maxF;     // worth everything you have
+  let lo=1,hi=maxF;
+  for(let it=0;it<10&&hi-lo>1;it++){const m=Math.round((lo+hi)/2);
+    if(at(m)-base>0.001)lo=m;else hi=m;}
+  return _oracleCache.v[id]=lo;
 }
 // PER-OWNER OPTIMAL: starter PPG/wk of the best roster THIS owner could have built — his best
 // keeper choice (0-3 from his real keeper-eligible roster at true keeper costs) + the optimal
@@ -1775,7 +2189,9 @@ function wireWhatif(){
 }
 function planPanelHTML(mkt,mv){
   const meS=mv._meS;
-  const plan=optimalPlan(mkt);
+  // 🔮 exact break-evens before display — planPanelHTML feeds the plan card, the dart dock's
+  // ⭐ DRAFT NOW column and the sold modal, so refining here fixes all three at once.
+  const plan=refineWalkAways(optimalPlan(mkt),mkt);
   const stP=plan.picks.filter(pk=>!["BN","K","DST"].includes(pk.slot));
   const bnP=plan.picks.filter(pk=>pk.slot==="BN");
   const kdP=plan.picks.filter(pk=>["K","DST"].includes(pk.slot));
@@ -1794,7 +2210,7 @@ function planPanelHTML(mkt,mv){
       <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${pk.p.name}${pinBadge(pk.p)}${wireBadge(mv[pid(pk.p)])}${heirBadge(pk.p)} <span class="muted" style="font-size:10px">${pk.p.team||""}</span>${newsFlagTag(pk.p)}</span>
       <span class="base" style="width:44px;text-align:right"><input class="wifin" data-pid="${pid(pk.p)}" value="${WHATIF[pid(pk.p)]!=null?WHATIF[pid(pk.p)]:pk.cost}" title="WHAT-IF $: type the price you expect to pay and the whole plan re-solves around it (roster, TE/flex choices, walk-aways). Empty the box to go back to live Exp $." style="width:38px;background:${WHATIF[pid(pk.p)]!=null?'#2b2410':'transparent'};border:1px solid ${WHATIF[pid(pk.p)]!=null?'var(--gold)':'#333'};border-radius:3px;color:inherit;font-size:11px;text-align:right;padding:0 2px"></span>
       <span style="width:96px;text-align:right;font-size:11px">${pk.wa!=null
-        ?`<span class="maxbid" title="WALK-AWAY: bid up to $${pk.wa} — past that, the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}">walk-away $${pk.wa}</span>`
+        ?`<span class="${pk.wa<pk.cost?'downc':'maxbid'}" title="🔮 ORACLE BID CEILING $${pk.wa} — your whole remaining roster re-solved at every price; past $${pk.wa} the roster is better served letting him go${pk.alt?` and pivoting to ${pk.alt.name} (the plan's next-best ${pk.slot})`:''}.${pk.wa<pk.cost?` He is expected to cost $${pk.cost}, MORE than he is worth to this roster — plan on losing him.`:''}${pk.waRaw!=null&&pk.waRaw!==pk.wa?` (λ estimate was $${pk.waRaw})`:''}">${pk.wa<pk.cost?'⚠ ':''}bid to $${pk.wa}</span>`
         :(pk.slot==="BN"?`<span class="muted" title="upside stash: ceiling ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(1):'—'} ppg${(typeof LOTTERY_2026!=='undefined'&&LOTTERY_2026[pk.p.name])?' · 🎟 '+(100*LOTTERY_2026[pk.p.name].p).toFixed(0)+'% star odds':''}">ceil ${pk.p.ceiling!=null?pk.p.ceiling.toFixed(0):'—'} ppg</span>`:'<span class="muted">$1 stream</span>')}</span>
       <span class="planNom" data-id="${pid(pk.p)}" title="nominate ${pk.p.name} — put him up (mock: on your turn) / open the sold box (draft room)" style="cursor:pointer;color:var(--gold);flex:none;padding-left:2px">▶</span></div>`;
     // 📅 BYE-COLLISION + PLAYOFF-SLATE advisories on the planned starters (playoff_sos_2026.js)
@@ -1821,7 +2237,7 @@ function planPanelHTML(mkt,mv){
           <span class="pos ${p.position}" style="transform:scale(.7);flex:none">${p.position}</span>
           <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.name}${isPinned(p)?' 📌':''}</span>
           <b class="upc" title="${dartScore(p)!=null?'backtested bench-dart score':'raw dart signal (no baked score)'}">${dartScore(p)!=null?dartScore(p).toFixed(1):Math.round(dartSig(p)*100)+'%'}</b></div>`).join("")||'<span class="muted">— none left</span>'}</div></div></div>`;
-    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Walk-away</b> is the roster-aware ceiling (what paying more would cost you elsewhere); the table's My Max below is the single-player worth ceiling — when walk-away is lower, trust walk-away. Bench slots are <b>dart slots</b>: chosen on <b>Dart %/Leap % breakout odds × ceiling, tilted young-and-rising</b> (a $1-3 breakout is next year's keeper lock; an old vet's ceiling season has no keeper future), not median projection. <b>🌊 Wire discipline</b> (this league's 2023-25 waivers): FAAB regenerates ~6 startable RBs, 7 TEs, 6 QBs and 5 WRs a year — 76% by week 5 — so ⭐ stars get the concentrated money, 📶 wire-grade players are capped at 55% of worth, and the ⚠ $8-30 RB/WR band never gets a stretch (52-62% hit rate).</div>`;
+    h+=`<div class="muted" style="font-size:11px;margin-top:6px">Plan spends <b>$${stP.reduce((a,pk)=>a+pk.cost,0)}</b> on starters · <b>$${bnP.reduce((a,pk)=>a+pk.cost,0)}</b> on bench · <b>$${kdP.reduce((a,pk)=>a+pk.cost,0)||0}</b> K/DST · <b>$${plan.unspent}</b> unallocated (bid-war headroom). Marginal dollar ≈ <b>${plan.lam.toFixed(1)} pts</b>. This is a live budget-knapsack over the whole remaining pool at <b>Exp $</b>: it re-solves after every pick, so if you're outbid — or you overpay — the plan instantly re-routes the money. <b>Bid to</b> is the 🔮 Oracle ceiling: your whole remaining roster re-solved at every price, so it already counts what those dollars would buy elsewhere. It is no longer floored at the expected price — when it lands <i>below</i> Exp $ (shown red) that is a PASS signal, not a ceiling, and it means the room will likely pay more for him than he is worth to you. The table's My Max is the single-player worth ceiling; when the two disagree, trust the Oracle. Bench slots are <b>dart slots</b>: chosen on <b>Dart %/Leap % breakout odds × ceiling, tilted young-and-rising</b> (a $1-3 breakout is next year's keeper lock; an old vet's ceiling season has no keeper future), not median projection. <b>🌊 Wire discipline</b> (this league's 2023-25 waivers): FAAB regenerates ~6 startable RBs, 7 TEs, 6 QBs and 5 WRs a year — 76% by week 5 — so ⭐ stars get the concentrated money, 📶 wire-grade players are capped at 55% of worth, and the ⚠ $8-30 RB/WR band never gets a stretch (52-62% hit rate).</div>`;
   }
   return {html:h+`</div>`,plan};
 }
@@ -1844,7 +2260,10 @@ function nomTickerHTML(mv,mkt){
   // roster (the plan knapsack's break-even). Plan members: their walk-away (bid where
   // swapping to the next-best alternative breaks even). Non-members: the entry price at
   // which they'd displace the weakest occupant of an eligible slot; $0 = never optimal.
-  const plan=(mkt&&typeof optimalPlan==="function")?optimalPlan(mkt):null;
+  // 🔮 same Oracle ceiling the plan card and the 📱 Companion show, so a player's number is
+  // identical everywhere on the page (cached per roster state — this costs ~0 after the
+  // first solve of the turn).
+  const plan=(mkt&&typeof optimalPlan==="function")?refineWalkAways(optimalPlan(mkt),mkt):null;
   const lam=plan?Math.max(plan.lam,0.02):null;
   const cap=plan&&mv._meS?Math.max(1,mv._meS.budget-(plan.nslots-1)):1;
   const inPlan={};if(plan)plan.picks.forEach(pk=>{inPlan[pid(pk.p)]=pk;});
@@ -1904,14 +2323,14 @@ function dartDockHTML(mkt,mv,plan){
     <span class="pos ${pos}" style="transform:scale(.7);flex:none">${pos}</span>
     <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${name}</span>
     <span style="flex:none">${right}</span></div>`;
-  const col=(title,tip,rows)=>`<div class="thinscroll" style="flex:1;min-width:148px;overflow-y:auto;border-right:1px solid var(--line);padding:0 6px 4px">
+  const col=(title,tip,rows)=>`<div class="thinscroll dockcol">
     <div style="font-size:10px;font-weight:700;position:sticky;top:0;background:var(--panel);padding:2px 0;cursor:help" title="${tip.replace(/"/g,'&quot;')}">${title}</div>
     ${rows||'<div class="muted" style="font-size:10px">— none left —</div>'}</div>`;
   let cols="";
   const stars=plan?plan.picks.filter(pk=>pk.wa!=null).slice().sort((a,b)=>(b.du||0)-(a.du||0)).slice(0,12):[];
   cols+=col("⭐ DRAFT NOW","Your plan's starters, most irreplaceable first — the players to land BEFORE the dart phase. $ shown is the walk-away (bid ceiling); re-solves after every pick.",
     stars.map(pk=>prow(pid(pk.p),pk.p.name,pk.p.position,`<span class="maxbid">$${pk.wa}</span>`,false,
-      `${pk.p.name} — plan ${pk.slot} at exp $${pk.cost} · walk-away $${pk.wa}${pk.alt?' · fallback '+pk.alt.name:''}`)).join(""));
+      `${pk.p.name} — plan ${pk.slot} at exp $${pk.cost} · 🔮 bid to $${pk.wa}${pk.wa<pk.cost?' (BELOW his expected price — he is likely to go for more than he is worth to you)':''}${pk.alt?' · fallback '+pk.alt.name:''}`)).join(""));
   // 🧠 CLAUDE'S RANK — the hand-synthesized ranking of every dart (screens' numbers +
   // judgment overrides for crowded rooms, sunk draft capital, depth-chart ordering and
   // the quiet-buzz storm cell). Live-filtered like every other column.
@@ -1952,9 +2371,9 @@ function dartDockHTML(mkt,mv,plan){
   return `<div style="height:27vh"></div>
     <div id="dartdock" style="position:fixed;left:0;right:0;bottom:0;height:25vh;z-index:60;background:var(--panel);border-top:2px solid var(--gold);display:flex;flex-direction:column;box-shadow:0 -6px 20px rgba(0,0,0,.55)">
     <div class="muted" style="display:flex;align-items:center;gap:10px;padding:2px 8px;font-size:10px;flex:none">
-      🎯 <b>DART DOCK</b> — live: sold players drop off, prices track the room, dimmed = above your max affordable · your budget <b class="maxbid">$${meS.budget}</b> · max bid <b>$${afford}</b> · ▶ = nominate
-      <span style="flex:1"></span><span id="dockHide" style="cursor:pointer;color:var(--gold)">▼ hide</span></div>
-    <div style="flex:1;display:flex;overflow:hidden">${cols}</div></div>`;
+      <span style="flex:1;min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">🎯 <b>DART DOCK</b><span class="dockexp"> — live: sold players drop off, prices track the room, dimmed = above your max affordable</span> · budget <b class="maxbid">$${meS.budget}</b> · max bid <b>$${afford}</b><span class="dockexp"> · ▶ = nominate</span><span class="dockswipe"> · swipe →</span></span>
+      <span id="dockHide" style="flex:none;cursor:pointer;color:var(--gold)">▼ hide</span></div>
+    <div class="thinscroll dockcols">${cols}</div></div>`;
 }
 // 🎯 the running list of players I WANT, in nomination-priority order: plan starters by
 // irreplaceability, then the plan's bench darts, then next-up high Dart/Leap RB/WR pivots,
@@ -2040,6 +2459,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     <label class="btn sm" for="espnTrendFile" title="Upload ESPN Live Draft Trends pasted into a plain .txt — sitewide ADP + average auction $">📈</label>
     <input id="espnTrendFile" type="file" accept=".txt,text/plain" style="display:none">
     <button class="btn sm" id="drReset" title="clears drafted players; keepers stay (managed in 🧩 Mock Keepers)">↺</button>
+    ${lastSale()?`<button class="btn sm" id="drUndo" title="Undo the last recorded sale — puts ${undoLabel(lastSale()).replace(/"/g,'&quot;')} back in the pool and refunds the money. Tap again to keep stepping back (${DRUNDO.length} recorded).">↩ undo</button>`:""}
     ${localStorage.getItem("draftroom_pre_mock")?`<button class="btn sm" id="drRestore" title="puts back the picks (and keepers) recorded before the last mock cleared them">↩</button>`:""}
     <span id="espnStatus" style="display:none"></span></div></div>`;
   h+=nomTickerHTML(mv,mkt);
@@ -2079,7 +2499,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
   const arrowR=k=>drSort===k?(drDir<0?' ▼':' ▲'):'';
   const thr=(k,lab,cls,ttl)=>`<th class="drh ${cls||''}" data-k="${k}" style="cursor:pointer;user-select:none"${ttl?` title="${ttl}"`:''}>${lab}${arrowR(k)}</th>`;
   h+=`<div class="muted" style="font-size:11px;margin:6px 0"><b>Value</b> = what he's worth (risk-adjusted, in this room's dollars — worth has no historical ceiling, so elite players can be worth more than anyone has ever PAID) · <b>Exp $</b> = expected purchase price at his live curve rank (capped at the most this league has ever paid at the position) · <b>My Max</b> = the most YOU should bid: Value × your spending power, roster-need gated <b>and wire-disciplined</b> · <b>Edge</b> = Value − Exp $ in dollars (positive = expected bargain) · <b>VONA pts</b> = risk-adjusted points over the last startable player at his position. <i>Click any column to sort.</i><br>${WIRE_LEGEND}</div>
-    <table style="width:100%"><thead><tr>${thr('pos','Pos','l','click to group into a positional board — QB→RB→WR→TE→K→DST, best value first within each')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
+    <div class="tblwrap"><table style="width:100%"><thead><tr>${thr('pos','Pos','l','click to group into a positional board — QB→RB→WR→TE→K→DST, best value first within each')}${thr('player','Player','l')}${thr('proj','Proj')}${thr('value','Value','','risk-adjusted worth in room dollars — NOT capped by history, so it can exceed any price ever paid')}${thr('exp','Exp $','','expected purchase price at his live rank on the league bid curve, capped at the position all-time max')}${espnLoaded()?thr('espn','ESPN $','','sitewide average auction value from your uploaded ESPN Live Draft Trends — the PUBLIC benchmark the bots bid from; — = unlisted (goes ~$1 sitewide)'):''}${thr('mymax','My Max','','the most you should bid: Value × your spending power, gated by roster need')}${thr('edge','Edge','','Value − Exp $ in DOLLARS (positive = expected bargain)')}${thr('vona','VONA pts','','risk-adjusted season points over the next-available startable at the position — collapses for abundant positions, spikes for scarce ones')}<th class="l">Assign</th></tr></thead><tbody>`;
   h+=drd.map((r,ri)=>{const p=r.p,id=r.id,m=r.m;   // ALL filtered players (deep darts findable); suitor calc still capped at ri<90
     const over=m.maxBid>m.market;
     const su=(!isK(p)&&ri<90&&r.exp>=5)?suitorsHTML(p,mkt,TS):null;
@@ -2094,7 +2514,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
       <td class="${r.edge>0?'upc':(r.edge<0?'downc':'muted')}">${isK(p)?"—":(r.edge>=0?'+':'')+r.edge}</td>
       <td class="${r.vona>0?'upc':'muted'}" style="font-size:11px">${isK(p)?"—":r.vona}</td>
       <td class="l">${isK(p)?'':`<button class="btn sm drwhatif${considerId===id?' up':''}" data-id="${id}" title="🔮 what-if: your optimal team at each price for ${p.name}">📊</button> `}<button class="btn sm up drdraft" data-id="${id}" data-exp="${r.exp}">Draft</button></td>
-    </tr>`;}).join("")+`</tbody></table>`;
+    </tr>`;}).join("")+`</tbody></table></div>`;
   // SOLD modal — built for speed: click Draft → price is prefilled+selected → click the winning
   // owner (or Enter = the default owner in the header dropdown). Esc cancels.
   h+=`<div class="drmodal" id="drModal" style="display:none"><div class="box">
@@ -2109,10 +2529,13 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
   document.getElementById("drMe").onchange=e=>{DR.me=+e.target.value;saveDR();render();};
   document.getElementById("espnFile").onchange=e=>{const f=e.target.files[0]; if(f) f.text().then(importEspnLeague);};
   wireEspnUpload();
+  {const ub=document.getElementById("drUndo");
+   if(ub)ub.onclick=()=>{const u=undoLastSale();if(u)render();};}
   document.getElementById("drReset").onclick=()=>{const n=Object.keys(DR.owned).filter(id=>!DR.owned[id].kept).length;
     if(!n){alert("No drafted players to clear (keepers are managed in 🧩 Mock Keepers).");return;}
     if(!confirm(`Clear ${n} drafted player${n>1?"s":""}? Keepers stay locked.`))return;
     for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
+    DRUNDO=[];saveUndo();                                  // the stack would resurrect what we just cleared
     saveDR();render();};
   if(document.getElementById("drRestore"))document.getElementById("drRestore").onclick=mdRestore;
   document.querySelectorAll(".dr-team[data-setme]").forEach(el=>el.onclick=ev=>{if(ev.target.closest(".drundo"))return;DR.me=+el.dataset.setme;saveDR();render();});
@@ -2126,7 +2549,7 @@ ${espnStatusTxt().replace(/<[^>]+>/g,"").replace(/"/g,"&quot;")}">❓</span>
     const s=teamState(t),afford=Math.max(1,s.budget-(s.spotsLeft-1));
     if(s.spotsLeft<=0){alert(DR.teams[t].name+" has no roster spots left.");return;}
     if(price>afford){alert(DR.teams[t].name+" can't pay $"+price+" — their max bid is $"+afford+" ($"+s.budget+" left, must keep $1 for each of their other "+(s.spotsLeft-1)+" spots).");return;}
-    DR.owned[drmId]={t,price,kept:false};saveDR();drmClose();render();};
+    recordSale(drmId,t,price);drmClose();render();};
   const openDrModal=id=>{const p=BYID[id];if(!p)return;
     drmId=id;
     const wa=(plan.picks.find(pk=>pk.p&&pid(pk.p)===id)||{}).wa;
@@ -2172,7 +2595,7 @@ function ensureKeeperLeague(){
 }
 const keptForTeam=i=>KEEPERS_2026.teams[i].candidates.filter(c=>DR.owned[c.pid]&&DR.owned[c.pid].t===i&&DR.owned[c.pid].kept);
 function setKeeper(pid,i,cost,on){
-  if(KLOCK){alert("🔒 Keepers are locked as FINAL. Hit 🔓 Unlock in the 🧩 Keepers tab if you absolutely need to change one.");render();return;}
+  {const L=lockState(); if(L.on){alert("🔒 Keepers are locked as FINAL ("+(L.src==="site"?"the official list baked into the site, "+L.ver:"locked on this device "+L.ver)+").\n\nHit 🔓 Unlock in the 🧩 Keepers tab if you absolutely need to change one.");render();return;}}
   if(on){DR.owned[pid]={t:i,price:cost,kept:true};} else {delete DR.owned[pid];} saveDR(); render(); }
 // "Reset to predicted" now ticks by MODELLED KEEP LIKELIHOOD, not by whether keeping is
 // +EV. Those disagree badly, and in both directions:
@@ -2208,7 +2631,7 @@ function resetPredicted(){
       .forEach(c=>{DR.owned[c.pid]={t:i,price:c.cost,kept:true};});});
   saveDR(); render(); }
 function clearKeepers(){
-  if(KLOCK){alert("🔒 Keepers are locked as FINAL — clearing is blocked. 🔓 Unlock first if you absolutely must.");return;}
+  if(lockState().on){alert("🔒 Keepers are locked as FINAL — clearing is blocked. 🔓 Unlock first if you absolutely must.");return;}
   for(const id in DR.owned){if(DR.owned[id].kept)delete DR.owned[id];} saveDR(); render(); }
 // per-owner historical positional spend tendencies (multipliers vs league) from keepers_2026.js
 function ownerTend(i){return (KEEPERS_2026.teams[i]&&KEEPERS_2026.teams[i].tend)||{QB:1,RB:1,WR:1,TE:1,payTE:false,eliteQB:false,top:0};}
@@ -2261,16 +2684,17 @@ function renderMockKeepers(){
     mv=myVal(mkt,BV);
   }finally{DR.owned=_realOwned;}                           // pricing captured — restore the real state
   // ONE pricing engine for cards + pool: exp = live market price (mkt.expIf rank-inserts kept players)
+  const LS=lockState();
   let totKept=0,totCost=0; KT.forEach((t,i)=>{const k=keptForTeam(i);totKept+=k.length;k.forEach(c=>totCost+=c.cost);});
   let h=`<div class="dr-panel"><div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
-    <h3 style="margin:0">${KLOCK?`🔒 Keepers — FINAL (locked ${KLOCK.version})`:"🧩 Keepers — set each team's ACTUAL keeps, ✓ verify, then lock"}</h3><span style="flex:1"></span>
+    <h3 style="margin:0">${LS.on?`🔒 Keepers — FINAL (${LS.src==="site"?"official list from the site":"locked on this device"}, ${LS.ver})`:"🧩 Keepers — set each team's ACTUAL keeps, ✓ verify, then lock"}</h3><span style="flex:1"></span>
     <span>My team: <select class="drsel" id="mkMe">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select></span>
-    ${KLOCK?`<button class="btn sm" id="mkExport" title="download keepers_final_2026.js — commit it (or hand it to Claude) to bake the lock into the site for every browser and device">⬇ Export finals</button>
-      <button class="btn sm" id="mkUnlock" title="removes the FINAL lock so the list can be edited — only if a selection genuinely changed">🔓 Unlock</button>`
+    ${LS.on?`${KLOCK?`<button class="btn sm" id="mkExport" title="download keepers_final_2026.js — commit it (or hand it to Claude) to bake the lock into the site for every browser and device">⬇ Export finals</button>
+`:""}<button class="btn sm" id="mkUnlock" title="releases the FINAL lock ON THIS DEVICE so the list can be edited — only if a selection genuinely changed">🔓 Unlock</button>`
     :`<button class="btn sm up" id="mkLock" title="freeze the ticked keepers as the league's FINAL selections: they re-apply on every page load and can't be edited or cleared until you 🔓 Unlock">🔒 LOCK as FINAL (${Object.keys(KCONF).length}/${KT.length} ✓)</button>
       <button class="btn sm up" id="mkPredict" title="tick each team's modeled most-likely keeps as a starting point">↺ Reset to predicted</button>
       <button class="btn sm" id="mkClear">Clear all</button>`}</div>
-    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed.${KLOCK?` <b style="color:var(--good)">🔒 FINAL — locked ${KLOCK.version}.</b> Re-applied on every page load: "Clear all", resets, mocks and stray clicks can't erase these. 🔓 Unlock only if a selection genuinely changed. ⬇ Export finals + commit bakes the lock into the site for a wiped browser or another device.`:` <b class="scarce">⚠ NOT LOCKED — scratch ticks only.</b> Set each team's real keepers, tick <b>✓ verified</b> on its card, then hit <b>🔒 LOCK as FINAL</b> to freeze them.`} Each card is sorted by <b>keep %</b> — the modeled odds that owner keeps the player, fitted on the league's actual 2023–25 keeper decisions (<span class="upc" style="font-weight:700">green ≥75%</span> is near-lock, discounted young stars are 97%+). <b>Verdict</b> is the rational call: <span class="upc">+$N</span> = keeping saves \$N vs redrafting · <span style="color:#e3b57f">redraft</span> = good value but cheaper to re-buy · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked. <b>🏅 optimal</b> on each card = the mathematically best 0–3 keeps for that roster (greedy-marginal knapsack: a keep must raise achievable starter PPG vs redrafting — opportunity cost, VONA and budget in one solve).</div></div>`;
+    <div class="muted" style="font-size:12px;margin-top:6px">${mkDrafted?`<span class="scarce">⚠ ${mkDrafted} mock-drafted players are still on rosters (they distort the pool &amp; prices)</span> <button class="btn sm" id="mkClearDrafted">↺ Reset to keepers</button><br>`:""}<b>${totKept}</b> keepers locked · <b>$${totCost}</b> committed.${LS.on?` <b style="color:var(--good)">🔒 FINAL — ${LS.src==="site"?`the league's official list, baked into the site ${LS.ver}. Every device that loads this page gets it, including this one`:`locked on this device ${LS.ver}`}.</b> Re-applied on every page load: "Clear all", resets, mocks and stray clicks can't erase these. 🔓 Unlock (this device only) if a selection genuinely changed.${LS.src==="device"?" ⬇ Export finals + commit bakes it into the site for every other browser and device.":""}`:` <b class="scarce">⚠ NOT LOCKED — scratch ticks only.</b> Set each team's real keepers, tick <b>✓ verified</b> on its card, then hit <b>🔒 LOCK as FINAL</b> to freeze them.`} Each card is sorted by <b>keep %</b> — the modeled odds that owner keeps the player, fitted on the league's actual 2023–25 keeper decisions (<span class="upc" style="font-weight:700">green ≥75%</span> is near-lock, discounted young stars are 97%+). <b>Verdict</b> is the rational call: <span class="upc">+$N</span> = keeping saves \$N vs redrafting · <span style="color:#e3b57f">redraft</span> = good value but cheaper to re-buy · — = pass. Predicted keeps (top-3 by \$ saved) are pre-ticked. <b>🏅 optimal</b> on each card = the mathematically best 0–3 keeps for that roster (greedy-marginal knapsack: a keep must raise achievable starter PPG vs redrafting — opportunity cost, VONA and budget in one solve).</div></div>`;
   // MOCK KEEPER CARDS — header and rows share ONE grid template so titles sit exactly over
   // their values: checkbox | pos | player | keep % (modeled likelihood, rows sorted by it) |
   // cost | exp $ | val | verdict
@@ -2290,7 +2714,7 @@ function renderMockKeepers(){
         :decision==="redraft"?`<span style="color:#e3b57f" title="Good value, but you can redraft him for ~$${exp} < the $${c.cost} keeper cost — don't waste a slot">redraft</span>`
         :`<span class="muted" title="Not worth a keeper slot (value $${val} ≤ cost $${c.cost})">—</span>`;
       return `<label class="mkc" style="display:grid;grid-template-columns:${MKCOLS};gap:3px;align-items:center;font-size:11px;${dis?'opacity:.35':''}">
-        <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${(dis||KLOCK)?"disabled":""}>
+        <input type="checkbox" class="mkchk" data-pid="${c.pid}" data-t="${i}" data-cost="${c.cost}" ${on?"checked":""} ${(dis||LS.on)?"disabled":""}>
         <span class="pos ${c.pos}" style="transform:scale(.8)">${c.pos}</span>
         <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.name}${okSet.has(c.pid)?' — 🏅 OPTIMAL KEEP: the roster knapsack (keeper cost vs auction alternatives at intrinsic prices, VONA, budget — one solve) picks him in this team\'s best 0-3 keep set':''}">${okSet.has(c.pid)?'🏅':''}${c.name}${c.waiver?' <span class="muted" style="font-size:9px">wvr</span>':''}${c.keptyrs?` <span class="muted" style="font-size:9px">${c.keptyrs}y</span>`:''}</span>
         ${probCell(KP[c.pid])}
@@ -2299,7 +2723,7 @@ function renderMockKeepers(){
         <span class="muted" style="text-align:right">$${val}</span>
         <span style="text-align:right">${badge}</span></label>`;}).join("");
     return `<div class="dr-team ${i===DR.me?"me":""}" style="min-width:330px">
-      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}${KLOCK?' <span title="locked as FINAL">🔒</span>':` <label style="font-size:10px;font-weight:400;cursor:pointer;margin-left:6px" title="tick once this card shows this team's ACTUAL keepers — the lock button counts verified teams"><input type="checkbox" class="mkconf" data-i="${i}" ${KCONF[i]?"checked":""}> <span class="${KCONF[i]?'upc':'scarce'}">✓ verified</span></label>`}<span class="bud">$${s.budget}</span></div>
+      <div class="nm">${t.name}${i===DR.me?' <span class="muted" style="font-size:10px">YOU</span>':''}${LS.on?' <span title="locked as FINAL">🔒</span>':` <label style="font-size:10px;font-weight:400;cursor:pointer;margin-left:6px" title="tick once this card shows this team's ACTUAL keepers — the lock button counts verified teams"><input type="checkbox" class="mkconf" data-i="${i}" ${KCONF[i]?"checked":""}> <span class="${KCONF[i]?'upc':'scarce'}">✓ verified</span></label>`}<span class="bud">$${s.budget}</span></div>
       <div class="muted" style="font-size:10px">2026 bump +$${t.bump2026} · <b>${kc}/3</b> kept · ${s.spotsLeft} spots · ${t.candidates.length} keepable</div>
       <div style="font-size:10px" title="the mathematically optimal 0-3 keeps for THIS team: greedy-marginal roster knapsack — each keep must RAISE the team's achievable starter PPG vs spending that money at auction (opportunity cost + VONA + budget in one solve)">🏅 optimal: ${OK.kept.length?OK.kept.map(k=>`${k.name} $${k.cost}`).join(" · ")+` <span class="upc">(+${OK.gain.toFixed(1)} ppg/wk)</span>`:'<span class="muted">keep nothing — no candidate beats redrafting</span>'}</div>
       <div class="muted" style="font-size:10px;font-style:italic" title="from 2023–25 auction spend by position (recency-weighted); 🏈 = NFL-team fandom mined from his bids (buys them far above pool share and/or pays over the curve)">${tendLabel(t.tend||{})}${(typeof OWNER_BIAS!=="undefined"&&OWNER_BIAS[t.owner]&&OWNER_BIAS[t.owner].fan)?' · 🏈 '+Object.entries(OWNER_BIAS[t.owner].fan).map(([tm,m])=>tm+" fan ×"+m).join(" · "):''}</div>
@@ -2336,10 +2760,10 @@ function renderMockKeepers(){
     mdBackup();
     for(const id in DR.owned)if(!DR.owned[id].kept)delete DR.owned[id];
     MD.on=false;MD.block=null;MD.sel=null;MD.log=[];MD.nom=0;saveDR();saveMD();render();};
-  if(KLOCK){
-    document.getElementById("mkExport").onclick=exportFinalKeepers;
+  if(lockState().on){
+    {const ex=document.getElementById("mkExport");if(ex)ex.onclick=exportFinalKeepers;}  // device locks only — a site lock is already in the repo
     document.getElementById("mkUnlock").onclick=()=>{
-      if(!confirm(`🔓 Unlock FINAL keepers?\n\nThe saved FINAL list (locked ${KLOCK.version}) is removed and the ticks become editable scratch again — nothing re-applies on reload until you re-lock. Only do this if a selection genuinely changed.`))return;
+      if(!confirm(`🔓 Unlock FINAL keepers on this device?\n\nThe FINAL list (${lockState().src==="site"?"the official one baked into the site":"locked on this device"}, ${lockState().ver}) stops applying HERE and the ticks become editable scratch again. Other devices are unaffected. Only do this if a selection genuinely changed.`))return;
       unlockFinalKeepers();render();};
   }else{
     document.getElementById("mkLock").onclick=()=>{
@@ -2646,6 +3070,602 @@ function whatIfPanelHTML(player,mkt){
         <div style="font-weight:700;font-size:15px">${r.ppg.toFixed(1)}</div>
         <div class="${up?'upc':(dn?'downc':'muted')}" style="font-size:11px">${r.delta>=0?'+':''}${r.delta.toFixed(1)}</div></div>`;}).join("")+`</div>`;
   return h+`</div>`;}
+// 🔮 Refine the plan's λ walk-aways into the EXACT break-even before anything is displayed.
+// ~25ms a starter after the optimalPlan flatten, so the Draft Room shows the real number
+// instead of the shadow-price approximation. pk.waRaw keeps the λ value for comparison.
+function refineWalkAways(plan,mkt){
+  (plan.picks||[]).forEach(pk=>{if(pk.wa==null||!pk.p)return;
+    const o=oracleBid(pk.p,mkt); if(o!=null)pk.wa=o;});
+  return plan;
+}
+// ================= ⚖️ DUEL — two ways to spend the same budget =================
+// Buying player A instead of player B does not change one slot, it changes the whole
+// roster: the plan re-solves around whatever money is left. This tab builds BOTH
+// completed rosters at the prices you set and simulates the season 4,000 times to show
+// what each shape actually pays — floor, ceiling, and how often one beats the other.
+// Paired (common random numbers): every player shared by the two rosters gets identical
+// draws in every season, so the difference is the decision and not simulation noise.
+const DUEL_A_C="#358ada", DUEL_B_C="#c2861f";   // dark-band steps of the board's accent/gold;
+                                                // CVD ΔE 25.5 protan / 22.8 tritan, ≥3:1 on panel
+let DUEL={a:null,b:null,pa:0,pb:0,wire:2,age:false,n:4000,res:null,busy:false};
+const D_WIRE={QB:22.5,RB:12.5,WR:13.5,TE:11.0}, D_SIG={QB:.35,RB:.55,WR:.55,TE:.55};
+const D_WK=17, D_WFROM=5, D_KAPPA=6, D_ADDS=["RB","WR","TE"];
+function d_rng(seed){let a=seed>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function d_norm(r){let u=0,v=0;while(!u)u=r();while(!v)v=r();
+  return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);}
+function d_gamma(r,k){                                    // Marsaglia-Tsang
+  if(k<1){const u=r();return d_gamma(r,k+1)*Math.pow(u,1/k);}
+  const d=k-1/3,c=1/Math.sqrt(9*d);
+  for(;;){let x,v;do{x=d_norm(r);v=1+c*x;}while(v<=0);v=v*v*v;const u=r();
+    if(u<1-0.0331*x*x*x*x)return d*v;
+    if(Math.log(u)<0.5*x*x+d*(1-v+Math.log(v)))return d*v;}}
+function d_beta(r,a,b){const x=d_gamma(r,a);return x/(x+d_gamma(r,b));}
+// the completed roster if you win `nm` at $p — the plan re-solves with what is left
+function duelRoster(nm,price,mkt){
+  const p=PLAYERS.find(x=>x.name===nm); if(!p)return null;
+  const id=pid(p), sv=DR.owned[id];
+  DR.owned[id]={t:DR.me,price:Math.max(1,price),kept:false};
+  let out;
+  try{
+    const pl=optimalPlan(mkt), st=teamState(DR.me);
+    out={own:st.own.map(x=>x.p), plan:pl.picks.filter(k=>k.slot!=="K"&&k.slot!=="DST"),
+         spend:pl.spend, unspent:pl.unspent};
+  } finally { if(sv===undefined)delete DR.owned[id]; else DR.owned[id]=sv; }
+  const mem=out.own.concat(out.plan.map(k=>k.p)).filter(Boolean);
+  return {members:mem, plan:out.plan, unspent:out.unspent};
+}
+const D_SLOTS=[["QB"],["RB"],["RB"],["WR"],["WR"],["TE"],["RB","WR","TE"]];
+function duelSim(memA,memB,nwire,ageBias,N){
+  const uni=new Map();
+  const add=p=>{if(p&&!uni.has(p.name))uni.set(p.name,p);};
+  memA.forEach(add); memB.forEach(add);
+  const wire=[];
+  for(let i=0;i<nwire;i++){const q=D_ADDS[i%D_ADDS.length];
+    wire.push({name:"__wire"+i,position:q,proj_ppg:D_WIRE[q],_sd:3,_g:D_WK,_wire:true});}
+  const P=[...uni.values()].map(p=>{
+    let ppg=p.proj_ppg||0;
+    // rb_age.md: our RB relative error drifts −1.87%/yr of age (p=0.011) — young under-,
+    // 28+ over-projected. Applied as a shade, centred on 26; RB only, as the study is.
+    if(ageBias&&p.position==="RB"&&p.age)ppg*=1-0.0187*(p.age-26);
+    const fl=p.floor||0,ce=p.ceiling||0;
+    return {name:p.name,pos:p.position,ppg,
+      sd:Math.max((ce-fl)/2.563,0.15*Math.max(ppg,1)),
+      g:Math.min(17,Math.max(1,p.proj_games||15))};}).concat(
+    wire.map(w=>({name:w.name,pos:w.position,ppg:w.proj_ppg,sd:w._sd,g:D_WK,wire:true})));
+  const ix={}; P.forEach((p,i)=>ix[p.name]=i);
+  const colsA=memA.map(p=>ix[p.name]).concat(wire.map(w=>ix[w.name]));
+  const colsB=memB.map(p=>ix[p.name]).concat(wire.map(w=>ix[w.name]));
+  const M=P.length, r=d_rng(20260905);
+  const tru=new Float64Array(M), st0=new Int32Array(M), st1=new Int32Array(M);
+  const noise=new Float64Array(M*D_WK), score=new Float64Array(M*D_WK);
+  const A=new Float64Array(N), B=new Float64Array(N), hurtA=new Uint8Array(N), hurtB=new Uint8Array(N);
+  const evaluate=cols=>{let tot=0;
+    for(let w=0;w<D_WK;w++){
+      const used={};
+      for(const ok of D_SLOTS){
+        let best=-1e9,bi=-1;
+        for(const j of cols){ if(used[j])continue;
+          if(ok.indexOf(P[j].pos)<0)continue;
+          const v=score[j*D_WK+w]; if(v>best){best=v;bi=j;} }
+        if(bi>=0){used[bi]=1; if(best>0)tot+=best;} }
+    } return tot;};
+  for(let s=0;s<N;s++){
+    for(let j=0;j<M;j++){
+      const p=P[j];
+      tru[j]=Math.max(0,p.ppg+p.sd*d_norm(r));
+      let gp;
+      if(p.wire){gp=D_WK;st0[j]=0;st1[j]=D_WFROM-1;}     // not yours until he flashes
+      else{const m=p.g/D_WK;
+        gp=Math.round(d_beta(r,m*D_KAPPA,Math.max((1-m)*D_KAPPA,1e-3))*D_WK);
+        gp=Math.min(D_WK,Math.max(0,gp));
+        const miss=D_WK-gp, s0=miss>0?Math.floor(r()*(D_WK-miss+1)):0;
+        st0[j]=s0; st1[j]=s0+miss;}
+      const sg=D_SIG[p.pos]||0.5;
+      for(let w=0;w<D_WK;w++){
+        const out=p.wire?(w<D_WFROM-1):(w>=st0[j]&&w<st1[j]);
+        score[j*D_WK+w]= out ? -1e9 : tru[j]*Math.exp(sg*d_norm(r)-sg*sg/2);}
+    }
+    A[s]=evaluate(colsA); B[s]=evaluate(colsB);
+    const ja=ix[memA[0]?memA[0].name:""],jb=ix[memB[0]?memB[0].name:""];
+    hurtA[s]=0;hurtB[s]=0;
+  }
+  return {A,B};
+}
+const d_pct=(arr,p)=>{const a=Float64Array.from(arr).sort();return a[Math.min(a.length-1,Math.floor(p/100*a.length))];};
+// ---- density overlay: two simulated season distributions, one x-axis, direct-labelled ----
+function duelChart(A,B,nmA,nmB){
+  const W=720,H=250,PADL=34,PADR=14,PADT=26,PADB=30, NB=34;
+  const all=[...A,...B];
+  let lo=d_pct(all,0.5), hi=d_pct(all,99.5);            // the body, not the far tails
+  lo=Math.floor(lo/25)*25; hi=Math.ceil(hi/25)*25;
+  const bw=(hi-lo)/NB;
+  const hist=arr=>{const h=new Array(NB).fill(0);
+    for(const v of arr){let k=Math.floor((v-lo)/bw); if(k<0)k=0; if(k>=NB)k=NB-1; h[k]++;}
+    const sm=h.map((_,i)=>(h[Math.max(0,i-1)]+h[i]+h[Math.min(NB-1,i+1)])/3);   // light smoothing
+    return sm.map(v=>v/arr.length);};
+  const ha=hist(A), hb=hist(B), peak=Math.max(...ha,...hb)||1;
+  const X=v=>PADL+(v-lo)/(hi-lo)*(W-PADL-PADR), Y=d=>H-PADB-(d/peak)*(H-PADT-PADB);
+  const path=h=>{let d=`M ${X(lo).toFixed(1)} ${Y(0).toFixed(1)}`;
+    h.forEach((v,i)=>{d+=` L ${X(lo+(i+0.5)*bw).toFixed(1)} ${Y(v).toFixed(1)}`;});
+    return d+` L ${X(hi).toFixed(1)} ${Y(0).toFixed(1)}`;};
+  const line=h=>h.map((v,i)=>`${i?"L":"M"} ${X(lo+(i+0.5)*bw).toFixed(1)} ${Y(v).toFixed(1)}`).join(" ");
+  const ticks=[]; for(let t=lo;t<=hi;t+=Math.max(50,Math.round((hi-lo)/6/50)*50))ticks.push(t);
+  const shoulder=(h,side)=>{const mx=Math.max(...h),th=0.45*mx;
+    if(side<0){for(let i=0;i<h.length;i++)if(h[i]>=th)return i;}
+    else{for(let i=h.length-1;i>=0;i--)if(h[i]>=th)return i;}
+    return Math.floor(h.length/2);};
+  const lab=(h,nm,c,side)=>{const i=shoulder(h,side),x=X(lo+(i+0.5)*bw),y=Y(h[i]);
+    const tx=side<0?x-9:x+9, an=side<0?"end":"start";
+    return `<g><circle cx="${x.toFixed(1)}" cy="${(y-11).toFixed(1)}" r="3.5" fill="${c}"/>
+      <text x="${tx.toFixed(1)}" y="${(y-7).toFixed(1)}" class="duel-dl" text-anchor="${an}">${nm}</text></g>`;};
+  const mA=d_pct(A,50),mB=d_pct(B,50);
+  return `<svg viewBox="0 0 ${W} ${H}" class="duel-svg" id="duelSvg" preserveAspectRatio="none" role="img"
+      aria-label="Simulated season points: ${nmA} versus ${nmB}">
+    ${ticks.map(t=>`<line x1="${X(t).toFixed(1)}" x2="${X(t).toFixed(1)}" y1="${PADT-6}" y2="${H-PADB}" class="duel-grid"/>
+      <text x="${X(t).toFixed(1)}" y="${H-PADB+15}" class="duel-ax" text-anchor="middle">${t}</text>`).join("")}
+    <line x1="${PADL}" x2="${W-PADR}" y1="${H-PADB}" y2="${H-PADB}" class="duel-axis"/>
+    <path d="${path(ha)}" fill="${DUEL_A_C}" opacity=".14"/>
+    <path d="${path(hb)}" fill="${DUEL_B_C}" opacity=".14"/>
+    <path d="${line(ha)}" fill="none" stroke="${DUEL_A_C}" stroke-width="2" stroke-linejoin="round"/>
+    <path d="${line(hb)}" fill="none" stroke="${DUEL_B_C}" stroke-width="2" stroke-linejoin="round"/>
+    <line x1="${X(mA).toFixed(1)}" x2="${X(mA).toFixed(1)}" y1="${H-PADB}" y2="${(H-PADB-9)}" stroke="${DUEL_A_C}" stroke-width="2"/>
+    <line x1="${X(mB).toFixed(1)}" x2="${X(mB).toFixed(1)}" y1="${H-PADB}" y2="${(H-PADB-9)}" stroke="${DUEL_B_C}" stroke-width="2"/>
+    ${lab(ha,nmA,DUEL_A_C,-1)}${lab(hb,nmB,DUEL_B_C,1)}
+    <text x="${PADL}" y="${PADT-12}" class="duel-ax">share of seasons</text>
+    <text x="${W-PADR}" y="${H-2}" class="duel-ax" text-anchor="end">season starter points →</text>
+    <line id="duelCross" x1="0" x2="0" y1="${PADT-6}" y2="${H-PADB}" class="duel-cross" style="opacity:0"/>
+    <rect id="duelHit" x="${PADL}" y="${PADT-6}" width="${W-PADL-PADR}" height="${H-PADB-PADT+6}"
+          fill="transparent" style="cursor:crosshair"/>
+  </svg>
+  <div class="duel-tip" id="duelTip" hidden></div>`;
+}
+function renderDuel(){
+  document.getElementById("tbl").style.display="none";
+  document.getElementById("scatter").style.display="none";
+  const host=document.getElementById("draftroom"); host.style.display="block";
+  if(!ensureKeeperLeague()){host.innerHTML='<div class="dr-panel">No keeper data.</div>';return;}
+  const mkt=dynamicMarket(), plan=optimalPlan(mkt), meS=teamState(DR.me);
+  const avail=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p))
+    .map(p=>({p,x:Math.round(mkt.price[pid(p)]||1)})).filter(x=>x.x>=4)
+    .sort((a,b)=>b.x-a.x).slice(0,160);
+  if(!DUEL.a){                                            // default: your plan's most irreplaceable
+    const st=plan.picks.filter(k=>k.wa!=null&&k.p).sort((x,y)=>(y.du||0)-(x.du||0))[0];
+    if(st){DUEL.a=st.p.name;DUEL.pa=st.cost;
+      const rival=avail.find(x=>x.p.position===st.p.position&&x.p.name!==st.p.name);
+      if(rival){DUEL.b=rival.p.name;DUEL.pb=rival.x;}}
+  }
+  const opt=sel=>avail.map(x=>`<option value="${x.p.name.replace(/"/g,'')}"${x.p.name===sel?" selected":""}>${x.p.name} · ${x.p.position} · $${x.x}</option>`).join("");
+  const seg=(id,vals,cur)=>vals.map(v=>`<button class="duel-seg${v===cur?" on":""}" data-${id}="${v}">${v}</button>`).join("");
+  let h=`<div class="duel">
+    <div class="dr-panel">
+      <h3 style="margin:0 0 3px">⚖️ Duel — two ways to spend the same $${meS.budget}</h3>
+      <div class="muted" style="font-size:11px;margin-bottom:8px">Winning a player does not change one slot — the plan re-solves around what is left. Both rosters below are completed at the prices you set, then the season is simulated ${DUEL.n.toLocaleString()} times with the same luck applied to both.</div>
+      <div class="duel-pick"><span class="duel-dot" style="background:${DUEL_A_C}"></span>
+        <select class="drsel duel-selA">${opt(DUEL.a)}</select>
+        <span class="duel-price"><button class="duel-step" data-pa="-1">−</button><b id="duelPA">$${DUEL.pa}</b><button class="duel-step" data-pa="1">+</button></span></div>
+      <div class="duel-pick"><span class="duel-dot" style="background:${DUEL_B_C}"></span>
+        <select class="drsel duel-selB">${opt(DUEL.b)}</select>
+        <span class="duel-price"><button class="duel-step" data-pb="-1">−</button><b id="duelPB">$${DUEL.pb}</b><button class="duel-step" data-pb="1">+</button></span></div>
+      <div class="duel-opts">
+        <label title="Waiver adds you keep from week 5. Your league's own 2023-25 wire produced 6.0 startable RBs, 5.0 WRs, 7.3 TEs and 5.7 QBs a year at RB 12.5 / WR 13.5 / TE 11.0 ppg, 76% of them flashing by week 5.">wire adds ${seg("wire",[0,1,2,3],DUEL.wire)}</label>
+        <label class="tgl" title="rb_age.md: our RB projections carry a relative-error drift of −1.87% per year of age (p=0.011) — young backs under-projected, 28+ over-projected. The study rejected a blanket multiplier (it did not cut MAE) but shipped the age tiebreaker: same projection ±10%, 4+ years apart, the younger RB outscores the older 58.7% of the time (501/854, p<0.0001). This shades every RB by that drift, centred on 26.">
+          <input type="checkbox" id="duelAge"${DUEL.age?" checked":""}> shade RBs for the age bias</label>
+        <button class="btn sm up" id="duelRun">${DUEL.busy?"running…":"▶ run "+DUEL.n.toLocaleString()+" seasons"}</button>
+        <button class="btn sm" id="duelN">${DUEL.n===4000?"precision ×5":"faster"}</button>
+      </div>
+    </div>`;
+  const R=DUEL.res;
+  if(R){
+    const {A,B,rosA,rosB,nmA,nmB}=R;
+    const mA=A.reduce((a,b)=>a+b,0)/A.length, mB=B.reduce((a,b)=>a+b,0)/B.length;
+    let win=0; for(let i=0;i<A.length;i++)if(B[i]>A[i])win++;
+    win=100*win/A.length;
+    const tile=(lab,val,sub,cls)=>`<div class="duel-tile"><div class="duel-tl">${lab}</div>
+      <div class="duel-tv ${cls||''}">${val}</div><div class="duel-ts">${sub}</div></div>`;
+    const gap=mB-mA, f=d_pct(B,10)-d_pct(A,10), c=d_pct(B,90)-d_pct(A,90);
+    h+=`<div class="duel-hero">
+      ${tile("who wins more seasons",(win>=50?nmB:nmA).split(" ").slice(-1)[0]+" "+Math.round(win>=50?win:100-win)+"%",
+             (Math.abs(win-50)<3?"a coin flip":"a real edge")+" over "+A.length.toLocaleString()+" seasons",win>=50?"b":"a")}
+      ${tile("season points",(gap>=0?"+":"")+Math.round(gap),(gap>=0?nmB:nmA).split(" ").slice(-1)[0]+" ahead · "+(Math.abs(gap)/17).toFixed(2)+" a week",gap>=0?"b":"a")}
+      ${tile("floor (p10)",(f>=0?"+":"")+Math.round(f),"the bad-luck seasons",f>=0?"b":"a")}
+      ${tile("ceiling (p90)",(c>=0?"+":"")+Math.round(c),"the good-luck seasons",c>=0?"b":"a")}
+    </div>
+    ${(()=>{
+      const oA=R.objA,oB=R.objB; if(oA==null||oB==null)return "";
+      const simB=gap>=0, planB=oB>oA;                       // does each model prefer B?
+      const simW=simB?nmB:nmA, planW=planB?nmB:nmA;
+      const pA=PLAYERS.find(x=>x.name===simW), pinned=pA&&isPinned(pA);
+      const pctSim=Math.abs(gap)/Math.max(mA,1)*100, pctPlan=Math.abs(oB-oA)/Math.max(oA,1)*100;
+      if(simB===planB) return `<div class="duel-rec ok">✓ <b>🎯 Your Targets agrees</b> — the plan also completes the better roster around <b>${planW}</b>. Nothing to reconcile.</div>`;
+      return `<div class="duel-rec">
+        <div><b>⚠ The two tabs disagree.</b> 🎯 Your Targets buys <b>${planW}</b> (by ${Math.abs(oB-oA).toFixed(0)} pts on its scale, ${pctPlan.toFixed(1)}%); this simulation prefers <b>${simW}</b> (by ${Math.abs(gap).toFixed(0)} pts, ${pctSim.toFixed(1)}%).</div>
+        <div class="duel-rw">They optimise different things, and neither is wrong. The plan maximises a <b>risk-discounted season total over fixed lineup slots</b>, which rewards the balanced roster. This tab <b>plays the season out</b> — you set the best lineup every week and seven bench bodies cover a bad stretch — which converts a stud's wider outcome band into upside instead of penalising it (${nmB}'s floor-to-ceiling band is ${(()=>{const x=PLAYERS.find(y=>y.name===nmB),z=PLAYERS.find(y=>y.name===nmA);return x&&z?((x.ceiling-x.floor).toFixed(1)+" vs "+(z.ceiling-z.floor).toFixed(1)):"wider";})()}). Both verdicts are ~1% of a season, so treat this as a tie and break it on what neither model sees — age, situation, your read of the room.</div>
+        ${pA?`<button class="btn sm ${pinned?"":"up"}" id="duelPin">${pinned?"📌 unpin "+simW:"📌 pin "+simW+" — make the plan buy him"}</button>`:""}
+      </div>`;})()}
+    <div class="dr-panel">
+      <div class="duel-leg"><span><i style="background:${DUEL_A_C}"></i>${nmA} $${DUEL.pa}</span>
+        <span><i style="background:${DUEL_B_C}"></i>${nmB} $${DUEL.pb}</span>
+        <span class="muted" style="font-size:10px">tick on the axis = median · hover for the odds</span></div>
+      ${duelChart(A,B,nmA,nmB)}
+    </div>
+    <div class="duel-cmp">${[[nmA,rosA,DUEL_A_C,DUEL.pa],[nmB,rosB,DUEL_B_C,DUEL.pb]].map(([nm,ro,col,pp])=>
+      `<div class="dr-panel"><div class="duel-rh"><span class="duel-dot" style="background:${col}"></span><b>${nm}</b> at $${pp}</div>
+        ${ro.plan.filter(k=>k.slot!=="BN").map(k=>`<div class="duel-row"><span class="pos ${k.p.position}">${k.p.position}</span>
+          <span class="duel-rn">${k.p.name}</span><span class="base">$${k.cost}</span></div>`).join("")}
+        <div class="duel-row muted"><span class="duel-rn" style="font-size:11px">+ ${ro.plan.filter(k=>k.slot==="BN").length} bench darts</span>
+          <span class="base">$${ro.plan.filter(k=>k.slot==="BN").reduce((a,k)=>a+k.cost,0)}</span></div></div>`).join("")}</div>
+    <div class="dr-panel"><div class="muted" style="font-size:10px;font-weight:700;letter-spacing:.05em;margin-bottom:5px">THE SAME NUMBERS AS A TABLE</div>
+      <table class="wbtbl"><tr><th>percentile</th><th>${nmA}</th><th>${nmB}</th><th>gap</th></tr>
+      ${[10,25,50,75,90].map(q=>{const a=d_pct(A,q),b=d_pct(B,q);
+        return `<tr><td>p${q}${q===10?" (floor)":q===90?" (ceiling)":""}</td><td>${Math.round(a)}</td><td>${Math.round(b)}</td>
+          <td class="${b>=a?'upc':'downc'}">${b>=a?"+":""}${Math.round(b-a)}</td></tr>`;}).join("")}
+      </table></div>`;
+  }
+  h+=`<div class="muted" style="font-size:11px;line-height:1.6;margin-top:10px">
+    <b>How to read it.</b> Each curve is where that roster's season lands across ${DUEL.n.toLocaleString()} simulated years — wider means less predictable, further right means better. The two rosters share every player they have in common, and in every simulated season those shared players get identical luck, so the gap you see is the decision and not noise.<br>
+    <b>What is modelled.</b> Each player's season level is drawn from his floor/ceiling band (read as p10/p90), games played from a Beta centred on his projected games (so injuries vary — a 15-game projection lands at 12 games or fewer about one year in six), and week-to-week scoring lognormally. Every week the best legal lineup is started. Waiver adds arrive week 5 at your league's own realised gem levels and are kept.<br>
+    <b>What is not.</b> Season starter points, not head-to-head record — schedule luck decides matchups and is not here. Keeper value beyond this season is not priced. And the whole thing inherits the board's projections: if you think one of these two is mis-projected, that matters more than anything on this page.</div></div>`;
+  host.innerHTML=h;
+  document.getElementById("notes").innerHTML="⚖️ <b>Duel.</b> Pick two players and two prices; the plan completes each roster with the money left and the season is simulated with common random numbers. Use it on the one or two buys that eat a quarter of your budget — that is where the roster shape actually turns.";
+  wireDuel(mkt);
+}
+function duelPlanObj(nm,price,mkt){        // what 🎯 Your Targets is maximising, for this branch
+  const p=PLAYERS.find(x=>x.name===nm); if(!p)return null;
+  const id=pid(p), sv=DR.owned[id];
+  try{ DR.owned[id]={t:DR.me,price:Math.max(1,price),kept:false}; return planObjective(mkt); }
+  finally{ if(sv===undefined)delete DR.owned[id]; else DR.owned[id]=sv; }
+}
+function duelRun(mkt){
+  const rosA=duelRoster(DUEL.a,DUEL.pa,mkt), rosB=duelRoster(DUEL.b,DUEL.pb,mkt);
+  if(!rosA||!rosB){DUEL.busy=false;renderDuel();return;}
+  const {A,B}=duelSim(rosA.members,rosB.members,DUEL.wire,DUEL.age,DUEL.n);
+  DUEL.res={A:Array.from(A),B:Array.from(B),rosA,rosB,nmA:DUEL.a,nmB:DUEL.b,
+            objA:duelPlanObj(DUEL.a,DUEL.pa,mkt), objB:duelPlanObj(DUEL.b,DUEL.pb,mkt)};
+  DUEL.busy=false; renderDuel();
+}
+function wireDuel(mkt){
+  const go=()=>{DUEL.busy=true;renderDuel();setTimeout(()=>duelRun(mkt),30);};
+  const sa=document.querySelector(".duel-selA"), sb=document.querySelector(".duel-selB");
+  const priceOf=n=>{const p=PLAYERS.find(x=>x.name===n);return p?Math.max(1,Math.round(mkt.price[pid(p)]||1)):1;};
+  if(sa)sa.onchange=e=>{DUEL.a=e.target.value;DUEL.pa=priceOf(DUEL.a);go();};
+  if(sb)sb.onchange=e=>{DUEL.b=e.target.value;DUEL.pb=priceOf(DUEL.b);go();};
+  document.querySelectorAll(".duel-step").forEach(b=>b.onclick=()=>{
+    const d=+(b.dataset.pa||b.dataset.pb);
+    if(b.dataset.pa!=null)DUEL.pa=Math.max(1,DUEL.pa+d); else DUEL.pb=Math.max(1,DUEL.pb+d);
+    const el=document.getElementById(b.dataset.pa!=null?"duelPA":"duelPB");
+    if(el)el.textContent="$"+(b.dataset.pa!=null?DUEL.pa:DUEL.pb);
+    clearTimeout(window._duelT); window._duelT=setTimeout(go,320);});   // let you hold a step
+  document.querySelectorAll("[data-wire]").forEach(b=>b.onclick=()=>{DUEL.wire=+b.dataset.wire;go();});
+  const ag=document.getElementById("duelAge"); if(ag)ag.onchange=e=>{DUEL.age=e.target.checked;go();};
+  const rb=document.getElementById("duelRun"); if(rb)rb.onclick=go;
+  const nb=document.getElementById("duelN"); if(nb)nb.onclick=()=>{DUEL.n=DUEL.n===4000?20000:4000;go();};
+  const pb=document.getElementById("duelPin");
+  if(pb&&DUEL.res){const w=(DUEL.res.B.reduce((a,b)=>a+b,0)>=DUEL.res.A.reduce((a,b)=>a+b,0))?DUEL.res.nmB:DUEL.res.nmA;
+    const pp=PLAYERS.find(x=>x.name===w);
+    if(pp)pb.onclick=()=>{togglePin(pid(pp));};}   // togglePin re-renders; 🎯 Your Targets follows
+  if(!DUEL.res&&!DUEL.busy&&DUEL.a&&DUEL.b)go();
+  // hover: the decision-relevant readout is "how often does each roster clear this number"
+  const svg=document.getElementById("duelSvg"),hit=document.getElementById("duelHit"),
+        cross=document.getElementById("duelCross"),tip=document.getElementById("duelTip");
+  if(svg&&hit&&DUEL.res){
+    const A=DUEL.res.A,B=DUEL.res.B,all=A.concat(B);
+    let lo=Math.floor(Math.min(...all)/25)*25, hi=Math.ceil(Math.max(...all)/25)*25;
+    const move=ev=>{
+      const r=svg.getBoundingClientRect(), px=(ev.touches?ev.touches[0].clientX:ev.clientX)-r.left;
+      const vb=720, sx=px/r.width*vb, PADL=34,PADR=14;
+      const v=lo+Math.min(1,Math.max(0,(sx-PADL)/(vb-PADL-PADR)))*(hi-lo);
+      cross.setAttribute("x1",sx);cross.setAttribute("x2",sx);cross.style.opacity=1;
+      const pa=100*A.filter(x=>x>=v).length/A.length, pb=100*B.filter(x=>x>=v).length/B.length;
+      tip.hidden=false;
+      tip.style.left=Math.min(r.width-160,Math.max(0,px-70))+"px";
+      tip.innerHTML=`<b>${Math.round(v)} pts or better</b>
+        <div><i style="background:${DUEL_A_C}"></i>${DUEL.res.nmA} <b>${pa.toFixed(0)}%</b></div>
+        <div><i style="background:${DUEL_B_C}"></i>${DUEL.res.nmB} <b>${pb.toFixed(0)}%</b></div>`;};
+    hit.onmousemove=move; hit.ontouchmove=e=>{e.preventDefault();move(e);};
+    hit.onmouseleave=()=>{cross.style.opacity=0;tip.hidden=true;};
+  }
+}
+
+// ================= 📱 MOBILE DRAFT COMPANION =================
+// One thumb, 30 seconds, one number. Everything else on this page is a desktop
+// analysis surface; this tab is the live-auction surface: what is up, how hard a dart
+// he is, and the most I should pay — with the room's money visible underneath.
+// Every price here is the ORACLE break-even (exact re-solve of my optimal roster at each
+// price) when it fits the render's time budget, and the λ estimate (~) when it doesn't;
+// 🔮 forces the exact number for everything on screen.
+let MDC_Q="", MDC_SEL=null, MDC_TEAM=null, MDC_FULL=false, MDC_PRICE=null;
+let _oracleBudget=0;
+const CLAUDE_DART_MAP=(()=>{const m={};
+  if(typeof CLAUDE_DARTS!=="undefined")for(const cd of CLAUDE_DARTS)m[cd.n+"|"+cd.p]=cd;
+  return m;})();
+// instant fallback: the λ shadow-price break-even against the best OTHER eligible player
+function mdcGuide(plan){
+  const lam=Math.max(plan.lam||1,0.02),CAND=plan.cand||[];
+  // A slot GROUP can hold several slots — seven bench darts, two RBs. The player you would
+  // take instead is not the best one left, it is the LAST ONE THAT MAKES THE ROSTER: with 7
+  // bench slots you compare a dart against the 7th-best dart, not the 1st. Comparing against
+  // the best is why every dart the plan itself wanted priced out at PASS.
+  const groups={};
+  (plan.needs||[]).forEach(nd=>{const k=nd.uk+"|"+nd.elig.join(",");
+    if(groups[k]){groups[k].n++;return;}
+    groups[k]={uk:nd.uk,elig:nd.elig,idx:nd.idx,n:1};});
+  const G=Object.values(groups);
+  G.forEach(g=>{const arr=[];
+    for(const j of g.idx){const c=CAND[j];arr.push({id:c.id,v:c[g.uk]-lam*c.price});}
+    arr.sort((a,b)=>b.v-a.v); g.top=arr.slice(0,g.n+1);});
+  const meS=teamState(DR.me),maxF=Math.max(1,meS.budget-(meS.spotsLeft-1));
+  const guide=p=>{const id=pid(p);let best=0;
+    for(const g of G){if(!g.elig.includes(p.position))continue;
+      const u=g.uk==="uRA"?raPts(p):g.uk==="uBN"?benchU(p):(p.proj_pts||0)/100;
+      const t=g.top.filter(x=>x.id!==id);                 // the man he has to beat
+      const altn=t.length?t[Math.min(g.n,t.length)-1].v:-1e9;
+      const w=(u-altn)/lam; if(w>best)best=w;}
+    return Math.max(0,Math.min(Math.round(best),maxF));};
+  // anyone the plan seats as a STARTER is Oracle-priced regardless of where the market's
+  // replacement line sits (a FLEX body can be under his own position's line and still start)
+  guide.starters=new Set((plan.picks||[]).filter(pk=>pk.wa!=null&&pk.p).map(pk=>pid(pk.p)));
+  return guide;
+}
+// exact where affordable, estimate where not — never blocks the render
+function mdcBid(p,mkt,guide){
+  const id=pid(p);
+  // ⚠ teamState fills STARTER needs greedily by projection, so a $1 dart bought while an
+  // RB slot is still open "occupies" that slot in the accounting — and the Oracle's
+  // re-solve then reports him as making the roster worse at any price, i.e. PASS on every
+  // dart the plan itself wants. Below the replacement line a player can only ever be a
+  // bench asset, so price him where the decision actually lives: against the NEXT dart,
+  // which is the λ break-even over the plan's bench slot. Above that line the Oracle's
+  // full re-solve is the right tool and is used unchanged.
+  if(!(guide.starters&&guide.starters.has(id))
+     &&Math.max(raPts(p)-((mkt.repl||{})[p.position]||0),0)<=0){
+    // benchU is a SELECTION utility (0.3 x ceiling x keeper runway x trajectory) tuned to make
+    // the knapsack pick darts, not a price — converting its gaps through λ hands back $25-30
+    // ceilings on $1 lottery tickets. Capped at the same stash ceiling myVal uses for bench
+    // buys, which is also where the dart price-band study put the validated bin.
+    return {v:Math.min(guide(p),BENCH_CAP+2),exact:false,bench:true};}
+  if(_oracleCache.k===oracleKey()&&_oracleCache.v[id]!=null)return{v:_oracleCache.v[id],exact:true};
+  if(_oracleBudget>0){const t0=performance.now();const v=oracleBid(p,mkt);
+    _oracleBudget-=performance.now()-t0;return{v,exact:true};}
+  return {v:guide(p),exact:false};
+}
+// how hard a dart is he — one glance, no hovering
+function mdcDart(p){
+  const st=STORM_DARTS[p.name+"|"+p.position];
+  if(st)return{t:"🚨 STORM",c:"#ffd9d9",b:"#7a1f1f",
+    tip:`HANDCUFF STORM — ${st.rb1} is in an August news storm and this back already has top-quartile camp buzz. That exact pair hit 33% in 2016-25 vs a 19-21% dart base.`};
+  const cd=CLAUDE_DART_MAP[p.name+"|"+p.position];
+  if(cd){const C={1:["#0f2f20","#7ee2b8","40-55%"],2:["#12283a","#8fc7ff","25-40%"],
+                  3:["#2a2436","#c9b6ef","12-25%"],4:["#232a33","#8b9bb0","<10%"]}[cd.tier];
+    return{t:"T"+cd.tier+" dart",c:C[1],b:C[0],tip:`Claude's dart board #${cd.r} · tier ${cd.tier} (≈${C[2]} to hit) — ${cd.w}`};}
+  const s=dartSig(p);
+  if(s>=0.30)return{t:"🎯🎯🎯",c:"#7ee2b8",b:"#0f2f20",tip:`${Math.round(s*100)}% modelled breakout signal — top-grade dart`};
+  if(s>=0.18)return{t:"🎯🎯",c:"#8fc7ff",b:"#12283a",tip:`${Math.round(s*100)}% modelled breakout signal`};
+  if(s>=0.10)return{t:"🎯",c:"#c9b6ef",b:"#2a2436",tip:`${Math.round(s*100)}% modelled breakout signal`};
+  return null;
+}
+function mdcRow(p,mkt,mv,guide,ctx,lead){
+  const id=pid(p),m=mv[id]||{},exp=Math.max(1,Math.round(mkt.price[id]||1));
+  const b=mdcBid(p,mkt,guide),d=mdcDart(p),wc=m.wc;
+  const good=b.v>=exp, dead=b.v<=0;
+  return `<div class="mdc-row mdcPick" data-id="${id}">
+    ${lead?`<span class="mdc-lead">${lead}</span>`:""}
+    <span class="pos ${p.position}">${p.position}</span>
+    <span class="mdc-nm"><b>${p.name}</b> <span class="muted">${p.team||""}</span>
+      ${d?`<span class="mdc-dart" style="background:${d.b};color:${d.c}" title="${d.tip.replace(/"/g,'&quot;')}">${d.t}</span>`:""}
+      ${wc?`<span class="mdc-dart" style="background:#2a2016;color:#e0a23c" title="${wc.note.replace(/"/g,'&quot;')}">${wc.tag}</span>`:""}
+      <span class="mdc-sub">exp $${exp}${ctx||""}</span></span>
+    <span class="mdc-bid ${dead?'x':(good?'go':'no')}" title="${b.exact?'ORACLE: exact break-even — re-solved your whole roster at each price':(b.bench?'Bench dart — priced against the last dart that still makes your roster, capped at the $'+(BENCH_CAP+2)+' stash ceiling. Darts are near-substitutes: take the grade, not the extra dollars.':'λ estimate — tap for the exact number')}">
+      ${dead?"PASS":"$"+b.v}${b.exact?"":"<i>~</i>"}</span></div>`;
+}
+function renderMobileCompanion(){
+  document.getElementById("tbl").style.display="none";
+  document.getElementById("scatter").style.display="none";
+  const host=document.getElementById("draftroom");host.style.display="block";
+  if(!ensureKeeperLeague()){host.innerHTML='<div class="dr-panel">No keeper data — run scripts/predict_keepers.py.</div>';return;}
+  const mkt=dynamicMarket(),plan=optimalPlan(mkt),mv=myVal(mkt),meS=mv._meS;
+  const TS=DR.teams.map((_,i)=>teamState(i)),guide=mdcGuide(plan);
+  const afford=Math.max(1,meS.budget-(meS.spotsLeft-1));
+  _oracleBudget=MDC_FULL?5000:220;   // 🔮 forces exact for the whole screen
+  MDC_FULL=false;
+  const needChips=["QB","RB","WR","TE","FLEX"].map(k=>meS.need[k]>0
+    ?`<span class="mdc-need">${k}${meS.need[k]>1?"×"+meS.need[k]:""}</span>`:"").join("")
+    +(meS.bench>0?`<span class="mdc-need bn">BN×${meS.bench}</span>`:"");
+  // ---- 1. search FIRST: whoever you just typed is the man on the block, so he gets the
+  //         exact-number time budget before the ticker spends it ----
+  const q=MDC_Q.trim().toLowerCase();
+  const hits=q?PLAYERS.filter(p=>!DR.owned[pid(p)]&&(p.name+" "+(p.team||"")).toLowerCase().includes(q))
+    .sort((a,b)=>(mkt.price[pid(b)]||1)-(mkt.price[pid(a)]||1)).slice(0,8):[];
+  const gone=q?PLAYERS.filter(p=>DR.owned[pid(p)]&&(p.name+" "+(p.team||"")).toLowerCase().includes(q)).slice(0,3):[];
+  const hitRows=hits.map(p=>mdcRow(p,mkt,mv,guide)).join("");
+  // ---- 2. YOUR TARGETS: the live plan, in the order to go get it. Starters ranked by
+  //         IRREPLACEABILITY (season points lost to the next-best at that slot), because
+  //         that — not price — is what decides who you cannot afford to lose. Re-solves
+  //         after every sale you record, so a target you miss drops off and its
+  //         replacement moves up. ----
+  const tgtS=plan.picks.filter(pk=>pk.wa!=null&&pk.p&&!DR.owned[pid(pk.p)])
+    .slice().sort((a,b)=>(b.du||0)-(a.du||0));
+  const tgtB=plan.picks.filter(pk=>pk.slot==="BN"&&pk.p&&!DR.owned[pid(pk.p)]).slice(0,6);
+  const tgtRows=tgtS.map((pk,i)=>mdcRow(pk.p,mkt,mv,guide,
+      ` · plan ${pk.slot}${pk.du&&pk.du<999?` · −${pk.du} pts if you lose him`:""}`,String(i+1)))
+    .concat(tgtB.map(pk=>mdcRow(pk.p,mkt,mv,guide," · bench dart","🎯"))).join("");
+  const tgtCost=tgtS.reduce((a,pk)=>a+pk.cost,0),benchCost=tgtB.reduce((a,pk)=>a+pk.cost,0);
+  // ---- 3. best-available ticker (consensus ADP, drafted players fall off) ----
+  const adp=p=>{const f=(typeof ffaMap!=="undefined"&&ffaMap)?ffaMap[fkey(p.name,p.position)]:null;
+    return (f&&f.adp)||p.espn_adp||p.ffc_adp||9999;};
+  const tick=PLAYERS.filter(p=>!DR.owned[pid(p)]&&!isK(p)).map(p=>({p,a:adp(p)}))
+    .filter(x=>x.a<9999).sort((x,y)=>x.a-y.a).slice(0,40);
+  const chips=tick.map(x=>{const id=pid(x.p),b=mdcBid(x.p,mkt,guide),d=mdcDart(x.p);
+    const exp=Math.max(1,Math.round(mkt.price[id]||1));
+    return `<span class="mdc-chip mdcPick" data-id="${id}">
+      <span class="pos ${x.p.position}">${x.p.position}</span>
+      <b>${x.p.name.split(" ").slice(-1)[0]}</b>${d?`<i class="mdc-flag" style="color:${d.c}">${d.t.slice(0,2)}</i>`:""}
+      <span class="mdc-cb ${b.v<=0?'x':(b.v>=exp?'go':'no')}">${b.v<=0?"pass":"$"+b.v}${b.exact?"":"<i>~</i>"}</span></span>`;}).join("");
+  // ---- 3. the room ----
+  const teamCards=DR.teams.map((t,i)=>{const s=TS[i],aff=Math.max(1,s.budget-(s.spotsLeft-1));
+    const nd=["QB","RB","WR","TE","FLEX"].filter(k=>s.need[k]>0).map(k=>k+(s.need[k]>1?"×"+s.need[k]:"")).join(" ");
+    const open=MDC_TEAM===i;
+    return `<div class="mdc-team${i===DR.me?" me":""}${s.spotsLeft<=0?" full":""}${open?" open":""}" data-t="${i}">
+      <div class="mdc-tn"><b>${t.name}${i===DR.me?" (YOU)":""}</b><span class="mdc-bud">$${s.budget}</span></div>
+      <div class="mdc-ts">${s.spotsLeft} spots · max $${aff}</div>
+      <div class="mdc-tn2">${nd||"<span class='muted'>starters full</span>"}</div>
+      ${open?`<div class="mdc-roster">${s.own.length?s.own.sort((a,b)=>b.price-a.price).map(x=>
+        `<div><span class="pos ${x.p.position}">${x.p.position}</span> ${x.p.name} <b class="base">$${x.price}</b>${DR.owned[x.id].kept?" 🔒":""}</div>`).join(""):"<span class='muted'>nobody yet</span>"}</div>`:""}
+    </div>`;}).join("");
+  host.innerHTML=`<div class="mdc">
+    <div class="mdc-bar">
+      <div class="mdc-me"><b class="maxbid">$${meS.budget}</b><span class="mdc-sub">${meS.spotsLeft} spots · max bid <b>$${afford}</b></span></div>
+      <div class="mdc-needs">${needChips}</div>
+      <button class="mdc-oracle" id="mdcOracle" title="Re-run the EXACT break-even (full roster re-solve at every price) for everything on screen, using the live game state. ~25ms a player.">🔮 Oracle</button>
+    </div>
+    ${lastSale()?`<button class="mdc-undo" id="mdcUndo" title="Undo the last sale you recorded — he goes back in the pool and the money is refunded. Tap again to keep stepping back.">
+      <b>↩ undo</b><span>${undoLabel(lastSale())}</span></button>`:""}
+    <div class="mdc-lbl">⚡ BEST AVAILABLE — tap to price &amp; record</div>
+    <div class="mdc-ticker thinscroll">${chips||"<span class='muted'>nobody left</span>"}</div>
+    <div class="mdc-search">
+      <input id="mdcQ" type="search" placeholder="Search the player on the block…" value="${MDC_Q.replace(/"/g,'&quot;')}" autocomplete="off">
+      ${MDC_Q?`<button class="qx" id="mdcQx" aria-label="Clear">✕</button>`:""}
+    </div>
+    ${q?`<div class="mdc-list">${hitRows||"<div class='mdc-none'>no available player matches</div>"}
+      ${gone.map(p=>{const o=DR.owned[pid(p)];return `<div class="mdc-row gone"><span class="pos ${p.position}">${p.position}</span>
+        <span class="mdc-nm"><b>${p.name}</b><span class="mdc-sub">${o.kept?"🔒 kept":"sold $"+o.price} — ${(DR.teams[o.t]||{}).name||"?"}</span></span></div>`;}).join("")}</div>`:""}
+    <div class="mdc-lbl" title="Your live plan: the best roster you can still buy at expected prices. Starters are ordered by how much you lose by missing them, not by price — number 1 is the one to go get. Bench darts follow. It re-solves after every sale you record.">🎯 YOUR TARGETS — in the order to go get them</div>
+    ${tgtRows?`<div class="mdc-list">${tgtRows}</div>
+      <div class="mdc-tsum">${tgtS.length} starter${tgtS.length===1?"":"s"} ≈ <b>$${tgtCost}</b> · ${tgtB.length} dart${tgtB.length===1?"":"s"} ≈ <b>$${benchCost}</b> · you hold <b class="maxbid">$${meS.budget}</b></div>`
+      :`<div class="mdc-none">roster full — nothing left to target</div>`}
+    <div class="mdc-lbl">🏟️ THE ROOM — tap a team for their roster</div>
+    <div class="mdc-teams">${teamCards}</div>
+    <div class="mdc-foot">$ = the most you should pay: an exact re-solve of your best remaining roster at every price, so it already counts what the money would buy elsewhere. <b>PASS</b> = he does not improve your roster at any price. <i>~</i> = fast estimate, tap 🔮 for exact. Re-solves after every sale you record.</div>
+  </div>${mdcSheet(mkt,mv,plan,TS,guide)}`;
+  // ---- wiring ----
+  const qi=document.getElementById("mdcQ");
+  if(qi){qi.oninput=e=>{MDC_Q=e.target.value;clearTimeout(window._mdcT);
+      window._mdcT=setTimeout(()=>{const s=qi.selectionStart;renderMobileCompanion();
+        const n=document.getElementById("mdcQ");if(n){n.focus();try{n.setSelectionRange(s,s);}catch(_){}}},120);};
+    qi.onkeydown=e=>{if(e.key==="Escape"){MDC_Q="";renderMobileCompanion();}};}
+  const qx=document.getElementById("mdcQx");
+  if(qx)qx.onclick=()=>{MDC_Q="";renderMobileCompanion();document.getElementById("mdcQ").focus();};
+  document.getElementById("mdcOracle").onclick=()=>{MDC_FULL=true;renderMobileCompanion();};
+  {const ub=document.getElementById("mdcUndo");
+   if(ub)ub.onclick=()=>{undoLastSale();renderMobileCompanion();};}
+  document.querySelectorAll(".mdcPick").forEach(el=>el.onclick=e=>{e.stopPropagation();
+    MDC_SEL=el.dataset.id;MDC_PRICE=null;renderMobileCompanion();});   // fresh player -> dial back to his market price
+  document.querySelectorAll(".mdc-team").forEach(el=>el.onclick=()=>{
+    MDC_TEAM=MDC_TEAM===+el.dataset.t?null:+el.dataset.t;renderMobileCompanion();});
+  wireMdcSheet(mkt);
+  document.getElementById("count").textContent=PLAYERS.filter(p=>!DR.owned[pid(p)]).length+" available";
+  document.getElementById("notes").innerHTML="📱 <b>Mobile Draft Companion.</b> Built for the 30 seconds you actually get: tap whoever is on the block (ticker or search), read the one number, record who won. "+
+    "The <b>$ number is the Oracle break-even</b> — your whole remaining roster re-solved at every price, so it already prices what those dollars would buy elsewhere; <b>PASS</b> means no price improves your team. "+
+    "It is NOT the old floored walk-away: that number could never drop below a player's expected price, which hid every 'he's overpriced' signal. Shares live state with the 🏟️ Draft Room — record a sale in either and both update.";
+}
+// ---- the tap-through card: the number, why, and who won ----
+function mdcSheet(mkt,mv,plan,TS,guide){
+  if(!MDC_SEL)return "";
+  const p=BYID[MDC_SEL];if(!p)return "";
+  if(DR.owned[MDC_SEL]){MDC_SEL=null;return "";}
+  const id=MDC_SEL,m=mv[id]||{},exp=Math.max(1,Math.round(mkt.price[id]||1));
+  const b=(()=>{const t0=performance.now();_oracleBudget=Math.max(_oracleBudget,400);
+    const r=mdcBid(p,mkt,guide);_oracleBudget-=performance.now()-t0;return r;})();
+  const d=mdcDart(p),meS=teamState(DR.me),afford=Math.max(1,meS.budget-(meS.spotsLeft-1));
+  // the dial spans every price any team in the room could actually pay
+  const dialMax=Math.max(2,...TS.map(s=>Math.max(1,s.budget-(s.spotsLeft-1))));
+  if(MDC_PRICE==null||MDC_PRICE>dialMax)MDC_PRICE=Math.min(Math.max(1,exp),dialMax);
+  const su=DR.teams.map((t,i)=>({n:t.name,b:i===DR.me?0:ownerBid(i,p,mkt,TS)})).filter(x=>x.b>1)
+    .sort((a,b2)=>b2.b-a.b).slice(0,3);
+  const verdict=b.v<=0?["PASS","x","He does not improve your roster at any price — let the room have him."]
+    :b.v>=exp+3?["BARGAIN","go",`Worth up to $${b.v} and the room should stop near $${exp} — this is where your money goes.`]
+    :b.v>=exp?["FAIR","go",`Worth up to $${b.v}; expected to clear around $${exp}. Bid, but no further.`]
+    :["OVERPRICED","no",`He clears around $${exp} and is only worth $${b.v} to your roster — let someone else pay.`];
+  return `<div class="mdc-sheetwrap" id="mdcSheetWrap"><div class="mdc-sheet">
+    <div class="mdc-sx" id="mdcClose">✕</div>
+    <div class="mdc-h"><span class="pos ${p.position}">${p.position}</span> ${p.name}
+      <span class="muted" style="font-size:12px">${p.team||""}</span></div>
+    <div class="mdc-big ${verdict[1]}">${b.v<=0?"PASS":"BID UP TO $"+b.v}
+      <span class="mdc-vd">${verdict[0]}</span></div>
+    <div class="mdc-why">${verdict[2]} ${b.exact?"<b>Exact</b> — full roster re-solve at every price.":"<b>Estimate</b> — tap 🔮 Oracle for the exact number."}</div>
+    <div class="mdc-meta">
+      <div title="What this room is expected to pay for him — the league's own 2023-25 bid curve times a per-player anchor, inflated for keepers."><span>expected price</span><b>$${exp}</b></div>
+      <div title="The most you could physically bid: your budget minus $1 held back for each of your other open spots."><span>your max bid</span><b>$${afford}</b></div>
+      <div title="FAIR VALUE, not a bid ceiling. His risk-adjusted points over replacement, priced at ONE league-wide exchange rate (all the room's money over all the value in the pool), inflated for keepers. It knows nothing about your roster, your budget or your alternatives — so it says what he is worth to A roster, while BID UP TO says what he is worth to YOURS. Fair value minus expected price is the market edge; the bid ceiling is the number you actually bid to."><span>fair value <i style="opacity:.6;font-style:normal">(league-wide)</i></span><b>$${m.value||1}</b>${(m.value||1)>exp+2?`<span class="upc" style="font-size:10px;margin-left:4px">+$${(m.value||1)-exp} vs market</span>`:((m.value||1)<exp-2?`<span class="downc" style="font-size:10px;margin-left:4px">−$${exp-(m.value||1)} vs market</span>`:"")}</div>
+      <div title="How hard a dart he is: 🚨 storm pair, Claude's T1-T4 dart board, or the modelled breakout signal."><span>dart grade</span><b>${d?d.t:"—"}</b></div>
+    </div>
+    <div class="mdc-note" style="border-left-color:var(--accent)"><b>Fair value ≠ bid ceiling.</b> Fair value is his price tag in the abstract; <b>bid up to</b> is what he adds to <i>your</i> roster once you account for the next-best player you would take instead and what those dollars buy elsewhere. When a cheap substitute exists, the ceiling drops far below fair value — that gap is the whole point of the number.</div>
+    ${d?`<div class="mdc-note">${d.tip}</div>`:""}
+    ${m.wc?`<div class="mdc-note warn">${m.wc.tag} ${m.wc.note}</div>`:""}
+    ${su.length?`<div class="mdc-note">🤖 likely bidders: ${su.map(x=>x.n+" ~$"+x.b).join(" · ")}</div>`:""}
+    <div class="mdc-sold">SOLD FOR</div>
+    <div class="mdc-dial">
+      <button class="mdc-step sm" id="mdcM5" title="−$5">−5</button>
+      <button class="mdc-step" id="mdcM1" title="−$1">−</button>
+      <input id="mdcPrice" class="mdc-price" type="number" inputmode="numeric" min="1" max="${dialMax}" value="${MDC_PRICE}">
+      <button class="mdc-step" id="mdcP1" title="+$1">+</button>
+      <button class="mdc-step sm" id="mdcP5" title="+$5">+5</button>
+    </div>
+    <div class="mdc-wheel thinscroll" id="mdcWheel"><span class="mdc-wtick pad"></span>${
+      Array.from({length:dialMax},(_,k)=>k+1).map(v=>`<span class="mdc-wtick${v===MDC_PRICE?" on":""}" data-v="${v}">${v}</span>`).join("")
+    }<span class="mdc-wtick pad"></span></div>
+    <div class="mdc-presets">
+      <button class="mdc-preset mdcPre" data-v="${exp}">market $${exp}</button>
+      ${b.v>0?`<button class="mdc-preset mdcPre" data-v="${b.v}">your ceiling $${b.v}</button>`:""}
+      <button class="mdc-preset mdcPre" data-v="1">$1</button>
+      <button class="mdc-preset" id="mdcReset" title="back to the expected price">↺ reset</button>
+    </div>
+    <div class="mdc-sold">TO:</div>
+    <div class="mdc-owners">${DR.teams.map((t,i)=>{const s=TS[i],aff=Math.max(1,s.budget-(s.spotsLeft-1));
+      return `<button class="mdcSold${i===DR.me?" me":""}" data-t="${i}"${s.spotsLeft<=0?" disabled":""}
+        title="$${s.budget} left · ${s.spotsLeft} spots · max $${aff}">${t.name}${i===DR.me?" (YOU)":""}<span>$${aff}</span></button>`;}).join("")}</div>
+  </div></div>`;
+}
+function wireMdcSheet(mkt){
+  const w=document.getElementById("mdcSheetWrap");if(!w)return;
+  document.getElementById("mdcClose").onclick=()=>{MDC_SEL=null;renderMobileCompanion();};
+  w.onclick=e=>{if(e.target===w){MDC_SEL=null;renderMobileCompanion();}};
+  // 💵 the dial updates IN PLACE — a full re-render is ~350ms and would throw away the
+  // wheel's scroll position on every tap, which is unusable while the bidding is live.
+  const inp=document.getElementById("mdcPrice"),wheel=document.getElementById("mdcWheel");
+  if(inp&&wheel){
+    const ticks=[...wheel.querySelectorAll(".mdc-wtick[data-v]")];
+    const lo=1,hi=ticks.length;
+    let selfScroll=false,scrollT=null;
+    const centre=(v,smooth)=>{const el=ticks[v-1];if(!el)return;selfScroll=true;
+      wheel.scrollTo({left:el.offsetLeft-(wheel.clientWidth/2)+(el.offsetWidth/2),behavior:smooth?"smooth":"auto"});
+      clearTimeout(scrollT);scrollT=setTimeout(()=>{selfScroll=false;},smooth?420:60);};
+    const paint=()=>{
+      inp.value=MDC_PRICE;
+      ticks.forEach((t,i)=>t.classList.toggle("on",i+1===MDC_PRICE));
+      // a team that cannot afford this price can't be the winner — grey it live
+      document.querySelectorAll(".mdcSold").forEach(bt=>{const s=teamState(+bt.dataset.t);
+        const aff=Math.max(1,s.budget-(s.spotsLeft-1));
+        bt.classList.toggle("cant",MDC_PRICE>aff||s.spotsLeft<=0);});};
+    const set=(v,scroll)=>{MDC_PRICE=Math.max(lo,Math.min(hi,Math.round(v)||lo));paint();if(scroll)centre(MDC_PRICE,true);};
+    const step=(d)=>set(MDC_PRICE+d,true);
+    document.getElementById("mdcM1").onclick=()=>step(-1);
+    document.getElementById("mdcP1").onclick=()=>step(1);
+    document.getElementById("mdcM5").onclick=()=>step(-5);
+    document.getElementById("mdcP5").onclick=()=>step(5);
+    document.querySelectorAll(".mdcPre").forEach(b=>b.onclick=()=>set(+b.dataset.v,true));
+    const rs=document.getElementById("mdcReset");
+    if(rs)rs.onclick=()=>{set(Math.max(1,Math.round(mkt.price[MDC_SEL]||1)),true);};
+    ticks.forEach((t,i)=>t.onclick=()=>set(i+1,true));
+    inp.onfocus=()=>inp.select();                               // tap the number, type over it
+    inp.oninput=()=>{const v=parseInt(inp.value,10);if(!isNaN(v)&&v>=lo&&v<=hi){MDC_PRICE=v;
+      ticks.forEach((t,k)=>t.classList.toggle("on",k+1===v));centre(v,false);}};
+    inp.onblur=()=>set(parseInt(inp.value,10)||MDC_PRICE,true);
+    wheel.onscroll=()=>{if(selfScroll)return;clearTimeout(scrollT);
+      scrollT=setTimeout(()=>{const c=wheel.scrollLeft+wheel.clientWidth/2;
+        let best=1,bd=1e9;ticks.forEach((t,i)=>{const d=Math.abs(t.offsetLeft+t.offsetWidth/2-c);
+          if(d<bd){bd=d;best=i+1;}});
+        if(best!==MDC_PRICE){MDC_PRICE=best;paint();}},90);};
+    paint();centre(MDC_PRICE,false);
+  }
+  document.querySelectorAll(".mdcSold").forEach(bt=>bt.onclick=()=>{
+    const t=+bt.dataset.t,price=Math.max(1,Math.round(MDC_PRICE||1));
+    const s=teamState(t),aff=Math.max(1,s.budget-(s.spotsLeft-1));
+    if(s.spotsLeft<=0){alert(DR.teams[t].name+" has no roster spots left.");return;}
+    if(price>aff){alert(DR.teams[t].name+" can't pay $"+price+" — max bid $"+aff+".");return;}
+    recordSale(MDC_SEL,t,price);MDC_SEL=null;MDC_PRICE=null;MDC_Q="";renderMobileCompanion();});
+}
+
 function renderMockDraft(){
   document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";
   const host=document.getElementById("draftroom");host.style.display="block";
@@ -3001,10 +4021,17 @@ function renderDartLenses(){
 function render(){
   // the floating search dropdown only lives in the two draft rooms — clear it elsewhere
   if(!query||!["draftroom","mockdraft"].includes(mode)){const _sd=document.getElementById("searchdrop");if(_sd)_sd.remove();}
+  // 📱 every mode writes its own column set into #hrow, so the phone column filter is
+  // cleared here and re-armed below only for the two boards that declare theirs via
+  // cols(). Modes that don't (Targets, Sleepers, Darts, Fade, Risers, Comps) keep all
+  // their columns and scroll sideways inside .tblwrap instead.
+  document.getElementById("mobcols").textContent="";
+  if(mode==="mobile"){ withKeeperBanner(renderMobileCompanion); return; }
+  if(mode==="duel"){ withKeeperBanner(renderDuel); return; }
   if(mode==="wind"){ renderWind(); return; }
-  if(mode==="mockkeep"){ renderMockKeepers(); return; }
-  if(mode==="mockdraft"){ renderMockDraft(); return; }
-  if(mode==="draftroom"){ renderDraftRoom(); return; }
+  if(mode==="mockkeep"){ withKeeperBanner(renderMockKeepers); return; }
+  if(mode==="mockdraft"){ withKeeperBanner(renderMockDraft); return; }
+  if(mode==="draftroom"){ withKeeperBanner(renderDraftRoom); return; }
   if(mode==="sleepers"){ renderSleepers(); return; }
   if(mode==="darts"){ renderDartLenses(); return; }
   if(mode==="fade"){ renderFade(); return; }
@@ -3014,6 +4041,15 @@ function render(){
   if(mode==="auction")buildAuctionMkt();
   notes();
   const COLS=cols();
+  // 📱 On a phone 12 columns is 1,100px of table. Keep the ones a draft actually reads
+  // — who he is, what he projects, what he costs — and hide the rest under 700px.
+  const MOB=new Set(mode==="auction"
+    ? ["overall_rank","position","name","mexp","mval","medge","keep"]
+    : ["overall_rank","position","name","proj","vorp"]);
+  const dropped=COLS.map((c,i)=>MOB.has(c[0])?null:i+1).filter(Boolean);
+  document.getElementById("mobcols").textContent=dropped.length
+    ? `@media(max-width:700px){${dropped.map(i=>`#tbl>thead>tr>th:nth-child(${i}),#tbl>tbody>tr>td:nth-child(${i})`).join(",")}{display:none}}`
+    : "";
   const HTIP={mexp:"our algo's expected purchase price: the league's real 2023-25 winning-bid curve × a per-player anchor fitted on what this room paid HIM before, keeper-aware (same Exp $ as the draft rooms)",
     "espn$":"ESPN sitewide average auction value from your uploaded Live Draft Trends (📈 button above)",
     aav:"FantasyFootballAnalytics average auction value — league-scored expert consensus (from your uploaded FFA CSV, or the baked 2026 file)",
