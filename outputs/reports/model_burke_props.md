@@ -76,3 +76,43 @@ Scripts: `scripts/model_burke_props_build.py` (frames from nfl_odds.db) and
 `scripts/model_burke_props_run.py` (pipeline + sim); both take the model_burke
 package directory as argv[1]. Found and reported upstream: `weekly_winrate`
 KeyErrors on an empty eval frame (patched defensively in the local copy).
+
+---
+
+## v2 (same day): the probability layer, fixed — and what it exposed
+
+Replaced the quantile-interpolated P(over) with a **walk-forward calibrated
+logistic**: P(over) ~ f(z, line) with z = (Model_Burke_mean − line)/spread-width,
+refit weekly on strictly-prior weeks (`scripts/model_burke_props_run2.py`).
+
+**The fix works as calibration.** 2025 receptions deciles now track reality
+(predicted 0.44 → realised 0.42; predicted 0.52 → realised 0.55). The v1
+phantom under-edge is gone — and with it, almost all stated edge: honest P(over)
+on receptions rarely leaves **[0.44, 0.52]**.
+
+**The betting result got worse, not better** (pooled @5%: 1,838 bets, −3.4%).
+The remaining "edges" are rows where the de-vigged price sits far from the
+model's calibrated ~0.48 — and on those rows the book was right (model unders
+won 44.9% when marginal calibration said ~52%). Being calibrated *marginally*
+is not being calibrated *conditional on disagreeing with the close*: where the
+closing price and the model differ by 5%+, the price knows something (news,
+role, injury detail) the model's box-score features don't. That is
+closing-line efficiency, measured cleanly.
+
+**What survives both versions:** high-conviction reception-yards OVERS —
+v2 @5%: 24 bets, +13.4%; @8%: 13 bets, +76%; every qualifying bet an Over.
+v1's monotone curve, same pocket. ~15–25 bets a season.
+
+### Verdict, revised
+
+- The 69%-weekly MAE win on receptions is real but is *pooled point accuracy*;
+  per-row, against the close, the market re-absorbs it. The model's honest
+  probability edge vs closing prices is ≈ zero outside the rec-yds-over pocket.
+- The playable strategy from this architecture is **narrow**: reception-yards
+  overs at ≥5–8% calibrated edge, ~1–2 bets/week.
+- The natural next test (untested here): the same sheet against **opening**
+  lines — a correction model's information advantage should be largest before
+  the market has processed the week, and this backtest only ever fought the
+  close, the hardest possible benchmark.
+- rush-yds v2 never engaged (calibration needs 400 prior rows; the scored
+  frame is too thin after burn-in).
