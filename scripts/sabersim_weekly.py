@@ -40,6 +40,9 @@ ap.add_argument("--hours", type=float, default=None, help="only games kicking of
 ap.add_argument("--out", default=None)
 ap.add_argument("--analyst", default="Robert Burke")
 ap.add_argument("--model-name", default="Model_Burke v1")
+ap.add_argument("--no-market", action="store_true", help="skip the live DK lines/props pull")
+ap.add_argument("--market-weight", type=float, default=0.6,
+                help="weight on the DK-implied stat where a line exists; remainder on FFA")
 ap.add_argument("--no-lineups", action="store_true", help="skip the live ESPN/Sleeper status pull")
 ap.add_argument("--kdst-weight", type=float, default=0.65,
                 help="weight on the pasted K/DST projection; remainder on the FFA-scored value")
@@ -247,7 +250,126 @@ print(f"  baseline MAE vs actual {np.abs(hist.actual_ppr - hist.baseline_proj).m
 cur = frame_for(SEASON, cur_week, live=True)
 if cur is None: raise SystemExit(f"no FFA file for {SEASON} wk{cur_week} — drop raw_stats_{SEASON}_wk{cur_week}.csv in {FDIR}")
 sk, kk, dst = cur
-sk = sk[sk.team.isin(games.team)]; kk = kk[kk.team.isin(games.team)]; dst = dst[dst.team.isin(games.team)]
+sk = sk[sk.team.isin(games.team)].copy(); kk = kk[kk.team.isin(games.team)].copy(); dst = dst[dst.team.isin(games.team)].copy()
+
+# ---------- 4b. live Vegas: DK spreads/totals (all games) + DK player props (slate) ----------
+# The FFA file is days old; the market reprices injuries and news within minutes. Stats
+# with a DK line are blended (--market-weight on the market) BEFORE scoring, so the
+# baseline the model corrects already reflects the news. Cache per event, 2h TTL.
+MKT_CACHE = os.path.join(ROOT, "data", "props_frames", f"mkt_cache_{SEASON}_wk{cur_week}.json")
+PROP_MKTS = "player_pass_yds,player_pass_tds,player_rush_yds,player_reception_yds,player_receptions,player_anytime_td"
+def amer_prob(price):
+    price = float(price); return 100 / (price + 100) if price > 0 else -price / (-price + 100)
+def pull_market(sl_games):
+    cache = json.load(open(MKT_CACHE)) if os.path.exists(MKT_CACHE) else {}
+    now_ts = time.time(); rem = "?"
+    if now_ts - cache.get("_lines_ts", 0) > 2 * 3600:
+        try:
+            j, rem = get(f"{API}/sports/americanfootball_nfl/odds?regions=us&bookmakers=draftkings"
+                         f"&markets=spreads,totals&oddsFormat=american")
+            lines = {}
+            for e in j:
+                d = {}
+                for bk in e.get("bookmakers", []):
+                    for m in bk.get("markets", []):
+                        for o in m.get("outcomes", []):
+                            if m["key"] == "totals" and o["name"] == "Over": d["total"] = o.get("point")
+                            if m["key"] == "spreads" and o["name"] == e["home_team"]: d["home_spread"] = o.get("point")
+                lines[e["id"]] = d
+            cache["_lines"], cache["_lines_ts"] = lines, now_ts
+            print(f"  DK game lines: {len(lines)} games (credits left {rem})")
+        except Exception as ex: print("  DK game lines failed:", str(ex)[:60])
+    n_new = 0
+    kick_by = dict(zip(sl_games.id, sl_games.kick))
+    for eid in sl_games.id.unique():
+        c = cache.get(eid, {})
+        hrs_to_kick = (kick_by[eid] - pd.Timestamp.now(tz="UTC")).total_seconds() / 3600
+        if c and (now_ts - c.get("_ts", 0) < 2 * 3600 or hrs_to_kick > 30): continue
+        try:
+            j, rem = get(f"{API}/sports/americanfootball_nfl/events/{eid}/odds?regions=us"
+                         f"&bookmakers=draftkings&markets={PROP_MKTS}&oddsFormat=american")
+            rows = []
+            for bk in j.get("bookmakers", []):
+                for m in bk.get("markets", []):
+                    for o in m.get("outcomes", []):
+                        rows.append({"market": m["key"], "player": o.get("description"), "side": o["name"],
+                                     "point": o.get("point"), "price": o["price"]})
+            cache[eid] = {"_ts": now_ts, "rows": rows}; n_new += 1; time.sleep(0.2)
+        except Exception as ex: print(f"  props fetch failed for {eid[:8]}:", str(ex)[:60])
+    if n_new: print(f"  DK props: {n_new} events pulled (credits left {rem})")
+    json.dump(cache, open(MKT_CACHE, "w"))
+    return cache
+
+def market_stats(cache, sl_games):
+    """per player: DK-implied pass_yds, pass_tds, rush_yds, rec_yds, rec, exp_td."""
+    ids_ = set(sl_games.id)
+    rows = [dict(r, event=eid) for eid, c in cache.items()
+            if not eid.startswith("_") and eid in ids_ for r in c.get("rows", [])]
+    if not rows: return pd.DataFrame(columns=["nname"])
+    r = pd.DataFrame(rows).dropna(subset=["player"]); r["nname"] = r.player.map(norm)
+    out = {}
+    for mk, col in (("player_pass_yds", "mkt_pass_yds"), ("player_pass_tds", "mkt_pass_tds"),
+                    ("player_rush_yds", "mkt_rush_yds"), ("player_reception_yds", "mkt_rec_yds"),
+                    ("player_receptions", "mkt_rec")):
+        x = r[(r.market == mk) & r.point.notna()]
+        if not len(x): continue
+        ov = x[x.side == "Over"].groupby("nname").agg(pt=("point", "first"), po=("price", "first"))
+        un = x[x.side == "Under"].groupby("nname").price.first().rename("pu")
+        x = ov.join(un, how="left")
+        skew = x.apply(lambda q: (amer_prob(q.po) - amer_prob(q.pu)) if pd.notna(q.pu) else 0.0, axis=1)
+        out[col] = x.pt + x.pt.abs() * 0.15 * skew   # -130/+100 skew (~.07) moves a 60-yd line ~0.6
+    td = r[(r.market == "player_anytime_td") & (r.side == "Yes")].groupby("nname").price.first()
+    if len(td): out["mkt_exp_td"] = td.map(lambda pr: -np.log(1 - min(amer_prob(pr), 0.95)))
+    return pd.DataFrame(out).reset_index().rename(columns={"index": "nname"})
+
+if not A.no_market:
+    cache = pull_market(games)
+    lines = cache.get("_lines", {})
+    if lines:
+        ctx = []
+        for g in games.itertuples():
+            L = lines.get(g.id, {})
+            if L.get("total") is None or L.get("home_spread") is None: continue
+            sp = L["home_spread"] if g.is_home else -L["home_spread"]
+            itt = L["total"] / 2 - sp / 2
+            ctx.append({"team": g.team, "spread": sp, "game_total": L["total"], "implied_team_total": itt,
+                        "opp_implied": L["total"] - itt})
+        ctx = pd.DataFrame(ctx)
+        if len(ctx):
+            for df_ in (sk, dst):
+                m = df_[["team"]].merge(ctx, on="team", how="left")
+                for c in ("spread", "game_total", "implied_team_total", "opp_implied"):
+                    df_[c] = np.where(m[c].notna(), m[c], df_[c].values)
+            dst["proj"] = score_dst(dst, dst.opp_implied)
+            print(f"  game context refreshed for {len(ctx)} team rows from live DK lines")
+    ms = market_stats(cache, games)
+    if len(ms):
+        w = A.market_weight
+        for c in ("mkt_pass_yds", "mkt_pass_tds", "mkt_rush_yds", "mkt_rec_yds", "mkt_rec", "mkt_exp_td"):
+            if c not in ms.columns: ms[c] = np.nan
+        sk = sk.merge(ms, on="nname", how="left")
+        blend = lambda ffa, mkt: np.where(mkt.notna(), w * mkt + (1 - w) * ffa.fillna(0), ffa)
+        for stat in ("pass_yds", "pass_tds", "rush_yds", "rec_yds", "rec"):
+            sk[stat] = blend(sk[stat], sk[f"mkt_{stat}"])
+        ffa_td = sk.rush_tds.fillna(0) + sk.rec_tds.fillna(0)
+        share_rush = (sk.rush_tds.fillna(0) / ffa_td.replace(0, np.nan)).fillna(
+            pd.Series(np.where(sk.position == "RB", 0.8, 0.1), index=sk.index))
+        new_td = np.where(sk.mkt_exp_td.notna(), w * sk.mkt_exp_td + (1 - w) * ffa_td, ffa_td)
+        sk["rush_tds"], sk["rec_tds"] = new_td * share_rush, new_td * (1 - share_rush)
+        sk["ffa_ppr"] = sk.baseline_proj
+        sk["baseline_proj"] = score_ppr(sk)
+        has = sk[["mkt_pass_yds", "mkt_pass_tds", "mkt_rush_yds", "mkt_rec_yds", "mkt_rec", "mkt_exp_td"]].notna().any(axis=1)
+        mkt_only = sk.copy()
+        for stat in ("pass_yds", "pass_tds", "rush_yds", "rec_yds", "rec"):
+            mkt_only[stat] = mkt_only[f"mkt_{stat}"].fillna(mkt_only[stat])
+        sk["market_ppr"] = np.where(has, score_ppr(mkt_only), np.nan)
+        d_ = (sk.baseline_proj - sk.ffa_ppr)
+        top = sk.loc[d_.abs().sort_values(ascending=False).index[:5]]
+        print(f"  DK props blended (w={w}) for {int(has.sum())} slate players; mean shift {d_[has].mean():+.2f}; biggest: "
+              + ", ".join(f"{r.player} {r.ffa_ppr:.1f}->{r.baseline_proj:.1f}" for r in top.itertuples()))
+        sk["no_line"] = (~has) & sk.team.isin(sk.team[has].unique()) & (sk.ffa_ppr >= 8)
+        if sk.no_line.any():
+            print("  no DK props posted (news?):", ", ".join(sk.player[sk.no_line]))
 # K / D-ST override (Subvertadown-style paste parsed by scripts/parse_kdst_paste.py):
 # blended with the FFA-scored value (--kdst-weight on the paste); FFA value kept in Baseline_FFA
 ovr_p = os.path.join(ROOT, "data", "kdst", f"kdst_{SEASON}_wk{cur_week}.csv")
@@ -284,8 +406,9 @@ for yr in sorted(ev_out.season.unique()):
     print(f"  {yr}: n={len(h):,}  MAE Model_Burke {mae('Model_Burke'):.3f} | baseline(FFA) {mae('baseline_proj'):.3f}"
           f" | control_k0 {mae('control_k0'):.3f}  · beats FFA in {wk_win:.0%} of weeks · 80% coverage {cov:.3f}")
 p = ev_out[(ev_out.season == SEASON) & (ev_out.week == cur_week)].copy()
-p = p.merge(sk[["player_id", "injury_status", "injury_details", "team", "opp"]], on="player_id",
-            how="left", suffixes=("", "_sk"))
+extra = [c for c in ("injury_status", "injury_details", "team", "opp", "ffa_ppr", "market_ppr", "no_line") if c in sk.columns]
+p = p.merge(sk[["player_id"] + extra], on="player_id", how="left", suffixes=("", "_sk"))
+p["note0"] = np.where(p.no_line.fillna(False), "no DK props posted", "") if "no_line" in p.columns else ""
 for c in ("team", "opp"):
     if c + "_sk" in p.columns: p[c] = p[c].fillna(p[c + "_sk"])
 p["proj"] = p.Model_Burke_mean
@@ -327,7 +450,7 @@ def live_status():
     return st
 
 p["nname"] = p.player.map(norm)
-p["status"], p["note"] = "", ""
+p["status"], p["note"] = "", p.note0
 if not A.no_lineups:
     st = live_status()
     key = list(zip(p.nname, p.team))
@@ -350,7 +473,10 @@ if not A.no_lineups:
                 for i, w in (rest.proj / rest.proj.sum()).items(): gain[i] = 0.30 * V * w
             if r.position == "QB":   # a backup QB inherits the role, discounted, not a share
                 gain = {top: max(0.0, 0.80 * V - float(p.loc[top, "proj"]))}
-        for i, g in gain.items():
+        for i, g in list(gain.items()):
+            if "market_ppr" in p.columns and pd.notna(p.loc[i, "market_ppr"]) and not A.no_market:
+                g *= (1 - A.market_weight)   # DK line already reflects the absence
+                gain[i] = g
             old = float(p.loc[i, "proj"]); new = old + g
             p.loc[i, "proj"] = new
             p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} ({r.player} OUT)"
@@ -403,8 +529,9 @@ def rows(df, kind):
                         "p75": (o.mb_p75 if kind == "skill" else o.proj * 1.35).round(2),
                         "Ceiling_p90": (o.mb_p90 if kind == "skill" else o.proj * 1.7).round(2),
                         "StdDev": (o.sd if kind == "skill" else o.proj * 0.5).round(2),
-                        "Baseline_FFA": (o.baseline_proj if kind == "skill"
+                        "Baseline_FFA": ((o.ffa_ppr if "ffa_ppr" in o else o.baseline_proj) if kind == "skill"
                                          else (o.baseline_ffa if "baseline_ffa" in o else o.proj)).round(2),
+                        "Market_PPR": (o.market_ppr.round(2) if (kind == "skill" and "market_ppr" in o) else np.nan),
                         "Injury": o.injury_status.fillna("") if "injury_status" in o else "",
                         "Status": o.status if "status" in o else "",
                         "Note": o.note if "note" in o else "",
