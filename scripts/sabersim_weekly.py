@@ -43,6 +43,8 @@ ap.add_argument("--model-name", default="Model_Burke v1")
 ap.add_argument("--no-market", action="store_true", help="skip the live DK lines/props pull")
 ap.add_argument("--market-weight", type=float, default=0.6,
                 help="weight on the DK-implied stat where a line exists; remainder on FFA")
+ap.add_argument("--p-play-doubt", type=float, default=0.4,
+                help="P(plays) for a Questionable player DK has not posted props for while teammates are priced")
 ap.add_argument("--no-lineups", action="store_true", help="skip the live ESPN/Sleeper status pull")
 ap.add_argument("--kdst-weight", type=float, default=0.65,
                 help="weight on the pasted K/DST projection; remainder on the FFA-scored value")
@@ -445,8 +447,10 @@ def live_status():
         for line in open(man, encoding="utf-8"):
             line = line.strip()
             if not line or line.startswith("#"): continue
-            nm, _, tm = line.partition(",")
-            st[(norm(nm), TEAM_FIX.get(tm.strip(), tm.strip()))] = ("OUT", "manual")
+            parts = [x.strip() for x in line.split(",")]
+            nm, tm = parts[0], TEAM_FIX.get(parts[1], parts[1]) if len(parts) > 1 else ""
+            flag = parts[2].lower() if len(parts) > 2 else "out"
+            st[(norm(nm), tm)] = ("ACTIVE", "manual") if flag.startswith("act") else ("OUT", "manual")
     return st
 
 p["nname"] = p.player.map(norm)
@@ -484,6 +488,37 @@ if not A.no_lineups:
         p.loc[r.Index, "note"] = f"OUT ({r.src}); was {V:.1f}"
         print(f"    OUT {r.player:<22} {r.position} {r.team}  {V:5.1f} -> "
               + ", ".join(f"{p.loc[i,'player']} +{g:.1f}" for i, g in gain.items()))
+    # ---- probable non-players: Questionable (any source) + DK posted no props for them
+    # while pricing their teammates. FFA still carries a near-full number for these, and
+    # a zero-line inactive is the single biggest avoidable miss. Treat as a mixture:
+    # P(plays) = --p-play-doubt (0.4): Proj = p * playing mean, quantiles from the
+    # mixture (median 0), and (1-p) of the points redistributed like an OUT.
+    p["p_play"], p["play_mean"] = 1.0, p.proj
+    q_any = (p.status == "Q") | p.injury_status.isin(["Q", "D", "Questionable", "Doubtful"])
+    forced = p.status == "ACTIVE"
+    doubt = q_any & p.no_line.fillna(False) & (p.status != "OUT") & ~forced & (p.proj > 0.5) if "no_line" in p.columns else pd.Series(False, index=p.index)
+    pp = A.p_play_doubt
+    for r in p[doubt].sort_values("proj", ascending=False).itertuples():
+        V = float(r.proj)
+        mates = p[(p.team == r.team) & (p.position == r.position) & (p.status != "OUT") & ~doubt & (p.index != r.Index)]
+        mates = mates.sort_values("proj", ascending=False)
+        gain = {}
+        if len(mates):
+            top = mates.index[0]; gain[top] = 0.55 * V * (1 - pp)
+            rest = mates.iloc[1:]
+            if len(rest) and rest.proj.sum() > 0:
+                for i, w_ in (rest.proj / rest.proj.sum()).items(): gain[i] = 0.30 * V * (1 - pp) * w_
+        for i, g in list(gain.items()):
+            if "market_ppr" in p.columns and pd.notna(p.loc[i, "market_ppr"]) and not A.no_market:
+                g *= (1 - A.market_weight); gain[i] = g
+            p.loc[i, "proj"] = float(p.loc[i, "proj"]) + g
+            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} ({r.player} doubtful)"
+        p.loc[r.Index, ["status", "p_play", "play_mean"]] = ["DOUBT", pp, V]
+        p.loc[r.Index, "proj"] = pp * V
+        p.loc[r.Index, "note"] = f"Q + no DK props: P(plays)={pp:.0%}, {V:.1f} if active"
+        print(f"    DOUBT {r.player:<20} {r.position} {r.team}  {V:5.1f} x{pp} -> {pp*V:4.1f}; "
+              + ", ".join(f"{p.loc[i,'player']} +{g:.1f}" for i, g in gain.items()))
+    p.loc[forced, "note"] = np.where(p.loc[forced, "note"] == "", "confirmed active (manual)", p.loc[forced, "note"])
     p["Model_Burke_mean"] = p.proj
 
 # ---- spread conditioned on projection size ----
@@ -511,7 +546,18 @@ def eval_spread(test_season):
     print(f"  spread check {test_season} (n={len(te):,}): 80% coverage local {cov:.3f} vs package {cov_pkg:.3f}"
           f" · pinball local {pin:.3f} vs package {pin_pkg:.3f}")
 eval_spread(2025)
-qs = np.array([local_quantiles(r.position, r.baseline_proj, r.Model_Burke_mean) for r in p.itertuples()])
+_pm = p.play_mean if "play_mean" in p.columns else p.Model_Burke_mean
+_pp = p.p_play if "p_play" in p.columns else pd.Series(1.0, index=p.index)
+qs = np.array([local_quantiles(r.position, r.baseline_proj, m) for r, m in zip(p.itertuples(), _pm)])
+def mix_quantiles(qrow, pplay):
+    """quantiles of  (1-pplay)*delta(0) + pplay*Playing  from the playing quantiles."""
+    if pplay >= 1: return qrow
+    out = []
+    for tau in QS:
+        if tau <= 1 - pplay: out.append(0.0)
+        else: out.append(float(np.interp((tau - (1 - pplay)) / pplay, QS, qrow)))
+    return np.array(out)
+qs = np.array([mix_quantiles(q, pp_) for q, pp_ in zip(qs, _pp)])
 for i, q in enumerate(QS): p[f"mb_p{int(q*100)}"] = qs[:, i]
 p["Model_Burke"] = p.mb_p50
 p["sd"] = (p.mb_p75 - p.mb_p25) / 1.35
