@@ -286,16 +286,46 @@ p = p.merge(sk[["player_id", "injury_status", "injury_details", "team", "opp"]],
 for c in ("team", "opp"):
     if c + "_sk" in p.columns: p[c] = p[c].fillna(p[c + "_sk"])
 p["proj"] = p.Model_Burke_mean
+
+# ---- spread conditioned on projection size ----
+# The package's spread is position-wide, so a 1-point bench player inherits a starter's
+# ±4 and gets negative floors. Replace it: for each player take the ~300 historical rows
+# of the same position with the closest baseline, use their empirical residual
+# (actual - baseline) quantiles, re-centre on the model mean, clip at the scoring floor.
+QS = (0.10, 0.25, 0.50, 0.75, 0.90)
+_h = ev_out[ev_out.actual_ppr.notna()].copy()
+_h["res"] = _h.actual_ppr - _h.baseline_proj
+def local_quantiles(pos, base, mean, hist=_h, k=300):
+    hp = hist[hist.position == pos]
+    idx = np.argsort(np.abs(hp.baseline_proj.values - base))[:k]
+    r = hp.res.values[idx]
+    q = np.quantile(r, QS) - r.mean() + mean
+    floor = -2.0 if (pos == "QB" and mean >= 5) else 0.0   # only a starting QB can go negative
+    return np.maximum(q, floor)
+def eval_spread(test_season):
+    hist = _h[_h.season < test_season]; te = _h[(_h.season == test_season) & _h.Model_Burke_mean.notna()]
+    qs = np.array([local_quantiles(r.position, r.baseline_proj, r.Model_Burke_mean, hist) for r in te.itertuples()])
+    cov = ((te.actual_ppr.values >= qs[:, 0]) & (te.actual_ppr.values <= qs[:, 4])).mean()
+    cov_pkg = ((te.actual_ppr >= te.mb_p10) & (te.actual_ppr <= te.mb_p90)).mean()
+    pin = np.mean([np.mean(np.maximum(q * (te.actual_ppr.values - qs[:, i]), (q - 1) * (te.actual_ppr.values - qs[:, i]))) for i, q in enumerate(QS)])
+    pin_pkg = np.mean([np.mean(np.maximum(q * (te.actual_ppr - te[f"mb_p{int(q*100)}"]), (q - 1) * (te.actual_ppr - te[f"mb_p{int(q*100)}"]))) for q in QS])
+    print(f"  spread check {test_season} (n={len(te):,}): 80% coverage local {cov:.3f} vs package {cov_pkg:.3f}"
+          f" · pinball local {pin:.3f} vs package {pin_pkg:.3f}")
+eval_spread(2025)
+qs = np.array([local_quantiles(r.position, r.baseline_proj, r.Model_Burke_mean) for r in p.itertuples()])
+for i, q in enumerate(QS): p[f"mb_p{int(q*100)}"] = qs[:, i]
+p["Model_Burke"] = p.mb_p50
 p["sd"] = (p.mb_p75 - p.mb_p25) / 1.35
 
 # ---------- 6. assemble CSV ----------
 def rows(df, kind):
     o = df.merge(games[["team", "game", "kickoff_et", "kick"]], on="team", how="left")
-    out = pd.DataFrame({"Player": o.player, "ID": o.player_id if "player_id" in o else "", "Pos": o.position, "Team": o.team, "Opp": o.opp,
+    pid = (o.player_id.where(~o.player_id.astype(str).str.startswith("ffa_"), "") if "player_id" in o else "")
+    out = pd.DataFrame({"Player": o.player, "ID": pid, "Pos": o.position, "Team": o.team, "Opp": o.opp,
                         "Game": o.game, "Kickoff": o.kickoff_et,
                         "Proj": o.proj.round(2),
                         "Median": (o.Model_Burke if kind == "skill" else o.proj).round(2),
-                        "Floor_p10": (o.mb_p10 if kind == "skill" else o.proj * 0.35).round(2),
+                        "Floor_p10": (o.mb_p10 if kind == "skill" else (o.proj * 0.35).clip(lower=0)).round(2),
                         "p25": (o.mb_p25 if kind == "skill" else o.proj * 0.65).round(2),
                         "p75": (o.mb_p75 if kind == "skill" else o.proj * 1.35).round(2),
                         "Ceiling_p90": (o.mb_p90 if kind == "skill" else o.proj * 1.7).round(2),
