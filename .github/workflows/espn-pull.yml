@@ -15,6 +15,7 @@ on:
       leagueId: { description: "League ID", default: "1211359110" }
       season:   { description: "Season",    default: "2026" }
       teamId:   { description: "Your team ID", default: "5" }
+      draftSeasons: { description: "Seasons to pull draft results for (space separated)", default: "2023 2024 2025 2026" }
 
 permissions:
   contents: write
@@ -32,11 +33,11 @@ jobs:
           ESPN_S2: ${{ secrets.ESPN_S2 }}
           ESPN_SWID: ${{ secrets.ESPN_SWID }}
         run: python scripts/fetch_espn.py "${{ inputs.leagueId }}" "${{ inputs.season }}" "${{ inputs.teamId }}" || echo "settings pull failed (continuing)"
-      - name: Fetch historical draft results (2023-2025)
+      - name: Fetch draft results (auction bids, every season incl. current)
         env:
           ESPN_S2: ${{ secrets.ESPN_S2 }}
           ESPN_SWID: ${{ secrets.ESPN_SWID }}
-        run: python scripts/fetch_espn_drafts.py "${{ inputs.leagueId }}" 2023 2024 2025 || echo "drafts pull failed (continuing)"
+        run: python scripts/fetch_espn_drafts.py "${{ inputs.leagueId }}" ${{ inputs.draftSeasons }} || echo "drafts pull failed (continuing)"
       - name: Fetch final standings (2023-2025, for keeper inflation)
         env:
           ESPN_S2: ${{ secrets.ESPN_S2 }}
