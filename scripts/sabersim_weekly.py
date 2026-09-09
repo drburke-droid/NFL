@@ -10,9 +10,9 @@ from the same FFA weekly baseline; K and DST pass through the scored FFA line.
 Usage:
   python scripts/sabersim_weekly.py <model_burke pkg dir> [--week N] [--all-games]
                                      [--hours H] [--out path.csv]
-Default: current week (first week whose kickoffs are not all in the past), only
-games that have not kicked off yet (what a 75-min-before send should contain).
---hours H restricts to games kicking off within H hours (e.g. one slate).
+Default: current week, NEXT SLATE ONLY — the games within 90 min of the earliest
+upcoming kickoff (one file per slate: Wed night, Thu night, Sun 1pm, Sun 4:25, SNF, MNF).
+--all-remaining = every game not yet kicked off; --hours H = games within H hours.
 Writes outputs/sabersim/projections_{S}_wk{W}_{stamp}.csv  (+ a full-run parquet).
 
 Running on another PC (fresh checkout of this repo):
@@ -37,6 +37,8 @@ ap.add_argument("pkg", nargs="?", default=os.environ.get("MODEL_BURKE_PKG", ""))
 ap.add_argument("--week", type=int, default=None)
 ap.add_argument("--all-games", action="store_true", help="include games already kicked off")
 ap.add_argument("--hours", type=float, default=None, help="only games kicking off within H hours")
+ap.add_argument("--all-remaining", action="store_true",
+                help="every game not yet kicked off (default: only the NEXT slate = games within 90 min of the earliest upcoming kickoff)")
 ap.add_argument("--out", default=None)
 ap.add_argument("--analyst", default="Robert Burke")
 ap.add_argument("--model-name", default="Model_Burke v1")
@@ -196,6 +198,9 @@ ev["week"] = ((ev.kick - ev.kick.min()).dt.days + 2) // 7 + 1
 sl = ev[ev.week == cur_week].copy()
 if not A.all_games: sl = sl[sl.kick > now]
 if A.hours: sl = sl[sl.kick <= now + pd.Timedelta(hours=A.hours)]
+elif not (A.all_games or A.all_remaining) and len(sl):
+    sl = sl[sl.kick <= sl.kick.min() + pd.Timedelta(minutes=90)]     # next slate only
+slate_tag = sl.kick.min().tz_convert("US/Eastern").strftime("%a%I%p").lower() if len(sl) else "none"
 print(f"week {cur_week}: {len(sl)} games in this send"
       + ("" if not len(sl) else f" (kickoffs {sl.kick.min():%a %H:%M}Z .. {sl.kick.max():%a %H:%M}Z)"))
 if not len(sl): raise SystemExit("nothing to send")
@@ -593,7 +598,7 @@ out.insert(1, "Model", A.model_name)
 out["Generated"] = pd.Timestamp.now(tz="US/Eastern").strftime("%Y-%m-%d %H:%M ET")
 stamp = pd.Timestamp.now().strftime("%m%d_%H%M")
 tag = A.analyst.split()[-1] + "_" + A.model_name.split()[0]
-path = A.out or os.path.join(OUTD, f"{tag}_{SEASON}_wk{cur_week}_{stamp}.csv")
+path = A.out or os.path.join(OUTD, f"{tag}_{SEASON}_wk{cur_week}_{slate_tag}_{stamp}.csv")
 out.to_csv(path, index=False)
 ev_out.to_parquet(os.path.join(OUTD, f"run_{SEASON}_wk{cur_week}_{stamp}.parquet"))
 print(f"\nwrote {os.path.relpath(path, ROOT)}: {len(out)} rows "
