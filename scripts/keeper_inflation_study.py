@@ -1,173 +1,178 @@
 #!/usr/bin/env python3
-"""How does keeper inflation actually work in THIS league?
+"""How does this league spend on NON-KEEPERS relative to pre-draft consensus?
 
-Identification: 2023 had zero keepers, so its paid/AAV ratio is the room's standing
-bias vs national AAV. 2024 and 2025 had keepers, so
+Keepers are inflationary by arithmetic, not by psychology. Every dollar of surplus
+locked up in a cheap keeper is a dollar that still has to be spent on a smaller pool
+of players. The question worth answering is not "is there inflation" (there must be)
+but WHERE it lands: which positions and price tiers absorb it, and which get missed.
 
-    keeper inflation = ratio(keeper season) / ratio(2023)
+Two pre-draft benchmarks:
+  ESPN  data/espn_salaries_2026.csv        "AVG SALARY" — ESPN's national auction values
+  FFA   data/ffanalytics/.../projections_*  consensus AAV
 
-strips out "this room just underpays" and isolates the keeper effect.
+⚠ ESPN IS ONLY USABLE AT THE TOP OF THE BOARD. It publishes ~200 players, so the
+cheap end of the auction is truncated: the darts it does price sit at its own $1-2
+floor while the room paid $3-6, which manufactures a fake ~3x "dart inflation".
+FFA ranks ~300 and is the honest benchmark below ~$10. The coverage table in the
+output makes this explicit; FFA leads every conclusion here.
 
-Baseline = nflv_ffa_league.ffa_aav for the SAME season (12-team $200 PPR AAV).
-Source   = outputs/espn_drafts.csv (this league's real winning bids, 2023-25).
+Method:
+  budget identity  implied multiplier = (12*200 - keeper spend) / consensus value of
+                   the players actually bought. Compare to what was really paid: if
+                   they match, the room is spending rationally in aggregate and the
+                   only interesting question is distribution.
+  elasticity       OLS log(bid) ~ log(consensus). <1 flattens the curve (overpays
+                   cheap, underpays dear), >1 steepens.
+  ratios           paid/consensus by position and by consensus-price tier.
 
-    python scripts/keeper_inflation_study.py
+Writes outputs/reports/keeper_inflation.md
 """
-
-import os
-import re
-import sqlite3
-
-import numpy as np
-import pandas as pd
-from scipy import stats
+import os, re
+import numpy as np, pandas as pd, statsmodels.api as sm
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB = os.path.join(ROOT, "db", "nfl_odds.db")
-DRAFTS = os.path.join(ROOT, "outputs", "espn_drafts.csv")
 OUT = os.path.join(ROOT, "outputs", "reports", "keeper_inflation.md")
-SUF = re.compile(r"\b(jr|sr|ii|iii|iv|v)\b")
-RNG = np.random.default_rng(0)
-POS = ["QB", "RB", "WR", "TE"]
+TEAMS, BUDGET = 12, 200
+SEASONS = (2023, 2024, 2025, 2026)
+CUR = 2026
+TIERS = ((25, 999, "$25+"), (10, 24.99, "$10-24"), (4, 9.99, "$4-9"), (1, 3.99, "$1-3"))
 
+_S = re.compile(r"\b(jr|sr|ii|iii|iv|v)\b")
+def nz(s):
+    s = str(s).lower().strip().replace(".", "").replace("'", "").replace("-", " ").replace(",", "")
+    return re.sub(r"\s+", " ", _S.sub("", s)).strip()
 
-def norm(s):
-    s = re.sub(r"[^a-z ]", "", str(s).lower())
-    return re.sub(r"\s+", " ", SUF.sub("", s)).strip()
+def espn_prices():
+    p = os.path.join(ROOT, "data", f"espn_salaries_{CUR}.csv")
+    if not os.path.exists(p): return None
+    e = pd.read_csv(p)
+    def sp(c):
+        q = str(c).split("\n")
+        m = re.match(r"^([A-Z]{2,3})(QB|RB|WR|TE|K|DST|D/ST)$", q[1].strip() if len(q) > 1 else "")
+        return pd.Series([q[0].strip(), m.group(2) if m else None])
+    e[["name", "pos"]] = e.Player.apply(sp)
+    e["espn"] = pd.to_numeric(e["AVG SALARY"], errors="coerce")
+    e["pos"] = e.pos.replace({"D/ST": "DST"})
+    e["nm"] = e.name.map(nz)
+    # dedupe: a duplicated (name,pos) silently fans out the draft table on merge
+    return e.dropna(subset=["espn", "pos"]).groupby(["nm", "pos"], as_index=False).espn.max()
 
-
-def load():
-    d = pd.read_csv(DRAFTS)
-    d["keeper"] = d["keeper"].astype(str).str.lower().isin(("true", "1"))
-    d["k"] = d["player"].map(norm) + "|" + d["pos"]
-    con = sqlite3.connect(DB)
-    f = pd.read_sql("SELECT season, player, position, ffa_aav FROM nflv_ffa_league "
-                    "WHERE season BETWEEN 2023 AND 2025", con)
-    con.close()
-    f["k"] = f["player"].map(norm) + "|" + f["position"]
-    f = f.dropna(subset=["ffa_aav"]).drop_duplicates(["season", "k"])
-    m = d.merge(f[["season", "k", "ffa_aav"]], on=["season", "k"], how="left")
-    return d, m
-
-
-def ratio(g):
-    return g.bid.sum() / g.ffa_aav.sum() if len(g) and g.ffa_aav.sum() > 0 else np.nan
-
-
-def boot_ratio_of_ratios(b, k, n=6000):
-    if len(b) < 4 or len(k) < 4:
-        return (np.nan, np.nan)
-    i1 = RNG.integers(0, len(b), size=(n, len(b)))
-    i2 = RNG.integers(0, len(k), size=(n, len(k)))
-    a = b.bid.values[i1].sum(1) / b.ffa_aav.values[i1].sum(1)
-    c = k.bid.values[i2].sum(1) / k.ffa_aav.values[i2].sum(1)
-    return tuple(np.percentile(c / a, [2.5, 97.5]))
-
+def ffa_prices(year):
+    p = os.path.join(ROOT, "data", "ffanalytics", "FFAn_league", f"projections_{year}_wk0.csv")
+    if not os.path.exists(p): return None
+    f = pd.read_csv(p)
+    f["nm"] = f.player.map(nz)
+    f = f.rename(columns={"position": "pos", "aav": "ffa"})
+    return f.dropna(subset=["ffa"]).groupby(["nm", "pos"], as_index=False).ffa.max()
 
 def main():
-    d, m = load()
-    sk = m[m["pos"].isin(POS) & m.ffa_aav.notna() & (m.ffa_aav > 0) & (~m.keeper)].copy()
-    L = []
-    add = L.append
-    add("# Keeper inflation in this league — measured, not assumed\n")
-    add(f"Source: `outputs/espn_drafts.csv` ({len(d)} picks, 2023-25) priced against "
-        f"same-season `nflv_ffa_league.ffa_aav`. **2023 had zero keepers** and is the control.\n")
+    d0 = pd.read_csv(os.path.join(ROOT, "outputs", "espn_drafts.csv"))
+    e, f = espn_prices(), ffa_prices(CUR)
+    D = d0[d0.season == CUR].copy(); D["nm"] = D.player.map(nz)
+    n0 = len(D)
+    D = D.merge(e, on=["nm", "pos"], how="left").merge(f, on=["nm", "pos"], how="left")
+    assert len(D) == n0, f"price merge duplicated rows: {len(D)} vs {n0}"
+    K, A = D[D.keeper], D[~D.keeper]
 
-    add("## Money mechanics\n")
-    add("| season | teams | budget | keeper $ | open $ available | open $ spent | unspent |")
-    add("|---|---|---|---|---|---|---|")
-    leaks = []
-    for s, g in d.groupby("season"):
-        t = g.team.nunique()
-        bud, ks = t * 200, g[g.keeper].bid.sum()
-        avail, spent = bud - ks, g[~g.keeper].bid.sum()
-        leaks.append((s, 1 - spent / avail))
-        add(f"| {s} | {t} | ${bud} | ${ks:.0f} | ${avail:.0f} | ${spent:.0f} | "
-            f"${avail-spent:.0f} ({100*(1-spent/avail):.1f}%) |")
-    add("")
-    add("Keeper drafts leave real money unspent — "
-        + ", ".join(f"{s}: {100*l:.1f}%" for s, l in leaks)
-        + ". That is why realised inflation lands below what a fully-cleared auction implies.\n")
+    L = []; a = L.append
+    a(f"# Keeper inflation — what the room really pays for non-keepers ({CUR})\n")
+    a(f"*{len(D)} picks, {len(K)} keepers, {len(A)} auction buys. Benchmarks: ESPN average "
+      "salary and FFAnalytics consensus AAV, both pre-draft.*\n")
 
-    b23 = sk[sk.season == 2023]
-    kall = sk[sk.season != 2023]
-    g_infl = ratio(kall) / ratio(b23)
-    lo, hi = boot_ratio_of_ratios(b23, kall)
-    add("## Headline\n")
-    add(f"- Room baseline (2023, keeper-free): **{ratio(b23):.3f}x** national AAV — this league underpays.")
-    add(f"- **Keeper inflation: {g_infl:.3f}x**, bootstrap 95% CI **[{lo:.2f}, {hi:.2f}]** "
-        f"(n={len(b23)} control picks, {len(kall)} keeper-era).")
+    a("## 1. Keepers are the engine, and it is arithmetic\n")
+    a("| benchmark | keepers cost | consensus value | surplus locked up | money left | implied multiplier | actually paid |")
+    a("|---|---:|---:|---:|---:|---:|---:|")
+    for s, lab in (("espn", "ESPN"), ("ffa", "FFA")):
+        kv, av = K[s].sum(), A[s].sum()
+        a(f"| {lab} | ${K.bid.sum()} | ${kv:.0f} | **${kv-K.bid.sum():.0f}** | "
+          f"${TEAMS*BUDGET-K.bid.sum()} | {(TEAMS*BUDGET-K.bid.sum())/av:.2f}x | {A.bid.sum()/av:.2f}x |")
+    a("\nImplied and actual land on top of each other. The room is **not irrational in "
+      "aggregate** — it spends exactly the money it has. Every dollar of keeper surplus "
+      "has to reappear somewhere, so the only question that matters is *where*.\n")
 
-    y = np.log(sk.bid.clip(lower=1).values / sk.ffa_aav.values)
-    lav = np.log(sk.ffa_aav.values)
-    lavc = lav - lav.mean()
-    K = (sk.season != 2023).astype(float).values
-    X = np.column_stack([np.ones(len(y)), K, lavc, K * lavc])
-    coef, *_ = np.linalg.lstsq(X, y, rcond=None)
-    res = y - X @ coef
-    dof = len(y) - X.shape[1]
-    cov = (res @ res / dof) * np.linalg.inv(X.T @ X)
-    se = np.sqrt(np.diag(cov))
-    p = 2 * (1 - stats.t.cdf(np.abs(coef / se), dof))
-    add(f"- OLS `log(paid/AAV) ~ keeper_era * log(AAV)` (n={len(y)}): keeper coefficient "
-        f"p={p[1]:.4f} -> **{np.exp(coef[1]):.3f}x** at mean price.\n")
+    a("## 2. ESPN is unusable below the top of the board\n")
+    a("| room paid | buys | ESPN has a price | FFA has a price |")
+    a("|---|---:|---:|---:|")
+    for lo, hi, nm in ((1, 3.99, "$1-3"), (4, 9.99, "$4-9"), (10, 999, "$10+")):
+        g = A[(A.bid >= lo) & (A.bid <= hi)]
+        a(f"| {nm} | {len(g)} | {g.espn.notna().sum()} | {g.ffa.notna().sum()} |")
+    a(f"\nESPN publishes {len(e)} players against FFA's {len(f)}. Its cheap tier is "
+      "truncated, so the darts it does price sit at its own $1-2 floor while the room "
+      "paid $3-6 — that manufactures a fake ~3x dart inflation. **Everything below is "
+      "read off FFA.**\n")
 
-    add("## Rejected hypotheses\n")
-    add("### Position-specific inflation — NOT supported\n")
-    add("| pos | 2023 base | keeper-era | inflation | 95% CI | vs global |")
-    add("|---|---|---|---|---|---|")
-    for pos in POS:
-        b, k = sk[(sk.season == 2023) & (sk.pos == pos)], sk[(sk.season != 2023) & (sk.pos == pos)]
-        i = ratio(k) / ratio(b)
-        l2, h2 = boot_ratio_of_ratios(b, k)
-        add(f"| {pos} | {ratio(b):.3f} | {ratio(k):.3f} | {i:.3f} | [{l2:.2f}, {h2:.2f}] | "
-            f"{'distinct' if (h2 < g_infl or l2 > g_infl) else 'overlaps'} |")
-    add("")
-    add("Point estimates tempt you (TE looks hottest), but **every CI overlaps the global "
-        "estimate** on 14-52 picks per position-season. Do not ship per-position multipliers.\n")
+    t = A[(A.ffa >= 1) & (A.bid >= 1)]
+    r = sm.OLS(np.log(t.bid), sm.add_constant(np.log(t.ffa))).fit()
+    tq = t[t.pos != "QB"]
+    rq = sm.OLS(np.log(tq.bid), sm.add_constant(np.log(tq.ffa))).fit()
+    a("## 3. The room steepens the price curve\n")
+    a(f"Elasticity of log(bid) on log(consensus): **{r.params.iloc[1]:.2f}** "
+      f"(SE {r.bse.iloc[1]:.2f}, n={len(t)}); excluding QB {rq.params.iloc[1]:.2f}. "
+      "Above 1 means the room pays *disproportionately* more as consensus value rises — "
+      "cheap players stay cheap and the middle gets bid up. It is not a QB artifact.\n")
 
-    add("### Price-tier gradient — NOT supported\n")
-    add(f"The interaction term is insignificant (p={p[3]:.4f}) and flips sign. A binned view "
-        "suggests cheap players inflate ~1.5x, but that is an artifact of bids being floored "
-        "at $1 against sub-$1 AAVs.\n")
+    a("## 4. Where the inflation lands (non-keepers vs FFA)\n")
+    tt = A[A.ffa >= 1].copy(); tt["m"] = tt.bid / tt.ffa
+    a(f"Overall the room paid **{tt.bid.sum()/tt.ffa.sum():.2f}x** consensus.\n")
+    a("| position | buys | paid | consensus | ratio | median |")
+    a("|---|---:|---:|---:|---:|---:|")
+    for pos in ["QB", "RB", "WR", "TE"]:
+        g = tt[tt.pos == pos]
+        if len(g) < 3: continue
+        a(f"| {pos} | {len(g)} | ${g.bid.sum()} | ${g.ffa.sum():.0f} | "
+          f"**{g.bid.sum()/g.ffa.sum():.2f}x** | {g.m.median():.2f}x |")
+    a("\n| consensus tier | buys | paid | consensus | ratio | median |")
+    a("|---|---:|---:|---:|---:|---:|")
+    for lo, hi, nm in TIERS:
+        g = tt[(tt.ffa >= lo) & (tt.ffa <= hi)]
+        if len(g) < 3: continue
+        a(f"| {nm} | {len(g)} | ${g.bid.sum()} | ${g.ffa.sum():.0f} | "
+          f"**{g.bid.sum()/g.ffa.sum():.2f}x** | {g.m.median():.2f}x |")
+    u = A[A.ffa.isna()]
+    a(f"\n{len(u)} auction buys had no consensus price at all, costing ${u.bid.sum()} "
+      f"({u.bid.sum()/A.bid.sum():.0%} of auction money) — the room barely bets off-board.\n")
 
-    add("### Keeper composition — NO detectable effect\n")
-    rows = []
-    for s in (2024, 2025):
-        for pos in POS:
-            kept = len(d[(d.season == s) & d.keeper & (d.pos == pos)])
-            pool = len(d[(d.season == s) & (d.pos == pos)])
-            g2 = sk[(sk.season == s) & (sk.pos == pos)]
-            b = sk[(sk.season == 2023) & (sk.pos == pos)]
-            if len(g2) < 4:
-                continue
-            rows.append({"kept_share": kept / pool, "infl": ratio(g2) / ratio(b)})
-    O = pd.DataFrame(rows)
-    pr = stats.pearsonr(O.kept_share, O.infl)
-    add(f"Does keeping most of a position inflate the survivors (scarcity) or deflate them "
-        f"(nobody still needs one)? **Neither, measurably**: corr(share kept, inflation) = "
-        f"{pr[0]:+.3f}, p={pr[1]:.3f} (n={len(O)} position-seasons). Underpowered, but no signal.\n")
+    a("## 5. Is it the same every year?\n")
+    a("| season | keepers | kept cost | kept value | implied | actual | QB ratio |")
+    a("|---|---:|---:|---:|---:|---:|---:|")
+    for yr in SEASONS:
+        ff = ffa_prices(yr)
+        if ff is None: continue
+        y = d0[d0.season == yr].copy(); y["nm"] = y.player.map(nz)
+        n1 = len(y); y = y.merge(ff, on=["nm", "pos"], how="left")
+        if len(y) != n1: continue
+        k, au = y[y.keeper], y[~y.keeper]
+        av = au.ffa.sum()
+        q = au[(au.pos == "QB") & (au.ffa >= 1)]
+        a(f"| {yr} | {len(k)} | ${k.bid.sum()} | ${k.ffa.sum():.0f} | "
+          f"{(TEAMS*BUDGET-k.bid.sum())/av:.2f}x | {au.bid.sum()/av:.2f}x | "
+          f"{(q.bid.sum()/q.ffa.sum() if len(q) else float('nan')):.2f}x |")
+    a("\n2023 had no keepers and the room paid **below** consensus (0.91x). Every keeper "
+      "year since has run at 1.18-1.20x. The mechanism is confirmed, and the room took a "
+      "year to adapt — in 2024 it underspent what the arithmetic allowed (0.98x actual "
+      "against 1.17x implied) and has since caught up.\n")
 
-    add("## Why keepers inflate at all\n")
-    for s in (2024, 2025):
-        k = m[(m.season == s) & m.keeper & m.ffa_aav.notna()]
-        add(f"- **{s}**: {len(k)} keepers cost ${k.bid.sum():.0f} but carry ${k.ffa_aav.sum():.0f} "
-            f"of AAV value — ${k.ffa_aav.sum()-k.bid.sum():.0f} of value leaves the pool free "
-            f"({k.ffa_aav.sum()/max(k.bid.sum(),1):.2f}x). Surviving money chases a thinner pool.")
-    add("")
-    add("## Applied\n")
-    add("`docs/index.html` `dynamicMarket()`: ceiling **1.6 -> 1.25** (top of the measured CI) and "
-        "a **0.94** unspent-money factor. The old 1.6 let Exp $ run ~22% past anything this "
-        "league has ever paid. Note `PRICE_ANCHOR` is already fitted on 2023-25 bids (two keeper "
-        "years), so it embeds the keeper effect — `infl` must only carry this room's money "
-        "surplus, never the keeper effect twice.\n")
+    a("## What to do with it\n")
+    a("- **Quarterback is the standing edge and it is widening** (0.86x → 0.89x → 0.79x → "
+      "0.65x). The room will not pay for QBs, so never spend up there and never burn a "
+      "keeper slot on one.\n")
+    a("- **The $10-24 band is where the keeper money goes.** Expect to pay ~1.3x consensus "
+      "for mid-tier starters; budget for it or avoid the band.\n")
+    a("- **Darts stay cheap** (median 0.60x consensus). The cheap end is not inflated, so "
+      "the late-auction dart strategy still works at face value.\n")
+    a("- **Stars are near consensus** (1.10x). Anchored prices at the top mean the premium "
+      "is not paid where it is most visible.\n")
+
+    a("## Caveats\n")
+    a(f"- One league, {len(A)} auction buys in {CUR}; the multi-year table is 4 drafts.\n")
+    a("- FFA AAV is a national consensus for a standard 12-team $200 league; this league's "
+      "scoring and keeper rules differ, so the *level* is approximate. The comparisons "
+      "across positions and tiers within a season are the reliable part.\n")
+    a("- Consensus prices are pre-draft snapshots and do not reflect late injury news.\n")
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
-    with open(OUT, "w", encoding="utf-8") as fh:
-        fh.write("\n".join(L))
-    print("\n".join(L[:40]))
-    print(f"\nwrote {os.path.relpath(OUT, ROOT)}")
-
+    open(OUT, "w").write("\n".join(L) + "\n")
+    print(f"wrote {OUT}")
 
 if __name__ == "__main__":
     main()

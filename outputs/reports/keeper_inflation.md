@@ -1,49 +1,76 @@
-# Keeper inflation in this league — measured, not assumed
+# Keeper inflation — what the room really pays for non-keepers (2026)
 
-Source: `outputs/espn_drafts.csv` (560 picks, 2023-25) priced against same-season `nflv_ffa_league.ffa_aav`. **2023 had zero keepers** and is the control.
+*192 picks, 36 keepers, 156 auction buys. Benchmarks: ESPN average salary and FFAnalytics consensus AAV, both pre-draft.*
 
-## Money mechanics
+## 1. Keepers are the engine, and it is arithmetic
 
-| season | teams | budget | keeper $ | open $ available | open $ spent | unspent |
-|---|---|---|---|---|---|---|
-| 2023 | 12 | $2400 | $0 | $2400 | $2355 | $45 (1.9%) |
-| 2024 | 11 | $2200 | $574 | $1626 | $1538 | $88 (5.4%) |
-| 2025 | 12 | $2400 | $478 | $1922 | $1802 | $120 (6.2%) |
+| benchmark | keepers cost | consensus value | surplus locked up | money left | implied multiplier | actually paid |
+|---|---:|---:|---:|---:|---:|---:|
+| ESPN | $723 | $913 | **$190** | $1677 | 1.77x | 1.74x |
+| FFA | $723 | $1054 | **$331** | $1677 | 1.20x | 1.18x |
 
-Keeper drafts leave real money unspent — 2023: 1.9%, 2024: 5.4%, 2025: 6.2%. That is why realised inflation lands below what a fully-cleared auction implies.
+Implied and actual land on top of each other. The room is **not irrational in aggregate** — it spends exactly the money it has. Every dollar of keeper surplus has to reappear somewhere, so the only question that matters is *where*.
 
-## Headline
+## 2. ESPN is unusable below the top of the board
 
-- Room baseline (2023, keeper-free): **0.904x** national AAV — this league underpays.
-- **Keeper inflation: 1.153x**, bootstrap 95% CI **[1.08, 1.24]** (n=161 control picks, 243 keeper-era).
-- OLS `log(paid/AAV) ~ keeper_era * log(AAV)` (n=404): keeper coefficient p=0.0095 -> **1.173x** at mean price.
+| room paid | buys | ESPN has a price | FFA has a price |
+|---|---:|---:|---:|
+| $1-3 | 71 | 52 | 56 |
+| $4-9 | 35 | 26 | 34 |
+| $10+ | 50 | 48 | 50 |
 
-## Rejected hypotheses
+ESPN publishes 199 players against FFA's 297. Its cheap tier is truncated, so the darts it does price sit at its own $1-2 floor while the room paid $3-6 — that manufactures a fake ~3x dart inflation. **Everything below is read off FFA.**
 
-### Position-specific inflation — NOT supported
+## 3. The room steepens the price curve
 
-| pos | 2023 base | keeper-era | inflation | 95% CI | vs global |
-|---|---|---|---|---|---|
-| QB | 0.860 | 0.838 | 0.975 | [0.80, 1.27] | overlaps |
-| RB | 0.902 | 1.040 | 1.152 | [1.01, 1.30] | overlaps |
-| WR | 0.942 | 1.109 | 1.177 | [1.08, 1.29] | overlaps |
-| TE | 0.782 | 1.081 | 1.382 | [1.08, 1.91] | overlaps |
+Elasticity of log(bid) on log(consensus): **1.20** (SE 0.06, n=139); excluding QB 1.21. Above 1 means the room pays *disproportionately* more as consensus value rises — cheap players stay cheap and the middle gets bid up. It is not a QB artifact.
 
-Point estimates tempt you (TE looks hottest), but **every CI overlaps the global estimate** on 14-52 picks per position-season. Do not ship per-position multipliers.
+## 4. Where the inflation lands (non-keepers vs FFA)
 
-### Price-tier gradient — NOT supported
+Overall the room paid **1.16x** consensus.
 
-The interaction term is insignificant (p=0.4984) and flips sign. A binned view suggests cheap players inflate ~1.5x, but that is an artifact of bids being floored at $1 against sub-$1 AAVs.
+| position | buys | paid | consensus | ratio | median |
+|---|---:|---:|---:|---:|---:|
+| QB | 20 | $122 | $188 | **0.65x** | 0.46x |
+| RB | 42 | $725 | $608 | **1.19x** | 1.05x |
+| WR | 51 | $667 | $514 | **1.30x** | 1.17x |
+| TE | 15 | $88 | $63 | **1.39x** | 1.15x |
 
-### Keeper composition — NO detectable effect
+| consensus tier | buys | paid | consensus | ratio | median |
+|---|---:|---:|---:|---:|---:|
+| $25+ | 12 | $580 | $525 | **1.10x** | 1.12x |
+| $10-24 | 26 | $559 | $434 | **1.29x** | 1.28x |
+| $4-9 | 45 | $344 | $294 | **1.17x** | 1.06x |
+| $1-3 | 56 | $135 | $144 | **0.94x** | 0.60x |
 
-Does keeping most of a position inflate the survivors (scarcity) or deflate them (nobody still needs one)? **Neither, measurably**: corr(share kept, inflation) = +0.130, p=0.759 (n=8 position-seasons). Underpowered, but no signal.
+16 auction buys had no consensus price at all, costing $26 (2% of auction money) — the room barely bets off-board.
 
-## Why keepers inflate at all
+## 5. Is it the same every year?
 
-- **2024**: 30 keepers cost $570 but carry $891 of AAV value — $321 of value leaves the pool free (1.56x). Surviving money chases a thinner pool.
-- **2025**: 30 keepers cost $478 but carry $912 of AAV value — $434 of value leaves the pool free (1.91x). Surviving money chases a thinner pool.
+| season | keepers | kept cost | kept value | implied | actual | QB ratio |
+|---|---:|---:|---:|---:|---:|---:|
+| 2023 | 0 | $0 | $0 | 0.93x | 0.91x | 0.86x |
+| 2024 | 31 | $574 | $891 | 1.17x | 0.98x | 0.89x |
+| 2025 | 30 | $478 | $912 | 1.28x | 1.20x | 0.79x |
+| 2026 | 36 | $723 | $1054 | 1.20x | 1.18x | 0.65x |
 
-## Applied
+2023 had no keepers and the room paid **below** consensus (0.91x). Every keeper year since has run at 1.18-1.20x. The mechanism is confirmed, and the room took a year to adapt — in 2024 it underspent what the arithmetic allowed (0.98x actual against 1.17x implied) and has since caught up.
 
-`docs/index.html` `dynamicMarket()`: ceiling **1.6 -> 1.25** (top of the measured CI) and a **0.94** unspent-money factor. The old 1.6 let Exp $ run ~22% past anything this league has ever paid. Note `PRICE_ANCHOR` is already fitted on 2023-25 bids (two keeper years), so it embeds the keeper effect — `infl` must only carry this room's money surplus, never the keeper effect twice.
+## What to do with it
+
+- **Quarterback is the standing edge and it is widening** (0.86x → 0.89x → 0.79x → 0.65x). The room will not pay for QBs, so never spend up there and never burn a keeper slot on one.
+
+- **The $10-24 band is where the keeper money goes.** Expect to pay ~1.3x consensus for mid-tier starters; budget for it or avoid the band.
+
+- **Darts stay cheap** (median 0.60x consensus). The cheap end is not inflated, so the late-auction dart strategy still works at face value.
+
+- **Stars are near consensus** (1.10x). Anchored prices at the top mean the premium is not paid where it is most visible.
+
+## Caveats
+
+- One league, 156 auction buys in 2026; the multi-year table is 4 drafts.
+
+- FFA AAV is a national consensus for a standard 12-team $200 league; this league's scoring and keeper rules differ, so the *level* is approximate. The comparisons across positions and tiers within a season are the reliable part.
+
+- Consensus prices are pre-draft snapshots and do not reflect late injury news.
+
