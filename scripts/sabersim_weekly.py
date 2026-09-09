@@ -38,6 +38,8 @@ ap.add_argument("--week", type=int, default=None)
 ap.add_argument("--all-games", action="store_true", help="include games already kicked off")
 ap.add_argument("--hours", type=float, default=None, help="only games kicking off within H hours")
 ap.add_argument("--out", default=None)
+ap.add_argument("--analyst", default="Robert Burke")
+ap.add_argument("--model-name", default="Model_Burke v1")
 ap.add_argument("--kdst-weight", type=float, default=0.65,
                 help="weight on the pasted K/DST projection; remainder on the FFA-scored value")
 A = ap.parse_args()
@@ -337,8 +339,13 @@ def rows(df, kind):
     return out
 out = pd.concat([rows(p, "skill"), rows(kk, "k"), rows(dst, "dst")], ignore_index=True)
 out = out[out.Proj.notna() & (out.Proj > 0.3)].sort_values(["_kick", "Proj"], ascending=[True, False]).drop(columns="_kick")
+# provenance columns (a comment line would break strict CSV readers)
+out.insert(0, "Analyst", A.analyst)
+out.insert(1, "Model", A.model_name)
+out["Generated"] = pd.Timestamp.now(tz="US/Eastern").strftime("%Y-%m-%d %H:%M ET")
 stamp = pd.Timestamp.now().strftime("%m%d_%H%M")
-path = A.out or os.path.join(OUTD, f"projections_{SEASON}_wk{cur_week}_{stamp}.csv")
+tag = A.analyst.split()[-1] + "_" + A.model_name.split()[0]
+path = A.out or os.path.join(OUTD, f"{tag}_{SEASON}_wk{cur_week}_{stamp}.csv")
 out.to_csv(path, index=False)
 ev_out.to_parquet(os.path.join(OUTD, f"run_{SEASON}_wk{cur_week}_{stamp}.parquet"))
 print(f"\nwrote {os.path.relpath(path, ROOT)}: {len(out)} rows "
