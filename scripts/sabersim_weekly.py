@@ -352,12 +352,16 @@ if not A.no_market:
     ms = market_stats(cache, games)
     if len(ms):
         w = A.market_weight
+        # per-stat weights from outputs/reports/market_blend_weight.md (2023-25 closing lines vs FFA):
+        # yardage lines beat FFA outright (best w 0.9-1.0); receptions FFA is better (best w 0.3);
+        # TDs untested -> the generic --market-weight
+        W_STAT = {"pass_yds": 0.9, "rush_yds": 0.9, "rec_yds": 0.9, "rec": 0.3, "pass_tds": w}
         for c in ("mkt_pass_yds", "mkt_pass_tds", "mkt_rush_yds", "mkt_rec_yds", "mkt_rec", "mkt_exp_td"):
             if c not in ms.columns: ms[c] = np.nan
         sk = sk.merge(ms, on="nname", how="left")
-        blend = lambda ffa, mkt: np.where(mkt.notna(), w * mkt + (1 - w) * ffa.fillna(0), ffa)
+        blend = lambda ffa, mkt, ww: np.where(mkt.notna(), ww * mkt + (1 - ww) * ffa.fillna(0), ffa)
         for stat in ("pass_yds", "pass_tds", "rush_yds", "rec_yds", "rec"):
-            sk[stat] = blend(sk[stat], sk[f"mkt_{stat}"])
+            sk[stat] = blend(sk[stat], sk[f"mkt_{stat}"], W_STAT[stat])
         ffa_td = sk.rush_tds.fillna(0) + sk.rec_tds.fillna(0)
         share_rush = (sk.rush_tds.fillna(0) / ffa_td.replace(0, np.nan)).fillna(
             pd.Series(np.where(sk.position == "RB", 0.8, 0.1), index=sk.index))
