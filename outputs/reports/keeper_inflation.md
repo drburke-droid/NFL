@@ -66,6 +66,63 @@ Overall the room paid **1.16x** consensus.
 
 - **Stars are near consensus** (1.10x). Anchored prices at the top mean the premium is not paid where it is most visible.
 
+## 6. Which players went over and under
+
+"Fair" is what **this league** normally pays a player of that consensus value and position — already including the 1.18x keeper inflation, so paying consensus x1.18 is par here, not an overpay.
+
+### Most overspent
+
+| player | pos | team | paid | consensus | fair | over |
+|---|---|---|---:|---:|---:|---:|
+| Bucky Irving | RB | Kid Dynamite | $34 | $16 | $20 | **+$14** (+72%) |
+| Christian Watson | WR | Empty Nesters | $27 | $10 | $13 | **+$14** (+107%) |
+| Jonathon Brooks | RB | Maple Maulers | $24 | $9 | $11 | **+$13** (+115%) |
+| Javonte Williams | RB | I Dowdle win | $49 | $29 | $37 | **+$12** (+32%) |
+| Blake Corum | RB | Gridiron of Grayskull | $18 | $6 | $6 | **+$12** (+188%) |
+| Ladd McConkey | WR | Maple Maulers | $39 | $20 | $27 | **+$12** (+43%) |
+| DK Metcalf | WR | CMC Music Factory | $19 | $8 | $10 | **+$9** (+91%) |
+| Parker Washington | WR | This is the year! | $24 | $12 | $16 | **+$8** (+54%) |
+| Caleb Williams | QB | Gridiron of Grayskull | $13 | $9 | $5 | **+$8** (+178%) |
+| Kyle Monangai | RB | Gridiron of Grayskull | $12 | $4 | $4 | **+$8** (+220%) |
+| Jayden Daniels | QB | This is the year! | $14 | $12 | $6 | **+$8** (+122%) |
+| George Kittle | TE | Kid Dynamite | $18 | $8 | $10 | **+$8** (+74%) |
+
+### Biggest bargains
+
+| player | pos | team | paid | consensus | fair | under |
+|---|---|---|---:|---:|---:|---:|
+| Christian McCaffrey | RB | CMC Music Factory | $56 | $58 | $70 | **$-14** (-20%) |
+| CeeDee Lamb | WR | Ugh...Yeah...What...Football! | $50 | $48 | $63 | **$-13** (-21%) |
+| Saquon Barkley | RB | Empty Nesters | $51 | $50 | $62 | **$-11** (-18%) |
+| Justin Jefferson | WR | Von Kaiser | $52 | $48 | $62 | **$-10** (-16%) |
+| David Montgomery | RB | Flex Luther | $15 | $19 | $25 | **$-10** (-40%) |
+| Bijan Robinson | RB | Flex Luther | $69 | $66 | $79 | **$-10** (-12%) |
+| Josh Jacobs | RB | Von Kaiser | $17 | $19 | $25 | **$-8** (-31%) |
+| D'Andre Swift | RB | I Dowdle win | $21 | $22 | $29 | **$-8** (-27%) |
+| Jadarian Price | RB | Gridiron of Grayskull | $16 | $18 | $23 | **$-7** (-31%) |
+| A.J. Brown | WR | Gridiron of Grayskull | $44 | $38 | $50 | **$-6** (-13%) |
+| Drake London | WR | Flex Luther | $43 | $36 | $48 | **$-5** (-11%) |
+| Tony Pollard | RB | Ugh...Yeah...What...Football! | $7 | $10 | $11 | **$-4** (-39%) |
+
+⚠ The bargain list leans elite because the $25+ tier still clears about $5 under the fitted curve even after the quadratic correction. With 12 teams and 16 roster spots the very top of the market is budget-constrained in a way an unconstrained price curve cannot represent, so read the elite names as partly structural. The genuine within-tier bargains are the mid-priced ones — Montgomery, Jacobs, Swift, Pollard.
+
+### Keeper surplus — the source of the inflation
+
+| player | pos | team | kept for | consensus | surplus |
+|---|---|---|---:|---:|---:|
+| Jaxon Smith-Njigba | WR | Ugh...Yeah...What...Football! | $13 | $54 | **+$41** |
+| Puka Nacua | WR | CMC Music Factory | $16 | $56 | **+$40** |
+| Chase Brown | RB | Ugh...Yeah...What...Football! | $6 | $44 | **+$38** |
+| De'Von Achane | RB | This is the year! | $14 | $43 | **+$29** |
+| James Cook III | RB | Paul's Perfect Team | $26 | $52 | **+$26** |
+| Jahmyr Gibbs | RB | 3AM  No Limit | $45 | $68 | **+$23** |
+| Jonathan Taylor | RB | Empty Nesters | $34 | $56 | **+$22** |
+| Trey McBride | TE | Von Kaiser | $9 | $30 | **+$21** |
+| George Pickens | WR | Empty Nesters | $12 | $32 | **+$20** |
+| Kyren Williams | RB | Von Kaiser | $12 | $31 | **+$19** |
+
+Total keeper surplus $331 across 36 keepers. A handful of owners carry most of it, and that is the money the rest of the room has to absorb.
+
 ## Caveats
 
 - One league, 156 auction buys in 2026; the multi-year table is 4 drafts.
@@ -73,4 +130,6 @@ Overall the room paid **1.16x** consensus.
 - FFA AAV is a national consensus for a standard 12-team $200 league; this league's scoring and keeper rules differ, so the *level* is approximate. The comparisons across positions and tiers within a season are the reliable part.
 
 - Consensus prices are pre-draft snapshots and do not reflect late injury news.
+
+- Over/under is measured against **pre-draft consensus**, i.e. disagreement with the market's expectation. It is not a verdict on the player: a bargain here can still bust and an overpay can still win the league.
 

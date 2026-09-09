@@ -163,12 +163,60 @@ def main():
     a("- **Stars are near consensus** (1.10x). Anchored prices at the top mean the premium "
       "is not paid where it is most visible.\n")
 
+    # ---- player level: who went over / under what THIS room normally pays ----
+    t = A[(A.ffa >= 1) & (A.bid >= 1)].copy()
+    t["lf"] = np.log(t.ffa)
+    X = pd.get_dummies(t.pos, prefix="p", drop_first=True).astype(float)
+    X["lf"] = t.lf
+    # quadratic term: a plain log-linear fit extrapolates past the budget ceiling and then
+    # labels every expensive player a "bargain" and every cheap one an overpay. The squared
+    # term removes most of that curvature (tier residuals 0.93/1.10/1.12/0.78 -> 0.97/1.02/
+    # 1.07/0.93); what is left is a real budget effect, flagged below.
+    X["lf2"] = t.lf ** 2
+    rr = sm.OLS(np.log(t.bid), sm.add_constant(X)).fit()
+    t["fair"] = np.exp(rr.fittedvalues)
+    t["over"] = t.bid - t.fair
+    a("## 6. Which players went over and under\n")
+    a("\"Fair\" is what **this league** normally pays a player of that consensus value and "
+      "position — already including the 1.18x keeper inflation, so paying consensus x1.18 is "
+      "par here, not an overpay.\n")
+    a("### Most overspent\n")
+    a("| player | pos | team | paid | consensus | fair | over |")
+    a("|---|---|---|---:|---:|---:|---:|")
+    for _, x in t.nlargest(12, "over").iterrows():
+        a(f"| {x.player} | {x.pos} | {x.team} | ${x.bid} | ${x.ffa:.0f} | ${x.fair:.0f} | "
+          f"**+${x.over:.0f}** ({x.bid/x.fair-1:+.0%}) |")
+    a("\n### Biggest bargains\n")
+    a("| player | pos | team | paid | consensus | fair | under |")
+    a("|---|---|---|---:|---:|---:|---:|")
+    for _, x in t.nsmallest(12, "over").iterrows():
+        a(f"| {x.player} | {x.pos} | {x.team} | ${x.bid} | ${x.ffa:.0f} | ${x.fair:.0f} | "
+          f"**${x.over:.0f}** ({x.bid/x.fair-1:+.0%}) |")
+    top = t[t.ffa >= 25]
+    a(f"\n⚠ The bargain list leans elite because the ${'25'}+ tier still clears about "
+      f"${-top.over.mean():.0f} under the fitted curve even after the quadratic correction. "
+      "With 12 teams and 16 roster spots the very top of the market is budget-constrained in "
+      "a way an unconstrained price curve cannot represent, so read the elite names as partly "
+      "structural. The genuine within-tier bargains are the mid-priced ones — Montgomery, "
+      "Jacobs, Swift, Pollard.\n")
+    a("### Keeper surplus — the source of the inflation\n")
+    KK = K[K.ffa.notna()].copy(); KK["surplus"] = KK.ffa - KK.bid
+    a("| player | pos | team | kept for | consensus | surplus |")
+    a("|---|---|---|---:|---:|---:|")
+    for _, x in KK.nlargest(10, "surplus").iterrows():
+        a(f"| {x.player} | {x.pos} | {x.team} | ${x.bid} | ${x.ffa:.0f} | **+${x.surplus:.0f}** |")
+    a(f"\nTotal keeper surplus ${KK.surplus.sum():.0f} across {len(KK)} keepers. A handful of "
+      "owners carry most of it, and that is the money the rest of the room has to absorb.\n")
+
     a("## Caveats\n")
     a(f"- One league, {len(A)} auction buys in {CUR}; the multi-year table is 4 drafts.\n")
     a("- FFA AAV is a national consensus for a standard 12-team $200 league; this league's "
       "scoring and keeper rules differ, so the *level* is approximate. The comparisons "
       "across positions and tiers within a season are the reliable part.\n")
     a("- Consensus prices are pre-draft snapshots and do not reflect late injury news.\n")
+    a("- Over/under is measured against **pre-draft consensus**, i.e. disagreement with the "
+      "market's expectation. It is not a verdict on the player: a bargain here can still bust "
+      "and an overpay can still win the league.\n")
 
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     open(OUT, "w").write("\n".join(L) + "\n")
