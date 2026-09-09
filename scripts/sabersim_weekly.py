@@ -422,9 +422,13 @@ p["proj"] = p.Model_Burke_mean
 
 # ---- live lineup status: ESPN injuries + Sleeper, plus a manual inactives file ----
 # FFA files are days old; official inactives post 90 min before kickoff (we send at 75).
-# OUT players go to zero and their projected points are redistributed to same-position
-# teammates (55% to the next man up, 30% spread over the rest, 15% lost — the
-# concentration matches the team-change usage study). Quantiles scale with the projection.
+# OUT players go to zero and their projected points are redistributed with the shares
+# measured in scripts/context_effects_study.py (2012-25 starter absences, net of drift):
+#   RB1 -> next RB 60%, other RBs 17%      (11% lost; pass rate does NOT change)
+#   WR1 -> next WR 20%, other WRs 24%      (35% lost — WR1 production mostly evaporates)
+#   TE1 -> next TE 36%, other TEs 4%, WRs 25% spread by projection (26% lost)
+#   QB1 -> backup inherits 55% of the starter's number
+SHARES = {"RB": (0.60, 0.17, 0.0), "WR": (0.20, 0.24, 0.0), "TE": (0.36, 0.04, 0.25), "QB": (0.55, 0.0, 0.0)}
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "doubtful", "dnr", "nfi", "inactive"}
 def http_json(u):
     with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=30) as r:
@@ -475,13 +479,18 @@ if not A.no_lineups:
         mates = p[(p.team == r.team) & (p.position == r.position) & (p.status != "OUT") & (p.index != r.Index)]
         mates = mates.sort_values("proj", ascending=False)
         V = float(r.proj); gain = {}
+        s_top, s_rest, s_wr = SHARES[r.position]
         if len(mates):
-            top = mates.index[0]; gain[top] = 0.55 * V
+            top = mates.index[0]; gain[top] = s_top * V
             rest = mates.iloc[1:]
             if len(rest) and rest.proj.sum() > 0:
-                for i, w in (rest.proj / rest.proj.sum()).items(): gain[i] = 0.30 * V * w
-            if r.position == "QB":   # a backup QB inherits the role, discounted, not a share
-                gain = {top: max(0.0, 0.80 * V - float(p.loc[top, "proj"]))}
+                for i, w in (rest.proj / rest.proj.sum()).items(): gain[i] = s_rest * V * w
+            if r.position == "QB":   # a backup QB inherits the role, not a share of it
+                gain = {top: max(0.0, s_top * V + 0.25 * V - float(p.loc[top, "proj"]))}
+        if s_wr > 0:   # TE1 out: a quarter of his points go to the WR room
+            wrs = p[(p.team == r.team) & (p.position == "WR") & (p.status != "OUT")]
+            if len(wrs) and wrs.proj.sum() > 0:
+                for i, w in (wrs.proj / wrs.proj.sum()).items(): gain[i] = gain.get(i, 0.0) + s_wr * V * w
         for i, g in list(gain.items()):
             if "market_ppr" in p.columns and pd.notna(p.loc[i, "market_ppr"]) and not A.no_market:
                 g *= (1 - A.market_weight)   # DK line already reflects the absence
@@ -508,11 +517,16 @@ if not A.no_lineups:
         mates = p[(p.team == r.team) & (p.position == r.position) & (p.status != "OUT") & ~doubt & (p.index != r.Index)]
         mates = mates.sort_values("proj", ascending=False)
         gain = {}
+        s_top, s_rest, s_wr = SHARES[r.position]
         if len(mates):
-            top = mates.index[0]; gain[top] = 0.55 * V * (1 - pp)
+            top = mates.index[0]; gain[top] = s_top * V * (1 - pp)
             rest = mates.iloc[1:]
             if len(rest) and rest.proj.sum() > 0:
-                for i, w_ in (rest.proj / rest.proj.sum()).items(): gain[i] = 0.30 * V * (1 - pp) * w_
+                for i, w_ in (rest.proj / rest.proj.sum()).items(): gain[i] = s_rest * V * (1 - pp) * w_
+        if s_wr > 0:
+            wrs = p[(p.team == r.team) & (p.position == "WR") & (p.status != "OUT")]
+            if len(wrs) and wrs.proj.sum() > 0:
+                for i, w_ in (wrs.proj / wrs.proj.sum()).items(): gain[i] = gain.get(i, 0.0) + s_wr * V * (1 - pp) * w_
         for i, g in list(gain.items()):
             if "market_ppr" in p.columns and pd.notna(p.loc[i, "market_ppr"]) and not A.no_market:
                 g *= (1 - A.market_weight); gain[i] = g
