@@ -14,6 +14,16 @@ Default: current week (first week whose kickoffs are not all in the past), only
 games that have not kicked off yet (what a 75-min-before send should contain).
 --hours H restricts to games kicking off within H hours (e.g. one slate).
 Writes outputs/sabersim/projections_{S}_wk{W}_{stamp}.csv  (+ a full-run parquet).
+
+Running on another PC (fresh checkout of this repo):
+  1. unzip model_burke_pkg.zip somewhere; argv[1] = its pkg/ folder
+  2. copy data/odds_api_key.txt (gitignored, one key per line) — only the free /events
+     endpoint is called, for kickoff times
+  3. pip install pandas numpy scikit-learn scipy pyarrow
+  4. per week: drop raw_stats_2026_wkN.csv in data/ffanalytics/FFAn_weekly/ and the K/DST
+     paste in data/kdst/paste_2026_wkN.txt, run parse_kdst_paste.py, then this script.
+  Box scores / game lines come from data/sabersim/*.parquet (exported from the odds DB;
+  the DB itself is not needed). 2026 box scores are pulled from nflverse when published.
 """
 import argparse, json, os, re, sqlite3, sys, time, urllib.error, urllib.request, warnings
 import numpy as np, pandas as pd
@@ -31,8 +41,9 @@ ap.add_argument("--out", default=None)
 ap.add_argument("--kdst-weight", type=float, default=0.65,
                 help="weight on the pasted K/DST projection; remainder on the FFA-scored value")
 A = ap.parse_args()
-if not A.pkg or not os.path.isdir(A.pkg):
-    raise SystemExit("pass the model_burke package dir (folder containing model_burke/)")
+if not A.pkg or not os.path.isdir(os.path.join(A.pkg, "model_burke")):
+    raise SystemExit("pass the Model_Burke package dir as argv[1] (the pkg/ folder from model_burke_pkg.zip, "
+                     "i.e. the folder CONTAINING model_burke/), or set MODEL_BURKE_PKG")
 sys.path.insert(0, A.pkg)
 from model_burke import pipeline
 from model_burke.features import build_lagged_features
@@ -61,8 +72,10 @@ def norm(s):
     s = re.sub(r"\s+(jr|sr|ii|iii|iv|v)$", "", s); return re.sub(r"\s+", " ", s)
 
 # ---------- Odds API key rotation (same contract as props_watch) ----------
-KEYS = [k.strip() for k in open(os.path.join(ROOT, "data", "odds_api_key.txt"))
-        if k.strip() and not k.startswith("#")]
+_kp = os.path.join(ROOT, "data", "odds_api_key.txt")
+if not os.path.exists(_kp):
+    raise SystemExit("data/odds_api_key.txt is missing (gitignored) — copy it from the other PC, one key per line")
+KEYS = [k.strip() for k in open(_kp) if k.strip() and not k.startswith("#")]
 _ki = [0]
 def get(url):
     while True:
@@ -112,16 +125,23 @@ weeks_avail = sorted({(int(s), int(w)) for s, w in files})
 print(f"FFA weekly files: {len(weeks_avail)} ({weeks_avail[0]} .. {weeks_avail[-1]})")
 
 # ---------- 2. box scores, ids, lags ----------
-con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
-wk = pd.read_sql("""SELECT player_id, player_display_name, position, season, week, team,
-                    opponent_team, targets, carries, receptions, receiving_yards, rushing_yards,
-                    passing_yards, attempts, target_share, wopr, air_yards_share,
-                    receiving_air_yards, fantasy_points_ppr, passing_epa, rushing_epa, receiving_epa
-                    FROM nflv_weekly WHERE season BETWEEN 2022 AND 2025
-                    AND position IN ('QB','RB','WR','TE')""", con)
-gl = pd.read_sql("SELECT season, week, team, opp, is_home, game_total, team_spread, implied_team_total "
-                 "FROM nflv_game_lines WHERE season BETWEEN 2023 AND 2026", con)
-con.close()
+# box scores + game lines: repo parquets (exported from db/nfl_odds.db so the script runs on
+# any checkout); the DB is only consulted when the parquets are missing
+PQ = os.path.join(ROOT, "data", "sabersim")
+if os.path.exists(os.path.join(PQ, "weekly_skill_2022_2025.parquet")):
+    wk = pd.read_parquet(os.path.join(PQ, "weekly_skill_2022_2025.parquet"))
+    gl = pd.read_parquet(os.path.join(PQ, "game_lines_2023_2026.parquet"))
+else:
+    con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
+    wk = pd.read_sql("""SELECT player_id, player_display_name, position, season, week, team,
+                        opponent_team, targets, carries, receptions, receiving_yards, rushing_yards,
+                        passing_yards, attempts, target_share, wopr, air_yards_share,
+                        receiving_air_yards, fantasy_points_ppr, passing_epa, rushing_epa, receiving_epa
+                        FROM nflv_weekly WHERE season BETWEEN 2022 AND 2025
+                        AND position IN ('QB','RB','WR','TE')""", con)
+    gl = pd.read_sql("SELECT season, week, team, opp, is_home, game_total, team_spread, implied_team_total "
+                     "FROM nflv_game_lines WHERE season BETWEEN 2023 AND 2026", con)
+    con.close()
 for yr in (SEASON,):   # in-season box scores from nflverse
     for url in (f"player_stats/player_stats_{yr}.parquet", f"player_stats/stats_player_week_{yr}.parquet"):
         try:
