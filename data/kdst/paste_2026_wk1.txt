@@ -1,0 +1,64 @@
+Jaguars vs. Browns 10.0
+Chargers vs. Cardinals 8.4
+Titans vs. Jets 8.2
+Raiders vs. Dolphins 7.8
+Eagles vs. Commanders 7.4
+Steelers vs. Falcons 7.3
+Jets @ Titans 7.2
+Chiefs vs. Broncos 6.4
+Bears @ Panthers 6.3
+Bills @ Texans 6.0
+Packers @ Vikings 6.0
+Dolphins @ Raiders 6.0
+Ravens @ Colts 5.9
+Rams @ 49ers 5.9
+Seahawks vs. Patriots 5.9
+Bengals vs. Buccaneers 5.7
+Cowboys @ Giants 5.7
+Lions vs. Saints 5.7
+Broncos @ Chiefs 5.6
+Falcons @ Steelers 5.3
+Texans vs. Bills 5.2
+Panthers vs. Bears 4.9
+Commanders @ Eagles 4.6
+Browns @ Jaguars 4.5
+Vikings vs. Packers 4.4
+Giants vs. Cowboys 4.0
+49ers @ Rams 3.9
+Patriots @ Seahawks 3.8
+Colts vs. Ravens 3.8
+Saints @ Lions 3.2
+Buccaneers @ Bengals 3.1
+Cardinals @ Chargers 2.9
+Cameron Dicker LAC vs. ARI 10.0
+Cam Little JAC vs. CLE 9.7
+Jake Bates DET vs. NO 9.5
+Chris Boswell PIT vs. ATL 9.3
+Evan McPherson CIN vs. TB 9.2
+Cairo Santos CHI @ CAR 9.1
+Matt Gay LV vs. MIA 8.9
+Spencer Shrader IND vs. BAL 8.9
+Tyler Loop BAL @ IND 8.8
+Tyler Bass BUF @ HOU 8.7
+Brandon Aubrey DAL @ NYG 8.7
+Ka'imi Fairbairn HOU vs. BUF 8.7
+Will Reichard MIN vs. GB 8.7
+Trey Smack GB @ MIN 8.7
+Chase McLaughlin TB @ CIN 8.6
+Daniel Carlson NO @ DET 8.4
+Jake Elliott PHI vs. WAS 8.4
+Jason Myers SEA vs. NE 8.4
+Riley Patterson MIA @ LV 8.4
+Andres Borregales NE @ SEA 8.3
+Ryan Fitzgerald CAR vs. CHI 8.3
+Blake Grupe NYJ @ TEN 8.3
+Dominic Zvada NYG vs. DAL 8.3
+Harrison Mevis LAR @ SF 8.2
+Joey Slye TEN vs. NYJ 8.1
+Eddy Pineiro SF @ LAR 8.1
+Wil Lutz DEN @ KC 8.0
+Harrison Butker KC vs. DEN 8.0
+Nick Folk ATL @ PIT 7.7
+Chad Ryland ARI @ LAC 7.4
+Drew Stevens WAS @ PHI 7.4
+Andre Szmyt CLE @ JAC 7.0

@@ -223,6 +223,23 @@ cur = frame_for(SEASON, cur_week, live=True)
 if cur is None: raise SystemExit(f"no FFA file for {SEASON} wk{cur_week} — drop raw_stats_{SEASON}_wk{cur_week}.csv in {FDIR}")
 sk, kk, dst = cur
 sk = sk[sk.team.isin(games.team)]; kk = kk[kk.team.isin(games.team)]; dst = dst[dst.team.isin(games.team)]
+# K / D-ST override (Subvertadown-style paste parsed by scripts/parse_kdst_paste.py):
+# trusted outright for the point projection; the FFA-scored value stays in Baseline_FFA
+ovr_p = os.path.join(ROOT, "data", "kdst", f"kdst_{SEASON}_wk{cur_week}.csv")
+if os.path.exists(ovr_p):
+    ovr = pd.read_csv(ovr_p)
+    for pos, tbl in (("K", kk), ("DST", dst)):
+        o = ovr[ovr.position == pos].set_index("team")
+        tbl["baseline_ffa"] = tbl.proj
+        hit = tbl.team.isin(o.index)
+        tbl.loc[hit, "proj"] = tbl.loc[hit, "team"].map(o.proj)
+        if pos == "K":   # the override names the kicker actually expected to kick
+            tbl.loc[hit, "player"] = tbl.loc[hit, "team"].map(o.player)
+        print(f"  {pos} override: {int(hit.sum())}/{len(tbl)} teams from {os.path.basename(ovr_p)}"
+              + ("" if hit.all() else f"; no override for {sorted(tbl.team[~hit])}"))
+    kk = kk.drop_duplicates("team"); dst = dst.drop_duplicates("team")
+else:
+    print(f"  no K/DST override ({os.path.relpath(ovr_p, ROOT)}) — using FFA-scored K and DST")
 print(f"{SEASON} wk{cur_week}: {len(sk)} skill rows on the slate, {len(kk)} K, {len(dst)} DST; "
       f"{sk.player_id.str.startswith('ffa_').sum()} without an NFL game log")
 
@@ -260,7 +277,8 @@ def rows(df, kind):
                         "p75": (o.mb_p75 if kind == "skill" else o.proj * 1.35).round(2),
                         "Ceiling_p90": (o.mb_p90 if kind == "skill" else o.proj * 1.7).round(2),
                         "StdDev": (o.sd if kind == "skill" else o.proj * 0.5).round(2),
-                        "Baseline_FFA": (o.baseline_proj if kind == "skill" else o.proj).round(2),
+                        "Baseline_FFA": (o.baseline_proj if kind == "skill"
+                                         else (o.baseline_ffa if "baseline_ffa" in o else o.proj)).round(2),
                         "Injury": o.injury_status.fillna("") if "injury_status" in o else "",
                         "_kick": o.kick})
     return out
