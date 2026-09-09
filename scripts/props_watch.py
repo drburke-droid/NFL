@@ -154,8 +154,10 @@ hist = hist[[c for c in hist.columns if c in histcols or c.endswith(("_l1", "_r3
 old_watch = pd.read_parquet(WATCHROWS) if os.path.exists(WATCHROWS) else pd.DataFrame()
 
 # weekly FFA (news-bearing consensus): data/ffanalytics/FFAn_weekly/projections_{S}_wk{W}.csv
-# Captured + displayed now; becomes a trained feature once the 2016+ weekly history
-# (home-PC pull) lands. Same schema as the season files, points are PER WEEK.
+# DISPLAY ONLY by decision: the 2023-25 weekly backfill (raw_stats_S_wkW.csv) was
+# retro-tested in scripts/ffa_weekly_props_study.py — FFA-vs-line adds no calibrated
+# edge on top of (z, line) (walk-forward logloss/Brier identical, pocket ROI slightly
+# worse). See outputs/reports/ffa_weekly_props_study.md before re-litigating.
 ffa_wk = None
 fdir = os.path.join(ROOT, "data", "ffanalytics", "FFAn_weekly")
 raw_p = os.path.join(fdir, f"raw_stats_2026_wk{cur_week_2026}.csv")
@@ -305,8 +307,8 @@ lsum = {"bets": int(len(led)), "graded": int(len(graded)),
         "wins": int((graded.result == "win").sum()),
         "units": round(float(graded.profit.sum()), 2)}
 
-# persist current-week rows for next run's grading/training (+ weekly FFA so the
-# news feature has history the day the 2016+ backfill lands)
+# persist current-week rows for next run's grading/training (+ weekly FFA columns
+# for the page; they are not model inputs — see ffa_weekly_props_study.md)
 if ffa_wk is not None:
     cur = cur.merge(ffa_wk, on="nname", how="left")
 keepcols = [c for c in cur.columns if c in hist.columns
