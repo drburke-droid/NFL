@@ -559,3 +559,195 @@ season,overall_pick,round,round_pick,team,owner,player,pos,bid,keeper
 2025,190,16,10,Spitting away the chase,funblood,Cedric Tillman,WR,1,False
 2025,191,16,11,State your name,espn19238790,Najee Harris,RB,1,False
 2025,192,16,12,State your name,espn19238790,Tyler Loop,K,1,False
+2026,1,1,1,I Dowdle win,espn98580191,Rico Dowdle,RB,6,True
+2026,2,1,2,I Dowdle win,espn98580191,Wan'Dale Robinson,WR,6,True
+2026,3,1,3,I Dowdle win,espn98580191,Michael Wilson,WR,6,True
+2026,4,1,4,Flex Luther,eyedocjj,Colston Loveland,TE,11,True
+2026,5,1,5,Flex Luther,eyedocjj,Chris Olave,WR,25,True
+2026,6,1,6,Flex Luther,eyedocjj,Luther Burden III,WR,11,True
+2026,7,1,7,This is the year!,funblood,Harold Fannin Jr.,TE,4,True
+2026,8,1,8,This is the year!,funblood,De'Von Achane,RB,14,True
+2026,9,1,9,This is the year!,funblood,Nico Collins,WR,36,True
+2026,10,1,10,3AM  No Limit,espn14211458,Jahmyr Gibbs,RB,45,True
+2026,11,1,11,3AM  No Limit,espn14211458,Cam Skattebo,RB,8,True
+2026,12,1,12,3AM  No Limit,espn14211458,Drake Maye,QB,6,True
+2026,13,2,1,Kid Dynamite,BobbyeddyB,Ja'Marr Chase,WR,61,True
+2026,14,2,2,Kid Dynamite,BobbyeddyB,Rashee Rice,WR,32,True
+2026,15,2,3,Kid Dynamite,BobbyeddyB,Joe Burrow,QB,6,True
+2026,16,2,4,CMC Music Factory,silverandblack.27,Puka Nacua,WR,16,True
+2026,17,2,5,CMC Music Factory,silverandblack.27,Matthew Stafford,QB,6,True
+2026,18,2,6,CMC Music Factory,silverandblack.27,Brock Bowers,TE,19,True
+2026,19,2,7,Gridiron of Grayskull,CBPainTrain,Tyler Warren,TE,13,True
+2026,20,2,8,Gridiron of Grayskull,CBPainTrain,Omarion Hampton,RB,45,True
+2026,21,2,9,Gridiron of Grayskull,CBPainTrain,Kyle Pitts Sr.,TE,4,True
+2026,22,2,10,Von Kaiser,espn19238790,Kyren Williams,RB,12,True
+2026,23,2,11,Von Kaiser,espn19238790,Jameson Williams,WR,9,True
+2026,24,2,12,Von Kaiser,espn19238790,Trey McBride,TE,9,True
+2026,25,3,1,Maple Maulers,Rohabhabibo,Malik Nabers,WR,34,True
+2026,26,3,2,Maple Maulers,Rohabhabibo,Breece Hall,RB,22,True
+2026,27,3,3,Maple Maulers,Rohabhabibo,DeVonta Smith,WR,20,True
+2026,28,3,4,Empty Nesters,RPT0777,George Pickens,WR,12,True
+2026,29,3,5,Empty Nesters,RPT0777,Emeka Egbuka,WR,25,True
+2026,30,3,6,Empty Nesters,RPT0777,Jonathan Taylor,RB,34,True
+2026,31,3,7,Ugh...Yeah...What...Football!,kdoggs80,Chase Brown,RB,6,True
+2026,32,3,8,Ugh...Yeah...What...Football!,kdoggs80,Jaxon Smith-Njigba,WR,13,True
+2026,33,3,9,Ugh...Yeah...What...Football!,kdoggs80,Kenneth Walker III,RB,32,True
+2026,34,3,10,Paul's Perfect Team,ESPNFAN25233150,Davante Adams,WR,36,True
+2026,35,3,11,Paul's Perfect Team,ESPNFAN25233150,James Cook III,RB,26,True
+2026,36,3,12,Paul's Perfect Team,ESPNFAN25233150,Amon-Ra St. Brown,WR,53,True
+2026,37,4,1,Von Kaiser,espn19238790,Justin Jefferson,WR,52,False
+2026,38,4,2,Flex Luther,eyedocjj,Bijan Robinson,RB,69,False
+2026,39,4,3,Paul's Perfect Team,ESPNFAN25233150,Travis Etienne Jr.,RB,29,False
+2026,40,4,4,Ugh...Yeah...What...Football!,kdoggs80,CeeDee Lamb,WR,50,False
+2026,41,4,5,Gridiron of Grayskull,CBPainTrain,Texans D/ST,DST,1,False
+2026,42,4,6,Maple Maulers,Rohabhabibo,Rams D/ST,DST,3,False
+2026,43,4,7,Ugh...Yeah...What...Football!,kdoggs80,Josh Allen,QB,26,False
+2026,44,4,8,Gridiron of Grayskull,CBPainTrain,Caleb Williams,QB,13,False
+2026,45,4,9,I Dowdle win,espn98580191,Garrett Wilson,WR,31,False
+2026,46,4,10,Kid Dynamite,BobbyeddyB,Cameron Dicker,K,1,False
+2026,47,4,11,Gridiron of Grayskull,CBPainTrain,Jadarian Price,RB,16,False
+2026,48,4,12,Empty Nesters,RPT0777,Broncos D/ST,DST,2,False
+2026,49,5,1,CMC Music Factory,silverandblack.27,Christian McCaffrey,RB,56,False
+2026,50,5,2,I Dowdle win,espn98580191,Brandon Aubrey,K,2,False
+2026,51,5,3,Paul's Perfect Team,ESPNFAN25233150,Mike Washington Jr.,RB,7,False
+2026,52,5,4,Von Kaiser,espn19238790,Jalen Hurts,QB,13,False
+2026,53,5,5,Maple Maulers,Rohabhabibo,Lamar Jackson,QB,16,False
+2026,54,5,6,Maple Maulers,Rohabhabibo,Jason Myers,K,3,False
+2026,55,5,7,CMC Music Factory,silverandblack.27,Chargers D/ST,DST,1,False
+2026,56,5,8,Von Kaiser,espn19238790,Ashton Jeanty,RB,47,False
+2026,57,5,9,Ugh...Yeah...What...Football!,kdoggs80,Seahawks D/ST,DST,2,False
+2026,58,5,10,Kid Dynamite,BobbyeddyB,Titans D/ST,DST,1,False
+2026,59,5,11,I Dowdle win,espn98580191,D'Andre Swift,RB,21,False
+2026,60,5,12,I Dowdle win,espn98580191,Steelers D/ST,DST,1,False
+2026,61,6,1,Flex Luther,eyedocjj,Drake London,WR,43,False
+2026,62,6,2,3AM  No Limit,espn14211458,Jeremiyah Love,RB,38,False
+2026,63,6,3,Paul's Perfect Team,ESPNFAN25233150,Patriots D/ST,DST,1,False
+2026,64,6,4,This is the year!,funblood,Derrick Henry,RB,55,False
+2026,65,6,5,Flex Luther,eyedocjj,Justin Herbert,QB,5,False
+2026,66,6,6,Maple Maulers,Rohabhabibo,Tucker Kraft,TE,11,False
+2026,67,6,7,Gridiron of Grayskull,CBPainTrain,Rome Odunze,WR,13,False
+2026,68,6,8,Empty Nesters,RPT0777,Ka'imi Fairbairn,K,1,False
+2026,69,6,9,This is the year!,funblood,Ravens D/ST,DST,1,False
+2026,70,6,10,Empty Nesters,RPT0777,Saquon Barkley,RB,51,False
+2026,71,6,11,Flex Luther,eyedocjj,David Montgomery,RB,15,False
+2026,72,6,12,I Dowdle win,espn98580191,Quinshon Judkins,RB,21,False
+2026,73,7,1,Gridiron of Grayskull,CBPainTrain,A.J. Brown,WR,44,False
+2026,74,7,2,3AM  No Limit,espn14211458,Harrison Mevis,K,2,False
+2026,75,7,3,Paul's Perfect Team,ESPNFAN25233150,Eddy Pineiro,K,1,False
+2026,76,7,4,Ugh...Yeah...What...Football!,kdoggs80,Patrick Mahomes,QB,4,False
+2026,77,7,5,Ugh...Yeah...What...Football!,kdoggs80,Harrison Butker,K,2,False
+2026,78,7,6,Maple Maulers,Rohabhabibo,Rhamondre Stevenson,RB,19,False
+2026,79,7,7,This is the year!,funblood,Jayden Daniels,QB,14,False
+2026,80,7,8,CMC Music Factory,silverandblack.27,Zay Flowers,WR,31,False
+2026,81,7,9,This is the year!,funblood,Cairo Santos,K,1,False
+2026,82,7,10,Von Kaiser,espn19238790,Josh Jacobs,RB,17,False
+2026,83,7,11,3AM  No Limit,espn14211458,Tetairoa McMillan,WR,31,False
+2026,84,7,12,I Dowdle win,espn98580191,Javonte Williams,RB,49,False
+2026,85,8,1,Von Kaiser,espn19238790,Marvin Harrison Jr.,WR,7,False
+2026,86,8,2,CMC Music Factory,silverandblack.27,Dak Prescott,QB,5,False
+2026,87,8,3,Von Kaiser,espn19238790,DJ Moore,WR,23,False
+2026,88,8,4,Empty Nesters,RPT0777,Trevor Lawrence,QB,4,False
+2026,89,8,5,3AM  No Limit,espn14211458,Tyler Shough,QB,2,False
+2026,90,8,6,Maple Maulers,Rohabhabibo,Malik Washington,WR,1,False
+2026,91,8,7,3AM  No Limit,espn14211458,Carnell Tate,WR,10,False
+2026,92,8,8,Kid Dynamite,BobbyeddyB,TreVeyon Henderson,RB,8,False
+2026,93,8,9,Maple Maulers,Rohabhabibo,Ladd McConkey,WR,39,False
+2026,94,8,10,Kid Dynamite,BobbyeddyB,George Kittle,TE,18,False
+2026,95,8,11,CMC Music Factory,silverandblack.27,MarShawn Lloyd,RB,9,False
+2026,96,8,12,Ugh...Yeah...What...Football!,kdoggs80,Sam LaPorta,TE,16,False
+2026,97,9,1,Von Kaiser,espn19238790,Eagles D/ST,DST,1,False
+2026,98,9,2,Ugh...Yeah...What...Football!,kdoggs80,Tony Pollard,RB,7,False
+2026,99,9,3,Paul's Perfect Team,ESPNFAN25233150,Brock Purdy,QB,1,False
+2026,100,9,4,Flex Luther,eyedocjj,Jets D/ST,DST,1,False
+2026,101,9,5,Gridiron of Grayskull,CBPainTrain,Malik Willis,QB,1,False
+2026,102,9,6,Maple Maulers,Rohabhabibo,Jonathon Brooks,RB,24,False
+2026,103,9,7,Empty Nesters,RPT0777,Bhayshul Tuten,RB,24,False
+2026,104,9,8,This is the year!,funblood,Jaylen Waddle,WR,31,False
+2026,105,9,9,CMC Music Factory,silverandblack.27,Mike Evans,WR,10,False
+2026,106,9,10,Kid Dynamite,BobbyeddyB,Alec Pierce,WR,7,False
+2026,107,9,11,3AM  No Limit,espn14211458,Tee Higgins,WR,27,False
+2026,108,9,12,Empty Nesters,RPT0777,Dallas Goedert,TE,6,False
+2026,109,10,1,I Dowdle win,espn98580191,Jared Goff,QB,2,False
+2026,110,10,2,Empty Nesters,RPT0777,Isaiah Likely,TE,5,False
+2026,111,10,3,Paul's Perfect Team,ESPNFAN25233150,Terrance Ferguson,TE,1,False
+2026,112,10,4,Flex Luther,eyedocjj,Cam Little,K,1,False
+2026,113,10,5,Gridiron of Grayskull,CBPainTrain,Evan McPherson,K,1,False
+2026,114,10,6,Empty Nesters,RPT0777,Ja'Kobi Lane,WR,2,False
+2026,115,10,7,CMC Music Factory,silverandblack.27,Jake Bates,K,1,False
+2026,116,10,8,Kid Dynamite,BobbyeddyB,Bucky Irving,RB,34,False
+2026,117,10,9,I Dowdle win,espn98580191,Terry McLaurin,WR,20,False
+2026,118,10,10,Kid Dynamite,BobbyeddyB,Dylan Sampson,RB,1,False
+2026,119,10,11,This is the year!,funblood,Parker Washington,WR,24,False
+2026,120,10,12,I Dowdle win,espn98580191,Dalton Kincaid,TE,9,False
+2026,121,11,1,This is the year!,funblood,Jordan Mason,RB,4,False
+2026,122,11,2,Empty Nesters,RPT0777,Christian Watson,WR,27,False
+2026,123,11,3,Paul's Perfect Team,ESPNFAN25233150,Jordan Addison,WR,5,False
+2026,124,11,4,Flex Luther,eyedocjj,Jayden Reed,WR,1,False
+2026,125,11,5,Gridiron of Grayskull,CBPainTrain,Kyle Monangai,RB,12,False
+2026,126,11,6,Ugh...Yeah...What...Football!,kdoggs80,Courtland Sutton,WR,13,False
+2026,127,11,7,Ugh...Yeah...What...Football!,kdoggs80,Michael Pittman Jr.,WR,13,False
+2026,128,11,8,Kid Dynamite,BobbyeddyB,Kyler Murray,QB,2,False
+2026,129,11,9,This is the year!,funblood,Jordan Love,QB,1,False
+2026,130,11,10,Kid Dynamite,BobbyeddyB,Omar Cooper Jr.,WR,1,False
+2026,131,11,11,CMC Music Factory,silverandblack.27,DK Metcalf,WR,19,False
+2026,132,11,12,I Dowdle win,espn98580191,T.J. Hockenson,TE,1,False
+2026,133,12,1,Von Kaiser,espn19238790,Isiah Pacheco,RB,1,False
+2026,134,12,2,Paul's Perfect Team,ESPNFAN25233150,Travis Kelce,TE,7,False
+2026,135,12,3,Paul's Perfect Team,ESPNFAN25233150,Makai Lemon,WR,5,False
+2026,136,12,4,CMC Music Factory,silverandblack.27,Jaylen Warren,RB,17,False
+2026,137,12,5,Gridiron of Grayskull,CBPainTrain,Blake Corum,RB,18,False
+2026,138,12,6,Kid Dynamite,BobbyeddyB,Matthew Golden,WR,10,False
+2026,139,12,7,Flex Luther,eyedocjj,Khalil Shakir,WR,2,False
+2026,140,12,8,Empty Nesters,RPT0777,Baker Mayfield,QB,1,False
+2026,141,12,9,Paul's Perfect Team,ESPNFAN25233150,Stefon Diggs,WR,8,False
+2026,142,12,10,Kid Dynamite,BobbyeddyB,Tank Bigsby,RB,3,False
+2026,143,12,11,I Dowdle win,espn98580191,Jaxson Dart,QB,8,False
+2026,144,12,12,I Dowdle win,espn98580191,Chris Godwin Jr.,WR,7,False
+2026,145,13,1,Von Kaiser,espn19238790,Matt Gay,K,1,False
+2026,146,13,2,3AM  No Limit,espn14211458,Kenny Gainwell,RB,6,False
+2026,147,13,3,Paul's Perfect Team,ESPNFAN25233150,J.K. Dobbins,RB,7,False
+2026,148,13,4,3AM  No Limit,espn14211458,Jakobi Meyers,WR,5,False
+2026,149,13,5,Gridiron of Grayskull,CBPainTrain,RJ Harvey,RB,3,False
+2026,150,13,6,Ugh...Yeah...What...Football!,kdoggs80,Bo Nix,QB,2,False
+2026,151,13,7,CMC Music Factory,silverandblack.27,Chuba Hubbard,RB,5,False
+2026,152,13,8,This is the year!,funblood,Jonah Coleman,RB,2,False
+2026,153,13,9,Ugh...Yeah...What...Football!,kdoggs80,Juwan Johnson,TE,2,False
+2026,154,13,10,Kid Dynamite,BobbyeddyB,Brian Thomas Jr.,WR,10,False
+2026,155,13,11,Gridiron of Grayskull,CBPainTrain,Josh Downs,WR,9,False
+2026,156,13,12,I Dowdle win,espn98580191,Tyler Allgeier,RB,1,False
+2026,157,14,1,3AM  No Limit,espn14211458,Aaron Jones Sr.,RB,6,False
+2026,158,14,2,Ugh...Yeah...What...Football!,kdoggs80,Rachaad White,RB,7,False
+2026,159,14,3,Paul's Perfect Team,ESPNFAN25233150,Jacory Croskey-Merritt,RB,9,False
+2026,160,14,4,Flex Luther,eyedocjj,Daniel Jones,QB,1,False
+2026,161,14,5,This is the year!,funblood,De'Zhaun Stribling,WR,6,False
+2026,162,14,6,Maple Maulers,Rohabhabibo,AJ Barner,TE,1,False
+2026,163,14,7,3AM  No Limit,espn14211458,Quentin Johnston,WR,4,False
+2026,164,14,8,Ugh...Yeah...What...Football!,kdoggs80,Emmett Johnson,RB,2,False
+2026,165,14,9,3AM  No Limit,espn14211458,Jake Ferguson,TE,6,False
+2026,166,14,10,Kid Dynamite,BobbyeddyB,Adonai Mitchell,WR,1,False
+2026,167,14,11,3AM  No Limit,espn14211458,Mark Andrews,TE,3,False
+2026,168,14,12,Von Kaiser,espn19238790,Travis Hunter,WR,1,False
+2026,169,15,1,Paul's Perfect Team,ESPNFAN25233150,C.J. Stroud,QB,1,False
+2026,170,15,2,Flex Luther,eyedocjj,Tyjae Spears,RB,1,False
+2026,171,15,3,Flex Luther,eyedocjj,Xavier Worthy,WR,6,False
+2026,172,15,4,Maple Maulers,Rohabhabibo,Jerry Jeudy,WR,1,False
+2026,173,15,5,Gridiron of Grayskull,CBPainTrain,Romeo Doubs,WR,4,False
+2026,174,15,6,This is the year!,funblood,Kaelon Black,RB,5,False
+2026,175,15,7,This is the year!,funblood,Kenyon Sadiq,TE,1,False
+2026,176,15,8,3AM  No Limit,espn14211458,Lions D/ST,DST,1,False
+2026,177,15,9,Empty Nesters,RPT0777,Jalen Coker,WR,2,False
+2026,178,15,10,Flex Luther,eyedocjj,Keaton Mitchell,RB,4,False
+2026,179,15,11,Gridiron of Grayskull,CBPainTrain,Jordyn Tyson,WR,1,False
+2026,180,15,12,Maple Maulers,Rohabhabibo,Tre' Harris,WR,1,False
+2026,181,16,1,CMC Music Factory,silverandblack.27,Rashid Shaheed,WR,1,False
+2026,182,16,2,Empty Nesters,RPT0777,KC Concepcion,WR,3,False
+2026,183,16,3,This is the year!,funblood,Caleb Douglas,WR,1,False
+2026,184,16,4,Von Kaiser,espn19238790,Woody Marks,RB,1,False
+2026,185,16,5,Flex Luther,eyedocjj,Hunter Henry,TE,1,False
+2026,186,16,6,Maple Maulers,Rohabhabibo,Jaylen Wright,RB,1,False
+2026,187,16,7,CMC Music Factory,silverandblack.27,Tre Tucker,WR,1,False
+2026,188,16,8,Empty Nesters,RPT0777,Braelon Allen,RB,1,False
+2026,189,16,9,CMC Music Factory,silverandblack.27,Deebo Samuel Sr.,WR,2,False
+2026,190,16,10,Maple Maulers,Rohabhabibo,Justice Hill,RB,1,False
+2026,191,16,11,Von Kaiser,espn19238790,Jalen McMillan,WR,1,False
+2026,192,16,12,Von Kaiser,espn19238790,Tank Dell,WR,1,False
