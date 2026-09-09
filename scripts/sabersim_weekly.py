@@ -28,6 +28,8 @@ ap.add_argument("--week", type=int, default=None)
 ap.add_argument("--all-games", action="store_true", help="include games already kicked off")
 ap.add_argument("--hours", type=float, default=None, help="only games kicking off within H hours")
 ap.add_argument("--out", default=None)
+ap.add_argument("--kdst-weight", type=float, default=0.65,
+                help="weight on the pasted K/DST projection; remainder on the FFA-scored value")
 A = ap.parse_args()
 if not A.pkg or not os.path.isdir(A.pkg):
     raise SystemExit("pass the model_burke package dir (folder containing model_burke/)")
@@ -224,7 +226,7 @@ if cur is None: raise SystemExit(f"no FFA file for {SEASON} wk{cur_week} — dro
 sk, kk, dst = cur
 sk = sk[sk.team.isin(games.team)]; kk = kk[kk.team.isin(games.team)]; dst = dst[dst.team.isin(games.team)]
 # K / D-ST override (Subvertadown-style paste parsed by scripts/parse_kdst_paste.py):
-# trusted outright for the point projection; the FFA-scored value stays in Baseline_FFA
+# blended with the FFA-scored value (--kdst-weight on the paste); FFA value kept in Baseline_FFA
 ovr_p = os.path.join(ROOT, "data", "kdst", f"kdst_{SEASON}_wk{cur_week}.csv")
 if os.path.exists(ovr_p):
     ovr = pd.read_csv(ovr_p)
@@ -232,10 +234,11 @@ if os.path.exists(ovr_p):
         o = ovr[ovr.position == pos].set_index("team")
         tbl["baseline_ffa"] = tbl.proj
         hit = tbl.team.isin(o.index)
-        tbl.loc[hit, "proj"] = tbl.loc[hit, "team"].map(o.proj)
+        w = A.kdst_weight
+        tbl.loc[hit, "proj"] = w * tbl.loc[hit, "team"].map(o.proj) + (1 - w) * tbl.loc[hit, "proj"]
         if pos == "K":   # the override names the kicker actually expected to kick
             tbl.loc[hit, "player"] = tbl.loc[hit, "team"].map(o.player)
-        print(f"  {pos} override: {int(hit.sum())}/{len(tbl)} teams from {os.path.basename(ovr_p)}"
+        print(f"  {pos} override: {int(hit.sum())}/{len(tbl)} teams from {os.path.basename(ovr_p)} (weight {w:.2f})"
               + ("" if hit.all() else f"; no override for {sorted(tbl.team[~hit])}"))
     kk = kk.drop_duplicates("team"); dst = dst.drop_duplicates("team")
 else:
