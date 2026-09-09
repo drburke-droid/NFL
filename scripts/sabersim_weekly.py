@@ -413,9 +413,10 @@ for yr in sorted(ev_out.season.unique()):
     print(f"  {yr}: n={len(h):,}  MAE Model_Burke {mae('Model_Burke'):.3f} | baseline(FFA) {mae('baseline_proj'):.3f}"
           f" | control_k0 {mae('control_k0'):.3f}  · beats FFA in {wk_win:.0%} of weeks · 80% coverage {cov:.3f}")
 p = ev_out[(ev_out.season == SEASON) & (ev_out.week == cur_week)].copy()
-extra = [c for c in ("injury_status", "injury_details", "team", "opp", "ffa_ppr", "market_ppr", "no_line") if c in sk.columns]
+STATS = ["pass_yds", "pass_tds", "pass_int", "rush_yds", "rush_tds", "rec", "rec_yds", "rec_tds", "fumbles_lost"]
+extra = [c for c in ("injury_status", "injury_details", "team", "opp", "ffa_ppr", "market_ppr", "no_line") + tuple(STATS) if c in sk.columns]
 p = p.merge(sk[["player_id"] + extra], on="player_id", how="left", suffixes=("", "_sk"))
-p["note0"] = np.where(p.no_line.fillna(False), "no DK props posted", "") if "no_line" in p.columns else ""
+p["note0"] = ""
 for c in ("team", "opp"):
     if c + "_sk" in p.columns: p[c] = p[c].fillna(p[c + "_sk"])
 p["proj"] = p.Model_Burke_mean
@@ -497,9 +498,9 @@ if not A.no_lineups:
                 gain[i] = g
             old = float(p.loc[i, "proj"]); new = old + g
             p.loc[i, "proj"] = new
-            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} ({r.player} OUT)"
+            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} with {r.player} out"
         p.loc[r.Index, "proj"] = 0.0
-        p.loc[r.Index, "note"] = f"OUT ({r.src}); was {V:.1f}"
+        p.loc[r.Index, "note"] = "OUT"
         print(f"    OUT {r.player:<22} {r.position} {r.team}  {V:5.1f} -> "
               + ", ".join(f"{p.loc[i,'player']} +{g:.1f}" for i, g in gain.items()))
     # ---- probable non-players: Questionable (any source) + DK posted no props for them
@@ -531,10 +532,10 @@ if not A.no_lineups:
             if "market_ppr" in p.columns and pd.notna(p.loc[i, "market_ppr"]) and not A.no_market:
                 g *= (1 - A.market_weight); gain[i] = g
             p.loc[i, "proj"] = float(p.loc[i, "proj"]) + g
-            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} ({r.player} doubtful)"
+            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} if {r.player} sits"
         p.loc[r.Index, ["status", "p_play", "play_mean"]] = ["DOUBT", pp, V]
         p.loc[r.Index, "proj"] = pp * V
-        p.loc[r.Index, "note"] = f"Q + no DK props: P(plays)={pp:.0%}, {V:.1f} if active"
+        p.loc[r.Index, "note"] = f"Questionable, likely inactive ({V:.1f} if active)"
         print(f"    DOUBT {r.player:<20} {r.position} {r.team}  {V:5.1f} x{pp} -> {pp*V:4.1f}; "
               + ", ".join(f"{p.loc[i,'player']} +{g:.1f}" for i, g in gain.items()))
     p.loc[forced, "note"] = np.where(p.loc[forced, "note"] == "", "confirmed active (manual)", p.loc[forced, "note"])
@@ -594,15 +595,33 @@ def rows(df, kind):
                         "p75": (o.mb_p75 if kind == "skill" else o.proj * 1.35).round(2),
                         "Ceiling_p90": (o.mb_p90 if kind == "skill" else o.proj * 1.7).round(2),
                         "StdDev": (o.sd if kind == "skill" else o.proj * 0.5).round(2),
-                        "Baseline_FFA": ((o.ffa_ppr if "ffa_ppr" in o else o.baseline_proj) if kind == "skill"
-                                         else (o.baseline_ffa if "baseline_ffa" in o else o.proj)).round(2),
-                        "Market_PPR": (o.market_ppr.round(2) if (kind == "skill" and "market_ppr" in o) else np.nan),
                         "Injury": o.injury_status.fillna("") if "injury_status" in o else "",
                         "Status": o.status if "status" in o else "",
                         "Note": o.note if "note" in o else "",
                         "_kick": o.kick})
+    # stat line, scaled so its PPR reconciles to Proj (the model's correction, lineup and
+    # doubt adjustments all applied pro rata across the player's stats)
+    if kind == "skill":
+        base = o.baseline_proj.replace(0, np.nan)
+        ratio = (o.proj / base).clip(0, 3).fillna(0)
+        for c in STATS:
+            out[c] = (o[c].fillna(0) * ratio).round(2) if c in o else 0.0
+    elif kind == "k":
+        r_ = (o.proj / o.baseline_ffa.replace(0, np.nan)).fillna(1) if "baseline_ffa" in o else 1.0
+        out["fg_made"] = ((o.fg_0019.fillna(0) + o.fg_2029.fillna(0) + o.fg_3039.fillna(0) + o.fg_4049.fillna(0) + o.fg_50.fillna(0)) * r_).round(2)
+        out["fg_40plus"] = ((o.fg_4049.fillna(0) + o.fg_50.fillna(0)) * r_).round(2)
+        out["xp_made"] = (o.xp.fillna(0) * r_).round(2)
+    elif kind == "dst":
+        r_ = (o.proj / o.baseline_ffa.replace(0, np.nan)).fillna(1) if "baseline_ffa" in o else 1.0
+        out["sacks"] = (o.dst_sacks.fillna(0) * r_).round(2); out["ints"] = (o.dst_int.fillna(0) * r_).round(2)
+        out["def_td"] = (o.dst_td.fillna(0) * r_).round(2); out["pts_allowed_exp"] = o.opp_implied.round(1) if "opp_implied" in o else np.nan
     return out
 out = pd.concat([rows(p, "skill"), rows(kk, "k"), rows(dst, "dst")], ignore_index=True)
+STATCOLS = ["pass_yds", "pass_tds", "pass_int", "rush_yds", "rush_tds", "rec", "rec_yds", "rec_tds", "fumbles_lost",
+            "fg_made", "fg_40plus", "xp_made", "sacks", "ints", "def_td", "pts_allowed_exp"]
+for c in STATCOLS:
+    if c not in out.columns: out[c] = np.nan
+out = out[[c for c in out.columns if c not in STATCOLS + ["Generated"]] + STATCOLS + (["Generated"] if "Generated" in out.columns else [])]
 for c in ("Median", "Floor_p10", "p25", "p75", "Ceiling_p90", "StdDev"):
     out.loc[out.Status == "OUT", c] = 0.0
 out = out[out.Proj.notna() & ((out.Proj > 0.3) | (out.Status == "OUT"))].sort_values(["_kick", "Proj"], ascending=[True, False]).drop(columns="_kick")
