@@ -1848,7 +1848,20 @@ function optPool(){
 // study's realized-scoring numbers.
 const WIRE_RANK={QB:9,RB:28,WR:28,TE:5};   // at/past this rank the wire regenerates the tier in-season
 const STAR_RANK={QB:2,RB:8,WR:8,TE:2};     // the tier that never reaches waivers (1 sustained top-12 RB in 3 yrs)
-const WIRE_PPG={QB:22.5,RB:12.5,WR:13.5,TE:11.0};   // realized ppg-after-flash of the league's actual gems
+// ⚠ WAS HARDCODED FROM RAW REALIZED PPG ({QB:22.5,RB:12.5,WR:13.5,TE:11.0}) AND COMPARED
+// AGAINST THIS BOARD'S RISK-ADJUSTED proj_ppg — the same scale mismatch the note above warns
+// about for WIRE_RANK. The QB figure (22.5) sat ABOVE the board's own QB1 (Josh Allen, 20.9),
+// so every quarterback graded wire-replaceable: wireClass capped My Max near $1 and the Oracle
+// answered PASS on Herbert, Lawrence, Nix and Mayfield — four 228+ point QBs that sold for
+// $1-$5 in the 2026 auction. TE was the same (11.0 against TE5 at 10.8). Derive it from the
+// board at each position's own WIRE_RANK so the two constants agree by construction and both
+// move when the projections do. 2026 board: QB 17.0, RB 10.4, WR 11.4, TE 10.8.
+const WIRE_PPG=(()=>{const w={};
+  for(const pos in WIRE_RANK){
+    const a=PLAYERS.filter(p=>p.position===pos).sort((x,y)=>(y.proj_ppg||0)-(x.proj_ppg||0));
+    const r=a[Math.min(WIRE_RANK[pos],a.length)-1];
+    w[pos]=r?+(r.proj_ppg||0).toFixed(1):0;}
+  return w;})();
 const WIRE_GEMS={QB:"5.7",RB:"6.0",WR:"5.0",TE:"7.3"};
 function wireClass(p,exp){
   const pos=p.position;if(pos==="K"||pos==="DST")return null;
@@ -2006,23 +2019,34 @@ function oracleKey(){const s=teamState(DR.me);
 // cracks the starting lineup, so buying one moved starter points by exactly zero and the
 // Oracle priced EVERY dart as "PASS, he doesn't improve your team at any price". A dart's
 // whole return is the world where he breaks into the lineup, which is what benchU prices.
+const availOf=p=>Math.max(0.25,Math.min(1,(p.proj_games||NORMG[p.position]||15)/17));
+// A backup is not worth zero. He starts in the weeks the man ahead of him is out, and the
+// objective never counted that: a QB2 behind an 11-game starter scored benchU alone, which is
+// half of why the tool waved off every cheap elite QB while the roster held an injury-prone
+// keeper. Value = his edge over a wire pickup, in the weeks he is needed and available.
+function backupPts(p,ahead){
+  if(isK(p)||!ahead||!ahead.length)return 0;
+  let up=1;for(const a of ahead)up*=availOf(a);
+  return Math.max(0,(p.proj_ppg||0)-(WIRE_PPG[p.position]||0))*(1-up)*availOf(p)*17;
+}
 function planObjective(mkt){
   const pl=optimalPlan(mkt), own=teamState(DR.me).own.map(x=>x.p);
   const all=[...own,...pl.picks.map(pk=>pk.p)].filter(Boolean);
-  const slots={QB:1,RB:2,WR:2,TE:1,FLEX:1};let s=0;const rest=[];
+  const slots={QB:1,RB:2,WR:2,TE:1,FLEX:1};let s=0;
+  const rest=[],seat={QB:[],RB:[],WR:[],TE:[]};
   [...all].sort((a,b)=>raPts(b)-raPts(a)).forEach(p=>{const q=p.position;
-    if(slots[q]>0){slots[q]--;s+=raPts(p);}
-    else if(FLEXE.includes(q)&&slots.FLEX>0){slots.FLEX--;s+=raPts(p);}
+    if(slots[q]>0){slots[q]--;s+=raPts(p);(seat[q]||[]).push(p);}
+    else if(FLEXE.includes(q)&&slots.FLEX>0){slots.FLEX--;s+=raPts(p);(seat[q]||[]).push(p);}
     else rest.push(p);});
   rest.sort((a,b)=>benchU(b)-benchU(a)).slice(0,Math.max(0,cfg.roster-9))
-      .forEach(p=>{if(!isK(p))s+=benchU(p);});      // K/DST are streamed, not bench assets
+      .forEach(p=>{if(!isK(p))s+=benchU(p)+backupPts(p,seat[p.position]);});  // K/DST are streamed
   return s;}
 function oracleBid(player,mkt){
   if(!player||DR.owned[pid(player)])return null;
   const key=oracleKey();
   if(_oracleCache.k!==key)_oracleCache={k:key,v:{}};
   const id=pid(player);
-  if(_oracleCache.v[id]!=null)return _oracleCache.v[id];
+  if(id in _oracleCache.v)return _oracleCache.v[id];
   const meS=teamState(DR.me), maxF=Math.max(1,meS.budget-(meS.spotsLeft-1));
   if(meS.spotsLeft<=0)return _oracleCache.v[id]=0;
   // the probe temporarily hands him to a team; try/finally so a throw can never leave the
@@ -2052,7 +2076,20 @@ function oracleBid(player,mkt){
     if(v>ladder[ladder.length-1])ladder.push(v);}
   let gi=-1;
   for(let i=ladder.length-1;i>=0;i--){if(better(ladder[i])){gi=i;break;}}
-  if(gi<0)return _oracleCache.v[id]=0;                       // no price at all beats passing
+  if(gi<0){
+    // NO PRICE BEATS PASSING — but check that against the objective's own noise floor before
+    // saying so. Every probe re-solves optimalPlan, and the plan re-arranges wholesale between
+    // probes: owning Jacobs at $1 flipped it from "Judkins $17 + Henry $45" to "Irving $18 +
+    // London $50" and moved the objective 1.6 points out of 1943 — 0.08%, against a decision
+    // threshold of 0.001. At that scale PASS is re-solve churn, not a verdict on the player, and
+    // it is how a 197-point RB at $1 came back PASS. Only report PASS when passing wins by more
+    // than the churn; otherwise say "no signal" and let the caller fall back to the λ estimate.
+    const floor=Math.max(0.75,Math.abs(base)*0.004);
+    let bestGap=-1e9;
+    for(const q of ladder){const g=at(q)-base;if(g>bestGap)bestGap=g;}
+    if(bestGap>-floor)return _oracleCache.v[id]=null;         // inside the noise band
+    return _oracleCache.v[id]=0;                              // genuinely worth nothing
+  }
   if(gi===ladder.length-1)return _oracleCache.v[id]=maxF;    // worth everything you have
   let lo=ladder[gi],hi=ladder[gi+1];
   for(let it=0;it<8&&hi-lo>1;it++){const m=Math.round((lo+hi)/2);
@@ -3482,9 +3519,11 @@ function mdcBid(p,mkt,guide){
     // buys, which is also where the dart price-band study put the validated bin.
     return {v:Math.max(planned?1:0,Math.min(guide(p),BENCH_CAP+2)),exact:false,bench:true};}
   const fl=v=>Math.max(planned?1:0,v);
-  if(_oracleCache.k===oracleKey()&&_oracleCache.v[id]!=null)return{v:fl(_oracleCache.v[id]),exact:true};
+  if(_oracleCache.k===oracleKey()&&(id in _oracleCache.v)){const c=_oracleCache.v[id];
+    return c==null?{v:fl(guide(p)),exact:false}:{v:fl(c),exact:true};}
   if(_oracleBudget>0){const t0=performance.now();const v=oracleBid(p,mkt);
-    _oracleBudget-=performance.now()-t0;return{v:fl(v),exact:true};}
+    _oracleBudget-=performance.now()-t0;
+    return v==null?{v:fl(guide(p)),exact:false}:{v:fl(v),exact:true};}
   return {v:fl(guide(p)),exact:false};
 }
 // how hard a dart is he — one glance, no hovering
