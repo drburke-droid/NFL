@@ -21,7 +21,7 @@ Week 1 note: no 2026 lags exist yet, so the correction leans on the 2023-25 bias
 layers and will flag conservatively. Rookies with no NFL game log are skipped
 until they appear in nflverse weekly data.
 """
-import json, os, re, sys, sqlite3, time, urllib.request, warnings
+import json, os, re, sys, sqlite3, time, urllib.error, urllib.request, warnings
 import numpy as np, pandas as pd
 warnings.filterwarnings("ignore")
 from sklearn.linear_model import LogisticRegression
@@ -34,7 +34,10 @@ sys.path.insert(0, PKG)
 from model_burke import pipeline
 from model_burke.features import build_lagged_features
 
-KEY = open(os.path.join(ROOT, "data", "odds_api_key.txt")).read().strip()
+# one key per line (gitignored); rotate to the next when one is out of credits
+KEYS = [k.strip() for k in open(os.path.join(ROOT, "data", "odds_api_key.txt"))
+        if k.strip() and not k.startswith("#")]
+_ki = [0]
 FRAMES = os.path.join(ROOT, "data", "props_frames")
 LEDGER = os.path.join(FRAMES, "ledger_2026.csv")
 WATCHROWS = os.path.join(FRAMES, "watch_2026_rows.parquet")
@@ -43,9 +46,24 @@ EDGE_FLAG = 0.05
 ALT_EV_FLAG = 0.08
 
 def get(url):
-    with urllib.request.urlopen(url, timeout=30) as r:
-        rem = r.headers.get("x-requests-remaining")
-        return json.loads(r.read().decode()), rem
+    """GET with the current key; on quota/auth failure (401/402/403/429) or a
+    key reporting 0 credits remaining, rotate to the next key and retry."""
+    while True:
+        key = KEYS[_ki[0]]
+        sep = "&" if "?" in url else "?"
+        try:
+            with urllib.request.urlopen(f"{url}{sep}apiKey={key}", timeout=30) as r:
+                rem = r.headers.get("x-requests-remaining")
+                body = json.loads(r.read().decode())
+        except urllib.error.HTTPError as e:
+            if e.code in (401, 402, 403, 429) and _ki[0] + 1 < len(KEYS):
+                print(f"  key #{_ki[0] + 1} rejected ({e.code}) — rotating to key #{_ki[0] + 2}")
+                _ki[0] += 1; continue
+            raise
+        if rem is not None and float(rem) <= 0 and _ki[0] + 1 < len(KEYS):
+            print(f"  key #{_ki[0] + 1} burned (0 credits left) — next call uses key #{_ki[0] + 2}")
+            _ki[0] += 1
+        return body, f"{rem} (key #{_ki[0] + 1} of {len(KEYS)})"
 
 def norm(s):
     s = str(s).lower().strip()
@@ -108,7 +126,7 @@ if cache_ok:
           f" (delete {os.path.relpath(LINECACHE, ROOT)} to force a fresh pull)")
 events = []
 if not cache_ok:
-    events, rem = get(f"{API}/sports/americanfootball_nfl/events?apiKey={KEY}")
+    events, rem = get(f"{API}/sports/americanfootball_nfl/events")
 if not cache_ok:
     now = pd.Timestamp.utcnow().tz_localize(None)
     soon = [e for e in events
@@ -118,7 +136,7 @@ if not cache_ok:
     for e in soon:
         try:
             j, rem = get(f"{API}/sports/americanfootball_nfl/events/{e['id']}/odds"
-                         f"?apiKey={KEY}&bookmakers=draftkings"
+                         f"?bookmakers=draftkings"
                          f"&markets=player_reception_yds,player_reception_yds_alternate"
                          f"&oddsFormat=american")
         except Exception as ex:
