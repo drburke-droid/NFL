@@ -40,6 +40,7 @@ ap.add_argument("--hours", type=float, default=None, help="only games kicking of
 ap.add_argument("--out", default=None)
 ap.add_argument("--analyst", default="Robert Burke")
 ap.add_argument("--model-name", default="Model_Burke v1")
+ap.add_argument("--no-lineups", action="store_true", help="skip the live ESPN/Sleeper status pull")
 ap.add_argument("--kdst-weight", type=float, default=0.65,
                 help="weight on the pasted K/DST projection; remainder on the FFA-scored value")
 A = ap.parse_args()
@@ -289,6 +290,76 @@ for c in ("team", "opp"):
     if c + "_sk" in p.columns: p[c] = p[c].fillna(p[c + "_sk"])
 p["proj"] = p.Model_Burke_mean
 
+# ---- live lineup status: ESPN injuries + Sleeper, plus a manual inactives file ----
+# FFA files are days old; official inactives post 90 min before kickoff (we send at 75).
+# OUT players go to zero and their projected points are redistributed to same-position
+# teammates (55% to the next man up, 30% spread over the rest, 15% lost — the
+# concentration matches the team-change usage study). Quantiles scale with the projection.
+OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "doubtful", "dnr", "nfi", "inactive"}
+def http_json(u):
+    with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=30) as r:
+        return json.loads(r.read().decode())
+def live_status():
+    st = {}   # (nname, team) -> (status, source)
+    try:
+        for t in http_json("https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries").get("injuries", []):
+            tm = NAME2ABBR.get(t.get("displayName"), "")
+            for i in t.get("injuries", []):
+                nm = norm(i.get("athlete", {}).get("displayName", "")); sts = str(i.get("status", "")).lower()
+                if sts in OUT_WORDS: st[(nm, tm)] = ("OUT", "espn")
+                elif sts == "questionable" and (nm, tm) not in st: st[(nm, tm)] = ("Q", "espn")
+    except Exception as e: print("  ESPN injuries unavailable:", str(e)[:50])
+    try:
+        for v in http_json("https://api.sleeper.app/v1/players/nfl").values():
+            if v.get("position") not in ("QB", "RB", "WR", "TE", "K"): continue
+            nm, tm = norm(v.get("full_name", "")), TEAM_FIX.get(v.get("team") or "", v.get("team") or "")
+            inj = str(v.get("injury_status") or "").lower()
+            if inj in OUT_WORDS: st[(nm, tm)] = ("OUT", st.get((nm, tm), ("", ""))[1] + "+sleeper")
+            elif inj == "questionable" and (nm, tm) not in st: st[(nm, tm)] = ("Q", "sleeper")
+    except Exception as e: print("  Sleeper unavailable:", str(e)[:50])
+    man = os.path.join(ROOT, "data", "inactives", f"inactives_{SEASON}_wk{cur_week}.txt")
+    if os.path.exists(man):
+        for line in open(man, encoding="utf-8"):
+            line = line.strip()
+            if not line or line.startswith("#"): continue
+            nm, _, tm = line.partition(",")
+            st[(norm(nm), TEAM_FIX.get(tm.strip(), tm.strip()))] = ("OUT", "manual")
+    return st
+
+p["nname"] = p.player.map(norm)
+p["status"], p["note"] = "", ""
+if not A.no_lineups:
+    st = live_status()
+    key = list(zip(p.nname, p.team))
+    p["status"] = [st.get(k, ("", ""))[0] for k in key]
+    p["src"] = [st.get(k, ("", ""))[1] for k in key]
+    # a name-only match catches team-code mismatches, but only for OUT
+    byname = {k[0]: v for k, v in st.items() if v[0] == "OUT"}
+    miss = (p.status == "") & p.nname.isin(byname)
+    p.loc[miss, "status"] = "OUT"; p.loc[miss, "src"] = p.loc[miss, "nname"].map(lambda n: byname[n][1] + "?team")
+    outs = p[(p.status == "OUT") & (p.proj > 0.5)].sort_values("proj", ascending=False)
+    print(f"  lineups: {len(st)} statuses pulled; {int((p.status == 'Q').sum())} Q, {len(outs)} OUT with a projection")
+    for r in outs.itertuples():
+        mates = p[(p.team == r.team) & (p.position == r.position) & (p.status != "OUT") & (p.index != r.Index)]
+        mates = mates.sort_values("proj", ascending=False)
+        V = float(r.proj); gain = {}
+        if len(mates):
+            top = mates.index[0]; gain[top] = 0.55 * V
+            rest = mates.iloc[1:]
+            if len(rest) and rest.proj.sum() > 0:
+                for i, w in (rest.proj / rest.proj.sum()).items(): gain[i] = 0.30 * V * w
+            if r.position == "QB":   # a backup QB inherits the role, discounted, not a share
+                gain = {top: max(0.0, 0.80 * V - float(p.loc[top, "proj"]))}
+        for i, g in gain.items():
+            old = float(p.loc[i, "proj"]); new = old + g
+            p.loc[i, "proj"] = new
+            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} ({r.player} OUT)"
+        p.loc[r.Index, "proj"] = 0.0
+        p.loc[r.Index, "note"] = f"OUT ({r.src}); was {V:.1f}"
+        print(f"    OUT {r.player:<22} {r.position} {r.team}  {V:5.1f} -> "
+              + ", ".join(f"{p.loc[i,'player']} +{g:.1f}" for i, g in gain.items()))
+    p["Model_Burke_mean"] = p.proj
+
 # ---- spread conditioned on projection size ----
 # The package's spread is position-wide, so a 1-point bench player inherits a starter's
 # ±4 and gets negative floors. Replace it: for each player take the ~300 historical rows
@@ -335,10 +406,14 @@ def rows(df, kind):
                         "Baseline_FFA": (o.baseline_proj if kind == "skill"
                                          else (o.baseline_ffa if "baseline_ffa" in o else o.proj)).round(2),
                         "Injury": o.injury_status.fillna("") if "injury_status" in o else "",
+                        "Status": o.status if "status" in o else "",
+                        "Note": o.note if "note" in o else "",
                         "_kick": o.kick})
     return out
 out = pd.concat([rows(p, "skill"), rows(kk, "k"), rows(dst, "dst")], ignore_index=True)
-out = out[out.Proj.notna() & (out.Proj > 0.3)].sort_values(["_kick", "Proj"], ascending=[True, False]).drop(columns="_kick")
+for c in ("Median", "Floor_p10", "p25", "p75", "Ceiling_p90", "StdDev"):
+    out.loc[out.Status == "OUT", c] = 0.0
+out = out[out.Proj.notna() & ((out.Proj > 0.3) | (out.Status == "OUT"))].sort_values(["_kick", "Proj"], ascending=[True, False]).drop(columns="_kick")
 # provenance columns (a comment line would break strict CSV readers)
 out.insert(0, "Analyst", A.analyst)
 out.insert(1, "Model", A.model_name)
