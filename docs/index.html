@@ -243,7 +243,13 @@
   .mdc-undo b{color:var(--gold);flex:none}
   .mdc-undo span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
   .mdc-lbl{color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.05em;margin:11px 0 4px}
-  .mdc-ticker{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px;scroll-snap-type:x proximity}
+  .mdc-mewarn{background:#3a2410;border:2px solid #c2861f;border-radius:10px;padding:10px 12px;margin:0 0 8px}
+.mdc-mewarn>b{color:#ffcf7a;font-size:14px;display:block}
+.mdc-mesub{color:#d7c4a5;font-size:11px;margin:2px 0 7px;line-height:1.35}
+.mdc-mewarn select{width:100%;padding:9px;font-size:15px;border-radius:8px;background:var(--bg);color:var(--fg);border:1px solid #c2861f;min-height:44px}
+.mdc-mek{color:#e8dcc6;font-size:11px;margin:6px 0 8px;line-height:1.4}
+.mdc-mewarn button{width:100%;min-height:44px;font-size:15px;font-weight:700;border-radius:8px;border:0;background:#c2861f;color:#1a1206;cursor:pointer}
+.mdc-ticker{display:flex;gap:6px;overflow-x:auto;padding-bottom:5px;scroll-snap-type:x proximity}
   .mdc-chip{flex:none;display:inline-flex;align-items:center;gap:4px;background:var(--panel);
             border:1px solid var(--line);border-radius:9px;padding:7px 9px;font-size:13px;
             white-space:nowrap;cursor:pointer;scroll-snap-align:start;min-height:44px}
@@ -3428,6 +3434,32 @@ function mdcGuide(plan){
   guide.planned=new Set((plan.picks||[]).filter(pk=>pk.p).map(pk=>pid(pk.p)));
   return guide;
 }
+// ⚠ WHICH TEAM AM I? DR.me defaults to 0 on any device with empty localStorage (a new
+// phone, a private window), and it is only corrected when the ESPN league JSON loads with
+// myTeamId. Get it wrong and EVERY number on this screen is computed for somebody else's
+// roster and somebody else's budget — the 2026 draft was run as Team 1 ($182 and a QB need)
+// instead of Team 5 ($101, two RB needs), which inflated every ceiling and is the single
+// most damaging failure this tool can have. It is silent, so it has to be made loud.
+function meUnconfirmed(){return DR.meConfirmed!==true;}
+function meKeepersOf(i){
+  const out=[];
+  for(const id in DR.owned){const o=DR.owned[id];
+    if(o.t!==i||!o.kept)continue;
+    const p=PLAYERS.find(q=>pid(q)===id);
+    if(p)out.push(`${p.name} $${o.price}`);}
+  return out;
+}
+function meBannerHTML(){
+  if(!meUnconfirmed())return "";
+  const ks=meKeepersOf(DR.me), s=teamState(DR.me);
+  return `<div class="mdc-mewarn" id="mdcMeWarn">
+    <b>⚠ Confirm which team is yours</b>
+    <div class="mdc-mesub">Every price below is computed for this roster and its budget. Pick wrong and every number is wrong.</div>
+    <select id="mdcMeSel">${DR.teams.map((t,i)=>`<option value="${i}" ${i===DR.me?"selected":""}>${t.name}</option>`).join("")}</select>
+    <div class="mdc-mek">$${s.budget} left · ${s.spotsLeft} spots · keepers: ${ks.length?ks.join(" · "):"<i>none</i>"}</div>
+    <button id="mdcMeOk">✓ That's my team</button>
+  </div>`;
+}
 // exact where affordable, estimate where not — never blocks the render
 function mdcBid(p,mkt,guide){
   const id=pid(p);
@@ -3543,8 +3575,9 @@ function renderMobileCompanion(){
         `<div><span class="pos ${x.p.position}">${x.p.position}</span> ${x.p.name} <b class="base">$${x.price}</b>${DR.owned[x.id].kept?" 🔒":""}</div>`).join(""):"<span class='muted'>nobody yet</span>"}</div>`:""}
     </div>`;}).join("");
   host.innerHTML=`<div class="mdc">
+    ${meBannerHTML()}
     <div class="mdc-bar">
-      <div class="mdc-me"><b class="maxbid">$${meS.budget}</b><span class="mdc-sub">${meS.spotsLeft} spots · max bid <b>$${afford}</b></span></div>
+      <div class="mdc-me"><b class="maxbid">$${meS.budget}</b><span class="mdc-sub">${(DR.teams[DR.me]||{}).name||"?"} · ${meS.spotsLeft} spots · max bid <b>$${afford}</b></span></div>
       <div class="mdc-needs">${needChips}</div>
       <button class="mdc-oracle" id="mdcOracle" title="Re-run the EXACT break-even (full roster re-solve at every price) for everything on screen, using the live game state. ~25ms a player.">🔮 Oracle</button>
     </div>
@@ -3568,6 +3601,10 @@ function renderMobileCompanion(){
     <div class="mdc-foot">$ = the most you should pay: an exact re-solve of your best remaining roster at every price, so it already counts what the money would buy elsewhere. <b>PASS</b> = he does not improve your roster at any price. <i>~</i> = fast estimate, tap 🔮 for exact. Re-solves after every sale you record.</div>
   </div>${mdcSheet(mkt,mv,plan,TS,guide)}`;
   // ---- wiring ----
+  const msel=document.getElementById("mdcMeSel");
+  if(msel)msel.onchange=e=>{DR.me=+e.target.value;saveDR();renderMobileCompanion();};
+  const mok=document.getElementById("mdcMeOk");
+  if(mok)mok.onclick=()=>{DR.meConfirmed=true;saveDR();renderMobileCompanion();};
   const qi=document.getElementById("mdcQ");
   if(qi){qi.oninput=e=>{MDC_Q=e.target.value;clearTimeout(window._mdcT);
       window._mdcT=setTimeout(()=>{const s=qi.selectionStart;renderMobileCompanion();
