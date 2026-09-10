@@ -23,6 +23,8 @@ name: SaberSim send
 # Manual send from the Actions tab (or the GitHub mobile app): Run workflow -> force=true.
 
 on:
+  push:                      # any push to main runs the window check too (a fallback trigger the
+    branches: [main]         # scheduler can't skip; outside the window it exits in ~20 s)
   schedule:
     # every 5 min, always (the window check exits in ~20 s when nothing is due; public-repo minutes are free).
     # Kept deliberately simple: a month/weekday-restricted cron never fired on 2026-09-10.
