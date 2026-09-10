@@ -64,10 +64,11 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          cache-dependency-path: requirements-sabersim.txt
 
       - name: Install
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
-        run: pip install -q pandas numpy scikit-learn scipy pyarrow
+        run: pip install -q -r requirements-sabersim.txt
 
       - name: Generate + email
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
