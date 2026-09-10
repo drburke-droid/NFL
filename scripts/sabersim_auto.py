@@ -40,10 +40,13 @@ if not os.path.exists(KEYF) and os.environ.get("ODDS_API_KEY"):
 lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "62,95").split(","))
 
 def out(**kw):
-    print(json.dumps(kw))
-    if os.environ.get("GITHUB_OUTPUT"):
+    print(json.dumps({k: v for k, v in kw.items() if k != "log_tail"}))
+    if kw.get("log_tail"): print("--- generator log tail ---\n" + kw["log_tail"])
+    if os.environ.get("GITHUB_OUTPUT"):      # scalar, single-line values only
         with open(os.environ["GITHUB_OUTPUT"], "a") as f:
-            for k, v in kw.items(): f.write(f"{k}={json.dumps(v) if not isinstance(v, str) else v}\n")
+            for k, v in kw.items():
+                if isinstance(v, (bool, int, float)) or (isinstance(v, str) and "\n" not in v and len(v) < 200):
+                    f.write(f"{k}={json.dumps(v) if not isinstance(v, str) else v}\n")
 
 def next_slate():
     keys = [k.strip() for k in open(KEYF) if k.strip() and not k.startswith("#")] if os.path.exists(KEYF) else []
@@ -80,8 +83,9 @@ with open(logp, "w", encoding="utf-8") as lf:
     rc = subprocess.call([sys.executable, os.path.join(ROOT, "scripts", "sabersim_weekly.py"), A.pkg, "--out", csv_path] + A.gen_args,
                          stdout=lf, stderr=subprocess.STDOUT, cwd=ROOT, env={**os.environ, "PYTHONIOENCODING": "utf-8"})
 if rc != 0 or not os.path.exists(csv_path):
-    tail = open(logp, encoding="utf-8", errors="ignore").read()[-800:]
-    out(sent=False, reason=f"generator exit {rc}", log_tail=tail); sys.exit(1)
+    txt = open(logp, encoding="utf-8", errors="ignore").read()
+    tail = txt[txt.rfind("Traceback"):] if "Traceback" in txt else txt[-1500:]
+    out(sent=False, reason=f"generator exit {rc}", log_tail=tail[-3000:]); sys.exit(1)
 n_rows = sum(1 for _ in open(csv_path, encoding="utf-8")) - 1
 
 # ---- email ----
