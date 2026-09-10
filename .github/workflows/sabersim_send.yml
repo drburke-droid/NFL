@@ -1,7 +1,7 @@
 name: SaberSim send
 
-# Unattended slate sends. Fires every 15 min during NFL game windows (UTC), and each tick
-# decides in ~20 s (stdlib only) whether the next slate kicks off 62-95 min from now and has
+# Unattended slate sends. Fires every 5 min during NFL game windows (UTC), and each tick
+# decides in ~20 s (stdlib only) whether the next slate kicks off 72-90 min from now and has
 # not been sent. Only then does it install deps, fetch the private Model_Burke package, run the
 # generator, and email the CSV. Nothing about the projections is committed or uploaded; the
 # only write-back is data/sabersim/sent_log.json (slate key, time, row count).
@@ -16,16 +16,17 @@ name: SaberSim send
 # Variables (Settings -> Secrets and variables -> Actions -> Variables tab):
 #   MAIL_TO             recipient. Week 1 test: your own address. Week 2: delete the variable (or set
 #                       it to analysts+robert@sabersim.com) and the sends go to SaberSim.
-#   SEND_WINDOW         optional, default "62,95" (minutes before the slate's first kickoff)
+#   SEND_WINDOW         optional, default "72,90": inactives post at T-90, SaberSim needs the CSV by T-75,
+#                       the run takes ~2.5 min, so ticks every 5 min inside T-90..T-72 land it on time
 #
 # Manual send from the Actions tab (or the GitHub mobile app): Run workflow -> force=true.
 
 on:
   schedule:
-    # every 15 min, 12:00-04:00 UTC, Thu-Tue, Sep-Jan  (covers Thu/Sun/Mon slates, London 9:30 ET,
+    # every 5 min, 12:00-04:00 UTC, Thu-Tue, Sep-Jan  (covers Thu/Sun/Mon slates, London 9:30 ET,
     # Sat December games, Thanksgiving/Christmas; both EDT and EST). Off-hour minutes avoid cron pile-ups.
-    - cron: "3,18,33,48 12-23 * 9-12,1 4,5,6,0,1,2"
-    - cron: "3,18,33,48 0-4 * 9-12,1 5,6,0,1,2"
+    - cron: "3-58/5 12-23 * 9-12,1 4,5,6,0,1,2"
+    - cron: "3-58/5 0-4 * 9-12,1 5,6,0,1,2"
   workflow_dispatch:
     inputs:
       force: { description: "Send now regardless of window / sent log", default: "false" }
@@ -48,7 +49,7 @@ jobs:
         id: win
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-          SEND_WINDOW: ${{ vars.SEND_WINDOW || '62,95' }}
+          SEND_WINDOW: ${{ vars.SEND_WINDOW || '72,90' }}
         run: python scripts/sabersim_auto.py --check
 
       - name: Fetch the private Model_Burke package
@@ -79,7 +80,7 @@ jobs:
           MAIL_CC: ${{ secrets.MAIL_CC }}
           MAIL_TO: ${{ vars.MAIL_TO || 'analysts+robert@sabersim.com' }}
           MODEL_BURKE_PKG: ${{ github.workspace }}/pkg
-          SEND_WINDOW: ${{ vars.SEND_WINDOW || '62,95' }}
+          SEND_WINDOW: ${{ vars.SEND_WINDOW || '72,90' }}
         run: |
           python scripts/sabersim_auto.py ${{ inputs.force == 'true' && '--force' || '' }} ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
 

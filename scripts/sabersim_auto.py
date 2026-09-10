@@ -3,7 +3,7 @@
 
 Designed for a scheduler that fires every ~15 minutes (GitHub Actions cron, Task Scheduler,
 cron-job.org). Each tick:
-  1. --check  : stdlib only, no pip — is the next slate's earliest kickoff 62-95 min away
+  1. --check  : stdlib only, no pip — is the next slate's earliest kickoff 72-90 min away
                 and not yet sent? Prints JSON and (in Actions) sets step outputs.
   2. run      : python scripts/sabersim_weekly.py <pkg>  -> CSV for the next slate
   3. email    : SMTP (Gmail app password or any SMTP) with the CSV attached
@@ -16,7 +16,9 @@ Env (all optional except the key and SMTP creds when actually sending):
   SMTP_USER / SMTP_PASS   sender login (Gmail: 2-step verification + App Password)
   SMTP_HOST / SMTP_PORT   default smtp.gmail.com / 465 (SSL)
   MAIL_TO           default analysts+robert@sabersim.com ; MAIL_CC optional (yourself)
-  SEND_WINDOW       "62,95" minutes-to-kickoff bounds (default)
+  SEND_WINDOW       "72,90" minutes-to-kickoff bounds at check time (default). Inactives post at
+                    T-90; the run takes ~2.5 min; SaberSim needs the CSV by T-75, so a check at T-78 or
+                    later lands late — the 5-min cron makes that rare, and 72 is the last-resort cutoff.
 Usage:
   python scripts/sabersim_auto.py --check
   python scripts/sabersim_auto.py            # check + run + email (no-op outside the window)
@@ -26,6 +28,8 @@ Usage:
 """
 import os, sys, json, argparse, subprocess, smtplib, ssl, urllib.request
 from datetime import datetime, timezone, timedelta
+from zoneinfo import ZoneInfo
+ET = ZoneInfo("America/New_York")
 from email.message import EmailMessage
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ap = argparse.ArgumentParser()
@@ -37,7 +41,7 @@ LOG = os.path.join(ROOT, "data", "sabersim", "sent_log.json"); os.makedirs(os.pa
 KEYF = os.path.join(ROOT, "data", "odds_api_key.txt")
 if not os.path.exists(KEYF) and os.environ.get("ODDS_API_KEY"):
     open(KEYF, "w").write(os.environ["ODDS_API_KEY"].strip() + "\n")
-lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "62,95").split(","))
+lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "72,90").split(","))
 
 def out(**kw):
     print(json.dumps({k: v for k, v in kw.items() if k != "log_tail"}))
@@ -64,7 +68,7 @@ def next_slate():
     k0 = up[0][0]; slate = [e for t, e in up if t <= k0 + timedelta(minutes=90)]
     key = k0.strftime("%Y-%m-%dT%H:%M") + f"_{len(slate)}g"
     return {"kick": k0, "minutes_to": (k0 - now).total_seconds() / 60, "games": len(slate), "key": key,
-            "label": k0.astimezone(timezone(timedelta(hours=-4))).strftime("%a %m/%d %I:%M %p ET") + f" slate ({len(slate)} games)"}, None
+            "label": k0.astimezone(ET).strftime("%a %m/%d %I:%M %p ET") + f" slate ({len(slate)} games)"}, None
 
 sent = json.load(open(LOG)) if os.path.exists(LOG) else {}
 s, err = next_slate()
@@ -76,7 +80,7 @@ if A.check or not (A.force or (in_win and not already)): sys.exit(0)
 
 # ---- run the generator (quiet: its stdout goes to a local log, not the scheduler's log) ----
 stamp = datetime.now(timezone.utc).strftime("%m%d_%H%M")
-csv_path = os.path.join(ROOT, "outputs", "sabersim", f"Burke_Model_Burke_{s['kick']:%Y}_{s['kick'].astimezone(timezone(timedelta(hours=-4))):%a%I%p}_{stamp}.csv".lower().replace("burke_model_burke", "Burke_Model_Burke"))
+csv_path = os.path.join(ROOT, "outputs", "sabersim", f"Burke_Model_Burke_{s['kick']:%Y}_{s['kick'].astimezone(ET):%a%I%p}_{stamp}.csv".lower().replace("burke_model_burke", "Burke_Model_Burke"))
 os.makedirs(os.path.dirname(csv_path), exist_ok=True)
 logp = csv_path.replace(".csv", ".log")
 with open(logp, "w", encoding="utf-8") as lf:
