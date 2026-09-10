@@ -1,0 +1,48 @@
+name: FFA weekly scrape
+
+# TEMPLATE (untested): runs the ffanalytics R scrape every Wednesday 10:00 UTC and commits
+# data/ffanalytics/FFAn_weekly/raw_stats_<season>_wk<week>.csv, which the SaberSim send needs.
+# Until this is verified, keep dropping the file in by hand; the send workflow fails loudly
+# (GitHub emails you) if the week's file is missing.
+
+on:
+  schedule:
+    - cron: "0 10 * 9-12,1 3"
+  workflow_dispatch:
+    inputs:
+      season: { description: "Season", default: "2026" }
+      week:   { description: "Week (blank = auto from schedule)", default: "" }
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with: { r-version: "4.4" }
+      - name: Install ffanalytics
+        run: |
+          Rscript -e 'install.packages(c("remotes","dplyr","readr"), repos="https://cloud.r-project.org")'
+          Rscript -e 'remotes::install_github("FantasyFootballAnalytics/ffanalytics")'
+      - name: Work out the week
+        id: wk
+        run: |
+          if [ -n "${{ inputs.week }}" ]; then echo "week=${{ inputs.week }}" >> $GITHUB_OUTPUT; else
+          python3 - <<'EOF' >> $GITHUB_OUTPUT
+          from datetime import date
+          # NFL 2026 week 1 Thursday = 2026-09-10; weeks roll on Tuesday
+          d0 = date(2026, 9, 8); print("week=%d" % ((date.today() - d0).days // 7 + 1))
+          EOF
+          fi
+      - name: Scrape
+        run: Rscript scripts/ffa_weekly_scrape.R "${{ inputs.season || '2026' }}" "${{ steps.wk.outputs.week }}"
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/ffanalytics/FFAn_weekly/raw_stats_*.csv
+          git commit -m "FFA weekly scrape (automated)" || { echo "no changes"; exit 0; }
+          git pull --rebase && git push

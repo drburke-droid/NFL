@@ -45,9 +45,13 @@ ap.add_argument("--model-name", default="Model_Burke v1")
 ap.add_argument("--no-market", action="store_true", help="skip the live DK lines/props pull")
 ap.add_argument("--market-weight", type=float, default=0.6,
                 help="weight on the DK-implied stat where a line exists; remainder on FFA")
-ap.add_argument("--p-play-doubt", type=float, default=0.4,
-                help="P(plays) for a Questionable player DK has not posted props for while teammates are priced")
+ap.add_argument("--p-play-doubt", type=float, default=0.2,
+                help="P(plays) for a Questionable player DK has not posted props for while teammates are priced "
+                     "(2025 measured: 0.20 overall, 0.11 for FFA proj >= 8, n=54; Q WITH a DK line played 100%%)")
 ap.add_argument("--no-lineups", action="store_true", help="skip the live ESPN/Sleeper status pull")
+ap.add_argument("--history-start", type=int, default=2023,
+                help="first FFA season used for Model_Burke training history (2016-22 files exist since 2026-09-10; "
+                     "ffa_history_length_study: longer history changes 2025 MAE by <0.005, so the trial model stays on 2023+)")
 ap.add_argument("--kdst-weight", type=float, default=0.65,
                 help="weight on the pasted K/DST projection; remainder on the FFA-scored value")
 A = ap.parse_args()
@@ -131,7 +135,7 @@ def load_ffa(s, w):
     return d.drop_duplicates(["nname", "position"])
 
 files = sorted(re.findall(r"raw_stats_(\d{4})_wk(\d+)\.csv", " ".join(os.listdir(FDIR))))
-weeks_avail = sorted({(int(s), int(w)) for s, w in files})
+weeks_avail = sorted({(int(s), int(w)) for s, w in files if int(s) >= A.history_start or int(s) == SEASON})
 print(f"FFA weekly files: {len(weeks_avail)} ({weeks_avail[0]} .. {weeks_avail[-1]})")
 
 # ---------- 2. box scores, ids, lags ----------
@@ -510,7 +514,7 @@ if not A.no_lineups:
     # ---- probable non-players: Questionable (any source) + DK posted no props for them
     # while pricing their teammates. FFA still carries a near-full number for these, and
     # a zero-line inactive is the single biggest avoidable miss. Treat as a mixture:
-    # P(plays) = --p-play-doubt (0.4): Proj = p * playing mean, quantiles from the
+    # P(plays) = --p-play-doubt (0.2, measured 2025): Proj = p * playing mean, quantiles from the
     # mixture (median 0), and (1-p) of the points redistributed like an OUT.
     p["p_play"], p["play_mean"] = 1.0, p.proj
     q_any = (p.status == "Q") | p.injury_status.isin(["Q", "D", "Questionable", "Doubtful"])
