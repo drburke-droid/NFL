@@ -64,3 +64,22 @@ Push the FFA file by Wednesday night and the rest is hands-off.
   local log that is not uploaded, and no CSV is committed or attached as an artifact.
 - **Nothing is auto-merged or retrained.** The model is exactly the one you have been sending;
   the workflow only runs it on time.
+
+## External trigger (required — GitHub's cron never fired for this repo)
+
+GitHub Actions never produced a scheduled run for this workflow, so the ticks come from cron-job.org
+(free) calling the workflow_dispatch endpoint. The window check inside the workflow still decides
+whether anything is sent, so extra ticks are harmless.
+
+1. cronjob.org → Sign up (free) → Cronjobs → Create cronjob.
+2. Title: `SaberSim tick`. URL: `https://api.github.com/repos/drburke-droid/NFL/actions/workflows/sabersim_send.yml/dispatches`
+3. Execution schedule: Every 5 minutes.
+4. Advanced tab:
+   - Request method: POST
+   - Headers: `Authorization: Bearer <the sabersim-page token>` · `Accept: application/vnd.github+json` · `Content-Type: application/json`
+   - Request body: `{"ref":"main"}`
+   - Treat 204 as success (it is the normal response).
+5. Save, then press "Test run": the Actions tab should show a new `workflow_dispatch` run within seconds.
+
+Timing: a tick at T-90..T-72 starts the run; the CSV lands ~2.5 min later. cron-job.org fires within seconds
+of the minute, so the T-88 tick is the usual one and the email arrives around T-85.

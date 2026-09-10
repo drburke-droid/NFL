@@ -26,9 +26,10 @@ on:
   push:                      # any push to main runs the window check too (a fallback trigger the
     branches: [main]         # scheduler can't skip; outside the window it exits in ~20 s)
   schedule:
-    # every 5 min, always (the window check exits in ~20 s when nothing is due; public-repo minutes are free).
-    # Kept deliberately simple: a month/weekday-restricted cron never fired on 2026-09-10.
-    - cron: "3-58/5 * * * *"
+    # GitHub's scheduler never fired for this workflow on 2026-09-10 (neither a restricted nor a plain cron).
+    # The live trigger is an external cron (cron-job.org) POSTing to the workflow_dispatch endpoint every
+    # 5 minutes; this schedule is left in as a free second chance. Every trigger runs the same window check.
+    - cron: "*/5 * * * *"
   workflow_dispatch:
     inputs:
       force: { description: "Send now regardless of window / sent log", default: "false" }
