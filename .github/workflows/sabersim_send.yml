@@ -72,6 +72,16 @@ jobs:
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
         run: pip install -q -r requirements-sabersim.txt
 
+      - name: Parse any K/DST paste that has no CSV yet
+        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
+        run: |
+          for f in data/kdst/paste_*_wk*.txt; do
+            [ -e "$f" ] || continue
+            b=$(basename "$f" .txt); b=${b#paste_}; s=${b%%_wk*}; w=${b##*_wk}
+            [ -e "data/kdst/kdst_${s}_wk${w}.csv" ] && [ "data/kdst/kdst_${s}_wk${w}.csv" -nt "$f" ] && continue
+            python scripts/parse_kdst_paste.py "$s" "$w" && echo "parsed $f"
+          done
+
       - name: Generate + email
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
         env:
@@ -102,6 +112,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/sabersim/sent_log.json 2>/dev/null || true
+          git add data/sabersim/sent_log.json data/kdst/kdst_*.csv 2>/dev/null || true
           git commit -m "SaberSim send log (automated)" || { echo "no changes"; exit 0; }
           git pull --rebase && git push

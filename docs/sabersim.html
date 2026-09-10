@@ -8,28 +8,31 @@
   :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; }
   body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
   main { max-width:640px; margin:0 auto; padding:24px 16px 60px; }
-  h1 { font-size:22px; margin:0 0 4px; } .sub { color:var(--mut); margin:0 0 20px; }
+  h1 { font-size:22px; margin:0 0 4px; } h2 { font-size:15px; margin:0 0 10px; color:var(--ink); }
+  .sub { color:var(--mut); margin:0 0 20px; } .sub a { color:var(--acc); }
   .card { background:var(--card); border:1px solid #262a33; border-radius:10px; padding:16px; margin-bottom:14px; }
   label { display:block; color:var(--mut); font-size:13px; margin-bottom:6px; }
-  input[type=password], input[type=text] { width:100%; box-sizing:border-box; background:#0f1115; color:var(--ink); border:1px solid #333845; border-radius:8px; padding:10px 12px; font-size:15px; }
+  input[type=password], input[type=text], input[type=number], textarea { width:100%; box-sizing:border-box; background:#0f1115; color:var(--ink); border:1px solid #333845; border-radius:8px; padding:10px 12px; font-size:15px; font-family:inherit; }
+  textarea { min-height:140px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; }
+  input[type=file] { color:var(--mut); font-size:13px; }
   button { background:var(--acc); color:#fff; border:0; border-radius:8px; padding:12px 18px; font-size:16px; font-weight:600; cursor:pointer; width:100%; margin-top:8px; }
   button.secondary { background:#2a2f3a; } button:disabled { opacity:.5; cursor:default; }
   .row { display:flex; gap:10px; } .row > * { flex:1; }
   .status { margin-top:12px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; white-space:pre-wrap; color:var(--mut); }
   .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
   .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#262a33; font-size:12px; color:var(--mut); }
-  small { color:var(--mut); }
+  small { color:var(--mut); display:block; margin-top:6px; }
 </style>
 </head>
 <body>
 <main>
   <h1>SaberSim send</h1>
-  <p class="sub">Runs the projection workflow on GitHub and hands you the CSV. Nothing runs in this page; it only asks GitHub to.</p>
+  <p class="sub"><a href="index.html">← draft tool</a> · Everything here asks GitHub to do the work; nothing runs in this page.</p>
 
   <div class="card">
     <label for="pat">GitHub token (kept only in this browser)</label>
     <input id="pat" type="password" placeholder="github_pat_…" autocomplete="off">
-    <small>Fine-grained token: <b>NFL</b> repo → Actions: read &amp; write, Contents: read. <b>model-burke-private</b> → Contents: read. Saved in localStorage on this device; never sent anywhere but api.github.com.</small>
+    <small>Fine-grained token on <b>NFL</b> and <b>model-burke-private</b>: Actions read &amp; write, Contents read &amp; write (write is what lets this page commit the FFA file and the K/DST paste). Saved in localStorage on this device only.</small>
     <div class="row">
       <button class="secondary" id="save">Save token</button>
       <button class="secondary" id="forget">Forget</button>
@@ -37,27 +40,47 @@
   </div>
 
   <div class="card">
+    <h2>Weekly inputs</h2>
+    <label for="week">NFL week</label>
+    <input id="week" type="number" min="1" max="22">
+    <small>Both uploads below are named by this week. Push them by Wednesday night; the sends read the repo, not your PC.</small>
+
+    <label for="ffa" style="margin-top:14px">FFA raw stats file (your R scrape, any file name)</label>
+    <input id="ffa" type="file" accept=".csv,text/csv">
+    <button id="upffa">Upload FFA file for this week</button>
+    <div class="status" id="ffastat"></div>
+
+    <label for="kdst" style="margin-top:14px">Subvertadown K / D-ST list (paste, one per line)</label>
+    <textarea id="kdst" placeholder="Jaguars vs. Browns 10.0&#10;Chargers vs. Cardinals 8.4&#10;Brandon Aubrey DAL @ NYG 9.3&#10;…"></textarea>
+    <button id="upkdst">Save K/DST paste for this week</button>
+    <small>Committed as data/kdst/paste_&lt;season&gt;_wk&lt;week&gt;.txt; the send parses it into the override CSV automatically.</small>
+    <div class="status" id="kdststat"></div>
+  </div>
+
+  <div class="card">
+    <h2>Send</h2>
     <div class="row">
-      <button id="run">Run now &amp; email me</button>
+      <button id="run">Run now &amp; email</button>
       <button id="dry" class="secondary">Dry run (no email)</button>
     </div>
-    <small>Next slate, forced, ignores the window and the sent log. Takes about 2½ minutes. The CSV goes to the MAIL_TO address and is also pushed to the private repo for the download button.</small>
+    <small>Next slate, forced. Takes about 2½ minutes. Goes to MAIL_TO and is also pushed to the private repo for the download button. A forced run marks that slate as sent, so the scheduled tick will skip it.</small>
     <div class="status" id="runstat">idle</div>
   </div>
 
   <div class="card">
+    <h2>Output</h2>
     <button id="dl">Download latest CSV</button>
     <button id="list" class="secondary">List recent sends</button>
     <div class="status" id="dlstat"></div>
   </div>
 
   <div class="card">
-    <span class="pill">credits</span> <span id="credits">Odds API credits: shown after each run in the email and below.</span>
+    <span class="pill">status</span> <span id="credits">Sign in with the token to see the last send and Odds API credits.</span>
     <div class="status" id="lastrun"></div>
   </div>
 </main>
 <script>
-const OWNER = "drburke-droid", REPO = "NFL", WF = "sabersim_send.yml", PRIV = "model-burke-private";
+const OWNER = "drburke-droid", REPO = "NFL", WF = "sabersim_send.yml", PRIV = "model-burke-private", SEASON = 2026;
 const API = "https://api.github.com";
 const $ = id => document.getElementById(id);
 const tok = () => { try { return localStorage.getItem("gh_pat") || ""; } catch (e) { return ""; } };
@@ -67,10 +90,47 @@ async function gh(path, opt = {}) {
   if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0, 200));
   return r.status === 204 ? null : r.json();
 }
+// default week: NFL 2026 week 1 rolled on Tue 2026-09-08; weeks roll every Tuesday
+(() => { const d0 = new Date(2026, 8, 8), wk = Math.max(1, Math.min(22, Math.floor((Date.now() - d0) / 864e5 / 7) + 1)); $("week").value = wk; })();
 try { $("pat").value = tok() ? "••••••••••••••••" : ""; } catch (e) {}
-$("save").onclick = () => { const v = $("pat").value.trim(); if (v && !v.startsWith("••")) { try { localStorage.setItem("gh_pat", v); } catch (e) {} $("pat").value = "••••••••••••••••"; $("runstat").textContent = "token saved"; } };
+$("save").onclick = () => { const v = $("pat").value.trim(); if (v && !v.startsWith("••")) { try { localStorage.setItem("gh_pat", v); } catch (e) {} $("pat").value = "••••••••••••••••"; $("runstat").textContent = "token saved"; lastRun(); } };
 $("forget").onclick = () => { try { localStorage.removeItem("gh_pat"); } catch (e) {} $("pat").value = ""; $("runstat").textContent = "token forgotten"; };
 
+// ---- commit a file to the NFL repo (create or update) ----
+function b64(bytes) { let s = ""; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s); }
+async function putFile(path, bytes, message) {
+  let sha; try { sha = (await gh(`/repos/${OWNER}/${REPO}/contents/${path}?ref=main`)).sha; } catch (e) {}
+  return gh(`/repos/${OWNER}/${REPO}/contents/${path}`, { method: "PUT", body: JSON.stringify({ message, content: b64(bytes), branch: "main", ...(sha ? { sha } : {}) }) });
+}
+$("upffa").onclick = async () => {
+  const st = $("ffastat"); st.className = "status"; const f = $("ffa").files[0]; const wk = parseInt($("week").value, 10);
+  if (!tok()) { st.textContent = "save a token first"; return; } if (!f) { st.textContent = "choose the CSV first"; return; }
+  st.textContent = "reading…";
+  try {
+    const bytes = new Uint8Array(await f.arrayBuffer()); const head = new TextDecoder().decode(bytes.subarray(0, 4000));
+    const cols = head.split(/\r?\n/)[0].split(",").map(c => c.replace(/"/g, ""));
+    const need = ["player", "team", "position", "rec_yds", "rush_yds", "pass_yds"]; const missing = need.filter(c => !cols.includes(c));
+    if (missing.length) { st.className = "status bad"; st.textContent = "this doesn't look like the raw stats file — missing columns: " + missing.join(", "); return; }
+    const warn = cols.includes("rec") ? "" : "\nwarning: no `rec` column — receptions will be estimated from rec_yds";
+    const path = `data/ffanalytics/FFAn_weekly/raw_stats_${SEASON}_wk${wk}.csv`; st.textContent = `committing ${path} (${(bytes.length / 1024).toFixed(0)} KB)…`;
+    const r = await putFile(path, bytes, `FFA weekly raw stats ${SEASON} wk${wk} (uploaded from the SaberSim page)`);
+    st.className = "status ok"; st.textContent = `committed ${path}\n${r.commit.sha.slice(0, 7)} — the sends for week ${wk} will use it` + warn;
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message + (e.message.startsWith("403") ? "\n(the token needs Contents: read & write on NFL)" : ""); }
+};
+$("upkdst").onclick = async () => {
+  const st = $("kdststat"); st.className = "status"; const txt = $("kdst").value.trim(); const wk = parseInt($("week").value, 10);
+  if (!tok()) { st.textContent = "save a token first"; return; } if (!txt) { st.textContent = "paste the list first"; return; }
+  const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const dst = lines.filter(l => /^\S+\s+(vs\.|@)\s+\S+\s+[\d.]+$/.test(l)).length, k = lines.filter(l => /^.+?\s+[A-Z]{2,3}\s+(vs\.|@)\s+[A-Z]{2,3}\s+[\d.]+$/.test(l)).length;
+  try {
+    const path = `data/kdst/paste_${SEASON}_wk${wk}.txt`;
+    const r = await putFile(path, new TextEncoder().encode(lines.join("\n") + "\n"), `K/DST paste ${SEASON} wk${wk} (from the SaberSim page)`);
+    st.className = "status ok"; st.textContent = `committed ${path} — ${dst} D/ST lines, ${k} K lines recognised of ${lines.length}\n${r.commit.sha.slice(0, 7)}`;
+    if (dst + k < lines.length) st.textContent += "\nunrecognised lines are ignored by the parser";
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
+};
+
+// ---- run ----
 async function trigger(dry) {
   if (!tok()) { $("runstat").textContent = "save a token first"; return; }
   $("run").disabled = $("dry").disabled = true;
@@ -85,7 +145,7 @@ async function trigger(dry) {
     for (let i = 0; i < 80; i++) {
       const r = await gh(`/repos/${OWNER}/${REPO}/actions/runs/${run.id}`);
       st.textContent = `run #${r.run_number}: ${r.status}${r.conclusion ? " → " + r.conclusion : ""}  (${Math.round((Date.now() - new Date(r.run_started_at || r.created_at)) / 1000)}s)\n${r.html_url}`;
-      if (r.status === "completed") { st.className = "status " + (r.conclusion === "success" ? "ok" : "bad"); if (r.conclusion === "success" && !dry) st.textContent += "\nemail sent — the CSV is in your inbox and in the private repo"; await lastRun(); break; }
+      if (r.status === "completed") { st.className = "status " + (r.conclusion === "success" ? "ok" : "bad"); if (r.conclusion === "success" && !dry) st.textContent += "\nemail sent — the CSV is in the inbox and in the private repo"; await lastRun(); break; }
       await new Promise(r => setTimeout(r, 5000));
     }
   } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
@@ -93,6 +153,7 @@ async function trigger(dry) {
 }
 $("run").onclick = () => trigger(false); $("dry").onclick = () => trigger(true);
 
+// ---- output ----
 async function sends() {
   const items = await gh(`/repos/${OWNER}/${PRIV}/contents/sends`);
   return items.filter(x => x.name.endsWith(".csv")).sort((a, b) => b.name.localeCompare(a.name));
@@ -117,8 +178,12 @@ async function lastRun() {
   try {
     const r = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=5`)).workflow_runs;
     $("lastrun").textContent = r.map(x => `#${x.run_number} ${x.event === "schedule" ? "auto" : "manual"} ${x.conclusion || x.status}  ${new Date(x.created_at).toLocaleString()}`).join("\n");
-    const log = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/data/sabersim/sent_log.json?t=` + Date.now()).then(r => r.json());
-    const keys = Object.keys(log).sort(); if (keys.length) { const k = keys[keys.length - 1]; $("credits").textContent = `last send: ${log[k].slate} — ${log[k].rows} rows at ${log[k].sent_at}` + (log[k].credits_left != null ? ` — Odds API credits left: ${log[k].credits_left}` : ""); }
+    const log = await gh(`/repos/${OWNER}/${REPO}/contents/data/sabersim/sent_log.json?ref=main`).then(f => JSON.parse(atob(f.content.replace(/\n/g, ""))));
+    const keys = Object.keys(log).sort(); const wk = parseInt($("week").value, 10);
+    let line = keys.length ? (k => `last send: ${log[k].slate} — ${log[k].rows} rows at ${log[k].sent_at}` + (log[k].credits_left != null ? ` — Odds API credits left: ${log[k].credits_left}` : ""))(keys[keys.length - 1]) : "no sends logged yet";
+    const have = async p => { try { await gh(`/repos/${OWNER}/${REPO}/contents/${p}?ref=main`); return true; } catch (e) { return false; } };
+    line += `\nweek ${wk} inputs: FFA file ${await have(`data/ffanalytics/FFAn_weekly/raw_stats_${SEASON}_wk${wk}.csv`) ? "✓" : "✗ missing"} · K/DST paste ${await have(`data/kdst/paste_${SEASON}_wk${wk}.txt`) ? "✓" : "– (optional)"}`;
+    $("credits").textContent = line;
   } catch (e) {}
 }
 if (tok()) lastRun();
