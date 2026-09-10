@@ -11,7 +11,8 @@ cron-job.org). Each tick:
                 tick in the same window is a no-op.
 
 Env (all optional except the key and SMTP creds when actually sending):
-  ODDS_API_KEY      written to data/odds_api_key.txt if that file is absent (Actions secret)
+  ODDS_API_KEY      written to data/odds_api_key.txt if that file is absent (Actions secret); may hold
+                    several keys separated by commas or newlines; the generator rotates on 401/429/0 credits
   MODEL_BURKE_PKG   path to the folder CONTAINING model_burke/  (default ./pkg)
   SMTP_USER / SMTP_PASS   sender login (Gmail: 2-step verification + App Password)
   SMTP_HOST / SMTP_PORT   default smtp.gmail.com / 465 (SSL)
@@ -43,8 +44,9 @@ ap.add_argument("gen_args", nargs="*", help="extra args for sabersim_weekly.py a
 A = ap.parse_args()
 LOG = os.path.join(ROOT, "data", "sabersim", "sent_log.json"); os.makedirs(os.path.dirname(LOG), exist_ok=True)
 KEYF = os.path.join(ROOT, "data", "odds_api_key.txt")
-if not os.path.exists(KEYF) and os.environ.get("ODDS_API_KEY"):
-    open(KEYF, "w").write(os.environ["ODDS_API_KEY"].strip() + "\n")
+if not os.path.exists(KEYF) and os.environ.get("ODDS_API_KEY"):   # the secret may hold several keys, comma/newline separated
+    import re as _re
+    open(KEYF, "w").write("\n".join(k for k in _re.split(r"[,;\s]+", os.environ["ODDS_API_KEY"]) if k) + "\n")
 lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "72,90").split(","))
 
 def out(**kw):
@@ -57,14 +59,18 @@ def out(**kw):
                     f.write(f"{k}={json.dumps(v) if not isinstance(v, str) else v}\n")
 
 def credits():
-    """Odds API credits left on the first key (free /events call reports x-requests-remaining)."""
+    """Odds API credits left, summed over every key in the key file (one free /events call per key)."""
     keys = [k.strip() for k in open(KEYF) if k.strip() and not k.startswith("#")] if os.path.exists(KEYF) else []
-    if not keys: return None, None
-    try:
-        with urllib.request.urlopen(f"https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events?apiKey={keys[0]}", timeout=30) as r:
-            h = r.headers
-        return int(float(h.get("x-requests-remaining", "nan"))), int(float(h.get("x-requests-used", "nan")))
-    except Exception: return None, None
+    if not keys: return None, None, []
+    left = used = 0; per = []
+    for k in keys:
+        try:
+            with urllib.request.urlopen(f"https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events?apiKey={k}", timeout=30) as r:
+                h = r.headers
+            l, u = int(float(h.get("x-requests-remaining", 0))), int(float(h.get("x-requests-used", 0)))
+        except Exception: l, u = 0, 0
+        left += l; used += u; per.append(l)
+    return left, used, per
 
 def next_slate():
     keys = [k.strip() for k in open(KEYF) if k.strip() and not k.startswith("#")] if os.path.exists(KEYF) else []
@@ -108,7 +114,7 @@ n_rows = sum(1 for _ in open(csv_path, encoding="utf-8")) - 1
 if os.environ.get("PUBLISH_DIR"):          # e.g. the private repo checkout: pkg/sends
     import shutil; os.makedirs(os.environ["PUBLISH_DIR"], exist_ok=True)
     shutil.copy(csv_path, os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path)))
-left, used = credits(); warn = int(os.environ.get("CREDIT_WARN", "120"))
+left, used, per_key = credits(); warn = int(os.environ.get("CREDIT_WARN", "120"))
 low = left is not None and left < warn
 
 # ---- email ----
