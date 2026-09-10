@@ -50,10 +50,10 @@
     <button id="upffa">Upload FFA file for this week</button>
     <div class="status" id="ffastat"></div>
 
-    <label for="kdst" style="margin-top:14px">Subvertadown K / D-ST list (paste, one per line)</label>
-    <textarea id="kdst" placeholder="Jaguars vs. Browns 10.0&#10;Chargers vs. Cardinals 8.4&#10;Brandon Aubrey DAL @ NYG 9.3&#10;…"></textarea>
-    <button id="upkdst">Save K/DST paste for this week</button>
-    <small>Committed as data/kdst/paste_&lt;season&gt;_wk&lt;week&gt;.txt; the send parses it into the override CSV automatically.</small>
+    <label for="kdst" style="margin-top:14px">Subvertadown paste (all tables: D/ST, K, QB, WR/RB/TE matchup bonuses — or just the short K/DST list)</label>
+    <textarea id="kdst" placeholder="Player/Team&#10;1&#10;2&#10;…&#10;Jaguars    10.0    2.7    3.7 …&#10;Cameron Dicker | LAC    10.0    9.8 …"></textarea>
+    <button id="upkdst">Save Subvertadown paste for this week</button>
+    <small>Committed as data/subvertadown/raw/paste_&lt;season&gt;_wk&lt;week&gt;.txt. The send parses every table into the point-in-time history and builds this week's K/DST override from the K and D/ST tables. Paste the matchup-bonus tables in WR, RB, TE order.</small>
     <div class="status" id="kdststat"></div>
   </div>
 
