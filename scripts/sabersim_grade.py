@@ -71,11 +71,17 @@ a["k_pts"] = 3 * (z("fg_made_0_19") + z("fg_made_20_29") + z("fg_made_30_39")) +
 a["actual"] = np.where(a.position == "K", a.k_pts, a.fantasy_points_ppr)
 act = a[["player_id", "nname", "position", "week", "actual"]]
 elig["nname"] = elig.Player.map(norm)
-g = elig.merge(act[["player_id", "week", "actual"]].rename(columns={"player_id": "ID"}), on=["ID", "week"], how="left")
-miss = g.actual.isna() & g.Pos.isin(["QB", "RB", "WR", "TE", "K"])
-if miss.any():   # name fallback (no gsis id on the K rows, or an id mismatch)
-    fb = g[miss].drop(columns=["actual"]).merge(act[["nname", "position", "week", "actual"]].rename(columns={"position": "Pos"}), on=["nname", "Pos", "week"], how="left")
-    g.loc[miss, "actual"] = fb.actual.values
+act = act.assign(team=a.team.values, last=a.player_display_name.map(lambda n: norm(n).split()[-1]))
+by_id = {(r.player_id, int(r.week)): r.actual for r in act.itertuples() if isinstance(r.player_id, str)}
+by_name = act.groupby(["nname", "position", "week"]).actual.sum().to_dict()
+lt = act.groupby(["last", "team", "position", "week"]).actual.agg(["sum", "size"])
+by_last = {k: v for k, v in lt["sum"].items() if lt.loc[k, "size"] == 1}      # only when unambiguous
+def lookup(r):
+    w = int(r.week)
+    if isinstance(r.ID, str) and (r.ID, w) in by_id: return by_id[(r.ID, w)]
+    if (r.nname, r.Pos, w) in by_name: return by_name[(r.nname, r.Pos, w)]
+    return by_last.get((r.nname.split()[-1], r.Team, r.Pos, w), np.nan)
+g = elig.copy(); g["actual"] = [lookup(r) for r in g.itertuples()]
 g = g[g.Pos.isin(["QB", "RB", "WR", "TE", "K"])].copy()
 # a player with no box-score row after the game = 0 points (inactive / no touches) — but only for
 # games whose week has any actuals at all (nflverse may not have published yet)

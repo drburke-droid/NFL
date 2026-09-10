@@ -1,17 +1,17 @@
 {
- "generated_at": "2026-09-10T21:44Z",
+ "generated_at": "2026-09-10T21:46Z",
  "season": 2026,
  "min_lead_min": 75.0,
  "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
  "weeks": [
   {
    "n": 29,
-   "mae": 4.713,
-   "rmse": 6.017,
-   "bias": -2.823,
-   "spearman": 0.487,
-   "cov80": 0.759,
-   "median_mae": 4.153,
+   "mae": 4.056,
+   "rmse": 5.301,
+   "bias": -1.857,
+   "spearman": 0.585,
+   "cov80": 0.862,
+   "median_mae": 3.582,
    "week": 1,
    "sends": 1,
    "games": 1,
@@ -19,12 +19,12 @@
    "by_pos": {
     "K": {
      "n": 2,
-     "mae": 8.14,
-     "rmse": 8.175,
-     "bias": -8.14,
+     "mae": 1.64,
+     "rmse": 1.66,
+     "bias": -1.64,
      "spearman": null,
-     "cov80": 0.0,
-     "median_mae": 8.14
+     "cov80": 1.0,
+     "median_mae": 1.64
     },
     "QB": {
      "n": 4,
@@ -37,21 +37,21 @@
     },
     "RB": {
      "n": 7,
-     "mae": 3.224,
-     "rmse": 4.836,
-     "bias": -3.224,
+     "mae": 2.11,
+     "rmse": 2.518,
+     "bias": -2.11,
      "spearman": null,
-     "cov80": 0.857,
-     "median_mae": 2.206
+     "cov80": 1.0,
+     "median_mae": 1.091
     },
     "TE": {
      "n": 5,
-     "mae": 2.784,
-     "rmse": 2.826,
-     "bias": -2.784,
+     "mae": 3.132,
+     "rmse": 3.239,
+     "bias": -1.344,
      "spearman": null,
      "cov80": 1.0,
-     "median_mae": 1.828
+     "median_mae": 2.676
     },
     "WR": {
      "n": 11,
@@ -67,21 +67,21 @@
  ],
  "overall": {
   "n": 29,
-  "mae": 4.713,
-  "rmse": 6.017,
-  "bias": -2.823,
-  "spearman": 0.487,
-  "cov80": 0.759,
-  "median_mae": 4.153,
+  "mae": 4.056,
+  "rmse": 5.301,
+  "bias": -1.857,
+  "spearman": 0.585,
+  "cov80": 0.862,
+  "median_mae": 3.582,
   "by_pos": {
    "K": {
     "n": 2,
-    "mae": 8.14,
-    "rmse": 8.175,
-    "bias": -8.14,
+    "mae": 1.64,
+    "rmse": 1.66,
+    "bias": -1.64,
     "spearman": null,
-    "cov80": 0.0,
-    "median_mae": 8.14
+    "cov80": 1.0,
+    "median_mae": 1.64
    },
    "QB": {
     "n": 4,
@@ -94,21 +94,21 @@
    },
    "RB": {
     "n": 7,
-    "mae": 3.224,
-    "rmse": 4.836,
-    "bias": -3.224,
+    "mae": 2.11,
+    "rmse": 2.518,
+    "bias": -2.11,
     "spearman": null,
-    "cov80": 0.857,
-    "median_mae": 2.206
+    "cov80": 1.0,
+    "median_mae": 1.091
    },
    "TE": {
     "n": 5,
-    "mae": 2.784,
-    "rmse": 2.826,
-    "bias": -2.784,
+    "mae": 3.132,
+    "rmse": 3.239,
+    "bias": -1.344,
     "spearman": null,
     "cov80": 1.0,
-    "median_mae": 1.828
+    "median_mae": 2.676
    },
    "WR": {
     "n": 11,
@@ -140,27 +140,11 @@
   },
   {
    "week": 1,
-   "player": "Jadarian Price",
-   "pos": "RB",
-   "team": "SEA",
-   "proj": 11.6,
-   "actual": 0.0
-  },
-  {
-   "week": 1,
    "player": "A.J. Brown",
    "pos": "WR",
    "team": "NE",
    "proj": 14.8,
    "actual": 5.6
-  },
-  {
-   "week": 1,
-   "player": "Jason Myers",
-   "pos": "K",
-   "team": "SEA",
-   "proj": 8.9,
-   "actual": 0.0
   },
   {
    "week": 1,
@@ -177,14 +161,6 @@
    "team": "SEA",
    "proj": 17.8,
    "actual": 26.2
-  },
-  {
-   "week": 1,
-   "player": "Andres Borregales",
-   "pos": "K",
-   "team": "NE",
-   "proj": 7.4,
-   "actual": 0.0
   },
   {
    "week": 1,
@@ -212,11 +188,35 @@
   },
   {
    "week": 1,
+   "player": "Eli Raridon",
+   "pos": "TE",
+   "team": "NE",
+   "proj": 2.7,
+   "actual": 7.2
+  },
+  {
+   "week": 1,
    "player": "Tory Horton",
    "pos": "WR",
    "team": "SEA",
    "proj": 4.2,
    "actual": 0.0
+  },
+  {
+   "week": 1,
+   "player": "Emanuel Wilson",
+   "pos": "RB",
+   "team": "SEA",
+   "proj": 4.1,
+   "actual": 0.3
+  },
+  {
+   "week": 1,
+   "player": "Jadarian Price",
+   "pos": "RB",
+   "team": "SEA",
+   "proj": 11.6,
+   "actual": 7.8
   }
  ]
 }
