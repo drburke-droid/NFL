@@ -1,7 +1,100 @@
 {
- "generated_at": "2026-09-10T21:46Z",
+ "generated_at": "2026-09-10T21:59Z",
  "season": 2026,
  "min_lead_min": 75.0,
+ "scale": {
+  "note": "Bands are for the full slate pool (every projected skill player, ~10 per team). MAE is dominated by outcome noise: a hindsight oracle that knows each player's true season average still scores MAE 4.04 on this pool, so ~4.0 is the floor and 3.0 is not attainable. Starters-only pools run 1.5-2 points higher (FFA 5.95 on players projected 8+). A single 30-player slate has an MAE standard deviation of ~0.8, so judge on 5+ weeks (~1,500 player-games) and on the same-rows comparison with FFA and DraftKings.",
+  "reference_2025": {
+   "previous game points": {
+    "mae": 5.73,
+    "rmse": 8.25,
+    "spearman": 0.532
+   },
+   "trailing 4-game mean": {
+    "mae": 4.78,
+    "rmse": 6.65,
+    "spearman": 0.625
+   },
+   "season-to-date mean": {
+    "mae": 4.67,
+    "rmse": 6.58,
+    "spearman": 0.641
+   },
+   "DK market-implied (rows with a line)": {
+    "mae": 4.74,
+    "rmse": 6.4,
+    "spearman": 0.608
+   },
+   "FFA consensus": {
+    "mae": 4.17,
+    "rmse": 5.85,
+    "spearman": 0.719
+   },
+   "Model_Burke (walk-forward)": {
+    "mae": 4.12,
+    "rmse": 5.9,
+    "spearman": 0.714
+   },
+   "oracle: true season mean, hindsight": {
+    "mae": 4.04,
+    "rmse": 5.65,
+    "spearman": 0.737
+   }
+  },
+  "bands": {
+   "mae": {
+    "elite": 4.05,
+    "top": 4.15,
+    "consensus": 4.3,
+    "fair": 4.8,
+    "poor": 99
+   },
+   "rmse": {
+    "elite": 5.65,
+    "top": 5.85,
+    "consensus": 6.05,
+    "fair": 6.7,
+    "poor": 99
+   },
+   "spearman": {
+    "higher": true,
+    "elite": 0.74,
+    "top": 0.72,
+    "consensus": 0.69,
+    "fair": 0.6,
+    "poor": -1
+   },
+   "abs_bias": {
+    "elite": 0.15,
+    "top": 0.3,
+    "consensus": 0.5,
+    "fair": 0.8,
+    "poor": 99
+   },
+   "cov80": {
+    "target": 0.8,
+    "elite": 0.02,
+    "top": 0.04,
+    "consensus": 0.06,
+    "fair": 0.1,
+    "poor": 1
+   },
+   "vs_ffa_ratio": {
+    "elite": 0.97,
+    "top": 0.99,
+    "consensus": 1.01,
+    "fair": 1.04,
+    "poor": 99
+   }
+  },
+  "labels": {
+   "elite": "elite (at the noise floor)",
+   "top": "top tier (beats the consensus)",
+   "consensus": "consensus-grade (FFA / market blend)",
+   "fair": "fair (trailing averages)",
+   "poor": "poor"
+  }
+ },
  "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
  "weeks": [
   {

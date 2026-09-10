@@ -125,7 +125,29 @@ for wk, d in g.groupby("week"):
     weeks.append(o)
 overall = block(g); overall["by_pos"] = {p: block(x) for p, x in g.groupby("Pos")}
 misses = g.reindex(g.err.abs().sort_values(ascending=False).index).head(12)
-out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead,
+# ---------- 5. scale: what the numbers mean (measured on the 2025 season, ~300 FFA-projected QB/RB/WR/TE per week) ----------
+SCALE = {
+  "note": ("Bands are for the full slate pool (every projected skill player, ~10 per team). MAE is dominated by outcome "
+           "noise: a hindsight oracle that knows each player's true season average still scores MAE 4.04 on this pool, "
+           "so ~4.0 is the floor and 3.0 is not attainable. Starters-only pools run 1.5-2 points higher (FFA 5.95 on "
+           "players projected 8+). A single 30-player slate has an MAE standard deviation of ~0.8, so judge on 5+ weeks "
+           "(~1,500 player-games) and on the same-rows comparison with FFA and DraftKings."),
+  "reference_2025": {"previous game points": {"mae": 5.73, "rmse": 8.25, "spearman": 0.532}, "trailing 4-game mean": {"mae": 4.78, "rmse": 6.65, "spearman": 0.625},
+                     "season-to-date mean": {"mae": 4.67, "rmse": 6.58, "spearman": 0.641}, "DK market-implied (rows with a line)": {"mae": 4.74, "rmse": 6.40, "spearman": 0.608},
+                     "FFA consensus": {"mae": 4.17, "rmse": 5.85, "spearman": 0.719}, "Model_Burke (walk-forward)": {"mae": 4.12, "rmse": 5.90, "spearman": 0.714},
+                     "oracle: true season mean, hindsight": {"mae": 4.04, "rmse": 5.65, "spearman": 0.737}},
+  "bands": {   # lower is better unless noted; thresholds = upper edge of each band
+    "mae":      {"elite": 4.05, "top": 4.15, "consensus": 4.30, "fair": 4.80, "poor": 99},
+    "rmse":     {"elite": 5.65, "top": 5.85, "consensus": 6.05, "fair": 6.70, "poor": 99},
+    "spearman": {"higher": True, "elite": 0.74, "top": 0.72, "consensus": 0.69, "fair": 0.60, "poor": -1},
+    "abs_bias": {"elite": 0.15, "top": 0.30, "consensus": 0.50, "fair": 0.80, "poor": 99},
+    "cov80":    {"target": 0.80, "elite": 0.02, "top": 0.04, "consensus": 0.06, "fair": 0.10, "poor": 1},   # |coverage - 0.80|
+    "vs_ffa_ratio": {"elite": 0.97, "top": 0.99, "consensus": 1.01, "fair": 1.04, "poor": 99}                # model MAE / FFA MAE on the same rows
+  },
+  "labels": {"elite": "elite (at the noise floor)", "top": "top tier (beats the consensus)", "consensus": "consensus-grade (FFA / market blend)",
+             "fair": "fair (trailing averages)", "poor": "poor"}
+}
+out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead, "scale": SCALE,
        "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
        "weeks": weeks, "overall": overall,
        "misses": [{"week": int(r.week), "player": r.Player, "pos": r.Pos, "team": r.Team, "proj": round(float(r.Proj), 1), "actual": round(float(r.actual), 1)} for r in misses.itertuples()]}
@@ -139,6 +161,11 @@ for w in weeks:
 L += ["", f"**Overall:** n {overall['n']} · MAE {overall['mae']} · RMSE {overall['rmse']} · bias {overall['bias']:+} · Spearman {overall['spearman']} · 80% coverage {overall['cov80']}", "",
       "| pos | n | MAE | RMSE | bias | 80% cov |", "|---|---|---|---|---|---|"]
 for p, o in overall["by_pos"].items(): L.append(f"| {p} | {o['n']} | {o['mae']} | {o['rmse']} | {o['bias']:+} | {o['cov80']} |")
+L += ["", "## Scale (2025 reference, full slate pool)", "", SCALE["note"], "", "| projection | MAE | RMSE | Spearman |", "|---|---|---|---|"]
+L += [f"| {k} | {v['mae']} | {v['rmse']} | {v['spearman']} |" for k, v in SCALE["reference_2025"].items()]
+L += ["", "Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fair ≤4.80 · poor above. RMSE 5.65/5.85/6.05/6.70. "
+      "Spearman ≥0.74/0.72/0.69/0.60. |bias| ≤0.15/0.30/0.50/0.80. 80% coverage within ±0.02/0.04/0.06/0.10 of 0.80. "
+      "Model÷FFA MAE on the same rows ≤0.97/0.99/1.01/1.04."]
 L += ["", "Largest misses:", ""] + [f"- wk{m['week']} {m['player']} ({m['pos']} {m['team']}): proj {m['proj']}, actual {m['actual']}" for m in out["misses"]]
 open(os.path.join(ROOT, "outputs", "reports", "sabersim_accuracy.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
 print("\n".join(L[:12])); print(f"\nwrote docs/sabersim_accuracy.json ({overall['n']} graded rows, {len(weeks)} week(s))")

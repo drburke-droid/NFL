@@ -203,19 +203,43 @@ if (tok()) lastRun();
 // ---- accuracy (public JSON written by the grade workflow) ----
 const f1 = v => (v == null ? "—" : (typeof v === "number" ? v.toFixed(2) : v));
 const sgn = v => (v == null ? "—" : (v > 0 ? "+" : "") + v.toFixed(2));
+const COL = { elite: "#3fb950", top: "#7ee787", consensus: "#d29922", fair: "#f0883e", poor: "#f85149" };
+function band(scale, metric, v, ffa) {          // returns the band name for a metric value
+  if (v == null || !scale) return null;
+  const b = scale.bands[metric]; if (!b) return null;
+  let x = v;
+  if (metric === "abs_bias") x = Math.abs(v);
+  if (metric === "cov80") x = Math.abs(v - b.target);
+  if (metric === "vs_ffa_ratio") { if (!ffa) return null; x = v / ffa; }
+  const order = ["elite", "top", "consensus", "fair", "poor"];
+  for (const k of order) { if (b.higher ? x >= b[k] : x <= b[k]) return k; }
+  return "poor";
+}
+const esc = s => String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+function cell(scale, metric, v, fmt, ffa) { const k = band(scale, metric, v, ffa); const txt = fmt(v); return k ? `<span style="color:${COL[k]}" title="${scale.labels[k]}">${txt}</span>` : txt; }
 async function accuracy() {
   const el = $("acc");
   try {
     const r = await fetch("sabersim_accuracy.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error(r.status);
-    const a = await r.json(); const o = a.overall;
-    let t = `graded ${a.generated_at} — ${o.n} player-games\n\n`;
-    t += "week  sends  n    MAE    RMSE   bias   rho   80%cov  FFA MAE  DK MAE\n";
-    for (const w of a.weeks) t += `${String(w.week).padEnd(5)} ${String(w.sends).padEnd(6)} ${String(w.n).padEnd(4)} ${f1(w.mae).padEnd(6)} ${f1(w.rmse).padEnd(6)} ${sgn(w.bias).padEnd(6)} ${f1(w.spearman).padEnd(5)} ${f1(w.cov80).padEnd(7)} ${f1(w.ffa_mae).padEnd(8)} ${f1(w.dk_mae)}\n`;
-    t += `${"all".padEnd(5)} ${"".padEnd(6)} ${String(o.n).padEnd(4)} ${f1(o.mae).padEnd(6)} ${f1(o.rmse).padEnd(6)} ${sgn(o.bias).padEnd(6)} ${f1(o.spearman).padEnd(5)} ${f1(o.cov80).padEnd(7)} ${f1(o.ffa_mae).padEnd(8)} ${f1(o.dk_mae)}\n\n`;
-    t += "by position: " + Object.entries(o.by_pos).map(([p, x]) => `${p} n${x.n} MAE ${f1(x.mae)} bias ${sgn(x.bias)}`).join(" · ") + "\n\n";
-    t += "largest misses:\n" + a.misses.slice(0, 8).map(m => `  wk${m.week} ${m.player} (${m.pos} ${m.team}) proj ${m.proj} → ${m.actual}`).join("\n");
-    if (a.weeks.some(w => w.late_sends_ignored)) t += "\n\nlate sends ignored: " + a.weeks.filter(w => w.late_sends_ignored).map(w => `wk${w.week} ${w.late_sends_ignored}`).join(", ");
-    el.textContent = t;
+    const a = await r.json(); const o = a.overall, sc = a.scale;
+    const line = (lab, w) => [esc(lab).padEnd(5), String(w.sends ?? "").padEnd(6), String(w.n).padEnd(4),
+      cell(sc, "mae", w.mae, f1), cell(sc, "rmse", w.rmse, f1), cell(sc, "abs_bias", w.bias, sgn), cell(sc, "spearman", w.spearman, f1), cell(sc, "cov80", w.cov80, f1),
+      f1(w.ffa_mae), w.ffa_mae ? cell(sc, "vs_ffa_ratio", w.model_mae_on_ffa_rows, v => (v / w.ffa_mae).toFixed(3), w.ffa_mae) : "—", f1(w.dk_mae)];
+    let h = `graded ${esc(a.generated_at)} — ${o.n} player-games\n\n`;
+    const hdr = ["week", "sends", "n", "MAE", "RMSE", "bias", "rho", "80%cov", "FFA MAE", "model÷FFA", "DK MAE"];
+    const rows = [hdr, ...a.weeks.map(w => line(String(w.week), w)), line("all", o)];
+    const widths = hdr.map((_, i) => Math.max(...rows.map(r => r[i].replace(/<[^>]+>/g, "").length)));
+    h += rows.map(r => r.map((c, i) => c + " ".repeat(Math.max(0, widths[i] - c.replace(/<[^>]+>/g, "").length))).join("  ")).join("\n") + "\n\n";
+    h += "by position: " + Object.entries(o.by_pos).map(([p, x]) => `${esc(p)} n${x.n} MAE ${f1(x.mae)} bias ${sgn(x.bias)}`).join(" · ") + "\n\n";
+    if (sc) {
+      h += `<span style="color:var(--ink)">scale</span> (2025, full slate pool): ` + Object.entries(sc.labels).map(([k, l]) => `<span style="color:${COL[k]}">■ ${esc(l)}</span>`).join("  ") + "\n";
+      h += `MAE ≤${sc.bands.mae.elite} elite · ≤${sc.bands.mae.top} top · ≤${sc.bands.mae.consensus} consensus · ≤${sc.bands.mae.fair} fair · above poor.  Spearman ≥${sc.bands.spearman.elite}/${sc.bands.spearman.top}/${sc.bands.spearman.consensus}/${sc.bands.spearman.fair}.  |bias| ≤${sc.bands.abs_bias.elite}/${sc.bands.abs_bias.top}/${sc.bands.abs_bias.consensus}/${sc.bands.abs_bias.fair}.  80% cov within ±${sc.bands.cov80.elite}/${sc.bands.cov80.top}/${sc.bands.cov80.consensus}/${sc.bands.cov80.fair} of 0.80.  model÷FFA ≤${sc.bands.vs_ffa_ratio.elite}/${sc.bands.vs_ffa_ratio.top}/${sc.bands.vs_ffa_ratio.consensus}/${sc.bands.vs_ffa_ratio.fair}.\n`;
+      h += "reference 2025: " + Object.entries(sc.reference_2025).map(([k, v]) => `${esc(k)} ${v.mae}`).join(" · ") + "\n";
+      h += `<span style="color:var(--mut)">${esc(sc.note)}</span>\n\n`;
+    }
+    h += "largest misses:\n" + a.misses.slice(0, 8).map(m => `  wk${m.week} ${esc(m.player)} (${esc(m.pos)} ${esc(m.team)}) proj ${m.proj} → ${m.actual}`).join("\n");
+    if (a.weeks.some(w => w.late_sends_ignored)) h += "\n\nlate sends ignored: " + a.weeks.filter(w => w.late_sends_ignored).map(w => `wk${w.week} ${w.late_sends_ignored}`).join(", ");
+    el.innerHTML = h;
   } catch (e) { el.textContent = "no grades published yet (first grade runs after the first completed games)"; }
 }
 accuracy();
