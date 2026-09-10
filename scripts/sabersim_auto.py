@@ -16,6 +16,10 @@ Env (all optional except the key and SMTP creds when actually sending):
   SMTP_USER / SMTP_PASS   sender login (Gmail: 2-step verification + App Password)
   SMTP_HOST / SMTP_PORT   default smtp.gmail.com / 465 (SSL)
   MAIL_TO           default analysts+robert@sabersim.com ; MAIL_CC optional (yourself)
+  PUBLISH_DIR       if set, the CSV is also copied there (the workflow points it at the private repo
+                    checkout, pkg/sends, and pushes — the Pages "Run now" button downloads from there)
+  CREDIT_WARN       Odds API credits threshold (default 120): below it the send email's subject starts
+                    with [LOW ODDS API CREDITS: n]; every internal copy lists credits remaining
   SEND_WINDOW       "72,90" minutes-to-kickoff bounds at check time (default). Inactives post at
                     T-90; the run takes ~2.5 min; SaberSim needs the CSV by T-75, so a check at T-78 or
                     later lands late — the 5-min cron makes that rare, and 72 is the last-resort cutoff.
@@ -51,6 +55,16 @@ def out(**kw):
             for k, v in kw.items():
                 if isinstance(v, (bool, int, float)) or (isinstance(v, str) and "\n" not in v and len(v) < 200):
                     f.write(f"{k}={json.dumps(v) if not isinstance(v, str) else v}\n")
+
+def credits():
+    """Odds API credits left on the first key (free /events call reports x-requests-remaining)."""
+    keys = [k.strip() for k in open(KEYF) if k.strip() and not k.startswith("#")] if os.path.exists(KEYF) else []
+    if not keys: return None, None
+    try:
+        with urllib.request.urlopen(f"https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events?apiKey={keys[0]}", timeout=30) as r:
+            h = r.headers
+        return int(float(h.get("x-requests-remaining", "nan"))), int(float(h.get("x-requests-used", "nan")))
+    except Exception: return None, None
 
 def next_slate():
     keys = [k.strip() for k in open(KEYF) if k.strip() and not k.startswith("#")] if os.path.exists(KEYF) else []
@@ -91,12 +105,17 @@ if rc != 0 or not os.path.exists(csv_path):
     tail = txt[txt.rfind("Traceback"):] if "Traceback" in txt else txt[-1500:]
     out(sent=False, reason=f"generator exit {rc}", log_tail=tail[-3000:]); sys.exit(1)
 n_rows = sum(1 for _ in open(csv_path, encoding="utf-8")) - 1
+if os.environ.get("PUBLISH_DIR"):          # e.g. the private repo checkout: pkg/sends
+    import shutil; os.makedirs(os.environ["PUBLISH_DIR"], exist_ok=True)
+    shutil.copy(csv_path, os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path)))
+left, used = credits(); warn = int(os.environ.get("CREDIT_WARN", "120"))
+low = left is not None and left < warn
 
 # ---- email ----
 user, pw = os.environ.get("SMTP_USER"), os.environ.get("SMTP_PASS")
 to = os.environ.get("MAIL_TO", "analysts+robert@sabersim.com"); cc = os.environ.get("MAIL_CC", "")
 if A.dry_run or not (user and pw):
-    out(sent=False, dry_run=True, file=os.path.basename(csv_path), rows=n_rows, reason="dry run" if A.dry_run else "SMTP_USER/SMTP_PASS not set")
+    out(sent=False, dry_run=True, file=os.path.basename(csv_path), rows=n_rows, credits_left=left, low_credits=low, reason="dry run" if A.dry_run else "SMTP_USER/SMTP_PASS not set")
     sys.exit(0)
 msg = EmailMessage()
 msg["From"] = user; msg["To"] = to
@@ -108,6 +127,6 @@ with open(csv_path, "rb") as f:
 host, port = os.environ.get("SMTP_HOST", "smtp.gmail.com"), int(os.environ.get("SMTP_PORT", "465"))
 with smtplib.SMTP_SSL(host, port, context=ssl.create_default_context()) as smtp:
     smtp.login(user, pw); smtp.send_message(msg)
-sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"]}
+sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"], "credits_left": left}
 json.dump(sent, open(LOG, "w"), indent=1)
-out(sent=True, file=os.path.basename(csv_path), rows=n_rows, to=to)
+out(sent=True, file=os.path.basename(csv_path), rows=n_rows, to=to, credits_left=left, low_credits=low)

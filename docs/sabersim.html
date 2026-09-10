@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SaberSim send</title>
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:22px; margin:0 0 4px; } .sub { color:var(--mut); margin:0 0 20px; }
+  .card { background:var(--card); border:1px solid #262a33; border-radius:10px; padding:16px; margin-bottom:14px; }
+  label { display:block; color:var(--mut); font-size:13px; margin-bottom:6px; }
+  input[type=password], input[type=text] { width:100%; box-sizing:border-box; background:#0f1115; color:var(--ink); border:1px solid #333845; border-radius:8px; padding:10px 12px; font-size:15px; }
+  button { background:var(--acc); color:#fff; border:0; border-radius:8px; padding:12px 18px; font-size:16px; font-weight:600; cursor:pointer; width:100%; margin-top:8px; }
+  button.secondary { background:#2a2f3a; } button:disabled { opacity:.5; cursor:default; }
+  .row { display:flex; gap:10px; } .row > * { flex:1; }
+  .status { margin-top:12px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; white-space:pre-wrap; color:var(--mut); }
+  .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+  .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#262a33; font-size:12px; color:var(--mut); }
+  small { color:var(--mut); }
+</style>
+</head>
+<body>
+<main>
+  <h1>SaberSim send</h1>
+  <p class="sub">Runs the projection workflow on GitHub and hands you the CSV. Nothing runs in this page; it only asks GitHub to.</p>
+
+  <div class="card">
+    <label for="pat">GitHub token (kept only in this browser)</label>
+    <input id="pat" type="password" placeholder="github_pat_…" autocomplete="off">
+    <small>Fine-grained token: <b>NFL</b> repo → Actions: read &amp; write, Contents: read. <b>model-burke-private</b> → Contents: read. Saved in localStorage on this device; never sent anywhere but api.github.com.</small>
+    <div class="row">
+      <button class="secondary" id="save">Save token</button>
+      <button class="secondary" id="forget">Forget</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <button id="run">Run now &amp; email me</button>
+      <button id="dry" class="secondary">Dry run (no email)</button>
+    </div>
+    <small>Next slate, forced, ignores the window and the sent log. Takes about 2½ minutes. The CSV goes to the MAIL_TO address and is also pushed to the private repo for the download button.</small>
+    <div class="status" id="runstat">idle</div>
+  </div>
+
+  <div class="card">
+    <button id="dl">Download latest CSV</button>
+    <button id="list" class="secondary">List recent sends</button>
+    <div class="status" id="dlstat"></div>
+  </div>
+
+  <div class="card">
+    <span class="pill">credits</span> <span id="credits">Odds API credits: shown after each run in the email and below.</span>
+    <div class="status" id="lastrun"></div>
+  </div>
+</main>
+<script>
+const OWNER = "drburke-droid", REPO = "NFL", WF = "sabersim_send.yml", PRIV = "model-burke-private";
+const API = "https://api.github.com";
+const $ = id => document.getElementById(id);
+const tok = () => { try { return localStorage.getItem("gh_pat") || ""; } catch (e) { return ""; } };
+function hdr() { return { "Authorization": "Bearer " + tok(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" }; }
+async function gh(path, opt = {}) {
+  const r = await fetch(API + path, { ...opt, headers: { ...hdr(), ...(opt.headers || {}) } });
+  if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0, 200));
+  return r.status === 204 ? null : r.json();
+}
+try { $("pat").value = tok() ? "••••••••••••••••" : ""; } catch (e) {}
+$("save").onclick = () => { const v = $("pat").value.trim(); if (v && !v.startsWith("••")) { try { localStorage.setItem("gh_pat", v); } catch (e) {} $("pat").value = "••••••••••••••••"; $("runstat").textContent = "token saved"; } };
+$("forget").onclick = () => { try { localStorage.removeItem("gh_pat"); } catch (e) {} $("pat").value = ""; $("runstat").textContent = "token forgotten"; };
+
+async function trigger(dry) {
+  if (!tok()) { $("runstat").textContent = "save a token first"; return; }
+  $("run").disabled = $("dry").disabled = true;
+  const st = $("runstat"); st.className = "status"; st.textContent = "dispatching…";
+  try {
+    const before = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0]?.id || 0;
+    await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main", inputs: { force: "true", dry_run: dry ? "true" : "false" } }) });
+    st.textContent = "dispatched; waiting for the run to appear…";
+    let run = null;
+    for (let i = 0; i < 20 && !run; i++) { await new Promise(r => setTimeout(r, 3000)); const rs = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0]; if (rs && rs.id !== before) run = rs; }
+    if (!run) { st.textContent = "run not visible yet — check the Actions tab"; return; }
+    for (let i = 0; i < 80; i++) {
+      const r = await gh(`/repos/${OWNER}/${REPO}/actions/runs/${run.id}`);
+      st.textContent = `run #${r.run_number}: ${r.status}${r.conclusion ? " → " + r.conclusion : ""}  (${Math.round((Date.now() - new Date(r.run_started_at || r.created_at)) / 1000)}s)\n${r.html_url}`;
+      if (r.status === "completed") { st.className = "status " + (r.conclusion === "success" ? "ok" : "bad"); if (r.conclusion === "success" && !dry) st.textContent += "\nemail sent — the CSV is in your inbox and in the private repo"; await lastRun(); break; }
+      await new Promise(r => setTimeout(r, 5000));
+    }
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
+  $("run").disabled = $("dry").disabled = false;
+}
+$("run").onclick = () => trigger(false); $("dry").onclick = () => trigger(true);
+
+async function sends() {
+  const items = await gh(`/repos/${OWNER}/${PRIV}/contents/sends`);
+  return items.filter(x => x.name.endsWith(".csv")).sort((a, b) => b.name.localeCompare(a.name));
+}
+$("list").onclick = async () => {
+  const st = $("dlstat"); st.className = "status";
+  try { const s = await sends(); st.textContent = s.length ? s.slice(0, 12).map(x => x.name + "  " + (x.size / 1024).toFixed(1) + " KB").join("\n") : "no sends published yet"; }
+  catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message + (e.message.startsWith("404") ? "\n(no sends/ folder yet, or the token lacks read access to the private repo)" : ""); }
+};
+$("dl").onclick = async () => {
+  const st = $("dlstat"); st.className = "status"; st.textContent = "fetching…";
+  try {
+    const s = await sends(); if (!s.length) { st.textContent = "no sends published yet"; return; }
+    const f = await gh(`/repos/${OWNER}/${PRIV}/contents/sends/${encodeURIComponent(s[0].name)}`);
+    const bytes = Uint8Array.from(atob(f.content.replace(/\n/g, "")), c => c.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], { type: "text/csv" }));
+    const a = document.createElement("a"); a.href = url; a.download = s[0].name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    st.className = "status ok"; st.textContent = "downloaded " + s[0].name;
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
+};
+async function lastRun() {
+  try {
+    const r = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=5`)).workflow_runs;
+    $("lastrun").textContent = r.map(x => `#${x.run_number} ${x.event === "schedule" ? "auto" : "manual"} ${x.conclusion || x.status}  ${new Date(x.created_at).toLocaleString()}`).join("\n");
+    const log = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/data/sabersim/sent_log.json?t=` + Date.now()).then(r => r.json());
+    const keys = Object.keys(log).sort(); if (keys.length) { const k = keys[keys.length - 1]; $("credits").textContent = `last send: ${log[k].slate} — ${log[k].rows} rows at ${log[k].sent_at}` + (log[k].credits_left != null ? ` — Odds API credits left: ${log[k].credits_left}` : ""); }
+  } catch (e) {}
+}
+if (tok()) lastRun();
+</script>
+</body>
+</html>
