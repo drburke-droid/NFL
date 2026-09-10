@@ -102,7 +102,7 @@ jobs:
           cd pkg
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add sends/*.csv 2>/dev/null || { echo "no CSV to publish"; exit 0; }
+          git add sends/*.csv sends/*.parquet 2>/dev/null || { echo "no CSV to publish"; exit 0; }
           git commit -m "send $(date -u +%Y-%m-%dT%H:%MZ)" || { echo "nothing new"; exit 0; }
           git push || echo "publish failed (token is read-only?) — the email still went out"
 

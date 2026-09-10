@@ -1,0 +1,40 @@
+name: SaberSim grade
+
+# Grades every eligible send (generated >= 75 min before kickoff) against nflverse box scores and
+# publishes docs/sabersim_accuracy.json for the SaberSim page. Runs Tuesday and Wednesday mornings
+# (nflverse posts Monday-night stats by Tuesday), and on demand from the page's "Grade now" button.
+
+on:
+  schedule:
+    - cron: "30 13 * 9-12,1 2,3"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  grade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch the private repo (sends live there)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.MODEL_BURKE_REPO }}
+          token: ${{ secrets.MODEL_BURKE_TOKEN }}
+          path: pkg
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-sabersim.txt
+      - run: pip install -q -r requirements-sabersim.txt
+      - name: Grade
+        run: python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
+      - name: Publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/sabersim_accuracy.json outputs/reports/sabersim_accuracy.md 2>/dev/null || true
+          git commit -m "SaberSim accuracy (automated)" || { echo "no changes"; exit 0; }
+          git pull --rebase && git push

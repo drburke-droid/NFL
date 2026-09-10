@@ -75,6 +75,14 @@
   </div>
 
   <div class="card">
+    <h2>Accuracy</h2>
+    <small>Latest eligible send per game and player (generated ≥ 75 min before kickoff), graded against box scores. QB/RB/WR/TE in PPR, K in DK kicker scoring; DST not graded. Re-graded automatically Tuesday and Wednesday mornings.</small>
+    <div class="status" id="acc">loading…</div>
+    <button id="grade" class="secondary">Grade now</button>
+    <div class="status" id="gradestat"></div>
+  </div>
+
+  <div class="card">
     <span class="pill">status</span> <span id="credits">Sign in with the token to see the last send and Odds API credits.</span>
     <div class="status" id="lastrun"></div>
   </div>
@@ -191,6 +199,34 @@ async function lastRun() {
   } catch (e) {}
 }
 if (tok()) lastRun();
+
+// ---- accuracy (public JSON written by the grade workflow) ----
+const f1 = v => (v == null ? "—" : (typeof v === "number" ? v.toFixed(2) : v));
+const sgn = v => (v == null ? "—" : (v > 0 ? "+" : "") + v.toFixed(2));
+async function accuracy() {
+  const el = $("acc");
+  try {
+    const r = await fetch("sabersim_accuracy.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error(r.status);
+    const a = await r.json(); const o = a.overall;
+    let t = `graded ${a.generated_at} — ${o.n} player-games\n\n`;
+    t += "week  sends  n    MAE    RMSE   bias   rho   80%cov  FFA MAE  DK MAE\n";
+    for (const w of a.weeks) t += `${String(w.week).padEnd(5)} ${String(w.sends).padEnd(6)} ${String(w.n).padEnd(4)} ${f1(w.mae).padEnd(6)} ${f1(w.rmse).padEnd(6)} ${sgn(w.bias).padEnd(6)} ${f1(w.spearman).padEnd(5)} ${f1(w.cov80).padEnd(7)} ${f1(w.ffa_mae).padEnd(8)} ${f1(w.dk_mae)}\n`;
+    t += `${"all".padEnd(5)} ${"".padEnd(6)} ${String(o.n).padEnd(4)} ${f1(o.mae).padEnd(6)} ${f1(o.rmse).padEnd(6)} ${sgn(o.bias).padEnd(6)} ${f1(o.spearman).padEnd(5)} ${f1(o.cov80).padEnd(7)} ${f1(o.ffa_mae).padEnd(8)} ${f1(o.dk_mae)}\n\n`;
+    t += "by position: " + Object.entries(o.by_pos).map(([p, x]) => `${p} n${x.n} MAE ${f1(x.mae)} bias ${sgn(x.bias)}`).join(" · ") + "\n\n";
+    t += "largest misses:\n" + a.misses.slice(0, 8).map(m => `  wk${m.week} ${m.player} (${m.pos} ${m.team}) proj ${m.proj} → ${m.actual}`).join("\n");
+    if (a.weeks.some(w => w.late_sends_ignored)) t += "\n\nlate sends ignored: " + a.weeks.filter(w => w.late_sends_ignored).map(w => `wk${w.week} ${w.late_sends_ignored}`).join(", ");
+    el.textContent = t;
+  } catch (e) { el.textContent = "no grades published yet (first grade runs after the first completed games)"; }
+}
+accuracy();
+$("grade").onclick = async () => {
+  const st = $("gradestat"); st.className = "status";
+  if (!tok()) { st.textContent = "save a token first"; return; }
+  try {
+    await gh(`/repos/${OWNER}/${REPO}/actions/workflows/sabersim_grade.yml/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main" }) });
+    st.textContent = "grading dispatched — about 2 minutes, then reload this page";
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
+};
 </script>
 </body>
 </html>

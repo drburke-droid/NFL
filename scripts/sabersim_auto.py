@@ -114,6 +114,9 @@ n_rows = sum(1 for _ in open(csv_path, encoding="utf-8")) - 1
 if os.environ.get("PUBLISH_DIR"):          # e.g. the private repo checkout: pkg/sends
     import shutil; os.makedirs(os.environ["PUBLISH_DIR"], exist_ok=True)
     shutil.copy(csv_path, os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path)))
+    import glob as _glob          # the generator's full run parquet (FFA baseline, DK market, quantiles) rides along for grading
+    runs = sorted(_glob.glob(os.path.join(ROOT, "outputs", "sabersim", "run_*.parquet")), key=os.path.getmtime)
+    if runs: shutil.copy(runs[-1], os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path).replace(".csv", ".parquet")))
 left, used, per_key = credits(); warn = int(os.environ.get("CREDIT_WARN", "120"))
 low = left is not None and left < warn
 

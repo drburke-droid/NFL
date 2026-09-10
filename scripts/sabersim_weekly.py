@@ -157,7 +157,7 @@ else:
                      "FROM nflv_game_lines WHERE season BETWEEN 2023 AND 2026", con)
     con.close()
 for yr in (SEASON,):   # in-season box scores from nflverse
-    for url in (f"player_stats/player_stats_{yr}.parquet", f"player_stats/stats_player_week_{yr}.parquet"):
+    for url in (f"stats_player/stats_player_week_{yr}.parquet", f"player_stats/player_stats_{yr}.parquet", f"player_stats/stats_player_week_{yr}.parquet"):
         try:
             w26 = pd.read_parquet("https://github.com/nflverse/nflverse-data/releases/download/" + url)
             w26 = w26[w26.position.isin(["QB", "RB", "WR", "TE"])]
