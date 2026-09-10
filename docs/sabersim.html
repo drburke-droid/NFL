@@ -86,7 +86,7 @@ const $ = id => document.getElementById(id);
 const tok = () => { try { return localStorage.getItem("gh_pat") || ""; } catch (e) { return ""; } };
 function hdr() { return { "Authorization": "Bearer " + tok(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" }; }
 async function gh(path, opt = {}) {
-  const r = await fetch(API + path, { ...opt, headers: { ...hdr(), ...(opt.headers || {}) } });
+  const r = await fetch(API + path, { cache: "no-store", ...opt, headers: { ...hdr(), ...(opt.headers || {}) } });
   if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0, 200));
   return r.status === 204 ? null : r.json();
 }
@@ -99,8 +99,12 @@ $("forget").onclick = () => { try { localStorage.removeItem("gh_pat"); } catch (
 // ---- commit a file to the NFL repo (create or update) ----
 function b64(bytes) { let s = ""; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s); }
 async function putFile(path, bytes, message) {
-  let sha; try { sha = (await gh(`/repos/${OWNER}/${REPO}/contents/${path}?ref=main`)).sha; } catch (e) {}
-  return gh(`/repos/${OWNER}/${REPO}/contents/${path}`, { method: "PUT", body: JSON.stringify({ message, content: b64(bytes), branch: "main", ...(sha ? { sha } : {}) }) });
+  const content = b64(bytes);
+  for (let attempt = 0; attempt < 3; attempt++) {
+    let sha; try { sha = (await gh(`/repos/${OWNER}/${REPO}/contents/${path}?ref=main&t=${Date.now()}`)).sha; } catch (e) {}
+    try { return await gh(`/repos/${OWNER}/${REPO}/contents/${path}`, { method: "PUT", body: JSON.stringify({ message, content, branch: "main", ...(sha ? { sha } : {}) }) }); }
+    catch (e) { if (!e.message.startsWith("409") || attempt === 2) throw e; await new Promise(r => setTimeout(r, 2500)); }
+  }
 }
 $("upffa").onclick = async () => {
   const st = $("ffastat"); st.className = "status"; const f = $("ffa").files[0]; const wk = parseInt($("week").value, 10);
