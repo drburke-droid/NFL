@@ -495,13 +495,17 @@ if not A.no_lineups:
             if nm in have or nm == r.nname or inj in OUT_WORDS or st.get((nm, r.team), ("", ""))[0] == "OUT": continue
             row = p.loc[r.Index].copy()
             row["player"], row["nname"], row["player_id"] = full, nm, (gsis if gsis else "")
+            # measured 2011-25 (starts vs the team QB1's per-game average): QB2 0.87 mean / 0.82 median,
+            # QB3+ 0.79 / 0.74 -> a nominal QB2 gets 0.85 of the starter, deeper backups 0.78
+            depth_frac = 0.85 if order <= 2 else 0.78
+            frac = frac / 0.8 * depth_frac
             row["proj"] = row["baseline_proj"] = frac * V
             for c in STATS:
                 if c in row.index and pd.notna(row[c]): row[c] = float(row[c]) * frac
             for c, val in (("status", ""), ("src", "sleeper-depth"), ("injury_status", np.nan), ("no_line", True), ("market_ppr", np.nan),
                            ("p_play", 1.0), ("play_mean", frac * V)):
                 if c in row.index: row[c] = val
-            row["note"] = f"depth-chart backup for {r.player} ({frac:.0%} of starter)"
+            row["note"] = f"depth-chart backup for {r.player} ({frac:.0%} of starter, depth {order})"
             new_i = p.index.max() + 1; p.loc[new_i] = row
             print(f"    + synthesized {full} ({r.team} {r.position} depth {order}) at {frac*V:.1f}")
             return new_i
