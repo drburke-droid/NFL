@@ -1,0 +1,45 @@
+exp_id: exp_003_stacker
+author: candidate agent (low-capacity stacking / blend-weight specialist)
+written_before_code: true
+
+hypothesis: >
+  A heavily regularised stacker that learns the FFA/DK blend weight and a small lag correction
+  as a function of context (position, projection tier, DK line availability, lag volatility,
+  week of season), trained on the residual actual_ppr - baseline_proj with the correction
+  shrunk by a factor k chosen by in-train walk-forward MAE (not eyeballed), lowers visible
+  walk-forward MAE by at least 0.5% versus the FFA consensus and produces a composite at or
+  above the model_burke incumbent, because the incumbent's fixed blend weights leave
+  context-dependent signal (line availability, tier, volatility) on the table.
+
+targets:
+  primary: actual_ppr - baseline_proj   (residual on FFA; the prediction is baseline_proj + k * correction)
+  training_rows: actual_active == 1 (tested against all rows; kept if walk-forward MAE improves)
+  quantiles: local residual-quantile rule (same-position, nearest-in-projection training rows)
+             re-centred on the model mean, as in league/baselines/run_baselines.py
+
+features:
+  core:        [baseline_proj, mkt_ppr, mkt_has_line]
+  lags:        [lag_fantasy_points_ppr_l1, lag_fantasy_points_ppr_r3, lag_fantasy_points_ppr_r6,
+                lag_fantasy_points_ppr_std3, lag_games_played, lag_targets_r3, lag_carries_r3]
+  context:     [position, week, ffa_injury_q, ctx_implied, ctx_spread]
+  derived:     [dk_minus_ffa = mkt_ppr - baseline_proj (0 when no line),
+                tier = baseline_proj bucket, early_season = week <= 4,
+                interactions of dk_minus_ffa and lag deltas with position / tier / has_line / std3]
+
+algorithm: >
+  Stage 1: ridge (or ElasticNet) on the residual with hand-built interaction columns, or a
+  LightGBM with <= 8 leaves, monotone constraints on dk_minus_ffa and lag deltas, few trees.
+  Stage 2: shrinkage k in {0, 0.1, ..., 1.0} selected by walk-forward MAE inside the training
+  window (fit on seasons before the last training season, validate on the last one).
+  Stage 3: optional per-position bias offset = median residual of the most recent training
+  season, applied only if it lowers the same inner walk-forward MAE.
+  Weekly refit.
+
+expected_direction: >
+  MAE below FFA (4.443) and at or below model_burke (4.419); RMSE at or below FFA; Spearman
+  at or above FFA; cov80 closer to 0.80 than model_burke (0.74) via the local-quantile rule.
+
+failure_condition: >
+  Visible MAE not below 4.42 (i.e. no improvement over model_burke), or the selected shrinkage
+  k collapses to 0 (the stacker adds nothing over FFA), or any evaluation season with MAE more
+  than 1% above model_burke's season MAE.

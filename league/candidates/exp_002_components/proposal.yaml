@@ -1,0 +1,54 @@
+exp_id: exp_002_components
+author: candidate agent (component-targets specialist)
+written: 2026-09-11, before any model code
+
+hypothesis: >
+  Modelling the box-score components (targets, receptions, receiving yards, carries, rushing
+  yards, pass attempts, passing yards) as separate outcomes shrunk toward FFA's own stat line,
+  and rebuilding PPR from those components plus FFA's untouched TD/turnover lines, gives a
+  lower MAE on scored (active) rows than correcting the PPR total directly, because the
+  component-level errors of the FFA line are individually less noisy and more predictable
+  from prior usage than the summed points residual.
+
+targets:
+  - actual_targets
+  - actual_receptions
+  - actual_rec_yds
+  - actual_carries
+  - actual_rush_yds
+  - actual_attempts
+  - actual_pass_yds
+  # TDs, interceptions and fumbles have no component outcome in the frame: FFA's line is used as-is.
+
+features:
+  ffa_line: [ffa_rec, ffa_rec_yds, ffa_rush_yds, ffa_pass_yds, ffa_pass_tds, ffa_pass_int, ffa_rush_tds, ffa_rec_tds, ffa_fumbles_lost, ffa_rec_sd, ffa_rec_yds_sd, ffa_rush_yds_sd, ffa_pass_yds_sd, ffa_injury_q, ffa_injury_o, baseline_proj]
+  usage_lags: [lag_targets_l1, lag_targets_r3, lag_targets_r6, lag_receptions_l1, lag_receptions_r3, lag_receptions_r6, lag_receiving_yards_l1, lag_receiving_yards_r3, lag_receiving_yards_r6, lag_carries_l1, lag_carries_r3, lag_carries_r6, lag_rushing_yards_l1, lag_rushing_yards_r3, lag_rushing_yards_r6, lag_attempts_l1, lag_attempts_r3, lag_attempts_r6, lag_passing_yards_l1, lag_passing_yards_r3, lag_passing_yards_r6, lag_target_share_r3, lag_target_share_r6, lag_wopr_r3, lag_wopr_r6, lag_air_yards_share_r6, lag_games_played, lag_fp_trend]
+  routes: [rt_route_share_l1, rt_route_share_r3, rt_route_share_r6, rt_route_surprise, rt_tprr_r6, rt_yprr_r6, rt_rz_tgt_rate_r6, rt_team_db_r6]
+  opponent_context: [opp_press_r6_z, opp_man_r6_z, opp_two_high_r6_z, opp_box_r6_z, ctx_spread, ctx_total, ctx_implied, ctx_home]
+  market: [mkt_ppr, mkt_rec_yds_line, mkt_has_line]
+
+algorithm: >
+  Per position (QB / RB / WR / TE) and per component: a low-capacity ridge (or a tightly
+  regularised LightGBM if ridge is clearly insufficient) fitted on actual_active == 1 training
+  rows to the component residual (actual_component - ffa_component_line), using the FFA line,
+  usage lags, route participation, opponent context and market features. The prediction of
+  each component is ffa_line + s_pos_comp * model_residual, where s_pos_comp in [0, 1] is a
+  shrinkage weight learned per position/component on a held-out slice of the training rows
+  (walk-forward, no test data). Components without an FFA line (targets, carries, attempts)
+  are modelled directly in the same way with a lag-based prior. PPR is rebuilt as
+  0.04*pass_yds + 4*pass_td - 2*int + 0.1*rush_yds + 6*rush_td + rec + 0.1*rec_yds + 6*rec_td
+  - 2*fumbles, with TD/INT/fumble lines taken from FFA. Quantiles: empirical residual spread of
+  the ~300 same-position training rows nearest in baseline_proj, re-centred on the new mean
+  (the generator's local_quantiles rule). REFIT = "season".
+
+expected_direction: >
+  MAE below the FFA baseline (4.443) by roughly 0.5-1.5% and at or below the incumbent's
+  4.419, with pinball at least as good as the local-quantile baselines (~1.58) and cov80
+  near 0.80. RB and WR should show the largest gains (their receptions/yards lines are the
+  noisiest relative to usage); QB the smallest.
+
+failure_condition: >
+  The component rebuild fails to beat FFA MAE by more than 0.3% on the visible folds, or
+  the learned shrinkage weights collapse to ~0 for every component (the component residuals
+  are no more predictable than the points residual), or any evaluation season has MAE worse
+  than the incumbent by more than 1%.

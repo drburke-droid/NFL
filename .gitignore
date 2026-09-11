@@ -38,3 +38,7 @@ data/nflverse_cache/
 
 data/odds_api_key.txt
 data/props_frames/lines_cache.json
+
+# Model League: per-run prediction dumps are regenerable from the registry code hashes
+league/registry/submissions/
+league/baselines/run.log

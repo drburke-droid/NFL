@@ -1,0 +1,70 @@
+exp_id: exp_001_quantiles
+author: candidate agent (distribution-shape specialist)
+written: 2026-09-11 (before any code)
+
+hypothesis: >
+  Fitting the five quantiles with gradient-boosted quantile regression on the ACTIVE-ONLY
+  training population, conditioned on projection level, position, market presence, projection
+  spread (ffa_*_sd), lag volatility (lag_*_std3), injury flags and game context, will cut pinball
+  loss by at least 3% and bring 80% interval coverage within 0.02 of 0.80 versus the incumbent's
+  local projection-conditioned residual quantiles (which are fit on all rows including inactive
+  zeros), while a shrunk ridge residual correction keeps MAE within 0.5% of the incumbent's mean.
+
+targets:
+  - actual_ppr (mean via shrunk residual on baseline_proj; quantiles p10/p25/p50/p75/p90 of
+    actual_ppr conditional on features, fit on actual_active == 1 rows)
+
+features:
+  mean_model:
+    - baseline_proj
+    - mkt_ppr
+    - mkt_has_line
+    - ctx_spread
+    - ctx_total
+    - ctx_implied
+    - lag_fantasy_points_ppr_l1
+    - lag_fantasy_points_ppr_r3
+    - lag_targets_r3
+    - lag_carries_r3
+    - ffa_injury_q
+  quantile_model:
+    - baseline_proj
+    - mkt_ppr
+    - mkt_has_line
+    - position (one-hot)
+    - week
+    - ctx_spread
+    - ctx_total
+    - ctx_implied
+    - ctx_home
+    - ctx_outdoor
+    - ffa_injury_q
+    - ffa_injury_o
+    - ffa_pass_yds, ffa_rush_yds, ffa_rec, ffa_rec_yds, ffa_pass_tds, ffa_rush_tds, ffa_rec_tds
+    - ffa_pass_yds_sd, ffa_rush_yds_sd, ffa_rec_yds_sd, ffa_rec_sd
+    - lag_fantasy_points_ppr_l1, lag_fantasy_points_ppr_r3, lag_fantasy_points_ppr_r6, lag_fantasy_points_ppr_std3
+    - lag_targets_r3, lag_targets_std3
+    - lag_carries_r3, lag_carries_std3
+    - lag_target_share_r3, lag_wopr_r3
+    - lag_games_played
+    - lag_fp_trend
+
+algorithm: >
+  Mean: baseline_proj + 0.5 * Ridge(alpha=10) residual fit (minimalist-style, recent seasons).
+  Quantiles: one LightGBM regressor per alpha in {0.10, 0.25, 0.50, 0.75, 0.90} with
+  objective='quantile', trained on actual_active == 1 rows, target = actual_ppr minus the mean
+  prediction (residual quantiles, so they are centred on the mean model automatically), small
+  trees / few leaves so the fit stays under 30 s per week. Quantiles are sorted to enforce
+  monotonicity and floored at 0 (-2 for QBs projected >= 5). The mean is left as pred; p50 may
+  differ from pred. Fallback: if the boosted quantiles do not calibrate, active-only empirical
+  residual quantiles conditioned on position x projection-tier x market-presence.
+
+expected_direction: >
+  MAE ~ equal to the incumbent (4.42 +/- 0.02); pinball down from ~1.58-1.65 to <= 1.53;
+  cov80 from 0.74-0.76 to 0.78-0.82; composite up by the pinball and calibration terms
+  (roughly +0.01 to +0.03 over the incumbent once model_burke_prod's pinball is registered).
+
+failure_condition: >
+  Pinball loss not at least 2% better than the incumbent's local quantiles on the visible folds,
+  OR cov80 outside [0.77, 0.83], OR MAE worse than the incumbent by more than 0.5%, OR any
+  evaluation season with MAE > incumbent x 1.01. Any of these means the hypothesis is rejected.

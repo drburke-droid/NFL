@@ -1,0 +1,52 @@
+exp_id: exp_004_contrarian
+author: contrarian / simplifier agent
+written_before_code: true
+
+hypothesis: >
+  A monotone per-position recalibration of the FFA line itself, fitted walk-forward on prior
+  ACTIVE player-weeks to the conditional MEDIAN (not the mean) of actual PPR, ties or beats the
+  incumbent's residual-GBM correction (model_burke_prod) on MAE and composite, and neither a
+  DK blend nor any residual feature model adds a measurable gain on top of it.
+
+sub_hypotheses:
+  a_recalibration: FFA over-rates the high-projection tiers of WR/TE (actual/FFA ~0.92-0.95 in the
+    top deciles on visible active rows) and the right-skew of weekly PPR means the MAE-optimal point
+    is below the FFA mean; a position x projection-tier median recalibration captures both.
+  b_dk_blend: a two-parameter FFA/DK blend with the weight chosen walk-forward on train rows that
+    carry a line. Expected to select a weight near zero (DK closing-line MAE on this frame is much
+    worse than FFA on the same rows), i.e. to falsify the blend rather than to use it.
+  c_robustness: report per-season / per-position deltas vs FFA and the incumbent so that any season
+    or position where the correction hurts can be gated off.
+
+targets:
+  point: actual_ppr conditional median (judged by MAE, weight 0.45)
+  distribution: p10..p90 from active-only local residual quantiles around the recalibrated mean
+
+features:
+  - baseline_proj        # the FFA PPR line; the only feature in the point model
+  - position
+  - mkt_ppr, mkt_has_line   # only for the (b) blend test
+  - actual_active        # train-side filter only
+  - actual_ppr           # train-side target only
+
+algorithm: >
+  For each position, on active training rows (recent seasons window), take the k nearest rows in
+  baseline_proj to each test row and use the median residual (actual - FFA) as the additive
+  correction; equivalently a kernel median regression of actual on FFA. Monotone in FFA by
+  construction of the local median when k is large. Optional DK weight w chosen by MAE grid on train
+  rows with a line. Quantiles: residual quantiles of the same local neighbourhood, computed on
+  active rows only, re-centred on the corrected mean, floored at 0 (QB -2). Weekly refit; no
+  learned parameters beyond (k, window, w).
+
+expected_direction: >
+  MAE below FFA by ~0.4-0.6% (comparable to the incumbent's 0.55%), pinball and cov80 better than
+  the incumbent because the quantiles exclude inactive zeros. DK weight ~0-0.1.
+
+failure_condition: >
+  Visible MAE not below FFA by at least 0.3%, or worse than model_burke_prod by more than 0.2%,
+  or any evaluation season with MAE > incumbent x 1.01. If the DK weight chosen walk-forward is
+  > 0.3 and materially improves MAE, sub-hypothesis (b) is falsified in the direction opposite to
+  the expectation.
+
+refit: week
+runtime_budget_s: 30 per weekly fit
