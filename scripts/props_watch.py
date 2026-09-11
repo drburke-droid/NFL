@@ -9,7 +9,7 @@ late). This script runs the whole loop for the current week:
      (~35 API credits of the free key's 500/month; key in data/odds_api_key.txt)
   3. rebuilds the model on 2023-25 closing-line history (data/props_frames/) plus
      graded 2026 weeks, predicts the current week walk-forward-style
-  4. calibrated P(over) per line; flags 🚨 WEAK LINES (over edge >= 5%)
+  4. calibrated P(over) per line; flags 🚨 WEAK LINES (over edge >= 8%; 5-8% = watch_over, no bet)
   5. writes docs/props_watch_2026.js (+ outputs/draft_tool copy) for the 📡 Props
      tab, appends flagged bets to the paper-trade ledger, grades past weeks
 
@@ -42,7 +42,8 @@ FRAMES = os.path.join(ROOT, "data", "props_frames")
 LEDGER = os.path.join(FRAMES, "ledger_2026.csv")
 WATCHROWS = os.path.join(FRAMES, "watch_2026_rows.parquet")
 API = "https://api.the-odds-api.com/v4"
-EDGE_FLAG = 0.05
+EDGE_FLAG = 0.08     # 🚨 + ledger: reception-yds OVERS at >= 8% calibrated edge (the only pocket that held up in 2025)
+WATCH_FLAG = 0.05    # shown in the table as "watch_over", no alert, not bet
 ALT_EV_FLAG = 0.08
 
 def get(url):
@@ -272,7 +273,8 @@ for _, r in pred.iterrows():
     io, iu = amer_imp(r.over_price), amer_imp(r.under_price)
     fair = io / (io + iu)
     edge = r.p_over - fair
-    flag = "WEAK_OVER" if edge >= EDGE_FLAG else ("weak_under" if -edge >= EDGE_FLAG else "")
+    flag = ("WEAK_OVER" if edge >= EDGE_FLAG else "watch_over" if edge >= WATCH_FLAG
+            else "weak_under" if -edge >= EDGE_FLAG else "")   # unders are informational only (overs-only strategy)
     arows = []
     for _, a in alt[(alt.nname == norm(r.player)) & (alt.side == "Over")].iterrows():
         pex = p_exceed(r.baseline_proj, r.p_over, a.point)
