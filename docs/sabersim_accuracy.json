@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-10T21:59Z",
+ "generated_at": "2026-09-11T03:33Z",
  "season": 2026,
  "min_lead_min": 75.0,
  "scale": {
@@ -98,13 +98,16 @@
  "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
  "weeks": [
   {
-   "n": 29,
-   "mae": 4.056,
-   "rmse": 5.301,
-   "bias": -1.857,
-   "spearman": 0.585,
-   "cov80": 0.862,
-   "median_mae": 3.582,
+   "n": 33,
+   "mae": 6.566,
+   "rmse": 8.643,
+   "bias": -6.566,
+   "spearman": NaN,
+   "cov80": 0.515,
+   "median_mae": 5.473,
+   "ffa_n": 26,
+   "ffa_mae": 6.792,
+   "model_mae_on_ffa_rows": 7.08,
    "week": 1,
    "sends": 1,
    "games": 1,
@@ -112,204 +115,213 @@
    "by_pos": {
     "K": {
      "n": 2,
-     "mae": 1.64,
-     "rmse": 1.66,
-     "bias": -1.64,
+     "mae": 7.965,
+     "rmse": 7.968,
+     "bias": -7.965,
      "spearman": null,
-     "cov80": 1.0,
-     "median_mae": 1.64
+     "cov80": 0.0,
+     "median_mae": 7.965
     },
     "QB": {
      "n": 4,
-     "mae": 8.255,
-     "rmse": 9.75,
-     "bias": -2.335,
+     "mae": 8.853,
+     "rmse": 11.719,
+     "bias": -8.853,
      "spearman": null,
      "cov80": 0.5,
-     "median_mae": 8.245
+     "median_mae": 8.238
     },
     "RB": {
      "n": 7,
-     "mae": 2.11,
-     "rmse": 2.518,
-     "bias": -2.11,
+     "mae": 7.327,
+     "rmse": 9.535,
+     "bias": -7.327,
      "spearman": null,
-     "cov80": 1.0,
-     "median_mae": 1.091
+     "cov80": 0.571,
+     "median_mae": 5.936
     },
     "TE": {
-     "n": 5,
-     "mae": 3.132,
-     "rmse": 3.239,
-     "bias": -1.344,
-     "spearman": null,
-     "cov80": 1.0,
-     "median_mae": 2.676
+     "n": 8,
+     "mae": 4.372,
+     "rmse": 5.002,
+     "bias": -4.372,
+     "spearman": NaN,
+     "cov80": 0.5,
+     "median_mae": 3.256
     },
     "WR": {
-     "n": 11,
-     "mae": 4.626,
-     "rmse": 5.496,
-     "bias": -1.795,
-     "spearman": 0.534,
-     "cov80": 0.818,
-     "median_mae": 4.236
+     "n": 12,
+     "mae": 6.588,
+     "rmse": 8.908,
+     "bias": -6.588,
+     "spearman": NaN,
+     "cov80": 0.583,
+     "median_mae": 5.343,
+     "ffa_n": 11,
+     "ffa_mae": 6.288,
+     "model_mae_on_ffa_rows": 6.558
     }
    }
   }
  ],
  "overall": {
-  "n": 29,
-  "mae": 4.056,
-  "rmse": 5.301,
-  "bias": -1.857,
-  "spearman": 0.585,
-  "cov80": 0.862,
-  "median_mae": 3.582,
+  "n": 33,
+  "mae": 6.566,
+  "rmse": 8.643,
+  "bias": -6.566,
+  "spearman": NaN,
+  "cov80": 0.515,
+  "median_mae": 5.473,
+  "ffa_n": 26,
+  "ffa_mae": 6.792,
+  "model_mae_on_ffa_rows": 7.08,
   "by_pos": {
    "K": {
     "n": 2,
-    "mae": 1.64,
-    "rmse": 1.66,
-    "bias": -1.64,
+    "mae": 7.965,
+    "rmse": 7.968,
+    "bias": -7.965,
     "spearman": null,
-    "cov80": 1.0,
-    "median_mae": 1.64
+    "cov80": 0.0,
+    "median_mae": 7.965
    },
    "QB": {
     "n": 4,
-    "mae": 8.255,
-    "rmse": 9.75,
-    "bias": -2.335,
+    "mae": 8.853,
+    "rmse": 11.719,
+    "bias": -8.853,
     "spearman": null,
     "cov80": 0.5,
-    "median_mae": 8.245
+    "median_mae": 8.238
    },
    "RB": {
     "n": 7,
-    "mae": 2.11,
-    "rmse": 2.518,
-    "bias": -2.11,
+    "mae": 7.327,
+    "rmse": 9.535,
+    "bias": -7.327,
     "spearman": null,
-    "cov80": 1.0,
-    "median_mae": 1.091
+    "cov80": 0.571,
+    "median_mae": 5.936
    },
    "TE": {
-    "n": 5,
-    "mae": 3.132,
-    "rmse": 3.239,
-    "bias": -1.344,
-    "spearman": null,
-    "cov80": 1.0,
-    "median_mae": 2.676
+    "n": 8,
+    "mae": 4.372,
+    "rmse": 5.002,
+    "bias": -4.372,
+    "spearman": NaN,
+    "cov80": 0.5,
+    "median_mae": 3.256
    },
    "WR": {
-    "n": 11,
-    "mae": 4.626,
-    "rmse": 5.496,
-    "bias": -1.795,
-    "spearman": 0.534,
-    "cov80": 0.818,
-    "median_mae": 4.236
+    "n": 12,
+    "mae": 6.588,
+    "rmse": 8.908,
+    "bias": -6.588,
+    "spearman": NaN,
+    "cov80": 0.583,
+    "median_mae": 5.343,
+    "ffa_n": 11,
+    "ffa_mae": 6.288,
+    "model_mae_on_ffa_rows": 6.558
    }
   }
  },
  "misses": [
   {
    "week": 1,
-   "player": "Sam Darnold",
-   "pos": "QB",
-   "team": "SEA",
-   "proj": 14.5,
-   "actual": 0.5
-  },
-  {
-   "week": 1,
-   "player": "Drew Lock",
-   "pos": "QB",
-   "team": "SEA",
-   "proj": 0.9,
-   "actual": 12.8
-  },
-  {
-   "week": 1,
-   "player": "A.J. Brown",
+   "player": "Puka Nacua",
    "pos": "WR",
-   "team": "NE",
-   "proj": 14.8,
-   "actual": 5.6
-  },
-  {
-   "week": 1,
-   "player": "Romeo Doubs",
-   "pos": "WR",
-   "team": "NE",
-   "proj": 8.5,
+   "team": "LA",
+   "proj": 21.2,
    "actual": 0.0
   },
   {
    "week": 1,
-   "player": "Jaxon Smith-Njigba",
-   "pos": "WR",
-   "team": "SEA",
-   "proj": 17.8,
-   "actual": 26.2
+   "player": "Christian McCaffrey",
+   "pos": "RB",
+   "team": "SF",
+   "proj": 19.4,
+   "actual": 0.0
   },
   {
    "week": 1,
-   "player": "Drake Maye",
+   "player": "Brock Purdy",
    "pos": "QB",
-   "team": "NE",
-   "proj": 16.5,
-   "actual": 9.8
+   "team": "SF",
+   "proj": 16.6,
+   "actual": 0.0
   },
   {
    "week": 1,
-   "player": "Rashid Shaheed",
+   "player": "Matthew Stafford",
+   "pos": "QB",
+   "team": "LA",
+   "proj": 16.4,
+   "actual": 0.0
+  },
+  {
+   "week": 1,
+   "player": "Davante Adams",
    "pos": "WR",
-   "team": "SEA",
-   "proj": 7.8,
-   "actual": 1.4
+   "team": "LA",
+   "proj": 14.3,
+   "actual": 0.0
   },
   {
    "week": 1,
-   "player": "Mack Hollins",
+   "player": "Kyren Williams",
+   "pos": "RB",
+   "team": "LA",
+   "proj": 12.9,
+   "actual": 0.0
+  },
+  {
+   "week": 1,
+   "player": "Mike Evans",
    "pos": "WR",
-   "team": "NE",
-   "proj": 3.6,
-   "actual": 9.1
+   "team": "SF",
+   "proj": 11.2,
+   "actual": 0.0
   },
   {
    "week": 1,
-   "player": "Eli Raridon",
+   "player": "George Kittle",
    "pos": "TE",
-   "team": "NE",
-   "proj": 2.7,
-   "actual": 7.2
-  },
-  {
-   "week": 1,
-   "player": "Tory Horton",
-   "pos": "WR",
-   "team": "SEA",
-   "proj": 4.2,
+   "team": "SF",
+   "proj": 9.3,
    "actual": 0.0
   },
   {
    "week": 1,
-   "player": "Emanuel Wilson",
-   "pos": "RB",
-   "team": "SEA",
-   "proj": 4.1,
-   "actual": 0.3
+   "player": "Deebo Samuel",
+   "pos": "WR",
+   "team": "SF",
+   "proj": 8.7,
+   "actual": 0.0
   },
   {
    "week": 1,
-   "player": "Jadarian Price",
+   "player": "Harrison Mevis",
+   "pos": "K",
+   "team": "LA",
+   "proj": 8.2,
+   "actual": 0.0
+  },
+  {
+   "week": 1,
+   "player": "Eddy Pineiro",
+   "pos": "K",
+   "team": "SF",
+   "proj": 7.8,
+   "actual": 0.0
+  },
+  {
+   "week": 1,
+   "player": "Blake Corum",
    "pos": "RB",
-   "team": "SEA",
-   "proj": 11.6,
-   "actual": 7.8
+   "team": "LA",
+   "proj": 7.6,
+   "actual": 0.0
   }
  ]
 }
