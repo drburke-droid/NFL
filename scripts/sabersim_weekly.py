@@ -439,6 +439,7 @@ p["proj"] = p.Model_Burke_mean
 #   QB1 -> backup inherits 55% of the starter's number
 SHARES = {"RB": (0.60, 0.17, 0.0), "WR": (0.20, 0.24, 0.0), "TE": (0.36, 0.04, 0.25), "QB": (0.55, 0.0, 0.0)}
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "doubtful", "dnr", "nfi", "inactive"}
+DEPTH = {}   # (team, pos) -> [(depth_chart_order, full_name, gsis_id, injury_status)] from Sleeper
 def http_json(u):
     with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=30) as r:
         return json.loads(r.read().decode())
@@ -457,6 +458,8 @@ def live_status():
             if v.get("position") not in ("QB", "RB", "WR", "TE", "K"): continue
             nm, tm = norm(v.get("full_name", "")), TEAM_FIX.get(v.get("team") or "", v.get("team") or "")
             inj = str(v.get("injury_status") or "").lower()
+            if v.get("depth_chart_order") and tm and v.get("status") == "Active":   # depth chart for synthesized backups
+                DEPTH.setdefault((tm, v["position"]), []).append((int(v["depth_chart_order"]), v.get("full_name", ""), v.get("gsis_id") or "", inj))
             if inj in OUT_WORDS: st[(nm, tm)] = ("OUT", st.get((nm, tm), ("", ""))[1] + "+sleeper")
             elif inj == "questionable" and (nm, tm) not in st: st[(nm, tm)] = ("Q", "sleeper")
     except Exception as e: print("  Sleeper unavailable:", str(e)[:50])
@@ -482,6 +485,27 @@ if not A.no_lineups:
     byname = {k[0]: v for k, v in st.items() if v[0] == "OUT"}
     miss = (p.status == "") & p.nname.isin(byname)
     p.loc[miss, "status"] = "OUT"; p.loc[miss, "src"] = p.loc[miss, "nname"].map(lambda n: byname[n][1] + "?team")
+    def synth_backup(r, V, frac):
+        """Starter r is out/doubtful and the FFA file has no other active QB for the team: add the
+        Sleeper depth-chart backup as a new row cloned from the starter at frac x the starter's number
+        (the same 0.8 share the existing rule gives a backup who IS in the file). Returns the new index."""
+        have = set(p[(p.team == r.team) & (p.position == r.position)].nname)
+        for order, full, gsis, inj in sorted(DEPTH.get((r.team, r.position), [])):
+            nm = norm(full)
+            if nm in have or nm == r.nname or inj in OUT_WORDS or st.get((nm, r.team), ("", ""))[0] == "OUT": continue
+            row = p.loc[r.Index].copy()
+            row["player"], row["nname"], row["player_id"] = full, nm, (gsis if gsis else "")
+            row["proj"] = row["baseline_proj"] = frac * V
+            for c in STATS:
+                if c in row.index and pd.notna(row[c]): row[c] = float(row[c]) * frac
+            for c, val in (("status", ""), ("src", "sleeper-depth"), ("injury_status", np.nan), ("no_line", True), ("market_ppr", np.nan),
+                           ("p_play", 1.0), ("play_mean", frac * V)):
+                if c in row.index: row[c] = val
+            row["note"] = f"depth-chart backup for {r.player} ({frac:.0%} of starter)"
+            new_i = p.index.max() + 1; p.loc[new_i] = row
+            print(f"    + synthesized {full} ({r.team} {r.position} depth {order}) at {frac*V:.1f}")
+            return new_i
+        return None
     outs = p[(p.status == "OUT") & (p.proj > 0.5)].sort_values("proj", ascending=False)
     print(f"  lineups: {len(st)} statuses pulled; {int((p.status == 'Q').sum())} Q, {len(outs)} OUT with a projection")
     for r in outs.itertuples():
@@ -496,6 +520,8 @@ if not A.no_lineups:
                 for i, w in (rest.proj / rest.proj.sum()).items(): gain[i] = s_rest * V * w
             if r.position == "QB":   # a backup QB inherits the role, not a share of it
                 gain = {top: max(0.0, s_top * V + 0.25 * V - float(p.loc[top, "proj"]))}
+        elif r.position == "QB":     # no other QB in the file: bring in the depth-chart backup
+            synth_backup(r, V, s_top + 0.25)
         if s_wr > 0:   # TE1 out: a quarter of his points go to the WR room
             wrs = p[(p.team == r.team) & (p.position == "WR") & (p.status != "OUT")]
             if len(wrs) and wrs.proj.sum() > 0:
@@ -532,6 +558,8 @@ if not A.no_lineups:
             rest = mates.iloc[1:]
             if len(rest) and rest.proj.sum() > 0:
                 for i, w_ in (rest.proj / rest.proj.sum()).items(): gain[i] = s_rest * V * (1 - pp) * w_
+        elif r.position == "QB":     # doubtful starter, no other QB in the file: backup at (1-p) x 0.8
+            synth_backup(r, V, (s_top + 0.25) * (1 - pp))
         if s_wr > 0:
             wrs = p[(p.team == r.team) & (p.position == "WR") & (p.status != "OUT")]
             if len(wrs) and wrs.proj.sum() > 0:
