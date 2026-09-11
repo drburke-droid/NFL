@@ -56,7 +56,7 @@ jobs:
         run: python scripts/sabersim_auto.py --check
 
       - name: Fetch the private Model_Burke package
-        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
+        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'
         uses: actions/checkout@v4
         with:
           repository: ${{ secrets.MODEL_BURKE_REPO }}
@@ -64,14 +64,14 @@ jobs:
           path: pkg
 
       - uses: actions/setup-python@v5
-        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
+        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'
         with:
           python-version: "3.11"
           cache: pip
           cache-dependency-path: requirements-sabersim.txt
 
       - name: Install
-        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
+        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'
         run: pip install -q -r requirements-sabersim.txt
 
       - name: Parse Subvertadown / K-DST pastes (idempotent)
@@ -108,11 +108,15 @@ jobs:
           git commit -m "send $(date -u +%Y-%m-%dT%H:%MZ)" || { echo "nothing new"; exit 0; }
           git push || echo "publish failed (token is read-only?) — the email still went out"
 
+      - name: Daily grade of finished games
+        if: steps.win.outputs.grade_due == 'true'
+        run: python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
+
       - name: Record the send
-        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
+        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/sabersim/sent_log.json data/kdst/kdst_*.csv data/subvertadown/subvertadown_long.csv 2>/dev/null || true
-          git commit -m "SaberSim send log (automated)" || { echo "no changes"; exit 0; }
+          git add data/sabersim/sent_log.json data/kdst/kdst_*.csv data/subvertadown/subvertadown_long.csv docs/sabersim_accuracy.json outputs/reports/sabersim_accuracy.md 2>/dev/null || true
+          git commit -m "SaberSim send log / grade (automated)" || { echo "no changes"; exit 0; }
           git pull --rebase && git push

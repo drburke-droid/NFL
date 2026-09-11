@@ -84,9 +84,13 @@ def lookup(r):
 g = elig.copy(); g["actual"] = [lookup(r) for r in g.itertuples()]
 g = g[g.Pos.isin(["QB", "RB", "WR", "TE", "K"])].copy()
 # a player with no box-score row after the game = 0 points (inactive / no touches) — but only for
-# games whose week has any actuals at all (nflverse may not have published yet)
-have = set(act.week.unique())
-g = g[g.week.isin(have)].copy(); g["actual"] = g.actual.fillna(0.0)
+# GAMES nflverse has ingested: both teams of the game must have rows for that week, otherwise the
+# whole game waits for the next grade (a week-level check graded a whole slate as zeros on 2026-09-10)
+have = a.groupby("week").team.apply(set).to_dict()
+ok = g.apply(lambda r: r.Team in have.get(int(r.week), set()) and r.Opp in have.get(int(r.week), set()), axis=1)
+skipped = g[~ok].groupby("week").Game.unique().to_dict()
+g = g[ok].copy(); g["actual"] = g.actual.fillna(0.0)
+if g.empty: raise SystemExit("no graded games yet: " + "; ".join(f"wk{k}: {len(v)} game(s) awaiting box scores" for k, v in skipped.items()))
 g["err"] = g.actual - g.Proj
 
 # ---------- 3. benchmarks from the run parquets (FFA baseline, DK market) ----------
@@ -152,7 +156,13 @@ out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ")
        "weeks": weeks, "overall": overall,
        "misses": [{"week": int(r.week), "player": r.Player, "pos": r.Pos, "team": r.Team, "proj": round(float(r.Proj), 1), "actual": round(float(r.actual), 1)} for r in misses.itertuples()]}
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True); os.makedirs(os.path.join(ROOT, "outputs", "reports"), exist_ok=True)
-json.dump(out, open(os.path.join(ROOT, "docs", "sabersim_accuracy.json"), "w"), indent=1)
+def clean(x):   # NaN is not valid JSON; the page's JSON.parse dies on it
+    if isinstance(x, dict): return {k: clean(v) for k, v in x.items()}
+    if isinstance(x, list): return [clean(v) for v in x]
+    if isinstance(x, float) and (np.isnan(x) or np.isinf(x)): return None
+    return x
+out["awaiting_box_scores"] = {int(k): [str(x) for x in v] for k, v in skipped.items()}
+json.dump(clean(out), open(os.path.join(ROOT, "docs", "sabersim_accuracy.json"), "w"), indent=1)
 L = [f"# SaberSim send accuracy — {A.season} (graded {out['generated_at']})", "", out["rule"], "",
      "| week | sends | games | n | MAE | RMSE | bias | Spearman | 80% cov | FFA MAE (same rows) | DK MAE (same rows) |", "|---|---|---|---|---|---|---|---|---|---|---|"]
 for w in weeks:

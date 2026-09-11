@@ -1,20 +1,20 @@
-# SaberSim send accuracy — 2026 (graded 2026-09-11T03:35Z)
+# SaberSim send accuracy — 2026 (graded 2026-09-11T14:26Z)
 
 latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded
 
 | week | sends | games | n | MAE | RMSE | bias | Spearman | 80% cov | FFA MAE (same rows) | DK MAE (same rows) |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 1 | 1 | 33 | 6.566 | 8.643 | -6.566 | nan | 0.515 | 6.792 (model 7.08) | — |
+| 1 | 2 | 2 | 62 | 4.097 | 5.186 | -1.769 | 0.643 | 0.823 | — | — |
 
-**Overall:** n 33 · MAE 6.566 · RMSE 8.643 · bias -6.566 · Spearman nan · 80% coverage 0.515
+**Overall:** n 62 · MAE 4.097 · RMSE 5.186 · bias -1.769 · Spearman 0.643 · 80% coverage 0.823
 
 | pos | n | MAE | RMSE | bias | 80% cov |
 |---|---|---|---|---|---|
-| K | 2 | 7.965 | 7.968 | -7.965 | 0.0 |
-| QB | 4 | 8.853 | 11.719 | -8.853 | 0.5 |
-| RB | 7 | 7.327 | 9.535 | -7.327 | 0.571 |
-| TE | 8 | 4.372 | 5.002 | -4.372 | 0.5 |
-| WR | 12 | 6.588 | 8.908 | -6.588 | 0.583 |
+| K | 4 | 3.44 | 4.092 | -1.725 | 0.75 |
+| QB | 8 | 6.639 | 8.526 | -2.576 | 0.625 |
+| RB | 14 | 2.567 | 2.856 | -1.354 | 0.857 |
+| TE | 13 | 3.189 | 3.588 | -2.2 | 0.923 |
+| WR | 23 | 4.771 | 5.663 | -1.506 | 0.826 |
 
 ## Scale (2025 reference, full slate pool)
 
@@ -34,15 +34,15 @@ Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fai
 
 Largest misses:
 
-- wk1 Puka Nacua (WR LA): proj 21.2, actual 0.0
-- wk1 Christian McCaffrey (RB SF): proj 19.4, actual 0.0
-- wk1 Brock Purdy (QB SF): proj 16.6, actual 0.0
-- wk1 Matthew Stafford (QB LA): proj 16.4, actual 0.0
-- wk1 Davante Adams (WR LA): proj 14.3, actual 0.0
-- wk1 Kyren Williams (RB LA): proj 12.9, actual 0.0
-- wk1 Mike Evans (WR SF): proj 11.2, actual 0.0
-- wk1 George Kittle (TE SF): proj 9.3, actual 0.0
-- wk1 Deebo Samuel (WR SF): proj 8.7, actual 0.0
-- wk1 Harrison Mevis (K LA): proj 8.2, actual 0.0
-- wk1 Eddy Pineiro (K SF): proj 7.8, actual 0.0
-- wk1 Blake Corum (RB LA): proj 7.6, actual 0.0
+- wk1 Sam Darnold (QB SEA): proj 14.5, actual 0.5
+- wk1 Matthew Stafford (QB LA): proj 17.5, actual 4.1
+- wk1 Drew Lock (QB SEA): proj 0.9, actual 12.8
+- wk1 A.J. Brown (WR NE): proj 14.8, actual 5.6
+- wk1 Puka Nacua (WR LA): proj 21.4, actual 12.4
+- wk1 Davante Adams (WR LA): proj 14.2, actual 5.6
+- wk1 Romeo Doubs (WR NE): proj 8.5, actual 0.0
+- wk1 Jaxon Smith-Njigba (WR SEA): proj 17.8, actual 26.2
+- wk1 Demarcus Robinson (WR SF): proj 4.7, actual 13.0
+- wk1 Deebo Samuel (WR SF): proj 10.1, actual 18.0
+- wk1 De'Zhaun Stribling (WR SF): proj 7.3, actual 0.0
+- wk1 George Kittle (TE SF): proj 10.4, actual 3.2

@@ -95,7 +95,11 @@ s, err = next_slate()
 if err: out(in_window=False, reason=err); sys.exit(0)
 already = s["key"] in sent
 in_win = lo <= s["minutes_to"] <= hi
-out(in_window=bool(in_win and not already) or A.force, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already)
+# daily grade: the tick that lands in the first 10 min of GRADE_HOUR UTC (default 14 = 8 am MDT) also
+# re-grades finished games (GitHub's own cron never fires for this repo, so the ticks carry it)
+_now = datetime.now(timezone.utc); gh_ = int(os.environ.get("GRADE_HOUR", "14"))
+grade_due = _now.hour == gh_ and _now.minute < 10
+out(in_window=bool(in_win and not already) or A.force, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already, grade_due=grade_due)
 if A.check or not (A.force or (in_win and not already)): sys.exit(0)
 
 # ---- run the generator (quiet: its stdout goes to a local log, not the scheduler's log) ----

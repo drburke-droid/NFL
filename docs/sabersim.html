@@ -239,6 +239,8 @@ async function accuracy() {
     }
     h += "largest misses:\n" + a.misses.slice(0, 8).map(m => `  wk${m.week} ${esc(m.player)} (${esc(m.pos)} ${esc(m.team)}) proj ${m.proj} → ${m.actual}`).join("\n");
     if (a.weeks.some(w => w.late_sends_ignored)) h += "\n\nlate sends ignored: " + a.weeks.filter(w => w.late_sends_ignored).map(w => `wk${w.week} ${w.late_sends_ignored}`).join(", ");
+    const aw = a.awaiting_box_scores || {}; const awn = Object.values(aw).reduce((n, v) => n + v.length, 0);
+    if (awn) h += `\n\n<span style="color:var(--warn)">${awn} game(s) sent but not yet in nflverse box scores — graded on the next daily pass (8 am MDT)</span>`;
     el.innerHTML = h;
   } catch (e) { el.textContent = "no grades published yet (first grade runs after the first completed games)"; }
 }
