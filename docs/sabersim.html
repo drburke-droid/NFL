@@ -38,6 +38,12 @@
   .note { font-size:12px; color:var(--mut); line-height:1.4; margin-top:6px; }
   ul.misses { margin:6px 0 0; padding-left:18px; font-size:13px; } ul.misses li { margin:2px 0; }
   h3 { font-size:13px; margin:14px 0 4px; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; }
+  details.ex { margin:6px 0 2px; border-left:2px solid #2a2f3a; padding-left:10px; }
+  details.ex summary { cursor:pointer; font-size:12px; color:var(--acc); list-style:none; }
+  details.ex summary::-webkit-details-marker { display:none; }
+  details.ex summary::before { content:"▸ "; } details.ex[open] summary::before { content:"▾ "; }
+  details.ex p, details.ex li { font-size:13px; line-height:1.5; color:var(--ink); margin:6px 0; }
+  details.ex ul { padding-left:18px; margin:4px 0; } details.ex b { color:var(--ink); } details.ex i { color:var(--mut); font-style:normal; }
   @media (max-width:480px) { .tile .v { font-size:19px; } table.acc { font-size:12px; } }
 </style>
 </head>
@@ -237,21 +243,58 @@ function tile(scale, metric, v, fmt, label, ffa) {
   const k = band(scale, metric, v, ffa);
   return `<div class="tile"><div class="v" style="color:${k ? COL[k] : "var(--ink)"}">${fmt(v)}</div><div class="k">${label}</div><div class="b" style="color:${k ? COL[k] : "var(--mut)"}">${k ? esc(scale.labels[k].split(" (")[0]) : ""}</div></div>`;
 }
+const EX = {
+  intro: `<details class="ex"><summary>How to read this card</summary>
+<p>Every projection we sent is compared with what the player actually scored, once nflverse publishes the box score. Only sends generated at least 75 minutes before kickoff count, and if several sends covered the same game, only the last eligible one is graded, so nothing is counted twice.</p>
+<p>Two habits keep this honest. <b>Look at the sample size first.</b> One game is a few dozen player-outcomes and football is noisy: the same model can look brilliant one week and poor the next without anything changing. Numbers start to mean something after a few hundred player-games, roughly five weeks. <b>Compare like with like.</b> A projection's error depends on who is being projected (stars are harder than backups), so the fairest test is against FFA and DraftKings on the identical players, which the "same rows" chips do.</p></details>`,
+  tiles: `<details class="ex"><summary>What the five numbers mean</summary>
+<ul>
+<li><b>MAE, mean absolute error.</b> Take every player, measure how far the projection missed in fantasy points, ignore whether it was high or low, average. "4.1" means we were typically about four points off. It is the most intuitive accuracy number. <i>Why the floor is around 4: even a perfect forecast of a player's true average misses by about that much, because a single game is random around that average.</i></li>
+<li><b>RMSE, root mean squared error.</b> Same idea, but each miss is squared before averaging, so one 20-point miss hurts far more than four 5-point misses. Compare it with MAE: if RMSE is much larger, the errors are spiky, a few blow-ups; if they are close, the misses are evenly spread.</li>
+<li><b>Bias.</b> The average of actual minus projection, sign kept. Negative means we project too high on the whole, positive too low. A small bias with a large MAE says the errors are noise in both directions, which is normal; a large bias says something systematic is off and can be corrected.</li>
+<li><b>Rank corr, Spearman correlation.</b> Forget the point totals and ask whether the <i>order</i> was right: did the players we ranked higher actually score higher? 1.0 is a perfect ordering, 0 is no relationship. For DFS this often matters more than MAE, because lineups are built from rankings, not from exact points.</li>
+<li><b>80% coverage.</b> Each projection comes with a floor (10th percentile) and ceiling (90th). If those are honest, the actual score should land between them 80% of the time. Well above 0.80 means the ranges are too wide, timid; well below means too narrow, overconfident. Being near 0.80 is called being <i>calibrated</i>.</li>
+</ul></details>`,
+  compare: `<details class="ex"><summary>The "same rows" comparison</summary>
+<p>FFA is the consensus of many public projection systems; DraftKings' lines are the betting market's view. Both are strong. Because error depends on which players are in the pool, we only compare on the exact same player-games, and report our MAE divided by theirs: <b>below 1.00</b> means we beat them, <b>1.00</b> is a tie. This ratio is the single most trustworthy number on the card, since it cancels out the difficulty of the slate.</p></details>`,
+  byweek: `<details class="ex"><summary>Reading the weekly rows</summary>
+<p>Each row is one week's eligible sends. Colours follow the scale at the bottom. Expect the numbers to jump around: a week with two games and 60 players has a standard deviation of about 0.6 in MAE, so a swing from 4.0 to 4.7 between weeks is usually noise, not a change in the model. The "all" row is the one that slowly becomes meaningful.</p></details>`,
+  bypos: `<details class="ex"><summary>Why positions differ</summary>
+<p>Quarterbacks always show the largest MAE because they score the most points and their outcomes swing the most; tight ends and kickers the least. Judge each position against its own history, not against the others. A negative bias at one position only is the more useful clue, because it points at something specific, such as how injuries or game scripts are being handled.</p></details>`,
+  sv: `<details class="ex"><summary>What this test is asking</summary>
+<p>Subvertadown publishes, for every team and position, a "matchup bonus": how many points above or below normal that team's receivers or backs should expect this week. This test asks whether that information would have helped <i>on top of</i> what our projections already knew.</p>
+<ul>
+<li><b>flagged ±0.5</b>: player-games where the bonus was meaningfully non-zero.</li>
+<li><b>direction hit</b>: on those, how often our miss pointed the way the bonus said (we were low when it said favourable, high when it said unfavourable). 50% is a coin flip. Sustained 60%+ over hundreds of player-games would be a real signal.</li>
+<li><b>err when fav / unfav</b>: our average miss in the favourable and unfavourable groups. A useful signal shows a gap between them, positive versus negative.</li>
+<li><b>+½ bonus / +full bonus</b>: what our MAE would have been if we had simply added half or all of the bonus to the projection. Green if it would have helped, red if it would have hurt.</li>
+<li><b>corr</b>: correlation between the bonus and our error, from −1 to 1. Around zero means the bonus carries nothing we did not already have.</li>
+</ul>
+<p>The bar is deliberately high because earlier studies found that matchup information of this kind is already priced into FFA and the betting market. We are looking for a consistent direction over many weeks, not one good Sunday.</p></details>`,
+  misses: `<details class="ex"><summary>Reading the misses</summary>
+<p>The biggest misses are usually not model failures: a player left injured in the first quarter, a backup who unexpectedly got the start, a touchdown that bounced the other way. They are listed so patterns can be spotted over time, for example if the same kind of situation keeps appearing. A single big miss tells you nothing about the model; ten of the same kind do.</p></details>`,
+  scale: `<details class="ex"><summary>Where the bands come from</summary>
+<p>The bands are measured, not chosen. On the 2025 season, projecting every skill player with a public projection: copying last week's points scores MAE 5.7; a trailing four-game average 4.8; the DraftKings market alone 4.7; the FFA consensus 4.2; and an oracle that knows each player's true season average in hindsight still scores 4.0. That last number is the noise floor, the error that remains when the forecast is as good as it can possibly be. "Elite" therefore means at the floor, "top tier" means beating the consensus, and a 3.0 MAE is not achievable on this kind of pool. The bands assume the full slate pool; a pool of only starters runs about two points higher for everyone.</p></details>`
+};
 async function accuracy() {
   const el = $("acc");
   try {
     const r = await fetch("sabersim_accuracy.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error(r.status);
     const a = await r.json(); const o = a.overall, sc = a.scale;
-    let h = `<div class="note">graded ${esc(a.generated_at)} UTC · ${o.n} player-games · ${a.weeks.length} week(s)</div>`;
+    let h = `<div class="note">graded ${esc(a.generated_at)} UTC · ${o.n} player-games · ${a.weeks.length} week(s)</div>` + EX.intro;
     h += `<div class="tiles">${tile(sc, "mae", o.mae, f1, "MAE")}${tile(sc, "rmse", o.rmse, f1, "RMSE")}${tile(sc, "abs_bias", o.bias, sgn, "bias")}${tile(sc, "spearman", o.spearman, f1, "rank corr")}${tile(sc, "cov80", o.cov80, f1, "80% coverage")}</div>`;
+    h += EX.tiles;
     if (o.ffa_mae) h += `<div class="chips"><span class="chip">same rows: FFA MAE <b>${f1(o.ffa_mae)}</b></span><span class="chip">model÷FFA <b>${colored(sc, "vs_ffa_ratio", o.model_mae_on_ffa_rows, v => (v / o.ffa_mae).toFixed(3), o.ffa_mae)}</b></span>${o.dk_mae ? `<span class="chip">DK MAE <b>${f1(o.dk_mae)}</b></span>` : ""}</div>`;
+    if (o.ffa_mae) h += EX.compare;
     h += `<h3>by week</h3><div class="tbl"><table class="acc"><tr><th>week</th><th>sends</th><th>games</th><th>n</th><th>MAE</th><th>RMSE</th><th>bias</th><th>ρ</th><th>80% cov</th><th>FFA MAE</th><th>DK MAE</th></tr>`;
     for (const w of a.weeks) h += `<tr><td>wk ${w.week}</td><td>${w.sends}</td><td>${w.games}</td><td>${w.n}</td><td>${colored(sc, "mae", w.mae, f1)}</td><td>${colored(sc, "rmse", w.rmse, f1)}</td><td>${colored(sc, "abs_bias", w.bias, sgn)}</td><td>${colored(sc, "spearman", w.spearman, f1)}</td><td>${colored(sc, "cov80", w.cov80, f1)}</td><td>${f1(w.ffa_mae)}</td><td>${f1(w.dk_mae)}</td></tr>`;
     h += `</table></div>`;
+    h += EX.byweek;
     h += `<h3>by position</h3><div class="chips">` + Object.entries(o.by_pos).map(([p, x]) => `<span class="chip"><b>${esc(p)}</b> n${x.n} · MAE ${f1(x.mae)} · bias ${sgn(x.bias)}</span>`).join("") + `</div>`;
+    h += EX.bypos;
     const sv = a.subvertadown || {};
     if (sv.commentary) {
-      h += `<h3>Subvertadown check</h3>`;
+      h += `<h3>Subvertadown check</h3>` + EX.sv;
       if (sv.bonus) {
         h += `<div class="tbl"><table class="acc"><tr><th>pos</th><th>n</th><th>flagged ±0.5</th><th>direction hit</th><th>err when fav</th><th>err when unfav</th><th>MAE model</th><th>+½ bonus</th><th>+full bonus</th><th>corr</th></tr>`;
         const rowsv = { ...sv.bonus.by_pos, all: sv.bonus.all };
@@ -265,12 +308,13 @@ async function accuracy() {
       if (sv.qb) h += `<div class="chips"><span class="chip">QB (n${sv.qb.n}): model MAE <b>${f1(sv.qb.mae_model)}</b></span><span class="chip">Subvertadown <b>${f1(sv.qb.mae_subvertadown)}</b></span><span class="chip">50/50 <b>${f1(sv.qb.mae_blend50)}</b></span></div>`;
       h += `<ul class="misses">` + sv.commentary.map(c => `<li>${esc(c)}</li>`).join("") + `</ul>`;
     }
-    h += `<h3>largest misses</h3><ul class="misses">` + a.misses.slice(0, 8).map(m => `<li>wk${m.week} <b>${esc(m.player)}</b> (${esc(m.pos)} ${esc(m.team)}) proj ${m.proj} → ${m.actual}</li>`).join("") + `</ul>`;
+    h += `<h3>largest misses</h3>` + EX.misses;
+    h += `<ul class="misses">` + a.misses.slice(0, 8).map(m => `<li>wk${m.week} <b>${esc(m.player)}</b> (${esc(m.pos)} ${esc(m.team)}) proj ${m.proj} → ${m.actual}</li>`).join("") + `</ul>`;
     const aw = a.awaiting_box_scores || {}; const awn = Object.values(aw).reduce((n, v) => n + v.length, 0);
     if (awn) h += `<div class="note" style="color:var(--warn)">${awn} game(s) sent but not yet in nflverse box scores — graded on the next daily pass (8 am MDT).</div>`;
     if (a.weeks.some(w => w.late_sends_ignored)) h += `<div class="note">late sends ignored: ${a.weeks.filter(w => w.late_sends_ignored).map(w => `wk${w.week} ${w.late_sends_ignored}`).join(", ")}</div>`;
     if (sc) {
-      h += `<h3>scale</h3><div class="legend">` + Object.entries(sc.labels).map(([k, l]) => `<span><span style="color:${COL[k]}">■</span> ${esc(l)}</span>`).join("") + `</div>`;
+      h += `<h3>scale</h3>` + EX.scale + `<div class="legend">` + Object.entries(sc.labels).map(([k, l]) => `<span><span style="color:${COL[k]}">■</span> ${esc(l)}</span>`).join("") + `</div>`;
       h += `<div class="note">MAE ≤${sc.bands.mae.elite} / ${sc.bands.mae.top} / ${sc.bands.mae.consensus} / ${sc.bands.mae.fair} · rank corr ≥${sc.bands.spearman.elite} / ${sc.bands.spearman.top} / ${sc.bands.spearman.consensus} / ${sc.bands.spearman.fair} · |bias| ≤${sc.bands.abs_bias.elite} / ${sc.bands.abs_bias.top} / ${sc.bands.abs_bias.consensus} / ${sc.bands.abs_bias.fair} · 80% cov within ±${sc.bands.cov80.elite} / ${sc.bands.cov80.top} / ${sc.bands.cov80.consensus} / ${sc.bands.cov80.fair} of 0.80 · model÷FFA ≤${sc.bands.vs_ffa_ratio.elite} / ${sc.bands.vs_ffa_ratio.top} / ${sc.bands.vs_ffa_ratio.consensus} / ${sc.bands.vs_ffa_ratio.fair}.<br>2025 reference: ` + Object.entries(sc.reference_2025).map(([k, v]) => `${esc(k)} ${v.mae}`).join(" · ") + `.<br>${esc(sc.note)}</div>`;
     }
     el.innerHTML = h;
