@@ -16,7 +16,9 @@ Env (all optional except the key and SMTP creds when actually sending):
   MODEL_BURKE_PKG   path to the folder CONTAINING model_burke/  (default ./pkg)
   SMTP_USER / SMTP_PASS   sender login (Gmail: 2-step verification + App Password)
   SMTP_HOST / SMTP_PORT   default smtp.gmail.com / 465 (SSL)
-  MAIL_TO           default analysts+robert@sabersim.com ; MAIL_CC optional (yourself)
+  MAIL_TO           default analysts+robert@sabersim.com. If MAIL_CC is set, MAIL_TO gets the clean external
+                    email and MAIL_CC gets a receipt (ops line + CSV copy); without MAIL_CC the send itself
+                    carries the ops line (test phase)
   PUBLISH_DIR       if set, the CSV is also copied there (the workflow points it at the private repo
                     checkout, pkg/sends, and pushes — the Pages "Run now" button downloads from there)
   CREDIT_WARN       Odds API credits threshold (default 120): below it the send email's subject starts
@@ -136,8 +138,10 @@ if cc: msg["Cc"] = cc
 msg["Subject"] = (f"[LOW ODDS API CREDITS: {left}] " if low else "") + f"Model_Burke projections — {s['label']}"
 body = f"Model_Burke v1 projections for the {s['label']}.\n{n_rows} players, generated {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC.\n\nRobert Burke"
 ops = f"Odds API credits remaining: {left if left is not None else 'unknown'} across {len(per_key)} key(s) {per_key}; used {used}; warning threshold {warn}."
-external = to.strip().lower() == "analysts+robert@sabersim.com"
-if not external: body += "\n\n--\n" + ops            # test phase: the send itself comes to you, ops line included
+# Two modes. With MAIL_CC set: MAIL_TO gets the clean external email (what SaberSim sees) and MAIL_CC
+# gets a receipt with the ops line + a copy of the CSV. Without MAIL_CC: the send itself carries the ops line.
+external = bool(cc)
+if not external: body += "\n\n--\n" + ops
 msg.set_content(body)
 with open(csv_path, "rb") as f:
     msg.add_attachment(f.read(), maintype="text", subtype="csv", filename=os.path.basename(csv_path))
@@ -147,7 +151,9 @@ with smtplib.SMTP_SSL(host, port, context=ssl.create_default_context()) as smtp:
     if external and cc:                       # live phase: SaberSim gets a clean mail, you get a receipt with the ops line
         rcpt = EmailMessage(); rcpt["From"] = user; rcpt["To"] = cc
         rcpt["Subject"] = (f"[LOW ODDS API CREDITS: {left}] " if low else "") + f"[sent to SaberSim] {s['label']} — {n_rows} rows"
-        rcpt.set_content(f"Sent {os.path.basename(csv_path)} to {to} at {datetime.now(timezone.utc):%H:%M} UTC.\n{ops}")
+        rcpt.set_content(f"Sent {os.path.basename(csv_path)} to {to} at {datetime.now(timezone.utc):%H:%M} UTC ({n_rows} rows).\n{ops}\n\nThe attached CSV is the exact file that went out.")
+        with open(csv_path, "rb") as f:
+            rcpt.add_attachment(f.read(), maintype="text", subtype="csv", filename=os.path.basename(csv_path))
         smtp.send_message(rcpt)
 sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"], "credits_left": left}
 json.dump(sent, open(LOG, "w"), indent=1)
