@@ -14,7 +14,7 @@ live in the backup zip: the Model_Burke package, the Odds API key file, and Clau
 
 ## One-time setup on the home PC (~15 min)
 
-1. Install Git and Python 3.11 or newer (3.11-3.14 all tested).
+1. Install Git and Python 3.11 or newer (3.11 runs in Actions, 3.14 on the work PC).
 2. Clone to the SAME path as the work PC so Claude's memory notes attach to the project:
    ```
    git clone https://github.com/drburke-droid/NFL.git C:\Users\<you>\Documents\GitHub\NFL
