@@ -513,6 +513,7 @@ if not A.no_lineups:
             print(f"    + synthesized {full} ({r.team} {r.position} depth {order}) at {frac*V:.1f}")
             return new_i
         return None
+    qb_top = p[p.position == "QB"].groupby("team").proj.max().to_dict()   # the team's projected starter, pre-zeroing
     outs = p[(p.status == "OUT") & (p.proj > 0.5)].sort_values("proj", ascending=False)
     print(f"  lineups: {len(st)} statuses pulled; {int((p.status == 'Q').sum())} Q, {len(outs)} OUT with a projection")
     for r in outs.itertuples():
@@ -529,7 +530,7 @@ if not A.no_lineups:
                 gain = {top: max(0.0, s_top * V + 0.25 * V - float(p.loc[top, "proj"]))}
         elif r.position == "QB":     # no other QB in the file: bring in the depth-chart backup
             synth_backup(r, V, s_top + 0.25)
-        if r.position == "QB":       # and his pass-catchers lose a measured slice
+        if r.position == "QB" and V >= 0.5 * qb_top.get(r.team, V):   # the STARTER is out: his pass-catchers lose a measured slice
             for i, m in p[(p.team == r.team) & p.position.isin(QB_OUT_HAIRCUT) & (p.status != "OUT")].iterrows():
                 gain[i] = gain.get(i, 0.0) - QB_OUT_HAIRCUT[m.position] * float(m.proj)
         if s_wr > 0:   # TE1 out: a quarter of his points go to the WR room
@@ -570,7 +571,7 @@ if not A.no_lineups:
                 for i, w_ in (rest.proj / rest.proj.sum()).items(): gain[i] = s_rest * V * (1 - pp) * w_
         elif r.position == "QB":     # doubtful starter, no other QB in the file: backup at (1-p) x 0.8
             synth_backup(r, V, (s_top + 0.25) * (1 - pp))
-        if r.position == "QB":
+        if r.position == "QB" and V >= 0.5 * qb_top.get(r.team, V):
             for i, m in p[(p.team == r.team) & p.position.isin(QB_OUT_HAIRCUT) & (p.status != "OUT") & ~doubt].iterrows():
                 gain[i] = gain.get(i, 0.0) - QB_OUT_HAIRCUT[m.position] * float(m.proj) * (1 - pp)
         if s_wr > 0:
