@@ -1,4 +1,4 @@
-# SaberSim send accuracy — 2026 (graded 2026-09-11T14:26Z)
+# SaberSim send accuracy — 2026 (graded 2026-09-11T14:31Z)
 
 latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded
 
@@ -31,6 +31,14 @@ Bands are for the full slate pool (every projected skill player, ~10 per team). 
 | oracle: true season mean, hindsight | 4.04 | 5.65 | 0.737 |
 
 Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fair ≤4.80 · poor above. RMSE 5.65/5.85/6.05/6.70. Spearman ≥0.74/0.72/0.69/0.60. |bias| ≤0.15/0.30/0.50/0.80. 80% coverage within ±0.02/0.04/0.06/0.10 of 0.80. Model÷FFA MAE on the same rows ≤0.97/0.99/1.01/1.04.
+
+## Subvertadown check
+
+- On 24 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 54% of the time (50% = coin flip).
+- Adding the full team bonus, shared by projection, would have moved MAE from 3.74 to 3.70; half of it: 3.72.
+- Correlation between the bonus and our error: +0.01.
+- Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.
+- QB: on 4 graded starters Subvertadown's projection MAE was 10.71 vs ours 9.62; a 50/50 blend 10.16.
 
 Largest misses:
 

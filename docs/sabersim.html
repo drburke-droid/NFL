@@ -22,6 +22,23 @@
   .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
   .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#262a33; font-size:12px; color:var(--mut); }
   small { color:var(--mut); display:block; margin-top:6px; }
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:8px; margin:10px 0 6px; }
+  .tile { background:#0f1115; border:1px solid #262a33; border-radius:8px; padding:10px 10px 8px; }
+  .tile .v { font-size:22px; font-weight:700; line-height:1.1; } .tile .k { font-size:11px; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
+  .tile .b { font-size:11px; margin-top:4px; }
+  .tbl { overflow-x:auto; -webkit-overflow-scrolling:touch; margin:8px 0; }
+  table.acc { border-collapse:collapse; font-size:13px; white-space:nowrap; min-width:100%; }
+  table.acc th, table.acc td { padding:6px 8px; text-align:right; border-bottom:1px solid #262a33; }
+  table.acc th { color:var(--mut); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  table.acc th:first-child, table.acc td:first-child { text-align:left; position:sticky; left:0; background:var(--card); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
+  .chip { background:#0f1115; border:1px solid #262a33; border-radius:999px; padding:4px 10px; font-size:12px; }
+  .chip b { color:var(--ink); }
+  .legend { display:flex; flex-wrap:wrap; gap:4px 12px; font-size:12px; color:var(--mut); margin:8px 0 4px; }
+  .note { font-size:12px; color:var(--mut); line-height:1.4; margin-top:6px; }
+  ul.misses { margin:6px 0 0; padding-left:18px; font-size:13px; } ul.misses li { margin:2px 0; }
+  h3 { font-size:13px; margin:14px 0 4px; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; }
+  @media (max-width:480px) { .tile .v { font-size:19px; } table.acc { font-size:12px; } }
 </style>
 </head>
 <body>
@@ -77,7 +94,7 @@
   <div class="card">
     <h2>Accuracy</h2>
     <small>Latest eligible send per game and player (generated ≥ 75 min before kickoff), graded against box scores. QB/RB/WR/TE in PPR, K in DK kicker scoring; DST not graded. Re-graded automatically Tuesday and Wednesday mornings.</small>
-    <div class="status" id="acc">loading…</div>
+    <div id="acc" class="note">loading…</div>
     <button id="grade" class="secondary">Grade now</button>
     <div class="status" id="gradestat"></div>
   </div>
@@ -204,43 +221,58 @@ if (tok()) lastRun();
 const f1 = v => (v == null ? "—" : (typeof v === "number" ? v.toFixed(2) : v));
 const sgn = v => (v == null ? "—" : (v > 0 ? "+" : "") + v.toFixed(2));
 const COL = { elite: "#3fb950", top: "#7ee787", consensus: "#d29922", fair: "#f0883e", poor: "#f85149" };
-function band(scale, metric, v, ffa) {          // returns the band name for a metric value
+function band(scale, metric, v, ffa) {
   if (v == null || !scale) return null;
   const b = scale.bands[metric]; if (!b) return null;
   let x = v;
   if (metric === "abs_bias") x = Math.abs(v);
   if (metric === "cov80") x = Math.abs(v - b.target);
   if (metric === "vs_ffa_ratio") { if (!ffa) return null; x = v / ffa; }
-  const order = ["elite", "top", "consensus", "fair", "poor"];
-  for (const k of order) { if (b.higher ? x >= b[k] : x <= b[k]) return k; }
+  for (const k of ["elite", "top", "consensus", "fair", "poor"]) { if (b.higher ? x >= b[k] : x <= b[k]) return k; }
   return "poor";
 }
-const esc = s => String(s).replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
-function cell(scale, metric, v, fmt, ffa) { const k = band(scale, metric, v, ffa); const txt = fmt(v); return k ? `<span style="color:${COL[k]}" title="${scale.labels[k]}">${txt}</span>` : txt; }
+const esc = s => String(s ?? "").replace(/[&<>]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;" }[c]));
+const colored = (scale, metric, v, fmt, ffa) => { const k = band(scale, metric, v, ffa); return k ? `<span style="color:${COL[k]}" title="${esc(scale.labels[k])}">${fmt(v)}</span>` : fmt(v); };
+function tile(scale, metric, v, fmt, label, ffa) {
+  const k = band(scale, metric, v, ffa);
+  return `<div class="tile"><div class="v" style="color:${k ? COL[k] : "var(--ink)"}">${fmt(v)}</div><div class="k">${label}</div><div class="b" style="color:${k ? COL[k] : "var(--mut)"}">${k ? esc(scale.labels[k].split(" (")[0]) : ""}</div></div>`;
+}
 async function accuracy() {
   const el = $("acc");
   try {
     const r = await fetch("sabersim_accuracy.json?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error(r.status);
     const a = await r.json(); const o = a.overall, sc = a.scale;
-    const line = (lab, w) => [esc(lab).padEnd(5), String(w.sends ?? "").padEnd(6), String(w.n).padEnd(4),
-      cell(sc, "mae", w.mae, f1), cell(sc, "rmse", w.rmse, f1), cell(sc, "abs_bias", w.bias, sgn), cell(sc, "spearman", w.spearman, f1), cell(sc, "cov80", w.cov80, f1),
-      f1(w.ffa_mae), w.ffa_mae ? cell(sc, "vs_ffa_ratio", w.model_mae_on_ffa_rows, v => (v / w.ffa_mae).toFixed(3), w.ffa_mae) : "—", f1(w.dk_mae)];
-    let h = `graded ${esc(a.generated_at)} — ${o.n} player-games\n\n`;
-    const hdr = ["week", "sends", "n", "MAE", "RMSE", "bias", "rho", "80%cov", "FFA MAE", "model÷FFA", "DK MAE"];
-    const rows = [hdr, ...a.weeks.map(w => line(String(w.week), w)), line("all", o)];
-    const widths = hdr.map((_, i) => Math.max(...rows.map(r => r[i].replace(/<[^>]+>/g, "").length)));
-    h += rows.map(r => r.map((c, i) => c + " ".repeat(Math.max(0, widths[i] - c.replace(/<[^>]+>/g, "").length))).join("  ")).join("\n") + "\n\n";
-    h += "by position: " + Object.entries(o.by_pos).map(([p, x]) => `${esc(p)} n${x.n} MAE ${f1(x.mae)} bias ${sgn(x.bias)}`).join(" · ") + "\n\n";
-    if (sc) {
-      h += `<span style="color:var(--ink)">scale</span> (2025, full slate pool): ` + Object.entries(sc.labels).map(([k, l]) => `<span style="color:${COL[k]}">■ ${esc(l)}</span>`).join("  ") + "\n";
-      h += `MAE ≤${sc.bands.mae.elite} elite · ≤${sc.bands.mae.top} top · ≤${sc.bands.mae.consensus} consensus · ≤${sc.bands.mae.fair} fair · above poor.  Spearman ≥${sc.bands.spearman.elite}/${sc.bands.spearman.top}/${sc.bands.spearman.consensus}/${sc.bands.spearman.fair}.  |bias| ≤${sc.bands.abs_bias.elite}/${sc.bands.abs_bias.top}/${sc.bands.abs_bias.consensus}/${sc.bands.abs_bias.fair}.  80% cov within ±${sc.bands.cov80.elite}/${sc.bands.cov80.top}/${sc.bands.cov80.consensus}/${sc.bands.cov80.fair} of 0.80.  model÷FFA ≤${sc.bands.vs_ffa_ratio.elite}/${sc.bands.vs_ffa_ratio.top}/${sc.bands.vs_ffa_ratio.consensus}/${sc.bands.vs_ffa_ratio.fair}.\n`;
-      h += "reference 2025: " + Object.entries(sc.reference_2025).map(([k, v]) => `${esc(k)} ${v.mae}`).join(" · ") + "\n";
-      h += `<span style="color:var(--mut)">${esc(sc.note)}</span>\n\n`;
+    let h = `<div class="note">graded ${esc(a.generated_at)} UTC · ${o.n} player-games · ${a.weeks.length} week(s)</div>`;
+    h += `<div class="tiles">${tile(sc, "mae", o.mae, f1, "MAE")}${tile(sc, "rmse", o.rmse, f1, "RMSE")}${tile(sc, "abs_bias", o.bias, sgn, "bias")}${tile(sc, "spearman", o.spearman, f1, "rank corr")}${tile(sc, "cov80", o.cov80, f1, "80% coverage")}</div>`;
+    if (o.ffa_mae) h += `<div class="chips"><span class="chip">same rows: FFA MAE <b>${f1(o.ffa_mae)}</b></span><span class="chip">model÷FFA <b>${colored(sc, "vs_ffa_ratio", o.model_mae_on_ffa_rows, v => (v / o.ffa_mae).toFixed(3), o.ffa_mae)}</b></span>${o.dk_mae ? `<span class="chip">DK MAE <b>${f1(o.dk_mae)}</b></span>` : ""}</div>`;
+    h += `<h3>by week</h3><div class="tbl"><table class="acc"><tr><th>week</th><th>sends</th><th>games</th><th>n</th><th>MAE</th><th>RMSE</th><th>bias</th><th>ρ</th><th>80% cov</th><th>FFA MAE</th><th>DK MAE</th></tr>`;
+    for (const w of a.weeks) h += `<tr><td>wk ${w.week}</td><td>${w.sends}</td><td>${w.games}</td><td>${w.n}</td><td>${colored(sc, "mae", w.mae, f1)}</td><td>${colored(sc, "rmse", w.rmse, f1)}</td><td>${colored(sc, "abs_bias", w.bias, sgn)}</td><td>${colored(sc, "spearman", w.spearman, f1)}</td><td>${colored(sc, "cov80", w.cov80, f1)}</td><td>${f1(w.ffa_mae)}</td><td>${f1(w.dk_mae)}</td></tr>`;
+    h += `</table></div>`;
+    h += `<h3>by position</h3><div class="chips">` + Object.entries(o.by_pos).map(([p, x]) => `<span class="chip"><b>${esc(p)}</b> n${x.n} · MAE ${f1(x.mae)} · bias ${sgn(x.bias)}</span>`).join("") + `</div>`;
+    const sv = a.subvertadown || {};
+    if (sv.commentary) {
+      h += `<h3>Subvertadown check</h3>`;
+      if (sv.bonus) {
+        h += `<div class="tbl"><table class="acc"><tr><th>pos</th><th>n</th><th>flagged ±0.5</th><th>direction hit</th><th>err when fav</th><th>err when unfav</th><th>MAE model</th><th>+½ bonus</th><th>+full bonus</th><th>corr</th></tr>`;
+        const rowsv = { ...sv.bonus.by_pos, all: sv.bonus.all };
+        for (const [p, x] of Object.entries(rowsv)) {
+          const d = x.dir_hit == null ? "—" : `<span style="color:${x.dir_hit >= 0.6 ? COL.top : x.dir_hit <= 0.4 ? COL.poor : "var(--ink)"}">${Math.round(x.dir_hit * 100)}%</span>`;
+          const imp = v => v == null ? "—" : `<span style="color:${v < x.mae_model - 0.005 ? COL.top : v > x.mae_model + 0.005 ? COL.poor : "var(--ink)"}">${f1(v)}</span>`;
+          h += `<tr><td>${esc(p)}</td><td>${x.n}</td><td>${x.n_strong}</td><td>${d}</td><td>${sgn(x.mean_err_fav)}</td><td>${sgn(x.mean_err_unfav)}</td><td>${f1(x.mae_model)}</td><td>${imp(x.mae_half_bonus)}</td><td>${imp(x.mae_full_bonus)}</td><td>${sgn(x.corr_bonus_err)}</td></tr>`;
+        }
+        h += `</table></div>`;
+      }
+      if (sv.qb) h += `<div class="chips"><span class="chip">QB (n${sv.qb.n}): model MAE <b>${f1(sv.qb.mae_model)}</b></span><span class="chip">Subvertadown <b>${f1(sv.qb.mae_subvertadown)}</b></span><span class="chip">50/50 <b>${f1(sv.qb.mae_blend50)}</b></span></div>`;
+      h += `<ul class="misses">` + sv.commentary.map(c => `<li>${esc(c)}</li>`).join("") + `</ul>`;
     }
-    h += "largest misses:\n" + a.misses.slice(0, 8).map(m => `  wk${m.week} ${esc(m.player)} (${esc(m.pos)} ${esc(m.team)}) proj ${m.proj} → ${m.actual}`).join("\n");
-    if (a.weeks.some(w => w.late_sends_ignored)) h += "\n\nlate sends ignored: " + a.weeks.filter(w => w.late_sends_ignored).map(w => `wk${w.week} ${w.late_sends_ignored}`).join(", ");
+    h += `<h3>largest misses</h3><ul class="misses">` + a.misses.slice(0, 8).map(m => `<li>wk${m.week} <b>${esc(m.player)}</b> (${esc(m.pos)} ${esc(m.team)}) proj ${m.proj} → ${m.actual}</li>`).join("") + `</ul>`;
     const aw = a.awaiting_box_scores || {}; const awn = Object.values(aw).reduce((n, v) => n + v.length, 0);
-    if (awn) h += `\n\n<span style="color:var(--warn)">${awn} game(s) sent but not yet in nflverse box scores — graded on the next daily pass (8 am MDT)</span>`;
+    if (awn) h += `<div class="note" style="color:var(--warn)">${awn} game(s) sent but not yet in nflverse box scores — graded on the next daily pass (8 am MDT).</div>`;
+    if (a.weeks.some(w => w.late_sends_ignored)) h += `<div class="note">late sends ignored: ${a.weeks.filter(w => w.late_sends_ignored).map(w => `wk${w.week} ${w.late_sends_ignored}`).join(", ")}</div>`;
+    if (sc) {
+      h += `<h3>scale</h3><div class="legend">` + Object.entries(sc.labels).map(([k, l]) => `<span><span style="color:${COL[k]}">■</span> ${esc(l)}</span>`).join("") + `</div>`;
+      h += `<div class="note">MAE ≤${sc.bands.mae.elite} / ${sc.bands.mae.top} / ${sc.bands.mae.consensus} / ${sc.bands.mae.fair} · rank corr ≥${sc.bands.spearman.elite} / ${sc.bands.spearman.top} / ${sc.bands.spearman.consensus} / ${sc.bands.spearman.fair} · |bias| ≤${sc.bands.abs_bias.elite} / ${sc.bands.abs_bias.top} / ${sc.bands.abs_bias.consensus} / ${sc.bands.abs_bias.fair} · 80% cov within ±${sc.bands.cov80.elite} / ${sc.bands.cov80.top} / ${sc.bands.cov80.consensus} / ${sc.bands.cov80.fair} of 0.80 · model÷FFA ≤${sc.bands.vs_ffa_ratio.elite} / ${sc.bands.vs_ffa_ratio.top} / ${sc.bands.vs_ffa_ratio.consensus} / ${sc.bands.vs_ffa_ratio.fair}.<br>2025 reference: ` + Object.entries(sc.reference_2025).map(([k, v]) => `${esc(k)} ${v.mae}`).join(" · ") + `.<br>${esc(sc.note)}</div>`;
+    }
     el.innerHTML = h;
   } catch (e) { el.textContent = "no grades published yet (first grade runs after the first completed games)"; }
 }

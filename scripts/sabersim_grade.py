@@ -129,6 +129,67 @@ for wk, d in g.groupby("week"):
     weeks.append(o)
 overall = block(g); overall["by_pos"] = {p: block(x) for p, x in g.groupby("Pos")}
 misses = g.reindex(g.err.abs().sort_values(ascending=False).index).head(12)
+# ---------- 4b. Subvertadown check: did their positional matchup bonus / QB projection point the right way? ----------
+sv = {}
+svp = os.path.join(ROOT, "data", "subvertadown", "subvertadown_long.csv")
+if os.path.exists(svp):
+    L0 = pd.read_csv(svp, dtype={"week": str})
+    def sv_lookup(table, team, wk, player=None):
+        """latest paste made at or before the game week (point-in-time), value for that week."""
+        d = L0[(L0.table == table) & (L0.team == team) & (L0.week == str(wk)) & (L0.week_of_paste <= wk)]
+        if player is not None: d = d[d.player.map(norm) == norm(player)]
+        if d.empty: return np.nan
+        return float(d.sort_values("week_of_paste").iloc[-1].value)
+    def sv_base(table, team, wk):
+        d = L0[(L0.table == table) & (L0.team == team) & (L0.week == "baseline") & (L0.week_of_paste <= wk)]
+        return float(d.sort_values("week_of_paste").iloc[-1].value) if len(d) else np.nan
+    sk = g[g.Pos.isin(["RB", "WR", "TE"])].copy()
+    sk["bonus"] = [sv_lookup(f"{r.Pos.lower()}_bonus", r.Team, r.week) for r in sk.itertuples()]
+    sk["base"] = [sv_base(f"{r.Pos.lower()}_bonus", r.Team, r.week) for r in sk.itertuples()]
+    sk = sk.dropna(subset=["bonus"])
+    if len(sk):
+        # allocate the TEAM-level bonus to players in proportion to their projection within team-position-game
+        tot = sk.groupby(["Game", "Team", "Pos"]).Proj.transform("sum")
+        sk["adj"] = sk.bonus * sk.Proj / tot.replace(0, np.nan)
+        strong = sk[sk.bonus.abs() >= 0.5]
+        hit = float(((strong.err > 0) == (strong.bonus > 0)).mean()) if len(strong) else None
+        rows_pos = {}
+        for pos_, d in sk.groupby("Pos"):
+            st = d[d.bonus.abs() >= 0.5]
+            rows_pos[pos_] = {"n": int(len(d)), "n_strong": int(len(st)),
+                              "dir_hit": round(float(((st.err > 0) == (st.bonus > 0)).mean()), 2) if len(st) else None,
+                              "mean_err_fav": round(float(d[d.bonus >= 0.5].err.mean()), 2) if (d.bonus >= 0.5).any() else None,
+                              "mean_err_unfav": round(float(d[d.bonus <= -0.5].err.mean()), 2) if (d.bonus <= -0.5).any() else None,
+                              "mae_model": round(float(d.err.abs().mean()), 3),
+                              "mae_full_bonus": round(float((d.actual - (d.Proj + d.adj)).abs().mean()), 3),
+                              "mae_half_bonus": round(float((d.actual - (d.Proj + 0.5 * d.adj)).abs().mean()), 3),
+                              "corr_bonus_err": round(float(np.corrcoef(d.bonus, d.err)[0, 1]), 3) if len(d) >= 8 and d.bonus.std() > 0 else None}
+        allb = {"n": int(len(sk)), "n_strong": int(len(strong)), "dir_hit": round(hit, 2) if hit is not None else None,
+                "mae_model": round(float(sk.err.abs().mean()), 3), "mae_full_bonus": round(float((sk.actual - (sk.Proj + sk.adj)).abs().mean()), 3),
+                "mae_half_bonus": round(float((sk.actual - (sk.Proj + 0.5 * sk.adj)).abs().mean()), 3),
+                "corr_bonus_err": round(float(np.corrcoef(sk.bonus, sk.err)[0, 1]), 3) if len(sk) >= 8 and sk.bonus.std() > 0 else None}
+        sv["bonus"] = {"all": allb, "by_pos": rows_pos}
+        # commentary
+        c = []
+        if allb["dir_hit"] is not None:
+            c.append(f"On {allb['n_strong']} RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, "
+                     f"the direction of our error matched the flag {allb['dir_hit']:.0%} of the time (50% = coin flip).")
+        c.append(f"Adding the full team bonus, shared by projection, would have moved MAE from {allb['mae_model']:.2f} to {allb['mae_full_bonus']:.2f}; "
+                 f"half of it: {allb['mae_half_bonus']:.2f}.")
+        if allb["corr_bonus_err"] is not None: c.append(f"Correlation between the bonus and our error: {allb['corr_bonus_err']:+.2f}.")
+        c.append("Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found "
+                 "opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.")
+        sv["commentary"] = c
+    # QB: their projection vs ours
+    q = g[g.Pos == "QB"].copy()
+    q["sv"] = [sv_lookup("qb", r.Team, r.week, r.Player) for r in q.itertuples()]
+    q = q.dropna(subset=["sv"])
+    if len(q):
+        sv["qb"] = {"n": int(len(q)), "mae_model": round(float(q.err.abs().mean()), 3), "mae_subvertadown": round(float((q.actual - q.sv).abs().mean()), 3),
+                    "mae_blend50": round(float((q.actual - 0.5 * (q.Proj + q.sv)).abs().mean()), 3),
+                    "rows": [{"player": r.Player, "team": r.Team, "week": int(r.week), "model": round(float(r.Proj), 1), "subvertadown": round(float(r.sv), 1), "actual": round(float(r.actual), 1)} for r in q.itertuples()]}
+        sv.setdefault("commentary", []).append(f"QB: on {len(q)} graded starters Subvertadown's projection MAE was {sv['qb']['mae_subvertadown']:.2f} vs ours {sv['qb']['mae_model']:.2f}; a 50/50 blend {sv['qb']['mae_blend50']:.2f}.")
+
 # ---------- 5. scale: what the numbers mean (measured on the 2025 season, ~300 FFA-projected QB/RB/WR/TE per week) ----------
 SCALE = {
   "note": ("Bands are for the full slate pool (every projected skill player, ~10 per team). MAE is dominated by outcome "
@@ -162,6 +223,7 @@ def clean(x):   # NaN is not valid JSON; the page's JSON.parse dies on it
     if isinstance(x, float) and (np.isnan(x) or np.isinf(x)): return None
     return x
 out["awaiting_box_scores"] = {int(k): [str(x) for x in v] for k, v in skipped.items()}
+out["subvertadown"] = sv
 json.dump(clean(out), open(os.path.join(ROOT, "docs", "sabersim_accuracy.json"), "w"), indent=1)
 L = [f"# SaberSim send accuracy — {A.season} (graded {out['generated_at']})", "", out["rule"], "",
      "| week | sends | games | n | MAE | RMSE | bias | Spearman | 80% cov | FFA MAE (same rows) | DK MAE (same rows) |", "|---|---|---|---|---|---|---|---|---|---|---|"]
@@ -176,6 +238,7 @@ L += [f"| {k} | {v['mae']} | {v['rmse']} | {v['spearman']} |" for k, v in SCALE[
 L += ["", "Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fair ≤4.80 · poor above. RMSE 5.65/5.85/6.05/6.70. "
       "Spearman ≥0.74/0.72/0.69/0.60. |bias| ≤0.15/0.30/0.50/0.80. 80% coverage within ±0.02/0.04/0.06/0.10 of 0.80. "
       "Model÷FFA MAE on the same rows ≤0.97/0.99/1.01/1.04."]
+if sv.get("commentary"): L += ["", "## Subvertadown check", ""] + [f"- {c}" for c in sv["commentary"]]
 L += ["", "Largest misses:", ""] + [f"- wk{m['week']} {m['player']} ({m['pos']} {m['team']}): proj {m['proj']}, actual {m['actual']}" for m in out["misses"]]
 open(os.path.join(ROOT, "outputs", "reports", "sabersim_accuracy.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
 print("\n".join(L[:12])); print(f"\nwrote docs/sabersim_accuracy.json ({overall['n']} graded rows, {len(weeks)} week(s))")
