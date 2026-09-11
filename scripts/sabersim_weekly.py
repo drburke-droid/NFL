@@ -438,6 +438,9 @@ p["proj"] = p.Model_Burke_mean
 #   TE1 -> next TE 36%, other TEs 4%, WRs 25% spread by projection (26% lost)
 #   QB1 -> backup inherits 55% of the starter's number
 SHARES = {"RB": (0.60, 0.17, 0.0), "WR": (0.20, 0.24, 0.0), "TE": (0.36, 0.04, 0.25), "QB": (0.55, 0.0, 0.0)}
+# QB1 out -> his pass-catchers lose too (2011-25, position-group PPR in backup starts vs the same
+# team-season's QB1 starts): WR 0.89-0.91, TE 0.91-0.95, RB 0.94-0.98 (carries unchanged, receiving down)
+QB_OUT_HAIRCUT = {"WR": 0.10, "TE": 0.07, "RB": 0.04}
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "doubtful", "dnr", "nfi", "inactive"}
 DEPTH = {}   # (team, pos) -> [(depth_chart_order, full_name, gsis_id, injury_status)] from Sleeper
 def http_json(u):
@@ -526,6 +529,9 @@ if not A.no_lineups:
                 gain = {top: max(0.0, s_top * V + 0.25 * V - float(p.loc[top, "proj"]))}
         elif r.position == "QB":     # no other QB in the file: bring in the depth-chart backup
             synth_backup(r, V, s_top + 0.25)
+        if r.position == "QB":       # and his pass-catchers lose a measured slice
+            for i, m in p[(p.team == r.team) & p.position.isin(QB_OUT_HAIRCUT) & (p.status != "OUT")].iterrows():
+                gain[i] = gain.get(i, 0.0) - QB_OUT_HAIRCUT[m.position] * float(m.proj)
         if s_wr > 0:   # TE1 out: a quarter of his points go to the WR room
             wrs = p[(p.team == r.team) & (p.position == "WR") & (p.status != "OUT")]
             if len(wrs) and wrs.proj.sum() > 0:
@@ -536,7 +542,7 @@ if not A.no_lineups:
                 gain[i] = g
             old = float(p.loc[i, "proj"]); new = old + g
             p.loc[i, "proj"] = new
-            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} with {r.player} out"
+            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"{g:+.1f} with {r.player} out"
         p.loc[r.Index, "proj"] = 0.0
         p.loc[r.Index, "note"] = "OUT"
         print(f"    OUT {r.player:<22} {r.position} {r.team}  {V:5.1f} -> "
@@ -564,6 +570,9 @@ if not A.no_lineups:
                 for i, w_ in (rest.proj / rest.proj.sum()).items(): gain[i] = s_rest * V * (1 - pp) * w_
         elif r.position == "QB":     # doubtful starter, no other QB in the file: backup at (1-p) x 0.8
             synth_backup(r, V, (s_top + 0.25) * (1 - pp))
+        if r.position == "QB":
+            for i, m in p[(p.team == r.team) & p.position.isin(QB_OUT_HAIRCUT) & (p.status != "OUT") & ~doubt].iterrows():
+                gain[i] = gain.get(i, 0.0) - QB_OUT_HAIRCUT[m.position] * float(m.proj) * (1 - pp)
         if s_wr > 0:
             wrs = p[(p.team == r.team) & (p.position == "WR") & (p.status != "OUT")]
             if len(wrs) and wrs.proj.sum() > 0:
@@ -572,7 +581,7 @@ if not A.no_lineups:
             if "market_ppr" in p.columns and pd.notna(p.loc[i, "market_ppr"]) and not A.no_market:
                 g *= (1 - A.market_weight); gain[i] = g
             p.loc[i, "proj"] = float(p.loc[i, "proj"]) + g
-            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"+{g:.1f} if {r.player} sits"
+            p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"{g:+.1f} if {r.player} sits"
         p.loc[r.Index, ["status", "p_play", "play_mean"]] = ["DOUBT", pp, V]
         p.loc[r.Index, "proj"] = pp * V
         p.loc[r.Index, "note"] = f"Questionable, likely inactive ({V:.1f} if active)"
