@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-11T14:31Z",
+ "generated_at": "2026-09-12T14:00Z",
  "season": 2026,
  "min_lead_min": 75.0,
  "scale": {
@@ -99,12 +99,15 @@
  "weeks": [
   {
    "n": 62,
-   "mae": 4.097,
-   "rmse": 5.186,
-   "bias": -1.769,
-   "spearman": 0.643,
-   "cov80": 0.823,
-   "median_mae": 3.602,
+   "mae": 4.166,
+   "rmse": 5.24,
+   "bias": -1.731,
+   "spearman": 0.63,
+   "cov80": 0.839,
+   "median_mae": 3.71,
+   "ffa_n": 49,
+   "ffa_mae": 4.412,
+   "model_mae_on_ffa_rows": 4.417,
    "week": 1,
    "sends": 2,
    "games": 2,
@@ -112,105 +115,126 @@
    "by_pos": {
     "K": {
      "n": 4,
-     "mae": 3.44,
-     "rmse": 4.092,
-     "bias": -1.725,
+     "mae": 3.428,
+     "rmse": 4.112,
+     "bias": -1.803,
      "spearman": null,
      "cov80": 0.75,
-     "median_mae": 3.44
+     "median_mae": 3.428
     },
     "QB": {
      "n": 8,
-     "mae": 6.639,
-     "rmse": 8.526,
-     "bias": -2.576,
-     "spearman": 0.488,
+     "mae": 6.516,
+     "rmse": 8.324,
+     "bias": -2.444,
+     "spearman": 0.586,
      "cov80": 0.625,
-     "median_mae": 6.368
+     "median_mae": 6.239
     },
     "RB": {
      "n": 14,
-     "mae": 2.567,
-     "rmse": 2.856,
-     "bias": -1.354,
-     "spearman": 0.764,
-     "cov80": 0.857,
-     "median_mae": 1.889
+     "mae": 2.754,
+     "rmse": 3.104,
+     "bias": -1.426,
+     "spearman": 0.78,
+     "cov80": 0.929,
+     "median_mae": 2.078,
+     "ffa_n": 10,
+     "ffa_mae": 3.229,
+     "model_mae_on_ffa_rows": 2.639
     },
     "TE": {
      "n": 13,
-     "mae": 3.189,
-     "rmse": 3.588,
-     "bias": -2.2,
-     "spearman": 0.396,
+     "mae": 3.289,
+     "rmse": 3.641,
+     "bias": -2.269,
+     "spearman": 0.266,
      "cov80": 0.923,
-     "median_mae": 2.46
+     "median_mae": 2.639,
+     "ffa_n": 11,
+     "ffa_mae": 3.06,
+     "model_mae_on_ffa_rows": 3.308
     },
     "WR": {
      "n": 23,
-     "mae": 4.771,
-     "rmse": 5.663,
-     "bias": -1.506,
-     "spearman": 0.695,
+     "mae": 4.832,
+     "rmse": 5.798,
+     "bias": -1.353,
+     "spearman": 0.656,
      "cov80": 0.826,
-     "median_mae": 4.357
+     "median_mae": 4.479,
+     "ffa_n": 21,
+     "ffa_mae": 4.776,
+     "model_mae_on_ffa_rows": 4.898
     }
    }
   }
  ],
  "overall": {
   "n": 62,
-  "mae": 4.097,
-  "rmse": 5.186,
-  "bias": -1.769,
-  "spearman": 0.643,
-  "cov80": 0.823,
-  "median_mae": 3.602,
+  "mae": 4.166,
+  "rmse": 5.24,
+  "bias": -1.731,
+  "spearman": 0.63,
+  "cov80": 0.839,
+  "median_mae": 3.71,
+  "ffa_n": 49,
+  "ffa_mae": 4.412,
+  "model_mae_on_ffa_rows": 4.417,
   "by_pos": {
    "K": {
     "n": 4,
-    "mae": 3.44,
-    "rmse": 4.092,
-    "bias": -1.725,
+    "mae": 3.428,
+    "rmse": 4.112,
+    "bias": -1.803,
     "spearman": null,
     "cov80": 0.75,
-    "median_mae": 3.44
+    "median_mae": 3.428
    },
    "QB": {
     "n": 8,
-    "mae": 6.639,
-    "rmse": 8.526,
-    "bias": -2.576,
-    "spearman": 0.488,
+    "mae": 6.516,
+    "rmse": 8.324,
+    "bias": -2.444,
+    "spearman": 0.586,
     "cov80": 0.625,
-    "median_mae": 6.368
+    "median_mae": 6.239
    },
    "RB": {
     "n": 14,
-    "mae": 2.567,
-    "rmse": 2.856,
-    "bias": -1.354,
-    "spearman": 0.764,
-    "cov80": 0.857,
-    "median_mae": 1.889
+    "mae": 2.754,
+    "rmse": 3.104,
+    "bias": -1.426,
+    "spearman": 0.78,
+    "cov80": 0.929,
+    "median_mae": 2.078,
+    "ffa_n": 10,
+    "ffa_mae": 3.229,
+    "model_mae_on_ffa_rows": 2.639
    },
    "TE": {
     "n": 13,
-    "mae": 3.189,
-    "rmse": 3.588,
-    "bias": -2.2,
-    "spearman": 0.396,
+    "mae": 3.289,
+    "rmse": 3.641,
+    "bias": -2.269,
+    "spearman": 0.266,
     "cov80": 0.923,
-    "median_mae": 2.46
+    "median_mae": 2.639,
+    "ffa_n": 11,
+    "ffa_mae": 3.06,
+    "model_mae_on_ffa_rows": 3.308
    },
    "WR": {
     "n": 23,
-    "mae": 4.771,
-    "rmse": 5.663,
-    "bias": -1.506,
-    "spearman": 0.695,
+    "mae": 4.832,
+    "rmse": 5.798,
+    "bias": -1.353,
+    "spearman": 0.656,
     "cov80": 0.826,
-    "median_mae": 4.357
+    "median_mae": 4.479,
+    "ffa_n": 21,
+    "ffa_mae": 4.776,
+    "model_mae_on_ffa_rows": 4.898
    }
   }
  },
@@ -228,7 +252,7 @@
    "player": "Matthew Stafford",
    "pos": "QB",
    "team": "LA",
-   "proj": 17.5,
+   "proj": 16.4,
    "actual": 4.1
   },
   {
@@ -238,6 +262,22 @@
    "team": "SEA",
    "proj": 0.9,
    "actual": 12.8
+  },
+  {
+   "week": 1,
+   "player": "Demarcus Robinson",
+   "pos": "WR",
+   "team": "SF",
+   "proj": 3.5,
+   "actual": 13.0
+  },
+  {
+   "week": 1,
+   "player": "Deebo Samuel",
+   "pos": "WR",
+   "team": "SF",
+   "proj": 8.7,
+   "actual": 18.0
   },
   {
    "week": 1,
@@ -252,7 +292,7 @@
    "player": "Puka Nacua",
    "pos": "WR",
    "team": "LA",
-   "proj": 21.4,
+   "proj": 21.2,
    "actual": 12.4
   },
   {
@@ -260,7 +300,7 @@
    "player": "Davante Adams",
    "pos": "WR",
    "team": "LA",
-   "proj": 14.2,
+   "proj": 14.3,
    "actual": 5.6
   },
   {
@@ -281,35 +321,19 @@
   },
   {
    "week": 1,
-   "player": "Demarcus Robinson",
-   "pos": "WR",
-   "team": "SF",
-   "proj": 4.7,
-   "actual": 13.0
-  },
-  {
-   "week": 1,
-   "player": "Deebo Samuel",
-   "pos": "WR",
-   "team": "SF",
-   "proj": 10.1,
-   "actual": 18.0
+   "player": "Harrison Mevis",
+   "pos": "K",
+   "team": "LA",
+   "proj": 8.2,
+   "actual": 1.0
   },
   {
    "week": 1,
    "player": "De'Zhaun Stribling",
    "pos": "WR",
    "team": "SF",
-   "proj": 7.3,
+   "proj": 6.9,
    "actual": 0.0
-  },
-  {
-   "week": 1,
-   "player": "George Kittle",
-   "pos": "TE",
-   "team": "SF",
-   "proj": 10.4,
-   "actual": 3.2
   }
  ],
  "awaiting_box_scores": {},
@@ -319,10 +343,10 @@
     "n": 50,
     "n_strong": 24,
     "dir_hit": 0.54,
-    "mae_model": 3.743,
-    "mae_full_bonus": 3.702,
-    "mae_half_bonus": 3.722,
-    "corr_bonus_err": 0.005
+    "mae_model": 3.849,
+    "mae_full_bonus": 3.808,
+    "mae_half_bonus": 3.829,
+    "corr_bonus_err": 0.016
    },
    "by_pos": {
     "RB": {
@@ -330,11 +354,11 @@
      "n_strong": 11,
      "dir_hit": 0.64,
      "mean_err_fav": -3.55,
-     "mean_err_unfav": -1.3,
-     "mae_model": 2.567,
-     "mae_full_bonus": 2.503,
-     "mae_half_bonus": 2.535,
-     "corr_bonus_err": -0.224
+     "mean_err_unfav": -1.5,
+     "mae_model": 2.754,
+     "mae_full_bonus": 2.689,
+     "mae_half_bonus": 2.722,
+     "corr_bonus_err": -0.167
     },
     "TE": {
      "n": 13,
@@ -342,10 +366,10 @@
      "dir_hit": 0.5,
      "mean_err_fav": null,
      "mean_err_unfav": 0.88,
-     "mae_model": 3.189,
-     "mae_full_bonus": 3.168,
-     "mae_half_bonus": 3.179,
-     "corr_bonus_err": -0.444
+     "mae_model": 3.289,
+     "mae_full_bonus": 3.268,
+     "mae_half_bonus": 3.278,
+     "corr_bonus_err": -0.459
     },
     "WR": {
      "n": 23,
@@ -353,34 +377,26 @@
      "dir_hit": 0.45,
      "mean_err_fav": -1.12,
      "mean_err_unfav": -2.36,
-     "mae_model": 4.771,
-     "mae_full_bonus": 4.734,
-     "mae_half_bonus": 4.753,
-     "corr_bonus_err": 0.15
+     "mae_model": 4.832,
+     "mae_full_bonus": 4.795,
+     "mae_half_bonus": 4.813,
+     "corr_bonus_err": 0.152
     }
    }
   },
   "commentary": [
    "On 24 RB/WR/TE player-games where Subvertadown flagged a matchup of at least \u00b10.5 team points, the direction of our error matched the flag 54% of the time (50% = coin flip).",
-   "Adding the full team bonus, shared by projection, would have moved MAE from 3.74 to 3.70; half of it: 3.72.",
-   "Correlation between the bonus and our error: +0.01.",
+   "Adding the full team bonus, shared by projection, would have moved MAE from 3.85 to 3.81; half of it: 3.83.",
+   "Correlation between the bonus and our error: +0.02.",
    "Directional only \u2014 a signal needs several hundred player-games before \u00b10.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.",
-   "QB: on 4 graded starters Subvertadown's projection MAE was 10.71 vs ours 9.62; a 50/50 blend 10.16."
+   "QB: on 4 graded starters Subvertadown's projection MAE was 10.71 vs ours 9.36; a 50/50 blend 10.04."
   ],
   "qb": {
    "n": 4,
-   "mae_model": 9.615,
+   "mae_model": 9.355,
    "mae_subvertadown": 10.715,
-   "mae_blend50": 10.165,
+   "mae_blend50": 10.035,
    "rows": [
-    {
-     "player": "Sam Darnold",
-     "team": "SEA",
-     "week": 1,
-     "model": 14.5,
-     "subvertadown": 17.4,
-     "actual": 0.5
-    },
     {
      "player": "Drake Maye",
      "team": "NE",
@@ -390,10 +406,18 @@
      "actual": 9.8
     },
     {
+     "player": "Sam Darnold",
+     "team": "SEA",
+     "week": 1,
+     "model": 14.5,
+     "subvertadown": 17.4,
+     "actual": 0.5
+    },
+    {
      "player": "Matthew Stafford",
      "team": "LA",
      "week": 1,
-     "model": 17.5,
+     "model": 16.4,
      "subvertadown": 18.0,
      "actual": 4.1
     },
@@ -401,7 +425,7 @@
      "player": "Brock Purdy",
      "team": "SF",
      "week": 1,
-     "model": 16.7,
+     "model": 16.6,
      "subvertadown": 17.3,
      "actual": 21.1
     }
