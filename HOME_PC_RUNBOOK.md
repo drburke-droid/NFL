@@ -49,7 +49,7 @@ should print the history summary and a 2023-25 scorecard, then write a CSV. Dele
 - Manual inactives (optional): `data/inactives/inactives_<season>_wk<week>.txt`, one player per
   line; `active: <name>` overrides a wrongly-listed OUT.
 
-## Generate the CSV (window: T-90 to T-75 before the slate's first kickoff)
+## Generate the CSV (window: T-82 to T-75 before the slate's first kickoff)
 
 ```
 git pull
@@ -60,6 +60,11 @@ Defaults do the right thing: next slate only (games within 90 min of the earlies
 kickoff), live DK lines and props blended per stat, live ESPN/Sleeper lineups with OUT
 redistribution, DOUBT players at P(plays) 0.2, K/DST override from the Subvertadown paste at
 weight 0.65. Useful flags:
+
+Do not generate at T-90 just because the inactives are officially out by then: the ESPN and
+Sleeper feeds carry them a few minutes late. Check the log's `lineups: ... N OUT with a
+projection` line — on an 8-game slate that number is ~20 once the inactives have landed and
+~8 while only the injury report is in. If it looks low, wait a tick and regenerate.
 
 | flag | when |
 |---|---|
@@ -82,7 +87,7 @@ set MAIL_CC=<gmail address>
 set MODEL_BURKE_PKG=pkg
 python scripts/sabersim_auto.py --force
 ```
-(`--dry-run` generates without emailing; `--force` ignores the T-90..T-72 window and the sent log.
+(`--dry-run` generates without emailing; `--force` ignores the T-82..T-72 window and the sent log.
 The wrapper uses `data/odds_api_key.txt` directly when `ODDS_API_KEY` is unset.)
 
 ## Email it by hand
@@ -94,7 +99,7 @@ The CSV must land before T-75. If you miss T-75 for a slate, send the next slate
 
 ## What the automated path did that you are replacing
 
-cron-job.org hits the workflow every 5 min; inside T-90..T-72 the wrapper generates, emails
+cron-job.org hits the workflow every 5 min; inside T-82..T-72 the wrapper generates, emails
 SaberSim (MAIL_TO) with the CC receipt to Gmail, publishes CSV + run parquet to the private repo
 (`sends/`), and records `data/sabersim/sent_log.json`. A manual send is not in that log; add a
 line to the receipt email to yourself so grading can find the file (the grader reads the run

@@ -1,9 +1,9 @@
 # Unattended SaberSim sends — setup
 
 What runs: `.github/workflows/sabersim_send.yml` fires every 15 minutes during game windows.
-Each tick costs ~20 s and nothing else unless the next slate's earliest kickoff is 62-95 minutes
+Each tick costs ~20 s and nothing else unless the next slate's earliest kickoff is 72-82 minutes
 away and unsent. Then it fetches the private Model_Burke package, runs `scripts/sabersim_weekly.py`
-(live ESPN/Sleeper lineups, DK lines, inactives at T-90 are already posted), and emails the CSV
+(live ESPN/Sleeper lineups, DK lines, inactives released at T-90 and by now carried by the feeds), and emails the CSV
 from your Gmail to analysts+robert@sabersim.com with you in CC. `scripts/sabersim_auto.py` is the
 wrapper; it works the same from Task Scheduler on a PC if you ever prefer that.
 
@@ -49,10 +49,13 @@ Push the FFA file by Wednesday night and the rest is hands-off.
 
 ## Timing and failure modes
 
-- **Cron drift.** GitHub may delay scheduled runs by 5-30 min under load. The 62-95 minute window
-  is 33 minutes wide and ticks come every 15 minutes, so one tick lands in the window even with
-  a 15-minute delay. Worst case the send goes at T-62 instead of T-75. If you ever want exact
-  timing, a free cron-job.org job hitting the workflow_dispatch API at T-80 is the upgrade.
+- **Cron drift.** The window is 72-82 minutes and only 10 minutes wide, so it holds exactly two
+  of the 5-minute ticks: T-80 (the intended one, email ~T-77.5) and T-75 (a fallback that emails
+  ~T-72.5, just past SaberSim's cutoff). That is the price of not sending at T-90 before the
+  inactives have reached the feeds. cron-job.org fires within seconds, so drift is not normally
+  the risk; a skipped or queued tick is. If both ticks are missed the slate goes unsent and there
+  is no alert — watch for the CC receipt in Gmail by T-72 and fall back to the Pages "Run now"
+  button or HOME_PC_RUNBOOK.md.
 - **Slate grouping** is the generator's: games within 90 minutes of the earliest upcoming kickoff.
   Sunday 1 pm and 4:05/4:25 are separate sends; SNF and MNF are their own.
 - **Double sends are prevented** by `data/sabersim/sent_log.json` (committed after each send).
@@ -81,5 +84,5 @@ whether anything is sent, so extra ticks are harmless.
    - Treat 204 as success (it is the normal response).
 5. Save, then press "Test run": the Actions tab should show a new `workflow_dispatch` run within seconds.
 
-Timing: a tick at T-90..T-72 starts the run; the CSV lands ~2.5 min later. cron-job.org fires within seconds
+Timing: a tick at T-82..T-72 starts the run; the CSV lands ~2.5 min later. cron-job.org fires within seconds
 of the minute, so the T-88 tick is the usual one and the email arrives around T-85.

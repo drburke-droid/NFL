@@ -1,9 +1,10 @@
-"""Unattended SaberSim send: run the generator in the window between official inactives
-(T-90 min) and the submission deadline (T-75 min), then email the CSV.
+"""Unattended SaberSim send: run the generator once the official inactives have actually reached the
+ESPN/Sleeper feeds (a few minutes after their T-90 release) and before the T-75 submission deadline,
+then email the CSV.
 
 Designed for a scheduler that fires every ~15 minutes (GitHub Actions cron, Task Scheduler,
 cron-job.org). Each tick:
-  1. --check  : stdlib only, no pip — is the next slate's earliest kickoff 72-90 min away
+  1. --check  : stdlib only, no pip — is the next slate's earliest kickoff 72-82 min away
                 and not yet sent? Prints JSON and (in Actions) sets step outputs.
   2. run      : python scripts/sabersim_weekly.py <pkg>  -> CSV for the next slate
   3. email    : SMTP (Gmail app password or any SMTP) with the CSV attached
@@ -23,9 +24,11 @@ Env (all optional except the key and SMTP creds when actually sending):
                     checkout, pkg/sends, and pushes — the Pages "Run now" button downloads from there)
   CREDIT_WARN       Odds API credits threshold (default 120): below it the send email's subject starts
                     with [LOW ODDS API CREDITS: n]; every internal copy lists credits remaining
-  SEND_WINDOW       "72,90" minutes-to-kickoff bounds at check time (default). Inactives post at
-                    T-90; the run takes ~2.5 min; SaberSim needs the CSV by T-75, so a check at T-78 or
-                    later lands late — the 5-min cron makes that rare, and 72 is the last-resort cutoff.
+  SEND_WINDOW       "72,82" minutes-to-kickoff bounds at check time (default). Inactives are released at
+                    T-90, but the feeds lag: the 2026-09-13 T-90 tick emailed 13 inactives short. Kickoffs
+                    sit on a 5-minute mark so ticks land at T-90/T-85/T-80/T-75; the 82 cap makes T-80 the
+                    first eligible tick (email ~T-77.5, inside the T-75 cutoff), with T-75 as a late
+                    fallback. 72 stays the last-resort floor.
 Usage:
   python scripts/sabersim_auto.py --check
   python scripts/sabersim_auto.py            # check + run + email (no-op outside the window)
@@ -49,7 +52,7 @@ KEYF = os.path.join(ROOT, "data", "odds_api_key.txt")
 if not os.path.exists(KEYF) and os.environ.get("ODDS_API_KEY"):   # the secret may hold several keys, comma/newline separated
     import re as _re
     open(KEYF, "w").write("\n".join(k for k in _re.split(r"[,;\s]+", os.environ["ODDS_API_KEY"]) if k) + "\n")
-lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "72,90").split(","))
+lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "72,82").split(","))
 
 def out(**kw):
     print(json.dumps({k: v for k, v in kw.items() if k != "log_tail"}))
