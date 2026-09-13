@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SaberSim scoring</title>
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:640px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:22px; margin:0 0 4px; } h2 { font-size:15px; margin:0 0 10px; }
+  h3 { font-size:13px; margin:16px 0 8px; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; }
+  .sub { color:var(--mut); margin:0 0 20px; } a { color:var(--acc); }
+  .card { background:var(--card); border:1px solid #262a33; border-radius:10px; padding:16px; margin-bottom:14px; }
+  button { background:var(--acc); color:#fff; border:0; border-radius:8px; padding:12px 18px; font-size:16px; font-weight:600; cursor:pointer; width:100%; margin-top:8px; }
+  button.secondary { background:#2a2f3a; } button:disabled { opacity:.5; cursor:default; }
+  .status { margin-top:12px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:13px; white-space:pre-wrap; color:var(--mut); }
+  .ok { color:var(--ok); } .warn { color:var(--warn); } .bad { color:var(--bad); }
+  .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#262a33; font-size:12px; color:var(--mut); }
+  small { color:var(--mut); display:block; margin-top:6px; }
+  .tiles { display:grid; grid-template-columns:repeat(auto-fit,minmax(96px,1fr)); gap:8px; margin:10px 0 6px; }
+  .tile { background:#0f1115; border:1px solid #262a33; border-radius:8px; padding:10px 10px 8px; }
+  .tile .v { font-size:22px; font-weight:700; line-height:1.1; font-variant-numeric:tabular-nums; }
+  .tile .k { font-size:11px; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; margin-top:2px; }
+  .tile .b { font-size:11px; margin-top:4px; font-variant-numeric:tabular-nums; }
+  .tbl { overflow-x:auto; } table.acc { border-collapse:collapse; font-size:13px; white-space:nowrap; min-width:100%; }
+  table.acc th, table.acc td { padding:6px 8px; text-align:right; border-bottom:1px solid #262a33; font-variant-numeric:tabular-nums; }
+  table.acc th { color:var(--mut); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  table.acc th:first-child, table.acc td:first-child { text-align:left; position:sticky; left:0; background:var(--card); }
+  /* slate pickers */
+  .slate { border:1px solid #262a33; border-radius:8px; padding:11px 12px 8px; margin-bottom:10px; background:#0f1115; }
+  .slate.pending { opacity:.55; }
+  .slate-hd { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .slate-nm { font-weight:600; font-size:14px; } .slate-mt { font-size:12px; color:var(--mut); }
+  .opt { display:block; margin-top:5px; }
+  .opt input { position:absolute; opacity:0; pointer-events:none; }
+  .opt label { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:9px; padding:7px 9px;
+    border:1px solid #262a33; border-radius:7px; cursor:pointer; background:var(--card); }
+  .opt label:hover { border-color:#3a4150; }
+  .opt input:checked + label { border-color:var(--acc); background:#1b2433; }
+  .opt input:focus-visible + label { outline:2px solid var(--acc); outline-offset:1px; }
+  .opt input:disabled + label { cursor:default; opacity:.6; }
+  .dot { width:12px; height:12px; border-radius:50%; border:2px solid #3a4150; flex:none; }
+  .opt input:checked + label .dot { border-color:var(--acc); background:radial-gradient(circle,var(--acc) 0 42%,transparent 45%); }
+  .nm { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; display:block; word-break:break-all; }
+  .mt { font-size:11px; color:var(--mut); display:block; margin-top:2px; }
+  .tag { font-size:11px; font-weight:600; padding:2px 7px; border-radius:5px; white-space:nowrap; }
+  .t-ok { background:#132a1b; color:var(--ok); } .t-dq { background:#2e2611; color:var(--warn); }
+  .t-no { background:#262a33; color:var(--mut); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 4px; }
+  .chip { background:#2a2f3a; color:var(--ink); border:0; border-radius:999px; padding:6px 12px;
+    font-size:13px; font-weight:600; cursor:pointer; width:auto; margin:0; }
+  .chip:hover { background:#333a47; }
+</style>
+</head>
+<body>
+<main>
+  <h1>SaberSim scoring</h1>
+  <p class="sub">SaberSim counts the last send that arrived at least 75 minutes before kickoff. When several
+    sends exist for a slate, which one counts changes the grade. Pick one per slate and see the scorecard.
+    &nbsp;<a href="sabersim.html">&larr; sends &amp; accuracy</a></p>
+
+  <div class="card">
+    <h2>Data</h2>
+    <div id="meta" class="status">loading…</div>
+    <button id="refresh" class="secondary">Refresh scoring</button>
+    <div id="refstat" class="status"></div>
+    <small>Refresh re-reads every published send and the latest nflverse box scores, then rebuilds this page's
+      data. Takes about two minutes. It uses the same token as the SaberSim page (Actions: read &amp; write) and
+      runs on its own queue, so it can never delay a slate send. It also rebuilds automatically after the
+      Tuesday and Wednesday grade.</small>
+  </div>
+
+  <div class="card">
+    <h2>Which send counts</h2>
+    <div class="chips" id="presets"></div>
+    <div id="slates"></div>
+  </div>
+
+  <div class="card">
+    <h2>Scorecard</h2>
+    <div id="sel" class="status"></div>
+    <div class="tiles" id="tiles"></div>
+    <div id="ffa"></div>
+    <h3>by position</h3>
+    <div class="tbl"><table class="acc" id="postab"></table></div>
+    <h3>what the swap changed</h3>
+    <div id="movenote" class="status"></div>
+    <div class="tbl"><table class="acc" id="movetab"></table></div>
+    <small>Deltas compare against the strict scenario — the sends SaberSim would actually have accepted.
+      Lower MAE, RMSE and median MAE are better; higher Spearman and coverage are better.</small>
+  </div>
+</main>
+<script>
+const OWNER = "drburke-droid", REPO = "NFL", WF = "sabersim_scenarios.yml";
+const API = "https://api.github.com";
+const $ = id => document.getElementById(id);
+const tok = () => { try { return localStorage.getItem("gh_pat") || ""; } catch (e) { return ""; } };
+function hdr() { return { "Authorization": "Bearer " + tok(), "Accept": "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" }; }
+async function gh(path, opt = {}) {
+  const r = await fetch(API + path, { cache: "no-store", ...opt, headers: { ...hdr(), ...(opt.headers || {}) } });
+  if (!r.ok) throw new Error(r.status + " " + (await r.text()).slice(0, 200));
+  return r.status === 204 ? null : r.json();
+}
+const esc = t => String(t).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const f3 = x => x == null ? "—" : x.toFixed(3);
+const NONE = "__none__";
+let D = null, state = {}, STRICT = {};
+
+/* ---------- stats ---------- */
+function ranks(v) {
+  const idx = v.map((x, i) => [x, i]).sort((a, b) => a[0] - b[0]), r = new Array(v.length);
+  let i = 0;
+  while (i < idx.length) {
+    let j = i; while (j + 1 < idx.length && idx[j + 1][0] === idx[i][0]) j++;
+    const avg = (i + j) / 2 + 1; for (let k = i; k <= j; k++) r[idx[k][1]] = avg; i = j + 1;
+  }
+  return r;
+}
+function pearson(a, b) {
+  const n = a.length; if (n < 2) return null;
+  const ma = a.reduce((s, x) => s + x, 0) / n, mb = b.reduce((s, x) => s + x, 0) / n;
+  let num = 0, da = 0, db = 0;
+  for (let i = 0; i < n; i++) { const x = a[i] - ma, y = b[i] - mb; num += x * y; da += x * x; db += y * y; }
+  return (da && db) ? num / Math.sqrt(da * db) : null;
+}
+const spearman = (a, b) => a.length < 8 ? null : pearson(ranks(a), ranks(b));
+
+/* rows for a selection: {pl:[pi,gi,posi,actual], v:[proj,med,lo,hi,ffa], slate} */
+function rowsFor(sel) {
+  const out = [];
+  D.slates.forEach(sl => {
+    if (!sl.graded) return;
+    const f = sel[sl.key]; if (!f || f === NONE) return;
+    const snd = sl.sends.find(x => x.file === f); if (!snd) return;
+    sl.pl.forEach((p, i) => {
+      const v = snd.v[i]; if (!v || p[3] == null || v[0] == null) return;
+      out.push({ pi: p[0], gi: p[1], pos: D.positions[p[2]] || "?", a: p[3],
+                 j: v[0], m: v[1], lo: v[2], hi: v[3], ffa: v[4], sk: sl.key });
+    });
+  });
+  return out;
+}
+function stats(rows) {
+  if (!rows.length) return null;
+  const n = rows.length; let ae = 0, se = 0, sb = 0, cov = 0, mm = 0;
+  rows.forEach(r => { const e = r.a - r.j; ae += Math.abs(e); se += e * e; sb += e;
+    if (r.lo != null && r.hi != null && r.a >= r.lo && r.a <= r.hi) cov++;
+    if (r.m != null) mm += Math.abs(r.a - r.m); });
+  const f = rows.filter(r => r.ffa != null);
+  const o = { n, games: new Set(rows.map(r => r.sk + "|" + r.gi)).size,
+    mae: ae / n, rmse: Math.sqrt(se / n), bias: sb / n, cov80: cov / n, median_mae: mm / n,
+    spearman: spearman(rows.map(r => r.j), rows.map(r => r.a)) };
+  if (f.length >= 8) {
+    o.ffa_n = f.length;
+    o.ffa_mae = f.reduce((s, r) => s + Math.abs(r.a - r.ffa), 0) / f.length;
+    o.model_on_ffa = f.reduce((s, r) => s + Math.abs(r.a - r.j), 0) / f.length;
+  }
+  return o;
+}
+
+/* ---------- render ---------- */
+function tile(k, v, d, invert) {
+  let b = "";
+  if (d != null && Math.abs(d) >= 0.0005) {
+    const good = invert ? d > 0 : d < 0;
+    b = `<div class="b ${good ? "ok" : "bad"}">${d > 0 ? "+" : ""}${d.toFixed(3)}</div>`;
+  } else if (d != null) b = `<div class="b" style="color:var(--mut)">no change</div>`;
+  return `<div class="tile"><div class="v">${v}</div><div class="k">${esc(k)}</div>${b}</div>`;
+}
+function drawSlates() {
+  $("slates").innerHTML = D.slates.map(sl => {
+    const opts = sl.sends.map(s => {
+      const id = "o_" + sl.key.replace(/[^a-z0-9]/gi, "") + "_" + s.short.replace(/[^a-z0-9]/gi, "");
+      return `<span class="opt"><input type="radio" id="${id}" name="s_${esc(sl.key)}" data-sl="${esc(sl.key)}" data-f="${esc(s.file)}"${state[sl.key] === s.file ? " checked" : ""}${sl.graded ? "" : " disabled"}>` +
+        `<label for="${id}"><span class="dot"></span><span><span class="nm">${esc(s.short)}</span>` +
+        `<span class="mt">${esc(s.gen)} · T-${s.lead} · ${s.out} ruled out</span></span>` +
+        `<span class="tag ${s.eligible ? "t-ok" : "t-dq"}">${s.eligible ? "on time" : "DQ"}</span></label></span>`;
+    }).join("");
+    const nid = "o_" + sl.key.replace(/[^a-z0-9]/gi, "") + "_none";
+    const none = `<span class="opt"><input type="radio" id="${nid}" name="s_${esc(sl.key)}" data-sl="${esc(sl.key)}" data-f="${NONE}"${state[sl.key] === NONE ? " checked" : ""}${sl.graded ? "" : " disabled"}>` +
+      `<label for="${nid}"><span class="dot"></span><span><span class="nm">no send counted</span>` +
+      `<span class="mt">drop this slate from the grade</span></span><span class="tag t-no">excluded</span></label></span>`;
+    return `<div class="slate${sl.graded ? "" : " pending"}"><div class="slate-hd"><span class="slate-nm">${esc(sl.label)}</span>` +
+      `<span class="slate-mt">wk${sl.week} · ${sl.games.length} game${sl.games.length === 1 ? "" : "s"}</span></div>` +
+      `<div class="slate-mt">${sl.graded ? "box scores in" : "awaiting box scores — no effect yet"}</div>` +
+      opts + none + `</div>`;
+  }).join("");
+  $("slates").querySelectorAll("input[type=radio]").forEach(el =>
+    el.addEventListener("change", () => { state[el.dataset.sl] = el.dataset.f; render(); }));
+}
+function render() {
+  const cur = stats(rowsFor(state)), base = stats(rowsFor(STRICT));
+  if (!cur) {
+    $("tiles").innerHTML = ""; $("ffa").innerHTML = ""; $("postab").innerHTML = "";
+    $("movetab").innerHTML = ""; $("movenote").textContent = "";
+    $("sel").textContent = "No sends selected — pick at least one slate above."; return;
+  }
+  const same = base && cur.n === base.n, d = (k) => same ? cur[k] - base[k] : null;
+  $("tiles").innerHTML =
+    tile("MAE", f3(cur.mae), d("mae"), false) +
+    tile("RMSE", f3(cur.rmse), d("rmse"), false) +
+    tile("Spearman", f3(cur.spearman), same && cur.spearman != null ? cur.spearman - base.spearman : null, true) +
+    tile("80% cov", f3(cur.cov80), d("cov80"), true) +
+    tile("bias", f3(cur.bias), null) +
+    tile("median MAE", f3(cur.median_mae), d("median_mae"), false);
+  $("ffa").innerHTML = cur.ffa_n
+    ? `<h3>against FFA, same ${cur.ffa_n} rows</h3><div class="tiles">` +
+      tile("Model_Burke", f3(cur.model_on_ffa), null) + tile("FFA", f3(cur.ffa_mae), null) +
+      tile("edge", (cur.ffa_mae - cur.model_on_ffa >= 0 ? "+" : "") + f3(cur.ffa_mae - cur.model_on_ffa), null) +
+      `</div>` : "";
+  $("sel").textContent = cur.n + " players · " + cur.games + " games — " +
+    D.slates.filter(s => s.graded).map(sl => {
+      const f = state[sl.key]; if (!f || f === NONE) return sl.label + ": excluded";
+      const s = sl.sends.find(x => x.file === f);
+      return sl.label + ": " + s.short + " (T-" + s.lead + ", " + s.out + " out)";
+    }).join("\n");
+  const by = {}; rowsFor(state).forEach(r => (by[r.pos] = by[r.pos] || []).push(r));
+  $("postab").innerHTML = `<tr><th>pos</th><th>n</th><th>MAE</th><th>RMSE</th><th>bias</th><th>80% cov</th></tr>` +
+    Object.keys(by).sort().map(p => { const x = stats(by[p]);
+      return `<tr><td>${esc(p)}</td><td>${x.n}</td><td>${f3(x.mae)}</td><td>${f3(x.rmse)}</td><td>${f3(x.bias)}</td><td>${f3(x.cov80)}</td></tr>`;
+    }).join("");
+  const bm = {}; rowsFor(STRICT).forEach(r => bm[r.sk + "|" + r.gi + "|" + r.pi] = r);
+  const mv = [];
+  rowsFor(state).forEach(r => { const b = bm[r.sk + "|" + r.gi + "|" + r.pi];
+    if (!b || Math.abs(b.j - r.j) < 0.01) return;
+    mv.push({ p: D.players[r.pi], pos: r.pos, a: r.a, bj: b.j, cj: r.j,
+              d: Math.abs(r.a - r.j) - Math.abs(r.a - b.j) }); });
+  mv.sort((x, y) => Math.abs(y.d) - Math.abs(x.d));
+  $("movenote").textContent = mv.length
+    ? mv.length + " player" + (mv.length === 1 ? "" : "s") + " differ from the strict scenario. Negative means the selected send was closer."
+    : "Matches the strict scenario — nothing moved.";
+  $("movetab").innerHTML = `<tr><th>player</th><th>pos</th><th>actual</th><th>strict</th><th>selected</th><th>error</th></tr>` +
+    (mv.slice(0, 12).map(m => `<tr><td>${esc(m.p)}</td><td>${esc(m.pos)}</td><td>${m.a.toFixed(2)}</td>` +
+      `<td>${m.bj.toFixed(2)}</td><td>${m.cj.toFixed(2)}</td>` +
+      `<td class="${m.d < 0 ? "ok" : "bad"}">${m.d > 0 ? "+" : ""}${m.d.toFixed(2)}</td></tr>`).join("")
+     || `<tr><td colspan="6" style="color:var(--mut)">no differences</td></tr>`);
+}
+const PRESETS = [
+  ["SaberSim strict", sl => { const o = sl.sends.filter(x => x.eligible); return o.length ? o[o.length - 1].file : NONE; }],
+  ["as delivered", sl => sl.sends[sl.sends.length - 1].file],
+  ["first send", sl => sl.sends[0].file],
+  ["most inactives caught", sl => sl.sends.reduce((b, x) => x.out > b.out ? x : b, sl.sends[0]).file]
+];
+function boot(d) {
+  D = d; STRICT = {}; 
+  D.slates.forEach(sl => { const o = sl.sends.filter(x => x.eligible); STRICT[sl.key] = o.length ? o[o.length - 1].file : NONE; });
+  state = Object.assign({}, STRICT);
+  const gr = D.slates.filter(s => s.graded), games = gr.reduce((a, s) => a + s.games.length, 0);
+  const chk = D.strict_matches_published === true
+    ? `<span class="pill ok">matches the published grade</span>`
+    : D.strict_matches_published === false
+      ? `<span class="pill bad">differs from the published grade — trust the Accuracy page</span>` : "";
+  $("meta").innerHTML = `built ${esc(D.generated_at)} · ${games} graded game${games === 1 ? "" : "s"} across ` +
+    `${gr.length} slate${gr.length === 1 ? "" : "s"} · ${D.slates.reduce((a, s) => a + s.sends.length, 0)} sends<br>${chk}`;
+  $("presets").innerHTML = PRESETS.map((p, i) => `<button class="chip" data-i="${i}">${esc(p[0])}</button>`).join("");
+  $("presets").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+    const fn = PRESETS[+b.dataset.i][1];
+    D.slates.forEach(sl => { state[sl.key] = sl.graded ? fn(sl) : NONE; });
+    drawSlates(); render();
+  }));
+  drawSlates(); render();
+}
+async function load() {
+  try {
+    const r = await fetch("sabersim_scenarios.json?t=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    boot(await r.json());
+  } catch (e) {
+    $("meta").className = "status warn";
+    $("meta").textContent = "No scoring data yet (" + e.message + "). Press Refresh scoring to build it.";
+  }
+}
+$("refresh").onclick = async () => {
+  const st = $("refstat");
+  if (!tok()) { st.className = "status bad"; st.textContent = "save a token on the SaberSim page first"; return; }
+  $("refresh").disabled = true; st.className = "status"; st.textContent = "dispatching…";
+  try {
+    const before = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0]?.id || 0;
+    await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main" }) });
+    st.textContent = "dispatched; waiting for the run to appear…";
+    let run = null;
+    for (let i = 0; i < 20 && !run; i++) {
+      await new Promise(r => setTimeout(r, 3000));
+      const rs = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0];
+      if (rs && rs.id !== before) run = rs;
+    }
+    if (!run) { st.className = "status warn"; st.textContent = "run not visible yet — check the Actions tab"; return; }
+    for (let i = 0; i < 80; i++) {
+      const r = await gh(`/repos/${OWNER}/${REPO}/actions/runs/${run.id}`);
+      st.textContent = `run #${r.run_number}: ${r.status}${r.conclusion ? " → " + r.conclusion : ""} (${Math.round((Date.now() - new Date(r.run_started_at || r.created_at)) / 1000)}s)\n${r.html_url}`;
+      if (r.status === "completed") {
+        st.className = "status " + (r.conclusion === "success" ? "ok" : "bad");
+        if (r.conclusion === "success") { st.textContent += "\nreloading the scoring data…"; await new Promise(r => setTimeout(r, 6000)); await load(); st.textContent += " done"; }
+        break;
+      }
+      await new Promise(r => setTimeout(r, 5000));
+    }
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message + (e.message.startsWith("403") ? "\n(the token needs Actions: read & write on NFL)" : ""); }
+  finally { $("refresh").disabled = false; }
+};
+load();
+</script>
+</body>
+</html>

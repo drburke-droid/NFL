@@ -1,0 +1,70 @@
+name: SaberSim scoring
+
+# Builds docs/sabersim_scenarios.json for the scoring page: every slate, every send published
+# for it, and each send's projections beside the actual result. The page picks one send per
+# slate and recomputes the scorecard in the browser.
+#
+# Deliberately separate from sabersim_send.yml: its own concurrency group, so refreshing the
+# scoring page can never queue against — or cancel — a slate send. It touches none of the
+# send path's files.
+#
+# Runs after the Tuesday/Wednesday grade, and on demand from the page's "Refresh scoring"
+# button (the same fine-grained token the SaberSim page already uses, Actions: read & write).
+
+on:
+  schedule:
+    - cron: "45 13 * 9-12,1 2,3"   # 15 min after sabersim_grade.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sabersim-scoring
+  cancel-in-progress: false
+
+jobs:
+  scoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the private repo (the sends live there)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.MODEL_BURKE_REPO }}
+          token: ${{ secrets.MODEL_BURKE_TOKEN }}
+          path: pkg
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-sabersim.txt
+
+      - run: pip install -q -r requirements-sabersim.txt
+
+      - name: Build the scenarios file
+        run: python scripts/sabersim_scenarios.py --sends pkg/sends outputs/sabersim
+
+      - name: Publish
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/sabersim_scenarios.json
+          git diff --cached --quiet && { echo "no change"; exit 0; }
+          git commit -m "SaberSim scoring scenarios (automated)"
+          # This workflow is the only writer of that file, so on a race the freshly built copy
+          # wins: replay it onto the new main rather than rebasing (a text rebase of JSON is
+          # what silently broke the send log on 2026-09-13).
+          n=0
+          until git push origin HEAD:main; do
+            n=$((n+1)); [ "$n" -gt 3 ] && { echo "push failed after $n attempts"; exit 1; }
+            cp docs/sabersim_scenarios.json "$RUNNER_TEMP/s.json"
+            git fetch origin main && git reset --hard origin/main
+            cp "$RUNNER_TEMP/s.json" docs/sabersim_scenarios.json
+            git add docs/sabersim_scenarios.json
+            git diff --cached --quiet && { echo "no change after refetch"; exit 0; }
+            git commit -m "SaberSim scoring scenarios (automated)"
+            sleep 3
+          done
