@@ -19,5 +19,12 @@
   "file": "Burke_Model_Burke_2026_sun04pm_0913_1911.csv",
   "slate": "Sun 09/13 04:25 PM ET slate (4 games)",
   "credits_left": 1538
+ },
+ "2026-09-14T00:20_1g": {
+  "sent_at": "2026-09-13T23:02:28Z",
+  "rows": 32,
+  "file": "Burke_Model_Burke_2026_sun08pm_0913_2300.csv",
+  "slate": "Sun 09/13 08:20 PM ET slate (1 games)",
+  "credits_left": 1504
  }
 }
