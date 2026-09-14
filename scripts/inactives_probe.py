@@ -28,10 +28,12 @@ import json, argparse, urllib.request
 from datetime import datetime, timezone
 
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "dnr", "nfi", "inactive"}
-# Deliberately the SAME User-Agent the generator sends (sabersim_weekly.py http_json). On
-# 2026-09-14 the probe got 403 from ESPN on the runners while using its own UA; matching the
-# generator's means a refusal here is evidence about the generator, not about the probe.
-UA = {"User-Agent": "Mozilla/5.0"}
+# No User-Agent at all, which is what the generator's espn_json now sends. ESPN 403s a browser UA
+# from a datacenter IP and serves the urllib default one — measured on a runner 2026-09-14 by
+# scripts/espn_diag.py, which is why the earlier "Mozilla/5.0" here (matched to the generator) got
+# 403 on every ESPN tick. Sleeper answers either way. Keep this identical to espn_json's headers so
+# a refusal here stays evidence about the generator rather than about the probe.
+UA = {}
 ap = argparse.ArgumentParser()
 ap.add_argument("--minutes-to", type=float, required=True)
 ap.add_argument("--slate", default="")

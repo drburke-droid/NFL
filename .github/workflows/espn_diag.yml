@@ -1,10 +1,15 @@
 name: ESPN diagnostic
 
-# One-off: can a runner reach ESPN at all, and does any header profile or host get through?
-# Separate workflow, own concurrency group, no schedule — it can never queue against a send.
+# Can a runner reach ESPN, and which headers/hosts does it accept? Then: does the probe, with the
+# same headers the generator now sends, actually come back with data?
+# Separate workflow, own concurrency group, manual dispatch only — it can never queue against a send.
 
 on:
   workflow_dispatch:
+    inputs:
+      minutes_to:
+        description: "minutes-to-kickoff to report for the probe tick"
+        default: "80"
 
 concurrency:
   group: espn-diag
@@ -15,4 +20,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: python scripts/espn_diag.py
+      - name: Header and host matrix
+        run: python scripts/espn_diag.py
+      - name: Probe with the generator's headers
+        run: |
+          python scripts/inactives_probe.py \
+            --minutes-to "${{ inputs.minutes_to }}" --slate "espn-fix-verify" --band 0,100000

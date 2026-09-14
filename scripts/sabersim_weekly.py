@@ -457,13 +457,31 @@ SHARES = {"RB": (0.60, 0.17, 0.0), "WR": (0.20, 0.24, 0.0), "TE": (0.36, 0.04, 0
 QB_OUT_HAIRCUT = {"WR": 0.10, "TE": 0.07, "RB": 0.04}
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "doubtful", "dnr", "nfi", "inactive"}
 DEPTH = {}   # (team, pos) -> [(depth_chart_order, full_name, gsis_id, injury_status)] from Sleeper
-def http_json(u):
-    with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=30) as r:
+def http_json(u, hdr=None):
+    # Default to a browser UA (some feeds refuse the urllib default), but let callers override it.
+    # ESPN wants the opposite: see espn_json.
+    h = {"User-Agent": "Mozilla/5.0"} if hdr is None else hdr
+    with urllib.request.urlopen(urllib.request.Request(u, headers=h), timeout=30) as r:
         return json.loads(r.read().decode())
+def espn_json(path):
+    """ESPN 403s a browser User-Agent from a datacenter IP and serves the honest urllib one.
+
+    Measured on a runner 2026-09-14 (scripts/espn_diag.py): site.api.espn.com returned 403 for
+    "Mozilla/5.0", for a full Chrome UA, and for Chrome plus Accept/Referer, on both /injuries and
+    /scoreboard — and 200 with 32 teams when no UA was set at all. So the blanket "Mozilla/5.0"
+    above is what has been failing every ESPN call, not the runner's IP; no proxy is needed. The
+    site.web.api host does not carry the rule and answers either way, so it is the fallback.
+    """
+    for host in ("site.api.espn.com", "site.web.api.espn.com"):
+        try:
+            return http_json(f"https://{host}{path}", hdr={})
+        except Exception as e:
+            last = e
+    raise last
 def live_status():
     st = {}   # (nname, team) -> (status, source)
     try:
-        for t in http_json("https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries").get("injuries", []):
+        for t in espn_json("/apis/site/v2/sports/football/nfl/injuries").get("injuries", []):
             tm = NAME2ABBR.get(t.get("displayName"), "")
             for i in t.get("injuries", []):
                 nm = norm(i.get("athlete", {}).get("displayName", "")); sts = str(i.get("status", "")).lower()
