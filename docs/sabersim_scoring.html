@@ -137,7 +137,7 @@ function rowsFor(sel) {
     sl.pl.forEach((p, i) => {
       const v = snd.v[i]; if (!v || p[3] == null || v[0] == null) return;
       out.push({ pi: p[0], gi: p[1], pos: D.positions[p[2]] || "?", a: p[3],
-                 j: v[0], m: v[1], lo: v[2], hi: v[3], ffa: v[4], sk: sl.key });
+                 j: v[0], m: v[1], lo: v[2], hi: v[3], ffa: v[4], dk: (v.length > 5 ? v[5] : null), sk: sl.key });
     });
   });
   return out;
@@ -149,6 +149,7 @@ function stats(rows) {
     if (r.lo != null && r.hi != null && r.a >= r.lo && r.a <= r.hi) cov++;
     if (r.m != null) mm += Math.abs(r.a - r.m); });
   const f = rows.filter(r => r.ffa != null);
+  const k = rows.filter(r => r.dk != null);
   const o = { n, games: new Set(rows.map(r => r.sk + "|" + r.gi)).size,
     mae: ae / n, rmse: Math.sqrt(se / n), bias: sb / n, cov80: cov / n, median_mae: mm / n,
     spearman: spearman(rows.map(r => r.j), rows.map(r => r.a)) };
@@ -156,6 +157,11 @@ function stats(rows) {
     o.ffa_n = f.length;
     o.ffa_mae = f.reduce((s, r) => s + Math.abs(r.a - r.ffa), 0) / f.length;
     o.model_on_ffa = f.reduce((s, r) => s + Math.abs(r.a - r.j), 0) / f.length;
+  }
+  if (k.length >= 8) {        // DK market-implied, on the rows the books actually priced
+    o.dk_n = k.length;
+    o.dk_mae = k.reduce((s, r) => s + Math.abs(r.a - r.dk), 0) / k.length;
+    o.model_on_dk = k.reduce((s, r) => s + Math.abs(r.a - r.j), 0) / k.length;
   }
   return o;
 }

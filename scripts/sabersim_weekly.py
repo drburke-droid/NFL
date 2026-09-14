@@ -683,6 +683,29 @@ stamp = pd.Timestamp.now().strftime("%m%d_%H%M")
 tag = A.analyst.split()[-1] + "_" + A.model_name.split()[0]
 path = A.out or os.path.join(OUTD, f"{tag}_{SEASON}_wk{cur_week}_{slate_tag}_{stamp}.csv")
 out.to_csv(path, index=False)
+# ---- DK columns for the graders, attached after the model has already run ----
+# market_proj has been NaN in every send this season: it is initialised to NaN where sk is built
+# and the real values are computed into market_ppr, a different name, which was never persisted.
+# So the Accuracy page's DK column has always been blank, and no_line — the "books pulled his
+# prop" flag that drives the DOUBT path — could not be audited after the fact either.
+#
+# This runs AFTER pipeline.run() has returned, so the model's feature surface is untouched. That
+# matters: residual.auto_features() lists market_proj as a feature whenever the column exists, so
+# populating it before training would silently change predictions. Here it cannot.
+#
+# Keyed on season and week as well as player_id — ev_out carries the 2023-25 walk-forward history,
+# and a player-only merge would paste this week's line onto his historical rows.
+try:
+    _dk = [c for c in ("market_ppr", "no_line") if c in sk.columns]
+    _key = [c for c in ("player_id", "season", "week") if c in sk.columns and c in ev_out.columns]
+    if _dk and "player_id" in _key:
+        ev_out = ev_out.merge(sk[_key + _dk].drop_duplicates(_key), on=_key, how="left", suffixes=("", "_sk"))
+        if "market_ppr" in _dk:
+            ev_out["market_proj"] = ev_out["market_proj"].fillna(ev_out["market_ppr"])
+        print(f"  run frame: DK benchmark on {int(ev_out.market_proj.notna().sum())} rows"
+              + (f", no_line set for {int(ev_out.no_line.fillna(False).sum())}" if "no_line" in ev_out else ""))
+except Exception as _e:                      # never let a benchmark column cost the send
+    print("  DK columns not attached:", str(_e)[:120])
 ev_out.to_parquet(os.path.join(OUTD, f"run_{SEASON}_wk{cur_week}_{stamp}.parquet"))
 print(f"\nwrote {os.path.relpath(path, ROOT)}: {len(out)} rows "
       f"({out.Pos.value_counts().to_dict()})")

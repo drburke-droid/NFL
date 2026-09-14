@@ -312,7 +312,7 @@ for key, d in s.groupby("slate_key"):
         for r in dd.itertuples():
             i = order.get(keyof(r))
             if i is not None:
-                v[i] = [r3(r.Proj), r3(r.Median), r3(r.Floor_p10), r3(r.Ceiling_p90), r3(r.ffa)]
+                v[i] = [r3(r.Proj), r3(r.Median), r3(r.Floor_p10), r3(r.Ceiling_p90), r3(r.ffa), r3(r.dk)]
         sends.append({"file": f, "short": f.replace("Burke_Model_Burke_", "").replace(".csv", ""),
                       "gen": dd.gen.iloc[0].strftime("%m/%d %H:%M ET"),
                       "lead": round(float(dd.lead_min.iloc[0])),
