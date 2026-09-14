@@ -291,6 +291,40 @@ if strict_official and os.path.exists(accp):
     except Exception as e:
         print("could not read the published grade:", str(e)[:80])
 
+# ---------- 4b. Subvertadown lookups ----------
+# The bonus is a team/position/week value and the QB line is a player/week value, so neither
+# depends on which send is picked — attach them per player and let the page recompute the whole
+# test (direction hit, +half/+full bonus MAE, correlation) under whatever sends are selected.
+# Same point-in-time rule as sabersim_grade.py: the latest paste made at or before that week.
+sv_bonus, sv_qb = {}, {}
+svp = os.path.join(ROOT, "data", "subvertadown", "subvertadown_long.csv")
+if os.path.exists(svp):
+    try:
+        L0 = pd.read_csv(svp, dtype={"week": str})
+        def sv_lookup(table, team, wk, player=None):
+            d = L0[(L0.table == table) & (L0.team == team) & (L0.week == str(wk)) & (L0.week_of_paste <= wk)]
+            if player is not None: d = d[d.player.map(norm) == norm(player)]
+            if d.empty: return np.nan
+            return float(d.sort_values("week_of_paste").iloc[-1].value)
+        for r in s.drop_duplicates(["Team", "Pos", "week"]).itertuples():
+            if r.Pos in ("RB", "WR", "TE"):
+                v = sv_lookup(f"{r.Pos.lower()}_bonus", r.Team, r.week)
+                if not pd.isna(v): sv_bonus[(r.Team, r.Pos, int(r.week))] = round(float(v), 3)
+        for r in s[s.Pos == "QB"].drop_duplicates(["Player", "Team", "week"]).itertuples():
+            v = sv_lookup("qb", r.Team, r.week, r.Player)
+            if not pd.isna(v): sv_qb[(r.Player, r.Team, int(r.week))] = round(float(v), 2)
+        print(f"subvertadown: {len(sv_bonus)} team-position bonuses, {len(sv_qb)} QB lines")
+    except Exception as e:
+        print("subvertadown lookups unavailable:", str(e)[:100])
+else:
+    print("subvertadown: no subvertadown_long.csv, skipping that test")
+
+# the scale and its bands are the Accuracy page's, reused so both tabs colour identically
+SCALE = None
+try:
+    SCALE = json.load(open(os.path.join(ROOT, "docs", "sabersim_accuracy.json"))).get("scale")
+except Exception: pass
+
 # ---------- 5. compact payload ----------
 players = sorted(s.Player.unique()); pidx = {p: i for i, p in enumerate(players)}
 POS = ["QB", "RB", "WR", "TE", "K"]
@@ -300,12 +334,15 @@ slates = []
 for key, d in s.groupby("slate_key"):
     games = sorted(d.Game.unique()); gidx = {gm: i for i, gm in enumerate(games)}
     # union of players across this slate's sends, ordered for stable indexing
-    uni = d.drop_duplicates(["Game", "Player", "Pos"])[["Game", "Player", "Pos", "actual", "box_ok"]]
+    uni = d.drop_duplicates(["Game", "Player", "Pos"])[["Game", "Player", "Pos", "Team", "actual", "box_ok"]]
     uni = uni.sort_values(["Game", "Pos", "Player"]).reset_index(drop=True)
     keyof = lambda r: (r.Game, r.Player, r.Pos)
     order = {keyof(r): i for i, r in enumerate(uni.itertuples())}
+    wk = int(d.week.iloc[0])
     pl = [[pidx[r.Player], gidx[r.Game], POS.index(r.Pos) if r.Pos in POS else -1,
-           (r3(r.actual) if r.box_ok else None)] for r in uni.itertuples()]
+           (r3(r.actual) if r.box_ok else None),
+           sv_bonus.get((r.Team, r.Pos, wk)),
+           sv_qb.get((r.Player, r.Team, wk))] for r in uni.itertuples()]
     sends = []
     for f, dd in sorted(d.groupby("send_file"), key=lambda t: t[1].gen.iloc[0]):
         v = [None] * len(uni)
@@ -327,7 +364,7 @@ slates.sort(key=lambda x: x["key"])
 
 out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"),
        "season": A.season, "min_lead_min": A.min_lead, "positions": POS, "players": players,
-       "slates": slates, "strict": strict, "strict_official": strict_official,
+       "slates": slates, "scale": SCALE, "strict": strict, "strict_official": strict_official,
        "published": published, "strict_matches_published": matches, "backup": backup}
 os.makedirs(os.path.dirname(A.out), exist_ok=True)
 json.dump(out, open(A.out, "w"), separators=(",", ":"))
