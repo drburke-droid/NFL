@@ -7,8 +7,9 @@ alternative is faster; only sampling them side by side against the same clock do
 
 Sources sampled (all free, no auth):
   espn_league  site.api.espn.com/.../nfl/injuries       — the current source, the baseline
-  espn_team    sports.core.api.espn.com/.../teams/{id}/injuries — per-team, may refresh before the
-               aggregate digest does; only the teams playing inside the band are queried
+  espn_team    sports.core.api.espn.com/.../teams/{id}/injuries — per-team; DISABLED as a count,
+               it returns $ref stubs rather than inline injuries (see the note in espn_team), so it
+               reports its shape only. Only the teams playing inside the band are queried.
   sleeper      api.sleeper.app/v1/players/nfl           — injury_status; already a dependency
 
 Known dead ends, from research on 2026-09-14: ESPN publishes no pregame inactives endpoint — the
@@ -80,8 +81,16 @@ def espn_team():
         for it in d.get("items", []):
             st = it.get("status") or (it.get("type") or {}).get("name")
             if is_out(st): n += 1
-        if n: per[abbr] = n
-    return {"out": sum(per.values()), "teams_queried": len(ids), "per_team": dict(sorted(per.items()))}
+        per[abbr] = {"out": n, "items": len(d.get("items", [])), "inline": any("status" in i or "type" in i for i in d.get("items", []))}
+    # The endpoint returns {"$ref": ".../athletes/{id}/injuries/{id}"} stubs, not inline injuries —
+    # dumped from a runner 2026-09-14, when this reported 0 OUT for KC while the league digest showed
+    # 9. Reading statuses needs one more fetch per item (~57 per team), so this cannot answer the
+    # "does per-team refresh before the digest?" question without ~114 requests a tick, which risks
+    # the league source that was just recovered. Report the shape instead of a zero that reads like a
+    # measurement: out is meaningless while inline is false.
+    inline = all(v["inline"] for v in per.values()) if per else False
+    return {"usable": inline, "out": sum(v["out"] for v in per.values()) if inline else None,
+            "teams_queried": len(ids), "per_team": dict(sorted(per.items()))}
 
 def sleeper():
     d = jget("https://api.sleeper.app/v1/players/nfl", timeout=90)
