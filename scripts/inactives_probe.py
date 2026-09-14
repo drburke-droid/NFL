@@ -1,17 +1,26 @@
-"""Sample how many players ESPN lists as OUT, once per tick, around the inactives release.
+"""Sample several candidate inactives feeds each tick, so their latency can be compared.
 
-Why this exists: official inactives are released at T-90, but the feeds the generator reads do not
-carry them for another ~17 minutes. On 2026-09-13 the 4:25 slate showed 3 OUT at T-74 and 9 at
-T-72, and the 1pm slate 8 at T-87.6 and 21 by T-66. Two data points per slate, scraped by hand.
-This records the whole curve so the crossover is measured rather than inferred, and so a candidate
-faster feed can be scored against the same clock.
+Official inactives are released at T-90. The feed the generator reads — ESPN's league-wide
+/injuries aggregate — did not carry them until ~T-73 on 2026-09-13, and the last send that still
+lands inside SaberSim's T-75 cutoff must start at T-80. Reading the docs does not settle which
+alternative is faster; only sampling them side by side against the same clock does.
 
-Deliberately writes NOTHING to the repo. A commit to main triggers sabersim_send.yml, and a run
-queued during the send window is exactly the concurrency hazard that cancelled a dispatch on
-2026-09-13. One JSON line per tick to stdout; the Actions log is the store.
+Sources sampled (all free, no auth):
+  espn_league  site.api.espn.com/.../nfl/injuries       — the current source, the baseline
+  espn_team    sports.core.api.espn.com/.../teams/{id}/injuries — per-team, may refresh before the
+               aggregate digest does; only the teams playing inside the band are queried
+  sleeper      api.sleeper.app/v1/players/nfl           — injury_status; already a dependency
 
-stdlib only, one HTTP request, ~1 s. Called from a continue-on-error step so it can never affect
-a send.
+Known dead ends, from research on 2026-09-14: ESPN publishes no pregame inactives endpoint — the
+core API's roster didNotPlay/active fields are populated from game participation, not from the
+inactive list, and a pregame endpoint is a standing unanswered request from its users. Of the
+commercial feeds, SportsDataIO is the one that explicitly documents an Inactive flag available
+"around 90 minutes before kickoff", but its free tier returns scrambled data, so it cannot be
+evaluated without buying it.
+
+Writes nothing to the repo: a commit to main triggers sabersim_send.yml, and a run queued during
+the send window is the concurrency hazard that cancelled a dispatch on 2026-09-13. One JSON line
+per tick to stdout; the Actions log is the store.
 
 Usage: python scripts/inactives_probe.py --minutes-to 83.4 --slate 2026-09-14T00:20_1g
 """
@@ -19,35 +28,74 @@ import json, argparse, urllib.request
 from datetime import datetime, timezone
 
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "dnr", "nfi", "inactive"}
+UA = {"User-Agent": "model-burke-probe"}
 ap = argparse.ArgumentParser()
-ap.add_argument("--minutes-to", type=float, required=True, help="minutes to the slate's first kickoff")
-ap.add_argument("--slate", default="", help="slate key, for grouping samples later")
+ap.add_argument("--minutes-to", type=float, required=True)
+ap.add_argument("--slate", default="")
 ap.add_argument("--band", default="60,100", help="only sample inside this minutes-to-kickoff band")
+ap.add_argument("--sources", default="espn_league,espn_team,sleeper")
 A = ap.parse_args()
 lo, hi = (float(x) for x in A.band.split(","))
 if not (lo <= A.minutes_to <= hi):
     print(json.dumps({"probe": "skip", "minutes_to": A.minutes_to, "reason": "outside band"}))
     raise SystemExit(0)
 
-url = "https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries"
-try:
-    req = urllib.request.Request(url, headers={"User-Agent": "model-burke-probe"})
-    with urllib.request.urlopen(req, timeout=25) as r:
-        data = json.load(r)
-except Exception as e:
-    print(json.dumps({"probe": "error", "minutes_to": A.minutes_to, "error": str(e)[:120]}))
-    raise SystemExit(0)
+def jget(url, timeout=25):
+    with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=timeout) as r:
+        return json.load(r)
+def is_out(s): return str(s or "").strip().lower() in OUT_WORDS
 
-per_team, total, q = {}, 0, 0
-for t in data.get("injuries", []):
-    team = t.get("abbreviation") or t.get("displayName") or "?"
-    n = 0
-    for inj in t.get("injuries", []):
-        st = str((inj.get("status") or "")).strip().lower()
-        if st in OUT_WORDS: n += 1; total += 1
-        elif st == "questionable": q += 1
-    if n: per_team[team] = n
+def espn_league():
+    d = jget("https://site.api.espn.com/apis/site/v2/sports/football/nfl/injuries")
+    per = {}
+    for t in d.get("injuries", []):
+        team = t.get("abbreviation") or t.get("displayName") or "?"
+        n = sum(1 for i in t.get("injuries", []) if is_out(i.get("status")))
+        if n: per[team] = n
+    return {"out": sum(per.values()), "teams": len(per), "per_team": dict(sorted(per.items()))}
+
+def espn_team():
+    """Only the teams whose game kicks off inside the band — a handful of requests, not 32."""
+    sb = jget("https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard")
+    now = datetime.now(timezone.utc); ids = {}
+    for ev in sb.get("events", []):
+        try: k = datetime.fromisoformat(ev["date"].replace("Z", "+00:00"))
+        except Exception: continue
+        mins = (k - now).total_seconds() / 60
+        if not (lo <= mins <= hi): continue
+        for c in ev.get("competitions", [{}])[0].get("competitors", []):
+            t = c.get("team") or {}
+            if t.get("id"): ids[t["id"]] = t.get("abbreviation") or t["id"]
+    per = {}
+    for tid, abbr in ids.items():
+        try:
+            d = jget(f"https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/teams/{tid}/injuries?limit=200")
+        except Exception: continue
+        n = 0
+        for it in d.get("items", []):
+            st = it.get("status") or (it.get("type") or {}).get("name")
+            if is_out(st): n += 1
+        if n: per[abbr] = n
+    return {"out": sum(per.values()), "teams_queried": len(ids), "per_team": dict(sorted(per.items()))}
+
+def sleeper():
+    d = jget("https://api.sleeper.app/v1/players/nfl", timeout=90)
+    per = {}
+    for p in (d or {}).values():
+        if not isinstance(p, dict) or not is_out(p.get("injury_status")): continue
+        t = p.get("team")
+        if t: per[t] = per.get(t, 0) + 1
+    return {"out": sum(per.values()), "teams": len(per), "per_team": dict(sorted(per.items()))}
+
+FN = {"espn_league": espn_league, "espn_team": espn_team, "sleeper": sleeper}
+res = {}
+for name in [x.strip() for x in A.sources.split(",") if x.strip()]:
+    fn = FN.get(name)
+    if not fn: continue
+    t0 = datetime.now(timezone.utc)
+    try: res[name] = fn()
+    except Exception as e: res[name] = {"error": str(e)[:110]}
+    res[name]["ms"] = int((datetime.now(timezone.utc) - t0).total_seconds() * 1000)
 print(json.dumps({"probe": "sample", "at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                  "slate": A.slate, "minutes_to": round(A.minutes_to, 1),
-                  "out_total": total, "questionable_total": q, "teams_with_out": len(per_team),
-                  "per_team": dict(sorted(per_team.items()))}, separators=(",", ":")))
+                  "slate": A.slate, "minutes_to": round(A.minutes_to, 1), "sources": res},
+                 separators=(",", ":")))
