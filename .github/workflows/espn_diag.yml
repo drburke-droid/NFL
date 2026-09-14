@@ -30,6 +30,6 @@ jobs:
         run: |
           # record_send.py pushes to `git rev-parse --abbrev-ref HEAD`. If checkout leaves HEAD
           # detached that returns "HEAD" and the script exits 0 without recording the send —
-          # a silent stop, which is the failure mode worst worth ruling out.
+          # a silent stop. Answered on a runner 2026-09-14: main, not detached.
           echo "abbrev-ref HEAD = $(git rev-parse --abbrev-ref HEAD)"
           echo "symbolic-ref    = $(git symbolic-ref -q HEAD || echo '(detached)')"

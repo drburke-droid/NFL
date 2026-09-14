@@ -19,6 +19,14 @@ Usage: python scripts/record_send.py -m "message" path [path ...]
 """
 import argparse, json, os, subprocess, sys, time
 
+def fail(why):
+    """Never let this step look like a failed send. The email goes out two steps earlier."""
+    print(f"record: {why}")
+    print("record: the CSV was emailed to SaberSim two steps earlier — what failed here is the")
+    print("record: LOG WRITE ONLY. A red run at this step does NOT mean the send was missed;")
+    print("record: check the Generate + email step and the Gmail sent box before concluding that.")
+    sys.exit(1)
+
 MERGE_BY_KEY = {"data/sabersim/sent_log.json"}   # dict keyed by slate; union, ours wins per key
 
 def git(*a, check=True, quiet=False):
@@ -36,7 +44,10 @@ A = ap.parse_args()
 
 branch = git("rev-parse", "--abbrev-ref", "HEAD", quiet=True).stdout.strip()
 if branch in ("", "HEAD"):
-    print("record: detached HEAD, nothing to push to"); sys.exit(0)
+    # Exiting 0 here would stop sends being recorded silently, for good — the same class of bug
+    # this script exists to remove. checkout@v4 leaves HEAD on main (measured on a runner
+    # 2026-09-14), so this means something changed and someone needs to look.
+    fail("detached HEAD — no branch to push to, so the send was NOT recorded")
 
 def stage_and_commit():
     for p in A.paths:
@@ -48,14 +59,6 @@ def stage_and_commit():
 
 if not stage_and_commit():
     print("record: nothing to commit"); sys.exit(0)
-
-def fail(why):
-    """Never let this step look like a failed send. The email goes out two steps earlier."""
-    print(f"record: {why}")
-    print("record: the CSV was emailed to SaberSim two steps earlier — what failed here is the")
-    print("record: LOG WRITE ONLY. A red run at this step does NOT mean the send was missed;")
-    print("record: check the Generate + email step and the Gmail sent box before concluding that.")
-    sys.exit(1)
 
 for attempt in range(1, A.attempts + 1):
     if git("push", A.remote, f"HEAD:{branch}", check=False, quiet=True).returncode == 0:
