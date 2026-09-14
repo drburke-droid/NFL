@@ -112,6 +112,8 @@ def pick_slate(slates, sent, wanted=""):
         if x["key"] not in sent: return x, None
     return dict(slates[0], all_sent=True), None
 
+ALL_SLATES = []
+
 def next_slate(sent, wanted=""):
     """The earliest slate that has NOT been sent yet.
 
@@ -131,6 +133,7 @@ def next_slate(sent, wanted=""):
     times = [datetime.fromisoformat(e["commence_time"].replace("Z", "+00:00")) for e in ev]
     sl = group_slates(times, now)
     if not sl: return None, "no upcoming events"
+    ALL_SLATES[:] = sl
     return pick_slate(sl, sent, wanted)
 
 sent = json.load(open(LOG)) if os.path.exists(LOG) else {}
@@ -142,7 +145,9 @@ in_win = lo <= s["minutes_to"] <= hi
 # re-grades finished games (GitHub's own cron never fires for this repo, so the ticks carry it)
 _now = datetime.now(timezone.utc); gh_ = int(os.environ.get("GRADE_HOUR", "14"))
 grade_due = _now.hour == gh_ and _now.minute < 10
-out(in_window=bool(in_win and not already) or A.force, slate_requested=A.slate or None, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already, grade_due=grade_due)
+imm = ALL_SLATES[0] if ALL_SLATES else s
+out(imminent_minutes_to=round(imm["minutes_to"], 1), imminent_slate=imm["key"],
+    in_window=bool(in_win and not already) or A.force, slate_requested=A.slate or None, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already, grade_due=grade_due)
 if A.check or not (A.force or (in_win and not already)): sys.exit(0)
 
 # ---- run the generator (quiet: its stdout goes to a local log, not the scheduler's log) ----
@@ -160,6 +165,18 @@ if rc != 0 or not os.path.exists(csv_path):
     tail = txt[txt.rfind("Traceback"):] if "Traceback" in txt else txt[-1500:]
     out(sent=False, reason=f"generator exit {rc}", log_tail=tail[-3000:]); sys.exit(1)
 n_rows = sum(1 for _ in open(csv_path, encoding="utf-8")) - 1
+# The generator's stdout goes to csv_path.log, which never reaches the Actions output, so a feed
+# quietly failing looked identical to a feed reporting nothing. On 2026-09-14 the probe found ESPN
+# returning 403 from the runners while live_status() was catching it and printing to that log.
+WARN_MARKERS = ("unavailable", "no DK props posted", "failed", "Traceback")
+try:
+    _log = open(logp, encoding="utf-8", errors="ignore").read().splitlines()
+    warns = [l.strip()[:160] for l in _log if any(m.lower() in l.lower() for m in WARN_MARKERS)][:6]
+except Exception:
+    warns = []
+if warns:
+    print("generator warnings:")
+    for w in warns: print("   " + w)
 if os.environ.get("PUBLISH_DIR"):          # e.g. the private repo checkout: pkg/sends
     import shutil; os.makedirs(os.environ["PUBLISH_DIR"], exist_ok=True)
     shutil.copy(csv_path, os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path)))
@@ -200,4 +217,5 @@ with smtplib.SMTP_SSL(host, port, context=ssl.create_default_context()) as smtp:
         smtp.send_message(rcpt)
 sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"], "credits_left": left}
 json.dump(sent, open(LOG, "w"), indent=1)
-out(sent=True, file=os.path.basename(csv_path), rows=n_rows, to=to, credits_left=left, low_credits=low)
+out(sent=True, file=os.path.basename(csv_path), rows=n_rows, to=to, credits_left=left,
+    low_credits=low, generator_warnings=len(warns))

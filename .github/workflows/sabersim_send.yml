@@ -73,15 +73,18 @@ jobs:
       # script: this step cannot fail the job, and it writes nothing to the repo, because a commit
       # to main would trigger this very workflow and queue against the send.
       - name: Probe the inactives feeds (never affects the send)
-        # Skipped on the tick that actually sends, so it cannot add even a second ahead of
-        # generation; that sample would be redundant anyway, since the send's own CSV records the
-        # OUT count at exactly that moment.
+        # Samples the IMMINENT slate, whether or not it has been sent. Keying it to the slate the
+        # workflow is acting on was wrong: that jumps to the next unsent slate the moment a send
+        # completes, so on 2026-09-14 the MNF samples stopped at T-85 and the post-send half of the
+        # curve — the half that shows whether the feeds moved after T-80 — was never taken.
+        # Still skipped on the tick that actually sends, so it cannot add a second ahead of
+        # generation; that sample is redundant anyway, the send's own CSV records it.
         if: steps.win.outputs.in_window != 'true'
         continue-on-error: true
         run: |
           python scripts/inactives_probe.py \
-            --minutes-to "${{ steps.win.outputs.minutes_to }}" \
-            --slate "${{ steps.win.outputs.slate_key }}" || true
+            --minutes-to "${{ steps.win.outputs.imminent_minutes_to }}" \
+            --slate "${{ steps.win.outputs.imminent_slate }}" || true
 
       - name: Fetch the private Model_Burke package
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'

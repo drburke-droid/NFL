@@ -28,7 +28,10 @@ import json, argparse, urllib.request
 from datetime import datetime, timezone
 
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "dnr", "nfi", "inactive"}
-UA = {"User-Agent": "model-burke-probe"}
+# Deliberately the SAME User-Agent the generator sends (sabersim_weekly.py http_json). On
+# 2026-09-14 the probe got 403 from ESPN on the runners while using its own UA; matching the
+# generator's means a refusal here is evidence about the generator, not about the probe.
+UA = {"User-Agent": "Mozilla/5.0"}
 ap = argparse.ArgumentParser()
 ap.add_argument("--minutes-to", type=float, required=True)
 ap.add_argument("--slate", default="")
