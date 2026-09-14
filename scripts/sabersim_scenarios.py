@@ -431,6 +431,43 @@ out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ")
        "strict_check": check, "backup": backup}
 os.makedirs(os.path.dirname(A.out), exist_ok=True)
 json.dump(out, open(A.out, "w"), separators=(",", ":"))
+
+# ---------- 6. upcoming slates, for the SaberSim page's per-slate Run buttons ----------
+# Grouped exactly as sabersim_auto.py groups them, so the key the page sends back as --slate lines
+# up with what the wrapper computes. Built from the schedule rather than the Odds API because this
+# runs days ahead and needs no key; the wrapper still recomputes from the Odds API at send time, so
+# --slate matching ignores the game-count suffix in case the two disagree on the field.
+try:
+    gm2 = pd.read_parquet("https://github.com/nflverse/nflverse-data/releases/download/schedules/games.parquet")
+    gm2 = gm2[(gm2.season == A.season) & (gm2.game_type == "REG")].dropna(subset=["gameday", "gametime"])
+    kick = pd.to_datetime(gm2.gameday.astype(str) + " " + gm2.gametime.astype(str)).dt.tz_localize(ET).dt.tz_convert("UTC")
+    gm2 = gm2.assign(kick=kick).sort_values("kick")
+    now_utc = pd.Timestamp.now(tz="UTC")
+    up = gm2[gm2.kick > now_utc]
+    groups, tol = [], pd.Timedelta(minutes=15)
+    for r in up.itertuples():
+        if groups and r.kick <= groups[-1]["kick"] + tol: groups[-1]["games"].append(f"{r.away_team} @ {r.home_team}")
+        else: groups.append({"kick": r.kick, "games": [f"{r.away_team} @ {r.home_team}"]})
+    slates_out = []
+    for g in groups[:12]:
+        k, n = g["kick"], len(g["games"])
+        slates_out.append({
+            "key": k.strftime("%Y-%m-%dT%H:%M") + f"_{n}g",
+            "kickoff": k.strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "label": k.tz_convert(ET).strftime("%a %m/%d %-I:%M %p ET"),
+            "games": g["games"],
+            "send_at": (k - pd.Timedelta(minutes=80)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "email_by": (k - pd.Timedelta(minutes=77)).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            "deadline": (k - pd.Timedelta(minutes=75)).strftime("%Y-%m-%dT%H:%M:%SZ")})
+    sp = os.path.join(ROOT, "docs", "sabersim_slates.json")
+    json.dump({"generated_at": out["generated_at"], "season": A.season,
+               "window": "T-80 send, email by ~T-77, SaberSim cutoff T-75", "slates": slates_out},
+              open(sp, "w"), indent=1)
+    print(f"wrote {sp}: {len(slates_out)} upcoming slates")
+    for x in slates_out[:6]:
+        print(f"   {x['label']:22s} {len(x['games'])} game(s)  send {x['send_at'][11:16]}Z  key {x['key']}")
+except Exception as e:
+    print("upcoming slates not written:", str(e)[:140])
 kb = os.path.getsize(A.out) / 1024
 gr = [x for x in slates if x["graded"]]
 print(f"wrote {A.out} ({kb:.0f} KB): {len(slates)} slates ({len(gr)} graded), "

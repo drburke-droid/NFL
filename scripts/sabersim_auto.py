@@ -44,6 +44,10 @@ from email.message import EmailMessage
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ap = argparse.ArgumentParser()
 ap.add_argument("--check", action="store_true"); ap.add_argument("--force", action="store_true")
+ap.add_argument("--slate", default="", help="kickoff key of a specific slate to send (or just its ISO "
+                "kickoff prefix, e.g. 2026-09-20T20:25). Overrides the automatic pick, which is the "
+                "earliest UNSENT slate — with a split late window that is not necessarily the one you "
+                "mean. Pair with --force to resend a slate already in the log.")
 ap.add_argument("--dry-run", action="store_true"); ap.add_argument("--pkg", default=os.environ.get("MODEL_BURKE_PKG", os.path.join(ROOT, "pkg")))
 ap.add_argument("gen_args", nargs="*", help="extra args for sabersim_weekly.py after --  (e.g. -- --no-market)")
 A = ap.parse_args()
@@ -97,7 +101,18 @@ def group_slates(times, now):
              "label": t.astimezone(ET).strftime("%a %m/%d %I:%M %p ET") + f" slate ({n} games)"}
             for t, n in out]
 
-def next_slate(sent):
+def pick_slate(slates, sent, wanted=""):
+    """The slate to act on: a named one if asked for, else the earliest not yet sent."""
+    if wanted:
+        w = wanted.split("_")[0]                     # tolerate a full key or a bare ISO kickoff
+        for x in slates:
+            if x["key"] == wanted or x["key"].startswith(w): return x, None
+        return None, f"no upcoming slate matching {wanted!r}"
+    for x in slates:
+        if x["key"] not in sent: return x, None
+    return dict(slates[0], all_sent=True), None
+
+def next_slate(sent, wanted=""):
     """The earliest slate that has NOT been sent yet.
 
     Returning simply the earliest upcoming slate was the second half of the week-2 problem: once
@@ -116,12 +131,10 @@ def next_slate(sent):
     times = [datetime.fromisoformat(e["commence_time"].replace("Z", "+00:00")) for e in ev]
     sl = group_slates(times, now)
     if not sl: return None, "no upcoming events"
-    for x in sl:
-        if x["key"] not in sent: return x, None
-    return dict(sl[0], all_sent=True), None
+    return pick_slate(sl, sent, wanted)
 
 sent = json.load(open(LOG)) if os.path.exists(LOG) else {}
-s, err = next_slate(sent)
+s, err = next_slate(sent, A.slate)
 if err: out(in_window=False, reason=err); sys.exit(0)
 already = bool(s.get("all_sent")) or s["key"] in sent
 in_win = lo <= s["minutes_to"] <= hi
@@ -129,7 +142,7 @@ in_win = lo <= s["minutes_to"] <= hi
 # re-grades finished games (GitHub's own cron never fires for this repo, so the ticks carry it)
 _now = datetime.now(timezone.utc); gh_ = int(os.environ.get("GRADE_HOUR", "14"))
 grade_due = _now.hour == gh_ and _now.minute < 10
-out(in_window=bool(in_win and not already) or A.force, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already, grade_due=grade_due)
+out(in_window=bool(in_win and not already) or A.force, slate_requested=A.slate or None, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already, grade_due=grade_due)
 if A.check or not (A.force or (in_win and not already)): sys.exit(0)
 
 # ---- run the generator (quiet: its stdout goes to a local log, not the scheduler's log) ----

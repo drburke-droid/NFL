@@ -1,0 +1,159 @@
+{
+ "generated_at": "2026-09-14T14:00Z",
+ "season": 2026,
+ "window": "T-80 send, email by ~T-77, SaberSim cutoff T-75",
+ "slates": [
+  {
+   "key": "2026-09-15T00:15_1g",
+   "kickoff": "2026-09-15T00:15:00Z",
+   "label": "Mon 09/14 8:15 PM ET",
+   "games": [
+    "DEN @ KC"
+   ],
+   "send_at": "2026-09-14T22:55:00Z",
+   "email_by": "2026-09-14T22:58:00Z",
+   "deadline": "2026-09-14T23:00:00Z"
+  },
+  {
+   "key": "2026-09-18T00:15_1g",
+   "kickoff": "2026-09-18T00:15:00Z",
+   "label": "Thu 09/17 8:15 PM ET",
+   "games": [
+    "DET @ BUF"
+   ],
+   "send_at": "2026-09-17T22:55:00Z",
+   "email_by": "2026-09-17T22:58:00Z",
+   "deadline": "2026-09-17T23:00:00Z"
+  },
+  {
+   "key": "2026-09-20T17:00_8g",
+   "kickoff": "2026-09-20T17:00:00Z",
+   "label": "Sun 09/20 1:00 PM ET",
+   "games": [
+    "GB @ NYJ",
+    "PHI @ TEN",
+    "CLE @ TB",
+    "PIT @ NE",
+    "NO @ BAL",
+    "MIN @ CHI",
+    "CAR @ ATL",
+    "CIN @ HOU"
+   ],
+   "send_at": "2026-09-20T15:40:00Z",
+   "email_by": "2026-09-20T15:43:00Z",
+   "deadline": "2026-09-20T15:45:00Z"
+  },
+  {
+   "key": "2026-09-20T20:05_2g",
+   "kickoff": "2026-09-20T20:05:00Z",
+   "label": "Sun 09/20 4:05 PM ET",
+   "games": [
+    "JAX @ DEN",
+    "LV @ LAC"
+   ],
+   "send_at": "2026-09-20T18:45:00Z",
+   "email_by": "2026-09-20T18:48:00Z",
+   "deadline": "2026-09-20T18:50:00Z"
+  },
+  {
+   "key": "2026-09-20T20:25_3g",
+   "kickoff": "2026-09-20T20:25:00Z",
+   "label": "Sun 09/20 4:25 PM ET",
+   "games": [
+    "SEA @ ARI",
+    "WAS @ DAL",
+    "MIA @ SF"
+   ],
+   "send_at": "2026-09-20T19:05:00Z",
+   "email_by": "2026-09-20T19:08:00Z",
+   "deadline": "2026-09-20T19:10:00Z"
+  },
+  {
+   "key": "2026-09-21T00:20_1g",
+   "kickoff": "2026-09-21T00:20:00Z",
+   "label": "Sun 09/20 8:20 PM ET",
+   "games": [
+    "IND @ KC"
+   ],
+   "send_at": "2026-09-20T23:00:00Z",
+   "email_by": "2026-09-20T23:03:00Z",
+   "deadline": "2026-09-20T23:05:00Z"
+  },
+  {
+   "key": "2026-09-22T00:15_1g",
+   "kickoff": "2026-09-22T00:15:00Z",
+   "label": "Mon 09/21 8:15 PM ET",
+   "games": [
+    "NYG @ LA"
+   ],
+   "send_at": "2026-09-21T22:55:00Z",
+   "email_by": "2026-09-21T22:58:00Z",
+   "deadline": "2026-09-21T23:00:00Z"
+  },
+  {
+   "key": "2026-09-25T00:15_1g",
+   "kickoff": "2026-09-25T00:15:00Z",
+   "label": "Thu 09/24 8:15 PM ET",
+   "games": [
+    "ATL @ GB"
+   ],
+   "send_at": "2026-09-24T22:55:00Z",
+   "email_by": "2026-09-24T22:58:00Z",
+   "deadline": "2026-09-24T23:00:00Z"
+  },
+  {
+   "key": "2026-09-27T17:00_9g",
+   "kickoff": "2026-09-27T17:00:00Z",
+   "label": "Sun 09/27 1:00 PM ET",
+   "games": [
+    "TEN @ NYG",
+    "SEA @ WAS",
+    "CIN @ PIT",
+    "KC @ MIA",
+    "CAR @ CLE",
+    "HOU @ IND",
+    "NYJ @ DET",
+    "LAC @ BUF",
+    "NE @ JAX"
+   ],
+   "send_at": "2026-09-27T15:40:00Z",
+   "email_by": "2026-09-27T15:43:00Z",
+   "deadline": "2026-09-27T15:45:00Z"
+  },
+  {
+   "key": "2026-09-27T20:05_2g",
+   "kickoff": "2026-09-27T20:05:00Z",
+   "label": "Sun 09/27 4:05 PM ET",
+   "games": [
+    "ARI @ SF",
+    "MIN @ TB"
+   ],
+   "send_at": "2026-09-27T18:45:00Z",
+   "email_by": "2026-09-27T18:48:00Z",
+   "deadline": "2026-09-27T18:50:00Z"
+  },
+  {
+   "key": "2026-09-27T20:25_2g",
+   "kickoff": "2026-09-27T20:25:00Z",
+   "label": "Sun 09/27 4:25 PM ET",
+   "games": [
+    "BAL @ DAL",
+    "LV @ NO"
+   ],
+   "send_at": "2026-09-27T19:05:00Z",
+   "email_by": "2026-09-27T19:08:00Z",
+   "deadline": "2026-09-27T19:10:00Z"
+  },
+  {
+   "key": "2026-09-28T00:20_1g",
+   "kickoff": "2026-09-28T00:20:00Z",
+   "label": "Sun 09/27 8:20 PM ET",
+   "games": [
+    "LA @ DEN"
+   ],
+   "send_at": "2026-09-27T23:00:00Z",
+   "email_by": "2026-09-27T23:03:00Z",
+   "deadline": "2026-09-27T23:05:00Z"
+  }
+ ]
+}
