@@ -46,6 +46,7 @@
   .mt { font-size:11px; color:var(--mut); display:block; margin-top:2px; }
   .tag { font-size:11px; font-weight:600; padding:2px 7px; border-radius:5px; white-space:nowrap; }
   .t-ok { background:#132a1b; color:var(--ok); } .t-dq { background:#2e2611; color:var(--warn); }
+  .t-prov { background:#2e2611; color:var(--warn); }
   .t-no { background:#262a33; color:var(--mut); }
   .chips { display:flex; flex-wrap:wrap; gap:6px; margin:2px 0 4px; }
   .chip { background:#2a2f3a; color:var(--ink); border:0; border-radius:999px; padding:6px 12px;
@@ -183,7 +184,9 @@ function drawSlates() {
       `<span class="mt">drop this slate from the grade</span></span><span class="tag t-no">excluded</span></label></span>`;
     return `<div class="slate${sl.graded ? "" : " pending"}"><div class="slate-hd"><span class="slate-nm">${esc(sl.label)}</span>` +
       `<span class="slate-mt">wk${sl.week} · ${sl.games.length} game${sl.games.length === 1 ? "" : "s"}</span></div>` +
-      `<div class="slate-mt">${sl.graded ? "box scores in" : "awaiting box scores — no effect yet"}</div>` +
+      `<div class="slate-mt">${sl.graded ? (sl.provisional
+        ? '<span class="tag t-prov">provisional</span> scored from Sleeper — nflverse has not published these yet'
+        : "box scores in") : "awaiting box scores — no effect yet"}</div>` +
       opts + none + `</div>`;
   }).join("");
   $("slates").querySelectorAll("input[type=radio]").forEach(el =>
@@ -247,12 +250,19 @@ function boot(d) {
   D.slates.forEach(sl => { const o = sl.sends.filter(x => x.eligible); STRICT[sl.key] = o.length ? o[o.length - 1].file : NONE; });
   state = Object.assign({}, STRICT);
   const gr = D.slates.filter(s => s.graded), games = gr.reduce((a, s) => a + s.games.length, 0);
+  const prov = D.slates.filter(s => s.provisional).map(s => s.label);
+  const ag = D.backup && D.backup.agreement;
   const chk = D.strict_matches_published === true
     ? `<span class="pill ok">matches the published grade</span>`
     : D.strict_matches_published === false
       ? `<span class="pill bad">differs from the published grade — trust the Accuracy page</span>` : "";
   $("meta").innerHTML = `built ${esc(D.generated_at)} · ${games} graded game${games === 1 ? "" : "s"} across ` +
-    `${gr.length} slate${gr.length === 1 ? "" : "s"} · ${D.slates.reduce((a, s) => a + s.sends.length, 0)} sends<br>${chk}`;
+    `${gr.length} slate${gr.length === 1 ? "" : "s"} · ${D.slates.reduce((a, s) => a + s.sends.length, 0)} sends<br>${chk}` +
+    (prov.length ? `<br><span class="warn">provisional: ${esc(prov.join(", "))} scored from Sleeper, ` +
+      `nflverse will overwrite on its next batch</span>` +
+      (ag ? `<br><span style="color:var(--mut)">Sleeper agreed with nflverse to within 0.1 on ` +
+            `${(ag.within_0_1 * 100).toFixed(1)}% of ${ag.n} shared rows (mean |diff| ${ag.mean_abs_diff})</span>` : "")
+     : "");
   $("presets").innerHTML = PRESETS.map((p, i) => `<button class="chip" data-i="${i}">${esc(p[0])}</button>`).join("");
   $("presets").querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
     const fn = PRESETS[+b.dataset.i][1];
