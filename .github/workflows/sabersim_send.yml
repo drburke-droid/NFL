@@ -1,7 +1,7 @@
 name: SaberSim send
 
 # Unattended slate sends. Fires every 5 min during NFL game windows (UTC), and each tick
-# decides in ~20 s (stdlib only) whether the next slate kicks off 72-82 min from now and has
+# decides in ~20 s (stdlib only) whether the next slate kicks off 78-82 min from now and has
 # not been sent. Only then does it install deps, fetch the private Model_Burke package, run the
 # generator, and email the CSV. Nothing about the projections is committed or uploaded; the
 # only write-back is data/sabersim/sent_log.json (slate key, time, row count).
@@ -17,13 +17,18 @@ name: SaberSim send
 # Variables (Settings -> Secrets and variables -> Actions -> Variables tab):
 #   MAIL_TO             recipient. Week 1 test: your own address. Week 2: delete the variable (or set
 #                       it to analysts+robert@sabersim.com) and the sends go to SaberSim.
-#   SEND_WINDOW         optional, default "72,82". Inactives are RELEASED at T-90 but the ESPN/Sleeper
+#   SEND_WINDOW         optional, default "78,82" — a single attempt at T-80. Inactives are RELEASED at T-90 but
 #                       feeds need several minutes to carry them: on 2026-09-13 the T-90 tick emailed at
 #                       T-87.6 with 8 OUT, and the T-68 rerun had 21 — 13 inactives missed, Alvin Kamara
 #                       among them at a 7.5-point projection. Kickoffs are always on a 5-minute mark, so
-#                       the ticks land at T-90/T-85/T-80/T-75; capping the window at 82 makes T-80 the
-#                       first eligible one (email ~T-77.5, inside SaberSim's T-75 cutoff) and leaves T-75
-#                       as a late fallback. Do not raise the cap back to 90 without re-checking OUT counts.
+#                       the ticks land at T-90/T-85/T-80/T-75, so T-80 is the LAST start that still lands
+#                       inside the T-75 cutoff (2.5 min of run time puts the email at ~T-77.5). T-75 was
+#                       dropped as a fallback on 2026-09-14: it emails at ~T-72.5, already late, and could
+#                       arrive just as the send is being forced by hand, putting two files in front of
+#                       SaberSim. One automatic attempt; the Pages "Run now" button is the fallback.
+#                       Measured on 2026-09-13: the feeds do not carry the inactives until ~T-73, so this
+#                       send reads the injury report, not the inactives. Widening the window does not fix
+#                       that — see scripts/inactives_probe.py, which is measuring the real crossover.
 #
 # Manual send from the Actions tab (or the GitHub mobile app): Run workflow -> force=true.
 
@@ -57,8 +62,20 @@ jobs:
         id: win
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
-          SEND_WINDOW: ${{ vars.SEND_WINDOW || '72,82' }}
+          SEND_WINDOW: ${{ vars.SEND_WINDOW || '78,82' }}
         run: python scripts/sabersim_auto.py --check
+
+      # Records how many players ESPN lists as OUT, every tick inside T-100..T-60, so the gap
+      # between the T-90 release and the feeds actually carrying it is measured rather than
+      # inferred from the two hand-scraped points we have. continue-on-error and a bare-stdlib
+      # script: this step cannot fail the job, and it writes nothing to the repo, because a commit
+      # to main would trigger this very workflow and queue against the send.
+      - name: Probe the inactives feed (never affects the send)
+        continue-on-error: true
+        run: |
+          python scripts/inactives_probe.py \
+            --minutes-to "${{ steps.win.outputs.minutes_to }}" \
+            --slate "${{ steps.win.outputs.slate_key }}" || true
 
       - name: Fetch the private Model_Burke package
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'
@@ -99,7 +116,7 @@ jobs:
           MODEL_BURKE_PKG: ${{ github.workspace }}/pkg
           PUBLISH_DIR: ${{ github.workspace }}/pkg/sends
           CREDIT_WARN: ${{ vars.CREDIT_WARN || '120' }}
-          SEND_WINDOW: ${{ vars.SEND_WINDOW || '72,82' }}
+          SEND_WINDOW: ${{ vars.SEND_WINDOW || '78,82' }}
         run: |
           python scripts/sabersim_auto.py ${{ inputs.force == 'true' && '--force' || '' }} ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
 

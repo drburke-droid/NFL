@@ -4,7 +4,7 @@ then email the CSV.
 
 Designed for a scheduler that fires every ~15 minutes (GitHub Actions cron, Task Scheduler,
 cron-job.org). Each tick:
-  1. --check  : stdlib only, no pip — is the next slate's earliest kickoff 72-82 min away
+  1. --check  : stdlib only, no pip — is the next slate's earliest kickoff 78-82 min away
                 and not yet sent? Prints JSON and (in Actions) sets step outputs.
   2. run      : python scripts/sabersim_weekly.py <pkg>  -> CSV for the next slate
   3. email    : SMTP (Gmail app password or any SMTP) with the CSV attached
@@ -24,7 +24,7 @@ Env (all optional except the key and SMTP creds when actually sending):
                     checkout, pkg/sends, and pushes — the Pages "Run now" button downloads from there)
   CREDIT_WARN       Odds API credits threshold (default 120): below it the send email's subject starts
                     with [LOW ODDS API CREDITS: n]; every internal copy lists credits remaining
-  SEND_WINDOW       "72,82" minutes-to-kickoff bounds at check time (default). Inactives are released at
+  SEND_WINDOW       "78,82" minutes-to-kickoff bounds at check time (default): one attempt, at T-80. Inactives are released at
                     T-90, but the feeds lag: the 2026-09-13 T-90 tick emailed 13 inactives short. Kickoffs
                     sit on a 5-minute mark so ticks land at T-90/T-85/T-80/T-75; the 82 cap makes T-80 the
                     first eligible tick (email ~T-77.5, inside the T-75 cutoff), with T-75 as a late
@@ -52,7 +52,7 @@ KEYF = os.path.join(ROOT, "data", "odds_api_key.txt")
 if not os.path.exists(KEYF) and os.environ.get("ODDS_API_KEY"):   # the secret may hold several keys, comma/newline separated
     import re as _re
     open(KEYF, "w").write("\n".join(k for k in _re.split(r"[,;\s]+", os.environ["ODDS_API_KEY"]) if k) + "\n")
-lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "72,82").split(","))
+lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "78,82").split(","))
 
 def out(**kw):
     print(json.dumps({k: v for k, v in kw.items() if k != "log_tail"}))
