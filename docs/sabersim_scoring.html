@@ -100,6 +100,9 @@
     <h3>what the swap changed</h3>
     <div id="movenote" class="status"></div>
     <div class="tbl"><table class="acc" id="movetab"></table></div>
+    <small>DST is graded here from nflverse's team file and the final scores — DK scoring, including the
+      points-allowed tier. The Accuracy page does not grade DST, so the comparison above is made on its
+      basis (skill positions, nflverse actuals) and these tiles will not match it row for row.</small>
     <small>Deltas compare against the strict scenario — the sends SaberSim would actually have accepted.
       Lower MAE, RMSE and median MAE are better; higher Spearman and coverage are better.</small>
   </div>
@@ -421,10 +424,10 @@ function boot(d) {
   const gr = D.slates.filter(s => s.graded), games = gr.reduce((a, s) => a + s.games.length, 0);
   const prov = D.slates.filter(s => s.provisional).map(s => s.label);
   const ag = D.backup && D.backup.agreement;
-  const chk = D.strict_matches_published === true
-    ? `<span class="pill ok">matches the published grade</span>`
-    : D.strict_matches_published === false
-      ? `<span class="pill bad">differs from the published grade — trust the Accuracy page</span>` : "";
+  const chk = { match: `<span class="pill ok">matches the published grade</span>`,
+    stale: `<span class="pill warn">the Accuracy page is a grade behind — press Grade now there to line them up</span>`,
+    diverged: `<span class="pill bad">differs from the published grade on the same rows — trust the Accuracy page</span>`
+  }[D.strict_check] || "";
   $("meta").innerHTML = `built ${esc(D.generated_at)} · ${games} graded game${games === 1 ? "" : "s"} across ` +
     `${gr.length} slate${gr.length === 1 ? "" : "s"} · ${D.slates.reduce((a, s) => a + s.sends.length, 0)} sends<br>${chk}` +
     (prov.length ? `<br><span class="warn">provisional: ${esc(prov.join(", "))} scored from Sleeper, ` +

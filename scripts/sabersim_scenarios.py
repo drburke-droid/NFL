@@ -96,11 +96,59 @@ def lookup(r):
     if (r.nname, r.Pos, w) in by_name: return by_name[(r.nname, r.Pos, w)]
     return by_last.get((r.nname.split()[-1], r.Team, r.Pos, w), np.nan)
 s["actual"] = [lookup(r) for r in s.itertuples()]
-s = s[s.Pos.isin(["QB", "RB", "WR", "TE", "K"])].copy()
+# ---------- 2a. team defence actuals (DST) ----------
+# sabersim_grade.py drops DST because stats_player_week carries no team-defence rows — true of that
+# file, but nflverse publishes stats_team_week, which has every DK component, and schedules/games
+# supplies the opponent's final score for the points-allowed tier. 80 DST rows went to SaberSim in
+# week 1 and none had ever been checked; the K/DST override leans on Subvertadown at weight 0.65,
+# so this is the least-validated part of the output, not the least important.
+DST_PA = [(0, 10), (6, 7), (13, 4), (20, 1), (27, 0), (34, -1)]          # upper bound -> points
+def pa_points(pa):
+    for hi, pts in DST_PA:
+        if pa <= hi: return pts
+    return -4
+dst = pd.DataFrame()
+try:
+    tw = pd.read_parquet(f"https://github.com/nflverse/nflverse-data/releases/download/stats_team/stats_team_week_{A.season}.parquet")
+    tw = tw[tw.season_type == "REG"].copy()
+    gm = pd.read_parquet("https://github.com/nflverse/nflverse-data/releases/download/schedules/games.parquet")
+    gm = gm[(gm.season == A.season) & (gm.game_type == "REG")]
+    pts = pd.concat([gm.rename(columns={"home_team": "team", "home_score": "pf"})[["season", "week", "team", "pf"]],
+                     gm.rename(columns={"away_team": "team", "away_score": "pf"})[["season", "week", "team", "pf"]]])
+    pts = pts.dropna(subset=["pf"])
+    tw = tw.merge(pts.rename(columns={"team": "opponent_team", "pf": "pa"}),
+                  on=["season", "week", "opponent_team"], how="left")
+    gv = lambda c: tw[c].fillna(0) if c in tw.columns else 0
+    tw["dst_actual"] = (gv("def_sacks") + 2 * gv("def_interceptions") + 2 * gv("fumble_recovery_opp")
+                        + 2 * gv("def_safeties") + 6 * gv("def_tds") + 6 * gv("special_teams_tds")
+                        + 2 * (gv("def_punt_blocks") + gv("def_pat_blocks") + gv("def_fg_blocks"))
+                        + tw["pa"].map(lambda x: pa_points(x) if pd.notna(x) else np.nan))
+    dst = tw.dropna(subset=["pa"])[["season", "week", "team", "dst_actual", "pa"]]
+    print(f"DST: scored {len(dst)} team-weeks from stats_team + schedules")
+except Exception as e:
+    print("DST actuals unavailable:", str(e)[:140])
+
+s = s[s.Pos.isin(["QB", "RB", "WR", "TE", "K", "DST"])].copy()
 # a game counts only once nflverse has BOTH teams for that week; a missing row is then a real 0
 have = a.groupby("week").team.apply(set).to_dict()
-s["box_ok"] = s.apply(lambda r: r.Team in have.get(int(r.week), set()) and r.Opp in have.get(int(r.week), set()), axis=1)
-s.loc[s.box_ok, "actual"] = s.loc[s.box_ok, "actual"].fillna(0.0)
+skill = s.Pos != "DST"
+s["box_ok"] = False
+s.loc[skill, "box_ok"] = s[skill].apply(
+    lambda r: r.Team in have.get(int(r.week), set()) and r.Opp in have.get(int(r.week), set()), axis=1)
+ok = skill & s.box_ok
+s.loc[ok, "actual"] = s.loc[ok, "actual"].fillna(0.0)
+
+# DST is scored from the team file, so it gets its own gate: both teams must have a final score.
+# It must not ride the skill gate above — that one is keyed on the PLAYER file's team coverage and
+# would mark every DST row gradeable and then fill its actual with 0.0.
+if len(dst):
+    dmap = {(int(r.season), int(r.week), r.team): float(r.dst_actual) for r in dst.itertuples()}
+    dteams = set(dmap)
+    m = ~skill
+    s.loc[m, "actual"] = [dmap.get((A.season, int(r.week), r.Team), np.nan) for r in s[m].itertuples()]
+    s.loc[m, "box_ok"] = [(A.season, int(r.week), r.Team) in dteams and (A.season, int(r.week), r.Opp) in dteams
+                          for r in s[m].itertuples()]
+    print(f"DST: {int((m & s.box_ok).sum())} of {int(m.sum())} rows gradeable")
 
 # ---------- 2b. backup actuals: Sleeper ----------
 # nflverse publishes every asset in one batch (all 2026 files carried the same Last-Modified on
@@ -200,7 +248,10 @@ if A.backup == "sleeper" and (~s.box_ok).any():
         # fill only what nflverse is missing, and only when Sleeper has BOTH teams of the game
         now = pd.Timestamp.now(tz=ET)
         s["final"] = (now - s.kick).dt.total_seconds() / 60 >= A.final_after_min
-        eligible = s.apply(lambda r: (not r.box_ok) and r.final
+        # DST never appears in Sleeper's player stats, so it is excluded from both the fill and the
+        # match-rate denominator — otherwise two unmatchable rows per game drag the rate down and
+        # get an otherwise complete game refused.
+        eligible = s.apply(lambda r: (not r.box_ok) and r.final and r.Pos != "DST"
                            and r.Team in sl_team.get(int(r.week), set())
                            and r.Opp in sl_team.get(int(r.week), set()), axis=1)
         # Per-game match rate. A player the backup does not carry would be filled with 0.0, and a
@@ -276,18 +327,29 @@ def strict_of(d):
                  .drop_duplicates(["Game", "ID", "Player", "Pos"], keep="last")) if len(d) else None
 g = s[s.box_ok]
 strict = strict_of(g)                               # what the page baselines against
-# The drift guard has to compare like with like: sabersim_grade.py only ever sees nflverse, so a
-# provisional row would make the badge go red for the wrong reason. Check on nflverse rows only.
-strict_official = strict_of(g[~g.provisional]) if (~g.provisional).any() else None
+# The drift guard has to compare like with like. sabersim_grade.py only ever sees nflverse and
+# never grades DST, so a provisional row or a DST row would move this number away from the
+# grader's and turn the badge red for the wrong reason. Compare on the grader's own basis:
+# nflverse actuals, skill positions only.
+_cmp = g[(~g.provisional) & (g.Pos != "DST")]
+strict_official = strict_of(_cmp) if len(_cmp) else None
 
-published, matches = None, None
+published, matches, check = None, None, "unknown"
 accp = os.path.join(ROOT, "docs", "sabersim_accuracy.json")
 if strict_official and os.path.exists(accp):
     try:
         pub = json.load(open(accp)).get("overall") or {}
         keys = ["n", "mae", "rmse", "bias", "spearman", "cov80"]
         published = {k: pub.get(k) for k in keys}
-        matches = all(pub.get(k) == strict_official.get(k) for k in keys if pub.get(k) is not None)
+        # Absolute metrics only compare if both ran over the same rows. nflverse publishes in
+        # batches, so the Accuracy page is routinely a grade behind this one — that is staleness,
+        # not divergence, and calling it drift would cry wolf every Sunday evening.
+        if pub.get("n") != strict_official.get("n"):
+            check = "stale"; matches = None
+        elif all(pub.get(k) == strict_official.get(k) for k in keys if pub.get(k) is not None):
+            check = "match"; matches = True
+        else:
+            check = "diverged"; matches = False
     except Exception as e:
         print("could not read the published grade:", str(e)[:80])
 
@@ -327,7 +389,7 @@ except Exception: pass
 
 # ---------- 5. compact payload ----------
 players = sorted(s.Player.unique()); pidx = {p: i for i, p in enumerate(players)}
-POS = ["QB", "RB", "WR", "TE", "K"]
+POS = ["QB", "RB", "WR", "TE", "K", "DST"]
 def r3(x): return None if x is None or (isinstance(x, float) and np.isnan(x)) else round(float(x), 3)
 
 slates = []
@@ -365,7 +427,8 @@ slates.sort(key=lambda x: x["key"])
 out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"),
        "season": A.season, "min_lead_min": A.min_lead, "positions": POS, "players": players,
        "slates": slates, "scale": SCALE, "strict": strict, "strict_official": strict_official,
-       "published": published, "strict_matches_published": matches, "backup": backup}
+       "published": published, "strict_matches_published": matches,
+       "strict_check": check, "backup": backup}
 os.makedirs(os.path.dirname(A.out), exist_ok=True)
 json.dump(out, open(A.out, "w"), separators=(",", ":"))
 kb = os.path.getsize(A.out) / 1024
@@ -374,8 +437,11 @@ print(f"wrote {A.out} ({kb:.0f} KB): {len(slates)} slates ({len(gr)} graded), "
       f"{sum(len(x['sends']) for x in slates)} sends, {len(players)} players")
 if strict: print(f"  strict: n={strict['n']} games={strict['games']} MAE={strict['mae']} "
                  f"rmse={strict['rmse']} rho={strict['spearman']}")
-print(f"  matches the published grade: {matches} (checked on nflverse rows only)")
+print({"match": "  matches the published grade exactly",
+       "stale": f"  the Accuracy page is a grade behind (it has n={(published or {}).get('n')}, this has n={strict_official['n'] if strict_official else '?'}) — press Grade now to line them up",
+       "diverged": "  DIVERGED from sabersim_grade.py on the same rows",
+       "unknown": "  no published grade to compare against"}[check])
 if backup["used"]:
     prov = [x["label"] for x in slates if x.get("provisional")]
     print(f"  PROVISIONAL from Sleeper: {', '.join(prov)} — nflverse will overwrite on its next batch")
-if matches is False: print("  WARNING: diverged from sabersim_grade.py — trust the grader, fix this script")
+if check == "diverged": print("  WARNING: same row count, different numbers — trust the grader, fix this script")
