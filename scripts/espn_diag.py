@@ -60,3 +60,14 @@ espn_ok = [k for k in ok if not k.startswith("H")]
 print("verdict:", "ESPN reachable — a header/host change fixes the generator"
       if espn_ok else
       "every ESPN host refused while Sleeper answered — this is IP-level, headers will not fix it")
+
+# What does a core-API team injuries item actually look like? espn_team in inactives_probe.py
+# counted 0 OUT for KC while the league digest showed 9, so its parse is reading the wrong shape.
+try:
+    with urllib.request.urlopen(urllib.request.Request(
+            "https://sports.core.api.espn.com/v2/sports/football/leagues/nfl/teams/12/injuries?limit=200",
+            headers={}), timeout=25) as r:
+        items = json.loads(r.read()).get("items", [])
+    print("\ncore API item shape:", json.dumps(items[0], indent=2)[:400] if items else "no items")
+except Exception as e:
+    print("\ncore API shape probe failed:", e)
