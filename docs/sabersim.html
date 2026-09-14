@@ -31,6 +31,13 @@
   table.acc th, table.acc td { padding:6px 8px; text-align:right; border-bottom:1px solid #262a33; }
   table.acc th { color:var(--mut); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
   table.acc th:first-child, table.acc td:first-child { text-align:left; position:sticky; left:0; background:var(--card); }
+  .slate { border:1px solid #262a33; border-radius:8px; padding:10px 12px; margin-top:8px; background:#0f1115; }
+  .slate .hd { display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .slate .nm { font-weight:600; } .slate .mt { font-size:12px; color:var(--mut); }
+  .slate .gm { font-size:12px; color:var(--mut); margin-top:3px; }
+  .slate button { width:auto; margin-top:8px; padding:8px 14px; font-size:14px; }
+  .slate.soon { border-color:#3a4150; }
+  .slate.past { opacity:.55; }
   .chips { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
   .chip { background:#0f1115; border:1px solid #262a33; border-radius:999px; padding:4px 10px; font-size:12px; }
   .chip b { color:var(--ink); }
@@ -88,6 +95,16 @@
     </div>
     <small>Next slate, forced. Takes about 2½ minutes. Goes to MAIL_TO and is also pushed to the private repo for the download button. A forced run marks that slate as sent, so the scheduled tick will skip it.</small>
     <div class="status" id="runstat">idle</div>
+  </div>
+
+  <div class="card">
+    <h2>Upcoming sends</h2>
+    <small>Each slate goes on its own clock: generated at T-80, receipt in your inbox by about T-77,
+      SaberSim's cutoff at T-75. A split late window is two separate sends, not one. If the receipt
+      has not arrived by the time shown, run that slate here — it targets that slate specifically,
+      so it cannot fire the wrong one.</small>
+    <div id="slatelist" class="status">loading…</div>
+    <div class="status" id="slatestat"></div>
   </div>
 
   <div class="card">
@@ -330,6 +347,65 @@ $("grade").onclick = async () => {
     st.textContent = "grading dispatched — about 2 minutes, then reload this page";
   } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
 };
+
+/* ---- upcoming sends, one Run button per slate ---- */
+(function () {
+  const box = $("slatelist"), st = $("slatestat");
+  const hhmm = iso => new Date(iso).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  async function runSlate(sl, btn) {
+    if (!tok()) { st.className = "status bad"; st.textContent = "save a token first"; return; }
+    btn.disabled = true; st.className = "status"; st.textContent = `dispatching ${sl.label}…`;
+    try {
+      const before = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0]?.id || 0;
+      await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/dispatches`, { method: "POST",
+        body: JSON.stringify({ ref: "main", inputs: { force: "true", dry_run: "false", slate: sl.key } }) });
+      st.textContent = "dispatched; waiting for the run…";
+      let run = null;
+      for (let i = 0; i < 20 && !run; i++) {
+        await new Promise(r => setTimeout(r, 3000));
+        const rs = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0];
+        if (rs && rs.id !== before) run = rs;
+      }
+      if (!run) { st.className = "status warn"; st.textContent = "run not visible yet — check the Actions tab"; return; }
+      for (let i = 0; i < 80; i++) {
+        const r = await gh(`/repos/${OWNER}/${REPO}/actions/runs/${run.id}`);
+        st.textContent = `${sl.label} — run #${r.run_number}: ${r.status}${r.conclusion ? " → " + r.conclusion : ""}\n${r.html_url}`;
+        if (r.status === "completed") {
+          st.className = "status " + (r.conclusion === "success" ? "ok" : "bad");
+          if (r.conclusion === "success") st.textContent += "\nemail sent for this slate";
+          break;
+        }
+        await new Promise(r => setTimeout(r, 5000));
+      }
+    } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
+    finally { btn.disabled = false; }
+  }
+  fetch("sabersim_slates.json?t=" + Date.now(), { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(d => {
+      const now = Date.now();
+      const up = (d.slates || []).filter(s => new Date(s.kickoff).getTime() > now).slice(0, 8);
+      if (!up.length) { box.textContent = "no upcoming slates in the schedule"; return; }
+      box.innerHTML = "";
+      up.forEach(sl => {
+        const mins = (new Date(sl.kickoff).getTime() - now) / 60000;
+        const el = document.createElement("div");
+        el.className = "slate" + (mins < 240 ? " soon" : "");
+        el.innerHTML =
+          `<div class="hd"><span class="nm">${esc(sl.label)}</span>` +
+          `<span class="mt">${sl.games.length} game${sl.games.length === 1 ? "" : "s"} · kickoff ${hhmm(sl.kickoff)} your time</span></div>` +
+          `<div class="gm">${sl.games.map(esc).join(" · ")}</div>` +
+          `<div class="mt" style="margin-top:5px">your time: sends ${hhmm(sl.send_at)} · ` +
+          `<b>email by ${hhmm(sl.email_by)}</b> · cutoff ${hhmm(sl.deadline)}</div>`;
+        const b = document.createElement("button");
+        b.className = "secondary"; b.textContent = "Run this slate now";
+        b.onclick = () => runSlate(sl, b);
+        el.appendChild(b); box.appendChild(el);
+      });
+    })
+    .catch(e => { box.className = "status warn";
+      box.textContent = "upcoming slates unavailable (" + e.message + ") — press Refresh scoring on the Scoring page to build the list"; });
+})();
 </script>
 </body>
 </html>

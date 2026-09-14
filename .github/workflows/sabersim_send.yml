@@ -43,6 +43,7 @@ on:
   workflow_dispatch:
     inputs:
       force: { description: "Send now regardless of window / sent log", default: "false" }
+      slate: { description: "Kickoff key of a specific slate, e.g. 2026-09-20T20:25 (blank = the earliest unsent)", default: "" }
       dry_run: { description: "Run everything but the email", default: "false" }
 
 permissions:
@@ -63,7 +64,8 @@ jobs:
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           SEND_WINDOW: ${{ vars.SEND_WINDOW || '78,82' }}
-        run: python scripts/sabersim_auto.py --check
+          SLATE_REQ: ${{ inputs.slate }}
+        run: python scripts/sabersim_auto.py --check ${SLATE_REQ:+--slate "$SLATE_REQ"}
 
       # Records how many players ESPN lists as OUT, every tick inside T-100..T-60, so the gap
       # between the T-90 release and the feeds actually carrying it is measured rather than
@@ -121,8 +123,9 @@ jobs:
           PUBLISH_DIR: ${{ github.workspace }}/pkg/sends
           CREDIT_WARN: ${{ vars.CREDIT_WARN || '120' }}
           SEND_WINDOW: ${{ vars.SEND_WINDOW || '78,82' }}
+          SLATE_REQ: ${{ inputs.slate }}
         run: |
-          python scripts/sabersim_auto.py ${{ inputs.force == 'true' && '--force' || '' }} ${{ inputs.dry_run == 'true' && '--dry-run' || '' }}
+          python scripts/sabersim_auto.py ${{ inputs.force == 'true' && '--force' || '' }} ${{ inputs.dry_run == 'true' && '--dry-run' || '' }} ${SLATE_REQ:+--slate "$SLATE_REQ"}
 
       - name: "Publish the CSV to the private repo (needs MODEL_BURKE_TOKEN with Contents write)"
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
