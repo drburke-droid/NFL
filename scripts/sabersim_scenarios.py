@@ -35,6 +35,10 @@ ap.add_argument("--min-lead", type=float, default=75.0, help="SaberSim's cutoff,
 ap.add_argument("--out", default=os.path.join(ROOT, "docs", "sabersim_scenarios.json"))
 ap.add_argument("--backup", choices=["sleeper", "none"], default="sleeper",
                 help="second actuals source for games nflverse has not published yet")
+ap.add_argument("--final-after-min", type=float, default=240.0,
+                help="minutes after kickoff before a game is treated as final. Sleeper reports LIVE "
+                     "stats, so without this a game in progress would be graded on partial totals. "
+                     "nflverse needs no such guard — it only ever publishes finals.")
 A = ap.parse_args()
 W1 = date.fromisoformat(A.week1_tuesday)
 
@@ -103,6 +107,7 @@ s.loc[s.box_ok, "actual"] = s.loc[s.box_ok, "actual"].fillna(0.0)
 # was trained on (4-pt pass TD, -2 INT, PPR, -2 fumble lost; DK scoring for K). Every Sleeper row
 # that overlaps an nflverse row is compared, and the agreement is published so the formula can be
 # audited rather than trusted.
+SLEEPER = os.environ.get("SLEEPER_BASE", "https://api.sleeper.app")   # overridable for tests
 def jget(url, timeout=90):
     req = urllib.request.Request(url, headers={"User-Agent": "model-burke-scenarios"})
     with urllib.request.urlopen(req, timeout=timeout) as r: return json.load(r)
@@ -115,7 +120,7 @@ def gv(d, *names):
     return 0.0
 def sleeper_week(season, week):
     """{gsis_id: (actual_skill, actual_k, team)} for one week, scored the grader's way."""
-    st = jget(f"https://api.sleeper.app/v1/stats/nfl/regular/{season}/{week}")
+    st = jget(f"{SLEEPER}/v1/stats/nfl/regular/{season}/{week}")
     pl = sleeper_week._players
     out = {}
     for sid, d in (st or {}).items():
@@ -134,10 +139,11 @@ def sleeper_week(season, week):
         out[gsis] = (skill, kpts, meta.get("team"))
     return out
 
-backup = {"used": False, "source": "sleeper", "weeks": [], "agreement": None, "error": None}
+backup = {"used": False, "source": "sleeper", "weeks": [], "agreement": None,
+          "in_progress": [], "final_after_min": A.final_after_min, "error": None}
 if A.backup == "sleeper" and (~s.box_ok).any():
     try:
-        sleeper_week._players = jget("https://api.sleeper.app/v1/players/nfl", timeout=180)
+        sleeper_week._players = jget(f"{SLEEPER}/v1/players/nfl", timeout=180)
         print(f"sleeper: {len(sleeper_week._players):,} players in the id map")
         sl, sl_team = {}, {}
         for wk in sorted(s.loc[~s.box_ok, "week"].unique()):
@@ -168,9 +174,16 @@ if A.backup == "sleeper" and (~s.box_ok).any():
                   f"{diff.mean():.4f}, max {diff.max():.3f}, within 0.1 = {(diff <= 0.1).mean():.1%}")
 
         # fill only what nflverse is missing, and only when Sleeper has BOTH teams of the game
-        fillable = s.apply(lambda r: (not r.box_ok)
+        now = pd.Timestamp.now(tz=ET)
+        s["final"] = (now - s.kick).dt.total_seconds() / 60 >= A.final_after_min
+        fillable = s.apply(lambda r: (not r.box_ok) and r.final
                            and r.Team in sl_team.get(int(r.week), set())
                            and r.Opp in sl_team.get(int(r.week), set()), axis=1)
+        live = s[(~s.box_ok) & (~s.final)]
+        if len(live):
+            backup["in_progress"] = sorted(live.Game.unique())
+            print(f"  holding {live.Game.nunique()} game(s) still inside {A.final_after_min:.0f} min "
+                  f"of kickoff: {', '.join(sorted(live.Game.unique()))}")
         if fillable.any():
             s.loc[fillable, "actual"] = s.loc[fillable, "sl"].fillna(0.0)
             s.loc[fillable, "box_ok"] = True
@@ -183,7 +196,9 @@ if A.backup == "sleeper" and (~s.box_ok).any():
     except Exception as e:
         backup["error"] = str(e)[:200]; print("sleeper backup unavailable:", backup["error"])
 if "provisional" not in s: s["provisional"] = False
-s["provisional"] = s.provisional.fillna(False)
+# astype(bool) matters: left as object, ~provisional becomes bitwise NOT on Python bools (~False
+# == -1) and pandas then reads those -1s as column labels. Cost a CI run on 2026-09-14.
+s["provisional"] = s.provisional.fillna(False).astype(bool)
 
 # ---------- 3. FFA / DK benchmarks ----------
 bench = []
