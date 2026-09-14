@@ -12,6 +12,8 @@ Usage:
                                      [--hours H] [--out path.csv]
 Default: current week, NEXT SLATE ONLY — the games within 90 min of the earliest
 upcoming kickoff (one file per slate: Wed night, Thu night, Sun 1pm, Sun 4:25, SNF, MNF).
+--kickoff ISO pins the slate explicitly, which is what the wrapper passes: a split late window
+(week 2 has 16:05 and 16:25 ET) needs one file per kickoff, not one file for both.
 --all-remaining = every game not yet kicked off; --hours H = games within H hours.
 Writes outputs/sabersim/projections_{S}_wk{W}_{stamp}.csv  (+ a full-run parquet).
 
@@ -37,6 +39,13 @@ ap.add_argument("pkg", nargs="?", default=os.environ.get("MODEL_BURKE_PKG", ""))
 ap.add_argument("--week", type=int, default=None)
 ap.add_argument("--all-games", action="store_true", help="include games already kicked off")
 ap.add_argument("--hours", type=float, default=None, help="only games kicking off within H hours")
+ap.add_argument("--kickoff", default=None,
+                help="ISO kickoff of the slate to build; only games within --slate-tol of it. The wrapper "
+                     "passes this so the generator cannot independently pick a different slate — on a split "
+                     "late window (week 2: 16:05 and 16:25 ET) it would otherwise always build the earlier "
+                     "one, because the earlier games have not kicked off yet.")
+ap.add_argument("--slate-tol", type=float, default=15.0,
+                help="minutes either side of --kickoff that count as the same slate")
 ap.add_argument("--all-remaining", action="store_true",
                 help="every game not yet kicked off (default: only the NEXT slate = games within 90 min of the earliest upcoming kickoff)")
 ap.add_argument("--out", default=None)
@@ -201,7 +210,12 @@ else:
 ev["week"] = ((ev.kick - ev.kick.min()).dt.days + 2) // 7 + 1
 sl = ev[ev.week == cur_week].copy()
 if not A.all_games: sl = sl[sl.kick > now]
-if A.hours: sl = sl[sl.kick <= now + pd.Timedelta(hours=A.hours)]
+if A.kickoff:
+    _k = pd.Timestamp(A.kickoff)
+    if _k.tzinfo is None: _k = _k.tz_localize("UTC")
+    _t = pd.Timedelta(minutes=A.slate_tol)
+    sl = sl[(sl.kick >= _k - _t) & (sl.kick <= _k + _t)]
+elif A.hours: sl = sl[sl.kick <= now + pd.Timedelta(hours=A.hours)]
 elif not (A.all_games or A.all_remaining) and len(sl):
     sl = sl[sl.kick <= sl.kick.min() + pd.Timedelta(minutes=90)]     # next slate only
 slate_tag = sl.kick.min().tz_convert("US/Eastern").strftime("%a%I%p").lower() if len(sl) else "none"

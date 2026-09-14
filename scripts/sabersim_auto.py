@@ -77,9 +77,35 @@ def credits():
         left += l; used += u; per.append(l)
     return left, used, per
 
-def next_slate():
+GROUP_MIN = float(os.environ.get("SLATE_GROUP_MIN", "15"))
+
+def group_slates(times, now):
+    """Upcoming kickoffs bucketed into slates, earliest first.
+
+    Grouped on a 15-minute tolerance, not the old 90. Week 2 is the case that forces it: the late
+    window splits 16:05 ET (2 games) and 16:25 ET (3), twenty minutes apart. Under 90 minutes they
+    became one slate keyed on 16:05, so the send fired at T-80 for 16:05 — which is T-100 for the
+    16:25 games, ten minutes before their inactives are even released. A tolerance still beats an
+    exact match, so a feed reporting 13:00 and 13:01 for the same window stays one slate.
+    """
+    out = []
+    for t in sorted(x for x in times if x > now):
+        if out and t <= out[-1][0] + timedelta(minutes=GROUP_MIN): out[-1][1] += 1
+        else: out.append([t, 1])
+    return [{"kick": t, "minutes_to": (t - now).total_seconds() / 60, "games": n,
+             "key": t.strftime("%Y-%m-%dT%H:%M") + f"_{n}g",
+             "label": t.astimezone(ET).strftime("%a %m/%d %I:%M %p ET") + f" slate ({n} games)"}
+            for t, n in out]
+
+def next_slate(sent):
+    """The earliest slate that has NOT been sent yet.
+
+    Returning simply the earliest upcoming slate was the second half of the week-2 problem: once
+    16:05 is in the sent log, every later tick still sees 16:05 as earliest, finds it already sent
+    and skips — so 16:25 would never get a send of its own, at any point.
+    """
     keys = [k.strip() for k in open(KEYF) if k.strip() and not k.startswith("#")] if os.path.exists(KEYF) else []
-    ev = None
+    ev = err = None
     for k in keys:
         try:
             with urllib.request.urlopen(f"https://api.the-odds-api.com/v4/sports/americanfootball_nfl/events?apiKey={k}", timeout=30) as r:
@@ -87,18 +113,17 @@ def next_slate():
         except Exception as e: err = str(e)[:60]
     if ev is None: return None, f"events fetch failed ({err if keys else 'no key'})"
     now = datetime.now(timezone.utc)
-    up = sorted(((datetime.fromisoformat(e["commence_time"].replace("Z", "+00:00")), e) for e in ev
-                 if datetime.fromisoformat(e["commence_time"].replace("Z", "+00:00")) > now), key=lambda x: x[0])
-    if not up: return None, "no upcoming events"
-    k0 = up[0][0]; slate = [e for t, e in up if t <= k0 + timedelta(minutes=90)]
-    key = k0.strftime("%Y-%m-%dT%H:%M") + f"_{len(slate)}g"
-    return {"kick": k0, "minutes_to": (k0 - now).total_seconds() / 60, "games": len(slate), "key": key,
-            "label": k0.astimezone(ET).strftime("%a %m/%d %I:%M %p ET") + f" slate ({len(slate)} games)"}, None
+    times = [datetime.fromisoformat(e["commence_time"].replace("Z", "+00:00")) for e in ev]
+    sl = group_slates(times, now)
+    if not sl: return None, "no upcoming events"
+    for x in sl:
+        if x["key"] not in sent: return x, None
+    return dict(sl[0], all_sent=True), None
 
 sent = json.load(open(LOG)) if os.path.exists(LOG) else {}
-s, err = next_slate()
+s, err = next_slate(sent)
 if err: out(in_window=False, reason=err); sys.exit(0)
-already = s["key"] in sent
+already = bool(s.get("all_sent")) or s["key"] in sent
 in_win = lo <= s["minutes_to"] <= hi
 # daily grade: the tick that lands in the first 10 min of GRADE_HOUR UTC (default 14 = 8 am MDT) also
 # re-grades finished games (GitHub's own cron never fires for this repo, so the ticks carry it)
@@ -113,7 +138,9 @@ csv_path = os.path.join(ROOT, "outputs", "sabersim", f"Burke_Model_Burke_{s['kic
 os.makedirs(os.path.dirname(csv_path), exist_ok=True)
 logp = csv_path.replace(".csv", ".log")
 with open(logp, "w", encoding="utf-8") as lf:
-    rc = subprocess.call([sys.executable, os.path.join(ROOT, "scripts", "sabersim_weekly.py"), A.pkg, "--out", csv_path] + A.gen_args,
+    rc = subprocess.call([sys.executable, os.path.join(ROOT, "scripts", "sabersim_weekly.py"), A.pkg,
+                          "--out", csv_path, "--kickoff", s["kick"].strftime("%Y-%m-%dT%H:%M:%SZ"),
+                          "--slate-tol", str(GROUP_MIN)] + A.gen_args,
                          stdout=lf, stderr=subprocess.STDOUT, cwd=ROOT, env={**os.environ, "PYTHONIOENCODING": "utf-8"})
 if rc != 0 or not os.path.exists(csv_path):
     txt = open(logp, encoding="utf-8", errors="ignore").read()
