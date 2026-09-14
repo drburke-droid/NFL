@@ -35,6 +35,10 @@ ap.add_argument("--min-lead", type=float, default=75.0, help="SaberSim's cutoff,
 ap.add_argument("--out", default=os.path.join(ROOT, "docs", "sabersim_scenarios.json"))
 ap.add_argument("--backup", choices=["sleeper", "none"], default="sleeper",
                 help="second actuals source for games nflverse has not published yet")
+ap.add_argument("--min-match", type=float, default=0.70,
+                help="a game is filled from the backup only if at least this share of its projected "
+                     "players were actually found there. An unmatched player would otherwise be "
+                     "scored 0.0, which reads as a model failure rather than a data gap.")
 ap.add_argument("--final-after-min", type=float, default=240.0,
                 help="minutes after kickoff before a game is treated as final. Sleeper reports LIVE "
                      "stats, so without this a game in progress would be graded on partial totals. "
@@ -119,15 +123,20 @@ def gv(d, *names):
             except (TypeError, ValueError): pass
     return 0.0
 def sleeper_week(season, week):
-    """{gsis_id: (actual_skill, actual_k, team)} for one week, scored the grader's way."""
+    """Actuals for one week, scored the grader's way, under the grader's three lookup tiers.
+
+    Keying on gsis_id alone is not enough: Sleeper's id map carries it for only a minority of
+    players, and everyone else silently fell through to a 0.0 actual (2026-09-14: 9 of 114 rows
+    matched on the 4:25 slate, the other 105 scored as zeros). Mirror sabersim_grade.py instead —
+    id, then name+position+team, then surname+team+position when unambiguous.
+    """
     st = jget(f"{SLEEPER}/v1/stats/nfl/regular/{season}/{week}")
     pl = sleeper_week._players
-    out = {}
+    out, by_name, last_ct, by_last = {}, {}, {}, {}
     for sid, d in (st or {}).items():
         if not isinstance(d, dict): continue
         meta = pl.get(sid) or {}
         gsis = meta.get("gsis_id")
-        if not gsis: continue
         skill = (0.04*gv(d, "pass_yd") + 4*gv(d, "pass_td") - 2*gv(d, "pass_int")
                  + 0.1*gv(d, "rush_yd") + 6*gv(d, "rush_td")
                  + 0.1*gv(d, "rec_yd") + 6*gv(d, "rec_td") + gv(d, "rec")
@@ -136,29 +145,44 @@ def sleeper_week(season, week):
         kpts = (3*(gv(d, "fgm_0_19") + gv(d, "fgm_20_29") + gv(d, "fgm_30_39"))
                 + 4*gv(d, "fgm_40_49") + 5*gv(d, "fgm_50p", "fgm_50_59")
                 + 5*gv(d, "fgm_60p") + gv(d, "xpm"))
-        out[gsis] = (skill, kpts, meta.get("team"))
-    return out
+        team, pos = meta.get("team"), meta.get("position")
+        nm = norm(meta.get("full_name") or meta.get("last_name") or "")
+        val = (skill, kpts, team)
+        if gsis: out[gsis] = val
+        if nm and pos: by_name[(nm, pos)] = val
+        if nm and team and pos:
+            ln = nm.split()[-1]
+            last_ct[(ln, team, pos)] = last_ct.get((ln, team, pos), 0) + 1
+            by_last[(ln, team, pos)] = val
+    by_last = {k: v for k, v in by_last.items() if last_ct.get(k) == 1}   # unambiguous only
+    return out, by_name, by_last
 
 backup = {"used": False, "source": "sleeper", "weeks": [], "agreement": None,
-          "in_progress": [], "final_after_min": A.final_after_min, "error": None}
+          "in_progress": [], "final_after_min": A.final_after_min,
+          "min_match": A.min_match, "match_rate": {}, "rejected": [], "error": None}
 if A.backup == "sleeper" and (~s.box_ok).any():
     try:
         sleeper_week._players = jget(f"{SLEEPER}/v1/players/nfl", timeout=180)
         print(f"sleeper: {len(sleeper_week._players):,} players in the id map")
         sl, sl_team = {}, {}
         for wk in sorted(s.loc[~s.box_ok, "week"].unique()):
-            try: w = sleeper_week(A.season, int(wk))
+            try: w, w_name, w_last = sleeper_week(A.season, int(wk))
             except Exception as e:
                 print(f"  week {wk}: stats fetch failed ({str(e)[:60]})"); continue
-            teams = {t for (_, _, t) in w.values() if t}
-            sl[int(wk)] = w; sl_team[int(wk)] = teams
-            backup["weeks"].append({"week": int(wk), "players": len(w), "teams": len(teams)})
-            print(f"  week {wk}: {len(w):,} players, {len(teams)} teams")
+            teams = {t for (_, _, t) in w.values() if t} | {t for (_, _, t) in w_name.values() if t}
+            sl[int(wk)] = (w, w_name, w_last); sl_team[int(wk)] = teams
+            backup["weeks"].append({"week": int(wk), "by_id": len(w), "by_name": len(w_name),
+                                    "teams": len(teams)})
+            print(f"  week {wk}: {len(w):,} matched by id, {len(w_name):,} by name, {len(teams)} teams")
 
         def sl_actual(r):
-            w = sl.get(int(r.week))
-            if not w or not isinstance(r.ID, str): return np.nan
-            hit = w.get(r.ID)
+            t = sl.get(int(r.week))
+            if not t: return np.nan
+            w, w_name, w_last = t
+            nm = norm(r.Player)
+            hit = (w.get(r.ID) if isinstance(r.ID, str) else None) \
+                  or w_name.get((nm, r.Pos)) \
+                  or w_last.get((nm.split()[-1], r.Team, r.Pos))
             if hit is None: return np.nan
             return hit[1] if r.Pos == "K" else hit[0]
         s["sl"] = [sl_actual(r) for r in s.itertuples()]
@@ -176,9 +200,24 @@ if A.backup == "sleeper" and (~s.box_ok).any():
         # fill only what nflverse is missing, and only when Sleeper has BOTH teams of the game
         now = pd.Timestamp.now(tz=ET)
         s["final"] = (now - s.kick).dt.total_seconds() / 60 >= A.final_after_min
-        fillable = s.apply(lambda r: (not r.box_ok) and r.final
+        eligible = s.apply(lambda r: (not r.box_ok) and r.final
                            and r.Team in sl_team.get(int(r.week), set())
                            and r.Opp in sl_team.get(int(r.week), set()), axis=1)
+        # Per-game match rate. A player the backup does not carry would be filled with 0.0, and a
+        # slate full of false zeros looks exactly like a catastrophic model miss — on 2026-09-14 it
+        # put the 4:25 slate at MAE 6.21 with 92% zeros, and dragged FFA down with it. Refuse the
+        # whole game rather than publish that.
+        cand = s[eligible]
+        rate = (cand.assign(ok=cand.sl.notna()).groupby("Game").ok.mean().to_dict()) if len(cand) else {}
+        backup["match_rate"] = {g: round(float(v), 3) for g, v in rate.items()}
+        good = {g for g, v in rate.items() if v >= A.min_match}
+        rejected = sorted(set(rate) - good)
+        if rejected:
+            backup["rejected"] = [{"game": g, "match_rate": round(float(rate[g]), 3)} for g in rejected]
+            for g in rejected:
+                print(f"  REFUSED {g}: only {rate[g]:.1%} of its players found in the backup "
+                      f"(need {A.min_match:.0%}) — leaving it ungraded")
+        fillable = eligible & s.Game.isin(good)
         live = s[(~s.box_ok) & (~s.final)]
         if len(live):
             backup["in_progress"] = sorted(live.Game.unique())
