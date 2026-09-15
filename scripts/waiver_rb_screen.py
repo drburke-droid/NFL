@@ -99,7 +99,11 @@ else:
     # ---- pre-week-1: opportunity watchlist ----
     print(f"  no {S} box scores yet — opportunity watchlist instead")
     def http_json(u):
-        with urllib.request.urlopen(urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0"}), timeout=30) as r:
+        # No User-Agent. ESPN 403s a browser UA from a datacenter IP and serves the urllib default
+        # one (measured on a runner 2026-09-14, scripts/espn_diag.py), so the "Mozilla/5.0" this
+        # used to send made the injury pull below fail every time it ran anywhere but a home PC —
+        # silently, because the except prints "ESPN unavailable" and carries on with an empty map.
+        with urllib.request.urlopen(urllib.request.Request(u, headers={}), timeout=30) as r:
             return json.loads(r.read().decode())
     NAME2ABBR = {"Arizona Cardinals": "ARI", "Atlanta Falcons": "ATL", "Baltimore Ravens": "BAL", "Buffalo Bills": "BUF",
         "Carolina Panthers": "CAR", "Chicago Bears": "CHI", "Cincinnati Bengals": "CIN", "Cleveland Browns": "CLE",

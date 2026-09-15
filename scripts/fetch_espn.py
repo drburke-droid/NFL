@@ -29,6 +29,14 @@ RAW = os.path.join(ROOT, "data", "espn"); os.makedirs(RAW, exist_ok=True)
 
 SLOT = {0: "QB", 2: "RB", 4: "WR", 6: "TE", 16: "DST", 17: "K", 20: "BENCH", 21: "IR", 23: "FLEX", 7: "OP"}
 POS = {1: "QB", 2: "RB", 3: "WR", 4: "TE", 5: "K", 16: "DST"}
+# proTeamId -> the abbreviation ffanalytics uses (LVR/JAC/LAR, not LV/JAX/LA), so a roster entry
+# can be matched to a projection by surname+team+position when the given names disagree — ESPN's
+# "Kenny Gainwell" is FFA's "Kenneth Gainwell". Name alone is not enough and surname alone is far
+# too loose: of 24 surname+position matches in a 192-player league, 23 were different people.
+PRO_TEAM = {1: "ATL", 2: "BUF", 3: "CHI", 4: "CIN", 5: "CLE", 6: "DAL", 7: "DEN", 8: "DET", 9: "GB",
+            10: "TEN", 11: "IND", 12: "KC", 13: "LVR", 14: "LAR", 15: "MIA", 16: "MIN", 17: "NE",
+            18: "NO", 19: "NYG", 20: "NYJ", 21: "PHI", 22: "ARI", 23: "PIT", 24: "LAC", 25: "SF",
+            26: "SEA", 27: "TB", 28: "WAS", 29: "CAR", 30: "JAC", 33: "BAL", 34: "HOU"}
 
 
 def cookies():
@@ -69,6 +77,7 @@ def main():
             ppe = e.get("playerPoolEntry") or {}; p = ppe.get("player", {})
             kval = ppe.get("keeperValue") or ppe.get("keeperValueFuture") or 0
             rost.append({"name": p.get("fullName"), "pos": POS.get(p.get("defaultPositionId"), "?"),
+                         "team": PRO_TEAM.get(p.get("proTeamId"), ""), "espn_id": p.get("id"),
                          "slot": SLOT.get(e.get("lineupSlotId"), str(e.get("lineupSlotId"))),
                          "keeper": bool(kval or e.get("keeper")), "keeper_price": kval,
                          # DRAFT / ADD (waiver-FA pickup) / TRADE — a mid-season drop+ADD resets
