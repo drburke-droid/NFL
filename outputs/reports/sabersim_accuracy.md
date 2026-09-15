@@ -1,20 +1,20 @@
-# SaberSim send accuracy — 2026 (graded 2026-09-14T14:06Z)
+# SaberSim send accuracy — 2026 (graded 2026-09-15T14:00Z)
 
 latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded
 
 | week | sends | games | n | MAE | RMSE | bias | Spearman | 80% cov | FFA MAE (same rows) | DK MAE (same rows) |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | 5 | 15 | 440 | 3.865 | 5.462 | -0.317 | 0.777 | 0.825 | 4.172 (model 4.133) | — |
+| 1 | 6 | 16 | 470 | 3.876 | 5.476 | -0.379 | 0.776 | 0.826 | 4.171 (model 4.139) | 4.466 (model 4.625) |
 
-**Overall:** n 440 · MAE 3.865 · RMSE 5.462 · bias -0.317 · Spearman 0.777 · 80% coverage 0.825
+**Overall:** n 470 · MAE 3.876 · RMSE 5.476 · bias -0.379 · Spearman 0.776 · 80% coverage 0.826
 
 | pos | n | MAE | RMSE | bias | 80% cov |
 |---|---|---|---|---|---|
-| K | 30 | 3.498 | 4.462 | -0.028 | 0.8 |
-| QB | 59 | 4.068 | 6.227 | +0.019 | 0.881 |
-| RB | 103 | 3.97 | 5.584 | -0.168 | 0.816 |
-| TE | 95 | 3.213 | 4.541 | -0.469 | 0.842 |
-| WR | 153 | 4.193 | 5.758 | -0.51 | 0.804 |
+| K | 32 | 3.425 | 4.375 | -0.171 | 0.812 |
+| QB | 63 | 4.113 | 6.223 | -0.096 | 0.873 |
+| RB | 110 | 4.05 | 5.761 | -0.047 | 0.818 |
+| TE | 100 | 3.176 | 4.509 | -0.394 | 0.84 |
+| WR | 165 | 4.182 | 5.697 | -0.739 | 0.806 |
 
 ## Scale (2025 reference, full slate pool)
 
@@ -34,11 +34,11 @@ Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fai
 
 ## Subvertadown check
 
-- On 216 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 46% of the time (50% = coin flip).
-- Adding the full team bonus, shared by projection, would have moved MAE from 3.86 to 3.86; half of it: 3.86.
-- Correlation between the bonus and our error: +0.01.
+- On 237 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 49% of the time (50% = coin flip).
+- Adding the full team bonus, shared by projection, would have moved MAE from 3.88 to 3.86; half of it: 3.87.
+- Correlation between the bonus and our error: +0.07.
 - Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.
-- QB: on 30 graded starters Subvertadown's projection MAE was 7.01 vs ours 6.31; a 50/50 blend 6.66.
+- QB: on 32 graded starters Subvertadown's projection MAE was 7.03 vs ours 6.43; a 50/50 blend 6.73.
 
 Largest misses:
 
@@ -46,6 +46,7 @@ Largest misses:
 - wk1 Christian Watson (WR GB): proj 11.6, actual 32.7
 - wk1 Caleb Williams (QB CHI): proj 17.2, actual 37.3
 - wk1 Derrick Henry (RB BAL): proj 15.9, actual 35.3
+- wk1 Kenneth Walker III (RB KC): proj 15.3, actual 34.1
 - wk1 Isaiah Likely (TE NYG): proj 9.1, actual 27.8
 - wk1 D'Andre Swift (RB CHI): proj 13.8, actual 32.4
 - wk1 Ja'Marr Chase (WR CIN): proj 21.1, actual 3.2
@@ -53,4 +54,3 @@ Largest misses:
 - wk1 Kyler Murray (QB MIN): proj 16.5, actual -0.4
 - wk1 Josh Allen (QB BUF): proj 19.3, actual 35.7
 - wk1 Bryce Young (QB CAR): proj 15.2, actual 31.4
-- wk1 David Montgomery (RB HOU): proj 12.9, actual 28.9
