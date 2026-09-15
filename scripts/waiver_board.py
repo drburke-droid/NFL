@@ -235,7 +235,10 @@ for pos in positions:
               f"{d:+6.2f} vs my worst{inj}{flag}")
 
 os.makedirs(os.path.dirname(A.json_out), exist_ok=True)
-json.dump({"season": A.season, "week": week, "league": lg.get("name"),
+# stale travels with the data, not just in the console warning: whatever renders this next has to
+# be able to show "these are last week's numbers" rather than presenting them as a live board.
+json.dump({"season": A.season, "week": week, "current_week": cur,
+           "stale": bool(cur and cur != week), "league": lg.get("name"),
            "scoring": scoring, "unmapped": [list(u) for u in unmapped],
            "board": board}, open(A.json_out, "w"), indent=1)
 print(f"\nwrote {os.path.relpath(A.json_out, ROOT)}")

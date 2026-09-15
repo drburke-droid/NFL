@@ -1,0 +1,909 @@
+{
+ "season": 2026,
+ "week": 1,
+ "current_week": 2,
+ "stale": true,
+ "league": "Kuhn and Friends",
+ "scoring": {
+  "pass_yds": 0.04,
+  "pass_tds": 6.0,
+  "two_pts": 2.0,
+  "pass_int": -1.0,
+  "rush_yds": 0.1,
+  "rush_tds": 6.0,
+  "rec_yds": 0.1,
+  "rec_tds": 6.0,
+  "rec": 1.0,
+  "fumbles_lost": -1.0,
+  "fg_4049": 4.0,
+  "fg_0039": 3.0,
+  "xp": 1.0,
+  "dst_td": 6.0,
+  "return_tds": 6.0,
+  "fg_50": 5.0
+ },
+ "unmapped": [
+  [
+   63,
+   6.0,
+   "no FFA column"
+  ],
+  [
+   201,
+   6.0,
+   "no FFA column"
+  ],
+  [
+   206,
+   2.0,
+   "no FFA column"
+  ],
+  [
+   209,
+   1.0,
+   "no FFA column"
+  ]
+ ],
+ "board": {
+  "QB": {
+   "mine": [
+    {
+     "name": "Joe Burrow",
+     "pos": "QB",
+     "team": "CIN",
+     "n": "joe burrow",
+     "pts": 24.29,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Kyler Murray",
+     "pos": "QB",
+     "team": "MIN",
+     "n": "kyler murray",
+     "pts": 19.54,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    }
+   ],
+   "free": [
+    {
+     "name": "Aaron Rodgers",
+     "pos": "QB",
+     "team": "PIT",
+     "n": "aaron rodgers",
+     "pts": 20.0,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Sam Darnold",
+     "pos": "QB",
+     "team": "SEA",
+     "n": "sam darnold",
+     "pts": 19.46,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Bryce Young",
+     "pos": "QB",
+     "team": "CAR",
+     "n": "bryce young",
+     "pts": 19.3,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Jacoby Brissett",
+     "pos": "QB",
+     "team": "ARI",
+     "n": "jacoby brissett",
+     "pts": 18.39,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Cam Ward",
+     "pos": "QB",
+     "team": "TEN",
+     "n": "cam ward",
+     "pts": 18.34,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Geno Smith",
+     "pos": "QB",
+     "team": "NYJ",
+     "n": "geno smith",
+     "pts": 16.21,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Tua Tagovailoa",
+     "pos": "QB",
+     "team": "ATL",
+     "n": "tua tagovailoa",
+     "pts": 16.12,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Kirk Cousins",
+     "pos": "QB",
+     "team": "LVR",
+     "n": "kirk cousins",
+     "pts": 15.45,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Deshaun Watson",
+     "pos": "QB",
+     "team": "CLE",
+     "n": "deshaun watson",
+     "pts": 15.16,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Fernando Mendoza",
+     "pos": "QB",
+     "team": "LVR",
+     "n": "fernando mendoza",
+     "pts": 3.5,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Spencer Rattler",
+     "pos": "QB",
+     "team": "NO",
+     "n": "spencer rattler",
+     "pts": 3.3,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Shedeur Sanders",
+     "pos": "QB",
+     "team": "CLE",
+     "n": "shedeur sanders",
+     "pts": 2.12,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    }
+   ],
+   "worst_of_mine": 19.54
+  },
+  "RB": {
+   "mine": [
+    {
+     "name": "Bucky Irving",
+     "pos": "RB",
+     "team": "TB",
+     "n": "bucky irving",
+     "pts": 12.46,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "TreVeyon Henderson",
+     "pos": "RB",
+     "team": "NE",
+     "n": "treveyon henderson",
+     "pts": 6.81,
+     "inj": "O",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Dylan Sampson",
+     "pos": "RB",
+     "team": "CLE",
+     "n": "dylan sampson",
+     "pts": 5.95,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Tank Bigsby",
+     "pos": "RB",
+     "team": "PHI",
+     "n": "tank bigsby",
+     "pts": 4.7,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    }
+   ],
+   "free": [
+    {
+     "name": "Alvin Kamara",
+     "pos": "RB",
+     "team": "NO",
+     "n": "alvin kamara",
+     "pts": 7.02,
+     "inj": "Q",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Chris Brooks",
+     "pos": "RB",
+     "team": "GB",
+     "n": "chris brooks",
+     "pts": 5.52,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Chris Rodriguez",
+     "pos": "RB",
+     "team": "JAC",
+     "n": "chris rodriguez",
+     "pts": 5.44,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Tyrone Tracy",
+     "pos": "RB",
+     "team": "NYG",
+     "n": "tyrone tracy",
+     "pts": 5.23,
+     "inj": "Q",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Samaje Perine",
+     "pos": "RB",
+     "team": "CIN",
+     "n": "samaje perine",
+     "pts": 4.94,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Brian Robinson",
+     "pos": "RB",
+     "team": "ATL",
+     "n": "brian robinson",
+     "pts": 4.55,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Malik Davis",
+     "pos": "RB",
+     "team": "DAL",
+     "n": "malik davis",
+     "pts": 4.52,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "George Holani",
+     "pos": "RB",
+     "team": "SEA",
+     "n": "george holani",
+     "pts": 4.42,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Najee Harris",
+     "pos": "RB",
+     "team": "NYG",
+     "n": "najee harris",
+     "pts": 4.39,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Ty Johnson",
+     "pos": "RB",
+     "team": "BUF",
+     "n": "ty johnson",
+     "pts": 4.35,
+     "inj": "Q",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "AJ Dillon",
+     "pos": "RB",
+     "team": "CAR",
+     "n": "aj dillon",
+     "pts": 4.11,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Jacob Saylors",
+     "pos": "RB",
+     "team": "DET",
+     "n": "jacob saylors",
+     "pts": 3.95,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    }
+   ],
+   "worst_of_mine": 4.7
+  },
+  "WR": {
+   "mine": [
+    {
+     "name": "Ja'Marr Chase",
+     "pos": "WR",
+     "team": "CIN",
+     "n": "jamarr chase",
+     "pts": 20.93,
+     "inj": "Q",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Rashee Rice",
+     "pos": "WR",
+     "team": "KC",
+     "n": "rashee rice",
+     "pts": 13.94,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Alec Pierce",
+     "pos": "WR",
+     "team": "IND",
+     "n": "alec pierce",
+     "pts": 10.93,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Brian Thomas Jr.",
+     "pos": "WR",
+     "team": "JAC",
+     "n": "brian thomas",
+     "pts": 9.87,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Matthew Golden",
+     "pos": "WR",
+     "team": "GB",
+     "n": "matthew golden",
+     "pts": 8.1,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Adonai Mitchell",
+     "pos": "WR",
+     "team": "NYJ",
+     "n": "adonai mitchell",
+     "pts": 6.16,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    },
+    {
+     "name": "Omar Cooper Jr.",
+     "pos": "WR",
+     "team": "NYJ",
+     "n": "omar cooper",
+     "pts": 5.84,
+     "inj": "NA",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    }
+   ],
+   "free": [
+    {
+     "name": "Tre Tucker",
+     "pos": "WR",
+     "team": "LVR",
+     "n": "tre tucker",
+     "pts": 8.73,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Keenan Allen",
+     "pos": "WR",
+     "team": "IND",
+     "n": "keenan allen",
+     "pts": 7.96,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Calvin Ridley",
+     "pos": "WR",
+     "team": "TEN",
+     "n": "calvin ridley",
+     "pts": 7.84,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Cooper Kupp",
+     "pos": "WR",
+     "team": "SEA",
+     "n": "cooper kupp",
+     "pts": 7.67,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Jalen Nailor",
+     "pos": "WR",
+     "team": "LVR",
+     "n": "jalen nailor",
+     "pts": 7.44,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Devaughn Vele",
+     "pos": "WR",
+     "team": "NO",
+     "n": "devaughn vele",
+     "pts": 7.16,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Kayshon Boutte",
+     "pos": "WR",
+     "team": "HOU",
+     "n": "kayshon boutte",
+     "pts": 6.97,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Rashod Bateman",
+     "pos": "WR",
+     "team": "BAL",
+     "n": "rashod bateman",
+     "pts": 6.9,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Jauan Jennings",
+     "pos": "WR",
+     "team": "MIN",
+     "n": "jauan jennings",
+     "pts": 6.81,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Denzel Boston",
+     "pos": "WR",
+     "team": "CLE",
+     "n": "denzel boston",
+     "pts": 6.54,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Dontayvion Wicks",
+     "pos": "WR",
+     "team": "PHI",
+     "n": "dontayvion wicks",
+     "pts": 6.44,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Jaylin Noel",
+     "pos": "WR",
+     "team": "HOU",
+     "n": "jaylin noel",
+     "pts": 6.04,
+     "inj": "Q",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    }
+   ],
+   "worst_of_mine": 5.84
+  },
+  "TE": {
+   "mine": [
+    {
+     "name": "George Kittle",
+     "pos": "TE",
+     "team": "SF",
+     "n": "george kittle",
+     "pts": 10.29,
+     "inj": "Q",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    }
+   ],
+   "free": [
+    {
+     "name": "Brenton Strange",
+     "pos": "TE",
+     "team": "JAC",
+     "n": "brenton strange",
+     "pts": 8.53,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Greg Dulcich",
+     "pos": "TE",
+     "team": "MIA",
+     "n": "greg dulcich",
+     "pts": 7.94,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Dalton Schultz",
+     "pos": "TE",
+     "team": "HOU",
+     "n": "dalton schultz",
+     "pts": 7.93,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Cade Otton",
+     "pos": "TE",
+     "team": "TB",
+     "n": "cade otton",
+     "pts": 7.81,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Pat Freiermuth",
+     "pos": "TE",
+     "team": "PIT",
+     "n": "pat freiermuth",
+     "pts": 7.43,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Oronde Gadsden",
+     "pos": "TE",
+     "team": "LAC",
+     "n": "oronde gadsden",
+     "pts": 7.14,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Darren Waller",
+     "pos": "TE",
+     "team": "CAR",
+     "n": "darren waller",
+     "pts": 6.52,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Chigoziem Okonkwo",
+     "pos": "TE",
+     "team": "WAS",
+     "n": "chigoziem okonkwo",
+     "pts": 6.42,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Mike Gesicki",
+     "pos": "TE",
+     "team": "CIN",
+     "n": "mike gesicki",
+     "pts": 6.38,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Mason Taylor",
+     "pos": "TE",
+     "team": "NYJ",
+     "n": "mason taylor",
+     "pts": 5.98,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "David Njoku",
+     "pos": "TE",
+     "team": "LAC",
+     "n": "david njoku",
+     "pts": 5.78,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Gunnar Helm",
+     "pos": "TE",
+     "team": "TEN",
+     "n": "gunnar helm",
+     "pts": 5.68,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    }
+   ],
+   "worst_of_mine": 10.29
+  },
+  "K": {
+   "mine": [
+    {
+     "name": "Cameron Dicker",
+     "pos": "K",
+     "team": "LAC",
+     "n": "cameron dicker",
+     "pts": 10.32,
+     "inj": "Q",
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
+    }
+   ],
+   "free": [
+    {
+     "name": "Tyler Loop",
+     "pos": "K",
+     "team": "BAL",
+     "n": "tyler loop",
+     "pts": 8.38,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Will Reichard",
+     "pos": "K",
+     "team": "MIN",
+     "n": "will reichard",
+     "pts": 8.37,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Blake Grupe",
+     "pos": "K",
+     "team": "NYJ",
+     "n": "blake grupe",
+     "pts": 8.03,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Joey Slye",
+     "pos": "K",
+     "team": "TEN",
+     "n": "joey slye",
+     "pts": 7.89,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Jake Elliott",
+     "pos": "K",
+     "team": "PHI",
+     "n": "jake elliott",
+     "pts": 7.85,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Spencer Shrader",
+     "pos": "K",
+     "team": "IND",
+     "n": "spencer shrader",
+     "pts": 7.76,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Chase McLaughlin",
+     "pos": "K",
+     "team": "TB",
+     "n": "chase mclaughlin",
+     "pts": 7.71,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Chris Boswell",
+     "pos": "K",
+     "team": "PIT",
+     "n": "chris boswell",
+     "pts": 7.61,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Wil Lutz",
+     "pos": "K",
+     "team": "DEN",
+     "n": "wil lutz",
+     "pts": 7.37,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Daniel Carlson",
+     "pos": "K",
+     "team": "NO",
+     "n": "daniel carlson",
+     "pts": 7.21,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Riley Patterson",
+     "pos": "K",
+     "team": "MIA",
+     "n": "riley patterson",
+     "pts": 7.14,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Chad Ryland",
+     "pos": "K",
+     "team": "ARI",
+     "n": "chad ryland",
+     "pts": 7.14,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    }
+   ],
+   "worst_of_mine": 10.32
+  }
+ }
+}
