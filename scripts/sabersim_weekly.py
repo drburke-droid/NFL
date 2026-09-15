@@ -63,6 +63,10 @@ ap.add_argument("--p-play-doubt", type=float, default=0.2,
                 help="P(plays) for a Questionable player DK has not posted props for while teammates are priced "
                      "(2025 measured: 0.20 overall, 0.11 for FFA proj >= 8, n=54; Q WITH a DK line played 100%%)")
 ap.add_argument("--no-lineups", action="store_true", help="skip the live ESPN/Sleeper status pull")
+ap.add_argument("--no-report", action="store_true", help="skip the official NFL injury report (practice status)")
+ap.add_argument("--no-dnp-haircut", action="store_true",
+                help="skip the DNP haircut: a player whose last practice was DNP but who plays produces ~0.90 of a healthy line "
+                     "(2017-25, 8/8 seasons; WR 0.85, RB 0.92, TE no shortfall; 0.78-0.86 even when DK has priced him)")
 ap.add_argument("--history-start", type=int, default=2023,
                 help="first FFA season used for Model_Burke training history (2016-22 files exist since 2026-09-10; "
                      "ffa_history_length_study: longer history changes 2025 MAE by <0.005, so the trial model stays on 2023+)")
@@ -491,8 +495,54 @@ def espn_json(path):
         except Exception as e:
             last = e
     raise last
+NICK2ABBR = {"Cardinals": "ARI", "Falcons": "ATL", "Ravens": "BAL", "Bills": "BUF", "Panthers": "CAR", "Bears": "CHI", "Bengals": "CIN",
+             "Browns": "CLE", "Cowboys": "DAL", "Broncos": "DEN", "Lions": "DET", "Packers": "GB", "Texans": "HOU", "Colts": "IND",
+             "Jaguars": "JAX", "Chiefs": "KC", "Raiders": "LV", "Chargers": "LAC", "Rams": "LA", "Dolphins": "MIA", "Vikings": "MIN",
+             "Patriots": "NE", "Saints": "NO", "Giants": "NYG", "Jets": "NYJ", "Eagles": "PHI", "Steelers": "PIT", "49ers": "SF",
+             "Seahawks": "SEA", "Buccaneers": "TB", "Titans": "TEN", "Commanders": "WAS"}
+PRAC_MAP = {"Did Not Participate In Practice": "DNP", "Limited Participation in Practice": "LP", "Full Participation in Practice": "FP"}
+# P(plays) for a Questionable player the books have NOT priced, by last practice status (2023-25, teammates priced:
+# DNP 18%, LP 30%; FP too few -> 0.45); --p-play-doubt when the practice status is unknown
+PP_BY_PRAC = {"DNP": 0.18, "LP": 0.30, "FP": 0.45}
+DNP_FAC = {"WR": 0.85, "QB": 0.88, "RB": 0.94, "TE": 1.0}     # playing-projection multiplier after a DNP (practice_report_study + the 2024-25 history check)
+def official_report(season, week):
+    """(nname, position) -> dict(team, desig, prac, injury, src) from the NFL's own injury report for this week.
+    Live page first (validated to be THIS week's report), then the nflverse daily parquet, else empty."""
+    out = {}
+    try:
+        html = urllib.request.urlopen(urllib.request.Request(f"https://www.nfl.com/injuries/league/{season}/REG{week}",
+                                                             headers={"User-Agent": "Mozilla/5.0"}), timeout=30).read().decode("utf8", "replace")
+        m = re.search(r"Injuries - WEEK (\d+)", html); sel = re.findall(r"<option[^>]*selected[^>]*>\s*WEEK (\d+)\s*</option>", html)
+        if m and int(m.group(1)) == int(week) and (not sel or int(sel[0]) == int(week)):   # the page serves the latest week under any URL
+            for chunk in html.split('d3-o-section-sub-title"><span>')[1:]:
+                nick = chunk[:chunk.find("<")].strip(); team = NICK2ABBR.get(nick, nick)
+                for row in re.findall(r"<tr>(.*?)</tr>", chunk.split("</table>")[0], re.S):
+                    cells = [re.sub(r"<[^>]+>", " ", c) for c in re.findall(r"<td[^>]*>(.*?)</td>", row, re.S)]
+                    cells = [re.sub(r"\s+", " ", c).strip() for c in cells]
+                    if len(cells) < 5 or cells[1] not in ("QB", "RB", "WR", "TE", "K"): continue
+                    out[(norm(cells[0]), cells[1])] = {"team": team, "injury": cells[2], "prac": PRAC_MAP.get(cells[3], ""), "desig": cells[4], "src": "nfl.com"}
+            if out: return out
+        else: print(f"  NFL.com injury page is not week {week} yet (shows {m.group(1) if m else '?'})")
+    except Exception as e: print("  NFL.com injury page unavailable:", str(e)[:60])
+    try:
+        cache = os.path.join(ROOT, "data", "nflverse_cache", f"injuries_{season}.parquet"); os.makedirs(os.path.dirname(cache), exist_ok=True)
+        if not os.path.exists(cache) or time.time() - os.path.getmtime(cache) > 6 * 3600:
+            urllib.request.urlretrieve(f"https://github.com/nflverse/nflverse-data/releases/download/injuries/injuries_{season}.parquet", cache)
+        d = pd.read_parquet(cache); d = d[(d.week == week) & d.position.isin(["QB", "RB", "WR", "TE", "K"])]
+        for r in d.itertuples():
+            out[(norm(r.full_name), r.position)] = {"team": TEAM_FIX.get(r.team, r.team), "injury": r.report_primary_injury or "", "prac": PRAC_MAP.get(r.practice_status, ""),
+                                                    "desig": r.report_status or "", "src": "nflverse"}
+    except Exception as e: print("  nflverse injuries unavailable:", str(e)[:60])
+    return out
+REPORT = {} if (A.no_report or A.no_lineups) else official_report(SEASON, cur_week)
+if REPORT:
+    _rc = pd.Series([v["prac"] for v in REPORT.values()]).value_counts().to_dict(); _rd = pd.Series([v["desig"] for v in REPORT.values() if v["desig"]]).value_counts().to_dict()
+    print(f"  injury report ({next(iter(REPORT.values()))['src']}): {len(REPORT)} skill/K players listed; practice {_rc}; designations {_rd}")
 def live_status():
     st = {}   # (nname, team) -> (status, source)
+    for (nm, pos), v in REPORT.items():     # the official designation outranks the aggregators: Out/Doubtful -> OUT, Questionable -> Q
+        if v["desig"] in ("Out", "Doubtful"): st[(nm, v["team"])] = ("OUT", "nfl-report")
+        elif v["desig"] == "Questionable": st[(nm, v["team"])] = ("Q", "nfl-report")
     try:
         for t in espn_json("/apis/site/v2/sports/football/nfl/injuries").get("injuries", []):
             tm = NAME2ABBR.get(t.get("displayName"), "")
@@ -533,6 +583,16 @@ if not A.no_lineups:
     byname = {k[0]: v for k, v in st.items() if v[0] == "OUT"}
     miss = (p.status == "") & p.nname.isin(byname)
     p.loc[miss, "status"] = "OUT"; p.loc[miss, "src"] = p.loc[miss, "nname"].map(lambda n: byname[n][1] + "?team")
+    p["prac"] = [REPORT.get((n, ps), {}).get("prac", "") for n, ps in zip(p.nname, p.position)]
+    p["inj_report"] = [REPORT.get((n, ps), {}).get("injury", "") for n, ps in zip(p.nname, p.position)]
+    # a player whose last practice was DNP but who is expected to play produces ~0.88 of his line (WR 0.85) --
+    # scripts/practice_report_study.py, 2017-25, 8/8 seasons, and still 0.78-0.86 when DK has priced him
+    dnp = (p.prac == "DNP") & (p.status != "OUT") & (p.proj > 0.5) & p.position.map(DNP_FAC).fillna(1.0).lt(1.0) & (not A.no_dnp_haircut)
+    if dnp.any():
+        fac = p.loc[dnp, "position"].map(DNP_FAC).fillna(1.0).values
+        p.loc[dnp, "proj"] = p.loc[dnp, "proj"] * fac
+        p.loc[dnp, "note"] = [(n + "; " if n else "") + f"DNP {i or 'practice'}: x{f_:.2f}" for n, i, f_ in zip(p.loc[dnp, "note"], p.loc[dnp, "inj_report"], fac)]
+        print(f"  DNP haircut on {int(dnp.sum())}: " + ", ".join(f"{r.player} ({r.position} x{DNP_FAC[r.position]:.2f}, {r.inj_report or '?'})" for r in p[dnp].sort_values("proj", ascending=False).head(8).itertuples()))
     def synth_backup(r, V, frac):
         """Starter r is out/doubtful and the FFA file has no other active QB for the team: add the
         Sleeper depth-chart backup as a new row cloned from the starter at frac x the starter's number
@@ -602,8 +662,8 @@ if not A.no_lineups:
     q_any = (p.status == "Q") | p.injury_status.isin(["Q", "D", "Questionable", "Doubtful"])
     forced = p.status == "ACTIVE"
     doubt = q_any & p.no_line.fillna(False) & (p.status != "OUT") & ~forced & (p.proj > 0.5) if "no_line" in p.columns else pd.Series(False, index=p.index)
-    pp = A.p_play_doubt
     for r in p[doubt].sort_values("proj", ascending=False).itertuples():
+        pp = PP_BY_PRAC.get(getattr(r, "prac", ""), A.p_play_doubt) if REPORT else A.p_play_doubt
         V = float(r.proj)
         mates = p[(p.team == r.team) & (p.position == r.position) & (p.status != "OUT") & ~doubt & (p.index != r.Index)]
         mates = mates.sort_values("proj", ascending=False)
@@ -630,7 +690,7 @@ if not A.no_lineups:
             p.loc[i, "note"] = (p.loc[i, "note"] + "; " if p.loc[i, "note"] else "") + f"{g:+.1f} if {r.player} sits"
         p.loc[r.Index, ["status", "p_play", "play_mean"]] = ["DOUBT", pp, V]
         p.loc[r.Index, "proj"] = pp * V
-        p.loc[r.Index, "note"] = f"Questionable, likely inactive ({V:.1f} if active)"
+        p.loc[r.Index, "note"] = f"Questionable{(' (' + r.prac + ')') if getattr(r, 'prac', '') else ''}, likely inactive: P(plays) {pp:.2f} ({V:.1f} if active)"
         print(f"    DOUBT {r.player:<20} {r.position} {r.team}  {V:5.1f} x{pp} -> {pp*V:4.1f}; "
               + ", ".join(f"{p.loc[i,'player']} +{g:.1f}" for i, g in gain.items()))
     p.loc[forced, "note"] = np.where(p.loc[forced, "note"] == "", "confirmed active (manual)", p.loc[forced, "note"])
@@ -703,6 +763,23 @@ def eval_spread(test_season):
     except Exception as ex: line += f" · GBM spread unavailable ({str(ex)[:60]})"
     print(line)
 eval_spread(2025)
+def eval_dnp(seasons=(2024, 2025)):
+    """MAE on played DNP rows in the history, incumbent vs the haircut, from the nflverse report (the same source as live)."""
+    try:
+        rows = []
+        for s in seasons:
+            c = os.path.join(ROOT, "data", "nflverse_cache", f"injuries_{s}.parquet")
+            if not os.path.exists(c): urllib.request.urlretrieve(f"https://github.com/nflverse/nflverse-data/releases/download/injuries/injuries_{s}.parquet", c)
+            rows.append(pd.read_parquet(c))
+        inj = pd.concat(rows); inj = inj[inj.game_type == "REG"].drop_duplicates(["season", "week", "gsis_id"], keep="last")
+        h = _h[_h.season.isin(seasons) & _h.Model_Burke.notna()].merge(inj[["season", "week", "gsis_id", "practice_status"]].rename(columns={"gsis_id": "player_id"}), on=["season", "week", "player_id"], how="inner")
+        d = h[h.practice_status == "Did Not Participate In Practice"]
+        if len(d) < 30: return
+        fac = d.position.map(DNP_FAC).fillna(1.0).values
+        print(f"  DNP check {seasons[0]}-{seasons[-1]} (n={len(d)} played DNP rows): MAE as-is {np.abs(d.actual_ppr - d.Model_Burke).mean():.3f} vs haircut {np.abs(d.actual_ppr - d.Model_Burke * fac).mean():.3f}"
+              f" · median actual/model {(d.actual_ppr / d.Model_Burke.clip(lower=1)).median():.2f} · by pos " + ", ".join(f"{pos} {np.abs(g.actual_ppr - g.Model_Burke).mean():.2f}->{np.abs(g.actual_ppr - g.Model_Burke * DNP_FAC.get(pos, 1.0)).mean():.2f} (n={len(g)})" for pos, g in d.groupby("position")))
+    except Exception as e: print("  DNP check skipped:", str(e)[:60])
+eval_dnp()
 _pm = p.play_mean if "play_mean" in p.columns else p.Model_Burke_mean
 _pp = p.p_play if "p_play" in p.columns else pd.Series(1.0, index=p.index)
 qs = np.array([local_quantiles(r.position, r.baseline_proj, m) for r, m in zip(p.itertuples(), _pm)])

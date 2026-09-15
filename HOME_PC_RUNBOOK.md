@@ -72,6 +72,8 @@ projection` line — on an 8-game slate that number is ~20 once the inactives ha
 | `--hours 6` | only games within 6 hours |
 | `--no-market` | Odds API keys exhausted (FFA-only baseline; say so in the email) |
 | `--no-lineups` | ESPN/Sleeper down (then use the inactives file by hand) |
+| `--no-report` | NFL.com injury page down (statuses fall back to ESPN/Sleeper; no practice-aware P(plays) or DNP haircut) |
+| `--no-dnp-haircut` | skip the x0.85 WR / x0.88 QB / x0.94 RB haircut for players whose last practice was DNP |
 | `--week N` | force the week if the FFA file name and the calendar disagree |
 
 The run takes ~2.5 min (package walk-forward on 2023-25 history). The log's scorecard block is
