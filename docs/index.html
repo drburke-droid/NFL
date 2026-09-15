@@ -24,6 +24,7 @@
 <script src="claude_darts_2026.js"></script>
 <script src="props_watch_2026.js"></script>
 <script src="ffa_2026.js"></script>
+<script src="myteam_2026.js"></script>
 <script src="espn_salary_2026.js"></script>
 <script src="playoff_sos_2026.js"></script>
 <style>
@@ -402,6 +403,7 @@
     <button class="btn" id="mMobile" title="One-thumb live-auction view: best-available ticker, search, the room's money, and ONE number per player — the Oracle break-even (your whole roster re-solved at every price).">📱 Mobile Companion</button>
     <button class="btn" id="mWind">🌬️ Wind Bets</button>
     <button class="btn" id="mProps" title="Weekly Model_Burke evaluation of DraftKings reception-yards lines — the validated pocket is OVERS at ≥5% calibrated edge. Refresh with: python scripts/props_watch.py">📡 Props</button>
+    <button class="btn" id="mTeam" title="My ESPN roster this week + the waiver wire, both scored in this league's scoring. Refresh with: python scripts/my_team_tab.py --pull --board">🏠 My Team</button>
     <a class="btn" href="sabersim.html" title="SaberSim sends: run now, download the latest CSV, upload the week's FFA file, paste the K/DST list, credit balance">🏈 SaberSim</a>
     <a class="btn" href="sabersim_scoring.html" title="Scoring scenarios: pick which send counts for each slate — SaberSim only grades the last one that arrived 75+ minutes before kickoff — and see what the scorecard becomes">📊 Scoring</a>
     <a class="btn" href="https://claude.ai/code/artifact/9b6157c6-a8c0-466e-9968-8c025c9348c0" target="_blank" rel="noopener" title="Career skill curves for every QB/RB/WR/TE since 2011 — default Alpha view blends opponent-adjusted per-play skill with earned volume (validated: 2.4× the forward signal at WR; Chase WR25→WR2), plus true-skill / Elo / observed views — opens the Claude artifact; requires your claude.ai login">📉 Skill Curves ↗</a>
@@ -450,6 +452,7 @@
     <div id="draftroom" style="display:none"></div>
     <div id="windtab" style="display:none"></div>
     <div id="propstab" style="display:none"></div>
+    <div id="teamtab" style="display:none"></div>
     <div class="foot" id="notes"></div>
   </div>
   <div class="side" id="side">
@@ -936,20 +939,22 @@ function setMode(m){
   document.getElementById("mMock").classList.toggle("active",m==="mockdraft");
   document.getElementById("mWind").classList.toggle("active",m==="wind");
   document.getElementById("mProps").classList.toggle("active",m==="props");
+  document.getElementById("mTeam").classList.toggle("active",m==="team");
   const host=(m==="draftroom"||m==="mockkeep"||m==="mockdraft"||m==="darts"||m==="mobile"||m==="duel");
   document.getElementById("settings").style.display=(m==="auction")?"flex":"none";   // draft room: settings are set pre-draft — reclaim the row
   document.getElementById("scorechips").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";   // draft-night declutter: scoring chips
   document.getElementById("leaguesub").style.display=(m==="draftroom"||m==="mobile"||m==="duel")?"none":"";    //  + league subtitle off in the Draft Room
-  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind"||m==="props")?"none":"flex";
+  document.getElementById("replcards").style.display=(m==="targets"||m==="comps"||host||m==="risers"||m==="sleepers"||m==="fade"||m==="wind"||m==="props"||m==="team")?"none":"flex";
   document.getElementById("compToggle").style.display=m==="comps"?"":"none";
   document.getElementById("draftroom").style.display=host?"block":"none";
   document.getElementById("windtab").style.display=m==="wind"?"block":"none";
   document.getElementById("propstab").style.display=m==="props"?"block":"none";
+  document.getElementById("teamtab").style.display=m==="team"?"block":"none";
   // 📱 the Companion carries its own search + needs bar; the desktop filter row would
   // just eat a third of a phone screen.
-  document.querySelector(".controls").style.display=(m==="wind"||m==="mobile"||m==="duel"||m==="props")?"none":"";
-  if(m==="wind"||m==="props"){document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";}
-  if(m!=="comps"&&!host&&m!=="wind"&&m!=="props"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
+  document.querySelector(".controls").style.display=(m==="wind"||m==="mobile"||m==="duel"||m==="props"||m==="team")?"none":"";
+  if(m==="wind"||m==="props"||m==="team"){document.getElementById("tbl").style.display="none";document.getElementById("scatter").style.display="none";}
+  if(m!=="comps"&&!host&&m!=="wind"&&m!=="props"&&m!=="team"){document.getElementById("tbl").style.display="";document.getElementById("scatter").style.display="none";}
   sortKey=m==="auction"?"bid":"overall_rank";sortDir=m==="auction"?-1:1;render();
 }
 document.getElementById("mCheat").onclick=()=>setMode("cheat");
@@ -967,6 +972,7 @@ document.getElementById("mKeep").onclick=()=>setMode("mockkeep");
 document.getElementById("mMock").onclick=()=>setMode("mockdraft");
 document.getElementById("mWind").onclick=()=>setMode("wind");
 document.getElementById("mProps").onclick=()=>setMode("props");
+document.getElementById("mTeam").onclick=()=>setMode("team");
 document.getElementById("cvTable").onclick=()=>{compView="table";document.getElementById("cvTable").classList.add("active");document.getElementById("cvScatter").classList.remove("active");render();};
 document.getElementById("cvScatter").onclick=()=>{compView="scatter";document.getElementById("cvScatter").classList.add("active");document.getElementById("cvTable").classList.remove("active");render();};
 ["cTeams","cBudget","cRoster"].forEach((id,i)=>{const key=["teams","budget","roster"][i];
@@ -3911,6 +3917,56 @@ function wbAddTickets(g){
                mk("prop",`${g.away} QB pass yds UNDER ___`,0.55));
   saveWB();render();
 }
+// 🏠 MY TEAM — my ESPN roster for the week + the waiver wire, both scored in THIS league's
+// scoring (6-pt pass TD, full PPR) from the FFA weekly file. Data baked by scripts/my_team_tab.py
+// into myteam_2026.js (roster via fetch_espn.py, board via waiver_board.py).
+function renderTeam(){
+  const host=document.getElementById("teamtab");
+  if(typeof MY_TEAM==="undefined"){
+    host.innerHTML='<div class="dr-panel"><h3>🏠 My Team</h3><div class="muted">No data baked yet. Run '+
+      '<code>python scripts/my_team_tab.py --pull --board</code> (ESPN cookies in data/espn_cookies.json), then commit+push docs/myteam_2026.js.</div></div>';
+    return;
+  }
+  const M=MY_TEAM, meta=M.meta, wk=meta.current_week;
+  const injc=s=>{const u=(s||"").toUpperCase(); if(!u||u==="ACTIVE"||u==="NA")return ""; const bad=/OUT|IR|SUSP|DOUBT/.test(u); return '<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:'+(bad?"#7a1f1f":"#6b4e00")+';color:#fff;margin-left:4px">'+u.replace("QUESTIONABLE","Q").replace("DOUBTFUL","D")+'</span>';};
+  const fmt=v=>v==null?'<span class="muted">—</span>':v.toFixed(1);
+  const oppc=o=>o==="BYE"?'<b style="color:var(--bad)">BYE</b>':(o||'<span class="muted">—</span>');
+  let h='<div class="dr-panel"><h3 style="margin:0 0 4px">🏠 '+meta.team+' <span class="muted" style="font-weight:normal">— '+meta.league+' · week '+wk+'</span></h3>'+
+    '<div class="muted" style="font-size:11px">Roster pulled '+meta.roster_pulled_utc.replace("T"," ").replace("Z"," UTC")+' · projections = FFA week '+meta.board_week+' file scored in league scoring · baked '+meta.generated_utc.replace("T"," ").replace("Z"," UTC")+'</div></div>';
+  if(meta.stale)
+    h+='<div class="dr-panel" style="border:2px solid #6b4e00;background:#2a2312"><b>⚠ Week '+meta.board_week+' projections shown for week '+wk+'.</b> '+
+      '<span class="muted">The week-'+wk+' FFA stat file has not been dropped in yet (a points-only file cannot be rescored). Upload it, then run <code>python scripts/my_team_tab.py --board</code>.</span></div>';
+  // ---- roster ----
+  const starters=M.roster.filter(r=>r.slot!=="BENCH"&&r.slot!=="IR"), bench=M.roster.filter(r=>r.slot==="BENCH"), ir=M.roster.filter(r=>r.slot==="IR");
+  const tot=starters.reduce((a,r)=>a+(r.proj||0),0);
+  const row=(r,dim)=>'<tr style="'+(dim?'opacity:.75':'')+'"><td class="muted">'+r.slot+'</td><td><b>'+r.name+'</b>'+(r.keeper?' <span class="chip" title="keeper ($'+r.keeper_price+')" style="font-size:10px;padding:0 5px">K $'+r.keeper_price+'</span>':'')+injc(r.inj_espn||r.inj_ffa)+'</td>'+
+    '<td>'+r.pos+'</td><td>'+r.team+'</td><td>'+oppc(r.opp)+'</td><td style="text-align:right"><b>'+fmt(r.proj)+'</b></td><td style="text-align:right" class="muted">'+fmt(r.last_pts)+'</td><td style="text-align:right" class="muted">'+fmt(r.season_pts)+'</td></tr>';
+  const head='<tr class="muted" style="font-size:11px"><th style="text-align:left">slot</th><th style="text-align:left">player</th><th style="text-align:left">pos</th><th style="text-align:left">team</th><th style="text-align:left">wk '+wk+'</th><th style="text-align:right">proj</th><th style="text-align:right">last wk</th><th style="text-align:right">season</th></tr>';
+  h+='<div class="dr-panel"><h3>Lineup <span class="muted" style="font-weight:normal">— starters project to <b>'+tot.toFixed(1)+'</b> (K/DST included where scored)</span></h3>'+
+    '<div class="tblwrap"><table style="width:100%;border-collapse:collapse;font-size:13px">'+head+starters.map(r=>row(r,false)).join("")+
+    (bench.length?'<tr><td colspan="8" class="muted" style="padding-top:8px;font-size:11px">BENCH</td></tr>'+bench.map(r=>row(r,true)).join(""):"")+
+    (ir.length?'<tr><td colspan="8" class="muted" style="padding-top:8px;font-size:11px">IR</td></tr>'+ir.map(r=>row(r,true)).join(""):"")+'</table></div></div>';
+  // ---- waiver wire ----
+  const POS=["QB","RB","WR","TE","K"];
+  h+='<div class="dr-panel"><h3>🌊 Waiver wire <span class="muted" style="font-weight:normal">— unrostered in this league, league scoring, Δ vs the weakest '+'player I hold at the position</span></h3><div style="display:flex;flex-wrap:wrap;gap:10px">';
+  for(const pos of POS){
+    const b=M.board[pos]; if(!b)continue;
+    const up=b.free.filter(f=>f.delta>0).length;
+    h+='<div style="flex:1 1 260px;min-width:240px;border:1px solid var(--line);border-radius:8px;padding:8px 10px"><div style="display:flex;justify-content:space-between;align-items:baseline"><b>'+pos+'</b>'+
+      '<span class="muted" style="font-size:11px">my weakest: '+fmt(b.worst_of_mine)+(up?' · <b class="upc">'+up+' upgrade'+(up>1?'s':'')+'</b>':'')+'</span></div>'+
+      '<table style="width:100%;border-collapse:collapse;font-size:12px;margin-top:4px">'+
+      b.free.map((f,i)=>'<tr'+(f.delta>0?' style="background:rgba(127,227,166,.08)"':'')+'><td class="muted" style="width:18px">'+(i+1)+'</td><td>'+f.name+injc(f.inj)+' <span class="muted">'+f.team+'</span></td><td class="muted" style="white-space:nowrap">'+oppc(f.opp)+'</td>'+
+        '<td style="text-align:right"><b>'+f.pts.toFixed(1)+'</b></td><td style="text-align:right;width:44px" class="'+(f.delta>0?'upc':'downc')+'">'+(f.delta>0?'+':'')+f.delta.toFixed(1)+'</td></tr>').join("")+'</table>'+
+      (b.mine.length?'<div class="muted" style="font-size:10px;margin-top:5px">mine: '+b.mine.map(m=>m.name+' '+m.pts.toFixed(1)).join(" · ")+'</div>':'')+'</div>';
+  }
+  h+='</div></div>';
+  if(M.rb_screen&&M.rb_screen.length)
+    h+='<div class="dr-panel"><h3>📶 RB usage screen <span class="muted" style="font-weight:normal">— scripts/waiver_rb_screen.py (snap share + touches, the only signals that tested real)</span></h3>'+
+      M.rb_screen.slice(0,12).map(r=>'<div style="font-size:12px"><b>'+r.full_name+'</b> <span class="muted">'+r.team+'</span> — '+(r.why||'')+(r.own_status?' <span class="muted">['+r.own_status+']</span>':'')+'</div>').join("")+'</div>';
+  host.innerHTML=h;
+  document.getElementById("notes").innerHTML="🏠 <b>My Team.</b> Roster = my ESPN team as last pulled (<code>python scripts/fetch_espn.py</code>, or the <i>Pull ESPN league</i> Actions workflow). Projections and the wire = the newest FFA weekly stat file rescored in this league's scoring (<code>python scripts/waiver_board.py</code>); free agents are players NONE of the 12 rosters hold. Δ compares to my weakest projected player at that position, so a green row is a direct upgrade on somebody I hold. Rebake with <code>python scripts/my_team_tab.py --pull --board</code> and push docs/myteam_2026.js.";
+}
+
 // 📡 PROPS WATCH — weekly Model_Burke read on DK reception-yds lines. Data baked by
 // scripts/props_watch.py into props_watch_2026.js; the validated pocket is OVERS at
 // >=5% calibrated edge (backtest: +14% ROI @8% edge; early lines beat late).
@@ -4100,6 +4156,7 @@ function render(){
   if(mode==="duel"){ withKeeperBanner(renderDuel); return; }
   if(mode==="wind"){ renderWind(); return; }
   if(mode==="props"){ renderProps(); return; }
+  if(mode==="team"){ renderTeam(); return; }
   if(mode==="mockkeep"){ withKeeperBanner(renderMockKeepers); return; }
   if(mode==="mockdraft"){ withKeeperBanner(renderMockDraft); return; }
   if(mode==="draftroom"){ withKeeperBanner(renderDraftRoom); return; }
