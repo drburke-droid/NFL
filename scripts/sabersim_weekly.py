@@ -304,7 +304,7 @@ def pull_market(sl_games):
             cache["_lines"], cache["_lines_ts"] = lines, now_ts
             try:
                 from odds_snapshots import record
-                record([{"event": k, "market": m, "point": v.get(m == "totals" and "total" or "home_spread")} for k, v in lines.items() for m in ("totals", "spreads")], "sabersim_send", SEASON, cur_week)
+                record([{"event": k, "market": m, "point": v.get("total" if m == "totals" else "home_spread")} for k, v in lines.items() for m in ("totals", "spreads")], "sabersim_send", SEASON, cur_week)
             except Exception as ex: print("  snapshot record failed:", str(ex)[:80])
             print(f"  DK game lines: {len(lines)} games (credits left {rem})")
         except Exception as ex: print("  DK game lines failed:", str(ex)[:60])
