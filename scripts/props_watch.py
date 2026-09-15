@@ -152,6 +152,10 @@ if not cache_ok:
                                  "price": o["price"], "market": m["key"]})
         time.sleep(0.2)
     json.dump({"rows": rows, "rem": rem}, open(LINECACHE, "w"))
+    try:                                   # append-only history of every line we ever pulled (odds_snapshots.py)
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__))); from odds_snapshots import record
+        print(f"  recorded {record(rows, 'props_watch', 2026, cur_week_2026)} line rows to data/props_frames/snapshots/")
+    except Exception as ex: print("  snapshot record failed:", str(ex)[:80])
     print(f"  API credits remaining: {rem}")
 raw = pd.DataFrame(rows).dropna(subset=["player_name", "point"])
 std = raw[raw.market == "player_reception_yds"]

@@ -67,7 +67,7 @@ A = ap.parse_args()
 if not A.pkg or not os.path.isdir(os.path.join(A.pkg, "model_burke")):
     raise SystemExit("pass the Model_Burke package dir as argv[1] (the pkg/ folder from model_burke_pkg.zip, "
                      "i.e. the folder CONTAINING model_burke/), or set MODEL_BURKE_PKG")
-sys.path.insert(0, A.pkg)
+sys.path.insert(0, A.pkg); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from model_burke import pipeline
 from model_burke.features import build_lagged_features
 
@@ -302,6 +302,10 @@ def pull_market(sl_games):
                             if m["key"] == "spreads" and o["name"] == e["home_team"]: d["home_spread"] = o.get("point")
                 lines[e["id"]] = d
             cache["_lines"], cache["_lines_ts"] = lines, now_ts
+            try:
+                from odds_snapshots import record
+                record([{"event": k, "market": m, "point": v.get(m == "totals" and "total" or "home_spread")} for k, v in lines.items() for m in ("totals", "spreads")], "sabersim_send", SEASON, cur_week)
+            except Exception as ex: print("  snapshot record failed:", str(ex)[:80])
             print(f"  DK game lines: {len(lines)} games (credits left {rem})")
         except Exception as ex: print("  DK game lines failed:", str(ex)[:60])
     n_new = 0
@@ -320,6 +324,10 @@ def pull_market(sl_games):
                         rows.append({"market": m["key"], "player": o.get("description"), "side": o["name"],
                                      "point": o.get("point"), "price": o["price"]})
             cache[eid] = {"_ts": now_ts, "rows": rows}; n_new += 1; time.sleep(0.2)
+            try:                           # append-only history of every line we ever pulled (odds_snapshots.py)
+                from odds_snapshots import record
+                record([dict(r, event=eid, commence=kick_by[eid].strftime("%Y-%m-%dT%H:%M:%SZ")) for r in rows], "sabersim_send", SEASON, cur_week)
+            except Exception as ex: print("  snapshot record failed:", str(ex)[:80])
         except Exception as ex: print(f"  props fetch failed for {eid[:8]}:", str(ex)[:60])
     if n_new: print(f"  DK props: {n_new} events pulled (credits left {rem})")
     json.dump(cache, open(MKT_CACHE, "w"))
