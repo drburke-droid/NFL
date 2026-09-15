@@ -52,6 +52,11 @@ ap.add_argument("--out", default=None)
 ap.add_argument("--analyst", default="Robert Burke")
 ap.add_argument("--model-name", default="Model_Burke v1")
 ap.add_argument("--no-market", action="store_true", help="skip the live DK lines/props pull")
+ap.add_argument("--spread", choices=["local", "gbm"], default="local",
+                help="distribution layer: local = ~300 nearest-projection residual quantiles (per position); gbm = boosted "
+                     "quantile regression on projection, volatility, role, context and injury (model league exp_001/exp_005: "
+                     "tails scaled per position to 0.80 on the last history season). Tested 2026-09-15: on the generator's own "
+                     "2022+ history the two TIE on 2025 (pinball 1.444 vs 1.443), so local stays the default; gbm is kept as an option")
 ap.add_argument("--market-weight", type=float, default=0.6,
                 help="weight on the DK-implied stat where a line exists; remainder on FFA")
 ap.add_argument("--p-play-doubt", type=float, default=0.2,
@@ -646,19 +651,64 @@ def local_quantiles(pos, base, mean, hist=_h, k=300):
     q = np.quantile(r, QS) - r.mean() + mean
     floor = -2.0 if (pos == "QB" and mean >= 5) else 0.0   # only a starting QB can go negative
     return np.maximum(q, floor)
+# ---- boosted quantile layer (model league exp_001 / exp_005): the residual's SHAPE depends on projection
+# level, recent volatility, role and context (stars and deep-ball WRs: lower median, longer right tail),
+# which one projection-only neighbourhood cannot carry. Five LightGBM quantile regressors on the played
+# history, target = actual - model mean; tail distances scaled per position so the last history season
+# (held out from a first fit) covers 0.80; refit on everything; re-centred on the live model mean.
+GBM_COLS = ["baseline_proj", "week", "spread", "game_total", "implied_team_total", "is_outdoor",
+            "fantasy_points_ppr_l1", "fantasy_points_ppr_r3", "fantasy_points_ppr_r6", "fantasy_points_ppr_std3",
+            "targets_r3", "targets_std3", "carries_r3", "carries_std3", "target_share_r3", "wopr_r3", "games_played", "fp_trend",
+            "pass_yds", "rush_yds", "rec", "rec_yds", "pass_tds", "rush_tds", "rec_tds", "pass_yds_sd", "rush_yds_sd", "rec_yds_sd", "rec_sd"]
+GBM_PARAMS = dict(n_estimators=200, learning_rate=0.05, num_leaves=7, min_child_samples=200, subsample=0.8, subsample_freq=1,
+                  colsample_bytree=0.8, reg_lambda=5.0, verbose=-1)
+def _gbm_design(d, med):
+    X = pd.DataFrame({c: (pd.to_numeric(d[c], errors="coerce") if c in d.columns else np.nan) for c in GBM_COLS}, index=d.index).fillna(med).fillna(0.0)
+    X["injury_q"] = d.injury_status.astype(str).str.upper().isin(["Q", "QUESTIONABLE"]).astype(float).values if "injury_status" in d.columns else 0.0
+    for pos in ("QB", "RB", "WR", "TE"): X[f"pos_{pos}"] = (d.position == pos).astype(float).values
+    return X
+def gbm_quantiles(hist, rows, centre, seed=17):
+    """rows x 5 quantiles of actual for `rows`, centred on `centre` (their model mean)."""
+    import lightgbm as lgb
+    h = hist[hist.Model_Burke_mean.notna() & hist.actual_ppr.notna()]
+    med = _gbm_design(h, pd.Series(dtype=float)).median()
+    y = (h.actual_ppr - h.Model_Burke_mean).values
+    fit = lambda d, yy: [lgb.LGBMRegressor(objective="quantile", alpha=float(a), random_state=seed + i, **GBM_PARAMS).fit(_gbm_design(d, med), yy) for i, a in enumerate(QS)]
+    predict = lambda ms, d: np.sort(np.column_stack([m.predict(_gbm_design(d, med)) for m in ms]), axis=1)
+    scale = {pos: 1.0 for pos in ("QB", "RB", "WR", "TE")}
+    last = int(h.season.max()); cal, h0 = h[h.season == last], h[h.season < last]
+    if len(h0) >= 1000 and len(cal) >= 300:
+        q0 = predict(fit(h0, (h0.actual_ppr - h0.Model_Burke_mean).values), cal); r0 = (cal.actual_ppr - cal.Model_Burke_mean).values
+        for pos in scale:
+            sel = (cal.position == pos).values
+            if sel.sum() < 100: continue
+            c50, lo, hi = q0[sel, 2], q0[sel, 0], q0[sel, 4]
+            scale[pos] = float(min(np.arange(0.8, 1.6001, 0.05), key=lambda s: abs(np.mean((r0[sel] >= c50 + s * (lo - c50)) & (r0[sel] <= c50 + s * (hi - c50))) - 0.80)))
+    q = predict(fit(h, y), rows)
+    c50 = q[:, 2:3]; q = c50 + rows.position.map(scale).fillna(1.0).values[:, None] * (q - c50)
+    q = np.sort(q, axis=1) + np.asarray(centre, dtype=float)[:, None]
+    floor = np.where((rows.position == "QB").values & (np.asarray(centre) >= 5), -2.0, 0.0)[:, None]
+    return np.maximum(q, floor), scale
 def eval_spread(test_season):
     hist = _h[_h.season < test_season]; te = _h[(_h.season == test_season) & _h.Model_Burke_mean.notna()]
-    qs = np.array([local_quantiles(r.position, r.baseline_proj, r.Model_Burke_mean, hist) for r in te.itertuples()])
-    cov = ((te.actual_ppr.values >= qs[:, 0]) & (te.actual_ppr.values <= qs[:, 4])).mean()
-    cov_pkg = ((te.actual_ppr >= te.mb_p10) & (te.actual_ppr <= te.mb_p90)).mean()
-    pin = np.mean([np.mean(np.maximum(q * (te.actual_ppr.values - qs[:, i]), (q - 1) * (te.actual_ppr.values - qs[:, i]))) for i, q in enumerate(QS)])
-    pin_pkg = np.mean([np.mean(np.maximum(q * (te.actual_ppr - te[f"mb_p{int(q*100)}"]), (q - 1) * (te.actual_ppr - te[f"mb_p{int(q*100)}"]))) for q in QS])
-    print(f"  spread check {test_season} (n={len(te):,}): 80% coverage local {cov:.3f} vs package {cov_pkg:.3f}"
-          f" · pinball local {pin:.3f} vs package {pin_pkg:.3f}")
+    if not len(hist) or not len(te): return
+    pin = lambda qs: np.mean([np.mean(np.maximum(q * (te.actual_ppr.values - qs[:, i]), (q - 1) * (te.actual_ppr.values - qs[:, i]))) for i, q in enumerate(QS)])
+    cov = lambda qs: ((te.actual_ppr.values >= qs[:, 0]) & (te.actual_ppr.values <= qs[:, 4])).mean()
+    q_loc = np.array([local_quantiles(r.position, r.baseline_proj, r.Model_Burke_mean, hist) for r in te.itertuples()])
+    q_pkg = te[[f"mb_p{int(q*100)}" for q in QS]].values
+    line = f"  spread check {test_season} (n={len(te):,}): 80% coverage local {cov(q_loc):.3f} vs package {cov(q_pkg):.3f} · pinball local {pin(q_loc):.3f} vs package {pin(q_pkg):.3f}"
+    try:
+        q_gbm, sc = gbm_quantiles(hist, te, te.Model_Burke_mean.values)
+        line += f" · GBM coverage {cov(q_gbm):.3f} pinball {pin(q_gbm):.3f} (tail scale {sc}) -> using {A.spread.upper()}"
+    except Exception as ex: line += f" · GBM spread unavailable ({str(ex)[:60]})"
+    print(line)
 eval_spread(2025)
 _pm = p.play_mean if "play_mean" in p.columns else p.Model_Burke_mean
 _pp = p.p_play if "p_play" in p.columns else pd.Series(1.0, index=p.index)
 qs = np.array([local_quantiles(r.position, r.baseline_proj, m) for r, m in zip(p.itertuples(), _pm)])
+if A.spread == "gbm" and len(p):
+    try: qs, _sc = gbm_quantiles(_h, p, np.asarray(_pm, dtype=float)); print(f"  spread: boosted quantiles, tail scale {_sc}")
+    except Exception as ex: print(f"  spread: GBM failed ({str(ex)[:80]}) -> local quantiles")
 def mix_quantiles(qrow, pplay):
     """quantiles of  (1-pplay)*delta(0) + pplay*Playing  from the playing quantiles."""
     if pplay >= 1: return qrow

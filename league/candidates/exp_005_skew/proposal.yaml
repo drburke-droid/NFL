@@ -1,0 +1,48 @@
+exp_id: exp_005_skew
+author: lead (Claude), from the segment heterogeneity study of 2026-09-15
+written_before_code: true
+
+hypothesis: >
+  The weekly error has real structure in its SHAPE (skew and spread) by projection level, recent
+  volatility, WR deep-ball share, early-season week, game context and injury tag, but not in its
+  centre (team, player and archetype median offsets are worth <= 0.15% MAE). A quantile layer that
+  conditions the residual distribution on those skew-carrying features, with the POINT RULE FIXED to
+  exp_004's (FFA + 0.5 x local median residual), beats the incumbent's projection-only local
+  quantiles on pinball by >= 2% and exp_004's own local quantiles by >= 1%, at 80% coverage within
+  0.79-0.81, with MAE unchanged from exp_004 (any MAE move is not the claim).
+
+targets:
+  point: exp_004 rule verbatim (FFA + 0.5 x local median residual, K = 1000 per position); NOT tuned here
+  distribution: p10..p90 of actual_ppr from per-alpha gradient-boosted quantile regression of the
+    residual (actual - point) on active rows
+
+features:
+  - baseline_proj, position            # projection level x position: the tier skew
+  - lag_fantasy_points_ppr_std3, lag_fantasy_points_ppr_r3, lag_fp_trend   # recent volatility
+  - rt_deep_share_r6, rt_route_share_r3                                   # WR deep-ball / role
+  - week                                # early-season flag (skew differs in weeks 1-2)
+  - ctx_spread, ctx_total, ctx_home     # favourite / home / total
+  - ffa_injury_q, lag_games_played      # Q-tag, experience
+  - ffa_pass_yds_sd, ffa_rush_yds_sd, ffa_rec_yds_sd, ffa_rec_sd            # FFA's own spread
+  - actual_active, actual_ppr           # train side only
+
+algorithm: >
+  Point: exp_004. Quantiles: five LightGBM quantile regressors (alpha 0.10/0.25/0.50/0.75/0.90),
+  small regularised trees (7 leaves, min 200 samples per leaf, 200 rounds), fitted on active training
+  rows 2016+ with target = actual - point. Coverage calibration: the tail distances (p90-p50, p50-p10)
+  are scaled by one factor per position chosen on the most recent training season (held out from a
+  first fit) so that held-out 80% coverage is 0.80, clipped to [0.8, 1.25]; the final fit uses every
+  training row. Quantiles sorted, floored at 0 (-2 for QBs projected >= 5). Season refit (declared).
+
+expected_direction: >
+  pinball 2-4% below the incumbent (1.5624) and 1-2% below exp_004 (1.549); cov80 0.79-0.81; MAE equal
+  to exp_004 (4.406) to three decimals since the point rule is identical.
+
+failure_condition: >
+  Pinball not below exp_004 by at least 1%, or cov80 outside 0.78-0.82 after calibration, or pinball
+  worse than the incumbent in more than half of the 36 visible weeks. If the gain vanishes when the
+  skew features are removed (baseline_proj + position only), the hypothesis is falsified in the
+  specific sense that the shape structure is not learnable beyond the projection level.
+
+refit: season
+runtime_budget_s: 120 per season fit
