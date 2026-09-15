@@ -154,16 +154,48 @@ if unmapped:
         print(f"    statId {sid} = {pts}  ({why})")
 
 # ---------- projections ----------
-week = A.week
-if week is None:
+# Every column the scoring needs. The 2026 wk2 scrape wrote ffanalytics' SCORED table (points,
+# floor, ceiling, rank, tier, vor) under the raw_stats_ filename instead of the stat-level one, so
+# a file can carry the right name, the right row count and the right players while holding none of
+# the stats. Unchecked, f() returns 0.0 for a missing column and every player scores exactly zero —
+# a board that looks plausible and ranks nothing. So the schema is checked, not assumed.
+REQUIRED = {"player", "position", "team", "pass_yds", "pass_tds", "pass_int", "rush_yds",
+            "rush_tds", "rec", "rec_yds", "rec_tds", "fumbles_lost"}
+
+
+def usable(fp):
+    try:
+        with open(fp, encoding="utf-8") as fh:
+            head = set(next(csv.reader(fh)))
+    except Exception as e:
+        return False, str(e)[:60]
+    missing = REQUIRED - head
+    return (not missing), ("missing " + ", ".join(sorted(missing)) if missing else "")
+
+
+week, path = A.week, None
+if week is not None:
+    path = os.path.join(FFA_DIR, f"raw_stats_{A.season}_wk{week}.csv")
+    if not os.path.exists(path):
+        sys.exit(f"no {path}")
+    ok, why = usable(path)
+    if not ok:
+        sys.exit(f"{os.path.basename(path)} is not a stat-level projection file ({why}) — "
+                 f"it cannot be scored")
+else:
     got = sorted(int(m.group(1)) for fn in os.listdir(FFA_DIR)
                  for m in [re.match(rf"raw_stats_{A.season}_wk(\d+)\.csv$", fn)] if m)
     if not got:
         sys.exit(f"no FFA weekly file for {A.season} in {FFA_DIR}")
-    week = got[-1]
-path = os.path.join(FFA_DIR, f"raw_stats_{A.season}_wk{week}.csv")
-if not os.path.exists(path):
-    sys.exit(f"no {path}")
+    for w in reversed(got):                      # newest first, but only if it can actually be scored
+        fp = os.path.join(FFA_DIR, f"raw_stats_{A.season}_wk{w}.csv")
+        ok, why = usable(fp)
+        if ok:
+            week, path = w, fp
+            break
+        print(f"  skipping week {w}: not a stat-level projection file ({why})")
+    if path is None:
+        sys.exit(f"no usable stat-level FFA file for {A.season} — every one is missing stat columns")
 rows = [r for r in csv.DictReader(open(path, encoding="utf-8")) if r["position"] in SKILL + ("K", "DST")]
 print(f"projections: {A.season} week {week} ({len(rows)} players at scoring positions)")
 # The FFA weekly scrape is a Wednesday job whose own workflow header calls itself untested, so the
@@ -187,10 +219,12 @@ if os.path.exists(sched):
     upcoming = sorted(w for w, ds in wks.items() if max(ds) > now)
     cur = upcoming[0] if upcoming else None
 if cur and cur != week:
+    cur_fp = os.path.join(FFA_DIR, f"raw_stats_{A.season}_wk{cur}.csv")
+    why = ("is not in the repo yet" if not os.path.exists(cur_fp)
+           else "is in the repo but is not a stat-level file, so it cannot be scored")
     print(f"\n  *** WARNING: these are WEEK {week} projections, but week {cur} is the one being "
-          f"played.\n      The week {cur} FFA file is not in the repo yet (it is a Wednesday "
-          f"scrape).\n      Ranks below reflect last week's expectations — do not claim on them "
-          f"blind. ***")
+          f"played.\n      The week {cur} file {why}.\n      Ranks below reflect last week's "
+          f"expectations — do not claim on them blind. ***")
 
 proj = []
 for r in rows:
