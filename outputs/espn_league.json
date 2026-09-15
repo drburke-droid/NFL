@@ -242,6 +242,8 @@
     {
      "name": "Rico Dowdle",
      "pos": "RB",
+     "team": "PIT",
+     "espn_id": 4038815,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
@@ -250,6 +252,8 @@
     {
      "name": "Wan'Dale Robinson",
      "pos": "WR",
+     "team": "TEN",
+     "espn_id": 4569587,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
@@ -258,6 +262,8 @@
     {
      "name": "Michael Wilson",
      "pos": "WR",
+     "team": "ARI",
+     "espn_id": 4360761,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
@@ -266,6 +272,8 @@
     {
      "name": "Garrett Wilson",
      "pos": "WR",
+     "team": "NYJ",
+     "espn_id": 4569618,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 23,
@@ -274,6 +282,8 @@
     {
      "name": "Brandon Aubrey",
      "pos": "K",
+     "team": "DAL",
+     "espn_id": 3953687,
      "slot": "K",
      "keeper": true,
      "keeper_price": 3,
@@ -282,6 +292,8 @@
     {
      "name": "D'Andre Swift",
      "pos": "RB",
+     "team": "CHI",
+     "espn_id": 4259545,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 11,
@@ -290,6 +302,8 @@
     {
      "name": "Steelers D/ST",
      "pos": "DST",
+     "team": "PIT",
+     "espn_id": -16023,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 1,
@@ -298,6 +312,8 @@
     {
      "name": "Quinshon Judkins",
      "pos": "RB",
+     "team": "CLE",
+     "espn_id": 4685702,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 1,
@@ -306,6 +322,8 @@
     {
      "name": "Javonte Williams",
      "pos": "RB",
+     "team": "DAL",
+     "espn_id": 4361579,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 13,
@@ -314,6 +332,8 @@
     {
      "name": "Jared Goff",
      "pos": "QB",
+     "team": "DET",
+     "espn_id": 3046779,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 3,
@@ -322,6 +342,8 @@
     {
      "name": "Terry McLaurin",
      "pos": "WR",
+     "team": "WAS",
+     "espn_id": 3121422,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 10,
@@ -330,6 +352,8 @@
     {
      "name": "Dalton Kincaid",
      "pos": "TE",
+     "team": "BUF",
+     "espn_id": 4385690,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 7,
@@ -338,6 +362,8 @@
     {
      "name": "T.J. Hockenson",
      "pos": "TE",
+     "team": "MIN",
+     "espn_id": 4036133,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 17,
@@ -346,6 +372,8 @@
     {
      "name": "Jaxson Dart",
      "pos": "QB",
+     "team": "NYG",
+     "espn_id": 4689114,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 8,
@@ -354,6 +382,8 @@
     {
      "name": "Chris Godwin Jr.",
      "pos": "WR",
+     "team": "TB",
+     "espn_id": 3116165,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 5,
@@ -362,6 +392,8 @@
     {
      "name": "Tyler Allgeier",
      "pos": "RB",
+     "team": "ARI",
+     "espn_id": 4373626,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -378,6 +410,8 @@
     {
      "name": "Colston Loveland",
      "pos": "TE",
+     "team": "CHI",
+     "espn_id": 4723086,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 11,
@@ -386,6 +420,8 @@
     {
      "name": "Chris Olave",
      "pos": "WR",
+     "team": "NO",
+     "espn_id": 4361370,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 25,
@@ -394,6 +430,8 @@
     {
      "name": "Luther Burden III",
      "pos": "WR",
+     "team": "CHI",
+     "espn_id": 4685278,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 11,
@@ -402,6 +440,8 @@
     {
      "name": "Bijan Robinson",
      "pos": "RB",
+     "team": "ATL",
+     "espn_id": 4430807,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 68,
@@ -410,6 +450,8 @@
     {
      "name": "Drake London",
      "pos": "WR",
+     "team": "ATL",
+     "espn_id": 4426502,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 37,
@@ -418,6 +460,8 @@
     {
      "name": "Justin Herbert",
      "pos": "QB",
+     "team": "LAC",
+     "espn_id": 4038941,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 5,
@@ -426,6 +470,8 @@
     {
      "name": "David Montgomery",
      "pos": "RB",
+     "team": "HOU",
+     "espn_id": 4035538,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 10,
@@ -434,6 +480,8 @@
     {
      "name": "Jets D/ST",
      "pos": "DST",
+     "team": "NYJ",
+     "espn_id": -16020,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 1,
@@ -442,6 +490,8 @@
     {
      "name": "Cam Little",
      "pos": "K",
+     "team": "JAC",
+     "espn_id": 4686361,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -450,6 +500,8 @@
     {
      "name": "Jayden Reed",
      "pos": "WR",
+     "team": "GB",
+     "espn_id": 4362249,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -458,6 +510,8 @@
     {
      "name": "Khalil Shakir",
      "pos": "WR",
+     "team": "BUF",
+     "espn_id": 4373678,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 17,
@@ -466,6 +520,8 @@
     {
      "name": "Daniel Jones",
      "pos": "QB",
+     "team": "IND",
+     "espn_id": 3917792,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -474,6 +530,8 @@
     {
      "name": "Tyjae Spears",
      "pos": "RB",
+     "team": "TEN",
+     "espn_id": 4428557,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -482,6 +540,8 @@
     {
      "name": "Xavier Worthy",
      "pos": "WR",
+     "team": "KC",
+     "espn_id": 4683062,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 22,
@@ -490,6 +550,8 @@
     {
      "name": "Keaton Mitchell",
      "pos": "RB",
+     "team": "LAC",
+     "espn_id": 4596334,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 4,
@@ -498,6 +560,8 @@
     {
      "name": "Hunter Henry",
      "pos": "TE",
+     "team": "NE",
+     "espn_id": 3046439,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -514,6 +578,8 @@
     {
      "name": "Harold Fannin Jr.",
      "pos": "TE",
+     "team": "CLE",
+     "espn_id": 5083076,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 4,
@@ -522,6 +588,8 @@
     {
      "name": "De'Von Achane",
      "pos": "RB",
+     "team": "MIA",
+     "espn_id": 4429160,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 14,
@@ -530,6 +598,8 @@
     {
      "name": "Nico Collins",
      "pos": "WR",
+     "team": "HOU",
+     "espn_id": 4258173,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 36,
@@ -538,6 +608,8 @@
     {
      "name": "Derrick Henry",
      "pos": "RB",
+     "team": "BAL",
+     "espn_id": 3043078,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 34,
@@ -546,6 +618,8 @@
     {
      "name": "Ravens D/ST",
      "pos": "DST",
+     "team": "BAL",
+     "espn_id": -16033,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 1,
@@ -554,6 +628,8 @@
     {
      "name": "Jayden Daniels",
      "pos": "QB",
+     "team": "WAS",
+     "espn_id": 4426348,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 14,
@@ -562,6 +638,8 @@
     {
      "name": "Cairo Santos",
      "pos": "K",
+     "team": "CHI",
+     "espn_id": 17427,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -570,6 +648,8 @@
     {
      "name": "Jaylen Waddle",
      "pos": "WR",
+     "team": "DEN",
+     "espn_id": 4372016,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 19,
@@ -578,6 +658,8 @@
     {
      "name": "Parker Washington",
      "pos": "WR",
+     "team": "JAC",
+     "espn_id": 4432620,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 24,
@@ -586,6 +668,8 @@
     {
      "name": "Jordan Mason",
      "pos": "RB",
+     "team": "MIN",
+     "espn_id": 4360569,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 4,
@@ -594,6 +678,8 @@
     {
      "name": "Jordan Love",
      "pos": "QB",
+     "team": "GB",
+     "espn_id": 4036378,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
@@ -602,6 +688,8 @@
     {
      "name": "Jonah Coleman",
      "pos": "RB",
+     "team": "DEN",
+     "espn_id": 4702555,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -610,6 +698,8 @@
     {
      "name": "De'Zhaun Stribling",
      "pos": "WR",
+     "team": "SF",
+     "espn_id": 4710714,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
@@ -618,6 +708,8 @@
     {
      "name": "Kaelon Black",
      "pos": "RB",
+     "team": "SF",
+     "espn_id": 4696044,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 5,
@@ -626,6 +718,8 @@
     {
      "name": "Kenyon Sadiq",
      "pos": "TE",
+     "team": "NYJ",
+     "espn_id": 5083315,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -634,6 +728,8 @@
     {
      "name": "Caleb Douglas",
      "pos": "WR",
+     "team": "MIA",
+     "espn_id": 4869645,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -650,6 +746,8 @@
     {
      "name": "Jahmyr Gibbs",
      "pos": "RB",
+     "team": "DET",
+     "espn_id": 4429795,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 45,
@@ -658,6 +756,8 @@
     {
      "name": "Cam Skattebo",
      "pos": "RB",
+     "team": "NYG",
+     "espn_id": 4696981,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 8,
@@ -666,6 +766,8 @@
     {
      "name": "Drake Maye",
      "pos": "QB",
+     "team": "NE",
+     "espn_id": 4431452,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 6,
@@ -674,6 +776,8 @@
     {
      "name": "Jeremiyah Love",
      "pos": "RB",
+     "team": "ARI",
+     "espn_id": 4870808,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 38,
@@ -682,6 +786,8 @@
     {
      "name": "Harrison Mevis",
      "pos": "K",
+     "team": "LAR",
+     "espn_id": 4574716,
      "slot": "K",
      "keeper": true,
      "keeper_price": 2,
@@ -690,6 +796,8 @@
     {
      "name": "Tetairoa McMillan",
      "pos": "WR",
+     "team": "CAR",
+     "espn_id": 4685472,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 21,
@@ -698,6 +806,8 @@
     {
      "name": "Tyler Shough",
      "pos": "QB",
+     "team": "NO",
+     "espn_id": 4360689,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
@@ -706,6 +816,8 @@
     {
      "name": "Carnell Tate",
      "pos": "WR",
+     "team": "TEN",
+     "espn_id": 4871023,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
@@ -714,6 +826,8 @@
     {
      "name": "Tee Higgins",
      "pos": "WR",
+     "team": "CIN",
+     "espn_id": 4239993,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 12,
@@ -722,6 +836,8 @@
     {
      "name": "Kenny Gainwell",
      "pos": "RB",
+     "team": "TB",
+     "espn_id": 4371733,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 7,
@@ -730,6 +846,8 @@
     {
      "name": "Jakobi Meyers",
      "pos": "WR",
+     "team": "JAC",
+     "espn_id": 3916433,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 5,
@@ -738,6 +856,8 @@
     {
      "name": "Aaron Jones Sr.",
      "pos": "RB",
+     "team": "MIN",
+     "espn_id": 3042519,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 17,
@@ -746,6 +866,8 @@
     {
      "name": "Quentin Johnston",
      "pos": "WR",
+     "team": "LAC",
+     "espn_id": 4429025,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 16,
@@ -754,6 +876,8 @@
     {
      "name": "Jake Ferguson",
      "pos": "TE",
+     "team": "DAL",
+     "espn_id": 4242355,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -762,6 +886,8 @@
     {
      "name": "Mark Andrews",
      "pos": "TE",
+     "team": "BAL",
+     "espn_id": 3116365,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 3,
@@ -770,6 +896,8 @@
     {
      "name": "Lions D/ST",
      "pos": "DST",
+     "team": "DET",
+     "espn_id": -16008,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 1,
@@ -786,6 +914,8 @@
     {
      "name": "Ja'Marr Chase",
      "pos": "WR",
+     "team": "CIN",
+     "espn_id": 4362628,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 61,
@@ -794,6 +924,8 @@
     {
      "name": "Rashee Rice",
      "pos": "WR",
+     "team": "KC",
+     "espn_id": 4428331,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 32,
@@ -802,6 +934,8 @@
     {
      "name": "Joe Burrow",
      "pos": "QB",
+     "team": "CIN",
+     "espn_id": 3915511,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 6,
@@ -810,6 +944,8 @@
     {
      "name": "Cameron Dicker",
      "pos": "K",
+     "team": "LAC",
+     "espn_id": 4362081,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -818,6 +954,8 @@
     {
      "name": "Titans D/ST",
      "pos": "DST",
+     "team": "TEN",
+     "espn_id": -16010,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 1,
@@ -826,6 +964,8 @@
     {
      "name": "TreVeyon Henderson",
      "pos": "RB",
+     "team": "NE",
+     "espn_id": 4432710,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 26,
@@ -834,6 +974,8 @@
     {
      "name": "George Kittle",
      "pos": "TE",
+     "team": "SF",
+     "espn_id": 3040151,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 24,
@@ -842,6 +984,8 @@
     {
      "name": "Alec Pierce",
      "pos": "WR",
+     "team": "IND",
+     "espn_id": 4360078,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 7,
@@ -850,6 +994,8 @@
     {
      "name": "Bucky Irving",
      "pos": "RB",
+     "team": "TB",
+     "espn_id": 4596448,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 1,
@@ -858,6 +1004,8 @@
     {
      "name": "Dylan Sampson",
      "pos": "RB",
+     "team": "CLE",
+     "espn_id": 5081397,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 5,
@@ -866,6 +1014,8 @@
     {
      "name": "Kyler Murray",
      "pos": "QB",
+     "team": "MIN",
+     "espn_id": 3917315,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -874,6 +1024,8 @@
     {
      "name": "Omar Cooper Jr.",
      "pos": "WR",
+     "team": "NYJ",
+     "espn_id": 4723820,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -882,6 +1034,8 @@
     {
      "name": "Matthew Golden",
      "pos": "WR",
+     "team": "GB",
+     "espn_id": 4701936,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
@@ -890,6 +1044,8 @@
     {
      "name": "Tank Bigsby",
      "pos": "RB",
+     "team": "PHI",
+     "espn_id": 4429013,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 3,
@@ -898,6 +1054,8 @@
     {
      "name": "Brian Thomas Jr.",
      "pos": "WR",
+     "team": "JAC",
+     "espn_id": 4432773,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 7,
@@ -906,6 +1064,8 @@
     {
      "name": "Adonai Mitchell",
      "pos": "WR",
+     "team": "NYJ",
+     "espn_id": 4597500,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
@@ -922,6 +1082,8 @@
     {
      "name": "Puka Nacua",
      "pos": "WR",
+     "team": "LAR",
+     "espn_id": 4426515,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 16,
@@ -930,6 +1092,8 @@
     {
      "name": "Matthew Stafford",
      "pos": "QB",
+     "team": "LAR",
+     "espn_id": 12483,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 6,
@@ -938,6 +1102,8 @@
     {
      "name": "Brock Bowers",
      "pos": "TE",
+     "team": "LVR",
+     "espn_id": 4432665,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 19,
@@ -946,6 +1112,8 @@
     {
      "name": "Christian McCaffrey",
      "pos": "RB",
+     "team": "SF",
+     "espn_id": 3117251,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 49,
@@ -954,6 +1122,8 @@
     {
      "name": "Chargers D/ST",
      "pos": "DST",
+     "team": "LAC",
+     "espn_id": -16024,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 1,
@@ -962,6 +1132,8 @@
     {
      "name": "Zay Flowers",
      "pos": "WR",
+     "team": "BAL",
+     "espn_id": 4429615,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 13,
@@ -970,6 +1142,8 @@
     {
      "name": "Dak Prescott",
      "pos": "QB",
+     "team": "DAL",
+     "espn_id": 2577417,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 4,
@@ -978,6 +1152,8 @@
     {
      "name": "MarShawn Lloyd",
      "pos": "RB",
+     "team": "GB",
+     "espn_id": 4429023,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 9,
@@ -986,6 +1162,8 @@
     {
      "name": "Mike Evans",
      "pos": "WR",
+     "team": "SF",
+     "espn_id": 16737,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
@@ -994,6 +1172,8 @@
     {
      "name": "Jake Bates",
      "pos": "K",
+     "team": "DET",
+     "espn_id": 4689936,
      "slot": "K",
      "keeper": true,
      "keeper_price": 2,
@@ -1002,6 +1182,8 @@
     {
      "name": "DK Metcalf",
      "pos": "WR",
+     "team": "PIT",
+     "espn_id": 4047650,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 26,
@@ -1010,6 +1192,8 @@
     {
      "name": "Jaylen Warren",
      "pos": "RB",
+     "team": "PIT",
+     "espn_id": 4569987,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 5,
@@ -1018,6 +1202,8 @@
     {
      "name": "Chuba Hubbard",
      "pos": "RB",
+     "team": "CAR",
+     "espn_id": 4241416,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
@@ -1026,6 +1212,8 @@
     {
      "name": "Rashid Shaheed",
      "pos": "WR",
+     "team": "SEA",
+     "espn_id": 4032473,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1034,6 +1222,8 @@
     {
      "name": "Deebo Samuel Sr.",
      "pos": "WR",
+     "team": "SF",
+     "espn_id": 3126486,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
@@ -1042,6 +1232,8 @@
     {
      "name": "Michael Mayer",
      "pos": "TE",
+     "team": "LVR",
+     "espn_id": 4429086,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 1,
@@ -1058,6 +1250,8 @@
     {
      "name": "Tyler Warren",
      "pos": "TE",
+     "team": "IND",
+     "espn_id": 4431459,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 13,
@@ -1066,6 +1260,8 @@
     {
      "name": "Omarion Hampton",
      "pos": "RB",
+     "team": "LAC",
+     "espn_id": 4685382,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 45,
@@ -1074,6 +1270,8 @@
     {
      "name": "Kyle Pitts Sr.",
      "pos": "TE",
+     "team": "ATL",
+     "espn_id": 4360248,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 4,
@@ -1082,6 +1280,8 @@
     {
      "name": "Texans D/ST",
      "pos": "DST",
+     "team": "HOU",
+     "espn_id": -16034,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 5,
@@ -1090,6 +1290,8 @@
     {
      "name": "Caleb Williams",
      "pos": "QB",
+     "team": "CHI",
+     "espn_id": 4431611,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 17,
@@ -1098,6 +1300,8 @@
     {
      "name": "Jadarian Price",
      "pos": "RB",
+     "team": "SEA",
+     "espn_id": 4685512,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 16,
@@ -1106,6 +1310,8 @@
     {
      "name": "Rome Odunze",
      "pos": "WR",
+     "team": "CHI",
+     "espn_id": 4431299,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 13,
@@ -1114,6 +1320,8 @@
     {
      "name": "A.J. Brown",
      "pos": "WR",
+     "team": "NE",
+     "espn_id": 4047646,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 48,
@@ -1122,6 +1330,8 @@
     {
      "name": "Malik Willis",
      "pos": "QB",
+     "team": "MIA",
+     "espn_id": 4242512,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1130,6 +1340,8 @@
     {
      "name": "Evan McPherson",
      "pos": "K",
+     "team": "CIN",
+     "espn_id": 4360234,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -1138,6 +1350,8 @@
     {
      "name": "Kyle Monangai",
      "pos": "RB",
+     "team": "CHI",
+     "espn_id": 4608686,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 12,
@@ -1146,6 +1360,8 @@
     {
      "name": "Blake Corum",
      "pos": "RB",
+     "team": "LAR",
+     "espn_id": 4429096,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1154,6 +1370,8 @@
     {
      "name": "RJ Harvey",
      "pos": "RB",
+     "team": "DEN",
+     "espn_id": 4568490,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 31,
@@ -1162,6 +1380,8 @@
     {
      "name": "Josh Downs",
      "pos": "WR",
+     "team": "IND",
+     "espn_id": 4688813,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 9,
@@ -1170,6 +1390,8 @@
     {
      "name": "Romeo Doubs",
      "pos": "WR",
+     "team": "NE",
+     "espn_id": 4361432,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 13,
@@ -1178,6 +1400,8 @@
     {
      "name": "Jordyn Tyson",
      "pos": "WR",
+     "team": "NO",
+     "espn_id": 4880281,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1194,6 +1418,8 @@
     {
      "name": "Kyren Williams",
      "pos": "RB",
+     "team": "LAR",
+     "espn_id": 4430737,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 12,
@@ -1202,6 +1428,8 @@
     {
      "name": "Jameson Williams",
      "pos": "WR",
+     "team": "DET",
+     "espn_id": 4426388,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 9,
@@ -1210,6 +1438,8 @@
     {
      "name": "Trey McBride",
      "pos": "TE",
+     "team": "ARI",
+     "espn_id": 4361307,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 9,
@@ -1218,6 +1448,8 @@
     {
      "name": "Justin Jefferson",
      "pos": "WR",
+     "team": "MIN",
+     "espn_id": 4262921,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 52,
@@ -1226,6 +1458,8 @@
     {
      "name": "Jalen Hurts",
      "pos": "QB",
+     "team": "PHI",
+     "espn_id": 4040715,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 19,
@@ -1234,6 +1468,8 @@
     {
      "name": "Ashton Jeanty",
      "pos": "RB",
+     "team": "LVR",
+     "espn_id": 4890973,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 66,
@@ -1242,6 +1478,8 @@
     {
      "name": "Josh Jacobs",
      "pos": "RB",
+     "team": "GB",
+     "espn_id": 4047365,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 56,
@@ -1250,6 +1488,8 @@
     {
      "name": "Marvin Harrison Jr.",
      "pos": "WR",
+     "team": "ARI",
+     "espn_id": 4432708,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 42,
@@ -1258,6 +1498,8 @@
     {
      "name": "DJ Moore",
      "pos": "WR",
+     "team": "BUF",
+     "espn_id": 3915416,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 20,
@@ -1266,6 +1508,8 @@
     {
      "name": "Eagles D/ST",
      "pos": "DST",
+     "team": "PHI",
+     "espn_id": -16021,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 2,
@@ -1274,6 +1518,8 @@
     {
      "name": "Isiah Pacheco",
      "pos": "RB",
+     "team": "DET",
+     "espn_id": 4361529,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1282,6 +1528,8 @@
     {
      "name": "Matt Gay",
      "pos": "K",
+     "team": "LVR",
+     "espn_id": 4249087,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -1290,6 +1538,8 @@
     {
      "name": "Travis Hunter",
      "pos": "WR",
+     "team": "JAC",
+     "espn_id": 4685415,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1298,6 +1548,8 @@
     {
      "name": "Woody Marks",
      "pos": "RB",
+     "team": "HOU",
+     "espn_id": 4429059,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 11,
@@ -1306,6 +1558,8 @@
     {
      "name": "Jalen McMillan",
      "pos": "WR",
+     "team": "TB",
+     "espn_id": 4430834,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1314,6 +1568,8 @@
     {
      "name": "Tank Dell",
      "pos": "WR",
+     "team": "HOU",
+     "espn_id": 4366031,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1330,6 +1586,8 @@
     {
      "name": "Malik Nabers",
      "pos": "WR",
+     "team": "NYG",
+     "espn_id": 4595348,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 34,
@@ -1338,6 +1596,8 @@
     {
      "name": "Breece Hall",
      "pos": "RB",
+     "team": "NYJ",
+     "espn_id": 4427366,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 22,
@@ -1346,6 +1606,8 @@
     {
      "name": "DeVonta Smith",
      "pos": "WR",
+     "team": "PHI",
+     "espn_id": 4241478,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 20,
@@ -1354,6 +1616,8 @@
     {
      "name": "Rams D/ST",
      "pos": "DST",
+     "team": "LAR",
+     "espn_id": -16014,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 3,
@@ -1362,6 +1626,8 @@
     {
      "name": "Lamar Jackson",
      "pos": "QB",
+     "team": "BAL",
+     "espn_id": 3916387,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 32,
@@ -1370,6 +1636,8 @@
     {
      "name": "Jason Myers",
      "pos": "K",
+     "team": "SEA",
+     "espn_id": 2473037,
      "slot": "K",
      "keeper": true,
      "keeper_price": 3,
@@ -1378,6 +1646,8 @@
     {
      "name": "Tucker Kraft",
      "pos": "TE",
+     "team": "GB",
+     "espn_id": 4572680,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 11,
@@ -1386,6 +1656,8 @@
     {
      "name": "Rhamondre Stevenson",
      "pos": "RB",
+     "team": "NE",
+     "espn_id": 4569173,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 15,
@@ -1394,6 +1666,8 @@
     {
      "name": "Malik Washington",
      "pos": "WR",
+     "team": "MIA",
+     "espn_id": 4569603,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1402,6 +1676,8 @@
     {
      "name": "Ladd McConkey",
      "pos": "WR",
+     "team": "LAC",
+     "espn_id": 4612826,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 4,
@@ -1410,6 +1686,8 @@
     {
      "name": "Jonathon Brooks",
      "pos": "RB",
+     "team": "CAR",
+     "espn_id": 4678008,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 24,
@@ -1418,6 +1696,8 @@
     {
      "name": "AJ Barner",
      "pos": "TE",
+     "team": "SEA",
+     "espn_id": 4576297,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 61,
@@ -1426,6 +1706,8 @@
     {
      "name": "Jerry Jeudy",
      "pos": "WR",
+     "team": "CLE",
+     "espn_id": 4241463,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 35,
@@ -1434,6 +1716,8 @@
     {
      "name": "Tre' Harris",
      "pos": "WR",
+     "team": "LAC",
+     "espn_id": 4686612,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1442,6 +1726,8 @@
     {
      "name": "Jaylen Wright",
      "pos": "RB",
+     "team": "MIA",
+     "espn_id": 4682745,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1450,6 +1736,8 @@
     {
      "name": "Justice Hill",
      "pos": "RB",
+     "team": "BAL",
+     "espn_id": 4038441,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1466,6 +1754,8 @@
     {
      "name": "George Pickens",
      "pos": "WR",
+     "team": "DAL",
+     "espn_id": 4426354,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 12,
@@ -1474,6 +1764,8 @@
     {
      "name": "Emeka Egbuka",
      "pos": "WR",
+     "team": "TB",
+     "espn_id": 4567750,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 25,
@@ -1482,6 +1774,8 @@
     {
      "name": "Jonathan Taylor",
      "pos": "RB",
+     "team": "IND",
+     "espn_id": 4242335,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 34,
@@ -1490,6 +1784,8 @@
     {
      "name": "Broncos D/ST",
      "pos": "DST",
+     "team": "DEN",
+     "espn_id": -16007,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 3,
@@ -1498,6 +1794,8 @@
     {
      "name": "Ka'imi Fairbairn",
      "pos": "K",
+     "team": "HOU",
+     "espn_id": 2971573,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -1506,6 +1804,8 @@
     {
      "name": "Saquon Barkley",
      "pos": "RB",
+     "team": "PHI",
+     "espn_id": 3929630,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 61,
@@ -1514,6 +1814,8 @@
     {
      "name": "Trevor Lawrence",
      "pos": "QB",
+     "team": "JAC",
+     "espn_id": 4360310,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 4,
@@ -1522,6 +1824,8 @@
     {
      "name": "Bhayshul Tuten",
      "pos": "RB",
+     "team": "JAC",
+     "espn_id": 4882093,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 8,
@@ -1530,6 +1834,8 @@
     {
      "name": "Dallas Goedert",
      "pos": "TE",
+     "team": "PHI",
+     "espn_id": 3121023,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1538,6 +1844,8 @@
     {
      "name": "Isaiah Likely",
      "pos": "TE",
+     "team": "NYG",
+     "espn_id": 4361050,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 5,
@@ -1546,6 +1854,8 @@
     {
      "name": "Ja'Kobi Lane",
      "pos": "WR",
+     "team": "BAL",
+     "espn_id": 4870847,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -1554,6 +1864,8 @@
     {
      "name": "Christian Watson",
      "pos": "WR",
+     "team": "GB",
+     "espn_id": 4248528,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 14,
@@ -1562,6 +1874,8 @@
     {
      "name": "Baker Mayfield",
      "pos": "QB",
+     "team": "TB",
+     "espn_id": 3052587,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 20,
@@ -1570,6 +1884,8 @@
     {
      "name": "Jalen Coker",
      "pos": "WR",
+     "team": "CAR",
+     "espn_id": 4695883,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -1578,6 +1894,8 @@
     {
      "name": "KC Concepcion",
      "pos": "WR",
+     "team": "CLE",
+     "espn_id": 4870653,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 3,
@@ -1586,6 +1904,8 @@
     {
      "name": "Braelon Allen",
      "pos": "RB",
+     "team": "NYJ",
+     "espn_id": 4685247,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1602,6 +1922,8 @@
     {
      "name": "Chase Brown",
      "pos": "RB",
+     "team": "CIN",
+     "espn_id": 4362238,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 6,
@@ -1610,6 +1932,8 @@
     {
      "name": "Jaxon Smith-Njigba",
      "pos": "WR",
+     "team": "SEA",
+     "espn_id": 4430878,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 13,
@@ -1618,6 +1942,8 @@
     {
      "name": "Kenneth Walker III",
      "pos": "RB",
+     "team": "KC",
+     "espn_id": 4567048,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 32,
@@ -1626,6 +1952,8 @@
     {
      "name": "CeeDee Lamb",
      "pos": "WR",
+     "team": "DAL",
+     "espn_id": 4241389,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 65,
@@ -1634,6 +1962,8 @@
     {
      "name": "Josh Allen",
      "pos": "QB",
+     "team": "BUF",
+     "espn_id": 3918298,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 27,
@@ -1642,6 +1972,8 @@
     {
      "name": "Seahawks D/ST",
      "pos": "DST",
+     "team": "SEA",
+     "espn_id": -16026,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 15,
@@ -1650,6 +1982,8 @@
     {
      "name": "Patrick Mahomes",
      "pos": "QB",
+     "team": "KC",
+     "espn_id": 3139477,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 18,
@@ -1658,6 +1992,8 @@
     {
      "name": "Harrison Butker",
      "pos": "K",
+     "team": "KC",
+     "espn_id": 3055899,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -1666,6 +2002,8 @@
     {
      "name": "Sam LaPorta",
      "pos": "TE",
+     "team": "DET",
+     "espn_id": 4430027,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 16,
@@ -1674,6 +2012,8 @@
     {
      "name": "Tony Pollard",
      "pos": "RB",
+     "team": "TEN",
+     "espn_id": 3916148,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 15,
@@ -1682,6 +2022,8 @@
     {
      "name": "Courtland Sutton",
      "pos": "WR",
+     "team": "DEN",
+     "espn_id": 3128429,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 18,
@@ -1690,6 +2032,8 @@
     {
      "name": "Michael Pittman Jr.",
      "pos": "WR",
+     "team": "PIT",
+     "espn_id": 4035687,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 1,
@@ -1698,6 +2042,8 @@
     {
      "name": "Bo Nix",
      "pos": "QB",
+     "team": "DEN",
+     "espn_id": 4426338,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 9,
@@ -1706,6 +2052,8 @@
     {
      "name": "Juwan Johnson",
      "pos": "TE",
+     "team": "NO",
+     "espn_id": 3929645,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -1714,6 +2062,8 @@
     {
      "name": "Rachaad White",
      "pos": "RB",
+     "team": "WAS",
+     "espn_id": 4697815,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 7,
@@ -1722,6 +2072,8 @@
     {
      "name": "Emmett Johnson",
      "pos": "RB",
+     "team": "KC",
+     "espn_id": 4832955,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -1738,6 +2090,8 @@
     {
      "name": "Davante Adams",
      "pos": "WR",
+     "team": "LAR",
+     "espn_id": 16800,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 36,
@@ -1746,6 +2100,8 @@
     {
      "name": "James Cook III",
      "pos": "RB",
+     "team": "BUF",
+     "espn_id": 4379399,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 26,
@@ -1754,6 +2110,8 @@
     {
      "name": "Amon-Ra St. Brown",
      "pos": "WR",
+     "team": "DET",
+     "espn_id": 4374302,
      "slot": "WR",
      "keeper": true,
      "keeper_price": 53,
@@ -1762,6 +2120,8 @@
     {
      "name": "Travis Etienne Jr.",
      "pos": "RB",
+     "team": "NO",
+     "espn_id": 4239996,
      "slot": "RB",
      "keeper": true,
      "keeper_price": 3,
@@ -1770,6 +2130,8 @@
     {
      "name": "Mike Washington Jr.",
      "pos": "RB",
+     "team": "LVR",
+     "espn_id": 4686658,
      "slot": "FLEX",
      "keeper": true,
      "keeper_price": 7,
@@ -1778,6 +2140,8 @@
     {
      "name": "Patriots D/ST",
      "pos": "DST",
+     "team": "NE",
+     "espn_id": -16017,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 1,
@@ -1786,6 +2150,8 @@
     {
      "name": "Eddy Pineiro",
      "pos": "K",
+     "team": "SF",
+     "espn_id": 4034949,
      "slot": "K",
      "keeper": true,
      "keeper_price": 1,
@@ -1794,6 +2160,8 @@
     {
      "name": "Brock Purdy",
      "pos": "QB",
+     "team": "SF",
+     "espn_id": 4361741,
      "slot": "QB",
      "keeper": true,
      "keeper_price": 3,
@@ -1802,6 +2170,8 @@
     {
      "name": "Terrance Ferguson",
      "pos": "TE",
+     "team": "LAR",
+     "espn_id": 4570037,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
@@ -1810,6 +2180,8 @@
     {
      "name": "Jordan Addison",
      "pos": "WR",
+     "team": "MIN",
+     "espn_id": 4429205,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
@@ -1818,6 +2190,8 @@
     {
      "name": "Travis Kelce",
      "pos": "TE",
+     "team": "KC",
+     "espn_id": 15847,
      "slot": "TE",
      "keeper": true,
      "keeper_price": 7,
@@ -1826,6 +2200,8 @@
     {
      "name": "Makai Lemon",
      "pos": "WR",
+     "team": "PHI",
+     "espn_id": 4870795,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 5,
@@ -1834,6 +2210,8 @@
     {
      "name": "Stefon Diggs",
      "pos": "WR",
+     "team": "WAS",
+     "espn_id": 2976212,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 11,
@@ -1842,6 +2220,8 @@
     {
      "name": "J.K. Dobbins",
      "pos": "RB",
+     "team": "DEN",
+     "espn_id": 4241985,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 18,
@@ -1850,6 +2230,8 @@
     {
      "name": "Jacory Croskey-Merritt",
      "pos": "RB",
+     "team": "WAS",
+     "espn_id": 4575131,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 17,
@@ -1858,6 +2240,8 @@
     {
      "name": "C.J. Stroud",
      "pos": "QB",
+     "team": "HOU",
+     "espn_id": 4432577,
      "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
