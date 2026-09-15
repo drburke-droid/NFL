@@ -57,17 +57,6 @@
      "rostered": true,
      "owner": "Glass Joe",
      "match": "name"
-    },
-    {
-     "name": "Kyler Murray",
-     "pos": "QB",
-     "team": "MIN",
-     "n": "kyler murray",
-     "pts": 19.54,
-     "inj": "NA",
-     "rostered": true,
-     "owner": "Glass Joe",
-     "match": "name"
     }
    ],
    "free": [
@@ -77,6 +66,17 @@
      "team": "PIT",
      "n": "aaron rodgers",
      "pts": 20.0,
+     "inj": "NA",
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Kyler Murray",
+     "pos": "QB",
+     "team": "MIN",
+     "n": "kyler murray",
+     "pts": 19.54,
      "inj": "NA",
      "rostered": false,
      "owner": "",
@@ -191,20 +191,9 @@
      "rostered": false,
      "owner": "",
      "match": ""
-    },
-    {
-     "name": "Shedeur Sanders",
-     "pos": "QB",
-     "team": "CLE",
-     "n": "shedeur sanders",
-     "pts": 2.12,
-     "inj": "NA",
-     "rostered": false,
-     "owner": "",
-     "match": ""
     }
    ],
-   "worst_of_mine": 19.54
+   "worst_of_mine": 24.29
   },
   "RB": {
    "mine": [

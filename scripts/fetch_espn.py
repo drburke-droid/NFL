@@ -82,7 +82,11 @@ def main():
                          "keeper": bool(kval or e.get("keeper")), "keeper_price": kval,
                          # DRAFT / ADD (waiver-FA pickup) / TRADE — a mid-season drop+ADD resets
                          # the keeper salary to $1 + inflation (league rule tweak, Aug 2026)
-                         "acq": e.get("acquisitionType")})
+                         "acq": e.get("acquisitionType"),
+                         # ESPN's own injury tag + points (season total, last scored week) for the My Team tab
+                         "inj": p.get("injuryStatus"),
+                         "season_pts": next((round(s.get("appliedTotal", 0), 1) for s in p.get("stats", []) if s.get("statSourceId") == 0 and s.get("scoringPeriodId") == 0), None),
+                         "last_pts": next((round(s.get("appliedTotal", 0), 1) for s in sorted(p.get("stats", []), key=lambda s: -s.get("scoringPeriodId", 0)) if s.get("statSourceId") == 0 and s.get("scoringPeriodId", 0) > 0), None)})
         teams.append({"id": t.get("id"), "name": (t.get("name") or f"{t.get('location','')} {t.get('nickname','')}").strip(),
                       "abbrev": t.get("abbrev"), "owner": owner, "roster": rost})
     out = {"leagueId": LEAGUE_ID, "season": SEASON, "myTeamId": TEAM_ID,
