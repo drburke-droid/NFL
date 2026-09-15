@@ -151,7 +151,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           python scripts/record_send.py -m "SaberSim send log / grade (automated)" \
             data/sabersim/sent_log.json \
-            data/props_frames/snapshots/props_*.csv \r
+            data/props_frames/snapshots/props_*.csv \
             data/kdst/kdst_*.csv \
             data/subvertadown/subvertadown_long.csv \
             docs/sabersim_accuracy.json \
