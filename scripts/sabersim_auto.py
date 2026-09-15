@@ -57,6 +57,10 @@ if not os.path.exists(KEYF) and os.environ.get("ODDS_API_KEY"):   # the secret m
     import re as _re
     open(KEYF, "w").write("\n".join(k for k in _re.split(r"[,;\s]+", os.environ["ODDS_API_KEY"]) if k) + "\n")
 lo, hi = (float(x) for x in os.environ.get("SEND_WINDOW", "78,82").split(","))
+# how many keys the run can see and a 4-char fingerprint of each, so the Actions log of every tick answers
+# "did the ODDS_API_KEY secret parse into all the keys I pasted?" (scripts/secret_keys_check.py reads it back)
+_keys = [k.strip() for k in open(KEYF) if k.strip() and not k.startswith("#")] if os.path.exists(KEYF) else []
+KEYS_INFO = {"keys": len(_keys), "key_tails": ",".join(k[-4:] for k in _keys)}
 
 def out(**kw):
     print(json.dumps({k: v for k, v in kw.items() if k != "log_tail"}))
@@ -138,7 +142,7 @@ def next_slate(sent, wanted=""):
 
 sent = json.load(open(LOG)) if os.path.exists(LOG) else {}
 s, err = next_slate(sent, A.slate)
-if err: out(in_window=False, reason=err); sys.exit(0)
+if err: out(in_window=False, reason=err, **KEYS_INFO); sys.exit(0)
 already = bool(s.get("all_sent")) or s["key"] in sent
 in_win = lo <= s["minutes_to"] <= hi
 # daily grade: the tick that lands in the first 10 min of GRADE_HOUR UTC (default 14 = 8 am MDT) also
@@ -147,7 +151,7 @@ _now = datetime.now(timezone.utc); gh_ = int(os.environ.get("GRADE_HOUR", "14"))
 grade_due = _now.hour == gh_ and _now.minute < 10
 imm = ALL_SLATES[0] if ALL_SLATES else s
 out(imminent_minutes_to=round(imm["minutes_to"], 1), imminent_slate=imm["key"],
-    in_window=bool(in_win and not already) or A.force, slate_requested=A.slate or None, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already, grade_due=grade_due)
+    in_window=bool(in_win and not already) or A.force, slate_requested=A.slate or None, minutes_to=round(s["minutes_to"], 1), slate=s["label"], slate_key=s["key"], already_sent=already, grade_due=grade_due, **KEYS_INFO)
 if A.check or not (A.force or (in_win and not already)): sys.exit(0)
 
 # ---- run the generator (quiet: its stdout goes to a local log, not the scheduler's log) ----
