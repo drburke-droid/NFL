@@ -101,8 +101,33 @@ def is_rostered(n, pos, team):
         return True, owner_of[n], "name"
     cand = by_surname.get((n.split()[-1] if n.split() else n, pos, team), [])
     if len(cand) == 1:
-        return True, owner_of[cand[0]], "surname+team"
+        a, b = n.split()[0], cand[0].split()[0]
+        if compatible_first(a, b):
+            return True, owner_of[cand[0]], "surname+team"
+        REJECTED.append((n, cand[0], team, pos))
     return False, "", ""
+
+
+REJECTED = []
+
+
+def compatible_first(a, b):
+    """Are these two given names plausibly the same person?
+
+    Surname + team + position is still not enough on its own: Bijan Robinson and Brian Robinson are
+    both 2026 Atlanta running backs, and only Bijan is rostered, so the looser rule hid a real free
+    agent. What the fallback is actually for is a nickname — ESPN's "Kenny" for FFA's "Kenneth" —
+    so require one name to be a prefix of the other, or a shared prefix of four characters.
+    kenny/kenneth share "kenn" and pass; brian/bijan share "b" and do not. The rule errs toward
+    rejecting, which shows a player as available rather than hiding him, and every rejection is
+    printed so a genuine alias surfaces instead of going quiet.
+    """
+    if a == b or a.startswith(b) or b.startswith(a):
+        return True
+    i = 0
+    while i < min(len(a), len(b)) and a[i] == b[i]:
+        i += 1
+    return i >= 4
 print(f"league: {lg.get('name')} | {lg['size']} teams | {len(rostered)} rostered players")
 print(f"my team: {next(t['name'] for t in lg['teams'] if t['id'] == mine_id)} ({len(my_players)} players)")
 
@@ -141,6 +166,31 @@ if not os.path.exists(path):
     sys.exit(f"no {path}")
 rows = [r for r in csv.DictReader(open(path, encoding="utf-8")) if r["position"] in SKILL + ("K", "DST")]
 print(f"projections: {A.season} week {week} ({len(rows)} players at scoring positions)")
+# The FFA weekly scrape is a Wednesday job whose own workflow header calls itself untested, so the
+# newest file on disk can easily be last week's. A waiver claim made on the previous week's
+# projections is worse than no board at all, so say it loudly rather than in a status line.
+sched = os.path.join(ROOT, "data", f"schedule_{A.season}.csv")
+cur = None
+if os.path.exists(sched):
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+    wks = defaultdict(list)
+    for r in csv.DictReader(open(sched, encoding="utf-8")):
+        for key in ("gameday", "game_date", "date", "kickoff", "start_time"):
+            if r.get(key):
+                try:
+                    wks[int(float(r.get("week")))].append(datetime.fromisoformat(
+                        str(r[key]).replace("Z", "+00:00")).replace(tzinfo=timezone.utc))
+                except Exception:
+                    pass
+                break
+    upcoming = sorted(w for w, ds in wks.items() if max(ds) > now)
+    cur = upcoming[0] if upcoming else None
+if cur and cur != week:
+    print(f"\n  *** WARNING: these are WEEK {week} projections, but week {cur} is the one being "
+          f"played.\n      The week {cur} FFA file is not in the repo yet (it is a Wednesday "
+          f"scrape).\n      Ranks below reflect last week's expectations — do not claim on them "
+          f"blind. ***")
 
 proj = []
 for r in rows:
@@ -158,8 +208,12 @@ alias = [p for p in proj if p["match"] == "surname+team"]
 print(f"matched {len(hit)} of {len(rostered)} rostered players to a projection "
       f"({len(rostered) - len(hit)} unmatched — not projected this week, IR, or spelling)")
 if alias:
-    print("  matched by surname+team (given names differ): "
+    print("  matched by surname+team (nickname): "
           + ", ".join(f"{p['name']} [{p['team']}]" for p in alias))
+if REJECTED:
+    print("  same surname/team/position but different given names — treated as AVAILABLE:")
+    for fn, rn, tm, ps in REJECTED:
+        print(f"    {fn} vs rostered {rn} ({ps} {tm})")
 
 positions = SKILL + ("K",) + (("DST",) if A.dst else ())
 board = {}
