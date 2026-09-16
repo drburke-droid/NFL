@@ -474,11 +474,11 @@ SHARES = {"RB": (0.60, 0.17, 0.0), "WR": (0.20, 0.24, 0.0), "TE": (0.36, 0.04, 0
 QB_OUT_HAIRCUT = {"WR": 0.10, "TE": 0.07, "RB": 0.04}
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "doubtful", "dnr", "nfi", "inactive"}
 DEPTH = {}   # (team, pos) -> [(depth_chart_order, full_name, gsis_id, injury_status)] from Sleeper
-def http_json(u, hdr=None):
+def http_json(u, hdr=None, timeout=30):
     # Default to a browser UA (some feeds refuse the urllib default), but let callers override it.
     # ESPN wants the opposite: see espn_json.
     h = {"User-Agent": "Mozilla/5.0"} if hdr is None else hdr
-    with urllib.request.urlopen(urllib.request.Request(u, headers=h), timeout=30) as r:
+    with urllib.request.urlopen(urllib.request.Request(u, headers=h), timeout=timeout) as r:
         return json.loads(r.read().decode())
 def espn_json(path):
     """ESPN 403s a browser User-Agent from a datacenter IP and serves the honest urllib one.
@@ -552,8 +552,11 @@ def sleeper_players():
     NFL Sunday that is the slower and less reliable path. Any failure falls straight back to the
     cached URL, which is exactly what the generator used before.
     """
+    # Short timeout on the bypass on purpose. The whole run has to finish inside ~150s to clear the
+    # T-75 cutoff, so a stalled origin must fail fast and hand back to the edge rather than burn a
+    # fifth of the budget on the default 30s. 12s is ~8x the 1530ms measured on a quiet runner.
     try:
-        return http_json(f"https://api.sleeper.app/v1/players/nfl?t={int(time.time())}")
+        return http_json(f"https://api.sleeper.app/v1/players/nfl?t={int(time.time())}", timeout=12)
     except Exception as e:
         print("  Sleeper origin fetch failed, falling back to the cached copy:", str(e)[:60])
         return http_json("https://api.sleeper.app/v1/players/nfl")
