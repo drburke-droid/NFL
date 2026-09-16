@@ -538,6 +538,25 @@ REPORT = {} if (A.no_report or A.no_lineups) else official_report(SEASON, cur_we
 if REPORT:
     _rc = pd.Series([v["prac"] for v in REPORT.values()]).value_counts().to_dict(); _rd = pd.Series([v["desig"] for v in REPORT.values() if v["desig"]]).value_counts().to_dict()
     print(f"  injury report ({next(iter(REPORT.values()))['src']}): {len(REPORT)} skill/K players listed; practice {_rc}; designations {_rd}")
+def sleeper_players():
+    """Sleeper's player dump, asking the CDN for the origin copy rather than whatever it has cached.
+
+    Measured on a runner 2026-09-16: the edge served this file with Age up to 555s — a copy nine
+    minutes old — on a feed we are reading precisely because it carries lineup status. A ?t= query
+    param reaches the origin (1530ms against 156ms cached, so it is a real fetch); a Cache-Control:
+    no-cache header is ignored outright.
+
+    Whether the origin actually carries statuses the cache lacks is still unmeasured — that needs a
+    game day, and inactives_probe.py samples both on Sunday. Until then this is free upside, so it
+    is taken, but NOT at the send's expense: a bypass hits the origin instead of the edge, and on an
+    NFL Sunday that is the slower and less reliable path. Any failure falls straight back to the
+    cached URL, which is exactly what the generator used before.
+    """
+    try:
+        return http_json(f"https://api.sleeper.app/v1/players/nfl?t={int(time.time())}")
+    except Exception as e:
+        print("  Sleeper origin fetch failed, falling back to the cached copy:", str(e)[:60])
+        return http_json("https://api.sleeper.app/v1/players/nfl")
 def live_status():
     st = {}   # (nname, team) -> (status, source)
     for (nm, pos), v in REPORT.items():     # the official designation outranks the aggregators: Out/Doubtful -> OUT, Questionable -> Q
@@ -552,7 +571,7 @@ def live_status():
                 elif sts == "questionable" and (nm, tm) not in st: st[(nm, tm)] = ("Q", "espn")
     except Exception as e: print("  ESPN injuries unavailable:", str(e)[:50])
     try:
-        for v in http_json("https://api.sleeper.app/v1/players/nfl").values():
+        for v in sleeper_players().values():
             if v.get("position") not in ("QB", "RB", "WR", "TE", "K"): continue
             nm, tm = norm(v.get("full_name", "")), TEAM_FIX.get(v.get("team") or "", v.get("team") or "")
             inj = str(v.get("injury_status") or "").lower()

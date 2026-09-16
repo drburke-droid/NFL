@@ -25,7 +25,7 @@ per tick to stdout; the Actions log is the store.
 
 Usage: python scripts/inactives_probe.py --minutes-to 83.4 --slate 2026-09-14T00:20_1g
 """
-import json, argparse, urllib.request
+import json, argparse, time, urllib.request
 from datetime import datetime, timezone
 
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "dnr", "nfi", "inactive"}
@@ -93,7 +93,10 @@ def espn_team():
             "teams_queried": len(ids), "per_team": dict(sorted(per.items()))}
 
 def sleeper():
-    d = jget("https://api.sleeper.app/v1/players/nfl", timeout=90)
+    # Origin copy, not the edge. Measured 2026-09-16: the CDN served this file with Age up to
+    # 555s, and a ?t= param reaches the origin (1530ms vs 156ms) while Cache-Control is ignored.
+    # Sampling the cached copy would measure the CDN's refresh, not the feed's.
+    d = jget(f"https://api.sleeper.app/v1/players/nfl?t={int(time.time())}", timeout=90)
     per = {}
     for p in (d or {}).values():
         if not isinstance(p, dict) or not is_out(p.get("injury_status")): continue
