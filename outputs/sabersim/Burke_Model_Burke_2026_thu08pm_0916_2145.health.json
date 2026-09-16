@@ -1,0 +1,80 @@
+{
+ "season": 2026,
+ "week": 2,
+ "slate_games": 1,
+ "games": [
+  "Detroit Lions @ Buffalo Bills"
+ ],
+ "market": "live",
+ "ffa": {
+  "file": "raw_stats_2026_wk2.csv",
+  "rows": 940,
+  "age_hours": 6.9,
+  "slate_skill": 24,
+  "slate_k": 2,
+  "slate_dst": 2
+ },
+ "dk_lines": {
+  "slate_games": 1,
+  "with_lines": 1,
+  "fetched_at": "2026-09-16T21:46Z",
+  "credits_left": "62"
+ },
+ "dk_props": {
+  "slate_events": 1,
+  "events_with_props": 1,
+  "with_props": 20,
+  "by_stat": {
+   "pass_yds": 2,
+   "pass_tds": 2,
+   "rush_yds": 4,
+   "rec_yds": 11,
+   "rec": 11,
+   "exp_td": 20
+  },
+  "no_line": [],
+  "eligible": 10
+ },
+ "kdst": {
+  "file": "kdst_2026_wk2.csv",
+  "K": {
+   "hit": 2,
+   "of": 2
+  },
+  "DST": {
+   "hit": 2,
+   "of": 2
+  }
+ },
+ "injury_report": {
+  "src": "nfl.com",
+  "listed": 41,
+  "designations": {
+   "Questionable": 1
+  }
+ },
+ "lineups": {
+  "statuses": 319,
+  "by_src": {
+   "espn": 136,
+   "sleeper": 101,
+   "+sleeper": 57,
+   "espn+sleeper": 24,
+   "nfl-report": 1
+  },
+  "q": 1,
+  "out": 0,
+  "out_by_src": {}
+ },
+ "csv": "Burke_Model_Burke_2026_thu08pm_0916_2145.csv",
+ "rows": 28,
+ "generated": "2026-09-16 17:46 ET",
+ "kickoffs": [
+  "Thu 09/17 08:15 PM ET"
+ ],
+ "warnings": [],
+ "dry_run": true,
+ "slate": "Thu 09/17 08:15 PM ET slate (1 games)",
+ "slate_key": "2026-09-18T00:15_1g",
+ "run_at": "2026-09-16T21:46:49Z"
+}

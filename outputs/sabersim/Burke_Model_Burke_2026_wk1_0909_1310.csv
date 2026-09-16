@@ -1,0 +1,502 @@
+Analyst,Model,Player,ID,Pos,Team,Opp,Game,Kickoff,Proj,Median,Floor_p10,p25,p75,Ceiling_p90,StdDev,Baseline_FFA,Market_PPR,Injury,Status,Note,Generated
+Robert Burke,Model_Burke v1,Jaxon Smith-Njigba,00-0038543,WR,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,18.09,17.15,8.44,11.49,22.92,29.38,8.47,17.6,17.81,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Drake Maye,00-0039851,QB,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,16.55,16.45,6.5,11.24,21.27,26.35,7.43,16.28,16.41,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rhamondre Stevenson,00-0036875,RB,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,15.51,14.46,6.81,10.67,19.61,24.49,6.62,11.0,14.53,,,+1.7 (TreVeyon Henderson OUT),2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,A.J. Brown,00-0035676,WR,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,14.85,14.86,4.88,8.8,20.15,24.74,8.4,14.78,14.18,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Sam Darnold,00-0034869,QB,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,14.48,14.03,5.04,9.04,19.7,24.24,7.9,14.35,13.88,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jadarian Price,,RB,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,11.53,10.14,3.61,6.33,16.06,21.53,7.21,11.83,11.13,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jason Myers,,K,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,8.9,8.9,3.11,5.78,12.01,15.13,4.45,9.82,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Romeo Doubs,00-0037816,WR,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,8.85,7.29,2.01,3.86,12.32,18.5,6.27,8.57,8.47,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Hunter Henry,00-0033090,TE,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,8.55,7.77,1.39,3.73,12.26,16.84,6.32,8.11,8.31,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rashid Shaheed,00-0037545,WR,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,7.84,6.8,1.84,3.91,10.77,15.93,5.09,8.06,7.01,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cooper Kupp,00-0033908,WR,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,7.67,6.56,1.67,3.63,10.66,14.45,5.21,7.64,6.92,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Andres Borregales,,K,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,7.38,7.38,2.58,4.8,9.96,12.54,3.69,5.67,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,AJ Barner,00-0039793,TE,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,7.03,6.19,1.18,2.68,9.82,14.37,5.28,6.15,6.9,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Seahawks,,DST,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,6.81,6.81,2.38,4.43,9.19,11.57,3.4,8.49,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,George Holani,00-0039299,RB,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,6.1,4.37,1.38,2.48,8.69,12.77,4.6,4.32,6.18,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Demario Douglas,00-0038621,WR,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,5.16,3.67,0.21,1.66,7.2,11.81,4.1,5.74,4.34,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Patriots,,DST,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,4.58,4.58,1.6,2.98,6.18,7.78,2.29,6.02,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tory Horton,00-0040648,WR,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,4.2,2.91,0.0,0.83,5.86,10.35,3.72,4.1,3.93,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Emanuel Wilson,00-0038797,RB,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,4.07,2.73,0.11,0.94,5.78,10.61,3.59,3.54,3.8,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mack Hollins,00-0033555,WR,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,3.94,2.36,0.0,0.65,5.86,9.8,3.86,4.51,3.02,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Corey Kiner,00-0040556,RB,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,3.49,2.36,0.52,1.03,4.71,9.44,2.72,2.36,2.46,,,+0.7 (TreVeyon Henderson OUT),2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Eli Raridon,,TE,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,2.67,1.46,0.0,0.0,3.95,7.16,2.92,2.4,2.44,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Elijah Arroyo,00-0040739,TE,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,2.29,1.42,0.0,0.0,3.35,6.59,2.48,1.99,1.7,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kyle Williams,00-0040131,WR,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,2.21,0.97,0.0,0.05,3.23,6.73,2.35,1.93,1.95,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Eric Saubert,00-0033576,TE,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,2.2,1.43,0.0,0.08,2.94,6.38,2.12,2.01,1.84,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ricky White,,WR,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,1.35,0.15,0.0,0.0,2.03,4.46,1.5,1.05,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Efton Chism,00-0040563,WR,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,1.35,0.19,0.0,0.0,2.06,4.44,1.53,0.96,1.07,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Reggie Gilliam,,RB,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,1.15,0.47,0.0,0.14,1.4,3.07,0.93,0.5,0.66,,,+0.2 (TreVeyon Henderson OUT),2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Drew Lock,00-0035704,QB,SEA,NE,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,0.94,0.0,0.0,0.0,2.58,7.87,1.91,0.57,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tommy DeVito,00-0038476,QB,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,0.52,0.0,0.0,0.0,2.16,7.45,1.6,0.15,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,TreVeyon Henderson,00-0040734,RB,NE,SEA,New England Patriots @ Seattle Seahawks,Wed 09/09 08:20 PM ET,0.0,0.0,0.0,0.0,0.0,0.0,0.0,7.42,,Q,OUT,OUT (espn+sleeper); was 7.7,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Puka Nacua,00-0039075,WR,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,20.69,19.53,10.81,14.16,25.05,33.04,8.07,21.1,20.45,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Christian McCaffrey,00-0033280,RB,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,19.14,17.42,9.6,12.4,24.31,32.08,8.82,17.27,18.99,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Matthew Stafford,00-0026498,QB,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,16.63,16.47,6.6,11.35,21.57,26.46,7.57,17.7,15.39,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brock Purdy,00-0037834,QB,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,16.52,16.42,6.51,11.12,21.64,26.42,7.79,16.71,16.07,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Davante Adams,00-0031381,WR,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,13.99,13.45,4.04,8.21,19.05,23.94,8.03,13.95,13.76,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kyren Williams,00-0037840,RB,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,13.61,12.57,5.11,8.86,17.91,22.7,6.7,13.45,12.97,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mike Evans,00-0031408,WR,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,11.16,9.68,3.02,5.63,16.03,20.57,7.7,10.9,10.74,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,George Kittle,00-0033288,TE,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,9.84,8.79,2.64,4.92,14.04,18.8,6.76,10.36,9.0,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Deebo Samuel,00-0035719,WR,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,8.68,7.22,1.93,4.03,12.11,18.22,5.98,9.77,7.46,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Blake Corum,00-0039738,RB,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,8.38,6.78,2.0,3.8,11.34,17.47,5.58,7.2,8.09,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,De'Zhaun Stribling,,WR,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,8.14,6.89,1.57,3.83,11.78,16.52,5.89,7.0,8.11,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Harrison Mevis,,K,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,8.05,8.05,2.82,5.23,10.87,13.68,4.02,7.77,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Eddy Pineiro,,K,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,7.57,7.57,2.65,4.92,10.22,12.86,3.78,6.58,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rams,,DST,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,6.17,6.17,2.16,4.01,8.32,10.48,3.08,6.66,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Terrance Ferguson,00-0040737,TE,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,5.73,4.33,0.34,1.83,8.18,13.38,4.7,5.25,5.24,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Colby Parkinson,00-0036244,TE,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,5.69,4.26,0.39,1.8,8.16,13.23,4.71,4.78,5.52,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Higbee,00-0033110,TE,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,4.11,2.81,0.06,1.25,6.04,9.58,3.55,3.51,3.79,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,49ers,,DST,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,3.99,3.99,1.39,2.59,5.38,6.78,1.99,4.14,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Demarcus Robinson,00-0032775,WR,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,3.98,2.38,0.0,0.53,5.89,10.05,3.97,4.41,3.31,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jordan James,00-0040177,RB,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,3.94,2.65,0.0,0.71,5.78,10.32,3.75,3.67,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tutu Atwell,00-0036849,WR,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,3.82,2.28,0.0,0.17,5.87,10.03,4.23,3.5,3.54,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kaelon Black,,RB,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,3.64,2.44,0.0,0.61,5.61,10.1,3.71,3.38,3.37,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kyle Juszczyk,,RB,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,3.22,1.89,0.0,0.28,4.75,9.72,3.31,3.25,2.78,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jacob Cowing,00-0039365,WR,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,3.08,1.75,0.0,0.34,4.18,8.46,2.84,2.88,2.8,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jake Tonges,00-0037112,TE,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,2.94,1.77,0.0,0.58,4.15,7.73,2.65,2.51,2.62,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Davis Allen,00-0039074,TE,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,2.93,1.68,0.0,0.43,4.36,7.8,2.91,2.85,2.58,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jordan Whittington,00-0039751,WR,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,2.9,1.52,0.0,0.19,4.17,8.24,2.95,2.41,2.62,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Konata Mumpfield,00-0040590,WR,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,2.16,0.7,0.0,0.23,3.13,6.03,2.15,1.79,1.88,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Luke Farrell,00-0036887,TE,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,1.85,1.17,0.0,0.0,2.27,6.49,1.68,1.6,1.49,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Max Klare,,TE,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,1.83,1.15,0.0,0.0,2.26,6.23,1.67,1.39,1.44,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Xavier Smith,00-0038359,WR,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,1.75,0.3,0.0,0.0,2.63,5.43,1.95,1.33,1.46,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ty Simpson,,QB,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,1.21,0.0,0.0,0.0,2.85,8.14,2.11,0.87,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ronnie Rivers,00-0037557,RB,LA,SF,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,1.17,0.37,0.0,0.03,1.56,3.25,1.13,0.85,0.9,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mac Jones,00-0036972,QB,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,1.0,0.0,0.0,0.0,2.64,7.93,1.96,0.65,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jordan Watkins,00-0040172,WR,SF,LA,San Francisco 49ers @ Los Angeles Rams,Thu 09/10 08:35 PM ET,0.66,0.0,0.0,0.0,0.62,2.82,0.46,0.18,0.34,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jahmyr Gibbs,00-0039139,RB,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,23.23,21.45,13.72,16.48,28.64,36.48,9.01,21.1,23.28,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ja'Marr Chase,00-0036900,WR,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,21.27,20.18,11.38,14.73,25.62,33.61,8.07,21.26,20.79,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bijan Robinson,00-0038542,RB,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,20.21,18.41,10.67,13.47,25.53,33.38,8.93,18.14,20.1,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Josh Allen,00-0034857,QB,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,19.95,19.64,8.81,14.63,25.08,29.3,7.74,20.12,19.9,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Amon-Ra St. Brown,00-0036963,WR,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,19.12,18.11,9.24,12.54,23.53,32.66,8.14,19.65,18.68,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Lamar Jackson,00-0034796,QB,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,19.03,18.9,8.16,13.58,24.24,28.98,7.9,19.38,18.0,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jonathan Taylor,00-0036223,RB,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,18.44,17.07,9.1,12.05,23.76,30.34,8.68,18.05,17.82,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Joe Burrow,00-0036442,QB,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,17.76,17.59,7.58,12.24,23.14,27.57,8.08,19.08,16.42,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Trevor Lawrence,00-0036971,QB,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,17.58,17.43,7.36,12.05,23.13,27.41,8.21,18.19,17.13,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chris Olave,00-0037239,WR,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,17.19,16.1,7.42,10.42,22.28,28.43,8.79,16.71,16.97,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Caleb Williams,00-0039918,QB,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,17.12,17.1,7.18,11.56,22.4,27.05,8.03,17.33,16.37,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chase Brown,00-0038597,RB,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,16.75,15.53,7.75,10.91,20.9,27.82,7.39,16.42,15.95,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jared Goff,00-0033106,QB,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,16.69,16.5,6.54,11.14,21.62,27.03,7.76,17.47,15.76,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Derrick Henry,00-0032764,RB,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,16.58,15.68,7.5,10.58,20.5,27.5,7.35,16.93,15.23,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Baker Mayfield,00-0034855,QB,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,16.57,16.48,6.56,11.17,21.69,26.47,7.79,17.51,15.31,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Shough,00-0040743,QB,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,16.38,16.36,6.27,10.84,21.5,26.33,7.89,15.3,16.58,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,James Cook,00-0037248,RB,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,15.68,15.18,6.54,10.12,19.55,26.28,6.98,15.56,15.38,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Daniel Jones,00-0035710,QB,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,15.58,15.38,5.79,10.21,20.69,25.81,7.77,15.33,15.38,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bryce Young,00-0039150,QB,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,15.31,15.35,5.62,9.68,20.44,25.13,7.97,16.0,14.63,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,C.J. Stroud,00-0039163,QB,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,15.19,15.25,5.47,9.54,20.25,24.74,7.93,15.97,14.22,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Travis Etienne,00-0036973,RB,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,14.98,14.55,5.5,9.8,19.08,24.9,6.87,13.68,14.61,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Nico Collins,00-0036554,WR,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,14.77,14.75,4.79,8.82,20.04,24.55,8.3,13.29,14.97,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tee Higgins,00-0036410,WR,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,14.72,14.43,4.82,8.81,20.02,24.61,8.3,14.23,14.88,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Drake London,00-0037238,WR,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,14.65,14.37,4.74,8.61,19.96,24.55,8.4,15.2,13.99,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Zay Flowers,00-0039064,WR,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,14.48,13.84,4.61,8.48,19.79,24.71,8.38,14.45,13.75,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,D'Andre Swift,00-0036275,RB,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,14.43,13.55,5.44,9.49,18.36,23.49,6.57,11.97,14.16,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cam Ward,00-0040676,QB,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,14.37,14.14,4.7,8.86,19.41,24.04,7.82,14.83,13.5,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Aaron Rodgers,00-0023459,QB,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,14.29,13.97,4.64,8.88,19.25,24.16,7.68,15.22,13.16,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Garrett Wilson,00-0037740,WR,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,14.21,13.53,4.21,8.61,19.41,24.34,8.0,14.69,13.63,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Breece Hall,00-0038120,RB,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,13.88,12.87,5.02,8.92,17.96,22.99,6.69,11.75,13.84,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Geno Smith,00-0030565,QB,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,13.42,12.97,3.78,8.01,17.97,23.95,7.38,12.87,13.27,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tetairoa McMillan,00-0040124,WR,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,13.37,12.34,4.41,7.46,18.38,23.96,8.09,13.31,12.64,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,David Montgomery,00-0035685,RB,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,12.88,11.27,4.58,8.25,17.29,22.09,6.7,12.49,12.3,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Luther Burden,00-0040735,WR,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,12.85,11.52,4.51,7.19,16.79,22.84,7.11,11.92,12.5,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Emeka Egbuka,00-0040129,WR,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,12.82,11.42,4.5,7.13,16.66,22.78,7.06,12.45,12.32,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bucky Irving,00-0039361,RB,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,12.77,10.97,4.51,7.96,17.09,22.29,6.76,12.14,12.19,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jameson Williams,00-0037240,WR,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,12.31,10.78,4.08,6.86,16.58,22.28,7.2,11.77,12.06,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Colston Loveland,00-0040126,TE,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,12.12,10.98,4.47,6.92,16.47,21.36,7.08,11.62,11.87,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Parker Washington,00-0038606,WR,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,12.08,10.82,3.92,6.67,16.83,22.4,7.53,10.86,12.23,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaylen Warren,00-0037228,RB,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,12.0,10.45,4.03,6.73,16.46,22.01,7.2,11.47,11.3,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,DK Metcalf,00-0035640,WR,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,11.37,9.85,3.16,5.79,16.58,21.54,7.99,11.29,11.05,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Warren,00-0040128,TE,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,11.27,10.18,3.59,6.17,15.42,20.73,6.85,10.73,11.19,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Quinshon Judkins,00-0040784,RB,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,11.12,9.73,3.21,5.91,15.65,20.4,7.22,10.12,10.87,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tua Tagovailoa,00-0036212,QB,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,10.93,10.4,1.15,5.54,15.73,21.32,7.54,12.91,9.25,,,+0.0 (Michael Penix Jr. OUT),2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tony Pollard,00-0035261,RB,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,10.93,9.49,3.14,5.82,15.39,20.09,7.09,10.68,10.03,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bhayshul Tuten,00-0040719,RB,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,10.87,9.52,3.25,5.9,15.42,20.11,7.05,10.36,10.69,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Deshaun Watson,00-0033537,QB,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,10.78,10.26,1.0,5.39,15.58,21.18,7.54,11.86,9.66,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chuba Hubbard,00-0036555,RB,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,10.78,9.37,3.02,5.67,15.23,19.97,7.08,9.57,10.51,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rome Odunze,00-0039919,WR,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,10.77,9.53,2.61,4.94,15.58,20.01,7.88,11.06,10.03,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Josh Downs,00-0038997,WR,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,10.71,9.43,2.68,5.05,15.38,20.05,7.65,10.15,10.42,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Wan'Dale Robinson,00-0038117,WR,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,10.69,9.43,2.68,5.05,15.26,20.05,7.56,10.46,10.3,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,D.J. Moore,00-0034827,WR,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,10.61,9.42,2.53,4.97,15.3,19.73,7.65,10.34,10.27,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Michael Pittman,00-0036252,WR,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,10.55,9.35,2.46,4.94,15.32,19.75,7.69,9.86,10.24,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Sam LaPorta,00-0039065,TE,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,10.49,9.52,2.9,5.43,14.74,19.91,6.9,10.36,10.01,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rico Dowdle,00-0036139,RB,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,10.42,8.89,2.92,5.08,14.7,19.93,7.13,10.31,9.47,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chris Godwin,00-0033921,WR,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,10.33,9.22,2.5,4.86,14.71,19.53,7.3,10.28,9.55,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Juwan Johnson,00-0036040,TE,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,10.31,9.33,2.76,5.28,14.62,19.69,6.92,9.7,10.07,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Alec Pierce,00-0037664,WR,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,10.23,9.02,2.38,4.58,14.51,19.82,7.36,10.48,9.74,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kyle Pitts,00-0036970,TE,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,10.23,9.28,2.66,5.19,14.5,19.64,6.9,9.99,10.25,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Carnell Tate,,WR,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,10.16,8.84,2.44,4.76,13.96,19.69,6.81,11.07,8.99,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jonathon Brooks,00-0039344,RB,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,10.05,8.58,3.01,5.14,14.34,18.75,6.81,9.22,9.79,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mark Andrews,00-0034753,TE,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,9.97,8.9,2.73,5.08,14.25,19.1,6.79,9.88,9.37,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaguars,,DST,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,9.8,9.8,3.43,6.37,13.23,16.66,4.9,9.43,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jakobi Meyers,00-0034960,WR,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,9.74,8.39,2.66,4.57,12.89,20.27,6.16,9.84,8.92,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kenneth Gainwell,00-0036919,RB,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,9.54,8.06,2.95,4.74,13.49,18.27,6.48,9.27,,,,no DK props posted,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Khalil Shakir,00-0037261,WR,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,9.28,7.92,2.43,4.28,12.32,19.69,5.95,9.53,8.43,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Harold Fannin,00-0040663,TE,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,9.28,8.18,1.95,4.46,13.35,18.11,6.58,10.34,8.7,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jake Bates,,K,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,9.26,9.26,3.24,6.02,12.5,15.74,4.63,8.81,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ka'imi Fairbairn,,K,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,9.26,9.26,3.24,6.02,12.5,15.74,4.63,10.29,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jalen Coker,00-0039491,WR,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,9.19,7.72,2.3,4.15,12.6,19.45,6.26,8.55,8.98,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kyle Monangai,00-0040236,RB,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,9.14,7.55,2.5,4.4,12.31,17.94,5.86,8.27,8.87,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Keenan Allen,00-0030279,WR,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,9.1,7.55,2.13,4.02,12.55,19.42,6.31,8.22,8.84,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brian Thomas Jr.,00-0039893,WR,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,9.09,7.52,2.13,4.02,12.54,19.41,6.31,9.83,8.07,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Alvin Kamara,00-0033906,RB,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,8.92,7.54,2.32,4.3,11.95,17.7,5.67,8.65,,Q,Q,no DK props posted,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyjae Spears,00-0039032,RB,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,8.9,7.44,2.33,4.31,11.87,17.72,5.59,8.45,8.34,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brenton Strange,00-0038935,TE,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,8.86,7.77,1.5,3.78,12.96,17.54,6.79,8.33,8.68,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cam Little,,K,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,8.8,8.8,3.08,5.72,11.88,14.96,4.4,7.14,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Loop,,K,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,8.61,8.61,3.01,5.6,11.63,14.64,4.31,8.26,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Evan McPherson,,K,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,8.61,8.61,3.01,5.6,11.63,14.64,4.31,7.52,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dalton Kincaid,00-0038933,TE,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,8.6,7.82,1.45,3.78,12.32,16.9,6.32,7.9,8.6,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chris Boswell,,K,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,8.6,8.6,3.01,5.59,11.61,14.62,4.3,7.3,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cairo Santos,,K,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,8.55,8.55,2.99,5.56,11.54,14.53,4.27,7.53,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dalton Schultz,00-0034383,TE,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,8.45,7.65,1.4,3.56,12.07,16.92,6.31,7.69,8.22,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Spencer Shrader,,K,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,8.44,8.44,2.95,5.48,11.39,14.34,4.22,7.57,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Devaughn Vele,00-0039424,WR,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,8.35,7.03,1.66,4.09,12.08,16.87,5.92,6.98,8.59,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Titans,,DST,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,8.35,8.35,2.92,5.43,11.27,14.2,4.18,8.63,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cade Otton,00-0038129,TE,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,8.31,7.42,1.75,3.71,11.42,16.78,5.71,8.03,7.56,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jalen McMillan,00-0039855,WR,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,8.18,6.94,1.62,3.88,11.83,16.57,5.89,7.32,7.9,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Blake Grupe,,K,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,8.12,8.12,2.84,5.28,10.96,13.81,4.06,7.79,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chase McLaughlin,,K,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,8.11,8.11,2.84,5.27,10.95,13.79,4.06,7.21,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Joey Slye,,K,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,7.97,7.97,2.79,5.18,10.76,13.55,3.99,7.74,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Daniel Carlson,,K,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,7.84,7.84,2.75,5.1,10.59,13.34,3.92,6.81,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,KC Concepcion,,WR,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,7.71,6.76,1.8,3.84,10.66,14.5,5.05,6.91,7.65,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Bass,,K,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,7.69,7.69,2.69,5.0,10.38,13.07,3.84,5.8,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jerry Jeudy,00-0036407,WR,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,7.62,6.5,1.62,3.58,10.61,14.4,5.21,8.29,6.6,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Woody Marks,00-0040583,RB,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,7.58,5.65,1.69,3.32,10.27,16.67,5.15,7.3,6.96,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ryan Fitzgerald,,K,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,7.56,7.56,2.65,4.92,10.21,12.86,3.78,6.19,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Steelers,,DST,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,7.32,7.32,2.56,4.76,9.88,12.44,3.66,7.35,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Calvin Ridley,00-0034837,WR,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,7.19,6.06,0.83,2.95,10.12,14.89,5.31,7.68,6.35,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Nick Folk,,K,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,7.13,7.13,2.5,4.63,9.62,12.12,3.56,6.07,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Pat Freiermuth,00-0036894,TE,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,6.98,6.11,1.18,2.69,9.7,14.37,5.19,7.26,6.32,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jets,,DST,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,6.98,6.98,2.44,4.54,9.42,11.87,3.49,6.57,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Adonai Mitchell,00-0039890,WR,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,6.82,5.49,0.4,2.56,9.69,14.35,5.28,5.93,6.7,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Nick Westbrook-Ikhine,00-0036182,WR,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,6.79,5.44,0.35,2.51,9.67,14.3,5.3,6.53,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rashod Bateman,00-0036550,WR,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,6.7,5.07,0.02,2.25,9.57,15.62,5.43,7.39,5.74,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaylin Noel,00-0040138,WR,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,6.62,5.01,0.0,2.26,9.71,15.37,5.51,6.09,6.37,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mike Gesicki,00-0034829,TE,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,6.54,5.28,0.6,2.43,9.7,14.18,5.38,6.25,5.68,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Andre Szmyt,,K,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,6.52,6.52,2.28,4.24,8.81,11.09,3.26,5.64,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bears,,DST,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,6.5,6.5,2.27,4.22,8.77,11.04,3.25,6.86,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chris Rodriguez,00-0038611,RB,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,6.47,4.75,1.31,2.55,9.11,13.11,4.86,5.32,6.35,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Lions,,DST,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,6.4,6.4,2.24,4.16,8.64,10.88,3.2,7.7,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Gunnar Helm,00-0040584,TE,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,6.26,4.85,0.38,2.17,9.01,13.69,5.06,5.92,5.62,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mason Taylor,00-0040736,TE,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,6.25,4.74,0.39,2.19,8.92,13.71,4.98,6.22,5.37,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Andrei Iosivas,00-0038619,WR,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,6.23,4.82,0.37,2.43,8.4,13.86,4.43,5.36,5.92,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Denzel Boston,,WR,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,6.17,4.82,0.35,2.42,8.33,13.75,4.37,5.88,5.67,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Darren Waller,00-0031610,TE,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,6.17,4.66,0.31,2.11,8.84,13.63,4.98,5.74,5.8,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bills,,DST,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,6.16,6.16,2.16,4.0,8.32,10.47,3.08,6.46,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kenyon Sadiq,,TE,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,6.15,5.03,0.31,2.1,8.74,13.54,4.92,5.71,5.7,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ravens,,DST,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,6.15,6.15,2.15,4.0,8.31,10.46,3.08,6.62,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bengals,,DST,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,5.94,5.94,2.08,3.86,8.02,10.1,2.97,6.39,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Xavier Hutchinson,00-0038618,WR,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,5.93,4.26,0.12,1.89,8.16,14.94,4.64,6.04,5.27,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Texans,,DST,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,5.93,5.93,2.08,3.86,8.01,10.09,2.97,7.29,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kayshon Boutte,00-0038608,WR,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,5.9,4.28,0.16,1.91,8.11,14.97,4.59,6.02,5.12,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Omar Cooper Jr.,,WR,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,5.86,4.12,0.03,1.74,8.21,14.8,4.79,5.66,5.55,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Elic Ayomanor,00-0040170,WR,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,5.85,4.09,0.0,1.69,8.19,14.79,4.81,5.91,5.55,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Falcons,,DST,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,5.81,5.81,2.03,3.78,7.85,9.88,2.91,6.77,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Xavier Legette,00-0039342,WR,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,5.8,4.02,0.0,1.6,8.05,14.97,4.78,5.7,5.28,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Samaje Perine,00-0033526,RB,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,5.66,3.95,1.02,2.07,8.1,12.18,4.46,5.35,5.15,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dylan Sampson,00-0040162,RB,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,5.61,3.88,0.92,1.95,7.97,12.02,4.46,5.34,5.34,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Braelon Allen,00-0039794,RB,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,5.45,3.69,0.83,1.93,7.74,12.06,4.3,5.3,4.86,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Zavier Scott,00-0038440,RB,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,5.37,3.53,0.75,1.85,7.58,12.14,4.24,5.11,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chimere Dike,00-0040705,WR,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,5.37,3.71,0.05,1.55,7.55,13.44,4.44,5.56,5.07,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Justice Hill,00-0034975,RB,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,5.2,3.41,0.56,1.61,7.56,12.11,4.41,5.37,4.6,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Browns,,DST,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,5.12,5.12,1.79,3.33,6.91,8.71,2.56,6.28,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brian Robinson,00-0037746,RB,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,5.11,3.29,0.44,1.45,7.13,11.99,4.21,4.75,4.63,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ja'Kobi Lane,,WR,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,5.07,3.78,0.41,1.75,6.91,11.24,3.82,4.79,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,John Metchie,00-0037614,WR,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,5.07,3.77,0.4,1.74,6.9,11.22,3.82,4.72,4.79,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Keon Coleman,00-0039901,WR,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,5.05,3.76,0.4,1.74,6.9,11.22,3.82,4.55,4.78,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Panthers,,DST,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,4.99,4.99,1.75,3.25,6.74,8.49,2.5,5.17,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Sione Vaki,00-0039364,RB,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,4.92,2.98,0.44,1.35,6.88,11.72,4.1,4.39,4.66,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Travis Hunter,00-0040718,WR,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,4.92,3.85,0.59,1.83,6.74,10.15,3.64,4.27,4.67,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Germie Bernard,,WR,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,4.86,3.92,0.68,1.86,6.55,10.11,3.47,4.42,4.59,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jacob Saylors,00-0038896,RB,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,4.83,3.21,0.41,1.2,6.65,11.55,4.04,4.07,4.56,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bryce Lance,,WR,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,4.72,3.76,0.58,1.74,6.65,9.92,3.64,4.31,4.45,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Isaac TeSlaa,00-0040669,WR,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,4.66,3.67,0.6,1.75,6.29,9.86,3.36,4.44,4.37,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ty Johnson,00-0035537,RB,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,4.6,3.06,0.35,1.15,6.42,11.31,3.91,4.35,4.33,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Darnell Washington,00-0038558,TE,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,4.6,3.03,0.11,1.12,6.81,11.05,4.21,4.45,4.05,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jahan Dotson,00-0037741,WR,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,4.5,3.43,0.32,1.41,5.98,9.86,3.38,4.26,3.99,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cole Kmet,00-0036290,TE,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,4.4,2.92,0.3,1.47,6.43,9.89,3.67,3.85,3.96,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ted Hurst,,WR,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,4.35,3.19,0.08,0.99,6.05,10.03,3.75,3.72,4.05,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Olamide Zaccheaus,00-0035208,WR,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,4.35,3.11,0.15,1.09,6.11,10.11,3.72,4.03,4.1,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dawson Knox,00-0035689,TE,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,4.33,2.86,0.24,1.31,6.36,9.83,3.75,4.47,3.67,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tommy Tremble,00-0037005,TE,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,4.33,2.82,0.25,1.41,6.29,9.83,3.61,3.83,3.93,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Colts,,DST,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,4.32,4.32,1.51,2.81,5.83,7.34,2.16,5.29,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Noah Fant,00-0035644,TE,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,4.29,2.77,0.22,1.38,6.26,9.81,3.61,3.9,4.03,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jahdae Walker,00-0040277,WR,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,4.26,3.0,0.0,0.74,5.97,10.17,3.87,4.34,3.98,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brock Wright,00-0036754,TE,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,4.2,2.8,0.15,1.38,6.1,9.47,3.5,4.41,3.98,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,AJ Dillon,00-0036265,RB,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,4.1,2.78,0.16,0.98,5.85,10.53,3.61,3.83,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Roman Wilson,00-0039739,WR,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,4.09,2.62,0.0,0.69,5.92,10.41,3.88,3.71,3.81,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kalif Raymond,00-0032464,WR,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,4.0,2.41,0.0,0.58,5.92,10.24,3.95,3.17,3.82,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Saints,,DST,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,3.98,3.98,1.39,2.59,5.38,6.77,1.99,5.44,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kendre Miller,00-0038551,RB,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,3.95,2.6,0.0,0.69,5.92,10.36,3.88,3.34,3.69,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Buccaneers,,DST,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,3.93,3.93,1.37,2.55,5.3,6.68,1.96,5.47,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tanner Hudson,00-0034613,TE,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,3.77,2.58,0.47,1.37,5.17,8.62,2.82,3.26,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ja'Tavion Sanders,00-0039356,TE,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,3.68,2.53,0.32,1.19,5.11,8.94,2.91,3.33,3.37,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Drew Sample,00-0035631,TE,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,3.65,2.47,0.31,1.26,5.02,8.84,2.78,2.84,3.14,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Erick All,00-0039814,TE,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,3.63,2.45,0.3,1.26,4.94,8.84,2.72,2.65,3.12,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaleel McLaughlin,00-0038794,RB,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,3.57,2.25,0.0,0.4,5.45,9.98,3.74,3.3,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Daniel Bellinger,00-0038115,TE,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,3.56,2.38,0.22,1.2,4.91,8.79,2.75,3.25,3.15,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mo Alie-Cox,00-0033217,TE,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,3.51,2.29,0.18,1.05,4.93,8.75,2.88,3.06,3.19,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Sean Tucker,00-0038951,RB,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,3.49,2.1,0.0,0.32,5.33,9.99,3.71,3.01,3.22,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Casey Washington,00-0039394,WR,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,3.48,1.98,0.0,0.25,5.0,9.11,3.52,3.21,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Josh Palmer,00-0036988,WR,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,3.38,2.02,0.0,0.25,4.71,8.9,3.31,3.11,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jared Wayne,00-0038728,WR,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,3.3,1.88,0.0,0.16,4.62,8.85,3.3,3.03,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Isaiah Davis,00-0039798,RB,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,3.26,1.94,0.0,0.33,4.81,9.67,3.32,2.55,3.0,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Durham Smythe,00-0034798,TE,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,3.13,2.02,0.0,0.87,4.41,8.02,2.62,2.7,2.78,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Austin Hooper,00-0032392,TE,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,3.09,2.01,0.0,0.94,4.31,7.81,2.5,2.84,2.87,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ray Davis,00-0039875,RB,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,3.08,1.8,0.0,0.27,4.53,9.42,3.16,2.53,2.82,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tez Johnson,00-0040237,WR,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,3.07,1.85,0.0,0.34,4.23,8.44,2.88,2.44,2.76,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jeremy Ruckert,00-0037805,TE,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,3.07,1.88,0.0,0.68,4.34,7.91,2.71,2.64,2.67,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Isaiah Bond,00-0040782,WR,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,3.04,1.69,0.0,0.25,4.15,8.43,2.89,2.66,2.79,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mitchell Evans,00-0040187,TE,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,3.02,1.81,0.0,0.62,4.23,8.1,2.68,2.74,2.7,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Audric Estime,,RB,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,3.0,1.79,0.0,0.26,4.45,9.27,3.11,2.34,2.73,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Nate Boerkircher,,TE,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,2.94,1.77,0.0,0.55,4.2,8.04,2.7,2.76,2.75,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ben Skowronek,00-0036862,WR,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,2.91,1.56,0.0,0.17,4.25,8.24,3.02,2.6,2.63,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Charlie Woerner,00-0036429,TE,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,2.9,1.71,0.0,0.51,4.19,7.74,2.73,2.76,2.68,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Devontez Walker,00-0039792,WR,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,2.86,1.51,0.0,0.22,4.09,8.19,2.87,2.45,2.58,,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Spencer Rattler,00-0039376,QB,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,2.72,1.27,0.0,0.24,4.36,9.66,3.06,2.43,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Andrew Ogletree,00-0037292,TE,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,2.69,1.53,0.0,0.05,3.95,7.14,2.89,2.36,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Isaiah Williams,00-0039451,WR,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,2.65,1.38,0.0,0.24,3.85,7.58,2.67,2.04,2.36,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Zavion Thomas,,WR,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,2.6,1.3,0.0,0.27,3.81,7.5,2.62,2.17,2.31,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Marlin Klein,,TE,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,2.59,1.45,0.0,0.0,3.86,7.02,2.86,2.32,2.3,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Blake Whiteheart,00-0038710,TE,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,2.58,1.45,0.0,0.0,3.86,7.05,2.86,2.51,2.38,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ashton Dulin,00-0035021,WR,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,2.54,1.22,0.0,0.2,3.72,7.41,2.61,2.0,2.26,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Foster Moreau,00-0034981,TE,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,2.53,1.46,0.0,0.03,3.73,6.91,2.74,2.14,2.25,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Payne Durham,00-0039050,TE,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,2.53,1.61,0.0,0.08,3.57,6.85,2.58,2.24,2.08,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cade Stover,00-0039359,TE,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,2.43,1.39,0.0,0.0,3.53,6.75,2.61,2.11,2.14,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ameer Abdullah,00-0032104,RB,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,2.39,1.43,0.0,0.25,3.17,6.78,2.16,1.96,2.13,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tim Patrick,00-0033375,WR,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,2.38,1.3,0.0,0.0,3.51,7.06,2.6,2.21,2.09,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Riley Nowakowski,,TE,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,2.34,1.47,0.0,0.0,3.33,6.64,2.47,2.13,2.01,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Seth McGowan,,RB,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,2.33,1.43,0.0,0.3,3.05,6.16,2.03,1.86,2.07,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jimmy Horn,00-0040218,WR,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,2.3,1.23,0.0,0.0,3.37,6.95,2.5,1.78,2.03,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jackson Hawes,00-0040194,TE,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,2.23,1.36,0.0,0.0,3.31,6.55,2.45,1.95,1.95,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,DJ Giddens,00-0040179,RB,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,2.22,1.38,0.0,0.35,2.93,5.8,1.9,1.8,1.95,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Zachariah Branch,,WR,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,2.22,1.02,0.0,0.06,3.2,6.75,2.33,1.58,1.96,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jack Endries,,TE,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,2.09,1.44,0.0,0.19,2.64,5.99,1.81,1.22,1.55,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,LeQuint Allen,00-0040238,RB,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,2.08,1.12,0.0,0.44,2.82,4.97,1.76,1.82,,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Matthew Hibner,,TE,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,2.0,1.3,0.0,0.04,2.55,6.45,1.86,1.6,1.62,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Shedeur Sanders,00-0040668,QB,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,1.98,0.53,0.0,0.0,3.63,8.92,2.69,1.71,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Colbie Young,,WR,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,1.85,0.41,0.0,0.01,2.82,5.58,2.08,0.57,1.53,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Davis Mills,00-0036898,QB,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,1.84,0.38,0.0,0.0,3.48,8.77,2.58,1.54,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Barion Brown,,WR,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,1.82,0.49,0.0,0.0,2.78,5.56,2.06,1.19,1.55,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Josh Cuevas,,TE,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,1.81,1.14,0.0,0.0,2.27,6.2,1.68,1.5,1.43,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rasheen Ali,00-0039796,RB,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,1.76,0.78,0.0,0.29,2.39,4.41,1.55,1.39,1.49,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Raheim Sanders,00-0040466,RB,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,1.72,0.76,0.0,0.28,2.33,4.35,1.52,1.44,1.46,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Malachi Corley,00-0039920,WR,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,1.7,0.25,0.0,0.0,2.56,5.36,1.9,1.37,1.44,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Elijah Sarratt,,WR,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,1.69,0.27,0.0,0.0,2.56,5.31,1.89,1.22,1.4,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kenny Pickett,00-0038102,QB,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,1.62,0.17,0.0,0.0,3.26,8.55,2.41,1.3,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kylen Granson,00-0036876,TE,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,1.6,0.95,0.0,0.0,2.03,5.93,1.5,1.07,1.1,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Joe Flacco,00-0026158,QB,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,1.54,0.09,0.0,0.0,3.18,8.47,2.35,1.13,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Nicholas Singleton,,RB,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,1.5,0.52,0.0,0.17,2.01,3.63,1.36,1.05,1.23,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Roschon Johnson,00-0039021,RB,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,1.49,0.52,0.0,0.17,2.0,3.63,1.35,1.11,1.23,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tanner Koziol,,TE,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,1.44,0.78,0.0,0.0,1.86,5.76,1.38,1.09,1.08,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mason Rudolph,00-0034771,QB,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,1.41,0.0,0.0,0.0,3.05,8.34,2.26,1.07,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Eli Heidenreich,,RB,PIT,ATL,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,1.4,0.52,0.0,0.17,1.96,3.57,1.33,1.07,1.14,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Skyler Bell,,WR,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,1.38,0.2,0.0,0.0,2.1,4.51,1.56,0.89,1.09,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kameron Johnson,00-0039589,WR,TB,CIN,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,1.37,0.2,0.0,0.0,2.06,4.44,1.53,1.05,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Laquon Treadwell,00-0032951,WR,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,1.37,0.2,0.0,0.0,2.08,4.46,1.54,0.76,1.07,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brycen Tremayne,00-0038840,WR,CAR,CHI,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,1.34,0.17,0.0,0.0,2.04,4.42,1.51,0.96,1.04,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,David Martin-Robinson,00-0039648,TE,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,1.31,0.63,0.0,0.0,1.74,5.53,1.29,0.79,0.8,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tahj Brooks,00-0040208,RB,CIN,TB,Tampa Bay Buccaneers @ Cincinnati Bengals,Sun 09/13 01:00 PM ET,1.26,0.45,0.0,0.12,1.74,3.41,1.2,0.86,1.0,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Sam Roush,,TE,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,1.24,0.64,0.0,0.0,1.69,4.71,1.25,0.8,0.75,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Andrew Beck,00-0034959,RB,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,1.22,0.41,0.0,0.08,1.67,3.34,1.18,1.06,0.95,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Keleki Latu,00-0040363,TE,BUF,HOU,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,1.21,0.5,0.0,0.0,1.66,5.46,1.23,0.83,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Huntley,00-0035993,QB,BAL,IND,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,1.15,0.0,0.0,0.0,2.79,8.08,2.07,0.81,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Julius Chestnut,00-0037594,RB,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,1.13,0.33,0.0,0.0,1.5,3.21,1.11,0.46,0.87,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Michael Burton,,RB,CLE,JAX,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,1.13,0.33,0.0,0.0,1.49,3.2,1.1,1.14,0.86,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cade Klubnik,,QB,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,1.09,0.0,0.0,0.0,2.73,8.02,2.03,0.69,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tay Martin,00-0037524,WR,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,1.09,0.16,0.0,0.0,1.47,3.6,1.09,0.55,0.8,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,British Brooks,00-0039603,RB,HOU,BUF,Buffalo Bills @ Houston Texans,Sun 09/13 01:00 PM ET,1.04,0.34,0.0,0.0,1.4,2.99,1.03,0.69,0.78,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Anthony Richardson,00-0039164,QB,IND,BAL,Baltimore Ravens @ Indianapolis Colts,Sun 09/13 01:00 PM ET,0.99,0.0,0.0,0.0,2.64,7.93,1.95,0.62,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Quinn Ewers,00-0040234,QB,JAX,CLE,Cleveland Browns @ Jacksonville Jaguars,Sun 09/13 01:00 PM ET,0.88,0.0,0.0,0.0,2.53,7.82,1.87,0.54,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Joshua Dobbs,00-0033949,QB,DET,NO,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,0.85,0.0,0.0,0.0,2.49,7.78,1.84,0.46,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Oscar Delp,,TE,NO,DET,New Orleans Saints @ Detroit Lions,Sun 09/13 01:00 PM ET,0.82,0.22,0.0,0.0,1.27,4.29,0.94,0.15,0.33,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mitchell Trubisky,00-0033869,QB,TEN,NYJ,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,0.76,0.0,0.0,0.0,2.4,7.69,1.78,0.34,,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kene Nwangwu,00-0036842,RB,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,0.69,0.01,0.0,0.0,0.92,2.64,0.68,0.34,0.43,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyson Bagent,00-0038416,QB,CHI,CAR,Chicago Bears @ Carolina Panthers,Sun 09/13 01:00 PM ET,0.63,0.0,0.0,0.0,2.27,7.56,1.68,0.23,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Arian Smith,00-0040582,WR,NYJ,TEN,New York Jets @ Tennessee Titans,Sun 09/13 01:00 PM ET,0.61,0.0,0.0,0.0,0.57,2.77,0.42,0.27,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Michael Penix Jr.,00-0039917,QB,ATL,PIT,Atlanta Falcons @ Pittsburgh Steelers,Sun 09/13 01:00 PM ET,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.22,,O,OUT,OUT (espn+sleeper); was 0.6,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jalen Hurts,00-0036389,QB,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,20.16,19.72,9.15,14.62,25.42,29.83,8.0,21.33,19.41,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Justin Herbert,00-0036355,QB,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,18.63,18.39,7.82,13.11,23.88,28.77,7.98,20.15,17.36,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Saquon Barkley,00-0034844,RB,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,17.72,16.55,8.58,11.95,22.94,29.0,8.14,18.61,16.57,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Devon Achane,00-0039040,RB,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,17.2,16.04,8.01,11.39,21.91,28.52,7.79,17.23,16.41,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ashton Jeanty,00-0040122,RB,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,16.86,15.61,7.86,11.09,21.07,28.04,7.39,15.72,16.59,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kyler Murray,00-0035228,QB,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,16.64,16.55,6.59,11.34,21.37,26.45,7.43,15.96,16.51,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Omarion Hampton,00-0040666,RB,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,16.64,15.71,7.68,10.75,20.68,27.66,7.36,16.33,15.92,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Justin Jefferson,00-0036322,WR,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,15.83,14.75,6.11,9.32,20.98,26.17,8.64,15.03,15.52,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brock Bowers,00-0039338,TE,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,15.36,14.31,7.36,10.29,19.74,24.48,7.0,15.79,15.48,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jordan Love,00-0036264,QB,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,15.07,15.08,5.4,9.34,20.08,24.58,7.96,13.47,15.46,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jayden Daniels,00-0039910,QB,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,14.97,14.99,5.3,9.24,19.99,24.48,7.96,16.05,13.53,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,DeVonta Smith,00-0036912,WR,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,14.7,14.7,4.78,8.65,19.99,24.51,8.4,14.15,14.27,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jacoby Brissett,00-0033119,QB,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,14.69,14.65,5.22,9.13,19.67,24.11,7.8,15.04,14.14,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Trey McBride,00-0037744,TE,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,14.26,13.21,6.29,9.14,18.66,23.4,7.06,14.41,14.19,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Malik Willis,00-0038128,QB,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,13.87,13.6,4.38,8.56,18.78,23.54,7.56,14.98,12.59,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ladd McConkey,00-0039915,WR,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,13.49,12.5,4.57,7.85,18.59,23.57,7.95,13.48,12.65,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kirk Cousins,00-0029604,QB,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,13.35,12.94,3.89,8.03,17.99,23.83,7.38,12.17,13.59,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jeremiyah Love,,RB,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,11.92,10.24,3.93,6.73,16.45,22.0,7.2,11.25,11.66,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,MarShawn Lloyd,00-0039811,RB,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,11.43,9.99,3.4,6.15,15.96,21.31,7.27,10.64,11.0,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Christian Watson,00-0038124,WR,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,11.42,9.86,3.2,5.76,16.75,21.58,8.14,10.15,11.59,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Quentin Johnston,00-0038544,WR,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,10.91,9.6,2.95,5.35,15.55,20.35,7.56,10.34,10.48,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Marvin Harrison Jr.,00-0039849,WR,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,10.82,9.46,2.69,5.07,15.64,20.28,7.83,10.21,10.7,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Terry McLaurin,00-0035659,WR,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,10.79,9.42,2.64,4.98,15.62,20.07,7.88,10.83,10.38,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dallas Goedert,00-0034351,TE,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,10.52,9.63,2.98,5.42,14.61,19.94,6.81,12.2,9.54,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jordan Addison,00-0038994,WR,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,10.33,9.15,2.37,4.81,14.98,19.44,7.53,9.81,10.15,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cameron Dicker,,K,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,10.23,10.23,3.58,6.65,13.8,17.38,5.11,10.64,,Q,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Aaron Jones,00-0033293,RB,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,10.21,8.61,3.07,5.1,14.47,19.1,6.94,10.47,9.05,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tucker Kraft,00-0038996,TE,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,9.78,8.73,2.58,4.91,13.84,18.75,6.62,8.17,10.13,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Michael Wilson,00-0038559,WR,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,9.62,8.18,2.52,4.3,12.86,21.13,6.35,9.91,8.93,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jayden Reed,00-0039146,WR,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,9.54,8.12,2.55,4.48,12.6,20.02,6.02,8.86,9.25,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tre Tucker,00-0038563,WR,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,9.53,8.08,2.56,4.46,12.62,20.03,6.04,8.65,9.48,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jordan Mason,00-0037525,RB,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,9.4,7.84,2.79,4.5,13.04,18.4,6.33,8.27,9.03,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Stefon Diggs,00-0031588,WR,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,9.3,7.93,2.44,4.33,12.33,19.7,5.92,9.11,8.87,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Matthew Golden,00-0040667,WR,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,8.88,7.32,2.03,3.88,12.34,18.52,6.27,7.59,8.98,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Will Reichard,,K,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,8.57,8.57,3.0,5.57,11.56,14.56,4.28,8.31,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chargers,,DST,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,8.5,8.5,2.98,5.53,11.48,14.45,4.25,8.69,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rachaad White,00-0037256,RB,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,8.33,6.92,2.14,3.75,11.26,17.25,5.57,7.27,8.01,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jacory Croskey-Merritt,00-0040242,RB,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,8.26,6.86,2.15,3.7,11.12,17.09,5.5,7.41,7.79,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jake Elliott,,K,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,8.07,8.07,2.83,5.25,10.9,13.73,4.04,7.47,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,T.J. Hockenson,00-0035229,TE,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,8.02,7.09,1.8,3.53,11.06,16.5,5.58,7.98,7.47,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Matt Gay,,K,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,8.02,8.02,2.81,5.22,10.83,13.64,4.01,6.4,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Riley Patterson,,K,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,7.89,7.89,2.76,5.13,10.65,13.41,3.94,6.94,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Trey Smack,,K,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,7.83,7.83,2.74,5.09,10.57,13.31,3.91,6.21,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Raiders,,DST,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,7.69,7.69,2.69,5.0,10.37,13.06,3.84,7.47,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Mike Washington Jr.,,RB,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,7.51,5.67,1.61,3.23,10.19,16.6,5.15,5.55,7.24,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Eagles,,DST,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,7.5,7.5,2.63,4.88,10.13,12.76,3.75,7.7,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Malik Washington,00-0039880,WR,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,7.28,5.97,0.8,2.99,10.34,15.62,5.44,7.67,6.62,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chad Ryland,,K,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,7.18,7.18,2.51,4.67,9.7,12.21,3.59,6.78,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Oronde Gadsden,00-0040189,TE,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,7.11,6.34,1.28,2.85,10.0,14.54,5.29,7.06,6.98,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dontayvion Wicks,00-0038393,WR,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,6.99,5.79,0.52,2.57,9.71,14.58,5.29,6.41,6.67,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Allgeier,00-0037263,RB,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,6.98,5.34,1.59,2.97,9.44,14.31,4.79,5.99,6.71,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Drew Stevens,,K,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,6.86,6.86,2.4,4.46,9.26,11.66,3.43,5.86,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Greg Dulcich,00-0037252,TE,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,6.83,5.91,0.95,2.64,9.54,14.11,5.11,7.35,6.17,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tre Harris,00-0040727,WR,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,6.73,5.32,0.27,2.54,9.61,14.39,5.24,5.9,6.42,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jalen Nailor,00-0037291,WR,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,6.65,5.05,0.0,2.28,9.75,15.41,5.53,6.72,6.1,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jauan Jennings,00-0036259,WR,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,6.57,5.01,0.05,2.49,9.71,15.26,5.35,6.42,6.15,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Makai Lemon,,WR,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,6.54,5.01,0.02,2.44,9.49,15.19,5.22,6.68,5.78,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chigoziem Okonkwo,,TE,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,6.48,5.51,0.64,2.34,9.31,14.21,5.16,6.35,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dolphins,,DST,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,6.3,6.3,2.21,4.1,8.51,10.71,3.15,6.86,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Caleb Douglas,,WR,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,6.12,4.62,0.18,2.1,8.59,14.5,4.81,5.09,6.12,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,David Njoku,00-0033885,TE,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,6.12,4.79,0.22,2.01,8.85,13.65,5.06,5.95,5.86,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Packers,,DST,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,6.12,6.12,2.14,3.98,8.27,10.41,3.06,6.36,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chris Brooks,00-0038685,RB,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,6.0,4.25,1.33,2.4,8.52,12.74,4.53,5.12,5.73,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jalen Tolbert,00-0037666,WR,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,5.76,3.97,0.0,1.52,7.85,15.59,4.68,5.57,5.49,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Keaton Mitchell,00-0038454,RB,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,5.69,3.98,1.08,2.17,8.09,12.28,4.38,4.67,5.43,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Michael Mayer,00-0039066,TE,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,5.31,3.92,0.27,1.59,7.48,12.48,4.37,4.84,4.92,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tank Bigsby,00-0038555,RB,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,5.14,3.42,0.42,1.44,7.3,11.97,4.34,4.72,4.87,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kimani Vidal,00-0039391,RB,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,5.07,3.05,0.46,1.42,7.14,11.88,4.24,4.08,4.8,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Vikings,,DST,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,5.03,5.03,1.76,3.27,6.79,8.55,2.52,6.2,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Marquise Brown,00-0035662,WR,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,4.98,3.83,0.5,1.79,6.93,10.3,3.81,4.74,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kendrick Bourne,00-0033307,WR,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,4.95,3.92,0.63,1.9,6.65,10.21,3.52,4.05,4.91,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Commanders,,DST,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,4.87,4.87,1.7,3.16,6.57,8.27,2.43,5.36,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jonnu Smith,00-0033858,TE,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,4.84,3.39,0.25,1.33,7.08,11.35,4.26,4.39,4.53,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Antonio Williams,,WR,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,4.64,3.69,0.59,1.72,6.25,9.82,3.35,4.28,4.39,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Charlie Kolar,00-0038046,TE,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,4.41,2.75,0.07,1.11,6.44,10.28,3.94,3.54,4.41,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jack Bech,00-0040729,WR,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,4.39,3.19,0.21,1.11,6.18,9.93,3.76,4.86,3.53,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaylen Wright,00-0039874,RB,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,4.21,2.99,0.31,1.13,5.8,9.95,3.47,3.42,3.95,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Malik Benson,,WR,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,3.95,2.38,0.0,0.55,5.83,9.82,3.91,3.49,3.67,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cardinals,,DST,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,3.82,3.82,1.34,2.48,5.15,6.49,1.91,5.52,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Josh Oliver,00-0035249,TE,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,3.58,2.43,0.23,1.16,5.0,8.72,2.84,3.22,3.29,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Elijah Higgins,00-0039041,TE,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,3.41,2.19,0.08,0.95,4.78,8.66,2.84,3.02,3.18,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chris Bell,,WR,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,2.73,1.47,0.06,0.31,3.79,7.73,2.58,1.95,2.47,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Fernando Mendoza,,QB,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,2.7,1.25,0.0,0.22,4.35,9.64,3.06,2.39,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Zonovan Knight,,RB,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,2.61,1.67,0.0,0.36,3.45,8.1,2.29,2.35,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bo Melton,,WR,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,2.58,1.34,0.0,0.23,3.79,7.45,2.64,2.2,2.3,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kaleb Johnson,00-0040142,RB,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,2.54,1.59,0.0,0.31,3.43,7.5,2.31,1.41,2.27,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Treylon Burks,00-0037742,WR,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,2.53,1.25,0.0,0.18,3.71,7.39,2.61,1.83,2.27,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Will Kacmarek,,TE,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,2.46,1.43,0.0,0.0,3.64,6.82,2.69,2.2,2.24,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Hunter Long,00-0037004,TE,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,2.46,1.4,0.0,0.0,3.65,6.85,2.7,2.32,2.24,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ollie Gordon,00-0040198,RB,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,2.41,1.45,0.0,0.25,3.19,6.79,2.18,1.58,2.15,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Eli Stowers,,TE,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,2.39,1.34,0.0,0.0,3.47,6.78,2.57,2.19,2.21,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kevin Coleman,,WR,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,2.37,1.21,0.0,0.01,3.55,7.07,2.62,1.98,2.12,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,John Bates,00-0036628,TE,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,2.32,1.38,0.0,0.0,3.38,6.64,2.5,2.1,2.09,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dyami Brown,00-0036626,WR,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,2.22,1.02,0.0,0.06,3.2,6.75,2.32,1.83,1.96,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Connor Heyward,00-0037304,TE,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,2.18,1.46,0.0,0.15,2.83,6.12,1.98,1.84,1.81,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ben Sinnott,00-0039912,TE,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,2.16,1.28,0.0,0.0,3.2,6.49,2.37,2.13,1.93,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Marcus Mariota,00-0032268,QB,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,2.07,0.62,0.0,0.0,3.71,9.0,2.75,1.78,,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Luke McCaffrey,00-0039355,WR,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,2.03,0.73,0.0,0.07,2.99,5.94,2.17,1.7,1.76,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ian Thomas,00-0034365,TE,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,2.01,1.33,0.0,0.07,2.6,5.81,1.87,1.61,1.64,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaylin Lane,00-0040164,WR,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,1.98,0.7,0.0,0.02,3.06,5.95,2.25,1.55,1.71,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,KeAndre Lambert-Smith,00-0040184,WR,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,1.92,0.99,0.0,0.0,2.92,5.81,2.16,1.34,1.65,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kaytron Allen,,RB,WAS,PHI,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,1.85,0.87,0.0,0.36,2.54,4.53,1.61,1.35,1.58,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Will Shipley,00-0039746,RB,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,1.83,0.83,0.0,0.33,2.52,4.52,1.62,1.27,1.56,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brenen Thompson,,WR,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,1.79,0.36,0.0,0.0,2.76,5.52,2.04,1.06,1.51,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tai Felton,00-0040154,WR,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,1.77,0.35,0.0,0.0,2.64,5.49,1.95,1.35,1.49,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dylan Laube,00-0039407,RB,LV,MIA,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,1.73,0.77,0.0,0.28,2.34,4.36,1.53,1.26,1.46,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Josh Whyle,00-0038589,TE,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,1.7,1.01,0.0,0.0,2.12,6.06,1.57,1.26,1.34,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Demond Claiborne,,RB,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,1.68,0.69,0.0,0.23,2.28,4.3,1.51,1.24,1.41,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Johnny Mundt,00-0033246,TE,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,1.56,0.84,0.0,0.0,1.96,5.95,1.45,1.06,1.25,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Skyy Moore,00-0038090,WR,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,1.52,0.23,0.0,0.0,2.25,4.99,1.67,1.1,1.23,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,J.J. McCarthy,00-0039923,QB,MIN,GB,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,1.5,0.05,0.0,0.0,3.15,8.44,2.33,1.18,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyrod Taylor,00-0028118,QB,GB,MIN,Green Bay Packers @ Minnesota Vikings,Sun 09/13 04:25 PM ET,1.42,0.0,0.0,0.0,3.06,8.35,2.27,1.08,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Darius Cooper,00-0040024,WR,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,1.41,0.22,0.0,0.0,2.15,4.55,1.59,0.9,1.13,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Alec Ingold,,RB,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,1.24,0.43,0.0,0.09,1.7,3.37,1.19,0.92,0.97,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Andy Dalton,00-0027973,QB,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,1.11,0.0,0.0,0.0,2.75,8.04,2.04,0.79,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Derius Davis,00-0038573,WR,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,1.08,0.05,0.0,0.0,1.44,3.61,1.06,0.74,0.79,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jalen Brooks,00-0038640,WR,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,1.04,0.01,0.0,0.0,1.35,3.98,1.0,0.75,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tanner McKee,00-0038400,QB,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,1.02,0.0,0.0,0.0,2.66,7.95,1.97,0.7,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Trey Lance,00-0037012,QB,LAC,ARI,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,1.0,0.0,0.0,0.0,2.64,7.93,1.96,0.67,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Elijah Moore,00-0036980,WR,PHI,WAS,Washington Commanders @ Philadelphia Eagles,Sun 09/13 04:25 PM ET,0.93,0.0,0.0,0.0,1.15,3.3,0.85,0.42,0.64,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ryan Miller,00-0038824,WR,MIA,LV,Miami Dolphins @ Las Vegas Raiders,Sun 09/13 04:25 PM ET,0.88,0.0,0.0,0.0,1.0,3.32,0.74,0.59,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Gardner Minshew,00-0035289,QB,ARI,LAC,Arizona Cardinals @ Los Angeles Chargers,Sun 09/13 04:25 PM ET,0.83,0.0,0.0,0.0,2.48,7.77,1.84,0.47,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaxson Dart,00-0040691,QB,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,18.17,17.88,7.59,12.49,23.55,28.32,8.19,17.88,17.95,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dak Prescott,00-0033077,QB,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,17.3,17.04,7.53,11.76,22.58,27.29,8.01,18.15,16.33,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,CeeDee Lamb,00-0036358,WR,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,16.97,15.92,7.24,10.28,22.05,27.64,8.71,15.43,17.05,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Javonte Williams,00-0036997,RB,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,15.34,14.84,5.8,9.81,19.37,25.72,7.08,15.13,14.73,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,George Pickens,00-0037247,WR,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,14.58,14.29,4.8,8.65,19.96,24.51,8.38,14.21,14.04,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cam Skattebo,00-0040715,RB,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,13.65,12.75,5.27,9.0,17.98,22.6,6.65,13.5,12.67,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Malik Nabers,00-0039337,WR,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,13.39,12.23,4.57,7.59,18.22,23.57,7.88,11.32,13.92,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Isaiah Likely,00-0037838,TE,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,9.3,8.04,1.85,4.2,13.5,18.32,6.89,9.55,8.63,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brandon Aubrey,,K,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,9.22,9.22,3.23,5.99,12.44,15.67,4.61,10.18,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jake Ferguson,00-0038041,TE,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,8.95,7.93,1.51,3.94,13.04,17.61,6.74,9.25,8.04,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Dominic Zvada,,K,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,7.02,7.02,2.46,4.56,9.47,11.93,3.51,4.63,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyrone Tracy,00-0039384,RB,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,6.03,4.28,1.32,2.4,8.52,12.72,4.53,5.39,5.76,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cowboys,,DST,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,5.99,5.99,2.1,3.89,8.09,10.18,3.0,6.53,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Malachi Fields,,WR,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,5.72,4.06,0.13,1.77,7.49,14.71,4.24,5.08,5.51,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Ryan Flournoy,00-0039410,WR,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,5.61,3.9,0.07,1.66,7.36,14.08,4.23,5.02,5.32,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Darnell Mooney,00-0036309,WR,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,5.47,3.87,0.19,1.7,7.35,13.64,4.19,4.88,5.18,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Theo Johnson,00-0039847,TE,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,5.38,4.04,0.3,1.63,7.55,12.85,4.38,4.87,5.01,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Najee Harris,00-0036893,RB,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,4.99,2.99,0.4,1.37,7.04,11.8,4.2,4.07,4.72,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Malik Davis,00-0037563,RB,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,4.7,3.15,0.4,1.19,6.4,11.55,3.86,4.5,4.43,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Giants,,DST,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,4.54,4.54,1.59,2.95,6.12,7.71,2.27,5.53,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,KaVontae Turpin,00-0037801,WR,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,4.37,3.14,0.15,1.1,6.11,10.12,3.72,3.91,4.09,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Devin Singletary,00-0035250,RB,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,3.96,2.59,0.0,0.73,5.81,10.38,3.76,3.98,3.7,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Luke Schoonmaker,00-0038547,TE,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,2.85,1.6,0.0,0.05,4.33,7.43,3.17,2.34,2.5,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Emari Demercado,00-0038705,RB,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,2.62,1.68,0.0,0.35,3.46,8.1,2.3,2.04,2.35,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brevyn Spann-Ford,00-0039530,TE,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,2.22,1.46,0.0,0.11,2.92,6.41,2.09,1.67,1.83,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Hunter Luepke,00-0038738,RB,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,2.1,1.14,0.0,0.41,2.81,5.06,1.77,1.91,1.84,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Israel Abanikanda,00-0038389,RB,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,2.06,1.16,0.0,0.44,2.77,4.96,1.73,1.79,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jonathan Mingo,00-0039062,WR,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,1.95,0.8,0.0,0.02,2.97,5.77,2.19,1.62,1.66,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chris Manhertz,00-0031484,TE,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,1.66,0.94,0.0,0.0,2.06,6.05,1.52,1.32,1.27,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jameis Winston,00-0031503,QB,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,1.52,0.07,0.0,0.0,3.16,8.45,2.34,1.19,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Thomas Fidone,00-0040225,TE,NYG,DAL,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,1.3,0.57,0.0,0.0,1.73,5.83,1.28,0.94,0.89,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Sam Howell,00-0037077,QB,DAL,NYG,Dallas Cowboys @ New York Giants,Sun 09/13 08:20 PM ET,0.92,0.0,0.0,0.0,2.57,7.86,1.9,0.55,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Patrick Mahomes,00-0033873,QB,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,16.31,16.25,6.25,10.76,21.41,26.25,7.89,16.0,16.16,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Bo Nix,00-0039732,QB,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,16.0,15.96,5.73,10.55,21.34,26.7,7.99,15.31,16.06,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Rashee Rice,00-0039067,WR,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,14.81,14.82,4.86,8.92,20.11,24.59,8.28,13.98,14.72,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Kenneth Walker III,00-0038134,RB,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,14.33,13.37,5.32,9.31,18.23,23.49,6.61,12.32,14.12,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jaylen Waddle,00-0036613,WR,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,12.06,10.76,4.03,6.76,16.59,22.17,7.29,10.69,12.23,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Travis Kelce,00-0030506,TE,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,10.85,9.87,3.17,5.62,14.95,20.13,6.91,9.5,10.78,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,J.K. Dobbins,00-0036158,RB,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,10.78,9.38,3.03,5.68,15.23,19.98,7.08,10.76,9.98,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Courtland Sutton,00-0034348,WR,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,10.68,9.39,2.65,5.01,15.34,20.01,7.65,9.68,10.65,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Xavier Worthy,00-0039894,WR,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,9.04,7.45,2.14,3.97,12.5,19.47,6.32,8.17,8.91,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,RJ Harvey,00-0040730,RB,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,8.51,6.97,2.3,4.07,11.52,17.29,5.52,8.93,7.83,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Harrison Butker,,K,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,7.76,7.76,2.71,5.04,10.47,13.19,3.88,7.3,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Wil Lutz,,K,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,7.68,7.68,2.69,4.99,10.36,13.05,3.84,7.08,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Broncos,,DST,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,6.25,6.25,2.19,4.06,8.44,10.63,3.13,7.46,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Chiefs,,DST,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,6.23,6.23,2.18,4.05,8.41,10.59,3.11,5.91,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Evan Engram,00-0033881,TE,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,6.01,4.62,0.16,1.96,8.67,13.46,4.97,5.38,5.71,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Pat Bryant,00-0040134,WR,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,5.69,4.0,0.11,1.75,7.46,14.69,4.23,4.13,5.92,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Marvin Mims,00-0038976,WR,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,5.41,3.76,0.1,1.56,7.29,13.72,4.25,5.28,5.14,Q,Q,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyquan Thornton,00-0038104,WR,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,4.68,3.69,0.62,1.77,6.3,9.88,3.36,4.06,4.48,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Troy Franklin,00-0039868,WR,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,4.35,3.1,0.14,1.08,6.1,10.1,3.72,4.2,4.1,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Emmett Johnson,,RB,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,3.6,2.35,0.0,0.5,5.53,10.06,3.73,2.89,3.34,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Noah Gray,00-0036637,TE,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,3.52,2.3,0.19,1.06,4.89,8.77,2.84,3.24,2.97,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Brashard Smith,00-0040078,RB,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,3.4,2.01,0.0,0.28,5.16,9.86,3.61,3.0,3.13,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Adam Trautman,00-0036422,TE,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,3.12,2.06,0.0,0.91,4.38,7.81,2.57,2.89,2.76,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jonah Coleman,,RB,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,3.03,1.78,0.0,0.24,4.47,9.37,3.13,2.51,2.76,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Lil'Jordan Humphrey,00-0035406,WR,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,2.85,1.48,0.0,0.18,4.15,8.16,2.94,2.68,2.59,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jalen Royals,00-0040646,WR,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,1.78,0.35,0.0,0.0,2.64,5.49,1.96,1.09,1.49,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Tyler Badie,00-0037085,RB,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,1.64,0.73,0.0,0.23,2.25,4.25,1.5,1.38,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Nate Adkins,00-0038783,TE,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,1.62,0.95,0.0,0.0,2.04,5.98,1.51,1.5,1.36,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Cyrus Allen,,WR,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,1.55,0.26,0.0,0.0,2.28,5.03,1.69,0.89,1.25,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Justin Fields,00-0036945,QB,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,1.25,0.0,0.0,0.0,2.9,8.19,2.15,0.91,,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Nikko Remigio,00-0038519,WR,KC,DEN,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,1.13,0.22,0.0,0.0,1.63,3.47,1.2,0.66,0.83,,,,2026-09-09 15:10 ET
+Robert Burke,Model_Burke v1,Jarrett Stidham,00-0035264,QB,DEN,KC,Denver Broncos @ Kansas City Chiefs,Mon 09/14 08:15 PM ET,0.85,0.0,0.0,0.0,2.49,7.78,1.84,0.51,,,,,2026-09-09 15:10 ET

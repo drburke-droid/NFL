@@ -1,0 +1,25 @@
+Traceback (most recent call last):
+  File "C:\Users\drbur\AppData\Local\Python\pythoncore-3.14-64\Lib\argparse.py", line 1744, in _check_help
+    formatter._expand_help(action)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\drbur\AppData\Local\Python\pythoncore-3.14-64\Lib\argparse.py", line 672, in _expand_help
+    return help_string % params
+           ~~~~~~~~~~~~^~~~~~~~
+ValueError: unsupported format character ')' (0x29) at index 178
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\drbur\Documents\GitHub\NFL\scripts\sabersim_weekly.py", line 48, in <module>
+    ap.add_argument("--p-play-doubt", type=float, default=0.2,
+    ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    help="P(plays) for a Questionable player DK has not posted props for while teammates are priced "
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                         "(2025 measured: 0.20 overall, 0.11 for FFA proj >= 8, n=54; Q WITH a DK line played 100%)")
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\drbur\AppData\Local\Python\pythoncore-3.14-64\Lib\argparse.py", line 1558, in add_argument
+    self._check_help(action)
+    ~~~~~~~~~~~~~~~~^^^^^^^^
+  File "C:\Users\drbur\AppData\Local\Python\pythoncore-3.14-64\Lib\argparse.py", line 1746, in _check_help
+    raise ValueError('badly formed help string') from exc
+ValueError: badly formed help string

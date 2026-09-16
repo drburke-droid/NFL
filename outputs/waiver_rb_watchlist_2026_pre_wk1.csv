@@ -1,0 +1,8 @@
+player_id,team,full_name,pfr_id,draft_number,birth_date,ffa_pos_rank,pre_rank,draft_round,age,nname,rb1,rb1_rank,rb1_status,wk1_ppr,injury_status,own_status,why,rk
+00-0039811,GB,MarShawn Lloyd,LloyMa00,88,2001-01-05 00:00:00,,99.0,3.0,25.0,marshawn lloyd,Josh Jacobs,10.0,out,9.897720136518775,,active,team RB1 Josh Jacobs is out; FFA projects a real wk1 role,0
+00-0033293,MIN,Aaron Jones,JoneAa00,182,1994-12-02 00:00:00,37.0,37.0,6.0,32.0,aaron jones,Aaron Jones,37.0,active,8.138897610921509,,active,FFA projects a real wk1 role,0
+00-0038685,GB,Chris Brooks,BrooCh00,,2000-01-11 00:00:00,,99.0,8.0,26.0,chris brooks,Josh Jacobs,10.0,out,4.094116040955628,,active,team RB1 Josh Jacobs is out,1
+00-0039299,SEA,George Holani,HolaGe00,,1999-12-16 00:00:00,,99.0,8.0,27.0,george holani,Zach Charbonnet,40.0,out,3.528122866894201,,active,team RB1 Zach Charbonnet is out,0
+00-0038797,SEA,Emanuel Wilson,WilsEm00,,1999-05-08 00:00:00,,99.0,8.0,27.0,emanuel wilson,Zach Charbonnet,40.0,out,2.953921501706483,,active,team RB1 Zach Charbonnet is out,1
+00-0040556,NE,Corey Kiner,KineCo00,,2002-01-21 00:00:00,,99.0,8.0,24.0,corey kiner,TreVeyon Henderson,24.0,out,1.8525547785547793,,active,team RB1 TreVeyon Henderson is out,0
+00-0036187,NE,Reggie Gilliam,GillRe00,,1997-08-20 00:00:00,,99.0,8.0,29.0,reggie gilliam,TreVeyon Henderson,24.0,out,0.366,,,team RB1 TreVeyon Henderson is out,1

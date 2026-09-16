@@ -1,0 +1,34 @@
+FFA weekly files: 59 ((2023, 1) .. (2026, 1))
+  2026 box scores: 47 rows
+  Odds API events: 212 (credits left 288)
+week 1: 8 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)
+history: 17,123 player-weeks with FFA baseline + actual, {2023: 18, 2024: 20, 2025: 20}
+  baseline MAE vs actual 4.218
+  K override: 16/16 teams from kdst_2026_wk1.csv (weight 0.65)
+  DST override: 16/16 teams from kdst_2026_wk1.csv (weight 0.65)
+2026 wk1: 217 skill rows on the slate, 16 K, 16 DST; 30 without an NFL game log
+  2023: n=1,867  MAE Model_Burke 4.245 | baseline(FFA) 4.278 | control_k0 4.243  · beats FFA in 83% of weeks · 80% coverage 0.000
+  2024: n=5,693  MAE Model_Burke 4.228 | baseline(FFA) 4.285 | control_k0 4.236  · beats FFA in 85% of weeks · 80% coverage 0.804
+  2025: n=5,887  MAE Model_Burke 4.123 | baseline(FFA) 4.190 | control_k0 4.129  · beats FFA in 90% of weeks · 80% coverage 0.806
+  lineups: 399 statuses pulled; 14 Q, 4 OUT with a projection
+    + synthesized Cooper Rush (ATL QB depth 2) at 10.4
+    OUT Tua Tagovailoa         QB ATL   12.9 -> 
+    OUT Tim Patrick            WR NYJ    2.5 -> Garrett Wilson +0.5, Adonai Mitchell +0.2, Omar Cooper Jr. +0.2, Isaiah Williams +0.1, Arian Smith +0.0
+    OUT Kene Nwangwu           RB NYJ    0.9 -> Breece Hall +0.5, Braelon Allen +0.1, Isaiah Davis +0.0, Andrew Beck +0.0
+    OUT Michael Penix Jr.      QB ATL    0.7 -> Cooper Rush +0.0
+  spread check 2025 (n=5,887): 80% coverage local 0.794 vs package 0.806 · pinball local 1.446 vs package 1.539
+
+wrote outputs\sabersim\Burke_Model_Burke_2026_sun01pm_0911_1613.csv: 250 rows ({'WR': 80, 'RB': 55, 'TE': 52, 'QB': 31, 'DST': 16, 'K': 16})
+     Analyst          Model            Player         ID Pos Team Opp                                      Game               Kickoff  Proj  Median  Floor_p10   p25   p75  Ceiling_p90  StdDev Injury Status Note  pass_yds  pass_tds  pass_int  rush_yds  rush_tds  rec  rec_yds  rec_tds  fumbles_lost  fg_made  fg_40plus  xp_made  sacks  ints  def_td  pts_allowed_exp           Generated
+Robert Burke Model_Burke v1     Ja'Marr Chase 00-0036900  WR  CIN  TB Tampa Bay Buccaneers @ Cincinnati Bengals Sun 09/13 01:00 PM ET 21.21   20.08      10.73 14.32 25.91        33.74    8.59      Q                  0.00      0.00      0.00      0.82      0.00 7.24    89.33     0.83          0.00      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1      Jahmyr Gibbs 00-0039139  RB  DET  NO        New Orleans Saints @ Detroit Lions Sun 09/13 01:00 PM ET 20.85   19.45      11.27 14.26 26.10        32.90    8.77                         0.00      0.00      0.00     79.24      0.82 3.86    32.00     0.19          0.10      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1 Amon-Ra St. Brown 00-0036963  WR  DET  NO        New Orleans Saints @ Detroit Lions Sun 09/13 01:00 PM ET 20.30   19.17       9.82 13.68 24.94        32.77    8.34                         0.00      0.00      0.00      0.89      0.00 6.91    83.63     0.82          0.00      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1     Lamar Jackson 00-0034796  QB  BAL IND     Baltimore Ravens @ Indianapolis Colts Sun 09/13 01:00 PM ET 19.57   19.48       9.13 14.21 25.07        28.98    8.04                       223.71      1.97      0.66     37.04      0.14 0.00     0.00     0.00          0.24      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1        Josh Allen 00-0034857  QB  BUF HOU            Buffalo Bills @ Houston Texans Sun 09/13 01:00 PM ET 19.16   18.99       8.72 13.66 24.63        28.89    8.13                       218.71      1.29      0.82     33.36      0.66 0.00     0.00     0.00          0.20      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1        Joe Burrow 00-0036442  QB  CIN  TB Tampa Bay Buccaneers @ Cincinnati Bengals Sun 09/13 01:00 PM ET 19.06   18.77       8.69 13.52 24.73        28.92    8.31                       258.74      2.24      0.79     10.55      0.09 0.00     0.00     0.00          0.12      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1    Bijan Robinson 00-0038542  RB  ATL PIT     Atlanta Falcons @ Pittsburgh Steelers Sun 09/13 01:00 PM ET 18.97   17.69       9.34 12.37 24.06        31.82    8.66                         0.00      0.00      0.00     81.29      0.40 4.10    36.42     0.15          0.10      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1   Trevor Lawrence 00-0036971  QB  JAX CLE   Cleveland Browns @ Jacksonville Jaguars Sun 09/13 01:00 PM ET 18.21   17.88       7.79 12.67 23.91        28.03    8.33                       218.27      1.88      0.78     20.84      0.30 0.00     0.00     0.00          0.20      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1   Jonathan Taylor 00-0036223  RB  IND BAL     Baltimore Ravens @ Indianapolis Colts Sun 09/13 01:00 PM ET 18.13   16.99       8.92 12.24 23.27        30.77    8.17                         0.00      0.00      0.00     82.23      0.80 2.72    20.78     0.08          0.10      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1    Baker Mayfield 00-0034855  QB   TB CIN Tampa Bay Buccaneers @ Cincinnati Bengals Sun 09/13 01:00 PM ET 17.95   17.80       8.36 12.44 23.27        28.01    8.02                       240.60      1.93      0.87     22.37      0.09 0.00     0.00     0.00          0.20      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1    Caleb Williams 00-0039918  QB  CHI CAR         Chicago Bears @ Carolina Panthers Sun 09/13 01:00 PM ET 17.58   17.43       7.71 12.17 23.00        27.50    8.03                       233.49      1.74      0.64     22.25      0.09 0.00     0.00     0.00          0.12      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
+Robert Burke Model_Burke v1        Jared Goff 00-0033106  QB  DET  NO        New Orleans Saints @ Detroit Lions Sun 09/13 01:00 PM ET 17.15   16.87       7.32 11.60 22.57        27.35    8.13                       250.82      2.07      0.65      4.95      0.01 0.00     0.00     0.00          0.20      NaN        NaN      NaN    NaN   NaN     NaN              NaN 2026-09-11 12:14 ET
