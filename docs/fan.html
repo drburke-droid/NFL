@@ -25,16 +25,17 @@ ed<!doctype html>
   .pts { font-size:12px; color:var(--mut); white-space:nowrap; } .pts b { color:var(--ink); font-size:14px; }
   .chip { display:inline-block; font-size:10px; padding:1px 6px; border-radius:8px; margin-left:4px; vertical-align:middle; color:#fff; background:#6b4e00; }
   .chip.out { background:#7a1f1f; }
-  .stats { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
-  .st { display:flex; align-items:center; gap:2px; background:#0f1115; border:1px solid var(--line); border-radius:8px; padding:3px 4px 3px 8px; }
-  .st .k { font-size:11px; color:var(--mut); margin-right:4px; white-space:nowrap; }
-  .st .v { font-size:14px; font-weight:600; min-width:34px; text-align:right; }
-  .st .arr { font-size:11px; min-width:26px; text-align:center; letter-spacing:-1px; }
+  .stats { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:6px; margin-top:6px; }
+  .st { display:grid; grid-template-columns:minmax(0,1fr) 62px 46px 30px 30px; align-items:center; column-gap:4px; background:#0f1115; border:1px solid var(--line); border-radius:8px; padding:3px 4px 3px 8px; }
+  .st .k { font-size:11px; color:var(--mut); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .st .v { font-size:14px; font-weight:600; text-align:right; white-space:nowrap; }
+  .st .v small { font-size:10px; color:var(--mut); font-weight:normal; text-decoration:line-through; margin-right:3px; }
+  .st .arr { font-size:11px; text-align:center; white-space:nowrap; font-weight:600; }
   .st .arr.up { color:var(--up); } .st .arr.down { color:var(--down); }
   .st button { background:#232833; color:var(--ink); border:0; border-radius:6px; width:30px; height:28px; font-size:14px; cursor:pointer; padding:0; }
   .st button:active { background:#2f3644; }
-  .st.up1 { border-color:#1f4d2c; } .st.up2 { border-color:#2a7a40; } .st.up3 { border-color:var(--up); }
-  .st.dn1 { border-color:#5a1f1f; } .st.dn2 { border-color:#8a2a2a; } .st.dn3 { border-color:var(--down); }
+  .st.up { border-color:#2a7a40; } .st.dn { border-color:#8a2a2a; }
+  @media (max-width:520px) { .stats { grid-template-columns:1fr; } }
   .more { background:none; border:1px dashed var(--line); color:var(--mut); border-radius:8px; padding:6px; width:100%; font-size:12px; cursor:pointer; margin:2px 0 6px; }
   .bar { position:fixed; left:0; right:0; bottom:0; background:#12151c; border-top:1px solid var(--line); padding:10px 14px calc(10px + env(safe-area-inset-bottom, 0px)); }
   .bar .in { max-width:760px; margin:0 auto; display:flex; gap:8px; align-items:center; }
@@ -56,8 +57,8 @@ ed<!doctype html>
   <p class="sub" id="sub">loading this week's projections…</p>
 
   <div class="card how">
-    <b>What this is.</b> Below are our model's projected stat lines for every skill player this week. If you think a number is too low, tap <b>▲</b> (up to three times: a little / clearly / a lot more). Too high, tap <b>▼</b>. Leave everything you agree with alone. When you're done, press <b>Submit</b> and send the code it gives you back to whoever sent you this link. Your picks are recorded and graded against what actually happens — they do not change the model (yet).
-    <div class="legend"><span><b style="color:var(--up)">▲</b> a bit more</span><span><b style="color:var(--up)">▲▲</b> clearly more</span><span><b style="color:var(--up)">▲▲▲</b> a lot more</span><span><b style="color:var(--down)">▼ … ▼▼▼</b> same, the other way</span></div>
+    <b>What this is.</b> Below are our model's projected stat lines for every skill player this week. If you think a number is too low, tap <b>▲</b>; too high, tap <b>▼</b>. Every press moves that stat <b>10%</b> of the projection and you can press as often as you like (three ▲ = +30%). The adjusted number shows next to the original. Leave everything you agree with alone. When you're done, press <b>Submit</b> and send the code it gives you back to whoever sent you this link. Your picks are recorded and graded against what actually happens — they do not change the model (yet).
+    <div class="legend"><span><b style="color:var(--up)">▲</b> +10% per press</span><span><b style="color:var(--down)">▼</b> −10% per press</span><span>▼ ten times = zero</span></div>
   </div>
 
   <div class="card">
@@ -97,7 +98,8 @@ ed<!doctype html>
 const FAN_TO = "robert.edward.burke+picks@gmail.com";
 const LABEL = {pass_yds:"pass yds", pass_tds:"pass TD", pass_int:"INT", rush_yds:"rush yds", rush_tds:"rush TD", rec:"rec", rec_yds:"rec yds", rec_tds:"rec TD"};
 const $ = id => document.getElementById(id);
-let D = null, KEY = "", picks = {};      // picks: "i:s" -> arrows (-3..3)
+let D = null, KEY = "", picks = {};      // picks: "i:s" -> arrow presses (signed, each = 10% of the baseline; -10 = zero)
+const STEP = 0.10, MIN_N = -10;
 const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
@@ -135,12 +137,14 @@ function card(p) {
   return `<div class="p${touched ? " touched" : ""}" data-i="${p.i}"><div class="hd"><div><span class="nm">${p.name}</span>${chip}<div class="meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}</div></div><div class="pts">proj <b>${p.proj.toFixed(1)}</b> pts</div></div>` +
     `<div class="stats">` + Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => stat(p.i, k, v)).join("") + `</div></div>`;
 }
+const fmt = (k, v) => k.endsWith("tds") || k === "pass_int" || k === "rec" ? v.toFixed(1) : String(Math.round(v));
 function stat(i, k, v) {
   const s = D.stat_keys.indexOf(k), a = picks[i + ":" + s] || 0;
-  const cls = a > 0 ? "up" + a : a < 0 ? "dn" + (-a) : "";
-  const arr = a > 0 ? "▲".repeat(a) : a < 0 ? "▼".repeat(-a) : "";
-  const val = k.endsWith("tds") || k === "pass_int" || k === "rec" ? v.toFixed(1) : Math.round(v);
-  return `<div class="st ${cls}" data-i="${i}" data-s="${s}"><span class="k">${LABEL[k]}</span><span class="v">${val}</span><span class="arr ${a > 0 ? "up" : a < 0 ? "down" : ""}">${arr}</span><button data-d="-1" title="fade">▼</button><button data-d="1" title="boost">▲</button></div>`;
+  const adj = Math.max(0, v * (1 + STEP * a));
+  const cls = a > 0 ? "up" : a < 0 ? "dn" : "";
+  const arr = a ? (a > 0 ? "+" : "−") + Math.abs(a * 10) + "%" : "";
+  const val = a ? `<small>${fmt(k, v)}</small>${fmt(k, adj)}` : fmt(k, v);
+  return `<div class="st ${cls}" data-i="${i}" data-s="${s}"><span class="k">${LABEL[k]}</span><span class="v">${val}</span><span class="arr ${a > 0 ? "up" : a < 0 ? "down" : ""}">${arr}</span><button data-d="-1" title="fade 10%">▼</button><button data-d="1" title="boost 10%">▲</button></div>`;
 }
 $("list").addEventListener("click", e => {
   const b = e.target.closest("button");
@@ -148,7 +152,7 @@ $("list").addEventListener("click", e => {
   if (b.dataset.team) { const m = document.querySelector(`[data-more="${b.dataset.team}"]`); m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace("hide", "show") : b.textContent.replace("show", "hide"); return; }
   const st = b.closest(".st"); if (!st) return;
   const key = st.dataset.i + ":" + st.dataset.s, d = +b.dataset.d;
-  let a = (picks[key] || 0) + d; a = Math.max(-3, Math.min(3, a));
+  let a = (picks[key] || 0) + d; a = Math.max(MIN_N, a);
   if (a === 0) delete picks[key]; else picks[key] = a;
   ls.set(KEY, JSON.stringify(picks));
   const p = D.players[+st.dataset.i], k = D.stat_keys[+st.dataset.s];
