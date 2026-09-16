@@ -83,7 +83,7 @@
     <label for="kdst" style="margin-top:14px">Subvertadown paste (all tables: D/ST, K, QB, WR/RB/TE matchup bonuses — or just the short K/DST list)</label>
     <textarea id="kdst" placeholder="Player/Team&#10;1&#10;2&#10;…&#10;Jaguars    10.0    2.7    3.7 …&#10;Cameron Dicker | LAC    10.0    9.8 …"></textarea>
     <button id="upkdst">Save Subvertadown paste for this week</button>
-    <small>Committed as data/subvertadown/raw/paste_&lt;season&gt;_wk&lt;week&gt;.txt. The send parses every table into the point-in-time history and builds this week's K/DST override from the K and D/ST tables. Paste the matchup-bonus tables in WR, RB, TE order.</small>
+    <small>Committed as data/subvertadown/raw/paste_&lt;season&gt;_wk&lt;week&gt;.txt (the short list goes to data/kdst/). The week header is read (1..17 preseason, 2..17 from week 2 on), so copy the tables as-is. The send parses every table into the point-in-time history and builds this week's K/DST override from the K and D/ST tables. Paste the matchup-bonus tables in WR, RB, TE order.</small>
     <div class="status" id="kdststat"></div>
   </div>
 
@@ -174,12 +174,28 @@ $("upkdst").onclick = async () => {
   const st = $("kdststat"); st.className = "status"; const txt = $("kdst").value.trim(); const wk = parseInt($("week").value, 10);
   if (!tok()) { st.textContent = "save a token first"; return; } if (!txt) { st.textContent = "paste the list first"; return; }
   const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-  const dst = lines.filter(l => /^\S+\s+(vs\.|@)\s+\S+\s+[\d.]+$/.test(l)).length, k = lines.filter(l => /^.+?\s+[A-Z]{2,3}\s+(vs\.|@)\s+[A-Z]{2,3}\s+[\d.]+$/.test(l)).length;
+  const full = lines.some(l => l.startsWith("Player/Team"));
+  let path, msg, pre = "";
+  if (full) {                                   // full-site tables (D/ST, K, QB, matchup bonuses)
+    const tables = lines.filter(l => l.startsWith("Player/Team")).length, bonus = lines.filter(l => l === "Baseline").length;
+    const isNum = l => /^-?\d+(\.\d+)?$/.test(l), label = l => !l.startsWith("Player") && !["AVG", "Playoffs", "Baseline", "Next 4"].includes(l) && !isNum(l);
+    const projRows = lines.filter(l => label(l) && /\s-?\d+\.\d+(\s+(-|-?\d+\.\d+))+\s*$/.test(l)).length;
+    const bonusRows = lines.filter((l, i) => label(l) && !/\d\.\d/.test(l) && lines[i + 1] && /^-?\d+\.\d+$/.test(lines[i + 1])).length;
+    const hdr = lines.filter(l => /^\d{1,2}$/.test(l)).map(Number), first = hdr.length ? Math.min(...hdr) : null;
+    if (!tables || !(projRows + bonusRows)) { st.className = "status bad"; st.textContent = "found a Player/Team header but no data rows — copy the whole table, header row included"; return; }
+    if (first !== null && first !== wk) pre = `note: the tables start at week ${first} and the week box says ${wk}; the parser reads the header, so week ${wk}'s column is used if present\n`;
+    path = `data/subvertadown/raw/paste_${SEASON}_wk${wk}.txt`;
+    msg = `${tables} tables (${tables - bonus} projection, ${bonus} matchup-bonus), ${projRows + bonusRows} team/player rows`;
+  } else {                                      // old short K/DST list
+    const dst = lines.filter(l => /^\S+\s+(vs\.|@)\s+\S+\s+[\d.]+$/.test(l)).length, k = lines.filter(l => /^.+?\s+[A-Z]{2,3}\s+(vs\.|@)\s+[A-Z]{2,3}\s+[\d.]+$/.test(l)).length;
+    if (!dst && !k) { st.className = "status bad"; st.textContent = "nothing recognised: expected the full Subvertadown tables (each starting with a Player/Team header row) or the short list (\"Jaguars vs. Browns 10.0\", \"Cam Little JAC @ CIN 8.1\")"; return; }
+    path = `data/kdst/paste_${SEASON}_wk${wk}.txt`;
+    msg = `${dst} D/ST lines, ${k} K lines recognised of ${lines.length}` + (dst + k < lines.length ? "\nunrecognised lines are ignored by the parser" : "");
+  }
   try {
-    const path = `data/kdst/paste_${SEASON}_wk${wk}.txt`;
-    const r = await putFile(path, new TextEncoder().encode(lines.join("\n") + "\n"), `K/DST paste ${SEASON} wk${wk} (from the SaberSim page)`);
-    st.className = "status ok"; st.textContent = `committed ${path} — ${dst} D/ST lines, ${k} K lines recognised of ${lines.length}\n${r.commit.sha.slice(0, 7)}`;
-    if (dst + k < lines.length) st.textContent += "\nunrecognised lines are ignored by the parser";
+    st.textContent = pre + `committing ${path}…`;
+    const r = await putFile(path, new TextEncoder().encode(lines.join("\n") + "\n"), `Subvertadown paste ${SEASON} wk${wk} (from the SaberSim page)`);
+    st.className = "status ok"; st.textContent = pre + `committed ${path} — ${msg}\n${r.commit.sha.slice(0, 7)}`;
   } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
 };
 
@@ -235,7 +251,7 @@ async function lastRun() {
     const keys = Object.keys(log).sort(); const wk = parseInt($("week").value, 10);
     let line = keys.length ? (k => `last send: ${log[k].slate} — ${log[k].rows} rows at ${log[k].sent_at}` + (log[k].credits_left != null ? ` — Odds API credits left: ${log[k].credits_left}` : ""))(keys[keys.length - 1]) : "no sends logged yet";
     const have = async p => { try { await gh(`/repos/${OWNER}/${REPO}/contents/${p}?ref=main`); return true; } catch (e) { return false; } };
-    line += `\nweek ${wk} inputs: FFA file ${await have(`data/ffanalytics/FFAn_weekly/raw_stats_${SEASON}_wk${wk}.csv`) ? "✓" : "✗ missing"} · K/DST paste ${await have(`data/kdst/paste_${SEASON}_wk${wk}.txt`) ? "✓" : "– (optional)"}`;
+    line += `\nweek ${wk} inputs: FFA file ${await have(`data/ffanalytics/FFAn_weekly/raw_stats_${SEASON}_wk${wk}.csv`) ? "✓" : "✗ missing"} · Subvertadown paste ${(await have(`data/subvertadown/raw/paste_${SEASON}_wk${wk}.txt`)) || (await have(`data/kdst/paste_${SEASON}_wk${wk}.txt`)) ? "✓" : "– (optional)"}`;
     $("credits").textContent = line;
   } catch (e) {}
 }

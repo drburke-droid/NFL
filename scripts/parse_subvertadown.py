@@ -2,7 +2,8 @@
 K / D-ST override CSV the SaberSim generator reads.
 
 Input: the site's tables copied as text (any subset, any order). Two kinds are recognised:
-  projections   header "Player/Team" then 1..17, AVG, Playoffs; rows "Jaguars 10.0 2.7 …" (D/ST)
+  projections   header "Player/Team" then the week numbers (1..17 preseason, 2..17 from week 2,
+                the header is read, not assumed), AVG, Playoffs; rows "Jaguars 10.0 2.7 …" (D/ST)
                 or "Cameron Dicker | LAC 10.0 9.8 …" (K / QB); "-" = bye
   matchup bonus header adds "Baseline" and "Next 4"; each team spans four lines
                 (name / baseline / next4 / weekly values). Tables are labelled by position in the
@@ -55,8 +56,15 @@ else:                                               # ---- full site tables ----
     for ch in chunks:
         ch = ch.split("Matchup Bonuses can help")[0]
         lines = [l.strip() for l in ch.replace(",", " ").splitlines()]
+        # header: the integer lines before the first data row name the week columns (1..17 in the
+        # preseason paste, 2..17 from week 2 on, ...). Everything after them is AVG / Playoffs.
+        hdr = []
+        for l in lines:
+            if re.fullmatch(r"\d{1,2}", l): hdr.append(int(l))
+            elif l and l not in ("AVG", "Playoffs", "Baseline", "Next 4"): break
+        week_cols = hdr if hdr else list(range(1, 18))
         lines = [l for l in lines if l and l not in ("AVG", "Playoffs", "Baseline", "Next 4") and not NUM.match(l) or (l and NUM.match(l) and "." in l)]
-        # header ints (1..17) were dropped by the NUM filter (no '.'); numeric lines with '.' are data
+        # header ints were dropped by the NUM filter (no '.'); numeric lines with '.' are data
         is_bonus = "Baseline" in ch and "Next 4" in ch
         recs = []
         i = 0
@@ -90,17 +98,17 @@ else:                                               # ---- full site tables ----
                 player, team = [x.strip() for x in name.split("|", 1)]; team = FIX.get(team, team)
             else:
                 player, team = "", NICK.get(name, name)
-            weeks = vals[:17]; tail = vals[17:]
+            n = len(week_cols); weeks = vals[:n]; tail = vals[n:]
             def add(wk, v):
                 if v != "-" and NUM.match(v): rows.append({"snapshot": date.today().isoformat(), "season": S, "week_of_paste": W, "table": table,
                                                          "team": team, "player": player, "week": wk, "value": float(v)})
-            for j, v in enumerate(weeks, 1): add(j, v)
+            for wk, v in zip(week_cols, weeks): add(wk, v)
             if len(tail) >= 1: add("avg", tail[0])
             if len(tail) >= 2: add("playoffs", tail[1])
             if extra: add("baseline", extra[0]);
             if len(extra) > 1: add("next4", extra[1])
-            if table in ("k", "dst") and len(weeks) >= W and weeks[W - 1] != "-":
-                kd.append({"position": table.upper(), "team": team, "player": player or NICK.get(name, name) and name, "proj": float(weeks[W - 1])})
+            if table in ("k", "dst") and W in week_cols and len(weeks) > week_cols.index(W) and weeks[week_cols.index(W)] != "-":
+                kd.append({"position": table.upper(), "team": team, "player": player or NICK.get(name, name) and name, "proj": float(weeks[week_cols.index(W)])})
 
 # ---- write ----
 if rows:
