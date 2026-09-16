@@ -81,14 +81,14 @@ ed<!doctype html>
 
 <div class="modal" id="modal"><div class="sheet">
   <h3 style="margin:0 0 6px">Your picks are ready</h3>
-  <div class="how">Send this code back to whoever gave you the link (text, DM or email — anything works). It contains only your name, the time, and your arrows.</div>
-  <div class="code" id="code"></div>
-  <textarea id="cmt" rows="2" placeholder="optional: one line on why (e.g. 'weather, wind 20 mph')" style="margin-bottom:8px"></textarea>
+  <div class="how" id="mhow">Press <b>Email it</b> — your mail app opens with your picks already filled in; just hit send. (No mail app on this device? Copy the code and text it instead.) The code holds only your name, the time, and your arrows.</div>
+  <textarea id="cmt" rows="2" placeholder="optional: one line on why (e.g. 'weather, wind 20 mph')" style="margin:8px 0"></textarea>
   <div class="row">
-    <button class="big" id="copy">Copy code</button>
     <a class="big" id="mail" style="text-align:center;text-decoration:none;display:none">Email it</a>
+    <button class="sec" id="copy">Copy code</button>
     <button class="sec" id="close">Close</button>
   </div>
+  <details style="margin-top:8px"><summary class="how" style="cursor:pointer">show the code</summary><div class="code" id="code"></div></details>
   <div class="status" id="mstat"></div>
 </div></div>
 
@@ -178,6 +178,7 @@ $("submit").onclick = () => {
   if (!$("who").value.trim()) { $("who").focus(); $("who").placeholder = "please add your name first"; return; }
   $("code").textContent = buildCode(); $("mstat").textContent = "";
   if (FAN_TO) { const m = $("mail"); m.style.display = ""; m.href = "mailto:" + FAN_TO + "?subject=" + encodeURIComponent(`Fan Picks wk${D.week} — ${$("who").value.trim()}`) + "&body=" + encodeURIComponent($("code").textContent); }
+  else { $("copy").className = "big"; $("mhow").textContent = "Copy this code and send it back to whoever gave you the link (text, DM or email — anything works). It holds only your name, the time, and your arrows."; }
   $("modal").classList.add("on");
 };
 $("cmt").addEventListener("input", () => { $("code").textContent = buildCode(); if (FAN_TO) $("mail").href = "mailto:" + FAN_TO + "?subject=" + encodeURIComponent(`Fan Picks wk${D.week} — ${$("who").value.trim()}`) + "&body=" + encodeURIComponent($("code").textContent); });
