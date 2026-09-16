@@ -305,6 +305,15 @@ cur = frame_for(SEASON, cur_week, live=True)
 if cur is None: raise SystemExit(f"no FFA file for {SEASON} wk{cur_week} — drop raw_stats_{SEASON}_wk{cur_week}.csv in {FDIR}")
 sk, kk, dst = cur
 sk = sk[sk.team.isin(games.team)].copy(); kk = kk[kk.team.isin(games.team)].copy(); dst = dst[dst.team.isin(games.team)].copy()
+# HEALTH: what each data pull actually delivered for THIS slate, written beside the CSV as
+# <csv>.health.json so the SaberSim page can show it. A feed that fails quietly must not look like a
+# feed that had nothing to say.
+_ffa_fp = os.path.join(FDIR, f"raw_stats_{SEASON}_wk{cur_week}.csv")
+HEALTH = {"season": SEASON, "week": cur_week, "slate_games": int(games.id.nunique()),
+          "games": sorted(set(games.game)), "market": "skipped (--no-market)" if A.no_market else "live",
+          "ffa": {"file": os.path.basename(_ffa_fp), "rows": sum(1 for _ in open(_ffa_fp, encoding="utf-8")) - 1,
+                  "age_hours": round((time.time() - os.path.getmtime(_ffa_fp)) / 3600, 1),
+                  "slate_skill": int(len(sk)), "slate_k": int(len(kk)), "slate_dst": int(len(dst))}}
 
 # ---------- 4b. live Vegas: DK spreads/totals (all games) + DK player props (slate) ----------
 # The FFA file is days old; the market reprices injuries and news within minutes. Stats
@@ -359,6 +368,7 @@ def pull_market(sl_games):
             except Exception as ex: print("  snapshot record failed:", str(ex)[:80])
         except Exception as ex: print(f"  props fetch failed for {eid[:8]}:", str(ex)[:60])
     if n_new: print(f"  DK props: {n_new} events pulled (credits left {rem})")
+    if rem != "?": cache["_credits_left"] = rem
     json.dump(cache, open(MKT_CACHE, "w"))
     return cache
 
@@ -387,6 +397,13 @@ def market_stats(cache, sl_games):
 if not A.no_market:
     cache = pull_market(games)
     lines = cache.get("_lines", {})
+    _ids = list(games.id.unique())
+    HEALTH["dk_lines"] = {"slate_games": len(_ids),
+                          "with_lines": sum(1 for i in _ids if lines.get(i, {}).get("total") is not None and lines.get(i, {}).get("home_spread") is not None),
+                          "fetched_at": (pd.Timestamp(cache["_lines_ts"], unit="s", tz="UTC").strftime("%Y-%m-%dT%H:%MZ") if cache.get("_lines_ts") else None),
+                          "credits_left": cache.get("_credits_left")}
+    HEALTH["dk_props"] = {"slate_events": len(_ids), "events_with_props": sum(1 for i in _ids if cache.get(i, {}).get("rows")),
+                          "with_props": 0, "by_stat": {}, "no_line": []}
     if lines:
         ctx = []
         for g in games.itertuples():
@@ -436,6 +453,9 @@ if not A.no_market:
         sk["no_line"] = (~has) & sk.team.isin(sk.team[has].unique()) & (sk.ffa_ppr >= 8)
         if sk.no_line.any():
             print("  no DK props posted (news?):", ", ".join(sk.player[sk.no_line]))
+        HEALTH["dk_props"].update({"with_props": int(has.sum()), "eligible": int((sk.ffa_ppr >= 8).sum()),
+                                   "by_stat": {c.replace("mkt_", ""): int(sk[c].notna().sum()) for c in ("mkt_pass_yds", "mkt_pass_tds", "mkt_rush_yds", "mkt_rec_yds", "mkt_rec", "mkt_exp_td")},
+                                   "no_line": sorted(sk.player[sk.no_line].tolist())})
 # K / D-ST override (Subvertadown-style paste parsed by scripts/parse_kdst_paste.py):
 # blended with the FFA-scored value (--kdst-weight on the paste); FFA value kept in Baseline_FFA
 ovr_p = os.path.join(ROOT, "data", "kdst", f"kdst_{SEASON}_wk{cur_week}.csv")
@@ -451,9 +471,11 @@ if os.path.exists(ovr_p):
             tbl.loc[hit, "player"] = tbl.loc[hit, "team"].map(o.player)
         print(f"  {pos} override: {int(hit.sum())}/{len(tbl)} teams from {os.path.basename(ovr_p)} (weight {w:.2f})"
               + ("" if hit.all() else f"; no override for {sorted(tbl.team[~hit])}"))
+        HEALTH.setdefault("kdst", {"file": os.path.basename(ovr_p)})[pos] = {"hit": int(hit.sum()), "of": int(len(tbl))}
     kk = kk.drop_duplicates("team"); dst = dst.drop_duplicates("team")
 else:
     print(f"  no K/DST override ({os.path.relpath(ovr_p, ROOT)}) — using FFA-scored K and DST")
+    HEALTH["kdst"] = None
 print(f"{SEASON} wk{cur_week}: {len(sk)} skill rows on the slate, {len(kk)} K, {len(dst)} DST; "
       f"{sk.player_id.str.startswith('ffa_').sum()} without an NFL game log")
 
@@ -560,6 +582,9 @@ REPORT = {} if (A.no_report or A.no_lineups) else official_report(SEASON, cur_we
 if REPORT:
     _rc = pd.Series([v["prac"] for v in REPORT.values()]).value_counts().to_dict(); _rd = pd.Series([v["desig"] for v in REPORT.values() if v["desig"]]).value_counts().to_dict()
     print(f"  injury report ({next(iter(REPORT.values()))['src']}): {len(REPORT)} skill/K players listed; practice {_rc}; designations {_rd}")
+    HEALTH["injury_report"] = {"src": next(iter(REPORT.values()))["src"], "listed": len(REPORT), "designations": _rd}
+else:
+    HEALTH["injury_report"] = None if not (A.no_report or A.no_lineups) else "skipped"
 def sleeper_players():
     """Sleeper's player dump, asking the CDN for the origin copy rather than whatever it has cached.
 
@@ -673,6 +698,7 @@ if not A.no_lineups:
     _by_src = pd.Series([v[1] for v in st.values()]).str.replace("?team", "", regex=False).value_counts().to_dict()
     _out_src = outs.src.fillna("").str.replace("?team", "", regex=False).value_counts().to_dict()
     print(f"  lineups: {len(st)} statuses pulled {_by_src}; {int((p.status == 'Q').sum())} Q, {len(outs)} OUT with a projection {_out_src}")
+    HEALTH["lineups"] = {"statuses": len(st), "by_src": _by_src, "q": int((p.status == "Q").sum()), "out": len(outs), "out_by_src": _out_src}
     for r in outs.itertuples():
         mates = p[(p.team == r.team) & (p.position == r.position) & (p.status != "OUT") & (p.index != r.Index)]
         mates = mates.sort_values("proj", ascending=False)
@@ -902,6 +928,10 @@ stamp = pd.Timestamp.now().strftime("%m%d_%H%M")
 tag = A.analyst.split()[-1] + "_" + A.model_name.split()[0]
 path = A.out or os.path.join(OUTD, f"{tag}_{SEASON}_wk{cur_week}_{slate_tag}_{stamp}.csv")
 out.to_csv(path, index=False)
+HEALTH.update({"csv": os.path.basename(path), "rows": int(len(out)), "generated": out["Generated"].iloc[0] if len(out) else None,
+               "kickoffs": sorted(set(games.kickoff_et))})
+try: json.dump(HEALTH, open(path.replace(".csv", ".health.json"), "w"), indent=1, default=str)
+except Exception as _e: print("  health record not written:", str(_e)[:80])
 # ---- DK columns for the graders, attached after the model has already run ----
 # market_proj has been NaN in every send this season: it is initialised to NaN where sk is built
 # and the real values are computed into market_ppr, a different name, which was never persisted.

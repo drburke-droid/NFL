@@ -181,12 +181,24 @@ except Exception:
 if warns:
     print("generator warnings:")
     for w in warns: print("   " + w)
+# the generator's health record (what FFA / DK lines / DK props / lineups actually delivered) + the wrapper's warnings
+health_p = csv_path.replace(".csv", ".health.json")
+try: health = json.load(open(health_p, encoding="utf-8"))
+except Exception: health = {}
+health.update({"warnings": warns, "dry_run": bool(A.dry_run), "slate": s["label"], "slate_key": s["key"],
+               "run_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")})
+json.dump(health, open(health_p, "w", encoding="utf-8"), indent=1, default=str)
 if os.environ.get("PUBLISH_DIR"):          # e.g. the private repo checkout: pkg/sends
     import shutil; os.makedirs(os.environ["PUBLISH_DIR"], exist_ok=True)
-    shutil.copy(csv_path, os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path)))
-    import glob as _glob          # the generator's full run parquet (FFA baseline, DK market, quantiles) rides along for grading
-    runs = sorted(_glob.glob(os.path.join(ROOT, "outputs", "sabersim", "run_*.parquet")), key=os.path.getmtime)
-    if runs: shutil.copy(runs[-1], os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path).replace(".csv", ".parquet")))
+    # a dry run is a PREVIEW: published so the page can show and download it, but under a name the
+    # graders' Burke_Model_Burke_* globs never match, so it is never mistaken for a send
+    pub = ("preview_" if A.dry_run else "") + os.path.basename(csv_path)
+    shutil.copy(csv_path, os.path.join(os.environ["PUBLISH_DIR"], pub))
+    shutil.copy(health_p, os.path.join(os.environ["PUBLISH_DIR"], pub.replace(".csv", ".health.json")))
+    if not A.dry_run:
+        import glob as _glob          # the generator's full run parquet (FFA baseline, DK market, quantiles) rides along for grading
+        runs = sorted(_glob.glob(os.path.join(ROOT, "outputs", "sabersim", "run_*.parquet")), key=os.path.getmtime)
+        if runs: shutil.copy(runs[-1], os.path.join(os.environ["PUBLISH_DIR"], os.path.basename(csv_path).replace(".csv", ".parquet")))
 left, used, per_key = credits(); warn = int(os.environ.get("CREDIT_WARN", "120"))
 low = left is not None and left < warn
 
@@ -225,7 +237,7 @@ try:    # the generator's own lineup summary ("lineups: N statuses pulled {espn:
 except Exception:
     _keep = []
 sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"], "credits_left": left,
-                  "lineups": _keep}
+                  "lineups": _keep, "health": {k: health.get(k) for k in ("ffa", "dk_lines", "dk_props", "kdst", "injury_report", "lineups", "warnings") if k in health}}
 json.dump(sent, open(LOG, "w"), indent=1)
 out(sent=True, file=os.path.basename(csv_path), rows=n_rows, to=to, credits_left=left,
     low_credits=low, generator_warnings=len(warns))

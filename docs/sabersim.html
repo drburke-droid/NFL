@@ -91,10 +91,18 @@
     <h2>Send</h2>
     <div class="row">
       <button id="run">Run now &amp; email</button>
-      <button id="dry" class="secondary">Dry run (no email)</button>
+      <button id="dry" class="secondary">Preview next slate (no email)</button>
     </div>
-    <small>Next slate, forced. Takes about 2½ minutes. Goes to MAIL_TO and is also pushed to the private repo for the download button. A forced run marks that slate as sent, so the scheduled tick will skip it.</small>
+    <small>Next slate, forced. <b>Run now</b> emails SaberSim (and CCs you) and marks the slate as sent, so the scheduled tick skips it. <b>Preview</b> runs the same generator with today's data, emails nobody, marks nothing, and shows the result below with a check of every data pull.</small>
     <div class="status" id="runstat">idle</div>
+  </div>
+
+  <div class="card">
+    <h2>Preview</h2>
+    <small>The most recent preview run (from the button above or a slate's Preview button). Each line is one data pull the projections depend on; ✗ means the feed failed or returned nothing for this slate, and the projections were built without it.</small>
+    <div id="prevhealth" class="note">no preview yet — press Preview on the slate you want to look at</div>
+    <button id="prevdl" class="secondary" hidden>Download this preview CSV</button>
+    <div class="status" id="prevstat"></div>
   </div>
 
   <div class="card">
@@ -109,8 +117,8 @@
 
   <div class="card">
     <h2>Output</h2>
-    <button id="dl">Download latest CSV</button>
-    <button id="list" class="secondary">List recent sends</button>
+    <button id="dl">Download latest sent CSV</button>
+    <button id="list" class="secondary">List recent sends &amp; previews</button>
     <div class="status" id="dlstat"></div>
   </div>
 
@@ -221,16 +229,97 @@ async function trigger(dry) {
   } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
   $("run").disabled = $("dry").disabled = false;
 }
-$("run").onclick = () => trigger(false); $("dry").onclick = () => trigger(true);
+$("run").onclick = () => trigger(false);
+
+// ---- preview: dispatch a dry run (optionally for one slate), then show its health record + a download ----
+async function dispatchWait(inputs, st, label) {
+  const before = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0]?.id || 0;
+  await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/dispatches`, { method: "POST", body: JSON.stringify({ ref: "main", inputs }) });
+  st.textContent = `${label}: dispatched; waiting for the run…`;
+  let run = null;
+  for (let i = 0; i < 20 && !run; i++) { await new Promise(r => setTimeout(r, 3000)); const rs = (await gh(`/repos/${OWNER}/${REPO}/actions/workflows/${WF}/runs?per_page=1`)).workflow_runs[0]; if (rs && rs.id !== before) run = rs; }
+  if (!run) { st.className = "status warn"; st.textContent = `${label}: run not visible yet — check the Actions tab`; return null; }
+  for (let i = 0; i < 80; i++) {
+    const r = await gh(`/repos/${OWNER}/${REPO}/actions/runs/${run.id}`);
+    st.textContent = `${label} — run #${r.run_number}: ${r.status}${r.conclusion ? " → " + r.conclusion : ""}  (${Math.round((Date.now() - new Date(r.run_started_at || r.created_at)) / 1000)}s)\n${r.html_url}`;
+    if (r.status === "completed") { st.className = "status " + (r.conclusion === "success" ? "ok" : "bad"); return r; }
+    await new Promise(r => setTimeout(r, 5000));
+  }
+  return null;
+}
+async function previewSlate(slateKey, st, btn) {
+  if (!tok()) { st.className = "status bad"; st.textContent = "save a token first"; return; }
+  if (btn) btn.disabled = true; st.className = "status"; st.textContent = "dispatching preview…";
+  try {
+    const r = await dispatchWait({ force: "true", dry_run: "true", slate: slateKey || "" }, st, "preview" + (slateKey ? " " + slateKey : ""));
+    if (r && r.conclusion === "success") { st.textContent += "\nno email sent — see the Preview card"; await showPreview(); $("prevhealth").scrollIntoView({ behavior: "smooth", block: "start" }); }
+    else if (r) { st.textContent += "\nthe run failed — open the Actions log above; the usual causes are a missing FFA file for the week or an Odds API key with no credits"; }
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
+  finally { if (btn) btn.disabled = false; }
+}
+$("dry").onclick = () => previewSlate("", $("runstat"), $("dry"));
+
+async function loadJson(name) { const f = await gh(`/repos/${OWNER}/${PRIV}/contents/sends/${encodeURIComponent(name)}`); return JSON.parse(decodeURIComponent(escape(atob(f.content.replace(/\n/g, ""))))); }
+function healthHtml(h) {
+  const ok = (b, t) => `<div><b class="${b ? "ok" : "bad"}">${b ? "✓" : "✗"}</b> ${t}</div>`;
+  let x = `<div class="note">${esc(h.slate || "")} · ${(h.games || []).length} game${(h.games || []).length === 1 ? "" : "s"} · generated ${esc(h.generated || h.run_at || "")}${h.dry_run ? " · preview (no email)" : ""} · ${h.rows || "?"} rows</div>`;
+  const f = h.ffa;
+  x += f ? ok(true, `FFA stat file <b>${esc(f.file)}</b>: ${f.rows} rows (${f.age_hours} h old) — ${f.slate_skill} skill players, ${f.slate_k} K, ${f.slate_dst} DST on this slate`)
+         : ok(false, "FFA stat file: not recorded");
+  if (h.market && h.market !== "live") x += ok(false, `DK market: ${esc(h.market)}`);
+  const L = h.dk_lines;
+  if (L) x += ok(L.with_lines === L.slate_games && L.slate_games > 0, `DK game lines (spread + total): <b>${L.with_lines}/${L.slate_games}</b> slate games` + (L.fetched_at ? ` · fetched ${esc(L.fetched_at)}` : "") + (L.credits_left != null ? ` · credits left ${L.credits_left}` : ""));
+  else if (h.market === "live") x += ok(false, "DK game lines: nothing recorded (pull failed before it started?)");
+  const P = h.dk_props;
+  if (P) {
+    const good = P.with_props > 0 && P.events_with_props === P.slate_events;
+    const by = P.by_stat ? Object.entries(P.by_stat).map(([k, v]) => `${k.replace("_", " ")} ${v}`).join(", ") : "";
+    x += ok(good, `DK player props: <b>${P.with_props}</b> slate players priced${P.eligible != null ? ` of ${P.eligible} projected 8+` : ""} · ${P.events_with_props}/${P.slate_events} games had props` + (by ? ` · ${by}` : ""));
+    if (P.no_line && P.no_line.length) x += `<div class="note">no DK line while teammates are priced (news?): ${P.no_line.map(esc).join(", ")}</div>`;
+  } else if (h.market === "live") x += ok(false, "DK player props: nothing recorded");
+  const R = h.injury_report;
+  x += R && typeof R === "object" ? ok(true, `official injury report (${esc(R.src)}): ${R.listed} listed` + (R.designations ? " · " + Object.entries(R.designations).map(([k, v]) => `${k} ${v}`).join(", ") : ""))
+     : R === "skipped" ? `<div class="note">injury report skipped</div>` : ok(false, "official injury report: nothing for this week yet (NFL.com and nflverse both empty)");
+  const S = h.lineups;
+  if (S) { const src = Object.entries(S.by_src || {}).map(([k, v]) => `${k} ${v}`).join(", "); x += ok((S.by_src || {}).espn > 0 || (S.by_src || {}).sleeper > 0 || (S.by_src || {})["espn+sleeper"] > 0, `lineup feeds: ${S.statuses} statuses (${src || "none"}) · ${S.q} Q · <b>${S.out} OUT</b> with a projection` + (S.out_by_src ? " (" + Object.entries(S.out_by_src).map(([k, v]) => `${k} ${v}`).join(", ") + ")" : "")); }
+  const K = h.kdst;
+  x += K ? ok((K.K || {}).hit === (K.K || {}).of && (K.DST || {}).hit === (K.DST || {}).of, `K/DST override from <b>${esc(K.file)}</b>: K ${(K.K || {}).hit}/${(K.K || {}).of}, DST ${(K.DST || {}).hit}/${(K.DST || {}).of}`)
+         : K === null ? ok(false, "K/DST override: no Subvertadown paste for this week — FFA-scored K and DST used") : "";
+  if (h.warnings && h.warnings.length) x += `<div class="note" style="color:var(--warn)">generator warnings: ${h.warnings.map(esc).join(" · ")}</div>`;
+  return x;
+}
+async function showPreview() {
+  const box = $("prevhealth"), st = $("prevstat"), dl = $("prevdl");
+  try {
+    const items = await gh(`/repos/${OWNER}/${PRIV}/contents/sends`);
+    const prev = items.filter(x => x.name.startsWith("preview_") && x.name.endsWith(".csv")).sort((a, b) => b.name.localeCompare(a.name));
+    if (!prev.length) { box.textContent = "no preview published yet"; return; }
+    const name = prev[0].name; let h = null;
+    try { h = await loadJson(name.replace(".csv", ".health.json")); } catch (e) {}
+    box.innerHTML = `<div class="note"><b>${esc(name)}</b></div>` + (h ? healthHtml(h) : `<div class="note">no health record beside this preview (older run)</div>`);
+    dl.hidden = false; dl.onclick = () => downloadSend(name, st);
+  } catch (e) { box.textContent = "could not read previews: " + e.message; }
+}
+async function downloadSend(name, st) {
+  st.className = "status"; st.textContent = "fetching…";
+  try {
+    const f = await gh(`/repos/${OWNER}/${PRIV}/contents/sends/${encodeURIComponent(name)}`);
+    const bytes = Uint8Array.from(atob(f.content.replace(/\n/g, "")), c => c.charCodeAt(0));
+    const url = URL.createObjectURL(new Blob([bytes], { type: "text/csv" }));
+    const a = document.createElement("a"); a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    st.className = "status ok"; st.textContent = "downloaded " + name;
+  } catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message; }
+}
+if (tok()) showPreview();
 
 // ---- output ----
-async function sends() {
+async function sends(withPreviews) {
   const items = await gh(`/repos/${OWNER}/${PRIV}/contents/sends`);
-  return items.filter(x => x.name.endsWith(".csv")).sort((a, b) => b.name.localeCompare(a.name));
+  return items.filter(x => x.name.endsWith(".csv") && (withPreviews || !x.name.startsWith("preview_"))).sort((a, b) => b.name.localeCompare(a.name));
 }
 $("list").onclick = async () => {
   const st = $("dlstat"); st.className = "status";
-  try { const s = await sends(); st.textContent = s.length ? s.slice(0, 12).map(x => x.name + "  " + (x.size / 1024).toFixed(1) + " KB").join("\n") : "no sends published yet"; }
+  try { const s = await sends(true); st.textContent = s.length ? s.slice(0, 14).map(x => (x.name.startsWith("preview_") ? "preview  " : "sent     ") + x.name.replace(/^preview_/, "") + "  " + (x.size / 1024).toFixed(1) + " KB").join("\n") : "no sends published yet"; }
   catch (e) { st.className = "status bad"; st.textContent = "error: " + e.message + (e.message.startsWith("404") ? "\n(no sends/ folder yet, or the token lacks read access to the private repo)" : ""); }
 };
 $("dl").onclick = async () => {
@@ -251,6 +340,8 @@ async function lastRun() {
     const log = await gh(`/repos/${OWNER}/${REPO}/contents/data/sabersim/sent_log.json?ref=main`).then(f => JSON.parse(atob(f.content.replace(/\n/g, ""))));
     const keys = Object.keys(log).sort(); const wk = parseInt($("week").value, 10);
     let line = keys.length ? (k => `last send: ${log[k].slate} — ${log[k].rows} rows at ${log[k].sent_at}` + (log[k].credits_left != null ? ` — Odds API credits left: ${log[k].credits_left}` : ""))(keys[keys.length - 1]) : "no sends logged yet";
+    const lh = keys.length ? log[keys[keys.length - 1]].health : null;
+    if (lh) { const L = lh.dk_lines || {}, P = lh.dk_props || {}, F = lh.ffa || {}; line += `\nlast send pulls: FFA ${F.file ? "✓ " + F.rows + " rows" : "✗"} · DK lines ${L.slate_games ? (L.with_lines === L.slate_games ? "✓" : "✗") + " " + L.with_lines + "/" + L.slate_games : "✗"} · DK props ${P.with_props ? "✓ " + P.with_props + " players" : "✗ none"} · OUT ${(lh.lineups || {}).out ?? "?"}` + (lh.warnings && lh.warnings.length ? ` · ${lh.warnings.length} warning${lh.warnings.length > 1 ? "s" : ""}` : ""); }
     const have = async p => { try { await gh(`/repos/${OWNER}/${REPO}/contents/${p}?ref=main`); return true; } catch (e) { return false; } };
     line += `\nweek ${wk} inputs: FFA file ${await have(`data/ffanalytics/FFAn_weekly/raw_stats_${SEASON}_wk${wk}.csv`) ? "✓" : "✗ missing"} · Subvertadown paste ${(await have(`data/subvertadown/raw/paste_${SEASON}_wk${wk}.txt`)) || (await have(`data/kdst/paste_${SEASON}_wk${wk}.txt`)) ? "✓" : "– (optional)"}`;
     $("credits").textContent = line;
@@ -417,7 +508,10 @@ $("grade").onclick = async () => {
         const b = document.createElement("button");
         b.className = "secondary"; b.textContent = "Run this slate now";
         b.onclick = () => runSlate(sl, b);
-        el.appendChild(b); box.appendChild(el);
+        const pv = document.createElement("button");
+        pv.className = "secondary"; pv.textContent = "Preview (no email)"; pv.style.marginLeft = "6px";
+        pv.onclick = () => previewSlate(sl.key, st, pv);
+        el.appendChild(b); el.appendChild(pv); box.appendChild(el);
       });
     })
     .catch(e => { box.className = "status warn";
