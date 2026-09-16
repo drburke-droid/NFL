@@ -264,11 +264,11 @@ function healthHtml(h) {
   const ok = (b, t) => `<div><b class="${b ? "ok" : "bad"}">${b ? "✓" : "✗"}</b> ${t}</div>`;
   let x = `<div class="note">${esc(h.slate || "")} · ${(h.games || []).length} game${(h.games || []).length === 1 ? "" : "s"} · generated ${esc(h.generated || h.run_at || "")}${h.dry_run ? " · preview (no email)" : ""} · ${h.rows || "?"} rows</div>`;
   const f = h.ffa;
-  x += f ? ok(true, `FFA stat file <b>${esc(f.file)}</b>: ${f.rows} rows (${f.age_hours} h old) — ${f.slate_skill} skill players, ${f.slate_k} K, ${f.slate_dst} DST on this slate`)
+  x += f ? ok(true, `FFA stat file <b>${esc(f.file)}</b>: ${f.rows} rows${f.age_hours > 0.5 ? ` (${f.age_hours} h old)` : ""} — ${f.slate_skill} skill players, ${f.slate_k} K, ${f.slate_dst} DST on this slate`)
          : ok(false, "FFA stat file: not recorded");
   if (h.market && h.market !== "live") x += ok(false, `DK market: ${esc(h.market)}`);
   const L = h.dk_lines;
-  if (L) x += ok(L.with_lines === L.slate_games && L.slate_games > 0, `DK game lines (spread + total): <b>${L.with_lines}/${L.slate_games}</b> slate games` + (L.fetched_at ? ` · fetched ${esc(L.fetched_at)}` : "") + (L.credits_left != null ? ` · credits left ${L.credits_left}` : ""));
+  if (L) x += ok(L.with_lines === L.slate_games && L.slate_games > 0, `DK game lines (spread + total): <b>${L.with_lines}/${L.slate_games}</b> slate games` + (L.fetched_at ? ` · fetched ${esc(L.fetched_at)}` : "") + (L.credits_left != null ? ` · ${L.credits_left} credits left on that key` : ""));
   else if (h.market === "live") x += ok(false, "DK game lines: nothing recorded (pull failed before it started?)");
   const P = h.dk_props;
   if (P) {
