@@ -26,6 +26,9 @@ jobs:
         run: |
           python scripts/inactives_probe.py \
             --minutes-to "${{ inputs.minutes_to }}" --slate "espn-fix-verify" --band 0,100000
+      - name: Hunt for a faster inactives source
+        run: python scripts/inactives_sources.py --week 1
+
       - name: What does checkout leave HEAD on?
         run: |
           # record_send.py pushes to `git rev-parse --abbrev-ref HEAD`. If checkout leaves HEAD
