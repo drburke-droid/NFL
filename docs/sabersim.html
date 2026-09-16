@@ -173,7 +173,8 @@ $("upffa").onclick = async () => {
 $("upkdst").onclick = async () => {
   const st = $("kdststat"); st.className = "status"; const txt = $("kdst").value.trim(); const wk = parseInt($("week").value, 10);
   if (!tok()) { st.textContent = "save a token first"; return; } if (!txt) { st.textContent = "paste the list first"; return; }
-  const lines = txt.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  // the site's clipboard copy has no line break between one table's last row and the next header ("…4.5Player/Team")
+  const lines = txt.replace(/(\S)Player\/Team/g, "$1\nPlayer/Team").split(/\r?\n/).map(l => l.trim()).filter(Boolean);
   const full = lines.some(l => l.startsWith("Player/Team"));
   let path, msg, pre = "";
   if (full) {                                   // full-site tables (D/ST, K, QB, matchup bonuses)
