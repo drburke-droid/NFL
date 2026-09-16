@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fan Picks</title>
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; --line:#262a33; --up:#3fb950; --down:#f85149; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:18px 14px 110px; }
+  h1 { font-size:22px; margin:0 0 2px; } .sub { color:var(--mut); margin:0 0 14px; font-size:13px; } .sub a { color:var(--acc); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+  .how { font-size:13px; color:var(--mut); } .how b { color:var(--ink); }
+  label { display:block; color:var(--mut); font-size:12px; margin-bottom:4px; }
+  input[type=text], select, textarea { width:100%; background:#0f1115; color:var(--ink); border:1px solid #333845; border-radius:8px; padding:9px 11px; font-size:15px; font-family:inherit; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; } .row > * { flex:1 1 140px; }
+  .game { margin:16px 0 6px; font-size:12px; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .game b { color:var(--ink); font-size:13px; letter-spacing:0; text-transform:none; }
+  .team { margin:8px 0 4px; font-size:12px; color:var(--mut); font-weight:600; }
+  .p { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 10px; margin-bottom:6px; }
+  .p.touched { border-color:#3a4a6b; }
+  .hd { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+  .nm { font-weight:600; } .meta { font-size:12px; color:var(--mut); }
+  .pts { font-size:12px; color:var(--mut); white-space:nowrap; } .pts b { color:var(--ink); font-size:14px; }
+  .chip { display:inline-block; font-size:10px; padding:1px 6px; border-radius:8px; margin-left:4px; vertical-align:middle; color:#fff; background:#6b4e00; }
+  .chip.out { background:#7a1f1f; }
+  .stats { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+  .st { display:flex; align-items:center; gap:2px; background:#0f1115; border:1px solid var(--line); border-radius:8px; padding:3px 4px 3px 8px; }
+  .st .k { font-size:11px; color:var(--mut); margin-right:4px; white-space:nowrap; }
+  .st .v { font-size:14px; font-weight:600; min-width:34px; text-align:right; }
+  .st .arr { font-size:11px; min-width:26px; text-align:center; letter-spacing:-1px; }
+  .st .arr.up { color:var(--up); } .st .arr.down { color:var(--down); }
+  .st button { background:#232833; color:var(--ink); border:0; border-radius:6px; width:30px; height:28px; font-size:14px; cursor:pointer; padding:0; }
+  .st button:active { background:#2f3644; }
+  .st.up1 { border-color:#1f4d2c; } .st.up2 { border-color:#2a7a40; } .st.up3 { border-color:var(--up); }
+  .st.dn1 { border-color:#5a1f1f; } .st.dn2 { border-color:#8a2a2a; } .st.dn3 { border-color:var(--down); }
+  .more { background:none; border:1px dashed var(--line); color:var(--mut); border-radius:8px; padding:6px; width:100%; font-size:12px; cursor:pointer; margin:2px 0 6px; }
+  .bar { position:fixed; left:0; right:0; bottom:0; background:#12151c; border-top:1px solid var(--line); padding:10px 14px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  .bar .in { max-width:760px; margin:0 auto; display:flex; gap:8px; align-items:center; }
+  .bar .n { flex:1; font-size:13px; color:var(--mut); } .bar .n b { color:var(--ink); }
+  button.big { background:var(--acc); color:#fff; border:0; border-radius:8px; padding:11px 16px; font-size:15px; font-weight:600; cursor:pointer; }
+  button.sec { background:#2a2f3a; color:var(--ink); border:0; border-radius:8px; padding:11px 14px; font-size:14px; cursor:pointer; }
+  .modal { position:fixed; inset:0; background:rgba(0,0,0,.7); display:none; align-items:flex-end; justify-content:center; z-index:9; }
+  .modal.on { display:flex; }
+  .sheet { background:var(--card); border:1px solid var(--line); border-radius:14px 14px 0 0; padding:16px; width:100%; max-width:760px; max-height:88vh; overflow:auto; }
+  .code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; word-break:break-all; background:#0f1115; border:1px solid var(--line); border-radius:8px; padding:10px; margin:8px 0; max-height:160px; overflow:auto; }
+  .status { font-size:13px; color:var(--mut); margin-top:8px; min-height:18px; } .ok { color:var(--ok); }
+  .legend { font-size:12px; color:var(--mut); margin-top:6px; } .legend span { margin-right:10px; }
+  .empty { color:var(--mut); padding:20px 0; text-align:center; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🙋 Fan Picks</h1>
+  <p class="sub" id="sub">loading this week's projections…</p>
+
+  <div class="card how">
+    <b>What this is.</b> Below are our model's projected stat lines for every skill player this week. If you think a number is too low, tap <b>▲</b> (up to three times: a little / clearly / a lot more). Too high, tap <b>▼</b>. Leave everything you agree with alone. When you're done, press <b>Submit</b> and send the code it gives you back to whoever sent you this link. Your picks are recorded and graded against what actually happens — they do not change the model (yet).
+    <div class="legend"><span><b style="color:var(--up)">▲</b> a bit more</span><span><b style="color:var(--up)">▲▲</b> clearly more</span><span><b style="color:var(--up)">▲▲▲</b> a lot more</span><span><b style="color:var(--down)">▼ … ▼▼▼</b> same, the other way</span></div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <div><label for="who">Your name or handle</label><input id="who" type="text" placeholder="so we know whose picks these are" autocomplete="nickname"></div>
+      <div><label for="game">Game</label><select id="game"><option value="">all games</option></select></div>
+      <div><label for="pos">Position</label><select id="pos"><option value="">all</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div>
+      <div><label for="q">Find a player</label><input id="q" type="text" placeholder="type a name or team"></div>
+    </div>
+  </div>
+
+  <div id="list"><div class="empty">loading…</div></div>
+</main>
+
+<div class="bar"><div class="in">
+  <div class="n"><b id="cnt">0</b> tweaks <span id="draft"></span></div>
+  <button class="sec" id="reset">Clear</button>
+  <button class="big" id="submit">Submit</button>
+</div></div>
+
+<div class="modal" id="modal"><div class="sheet">
+  <h3 style="margin:0 0 6px">Your picks are ready</h3>
+  <div class="how">Send this code back to whoever gave you the link (text, DM or email — anything works). It contains only your name, the time, and your arrows.</div>
+  <div class="code" id="code"></div>
+  <textarea id="cmt" rows="2" placeholder="optional: one line on why (e.g. 'weather, wind 20 mph')" style="margin-bottom:8px"></textarea>
+  <div class="row">
+    <button class="big" id="copy">Copy code</button>
+    <a class="big" id="mail" style="text-align:center;text-decoration:none;display:none">Email it</a>
+    <button class="sec" id="close">Close</button>
+  </div>
+  <div class="status" id="mstat"></div>
+</div></div>
+
+<script>
+// Set FAN_TO to an email address to show an "Email it" button that opens the fan's mail app with
+// the code in the body. Empty = copy-only (the page publishes no address).
+const FAN_TO = "";
+const LABEL = {pass_yds:"pass yds", pass_tds:"pass TD", pass_int:"INT", rush_yds:"rush yds", rush_tds:"rush TD", rec:"rec", rec_yds:"rec yds", rec_tds:"rec TD"};
+const $ = id => document.getElementById(id);
+let D = null, KEY = "", picks = {};      // picks: "i:s" -> arrows (-3..3)
+const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
+
+fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
+  D = d; KEY = "fanpicks_" + d.season + "_wk" + d.week;
+  try { picks = JSON.parse(ls.get(KEY) || "{}") || {}; } catch(e) { picks = {}; }
+  $("who").value = ls.get("fanpicks_who") || "";
+  $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
+  for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
+  render(); count();
+}).catch(e => { $("list").innerHTML = '<div class="empty">could not load this week\'s projections (' + e.message + ')</div>'; });
+
+const norm = s => (s || "").toLowerCase();
+function render() {
+  const g = $("game").value, pos = $("pos").value, q = norm($("q").value).trim();
+  let h = "";
+  for (const game of D.games) {
+    if (g && game.game !== g) continue;
+    const ps = D.players.filter(p => p.game === game.game && (!pos || p.pos === pos) && (!q || norm(p.name).includes(q) || norm(p.team) === q));
+    if (!ps.length) continue;
+    h += `<div class="game"><b>${game.away} @ ${game.home}</b><span>${game.kickoff}</span></div>`;
+    for (const team of [game.away, game.home]) {
+      const tp = ps.filter(p => p.team === team).sort((a, b) => b.proj - a.proj);
+      if (!tp.length) continue;
+      h += `<div class="team">${team}</div>`;
+      const main = q ? tp : tp.filter(p => p.proj >= 3), rest = q ? [] : tp.filter(p => p.proj < 3);
+      h += main.map(card).join("");
+      if (rest.length) h += `<button class="more" data-team="${team}-${game.game}">show ${rest.length} more ${team} player${rest.length > 1 ? "s" : ""} (under 3 pts)</button><div hidden data-more="${team}-${game.game}">${rest.map(card).join("")}</div>`;
+    }
+  }
+  $("list").innerHTML = h || '<div class="empty">nothing matches</div>';
+}
+function card(p) {
+  const touched = Object.keys(picks).some(k => k.split(":")[0] == p.i);
+  const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
+  return `<div class="p${touched ? " touched" : ""}" data-i="${p.i}"><div class="hd"><div><span class="nm">${p.name}</span>${chip}<div class="meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}</div></div><div class="pts">proj <b>${p.proj.toFixed(1)}</b> pts</div></div>` +
+    `<div class="stats">` + Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => stat(p.i, k, v)).join("") + `</div></div>`;
+}
+function stat(i, k, v) {
+  const s = D.stat_keys.indexOf(k), a = picks[i + ":" + s] || 0;
+  const cls = a > 0 ? "up" + a : a < 0 ? "dn" + (-a) : "";
+  const arr = a > 0 ? "▲".repeat(a) : a < 0 ? "▼".repeat(-a) : "";
+  const val = k.endsWith("tds") || k === "pass_int" || k === "rec" ? v.toFixed(1) : Math.round(v);
+  return `<div class="st ${cls}" data-i="${i}" data-s="${s}"><span class="k">${LABEL[k]}</span><span class="v">${val}</span><span class="arr ${a > 0 ? "up" : a < 0 ? "down" : ""}">${arr}</span><button data-d="-1" title="fade">▼</button><button data-d="1" title="boost">▲</button></div>`;
+}
+$("list").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  if (b.dataset.team) { const m = document.querySelector(`[data-more="${b.dataset.team}"]`); m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace("hide", "show") : b.textContent.replace("show", "hide"); return; }
+  const st = b.closest(".st"); if (!st) return;
+  const key = st.dataset.i + ":" + st.dataset.s, d = +b.dataset.d;
+  let a = (picks[key] || 0) + d; a = Math.max(-3, Math.min(3, a));
+  if (a === 0) delete picks[key]; else picks[key] = a;
+  ls.set(KEY, JSON.stringify(picks));
+  const p = D.players[+st.dataset.i], k = D.stat_keys[+st.dataset.s];
+  st.outerHTML = stat(p.i, k, p.stats[k]);
+  const card_ = document.querySelector(`.p[data-i="${p.i}"]`); if (card_) card_.classList.toggle("touched", Object.keys(picks).some(x => x.split(":")[0] == p.i));
+  count();
+});
+function count() { const n = Object.keys(picks).length; $("cnt").textContent = n; $("draft").textContent = n ? "· saved on this device" : ""; }
+for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
+$("q").addEventListener("input", render);
+$("who").addEventListener("input", () => ls.set("fanpicks_who", $("who").value));
+$("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {}; ls.del(KEY); render(); count(); };
+
+function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
+function buildCode() {
+  const a = Object.entries(picks).map(([k, v]) => { const [i, s] = k.split(":").map(Number); return [i, s, v]; });
+  const j = {n: ($("who").value || "").trim().slice(0, 60), t: new Date().toISOString().slice(0, 16) + "Z", c: ($("cmt").value || "").trim().slice(0, 300), a};
+  return "FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
+}
+$("submit").onclick = () => {
+  if (!D) return;
+  if (!Object.keys(picks).length) { $("draft").textContent = "· tap ▲ or ▼ on at least one stat first"; return; }
+  if (!$("who").value.trim()) { $("who").focus(); $("who").placeholder = "please add your name first"; return; }
+  $("code").textContent = buildCode(); $("mstat").textContent = "";
+  if (FAN_TO) { const m = $("mail"); m.style.display = ""; m.href = "mailto:" + FAN_TO + "?subject=" + encodeURIComponent(`Fan Picks wk${D.week} — ${$("who").value.trim()}`) + "&body=" + encodeURIComponent($("code").textContent); }
+  $("modal").classList.add("on");
+};
+$("cmt").addEventListener("input", () => { $("code").textContent = buildCode(); if (FAN_TO) $("mail").href = "mailto:" + FAN_TO + "?subject=" + encodeURIComponent(`Fan Picks wk${D.week} — ${$("who").value.trim()}`) + "&body=" + encodeURIComponent($("code").textContent); });
+$("copy").onclick = async () => {
+  const c = $("code").textContent;
+  try { await navigator.clipboard.writeText(c); $("mstat").className = "status ok"; $("mstat").textContent = "copied — paste it into a message to the person who sent you the link"; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents($("code")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("mstat").textContent = "select the code above and copy it"; }
+};
+$("close").onclick = () => $("modal").classList.remove("on");
+$("modal").addEventListener("click", e => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
+</script>
+</body>
+</html>

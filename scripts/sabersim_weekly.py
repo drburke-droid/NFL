@@ -478,6 +478,8 @@ p = p.merge(sk[["player_id"] + extra], on="player_id", how="left", suffixes=("",
 p["note0"] = ""
 for c in ("team", "opp"):
     if c + "_sk" in p.columns: p[c] = p[c].fillna(p[c + "_sk"])
+if "opp" in p.columns:   # the lines table can lack a game (week not exported yet); the slate always knows the opponent
+    p["opp"] = p.opp.fillna(p.team.map(games.drop_duplicates("team").set_index("team").opp))
 p["proj"] = p.Model_Burke_mean
 
 # ---- live lineup status: ESPN injuries + Sleeper, plus a manual inactives file ----
