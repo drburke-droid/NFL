@@ -60,11 +60,13 @@ SLOT_ORDER = ["QB", "RB", "WR", "TE", "FLEX", "OP", "K", "DST", "BENCH", "IR"]
 roster = []
 for r in me["roster"]:
     n = norm(r["name"]); p = proj.get((n, r["pos"])) or mine_n.get(n) or {}
+    espn_tag = (r.get("inj") or "").upper()
+    is_out = bool(p.get("out")) or espn_tag in ("INJURY_RESERVE", "OUT", "SUSPENSION", "SUSPENDED")
     roster.append({"name": r["name"], "pos": r["pos"], "team": r.get("team", ""), "slot": r.get("slot", ""), "opp": opp_of(r.get("team", "")),
                    "keeper": bool(r.get("keeper")), "keeper_price": r.get("keeper_price") or 0, "acq": r.get("acq"),
                    "inj_espn": r.get("inj") or "", "inj_ffa": (p.get("inj") or "") if p.get("inj") not in (None, "NA") else "",
                    "season_pts": r.get("season_pts"), "last_pts": r.get("last_pts"),
-                   "proj": p.get("pts"), "n": n})
+                   "proj": (0.0 if is_out else p.get("pts")), "out": is_out, "n": n})
 roster.sort(key=lambda r: (SLOT_ORDER.index(r["slot"]) if r["slot"] in SLOT_ORDER else 99, -(r["proj"] or 0)))
 
 board = {}

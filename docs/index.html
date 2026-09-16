@@ -3928,7 +3928,7 @@ function renderTeam(){
     return;
   }
   const M=MY_TEAM, meta=M.meta, wk=meta.current_week;
-  const injc=s=>{const u=(s||"").toUpperCase(); if(!u||u==="ACTIVE"||u==="NA")return ""; const bad=/OUT|IR|SUSP|DOUBT/.test(u); return '<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:'+(bad?"#7a1f1f":"#6b4e00")+';color:#fff;margin-left:4px">'+u.replace("QUESTIONABLE","Q").replace("DOUBTFUL","D")+'</span>';};
+  const injc=s=>{let u=(s||"").toUpperCase().replace("INJURY_RESERVE","IR").replace("SUSPENSION","SUS"); if(!u||u==="ACTIVE"||u==="NA")return ""; const bad=/^(O|OUT|IR|SUS|SUSP|PUP|NFI)$|DOUBT/.test(u); return '<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:'+(bad?"#7a1f1f":"#6b4e00")+';color:#fff;margin-left:4px">'+u.replace("QUESTIONABLE","Q").replace("DOUBTFUL","D").replace("DAY_TO_DAY","DTD")+'</span>';};
   const fmt=v=>v==null?'<span class="muted">—</span>':v.toFixed(1);
   const oppc=o=>o==="BYE"?'<b style="color:var(--bad)">BYE</b>':(o||'<span class="muted">—</span>');
   let h='<div class="dr-panel"><h3 style="margin:0 0 4px">🏠 '+meta.team+' <span class="muted" style="font-weight:normal">— '+meta.league+' · week '+wk+'</span></h3>'+
@@ -3939,7 +3939,7 @@ function renderTeam(){
   // ---- roster ----
   const starters=M.roster.filter(r=>r.slot!=="BENCH"&&r.slot!=="IR"), bench=M.roster.filter(r=>r.slot==="BENCH"), ir=M.roster.filter(r=>r.slot==="IR");
   const tot=starters.reduce((a,r)=>a+(r.proj||0),0);
-  const row=(r,dim)=>'<tr style="'+(dim?'opacity:.75':'')+'"><td class="muted">'+r.slot+'</td><td><b>'+r.name+'</b>'+(r.keeper?' <span class="chip" title="keeper ($'+r.keeper_price+')" style="font-size:10px;padding:0 5px">K $'+r.keeper_price+'</span>':'')+injc(r.inj_espn||r.inj_ffa)+'</td>'+
+  const row=(r,dim)=>'<tr style="'+((dim||r.out)?'opacity:.75':'')+'"><td class="muted">'+r.slot+'</td><td><b>'+r.name+'</b>'+(r.keeper?' <span class="chip" title="keeper ($'+r.keeper_price+')" style="font-size:10px;padding:0 5px">K $'+r.keeper_price+'</span>':'')+injc(r.inj_espn||r.inj_ffa)+'</td>'+
     '<td>'+r.pos+'</td><td>'+r.team+'</td><td>'+oppc(r.opp)+'</td><td style="text-align:right"><b>'+fmt(r.proj)+'</b></td><td style="text-align:right" class="muted">'+fmt(r.last_pts)+'</td><td style="text-align:right" class="muted">'+fmt(r.season_pts)+'</td></tr>';
   const head='<tr class="muted" style="font-size:11px"><th style="text-align:left">slot</th><th style="text-align:left">player</th><th style="text-align:left">pos</th><th style="text-align:left">team</th><th style="text-align:left">wk '+wk+'</th><th style="text-align:right">proj</th><th style="text-align:right">last wk</th><th style="text-align:right">season</th></tr>';
   h+='<div class="dr-panel"><h3>Lineup <span class="muted" style="font-weight:normal">— starters project to <b>'+tot.toFixed(1)+'</b> (K/DST included where scored)</span></h3>'+

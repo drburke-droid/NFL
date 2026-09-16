@@ -219,7 +219,13 @@ with smtplib.SMTP_SSL(host, port, context=ssl.create_default_context()) as smtp:
         with open(csv_path, "rb") as f:
             rcpt.add_attachment(f.read(), maintype="text", subtype="csv", filename=os.path.basename(csv_path))
         smtp.send_message(rcpt)
-sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"], "credits_left": left}
+try:    # the generator's own lineup summary ("lineups: N statuses pulled {espn: .., sleeper: ..}; Q, OUT {..}") and injury-report line
+    _keep = [l.strip()[:300] for l in open(logp, encoding="utf-8", errors="ignore").read().splitlines()
+             if l.strip().startswith(("lineups:", "injury report", "schedule:", "week ", "ESPN injuries unavailable", "Sleeper unavailable", "NFL.com injury"))][:6]
+except Exception:
+    _keep = []
+sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"], "credits_left": left,
+                  "lineups": _keep}
 json.dump(sent, open(LOG, "w"), indent=1)
 out(sent=True, file=os.path.basename(csv_path), rows=n_rows, to=to, credits_left=left,
     low_credits=low, generator_warnings=len(warns))

@@ -205,18 +205,38 @@ ev = pd.DataFrame(events)
 ev["kick"] = pd.to_datetime(ev.commence_time, utc=True)
 ev["home"] = ev.home_team.map(NAME2ABBR); ev["away"] = ev.away_team.map(NAME2ABBR)
 now = pd.Timestamp.now(tz="UTC")
-# week boundaries: NFL weeks roll over Tuesday; label by nflv_game_lines when available
-gl26 = gl[gl.season == SEASON]
-if A.week: cur_week = A.week
+# Week labels come from the season schedule (data/schedule_{SEASON}.csv, nflverse). The Odds API only
+# lists games that have not kicked off, so anchoring weeks on its earliest event made every run
+# "week 1": correct through the opening week, then wrong forever after (caught 2026-09-16 on the
+# first week-2 run — it loaded the week-1 FFA file and K/DST override). A week starts two days
+# before its first kickoff (Tuesday) and is current until its last game is four hours old.
+def schedule_weeks():
+    fp = os.path.join(ROOT, "data", f"schedule_{SEASON}.csv")
+    if not os.path.exists(fp): return {}
+    sch = pd.read_csv(fp); sch = sch[(sch.season == SEASON) & (sch.game_type == "REG")]
+    t = pd.to_datetime(sch.gameday.astype(str) + " " + sch.gametime.fillna("13:00").astype(str), errors="coerce")
+    t = t.dt.tz_localize("US/Eastern", ambiguous="NaT", nonexistent="shift_forward").dt.tz_convert("UTC")
+    g = pd.DataFrame({"week": sch.week.astype(int), "kick": t}).dropna().groupby("week").kick.agg(["min", "max"])
+    return {int(w): (r["min"], r["max"]) for w, r in g.iterrows()}
+SCHED = schedule_weeks()
+def week_of(kick):
+    """schedule week containing a kickoff (weeks open two days before their first game)"""
+    ws = [w for w, (lo, hi) in SCHED.items() if kick >= lo - pd.Timedelta(days=2)]
+    return max(ws) if ws else None
+if SCHED:
+    ev["week"] = ev.kick.map(week_of)
+    if A.week: cur_week = A.week
+    else:
+        open_weeks = [w for w, (lo, hi) in SCHED.items() if hi + pd.Timedelta(hours=4) > now]
+        cur_week = min(open_weeks) if open_weeks else max(SCHED)
+    print(f"  schedule: {len(SCHED)} weeks; week {cur_week} runs {SCHED[cur_week][0]:%a %m/%d} .. {SCHED[cur_week][1]:%a %m/%d}")
 else:
-    # first week with any game not yet completed (kick + 4h > now)
-    ev["wk_guess"] = ((ev.kick - ev.kick.min()).dt.days + 2) // 7 + 1
-    live = ev[ev.kick + pd.Timedelta(hours=4) > now]
-    cur_week = int(live.wk_guess.min()) if len(live) else int(ev.wk_guess.max())
-    first_kick = ev.kick.min()
-    if len(gl26):   # trust the lines table's week labels when it has them
-        pass
-ev["week"] = ((ev.kick - ev.kick.min()).dt.days + 2) // 7 + 1
+    print("  no data/schedule file: labelling weeks from the earliest listed event (only right in week 1)")
+    ev["week"] = ((ev.kick - ev.kick.min()).dt.days + 2) // 7 + 1
+    if A.week: cur_week = A.week
+    else:
+        live = ev[ev.kick + pd.Timedelta(hours=4) > now]
+        cur_week = int(live.week.min()) if len(live) else int(ev.week.max())
 sl = ev[ev.week == cur_week].copy()
 if not A.all_games: sl = sl[sl.kick > now]
 if A.kickoff:
@@ -605,6 +625,12 @@ if not A.no_lineups:
     byname = {k[0]: v for k, v in st.items() if v[0] == "OUT"}
     miss = (p.status == "") & p.nname.isin(byname)
     p.loc[miss, "status"] = "OUT"; p.loc[miss, "src"] = p.loc[miss, "nname"].map(lambda n: byname[n][1] + "?team")
+    # the FFA scrape's own tag (O / IR / SUS / PUP) is the last-resort OUT source: a player every
+    # live feed missed (ESPN refusing the runner, Sleeper's cache) but whom the Wednesday scrape
+    # already knew was gone must not keep a projection
+    if "injury_status" in p.columns:
+        ffa_out = (p.status == "") & p.injury_status.astype(str).str.strip().str.upper().isin(["O", "OUT", "IR", "SUS", "PUP", "NFI"])
+        p.loc[ffa_out, "status"] = "OUT"; p.loc[ffa_out, "src"] = "ffa-tag"
     p["prac"] = [REPORT.get((n, ps), {}).get("prac", "") for n, ps in zip(p.nname, p.position)]
     p["inj_report"] = [REPORT.get((n, ps), {}).get("injury", "") for n, ps in zip(p.nname, p.position)]
     # a player whose last practice was DNP but who is expected to play produces ~0.88 of his line (WR 0.85) --
@@ -642,7 +668,9 @@ if not A.no_lineups:
         return None
     qb_top = p[p.position == "QB"].groupby("team").proj.max().to_dict()   # the team's projected starter, pre-zeroing
     outs = p[(p.status == "OUT") & (p.proj > 0.5)].sort_values("proj", ascending=False)
-    print(f"  lineups: {len(st)} statuses pulled; {int((p.status == 'Q').sum())} Q, {len(outs)} OUT with a projection")
+    _by_src = pd.Series([v[1] for v in st.values()]).str.replace("?team", "", regex=False).value_counts().to_dict()
+    _out_src = outs.src.fillna("").str.replace("?team", "", regex=False).value_counts().to_dict()
+    print(f"  lineups: {len(st)} statuses pulled {_by_src}; {int((p.status == 'Q').sum())} Q, {len(outs)} OUT with a projection {_out_src}")
     for r in outs.itertuples():
         mates = p[(p.team == r.team) & (p.position == r.position) & (p.status != "OUT") & (p.index != r.Index)]
         mates = mates.sort_values("proj", ascending=False)

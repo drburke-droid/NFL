@@ -26,6 +26,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 LEAGUE = os.path.join(ROOT, "outputs", "espn_league.json")
 FFA_DIR = os.path.join(ROOT, "data", "ffanalytics", "FFAn_weekly")
 SKILL = ("QB", "RB", "WR", "TE")
+OUT_TAGS = {"O", "OUT", "IR", "SUS", "PUP", "NFI"}     # FFA injury_status values that mean "will not play"
 
 # statId -> the FFA column it scores. Decoded from the standard ESPN fantasy stat table; the ones
 # this league leaves at zero never reach here. FOLD means the rule is real but FFA reports it
@@ -230,10 +231,12 @@ proj = []
 for r in rows:
     r["fg_0039"] = f(r, "fg_0019") + f(r, "fg_2029") + f(r, "fg_3039")
     pts = sum(f(r, col) * mult for col, mult in scoring.items())
+    inj = (r.get("injury_status") or "").strip()
+    if inj.upper() in OUT_TAGS: pts = 0.0      # FFA still prints a stat line for a player it tags O/IR; he scores nothing
     n = norm(r["player"])
     held, who, how = is_rostered(n, r["position"], r["team"])
     proj.append({"name": r["player"], "pos": r["position"], "team": r["team"], "n": n,
-                 "pts": round(pts, 2), "inj": (r.get("injury_status") or "").strip(),
+                 "pts": round(pts, 2), "inj": inj, "out": inj.upper() in OUT_TAGS,
                  "rostered": held, "owner": who, "match": how})
 
 # a projected player nobody rosters is, by definition, a free agent in a 12-team league
@@ -253,9 +256,9 @@ positions = SKILL + ("K",) + (("DST",) if A.dst else ())
 board = {}
 for pos in positions:
     pool = sorted([p for p in proj if p["pos"] == pos], key=lambda x: -x["pts"])
-    free = [p for p in pool if not p["rostered"]]
+    free = [p for p in pool if not p["rostered"] and not p["out"]]      # an IR player is not a waiver add
     ours = [p for p in pool if p["n"] in {m["n"] for m in my_players}]
-    worst = min((p["pts"] for p in ours), default=0.0)
+    worst = min((p["pts"] for p in ours if not p["out"]), default=0.0)   # delta vs my weakest AVAILABLE player
     board[pos] = {"mine": ours, "free": free[:A.top], "worst_of_mine": worst}
 
     print(f"\n=== {pos} ===")
