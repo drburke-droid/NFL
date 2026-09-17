@@ -30,11 +30,13 @@ jobs:
           cache-dependency-path: requirements-sabersim.txt
       - run: pip install -q -r requirements-sabersim.txt
       - name: Grade
-        run: python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
+        run: |
+          python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
+          python scripts/fan_grade.py || echo "fan grade failed (continuing)"
       - name: Publish
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/sabersim_accuracy.json outputs/reports/sabersim_accuracy.md 2>/dev/null || true
+          git add docs/sabersim_accuracy.json docs/fan/grade.json outputs/reports/sabersim_accuracy.md 2>/dev/null || true
           git commit -m "SaberSim accuracy (automated)" || { echo "no changes"; exit 0; }
           git pull --rebase && git push

@@ -142,7 +142,9 @@ jobs:
 
       - name: Daily grade of finished games
         if: steps.win.outputs.grade_due == 'true'
-        run: python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
+        run: |
+          python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
+          python scripts/fan_grade.py || echo "fan grade failed (continuing)"
 
       - name: Record the send
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'
@@ -155,4 +157,5 @@ jobs:
             data/kdst/kdst_*.csv \
             data/subvertadown/subvertadown_long.csv \
             docs/sabersim_accuracy.json \
+            docs/fan/grade.json \
             outputs/reports/sabersim_accuracy.md

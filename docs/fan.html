@@ -49,6 +49,12 @@
   .status { font-size:13px; color:var(--mut); margin-top:8px; min-height:18px; } .ok { color:var(--ok); }
   .legend { font-size:12px; color:var(--mut); margin-top:6px; } .legend span { margin-right:10px; }
   .empty { color:var(--mut); padding:20px 0; text-align:center; }
+  table.g { border-collapse:collapse; width:100%; font-size:12px; margin-top:6px; }
+  table.g th, table.g td { padding:4px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
+  table.g th { color:var(--mut); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
+  table.g th:first-child, table.g td:first-child { text-align:left; }
+  .gwrap { overflow-x:auto; }
+  .pos { color:var(--up); } .neg { color:var(--down); }
 </style>
 </head>
 <body>
@@ -71,6 +77,12 @@
   </div>
 
   <div id="list"><div class="empty">loading…</div></div>
+
+  <div class="card" id="gradecard" style="margin-top:18px">
+    <b>How the picks are doing</b>
+    <div class="how" style="margin-top:4px">Every arrow is scored once the game's box score is in. <b>Direction</b> = the real number moved the way the arrow said. <b>Error removed</b> = how many fantasy points closer (or farther) the fan's number was than ours, added up. Shadow mode: this changes nothing in the model.</div>
+    <div id="grade" class="how" style="margin-top:8px">loading…</div>
+  </div>
 </main>
 
 <div class="bar"><div class="in">
@@ -188,6 +200,32 @@ $("copy").onclick = async () => {
   catch (e) { const r = document.createRange(); r.selectNodeContents($("code")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("mstat").textContent = "select the code above and copy it"; }
 };
 $("close").onclick = () => $("modal").classList.remove("on");
+
+// ---- grading (docs/fan/grade.json, refreshed by the daily grade job) ----
+fetch("fan/grade.json?" + Date.now()).then(r => r.json()).then(G => {
+  const el = $("grade"), o = G.overall || {};
+  const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
+  const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
+  if (!o.n) { el.textContent = "no picks submitted yet — yours could be the first"; return; }
+  let h = `<div><b>${o.n}</b> arrows from <b>${(G.by_fan || []).length}</b> fan${(G.by_fan || []).length === 1 ? "" : "s"} · <b>${o.graded}</b> graded · ${o.pending} waiting for box scores` +
+    (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than the model on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
+  if ((G.by_fan || []).length) {
+    h += `<div class="gwrap"><table class="g"><tr><th>fan</th><th>graded</th><th>pending</th><th>direction</th><th>closer / farther</th><th>error removed (pts)</th></tr>` +
+      G.by_fan.map(f => `<tr><td>${f.fan.replace(/</g, "&lt;")}</td><td>${f.graded}</td><td>${f.pending}</td><td>${pct(f.hit_rate)}</td><td>${f.closer} / ${f.farther}</td><td>${pts(f.removed_pts)}</td></tr>`).join("") + `</table></div>`;
+  }
+  if (G.by_size && o.graded) {
+    const sz = Object.entries(G.by_size).filter(([k, v]) => v.graded).map(([k, v]) => `${k}×: ${pct(v.hit_rate)} on ${v.graded}`).join(" · ");
+    const dr = Object.entries(G.by_direction || {}).filter(([k, v]) => v.graded).map(([k, v]) => `${k}s ${pct(v.hit_rate)} (${v.graded})`).join(" · ");
+    h += `<div class="how" style="margin-top:6px">by arrow count — ${sz}${dr ? " · " + dr : ""}</div>`;
+  }
+  if ((G.rows || []).length) {
+    h += `<details style="margin-top:8px"><summary class="how" style="cursor:pointer">graded picks (${G.rows.length})</summary><div class="gwrap"><table class="g"><tr><th>wk</th><th>fan</th><th>player</th><th>stat</th><th>arrows</th><th>ours</th><th>fan</th><th>actual</th><th>dir</th><th>pts</th></tr>` +
+      G.rows.map(r => `<tr><td>${r.week}</td><td>${String(r.fan).replace(/</g, "&lt;")}</td><td>${r.player} <span style="color:var(--mut)">${r.team} ${r.pos}</span></td><td>${(LABEL[r.stat] || r.stat)}</td><td>${r.arrows > 0 ? "+" : ""}${r.arrows}</td><td>${r.baseline}</td><td>${r.adjusted}</td><td>${r.actual}</td><td class="${r.direction === "hit" ? "pos" : r.direction === "miss" ? "neg" : ""}">${r.direction}</td><td>${pts(r.removed_pts)}</td></tr>`).join("") + `</table></div></details>`;
+  }
+  if ((G.pending_games || []).length) h += `<div class="how" style="margin-top:6px">waiting on: ${G.pending_games.join(", ")}</div>`;
+  h += `<div class="how" style="margin-top:6px">updated ${G.generated || ""}</div>`;
+  el.innerHTML = h;
+}).catch(() => { $("grade").textContent = "grading not available yet"; });
 $("modal").addEventListener("click", e => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
 </script>
 </body>
