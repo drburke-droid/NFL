@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-16T17:40Z",
+ "generated_at": "2026-09-17T14:00Z",
  "season": 2026,
  "min_lead_min": 75.0,
  "scale": {
@@ -448,28 +448,68 @@
      "actual": 4.1
     },
     {
-     "player": "Tua Tagovailoa",
-     "team": "ATL",
+     "player": "C.J. Stroud",
+     "team": "HOU",
      "week": 1,
-     "model": 0.0,
-     "subvertadown": 12.4,
-     "actual": 0.0
+     "model": 15.0,
+     "subvertadown": 15.8,
+     "actual": 16.5
     },
     {
-     "player": "Geno Smith",
-     "team": "NYJ",
+     "player": "Bryce Young",
+     "team": "CAR",
      "week": 1,
-     "model": 11.4,
-     "subvertadown": 12.7,
-     "actual": 9.3
+     "model": 15.2,
+     "subvertadown": 14.4,
+     "actual": 31.4
     },
     {
-     "player": "Deshaun Watson",
-     "team": "CLE",
+     "player": "Daniel Jones",
+     "team": "IND",
      "week": 1,
-     "model": 10.5,
-     "subvertadown": 10.5,
-     "actual": 14.0
+     "model": 15.5,
+     "subvertadown": 17.0,
+     "actual": 9.0
+    },
+    {
+     "player": "Jared Goff",
+     "team": "DET",
+     "week": 1,
+     "model": 16.3,
+     "subvertadown": 19.5,
+     "actual": 16.4
+    },
+    {
+     "player": "Tyler Shough",
+     "team": "NO",
+     "week": 1,
+     "model": 16.7,
+     "subvertadown": 16.9,
+     "actual": 23.2
+    },
+    {
+     "player": "Baker Mayfield",
+     "team": "TB",
+     "week": 1,
+     "model": 16.7,
+     "subvertadown": 17.2,
+     "actual": 11.6
+    },
+    {
+     "player": "Caleb Williams",
+     "team": "CHI",
+     "week": 1,
+     "model": 17.2,
+     "subvertadown": 18.2,
+     "actual": 37.3
+    },
+    {
+     "player": "Trevor Lawrence",
+     "team": "JAX",
+     "week": 1,
+     "model": 17.6,
+     "subvertadown": 17.4,
+     "actual": 26.1
     },
     {
      "player": "Josh Allen",
@@ -496,68 +536,12 @@
      "actual": 14.2
     },
     {
-     "player": "Trevor Lawrence",
-     "team": "JAX",
+     "player": "Deshaun Watson",
+     "team": "CLE",
      "week": 1,
-     "model": 17.6,
-     "subvertadown": 17.4,
-     "actual": 26.1
-    },
-    {
-     "player": "Caleb Williams",
-     "team": "CHI",
-     "week": 1,
-     "model": 17.2,
-     "subvertadown": 18.2,
-     "actual": 37.3
-    },
-    {
-     "player": "Baker Mayfield",
-     "team": "TB",
-     "week": 1,
-     "model": 16.7,
-     "subvertadown": 17.2,
-     "actual": 11.6
-    },
-    {
-     "player": "Tyler Shough",
-     "team": "NO",
-     "week": 1,
-     "model": 16.7,
-     "subvertadown": 16.9,
-     "actual": 23.2
-    },
-    {
-     "player": "Jared Goff",
-     "team": "DET",
-     "week": 1,
-     "model": 16.3,
-     "subvertadown": 19.5,
-     "actual": 16.4
-    },
-    {
-     "player": "Daniel Jones",
-     "team": "IND",
-     "week": 1,
-     "model": 15.5,
-     "subvertadown": 17.0,
-     "actual": 9.0
-    },
-    {
-     "player": "Bryce Young",
-     "team": "CAR",
-     "week": 1,
-     "model": 15.2,
-     "subvertadown": 14.4,
-     "actual": 31.4
-    },
-    {
-     "player": "C.J. Stroud",
-     "team": "HOU",
-     "week": 1,
-     "model": 15.0,
-     "subvertadown": 15.8,
-     "actual": 16.5
+     "model": 10.5,
+     "subvertadown": 10.5,
+     "actual": 14.0
     },
     {
      "player": "Aaron Rodgers",
@@ -568,12 +552,28 @@
      "actual": 12.5
     },
     {
+     "player": "Geno Smith",
+     "team": "NYJ",
+     "week": 1,
+     "model": 11.4,
+     "subvertadown": 12.7,
+     "actual": 9.3
+    },
+    {
      "player": "Cam Ward",
      "team": "TEN",
      "week": 1,
      "model": 14.0,
      "subvertadown": 12.1,
      "actual": 11.7
+    },
+    {
+     "player": "Tua Tagovailoa",
+     "team": "ATL",
+     "week": 1,
+     "model": 0.0,
+     "subvertadown": 12.4,
+     "actual": 0.0
     },
     {
      "player": "Kirk Cousins",
@@ -616,12 +616,12 @@
      "actual": 19.5
     },
     {
-     "player": "Jalen Hurts",
-     "team": "PHI",
+     "player": "Kyler Murray",
+     "team": "MIN",
      "week": 1,
-     "model": 20.1,
-     "subvertadown": 19.8,
-     "actual": 24.7
+     "model": 16.5,
+     "subvertadown": 18.8,
+     "actual": -0.4
     },
     {
      "player": "Justin Herbert",
@@ -632,12 +632,12 @@
      "actual": 13.3
     },
     {
-     "player": "Kyler Murray",
-     "team": "MIN",
+     "player": "Jalen Hurts",
+     "team": "PHI",
      "week": 1,
-     "model": 16.5,
-     "subvertadown": 18.8,
-     "actual": -0.4
+     "model": 20.1,
+     "subvertadown": 19.8,
+     "actual": 24.7
     },
     {
      "player": "Dak Prescott",
@@ -656,20 +656,20 @@
      "actual": 26.6
     },
     {
-     "player": "Patrick Mahomes",
-     "team": "KC",
-     "week": 1,
-     "model": 15.7,
-     "subvertadown": 16.7,
-     "actual": 21.7
-    },
-    {
      "player": "Bo Nix",
      "team": "DEN",
      "week": 1,
      "model": 16.0,
      "subvertadown": 15.2,
      "actual": 5.4
+    },
+    {
+     "player": "Patrick Mahomes",
+     "team": "KC",
+     "week": 1,
+     "model": 15.7,
+     "subvertadown": 16.7,
+     "actual": 21.7
     }
    ]
   }
