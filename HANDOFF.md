@@ -75,3 +75,21 @@ PC gets them from the backup zip). This file carries the context those notes wou
   exhausted. Regenerable by the news collector, or move it as a Release asset like the odds DB.
 - The Odds API key file holds 6 keys (~2.4k credits on 2026-09-16); the health line shows the
   balance of the single key a call used, not the total.
+
+## Generating a projection CSV from the cloud console (no key file, no PC)
+
+The generator runs OFFLINE when `data/odds_api_key.txt` is absent: the slate comes from
+`data/schedule_2026.csv`, the DK lines/props blend is skipped, and everything else (FFA file, NFL.com
+injury report, ESPN/Sleeper lineups, K/DST override, the model, the quantile layer) runs as usual.
+Verified 2026-09-17: with the key hidden, the Thursday slate produced a 28-row CSV in ~2 min.
+
+What the session needs: this repo, `pip install -r requirements-sabersim.txt`, and the Model_Burke
+package (`git clone https://<PAT>@github.com/drburke-droid/model-burke-private.git`, then point the
+positional argument at that clone, or set `MODEL_BURKE_PKG`). Then:
+
+    python scripts/sabersim_weekly.py <pkg dir> --out outputs/sabersim/manual.csv        # next slate
+    python scripts/sabersim_weekly.py <pkg dir> --kickoff 2026-09-20T17:00:00Z --out ...  # a specific slate
+    python scripts/sabersim_weekly.py <pkg dir> --all-games --out ...                     # the whole week
+
+Email the CSV to SaberSim yourself (address and timing in `SABERSIM_AUTOMATION.md`). If the page's
+Run / Preview buttons work, prefer them: they include the DK blend and need nothing installed.

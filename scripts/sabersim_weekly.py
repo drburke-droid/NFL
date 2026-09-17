@@ -105,9 +105,14 @@ def norm(s):
 
 # ---------- Odds API key rotation (same contract as props_watch) ----------
 _kp = os.path.join(ROOT, "data", "odds_api_key.txt")
-if not os.path.exists(_kp):
-    raise SystemExit("data/odds_api_key.txt is missing (gitignored) — copy it from the other PC, one key per line")
-KEYS = [k.strip() for k in open(_kp) if k.strip() and not k.startswith("#")]
+KEYS = [k.strip() for k in open(_kp) if k.strip() and not k.startswith("#")] if os.path.exists(_kp) else []
+OFFLINE = not KEYS
+if OFFLINE:
+    # No Odds API key (a cloud console or a fresh clone): the slate comes from data/schedule_<S>.csv
+    # and the DK blend is skipped. Everything else (FFA, injury report, ESPN/Sleeper lineups, K/DST
+    # override, the model) runs as usual, so a CSV can still be produced anywhere the package is.
+    print("  no data/odds_api_key.txt — OFFLINE: slate from the schedule file, DK lines/props skipped (--no-market)")
+    A.no_market = True
 _ki = [0]
 def get(url):
     while True:
@@ -195,12 +200,24 @@ ypr_p = (last.groupby("player_id")[["receptions", "receiving_yards"]].sum().quer
 ypr_pos = last.groupby("position")[["receptions", "receiving_yards"]].sum().eval("receiving_yards / receptions")
 
 # ---------- 3. current week + kickoffs ----------
-try:
-    events, rem = get(f"{API}/sports/americanfootball_nfl/events")
-    print(f"  Odds API events: {len(events)} (credits left {rem})")
-except Exception as e:
-    print("  events fetch failed:", str(e)[:60]); events = json.load(open(
-        os.path.join(ROOT, "data", "props_frames", "lines_cache.json"))).get("events", [])
+ABBR2NAME = {v: k for k, v in NAME2ABBR.items()}
+def schedule_events():
+    """the season schedule as Odds-API-shaped events (id, commence_time, home_team, away_team), games not yet 4 h old"""
+    sch = pd.read_csv(os.path.join(ROOT, "data", f"schedule_{SEASON}.csv"))
+    sch = sch[(sch.season == SEASON) & (sch.game_type == "REG")]
+    t = pd.to_datetime(sch.gameday.astype(str) + " " + sch.gametime.fillna("13:00").astype(str), errors="coerce")
+    t = t.dt.tz_localize("US/Eastern", ambiguous="NaT", nonexistent="shift_forward").dt.tz_convert("UTC")
+    keep = t.notna() & (t + pd.Timedelta(hours=4) > pd.Timestamp.now(tz="UTC"))
+    return [{"id": r.game_id, "commence_time": k.strftime("%Y-%m-%dT%H:%M:%SZ"), "home_team": ABBR2NAME.get(r.home_team, r.home_team),
+             "away_team": ABBR2NAME.get(r.away_team, r.away_team)} for r, k in zip(sch[keep].itertuples(), t[keep])]
+events = None
+if not OFFLINE:
+    try:
+        events, rem = get(f"{API}/sports/americanfootball_nfl/events")
+        print(f"  Odds API events: {len(events)} (credits left {rem})")
+    except Exception as e: print("  events fetch failed:", str(e)[:60])
+if not events:
+    events = schedule_events(); print(f"  slate from data/schedule_{SEASON}.csv: {len(events)} games still to play")
 ev = pd.DataFrame(events)
 ev["kick"] = pd.to_datetime(ev.commence_time, utc=True)
 ev["home"] = ev.home_team.map(NAME2ABBR); ev["away"] = ev.away_team.map(NAME2ABBR)
