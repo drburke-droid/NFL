@@ -103,7 +103,7 @@ const STEP = 0.10, MIN_N = -10;
 const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
-  D = d; KEY = "fanpicks_" + d.season + "_wk" + d.week;
+  D = d; KEY = "fanpicks_" + d.season + "_wk" + d.week + "_" + (d.bake_id || "");   // a re-bake renumbers players, so drafts are per bake
   try { picks = JSON.parse(ls.get(KEY) || "{}") || {}; } catch(e) { picks = {}; }
   $("who").value = ls.get("fanpicks_who") || "";
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
@@ -169,7 +169,7 @@ $("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {};
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
   const a = Object.entries(picks).map(([k, v]) => { const [i, s] = k.split(":").map(Number); return [i, s, v]; });
-  const j = {n: ($("who").value || "").trim().slice(0, 60), t: new Date().toISOString().slice(0, 16) + "Z", c: ($("cmt").value || "").trim().slice(0, 300), a};
+  const j = {n: ($("who").value || "").trim().slice(0, 60), t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), a};
   return "FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
 }
 $("submit").onclick = () => {

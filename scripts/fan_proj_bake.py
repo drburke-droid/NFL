@@ -12,7 +12,9 @@ grade compares fan arrows against THIS baseline and against actuals.)
 
 Outputs:
     docs/fan/proj_latest.json         what the page loads
-    docs/fan/proj_<S>_wk<W>.json      frozen copy for the week (the record script decodes codes against it)
+    docs/fan/proj_<S>_wk<W>.json      latest bake for the week
+    docs/fan/proj_<S>_wk<W>_<bake_id>.json  frozen copy per bake; a code carries its bake_id, so a re-bake
+                                      (fresh FFA file mid-week) never changes what an earlier code means
 
 Usage: python scripts/fan_proj_bake.py <csv> <season> <week>
 """
@@ -53,10 +55,11 @@ for r in rows:
                     "stats": stats})
 for g in games.values(): g["teams"] = sorted(g["teams"])
 order = sorted(games.values(), key=lambda g: (datetime.strptime(f"{S} " + g["kickoff"][4:], "%Y %m/%d %I:%M %p ET"), g["game"]))
-out = {"season": S, "week": W, "generated": gen, "baked": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"),
+bake_id = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
+out = {"season": S, "week": W, "generated": gen, "baked": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "bake_id": bake_id,
        "stat_keys": ["pass_yds", "pass_tds", "pass_int", "rush_yds", "rush_tds", "rec", "rec_yds", "rec_tds"],
        "games": order, "players": players}
 d = os.path.join(ROOT, "docs", "fan"); os.makedirs(d, exist_ok=True)
-for name in ("proj_latest.json", f"proj_{S}_wk{W}.json"):
+for name in ("proj_latest.json", f"proj_{S}_wk{W}.json", f"proj_{S}_wk{W}_{bake_id}.json"):   # the stamped copy is what codes decode against
     with open(os.path.join(d, name), "w", encoding="utf-8") as fh: json.dump(out, fh, separators=(",", ":"))
 print(f"baked {len(players)} players in {len(order)} games ({S} wk{W}, generated {gen}) -> docs/fan/proj_latest.json + proj_{S}_wk{W}.json")
