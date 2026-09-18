@@ -206,7 +206,7 @@ def schedule_events():
     sch = pd.read_csv(os.path.join(ROOT, "data", f"schedule_{SEASON}.csv"))
     sch = sch[(sch.season == SEASON) & (sch.game_type == "REG")]
     t = pd.to_datetime(sch.gameday.astype(str) + " " + sch.gametime.fillna("13:00").astype(str), errors="coerce")
-    t = t.dt.tz_localize("US/Eastern", ambiguous="NaT", nonexistent="shift_forward").dt.tz_convert("UTC")
+    t = t.dt.tz_localize("America/New_York", ambiguous="NaT", nonexistent="shift_forward").dt.tz_convert("UTC")
     keep = t.notna() & (t + pd.Timedelta(hours=4) > pd.Timestamp.now(tz="UTC"))
     return [{"id": r.game_id, "commence_time": k.strftime("%Y-%m-%dT%H:%M:%SZ"), "home_team": ABBR2NAME.get(r.home_team, r.home_team),
              "away_team": ABBR2NAME.get(r.away_team, r.away_team)} for r, k in zip(sch[keep].itertuples(), t[keep])]
@@ -232,7 +232,7 @@ def schedule_weeks():
     if not os.path.exists(fp): return {}
     sch = pd.read_csv(fp); sch = sch[(sch.season == SEASON) & (sch.game_type == "REG")]
     t = pd.to_datetime(sch.gameday.astype(str) + " " + sch.gametime.fillna("13:00").astype(str), errors="coerce")
-    t = t.dt.tz_localize("US/Eastern", ambiguous="NaT", nonexistent="shift_forward").dt.tz_convert("UTC")
+    t = t.dt.tz_localize("America/New_York", ambiguous="NaT", nonexistent="shift_forward").dt.tz_convert("UTC")
     g = pd.DataFrame({"week": sch.week.astype(int), "kick": t}).dropna().groupby("week").kick.agg(["min", "max"])
     return {int(w): (r["min"], r["max"]) for w, r in g.iterrows()}
 SCHED = schedule_weeks()
@@ -264,13 +264,13 @@ if A.kickoff:
 elif A.hours: sl = sl[sl.kick <= now + pd.Timedelta(hours=A.hours)]
 elif not (A.all_games or A.all_remaining) and len(sl):
     sl = sl[sl.kick <= sl.kick.min() + pd.Timedelta(minutes=90)]     # next slate only
-slate_tag = sl.kick.min().tz_convert("US/Eastern").strftime("%a%I%p").lower() if len(sl) else "none"
+slate_tag = sl.kick.min().tz_convert("America/New_York").strftime("%a%I%p").lower() if len(sl) else "none"
 print(f"week {cur_week}: {len(sl)} games in this send"
       + ("" if not len(sl) else f" (kickoffs {sl.kick.min():%a %H:%M}Z .. {sl.kick.max():%a %H:%M}Z)"))
 if not len(sl): raise SystemExit("nothing to send")
 games = pd.concat([sl.assign(team=sl.home, opp=sl.away, is_home=1), sl.assign(team=sl.away, opp=sl.home, is_home=0)])
 games["game"] = games.away_team + " @ " + games.home_team
-games["kickoff_et"] = games.kick.dt.tz_convert("US/Eastern").dt.strftime("%a %m/%d %I:%M %p ET")
+games["kickoff_et"] = games.kick.dt.tz_convert("America/New_York").dt.strftime("%a %m/%d %I:%M %p ET")
 games = games[["team", "opp", "is_home", "home", "game", "kickoff_et", "kick", "id"]]
 
 # ---------- 4. history frame (FFA baseline x actuals x lags x context) ----------
@@ -947,7 +947,7 @@ out = out[out.Proj.notna() & ((out.Proj > 0.3) | (out.Status == "OUT"))].sort_va
 # provenance columns (a comment line would break strict CSV readers)
 out.insert(0, "Analyst", A.analyst)
 out.insert(1, "Model", A.model_name)
-out["Generated"] = pd.Timestamp.now(tz="US/Eastern").strftime("%Y-%m-%d %H:%M ET")
+out["Generated"] = pd.Timestamp.now(tz="America/New_York").strftime("%Y-%m-%d %H:%M ET")
 stamp = pd.Timestamp.now().strftime("%m%d_%H%M")
 tag = A.analyst.split()[-1] + "_" + A.model_name.split()[0]
 path = A.out or os.path.join(OUTD, f"{tag}_{SEASON}_wk{cur_week}_{slate_tag}_{stamp}.csv")

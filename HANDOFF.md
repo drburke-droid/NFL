@@ -21,6 +21,12 @@ PC gets them from the backup zip). This file carries the context those notes wou
    grader recovers a blank Opp from the game's own skill rows so existing sends grade correctly.
    Week 2 went from MAE 6.762 / bias +3.55 / 24 rows to MAE 4.944 / bias +1.509 / 26 rows; week 1 is
    unchanged. Without the generator fix the Sunday CIN @ HOU send would have hit the same thing.
+3. **Generator no longer needs legacy tzdata.** `sabersim_weekly.py` asked for `US/Eastern`, a legacy
+   alias that full tzdata ships but slim images (including the Claude Code cloud console) do not, so
+   the console recipe below died on `ZoneInfoNotFoundError` before reading a single file. All five
+   uses now say `America/New_York` — the same zone, and what `sabersim_grade.py` already used.
+   Verified on a container without the alias: output identical to the run before the change, bar the
+   Generated stamp.
 
 ## What changed 2026-09-16 / 17
 
