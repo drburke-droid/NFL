@@ -80,6 +80,12 @@ def lookup(r):
     w = int(r.week)
     if isinstance(r.ID, str) and (r.ID, w) in by_id: return by_id[(r.ID, w)]
     if (r.nname, r.Pos, w) in by_name: return by_name[(r.nname, r.Pos, w)]
+    # the last-name fallback is for FFA-only players who have no nflverse id at all. A row that DOES
+    # carry one and matched nothing above did not appear in the box score -> it played no snaps, so
+    # fall through to the 0 below. (Without this, a backup inherits the starter's line whenever the
+    # starter is the only one of that surname on the team: Kyle Allen was credited with Josh Allen's
+    # 40.8 in 2026 wk2.)
+    if isinstance(r.ID, str) and r.ID.startswith("00-"): return np.nan
     return by_last.get((r.nname.split()[-1], r.Team, r.Pos, w), np.nan)
 g = elig.copy(); g["actual"] = [lookup(r) for r in g.itertuples()]
 g = g[g.Pos.isin(["QB", "RB", "WR", "TE", "K"])].copy()
@@ -87,6 +93,12 @@ g = g[g.Pos.isin(["QB", "RB", "WR", "TE", "K"])].copy()
 # GAMES nflverse has ingested: both teams of the game must have rows for that week, otherwise the
 # whole game waits for the next grade (a week-level check graded a whole slate as zeros on 2026-09-10)
 have = a.groupby("week").team.apply(set).to_dict()
+# older sends can carry a blank Opp on their K and DST rows (the game-lines table was missing that
+# game); the send's own skill rows know the opponent, so recover it from them rather than dropping
+# the whole game as not-yet-ingested
+_gm = g.groupby("Game").Team.apply(set)
+g["Opp"] = [r.Opp if isinstance(r.Opp, str) else next(iter(_gm.get(r.Game, set()) - {r.Team}), None)
+            for r in g.itertuples()]
 ok = g.apply(lambda r: r.Team in have.get(int(r.week), set()) and r.Opp in have.get(int(r.week), set()), axis=1)
 skipped = g[~ok].groupby("week").Game.unique().to_dict()
 g = g[ok].copy(); g["actual"] = g.actual.fillna(0.0)

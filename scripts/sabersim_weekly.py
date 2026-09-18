@@ -322,6 +322,13 @@ cur = frame_for(SEASON, cur_week, live=True)
 if cur is None: raise SystemExit(f"no FFA file for {SEASON} wk{cur_week} — drop raw_stats_{SEASON}_wk{cur_week}.csv in {FDIR}")
 sk, kk, dst = cur
 sk = sk[sk.team.isin(games.team)].copy(); kk = kk[kk.team.isin(games.team)].copy(); dst = dst[dst.team.isin(games.team)].copy()
+# context() takes the opponent from the game-lines table, which can be missing a game the slate has
+# (2026 wk2 carried 28 of 32 teams: no BUF/DET, no CIN/HOU). The skill frame gets a slate-based fill
+# after the pipeline (section 5); K and DST go straight to the CSV, so fill them here — a blank Opp
+# is what dropped both kickers from the wk2 grade and flagged the game as awaiting box scores.
+_slate_opp = games.drop_duplicates("team").set_index("team").opp
+for _t in (kk, dst):
+    _t["opp"] = _t.opp.fillna(_t.team.map(_slate_opp)) if "opp" in _t.columns else _t.team.map(_slate_opp)
 # HEALTH: what each data pull actually delivered for THIS slate, written beside the CSV as
 # <csv>.health.json so the SaberSim page can show it. A feed that fails quietly must not look like a
 # feed that had nothing to say.

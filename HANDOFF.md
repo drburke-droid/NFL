@@ -1,10 +1,26 @@
-# Handoff — state as of 2026-09-17 (week 2)
+# Handoff — state as of 2026-09-18 (week 2)
 
 For picking the project up from another machine or the cloud console. Everything below is in this
 repo; the only things that are NOT are the Model_Burke package (private repo `model-burke-private`,
 or `pkg/` from the backup zip — see HOME_PC_RUNBOOK.md), the Odds API key file
 (`data/odds_api_key.txt`, gitignored), and Claude's memory notes (local `.claude` folder; the home
 PC gets them from the backup zip). This file carries the context those notes would otherwise hold.
+
+## What changed 2026-09-18
+
+1. **Grader credited a backup with the starter's line (fixed).** `sabersim_grade.py` fell through to
+   a last-name match for any row that missed on both player id and full name, so Kyle Allen (rostered,
+   no snaps, no box-score row) was scored with Josh Allen's 40.8 in week 2. The fallback is now only
+   for FFA-only rows with no nflverse id; a row that carries one and has no box-score row is a 0.
+2. **K/DST rows reached the CSV with a blank Opp (fixed, both ends).** `context()` reads the opponent
+   from the game-lines export, which carried 28 of 32 teams for week 2 — no BUF/DET, no CIN/HOU. The
+   skill frame has a slate-based fill after the pipeline; K and DST did not, so both kickers in the
+   Thursday send had no Opp. The grader's "has nflverse ingested this game" check requires Team and
+   Opp, so it dropped the kickers and flagged Detroit @ Buffalo as awaiting box scores with the rest
+   of the game already graded. `sabersim_weekly.py` now fills K/DST opp from the slate, and the
+   grader recovers a blank Opp from the game's own skill rows so existing sends grade correctly.
+   Week 2 went from MAE 6.762 / bias +3.55 / 24 rows to MAE 4.944 / bias +1.509 / 26 rows; week 1 is
+   unchanged. Without the generator fix the Sunday CIN @ HOU send would have hit the same thing.
 
 ## What changed 2026-09-16 / 17
 

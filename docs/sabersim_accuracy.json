@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-17T14:05Z",
+ "generated_at": "2026-09-18T12:45Z",
  "season": 2026,
  "min_lead_min": 75.0,
  "scale": {
@@ -177,82 +177,154 @@
      "model_mae_on_dk_rows": 4.323
     }
    }
+  },
+  {
+   "n": 26,
+   "mae": 4.944,
+   "rmse": 7.065,
+   "bias": 1.509,
+   "spearman": 0.769,
+   "cov80": 0.654,
+   "median_mae": 4.973,
+   "ffa_n": 23,
+   "ffa_mae": 5.493,
+   "model_mae_on_ffa_rows": 5.365,
+   "dk_n": 19,
+   "dk_mae": 5.992,
+   "model_mae_on_dk_rows": 6.04,
+   "week": 2,
+   "sends": 1,
+   "games": 1,
+   "late_sends_ignored": 0,
+   "by_pos": {
+    "K": {
+     "n": 2,
+     "mae": 2.58,
+     "rmse": 2.817,
+     "bias": -2.58,
+     "spearman": null,
+     "cov80": 1.0,
+     "median_mae": 2.58
+    },
+    "QB": {
+     "n": 4,
+     "mae": 8.178,
+     "rmse": 10.981,
+     "bias": 7.252,
+     "spearman": null,
+     "cov80": 0.5,
+     "median_mae": 7.707
+    },
+    "RB": {
+     "n": 6,
+     "mae": 1.24,
+     "rmse": 1.708,
+     "bias": -0.43,
+     "spearman": null,
+     "cov80": 0.667,
+     "median_mae": 1.557
+    },
+    "TE": {
+     "n": 6,
+     "mae": 4.672,
+     "rmse": 5.582,
+     "bias": 2.325,
+     "spearman": null,
+     "cov80": 0.833,
+     "median_mae": 4.792
+    },
+    "WR": {
+     "n": 8,
+     "mae": 6.901,
+     "rmse": 8.626,
+     "bias": 0.501,
+     "spearman": 0.095,
+     "cov80": 0.5,
+     "median_mae": 6.903
+    }
+   }
   }
  ],
  "overall": {
-  "n": 470,
-  "mae": 3.876,
-  "rmse": 5.476,
-  "bias": -0.379,
+  "n": 496,
+  "mae": 3.932,
+  "rmse": 5.57,
+  "bias": -0.28,
   "spearman": 0.776,
-  "cov80": 0.826,
-  "median_mae": 3.513,
-  "ffa_n": 376,
-  "ffa_mae": 4.171,
-  "model_mae_on_ffa_rows": 4.139,
-  "dk_n": 22,
-  "dk_mae": 4.466,
-  "model_mae_on_dk_rows": 4.625,
+  "cov80": 0.817,
+  "median_mae": 3.59,
+  "ffa_n": 399,
+  "ffa_mae": 4.247,
+  "model_mae_on_ffa_rows": 4.209,
+  "dk_n": 41,
+  "dk_mae": 5.173,
+  "model_mae_on_dk_rows": 5.281,
   "by_pos": {
    "K": {
-    "n": 32,
-    "mae": 3.425,
-    "rmse": 4.375,
-    "bias": -0.171,
-    "spearman": 0.074,
-    "cov80": 0.812,
-    "median_mae": 3.425
+    "n": 34,
+    "mae": 3.375,
+    "rmse": 4.299,
+    "bias": -0.313,
+    "spearman": 0.052,
+    "cov80": 0.824,
+    "median_mae": 3.375
    },
    "QB": {
-    "n": 63,
-    "mae": 4.113,
-    "rmse": 6.223,
-    "bias": -0.096,
-    "spearman": 0.781,
-    "cov80": 0.873,
-    "median_mae": 3.662,
-    "ffa_n": 59,
-    "ffa_mae": 4.311,
-    "model_mae_on_ffa_rows": 4.209
+    "n": 67,
+    "mae": 4.356,
+    "rmse": 6.604,
+    "bias": 0.343,
+    "spearman": 0.79,
+    "cov80": 0.851,
+    "median_mae": 3.903,
+    "ffa_n": 63,
+    "ffa_mae": 4.543,
+    "model_mae_on_ffa_rows": 4.461
    },
    "RB": {
-    "n": 110,
-    "mae": 4.05,
-    "rmse": 5.761,
-    "bias": -0.047,
-    "spearman": 0.805,
-    "cov80": 0.818,
-    "median_mae": 3.692,
-    "ffa_n": 93,
-    "ffa_mae": 4.488,
-    "model_mae_on_ffa_rows": 4.39
+    "n": 116,
+    "mae": 3.904,
+    "rmse": 5.623,
+    "bias": -0.067,
+    "spearman": 0.812,
+    "cov80": 0.81,
+    "median_mae": 3.582,
+    "ffa_n": 99,
+    "ffa_mae": 4.34,
+    "model_mae_on_ffa_rows": 4.199,
+    "dk_n": 9,
+    "dk_mae": 3.758,
+    "model_mae_on_dk_rows": 3.932
    },
    "TE": {
-    "n": 100,
-    "mae": 3.176,
-    "rmse": 4.509,
-    "bias": -0.394,
-    "spearman": 0.688,
+    "n": 106,
+    "mae": 3.261,
+    "rmse": 4.577,
+    "bias": -0.24,
+    "spearman": 0.707,
     "cov80": 0.84,
-    "median_mae": 2.882,
-    "ffa_n": 85,
-    "ffa_mae": 3.448,
-    "model_mae_on_ffa_rows": 3.399
+    "median_mae": 2.99,
+    "ffa_n": 91,
+    "ffa_mae": 3.521,
+    "model_mae_on_ffa_rows": 3.483,
+    "dk_n": 11,
+    "dk_mae": 3.639,
+    "model_mae_on_dk_rows": 3.669
    },
    "WR": {
-    "n": 165,
-    "mae": 4.182,
-    "rmse": 5.697,
-    "bias": -0.739,
-    "spearman": 0.734,
-    "cov80": 0.806,
-    "median_mae": 3.737,
-    "ffa_n": 139,
-    "ffa_mae": 4.341,
-    "model_mae_on_ffa_rows": 4.393,
-    "dk_n": 10,
-    "dk_mae": 4.015,
-    "model_mae_on_dk_rows": 4.323
+    "n": 173,
+    "mae": 4.307,
+    "rmse": 5.865,
+    "bias": -0.682,
+    "spearman": 0.703,
+    "cov80": 0.792,
+    "median_mae": 3.883,
+    "ffa_n": 146,
+    "ffa_mae": 4.509,
+    "model_mae_on_ffa_rows": 4.561,
+    "dk_n": 16,
+    "dk_mae": 5.485,
+    "model_mae_on_dk_rows": 5.729
    }
   }
  },
@@ -322,6 +394,14 @@
    "actual": 3.2
   },
   {
+   "week": 2,
+   "player": "Josh Allen",
+   "pos": "QB",
+   "team": "BUF",
+   "proj": 23.9,
+   "actual": 40.8
+  },
+  {
    "week": 1,
    "player": "Ashton Jeanty",
    "pos": "RB",
@@ -344,76 +424,68 @@
    "team": "BUF",
    "proj": 19.3,
    "actual": 35.7
-  },
-  {
-   "week": 1,
-   "player": "Bryce Young",
-   "pos": "QB",
-   "team": "CAR",
-   "proj": 15.2,
-   "actual": 31.4
   }
  ],
  "awaiting_box_scores": {},
  "subvertadown": {
   "bonus": {
    "all": {
-    "n": 375,
-    "n_strong": 237,
+    "n": 395,
+    "n_strong": 251,
     "dir_hit": 0.49,
-    "mae_model": 3.875,
-    "mae_full_bonus": 3.858,
-    "mae_half_bonus": 3.865,
-    "corr_bonus_err": 0.071
+    "mae_model": 3.908,
+    "mae_full_bonus": 3.892,
+    "mae_half_bonus": 3.899,
+    "corr_bonus_err": 0.073
    },
    "by_pos": {
     "RB": {
-     "n": 110,
-     "n_strong": 72,
-     "dir_hit": 0.54,
-     "mean_err_fav": -0.44,
+     "n": 116,
+     "n_strong": 75,
+     "dir_hit": 0.53,
+     "mean_err_fav": -0.41,
      "mean_err_unfav": -1.05,
-     "mae_model": 4.05,
-     "mae_full_bonus": 4.044,
-     "mae_half_bonus": 4.046,
-     "corr_bonus_err": 0.037
+     "mae_model": 3.904,
+     "mae_full_bonus": 3.893,
+     "mae_half_bonus": 3.898,
+     "corr_bonus_err": 0.035
     },
     "TE": {
-     "n": 100,
-     "n_strong": 35,
+     "n": 106,
+     "n_strong": 41,
      "dir_hit": 0.49,
-     "mean_err_fav": -0.06,
-     "mean_err_unfav": -1.18,
-     "mae_model": 3.176,
-     "mae_full_bonus": 3.183,
-     "mae_half_bonus": 3.179,
-     "corr_bonus_err": 0.055
+     "mean_err_fav": 0.4,
+     "mean_err_unfav": -0.85,
+     "mae_model": 3.261,
+     "mae_full_bonus": 3.257,
+     "mae_half_bonus": 3.258,
+     "corr_bonus_err": 0.112
     },
     "WR": {
-     "n": 165,
-     "n_strong": 130,
+     "n": 173,
+     "n_strong": 135,
      "dir_hit": 0.47,
-     "mean_err_fav": -0.45,
+     "mean_err_fav": -0.46,
      "mean_err_unfav": -1.36,
-     "mae_model": 4.182,
-     "mae_full_bonus": 4.144,
-     "mae_half_bonus": 4.161,
-     "corr_bonus_err": 0.099
+     "mae_model": 4.307,
+     "mae_full_bonus": 4.281,
+     "mae_half_bonus": 4.292,
+     "corr_bonus_err": 0.09
     }
    }
   },
   "commentary": [
-   "On 237 RB/WR/TE player-games where Subvertadown flagged a matchup of at least \u00b10.5 team points, the direction of our error matched the flag 49% of the time (50% = coin flip).",
-   "Adding the full team bonus, shared by projection, would have moved MAE from 3.88 to 3.86; half of it: 3.87.",
+   "On 251 RB/WR/TE player-games where Subvertadown flagged a matchup of at least \u00b10.5 team points, the direction of our error matched the flag 49% of the time (50% = coin flip).",
+   "Adding the full team bonus, shared by projection, would have moved MAE from 3.91 to 3.89; half of it: 3.90.",
    "Correlation between the bonus and our error: +0.07.",
    "Directional only \u2014 a signal needs several hundred player-games before \u00b10.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.",
-   "QB: on 32 graded starters Subvertadown's projection MAE was 7.03 vs ours 6.43; a 50/50 blend 6.73."
+   "QB: on 34 graded starters Subvertadown's projection MAE was 7.46 vs ours 6.96; a 50/50 blend 7.21."
   ],
   "qb": {
-   "n": 32,
-   "mae_model": 6.434,
-   "mae_subvertadown": 7.034,
-   "mae_blend50": 6.729,
+   "n": 34,
+   "mae_model": 6.963,
+   "mae_subvertadown": 7.456,
+   "mae_blend50": 7.205,
    "rows": [
     {
      "player": "Drake Maye",
@@ -446,6 +518,14 @@
      "model": 16.4,
      "subvertadown": 18.0,
      "actual": 4.1
+    },
+    {
+     "player": "Aaron Rodgers",
+     "team": "PIT",
+     "week": 1,
+     "model": 14.2,
+     "subvertadown": 14.4,
+     "actual": 12.5
     },
     {
      "player": "C.J. Stroud",
@@ -488,14 +568,6 @@
      "actual": 23.2
     },
     {
-     "player": "Baker Mayfield",
-     "team": "TB",
-     "week": 1,
-     "model": 16.7,
-     "subvertadown": 17.2,
-     "actual": 11.6
-    },
-    {
      "player": "Caleb Williams",
      "team": "CHI",
      "week": 1,
@@ -536,28 +608,12 @@
      "actual": 14.2
     },
     {
-     "player": "Deshaun Watson",
-     "team": "CLE",
+     "player": "Baker Mayfield",
+     "team": "TB",
      "week": 1,
-     "model": 10.5,
-     "subvertadown": 10.5,
-     "actual": 14.0
-    },
-    {
-     "player": "Aaron Rodgers",
-     "team": "PIT",
-     "week": 1,
-     "model": 14.2,
-     "subvertadown": 14.4,
-     "actual": 12.5
-    },
-    {
-     "player": "Geno Smith",
-     "team": "NYJ",
-     "week": 1,
-     "model": 11.4,
-     "subvertadown": 12.7,
-     "actual": 9.3
+     "model": 16.7,
+     "subvertadown": 17.2,
+     "actual": 11.6
     },
     {
      "player": "Cam Ward",
@@ -568,52 +624,28 @@
      "actual": 11.7
     },
     {
+     "player": "Deshaun Watson",
+     "team": "CLE",
+     "week": 1,
+     "model": 10.5,
+     "subvertadown": 10.5,
+     "actual": 14.0
+    },
+    {
+     "player": "Geno Smith",
+     "team": "NYJ",
+     "week": 1,
+     "model": 11.4,
+     "subvertadown": 12.7,
+     "actual": 9.3
+    },
+    {
      "player": "Tua Tagovailoa",
      "team": "ATL",
      "week": 1,
      "model": 0.0,
      "subvertadown": 12.4,
      "actual": 0.0
-    },
-    {
-     "player": "Kirk Cousins",
-     "team": "LV",
-     "week": 1,
-     "model": 12.9,
-     "subvertadown": 13.2,
-     "actual": 13.8
-    },
-    {
-     "player": "Malik Willis",
-     "team": "MIA",
-     "week": 1,
-     "model": 14.2,
-     "subvertadown": 14.5,
-     "actual": 16.7
-    },
-    {
-     "player": "Jacoby Brissett",
-     "team": "ARI",
-     "week": 1,
-     "model": 14.5,
-     "subvertadown": 13.2,
-     "actual": 16.5
-    },
-    {
-     "player": "Jayden Daniels",
-     "team": "WAS",
-     "week": 1,
-     "model": 15.0,
-     "subvertadown": 16.9,
-     "actual": 17.7
-    },
-    {
-     "player": "Jordan Love",
-     "team": "GB",
-     "week": 1,
-     "model": 15.7,
-     "subvertadown": 16.0,
-     "actual": 19.5
     },
     {
      "player": "Kyler Murray",
@@ -640,12 +672,44 @@
      "actual": 24.7
     },
     {
-     "player": "Dak Prescott",
-     "team": "DAL",
+     "player": "Jordan Love",
+     "team": "GB",
      "week": 1,
-     "model": 17.3,
-     "subvertadown": 18.3,
-     "actual": 14.4
+     "model": 15.7,
+     "subvertadown": 16.0,
+     "actual": 19.5
+    },
+    {
+     "player": "Jayden Daniels",
+     "team": "WAS",
+     "week": 1,
+     "model": 15.0,
+     "subvertadown": 16.9,
+     "actual": 17.7
+    },
+    {
+     "player": "Jacoby Brissett",
+     "team": "ARI",
+     "week": 1,
+     "model": 14.5,
+     "subvertadown": 13.2,
+     "actual": 16.5
+    },
+    {
+     "player": "Malik Willis",
+     "team": "MIA",
+     "week": 1,
+     "model": 14.2,
+     "subvertadown": 14.5,
+     "actual": 16.7
+    },
+    {
+     "player": "Kirk Cousins",
+     "team": "LV",
+     "week": 1,
+     "model": 12.9,
+     "subvertadown": 13.2,
+     "actual": 13.8
     },
     {
      "player": "Jaxson Dart",
@@ -654,6 +718,14 @@
      "model": 17.9,
      "subvertadown": 18.2,
      "actual": 26.6
+    },
+    {
+     "player": "Dak Prescott",
+     "team": "DAL",
+     "week": 1,
+     "model": 17.3,
+     "subvertadown": 18.3,
+     "actual": 14.4
     },
     {
      "player": "Bo Nix",
@@ -670,6 +742,22 @@
      "model": 15.7,
      "subvertadown": 16.7,
      "actual": 21.7
+    },
+    {
+     "player": "Jared Goff",
+     "team": "DET",
+     "week": 2,
+     "model": 15.8,
+     "subvertadown": 17.3,
+     "actual": 29.8
+    },
+    {
+     "player": "Josh Allen",
+     "team": "BUF",
+     "week": 2,
+     "model": 23.9,
+     "subvertadown": 24.9,
+     "actual": 40.8
     }
    ]
   }
