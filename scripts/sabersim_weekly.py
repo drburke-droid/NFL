@@ -439,12 +439,15 @@ if not A.no_market:
                         "opp_implied": L["total"] - itt})
         ctx = pd.DataFrame(ctx)
         if len(ctx):
-            for df_ in (sk, dst):
+            # kk is in here for consistency, not for its own sake: score_k is pure FFA kicking
+            # stats and the K CSV rows read no context column, so leaving it out changed nothing
+            # today — but it is the same omission that left K/DST without an Opp.
+            for df_ in (sk, kk, dst):
                 m = df_[["team"]].merge(ctx, on="team", how="left")
                 for c in ("spread", "game_total", "implied_team_total", "opp_implied"):
                     df_[c] = np.where(m[c].notna(), m[c], df_[c].values)
             dst["proj"] = score_dst(dst, dst.opp_implied)
-            print(f"  game context refreshed for {len(ctx)} team rows from live DK lines")
+            print(f"  game context refreshed for {len(ctx)} team rows from live DK lines (skill, K, DST)")
     ms = market_stats(cache, games)
     if len(ms):
         w = A.market_weight
