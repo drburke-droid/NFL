@@ -28,6 +28,36 @@ PC gets them from the backup zip). This file carries the context those notes wou
    Verified on a container without the alias: output identical to the run before the change, bar the
    Generated stamp.
 
+## Game lines: why the table was missing games, and what changed
+
+The week-2 blank-Opp bug traced back to `data/sabersim/game_lines_*.parquet` holding 78 of 272 games
+for 2026 — no DET @ BUF and no CIN @ HOU in week 2, and almost nothing from week 8 on. Not a TNF/MNF
+pattern: the missing games cover every kickoff slot.
+
+`scripts/fetch_schedule_lines.py` pulls nflverse schedules, drops games with no `spread_line` /
+`total_line`, and wrote the table with `if_exists="replace"`. For settled seasons that is exact
+(1999-2025 is 100% covered). For the CURRENT season it is not: nflverse carries a line only while a
+book has the game on the board, so a pull covers the next few weeks and nothing past them, and a game
+taken off the board vanishes. Each replace therefore froze one snapshot and discarded everything else.
+The committed parquet was exported in the preseason off look-ahead lines that have since come down —
+today's live nflverse has only 48 priced 2026 games (weeks 1-3), FEWER than the parquet's 78, so
+re-running the old script would have made the hole bigger, not smaller.
+
+- The ingestion now UPSERTS on (season, week, game_type, team): the pull refreshes what it carries and
+  leaves every other row alone. `--replace` restores the old rebuild if you ever want a clean purge.
+- `--export-parquet` refreshes the two committed exports the model code reads, and refuses to write a
+  file smaller than the one on disk unless `--force` — the whole bug class was silent shrinkage.
+- `tests/test_game_lines_upsert.py` covers it: look-aheads survive a shrunken pull, new weeks get
+  added, fresh lines win on conflict, settled history is untouched, and the shrink guard holds.
+- Re-running it needs `db/nfl_odds.db`, so it is a home-PC job: `python scripts/fetch_schedule_lines.py
+  --export-parquet`, then commit the parquets.
+
+Impact was limited to `Opp`, because `sabersim_weekly.py` refreshes spread / total / implied totals
+from live DK lines at send time. Offline runs (`--no-market`, no Odds API key — the cloud-console
+recipe below) have no such backstop: teams absent from the parquet go into the model with NaN game
+environment. Refreshing the parquets closes that. The DK refresh now also covers the K frame; nothing
+reads K's context columns today, but it was the same omission that left K/DST without an Opp.
+
 ## What changed 2026-09-16 / 17
 
 1. **Generator week bug (critical, fixed).** `sabersim_weekly.py` anchored weeks on the earliest
