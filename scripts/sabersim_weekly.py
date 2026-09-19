@@ -77,6 +77,7 @@ if not A.pkg or not os.path.isdir(os.path.join(A.pkg, "model_burke")):
     raise SystemExit("pass the Model_Burke package dir as argv[1] (the pkg/ folder from model_burke_pkg.zip, "
                      "i.e. the folder CONTAINING model_burke/), or set MODEL_BURKE_PKG")
 sys.path.insert(0, A.pkg); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import name_match
 from model_burke import pipeline
 from model_burke.features import build_lagged_features
 
@@ -396,13 +397,25 @@ def pull_market(sl_games):
     json.dump(cache, open(MKT_CACHE, "w"))
     return cache
 
-def market_stats(cache, sl_games):
-    """per player: DK-implied pass_yds, pass_tds, rush_yds, rec_yds, rec, exp_td."""
+def market_stats(cache, sl_games, players):
+    """per player: DK-implied pass_yds, pass_tds, rush_yds, rec_yds, rec, exp_td.
+
+    Returns (frame, alias, ambiguous). DK spells some players differently from the FFA file
+    (Kenny/Kenneth Gainwell, Joshua/Josh Palmer), so unmatched DK names are reconciled onto
+    slate players first — see scripts/name_match.py for why that needs the game and the
+    first name, not just the surname.
+    """
     ids_ = set(sl_games.id)
     rows = [dict(r, event=eid) for eid, c in cache.items()
             if not eid.startswith("_") and eid in ids_ for r in c.get("rows", [])]
-    if not rows: return pd.DataFrame(columns=["nname"])
+    if not rows: return pd.DataFrame(columns=["nname"]), {}, []
     r = pd.DataFrame(rows).dropna(subset=["player"]); r["nname"] = r.player.map(norm)
+    ev_teams = {}
+    for g in sl_games.itertuples(): ev_teams.setdefault(g.id, set()).add(g.team)
+    alias, ambiguous = name_match.reconcile(
+        list(r[["event", "nname"]].drop_duplicates().itertuples(index=False, name=None)),
+        ev_teams, list(zip(players.nname, players.team)))
+    if alias: r["nname"] = r.nname.replace(alias)
     out = {}
     for mk, col in (("player_pass_yds", "mkt_pass_yds"), ("player_pass_tds", "mkt_pass_tds"),
                     ("player_rush_yds", "mkt_rush_yds"), ("player_reception_yds", "mkt_rec_yds"),
@@ -416,7 +429,7 @@ def market_stats(cache, sl_games):
         out[col] = x.pt + x.pt.abs() * 0.15 * skew   # -130/+100 skew (~.07) moves a 60-yd line ~0.6
     td = r[(r.market == "player_anytime_td") & (r.side == "Yes")].groupby("nname").price.first()
     if len(td): out["mkt_exp_td"] = td.map(lambda pr: -np.log(1 - min(amer_prob(pr), 0.95)))
-    return pd.DataFrame(out).reset_index().rename(columns={"index": "nname"})
+    return pd.DataFrame(out).reset_index().rename(columns={"index": "nname"}), alias, ambiguous
 
 if not A.no_market:
     cache = pull_market(games)
@@ -448,7 +461,7 @@ if not A.no_market:
                     df_[c] = np.where(m[c].notna(), m[c], df_[c].values)
             dst["proj"] = score_dst(dst, dst.opp_implied)
             print(f"  game context refreshed for {len(ctx)} team rows from live DK lines (skill, K, DST)")
-    ms = market_stats(cache, games)
+    ms, name_alias, name_amb = market_stats(cache, games, sk)
     if len(ms):
         w = A.market_weight
         # per-stat weights from outputs/reports/market_blend_weight.md (2023-25 closing lines vs FFA):
@@ -480,7 +493,17 @@ if not A.no_market:
         sk["no_line"] = (~has) & sk.team.isin(sk.team[has].unique()) & (sk.ffa_ppr >= 8)
         if sk.no_line.any():
             print("  no DK props posted (news?):", ", ".join(sk.player[sk.no_line]))
+        if name_alias:
+            print("  DK name aliases: " + ", ".join(f"{k} -> {v}" for k, v in sorted(name_alias.items())))
+        if name_amb:
+            print("  DK names left unmatched (more than one candidate):", ", ".join(sorted(name_amb)))
+        # no_line keeps its ffa_ppr >= 8 gate on purpose — it also drives the DOUBT haircut, and
+        # widening it there would put every unpriced bench player at risk of one. The count below
+        # is the visibility fix: a sub-8 player losing the blend used to leave no trace at all.
         HEALTH["dk_props"].update({"with_props": int(has.sum()), "eligible": int((sk.ffa_ppr >= 8).sum()),
+                                   "name_aliases": dict(sorted(name_alias.items())),
+                                   "ambiguous_names": sorted(name_amb),
+                                   "no_props_n": int(((~has) & sk.team.isin(sk.team[has].unique())).sum()),
                                    "by_stat": {c.replace("mkt_", ""): int(sk[c].notna().sum()) for c in ("mkt_pass_yds", "mkt_pass_tds", "mkt_rush_yds", "mkt_rec_yds", "mkt_rec", "mkt_exp_td")},
                                    "no_line": sorted(sk.player[sk.no_line].tolist())})
 # K / D-ST override (Subvertadown-style paste parsed by scripts/parse_kdst_paste.py):
