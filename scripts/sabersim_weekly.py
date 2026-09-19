@@ -415,7 +415,9 @@ def market_stats(cache, sl_games, players):
     alias, ambiguous = name_match.reconcile(
         list(r[["event", "nname"]].drop_duplicates().itertuples(index=False, name=None)),
         ev_teams, list(zip(players.nname, players.team)))
-    if alias: r["nname"] = r.nname.replace(alias)
+    # per row, not a global rename: the alias is keyed by (event, name) so one game's mapping
+    # cannot reach another game's identically-spelled player (see scripts/name_match.py)
+    if alias: r["nname"] = [alias.get((e, n), n) for e, n in zip(r.event, r.nname)]
     out = {}
     for mk, col in (("player_pass_yds", "mkt_pass_yds"), ("player_pass_tds", "mkt_pass_tds"),
                     ("player_rush_yds", "mkt_rush_yds"), ("player_reception_yds", "mkt_rec_yds"),
@@ -493,15 +495,16 @@ if not A.no_market:
         sk["no_line"] = (~has) & sk.team.isin(sk.team[has].unique()) & (sk.ffa_ppr >= 8)
         if sk.no_line.any():
             print("  no DK props posted (news?):", ", ".join(sk.player[sk.no_line]))
-        if name_alias:
-            print("  DK name aliases: " + ", ".join(f"{k} -> {v}" for k, v in sorted(name_alias.items())))
+        alias_show = sorted({f"{dk} -> {ffa}" for (_ev, dk), ffa in name_alias.items()})
+        if alias_show:
+            print("  DK name aliases: " + ", ".join(alias_show))
         if name_amb:
             print("  DK names left unmatched (more than one candidate):", ", ".join(sorted(name_amb)))
         # no_line keeps its ffa_ppr >= 8 gate on purpose — it also drives the DOUBT haircut, and
         # widening it there would put every unpriced bench player at risk of one. The count below
         # is the visibility fix: a sub-8 player losing the blend used to leave no trace at all.
         HEALTH["dk_props"].update({"with_props": int(has.sum()), "eligible": int((sk.ffa_ppr >= 8).sum()),
-                                   "name_aliases": dict(sorted(name_alias.items())),
+                                   "name_aliases": alias_show,
                                    "ambiguous_names": sorted(name_amb),
                                    "no_props_n": int(((~has) & sk.team.isin(sk.team[has].unique())).sum()),
                                    "by_stat": {c.replace("mkt_", ""): int(sk[c].notna().sum()) for c in ("mkt_pass_yds", "mkt_pass_tds", "mkt_rush_yds", "mkt_rec_yds", "mkt_rec", "mkt_exp_td")},

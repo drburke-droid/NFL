@@ -47,8 +47,16 @@ def reconcile(dk_names, event_teams, players):
     event_teams {event_id: set of the two team codes playing in it}
     players     iterable of (normalized slate player name, team code)
 
-    Returns (alias, ambiguous): alias maps a DK name to the slate name it means, and
-    ambiguous lists DK names that had more than one plausible match and were left alone.
+    Returns (alias, ambiguous): alias maps (event_id, DK name) to the slate name it means,
+    and ambiguous lists DK names that had more than one plausible match and were left alone.
+
+    The key carries the event on purpose. Two different players can share a DK spelling in
+    two different games — a Chris Smith in each, written Christian Smith in one FFA row and
+    Christopher Smith in the other. Keying on the name alone would let the first game's
+    mapping win and then be applied to every row of that name, which the caller groups by
+    name, merging one player's lines into the other. That is the mis-attribution this whole
+    module exists to avoid, so the same-game guard has to survive into how the alias is
+    applied, not just how it is chosen.
     """
     known = {n for n, _ in players}
     by_team_surname = {}
@@ -57,9 +65,9 @@ def reconcile(dk_names, event_teams, players):
         if len(parts) >= 2:
             by_team_surname.setdefault((team, parts[-1]), []).append(n)
 
-    alias, ambiguous = {}, []
+    alias, ambiguous = {}, set()
     for event_id, dk in dk_names:
-        if dk in known or dk in alias:
+        if dk in known or (event_id, dk) in alias:
             continue
         parts = dk.split()
         if len(parts) < 2:
@@ -69,7 +77,7 @@ def reconcile(dk_names, event_teams, players):
                 for other in by_team_surname.get((team, surname), [])
                 if same_person(first, other.split()[0])}
         if len(cand) == 1:
-            alias[dk] = cand.pop()
+            alias[(event_id, dk)] = cand.pop()
         elif cand:
-            ambiguous.append(dk)
-    return alias, ambiguous
+            ambiguous.add(dk)
+    return alias, sorted(ambiguous)
