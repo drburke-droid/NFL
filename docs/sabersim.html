@@ -288,11 +288,23 @@ function healthHtml(h) {
   if (h.warnings && h.warnings.length) x += `<div class="note" style="color:var(--warn)">generator warnings: ${h.warnings.map(esc).join(" · ")}</div>`;
   return x;
 }
+// Published names are <...>_<season>_<slate tag>_<MMDD>_<HHMM>.csv, and the slate tag sits BEFORE
+// the date — so sorting the raw string orders by weekday name (wk1 > thu > sun > mon), not by time.
+// That is why a Thursday preview kept outranking a newer Sunday one, and why "Download the latest
+// send" handed back the week-1 Wednesday file. Sort on the stamp in the name instead.
+function stamp(name) {
+  const m = name.match(/_(20\d{2})_.*_(\d{2})(\d{2})_(\d{2})(\d{2})\.csv$/);
+  if (!m) return 0;
+  const [, season, mm, dd, hh, mi] = m;
+  return Date.UTC(+season + (+mm <= 7 ? 1 : 0), +mm - 1, +dd, +hh, +mi);   // Jan-Jul = the season's second year
+}
+const byNewest = (a, b) => stamp(b.name) - stamp(a.name) || b.name.localeCompare(a.name);
+
 async function showPreview() {
   const box = $("prevhealth"), st = $("prevstat"), dl = $("prevdl");
   try {
     const items = await gh(`/repos/${OWNER}/${PRIV}/contents/sends`);
-    const prev = items.filter(x => x.name.startsWith("preview_") && x.name.endsWith(".csv")).sort((a, b) => b.name.localeCompare(a.name));
+    const prev = items.filter(x => x.name.startsWith("preview_") && x.name.endsWith(".csv")).sort(byNewest);
     if (!prev.length) { box.textContent = "no preview published yet"; return; }
     const name = prev[0].name; let h = null;
     try { h = await loadJson(name.replace(".csv", ".health.json")); } catch (e) {}
@@ -315,7 +327,7 @@ if (tok()) showPreview();
 // ---- output ----
 async function sends(withPreviews) {
   const items = await gh(`/repos/${OWNER}/${PRIV}/contents/sends`);
-  return items.filter(x => x.name.endsWith(".csv") && (withPreviews || !x.name.startsWith("preview_"))).sort((a, b) => b.name.localeCompare(a.name));
+  return items.filter(x => x.name.endsWith(".csv") && (withPreviews || !x.name.startsWith("preview_"))).sort(byNewest);
 }
 $("list").onclick = async () => {
   const st = $("dlstat"); st.className = "status";

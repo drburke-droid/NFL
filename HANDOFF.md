@@ -28,6 +28,16 @@ PC gets them from the backup zip). This file carries the context those notes wou
    Verified on a container without the alias: output identical to the run before the change, bar the
    Generated stamp.
 
+## SaberSim page showed the wrong "latest" file (fixed)
+
+`docs/sabersim.html` picked the newest preview and the newest send with `b.name.localeCompare(a.name)`.
+Published names are `<...>_<season>_<slate tag>_<MMDD>_<HHMM>.csv` with the slate tag BEFORE the date,
+so a string sort orders by weekday name — `wk1` > `wed` > `thu` > `sun` > `mon` — not by time. The
+Preview panel kept showing `thu08pm_0917_1918` after `sun01pm_0919_1721` was published, and "Download
+the latest send" had been handing back `wk1_wed08pm_0909_1622`, the week-1 Wednesday file, all season.
+Both sorts (and the sends/previews list) now use a `stamp()` parsed from the name; Jan-Jul is treated
+as the season's second calendar year so the rollover sorts right.
+
 ## Game lines: why the table was missing games, and what changed
 
 The week-2 blank-Opp bug traced back to `data/sabersim/game_lines_*.parquet` holding 78 of 272 games
