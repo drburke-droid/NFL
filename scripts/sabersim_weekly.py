@@ -346,6 +346,10 @@ HEALTH = {"season": SEASON, "week": cur_week, "slate_games": int(games.id.nuniqu
 # baseline the model corrects already reflects the news. Cache per event, 2h TTL.
 MKT_CACHE = os.path.join(ROOT, "data", "props_frames", f"mkt_cache_{SEASON}_wk{cur_week}.json")
 PROP_MKTS = "player_pass_yds,player_pass_tds,player_rush_yds,player_reception_yds,player_receptions,player_anytime_td"
+# Kicking markets go in their OWN request. The Odds API rejects a whole call when one market
+# key is unsupported, and losing a slate's skill props to a kicker experiment is not a trade
+# worth making. Availability varies by book and week, so a failure here is logged and ignored.
+KICK_MKTS = "player_field_goals,player_kicking_points,player_pats"
 def amer_prob(price):
     price = float(price); return 100 / (price + 100) if price > 0 else -price / (-price + 100)
 def pull_market(sl_games):
@@ -386,16 +390,54 @@ def pull_market(sl_games):
                     for o in m.get("outcomes", []):
                         rows.append({"market": m["key"], "player": o.get("description"), "side": o["name"],
                                      "point": o.get("point"), "price": o["price"]})
-            cache[eid] = {"_ts": now_ts, "rows": rows}; n_new += 1; time.sleep(0.2)
+            krows = []
+            try:
+                jk, rem = get(f"{API}/sports/americanfootball_nfl/events/{eid}/odds?regions=us"
+                              f"&bookmakers=draftkings&markets={KICK_MKTS}&oddsFormat=american")
+                for bk in jk.get("bookmakers", []):
+                    for m in bk.get("markets", []):
+                        for o in m.get("outcomes", []):
+                            krows.append({"market": m["key"], "player": o.get("description"), "side": o["name"],
+                                          "point": o.get("point"), "price": o["price"]})
+            except Exception as ex: print(f"  kicking props unavailable for {eid[:8]}:", str(ex)[:60])
+            cache[eid] = {"_ts": now_ts, "rows": rows, "krows": krows}; n_new += 1; time.sleep(0.2)
             try:                           # append-only history of every line we ever pulled (odds_snapshots.py)
                 from odds_snapshots import record
-                record([dict(r, event=eid, commence=kick_by[eid].strftime("%Y-%m-%dT%H:%M:%SZ")) for r in rows], "sabersim_send", SEASON, cur_week)
+                record([dict(r, event=eid, commence=kick_by[eid].strftime("%Y-%m-%dT%H:%M:%SZ")) for r in rows + krows], "sabersim_send", SEASON, cur_week)
             except Exception as ex: print("  snapshot record failed:", str(ex)[:80])
         except Exception as ex: print(f"  props fetch failed for {eid[:8]}:", str(ex)[:60])
     if n_new: print(f"  DK props: {n_new} events pulled (credits left {rem})")
     if rem != "?": cache["_credits_left"] = rem
     json.dump(cache, open(MKT_CACHE, "w"))
     return cache
+
+def kicker_signal(cache, sl_games, k_frame):
+    """Which kickers DK has actually priced, per team.
+
+    A book prices the kicker a team is expected to use and nobody else, which is the only free
+    signal we have on a committee or a late change — the FFA file lists every kicker on the
+    roster and the Subvertadown override sometimes names two (week 2 carried "Grupe / Sanders"
+    for the Jets, which reached the CSV as a player SaberSim cannot match).
+
+    Recorded, never blended. A book's "kicking points" is flat 3-per-field-goal scoring while
+    ours is distance-weighted (3/4/5 by range), so the two numbers are not comparable and
+    blending them would import a systematic error. Treat this as the Subvertadown and Fan Picks
+    signals are treated: collect first, weigh only once there is evidence.
+    """
+    ids_ = set(sl_games.id)
+    ev_teams = {}
+    for g in sl_games.itertuples(): ev_teams.setdefault(g.id, set()).add(g.team)
+    out = {}
+    for eid, c in cache.items():
+        if eid.startswith("_") or eid not in ids_: continue
+        priced = {norm(r["player"]) for r in c.get("krows", []) if r.get("player")}
+        if not priced: continue
+        for team in ev_teams.get(eid, ()):
+            hit = sorted({r.player for r in k_frame[k_frame.team == team].itertuples()
+                          if norm(r.player) in priced})
+            if hit: out[team] = hit
+    return out
+
 
 def market_stats(cache, sl_games, players):
     """per player: DK-implied pass_yds, pass_tds, rush_yds, rec_yds, rec, exp_td.
@@ -511,6 +553,9 @@ if not A.no_market:
                                    "no_line": sorted(sk.player[sk.no_line].tolist())})
 # K / D-ST override (Subvertadown-style paste parsed by scripts/parse_kdst_paste.py):
 # blended with the FFA-scored value (--kdst-weight on the paste); FFA value kept in Baseline_FFA
+# computed before the override collapses a team to one kicker row, so the alternatives are
+# still visible; compared against what we actually send just below
+DK_KICK = kicker_signal(cache, games, kk) if not A.no_market else {}
 ovr_p = os.path.join(ROOT, "data", "kdst", f"kdst_{SEASON}_wk{cur_week}.csv")
 if os.path.exists(ovr_p):
     ovr = pd.read_csv(ovr_p)
@@ -529,6 +574,18 @@ if os.path.exists(ovr_p):
 else:
     print(f"  no K/DST override ({os.path.relpath(ovr_p, ROOT)}) — using FFA-scored K and DST")
     HEALTH["kdst"] = None
+if DK_KICK:
+    sending = dict(zip(kk.team, kk.player))
+    off = {t: v for t, v in sorted(DK_KICK.items()) if sending.get(t) and sending[t] not in v}
+    print(f"  DK priced a kicker for {len(DK_KICK)}/{kk.team.nunique()} slate teams"
+          + ("" if not off else "; NOT the one we are sending: "
+             + ", ".join(f"{t} sending {sending[t]}, DK prices {' / '.join(v)}" for t, v in off.items())))
+    HEALTH["dk_kickers"] = {"priced_teams": len(DK_KICK),
+                            "by_team": {t: v for t, v in sorted(DK_KICK.items())},
+                            "not_the_one_we_send": {t: {"sending": sending[t], "dk_prices": v}
+                                                    for t, v in off.items()}}
+else:
+    HEALTH["dk_kickers"] = None
 print(f"{SEASON} wk{cur_week}: {len(sk)} skill rows on the slate, {len(kk)} K, {len(dst)} DST; "
       f"{sk.player_id.str.startswith('ffa_').sum()} without an NFL game log")
 
