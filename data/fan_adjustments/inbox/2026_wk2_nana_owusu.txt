@@ -1,1 +1,4 @@
+# Nana Owusu, 2026 wk2. Second code is a revision of the first (same bake, two arrows added).
+# Both are kept as history; fan_grade uses only the latest submitted_at per fan per week.
 FAN1.2026.2.eyJuIjoiTmFuYSBPd3VzdSIsInQiOiIyMDI2LTA5LTIwVDEzOjMxWiIsImIiOiIyMDI2MDkxNzE5MTIiLCJjIjoiIiwiYSI6W1syMzIsNCwxMF0sWzIzMiw3LDhdLFsyMzcsMiw0XSxbMjM3LDAsMV0sWzI0OSw2LDVdLFsyNDksNSw1XV19
+FAN1.2026.2.eyJuIjoiTmFuYSBPd3VzdSIsInQiOiIyMDI2LTA5LTIwVDE0OjAzWiIsImIiOiIyMDI2MDkxNzE5MTIiLCJjIjoiIiwiYSI6W1syMzIsNCwxMF0sWzIzMiw3LDhdLFsyMzcsMiw0XSxbMjM3LDAsMV0sWzI0OSw2LDVdLFsyNDksNSw1XSxbMjMyLDYsNl0sWzIzMyw0LDJdXX0

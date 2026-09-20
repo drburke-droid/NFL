@@ -1,9 +1,9 @@
 {
- "generated": "2026-09-20T14:00Z",
+ "generated": "2026-09-20T14:23Z",
  "overall": {
-  "n": 6,
+  "n": 8,
   "graded": 0,
-  "pending": 6,
+  "pending": 8,
   "hit_rate": null,
   "hits": 0,
   "misses": 0,
@@ -19,9 +19,9 @@
    "weeks": [
     2
    ],
-   "n": 6,
+   "n": 8,
    "graded": 0,
-   "pending": 6,
+   "pending": 8,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -86,9 +86,9 @@
    "mae_adj_pts": null
   },
   "rec_yds": {
-   "n": 1,
+   "n": 2,
    "graded": 0,
-   "pending": 1,
+   "pending": 2,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -99,9 +99,9 @@
    "mae_adj_pts": null
   },
   "rush_tds": {
-   "n": 1,
+   "n": 2,
    "graded": 0,
-   "pending": 1,
+   "pending": 2,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -126,10 +126,23 @@
    "mae_base_pts": null,
    "mae_adj_pts": null
   },
-  "4+": {
-   "n": 5,
+  "2": {
+   "n": 1,
    "graded": 0,
-   "pending": 5,
+   "pending": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "4+": {
+   "n": 6,
+   "graded": 0,
+   "pending": 6,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -142,9 +155,9 @@
  },
  "by_direction": {
   "boost": {
-   "n": 6,
+   "n": 8,
    "graded": 0,
-   "pending": 6,
+   "pending": 8,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -157,9 +170,9 @@
  },
  "by_week": {
   "2": {
-   "n": 6,
+   "n": 8,
    "graded": 0,
-   "pending": 6,
+   "pending": 8,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -172,6 +185,7 @@
  },
  "rows": [],
  "pending_games": [
+  "wk2 LAC v LV",
   "wk2 LV v LAC"
  ],
  "season": 2026
