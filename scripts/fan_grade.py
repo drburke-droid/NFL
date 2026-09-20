@@ -20,20 +20,72 @@ workflow and by the grade workflow; run by hand any time.
 
 Usage: python scripts/fan_grade.py [--season 2026] [--selftest]
 """
-import os, re, sys, csv, json, argparse
-from datetime import datetime, timezone
+import os, re, sys, csv, json, glob, argparse
+from datetime import datetime, timezone, date
+from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ET = ZoneInfo("America/New_York")
 ap = argparse.ArgumentParser()
 ap.add_argument("--season", type=int, default=2026)
+ap.add_argument("--sends", nargs="+", default=[os.path.join(ROOT, "outputs", "sabersim")],
+                help="folders holding Burke_Model_Burke_*.csv — the numbers we actually sent")
+ap.add_argument("--week1-tuesday", default="2026-09-08", help="Tuesday that starts week 1 (weeks roll on Tuesdays)")
+ap.add_argument("--min-lead", type=float, default=75.0, help="minutes before kickoff a send must be generated to count")
+ap.add_argument("--vs-bake", action="store_true",
+                help="score against the frozen bake instead of the send (the old basis; see the note in sent_line)")
 ap.add_argument("--selftest", action="store_true", help="grade a synthetic submission against synthetic actuals and print the checks")
 A = ap.parse_args()
+W1 = date.fromisoformat(A.week1_tuesday)
 LONG = os.path.join(ROOT, "data", "fan_adjustments", "fan_adjustments_long.csv")
 OUT = os.path.join(ROOT, "docs", "fan", "grade.json")
 COL = {"pass_yds": "passing_yards", "pass_tds": "passing_tds", "pass_int": "passing_interceptions", "rush_yds": "rushing_yards",
        "rush_tds": "rushing_tds", "rec": "receptions", "rec_yds": "receiving_yards", "rec_tds": "receiving_tds"}
 PTS = {"pass_yds": 0.04, "pass_tds": 4.0, "pass_int": 1.0, "rush_yds": 0.1, "rush_tds": 6.0, "rec": 1.0, "rec_yds": 0.1, "rec_tds": 6.0}
 def norm(s): return re.sub(r"[^a-z]", "", str(s).lower().replace(" jr", "").replace(" sr", "").replace(" iii", "").replace(" ii", ""))
+
+def sent_line(sends, min_lead):
+    """(week, normalized name, position) -> the stat line we actually SENT, per stat key.
+
+    Why not the bake. The fan page shows a file frozen days earlier, so grading a fan against it
+    credits him with every point of error the news removed between bake and kickoff — reading the
+    injury report scores as forecasting skill. Week 2 made that concrete: Clay faded Nico Collins to
+    zero for +16.99 of his +17.23, and the send already had Collins at 0.00 because he was ruled OUT.
+    The bake still said 17.18.
+
+    Scoring against the send asks the question that actually decides anything: if we applied this
+    fan's percentage nudge to the number we shipped, would it have helped? Same eligibility rule the
+    model's own grader uses — the latest send generated at least min_lead minutes before kickoff.
+    """
+    frames = []
+    for d in sends:
+        for f in sorted(glob.glob(os.path.join(d, "Burke_Model_Burke_*.csv"))):
+            try: x = pd.read_csv(f)
+            except Exception: continue
+            if "Generated" in x.columns and "Kickoff" in x.columns: frames.append(x)
+    if not frames: return {}
+    s = pd.concat(frames, ignore_index=True)
+    s["gen"] = pd.to_datetime(s.Generated.str.replace(" ET", "", regex=False), format="%Y-%m-%d %H:%M",
+                              errors="coerce").dt.tz_localize(ET)
+    def kick(row):
+        m = re.match(r"^\w{3} (\d{2})/(\d{2}) (\d{2}):(\d{2}) (AM|PM) ET$", str(row.Kickoff))
+        if not m or pd.isna(row.gen): return pd.NaT
+        mo, dd, hh, mi, ap_ = int(m[1]), int(m[2]), int(m[3]) % 12, int(m[4]), m[5]
+        yr = row.gen.year + (1 if (mo < row.gen.month - 6) else 0)
+        return pd.Timestamp(yr, mo, dd, hh + (12 if ap_ == "PM" else 0), mi, tz=ET)
+    s["kick"] = s.apply(kick, axis=1)
+    s = s.dropna(subset=["gen", "kick"])
+    s = s[(s.kick - s.gen).dt.total_seconds() / 60 >= min_lead]
+    if s.empty: return {}
+    s["week"] = ((s.kick.dt.tz_convert(ET).dt.date - W1).map(lambda t: t.days) // 7 + 1).astype(int)
+    s = s.sort_values("gen").drop_duplicates(["week", "Player", "Pos"], keep="last")
+    out = {}
+    for r in s.itertuples():
+        key = (int(r.week), norm(r.Player), r.Pos)
+        out[key] = {k: (float(getattr(r, k)) if pd.notna(getattr(r, k, np.nan)) else np.nan)
+                    for k in COL if hasattr(r, k)}
+    return out
+
 
 def grade(rows, act):
     """rows: DataFrame of recorded arrows; act: nflverse weekly frame (player_id, player_display_name, position, team, week + stat cols).
@@ -49,15 +101,24 @@ def grade(rows, act):
         a = by_id.get((r.player_id, wk)) if isinstance(r.player_id, str) and r.player_id else None
         if a is None: a = by_nm.get((norm(r.player), r.pos, wk))
         actual = float(getattr(a, COL[stat]) or 0.0) if a is not None else (0.0 if ingested else np.nan)
-        base, adj, n = float(r.baseline), float(r.adjusted), int(r.arrows)
+        n = int(r.arrows)
+        if A.vs_bake:
+            base, basis = float(r.baseline), "bake"
+        else:                                  # the fan's percentage, applied to what we shipped
+            sl = SENT.get((wk, norm(r.player), r.pos))
+            sb = sl.get(stat, np.nan) if sl else np.nan
+            base, basis = (float(sb), "send") if pd.notna(sb) else (np.nan, "no_send")
+        adj = base * (1 + 0.1 * n) if pd.notna(base) else np.nan
         d = dict(r._asdict()); d.pop("Index", None)
+        d.update({"basis": basis, "base": None if pd.isna(base) else round(base, 3),
+                  "adj": None if pd.isna(adj) else round(adj, 3), "no_send": basis == "no_send"})
         # every column exists on every row, graded or not: with all rows pending (a submission
         # in before its games kick off) these were absent entirely and summarise() died on
         # gd.direction, so a fan who submitted early broke the whole grade until his games ran
         d.update({"pending": not ingested, "actual": None if not ingested else round(actual, 2),
                   "direction": None, "err_base": np.nan, "err_adj": np.nan,
                   "removed": np.nan, "removed_pts": np.nan})
-        if ingested:
+        if ingested and basis != "no_send":
             move = actual - base
             d["direction"] = "neutral" if abs(move) < 1e-9 else ("hit" if np.sign(move) == np.sign(n) else "miss")
             d["err_base"] = round(abs(actual - base), 3); d["err_adj"] = round(abs(actual - adj), 3)
@@ -68,9 +129,10 @@ def grade(rows, act):
 
 def summarise(g):
     def block(d):
-        gd = d[~d.pending]
+        gd = d[~d.pending & ~d.no_send]
         dec = gd[gd.direction != "neutral"]
-        return {"n": int(len(d)), "graded": int(len(gd)), "pending": int(d.pending.sum()),
+        return {"n": int(len(d)), "graded": int(len(gd)), "pending": int((d.pending & ~d.no_send).sum()),
+                "no_send": int(d.no_send.sum()),
                 "hit_rate": round(float((dec.direction == "hit").mean()), 3) if len(dec) else None, "hits": int((dec.direction == "hit").sum()), "misses": int((dec.direction == "miss").sum()),
                 "closer": int((gd.removed > 0).sum()) if len(gd) else 0, "farther": int((gd.removed < 0).sum()) if len(gd) else 0,
                 "removed_pts": round(float(gd.removed_pts.sum()), 2) if len(gd) else None,
@@ -84,10 +146,10 @@ def summarise(g):
     s["by_size"] = {k: block(d) for k, d in g.groupby("size")}
     s["by_direction"] = {k: block(d) for k, d in g.groupby(g.arrows.map(lambda n: "boost" if n > 0 else "fade"))}
     s["by_week"] = {int(w): block(d) for w, d in g.groupby("week")}
-    gd = g[~g.pending].sort_values(["week", "fan", "removed_pts"], ascending=[False, True, False])
-    s["rows"] = [{k: (None if (isinstance(v, float) and np.isnan(v)) else v) for k, v in r.items() if k in ("week", "fan", "player", "team", "pos", "stat", "arrows", "baseline", "adjusted", "actual", "direction", "removed_pts")}
+    gd = g[~g.pending & ~g.no_send].sort_values(["week", "fan", "removed_pts"], ascending=[False, True, False])
+    s["rows"] = [{k: (None if (isinstance(v, float) and np.isnan(v)) else v) for k, v in r.items() if k in ("week", "fan", "player", "team", "pos", "stat", "arrows", "baseline", "base", "adj", "basis", "actual", "direction", "removed_pts")}
                  for r in gd.head(400).to_dict("records")]
-    pend = g[g.pending]
+    pend = g[g.pending & ~g.no_send]
     s["pending_games"] = sorted({f"wk{int(r.week)} {r.team} v {r.opp}" for r in pend.itertuples()})
     return s
 
@@ -110,6 +172,7 @@ if A.selftest:
                         dict(player_id="00-9", player_display_name="Someone", position="WR", team="DET", week=1, receiving_yards=0, rushing_tds=0, receptions=0, passing_yards=0)])
     for c in COL.values():
         if c not in act.columns: act[c] = 0.0
+    A.vs_bake = True                 # the selftest has no send CSVs; it checks the grading maths
     g = grade(rows, act); s = summarise(g)
     assert list(g.direction.fillna("")) == ["hit", "miss", "miss", ""], list(g.direction)
     assert abs(g.removed_pts.iloc[0] - 1.0) < 1e-6, g.removed_pts.iloc[0]        # 30 -> 20 yds error = 1.0 pt closer
@@ -165,7 +228,15 @@ url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player
 act = pd.read_parquet(url); act = act[act.season_type == "REG"]
 for c in COL.values():
     if c not in act.columns: act[c] = 0.0
+SENT = {} if A.vs_bake else sent_line(A.sends, A.min_lead)
+if not A.vs_bake:
+    print(f"  sent lines for {len(SENT)} player-weeks from {', '.join(A.sends)}")
 g = grade(rows, act); s = summarise(g); s["season"] = A.season
+s["basis"] = "bake" if A.vs_bake else "send"
+if int(g.no_send.sum()):
+    for (fan, wk), d in g[g.no_send].groupby(["fan", "week"]):
+        who = ", ".join(sorted({r.player for r in d.itertuples()}))
+        print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) not scorable — no eligible send line ({who})")
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
 json.dump(clean(s), open(OUT, "w"), indent=1)
 o = s["overall"]
