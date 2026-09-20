@@ -1,9 +1,9 @@
 {
- "generated": "2026-09-20T15:53Z",
+ "generated": "2026-09-20T18:11Z",
  "overall": {
-  "n": 8,
+  "n": 39,
   "graded": 0,
-  "pending": 8,
+  "pending": 39,
   "hit_rate": null,
   "hits": 0,
   "misses": 0,
@@ -14,6 +14,23 @@
   "mae_adj_pts": null
  },
  "by_fan": [
+  {
+   "fan": "Clay",
+   "weeks": [
+    2
+   ],
+   "n": 31,
+   "graded": 0,
+   "pending": 31,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
   {
    "fan": "Nana Owusu",
    "weeks": [
@@ -34,9 +51,22 @@
  ],
  "by_stat": {
   "pass_int": {
-   "n": 1,
+   "n": 3,
    "graded": 0,
-   "pending": 1,
+   "pending": 3,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "pass_tds": {
+   "n": 2,
+   "graded": 0,
+   "pending": 2,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -47,9 +77,9 @@
    "mae_adj_pts": null
   },
   "pass_yds": {
-   "n": 1,
+   "n": 3,
    "graded": 0,
-   "pending": 1,
+   "pending": 3,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -60,9 +90,9 @@
    "mae_adj_pts": null
   },
   "rec": {
-   "n": 1,
+   "n": 8,
    "graded": 0,
-   "pending": 1,
+   "pending": 8,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -73,9 +103,9 @@
    "mae_adj_pts": null
   },
   "rec_tds": {
-   "n": 1,
+   "n": 4,
    "graded": 0,
-   "pending": 1,
+   "pending": 4,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -86,9 +116,9 @@
    "mae_adj_pts": null
   },
   "rec_yds": {
-   "n": 2,
+   "n": 7,
    "graded": 0,
-   "pending": 2,
+   "pending": 7,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -99,9 +129,22 @@
    "mae_adj_pts": null
   },
   "rush_tds": {
-   "n": 2,
+   "n": 7,
    "graded": 0,
-   "pending": 2,
+   "pending": 7,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rush_yds": {
+   "n": 5,
+   "graded": 0,
+   "pending": 5,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -114,9 +157,9 @@
  },
  "by_size": {
   "1": {
-   "n": 1,
+   "n": 2,
    "graded": 0,
-   "pending": 1,
+   "pending": 2,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -127,9 +170,22 @@
    "mae_adj_pts": null
   },
   "2": {
-   "n": 1,
+   "n": 17,
    "graded": 0,
-   "pending": 1,
+   "pending": 17,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "3": {
+   "n": 3,
+   "graded": 0,
+   "pending": 3,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -140,9 +196,9 @@
    "mae_adj_pts": null
   },
   "4+": {
-   "n": 6,
+   "n": 17,
    "graded": 0,
-   "pending": 6,
+   "pending": 17,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -155,9 +211,22 @@
  },
  "by_direction": {
   "boost": {
-   "n": 8,
+   "n": 35,
    "graded": 0,
-   "pending": 8,
+   "pending": 35,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "fade": {
+   "n": 4,
+   "graded": 0,
+   "pending": 4,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -170,9 +239,9 @@
  },
  "by_week": {
   "2": {
-   "n": 8,
+   "n": 39,
    "graded": 0,
-   "pending": 8,
+   "pending": 39,
    "hit_rate": null,
    "hits": 0,
    "misses": 0,
@@ -185,8 +254,12 @@
  },
  "rows": [],
  "pending_games": [
+  "wk2 ATL v CAR",
+  "wk2 CAR v ATL",
+  "wk2 HOU v CIN",
   "wk2 LAC v LV",
-  "wk2 LV v LAC"
+  "wk2 LV v LAC",
+  "wk2 TB v CLE"
  ],
  "season": 2026
 }
