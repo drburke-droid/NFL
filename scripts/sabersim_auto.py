@@ -237,7 +237,7 @@ try:    # the generator's own lineup summary ("lineups: N statuses pulled {espn:
 except Exception:
     _keep = []
 sent[s["key"]] = {"sent_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), "rows": n_rows, "file": os.path.basename(csv_path), "slate": s["label"], "credits_left": left,
-                  "lineups": _keep, "health": {k: health.get(k) for k in ("ffa", "dk_lines", "dk_props", "kdst", "injury_report", "lineups", "warnings") if k in health}}
+                  "lineups": _keep, "health": {k: health.get(k) for k in ("ffa", "dk_lines", "dk_props", "kdst", "dk_kickers", "injury_report", "lineups", "warnings") if k in health}}
 json.dump(sent, open(LOG, "w"), indent=1)
 out(sent=True, file=os.path.basename(csv_path), rows=n_rows, to=to, credits_left=left,
     low_credits=low, generator_warnings=len(warns))

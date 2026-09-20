@@ -135,6 +135,32 @@ if len(rows):
             kept = rows[(rows.week == wk) & (rows.fan == fan) & ~superseded].submitted_at.iloc[0]
             print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) superseded by a later submission ({kept})")
         rows = rows[~superseded].copy()
+# An arrow is a forecast or it is nothing. The page bakes the whole week, so a fan scrolling it on
+# Sunday can still put arrows on Thursday's game, and nflverse has that box score — the grader would
+# score those instantly against a result the fan could already have read. Clay's first submission had
+# 21 of 52 arrows on Detroit @ Buffalo, three days after it was played. Kickoff comes from the
+# schedule rather than the bake, so this holds for rows recorded before bake ids existed.
+_sch = os.path.join(ROOT, "data", f"schedule_{A.season}.csv")
+if len(rows) and os.path.exists(_sch):
+    _s = pd.read_csv(_sch)
+    _s = _s[(_s.season == A.season) & (_s.game_type == "REG")]
+    _k = pd.to_datetime(_s.gameday.astype(str) + " " + _s.gametime.fillna("13:00").astype(str),
+                        errors="coerce").dt.tz_localize("America/New_York", ambiguous="NaT",
+                                                        nonexistent="shift_forward").dt.tz_convert("UTC")
+    kick = {}
+    for r, k in zip(_s.itertuples(), _k):
+        if pd.notna(k):
+            kick[(int(r.week), r.home_team)] = k
+            kick[(int(r.week), r.away_team)] = k
+    rows["_kick"] = [kick.get((int(w), t)) for w, t in zip(rows.week, rows.team)]
+    _sub = pd.to_datetime(rows.submitted_at, errors="coerce", utc=True)
+    late = rows._kick.notna() & _sub.notna() & (_sub > rows._kick)
+    if late.any():
+        for (fan, wk), d in rows[late].groupby(["fan", "week"]):
+            games = ", ".join(sorted({f"{r.team} v {r.opp}" for r in d.itertuples()}))
+            print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) dropped — submitted after kickoff ({games})")
+        rows = rows[~late].copy()
+    rows = rows.drop(columns=["_kick"])
 url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{A.season}.parquet"
 act = pd.read_parquet(url); act = act[act.season_type == "REG"]
 for c in COL.values():

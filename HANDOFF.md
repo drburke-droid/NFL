@@ -136,8 +136,14 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   `lm-api-reads.fantasy.espn.com/.../players?view=players_wl` alongside the others; the repo already
   had working cookie auth for that host (fetch_espn*.py), it just was never pointed at injuries.
   It reports the field's presence and the raw status distribution rather than a bare count, because
-  whether that view carries injuryStatus is unverified — ESPN blocks the cloud sandbox entirely, so
-  the first live ticks are the test. If it crosses meaningfully before T-80 it closes this gap.
+  Measured on the 2026-09-20 afternoon bands: the host answers an UNAUTHENTICATED datacenter
+  request in 267 ms — faster than espn_league (413 ms) and Sleeper (1322 ms) — and accepts the
+  cookies, so transport and auth are fine. But `players_wl` carries NO injuryStatus: 11,618
+  players, every one None. It is the player-universe view and nothing more. The probe now tries
+  `kona_player_info` (season, then league-scoped) first and falls back to players_wl, reporting
+  `via` for whichever view actually carried the field. Reporting `field` rather than a bare count
+  is what kept this from reading as "ESPN fantasy is no faster" and closing the question wrongly
+  a second time. If it crosses meaningfully before T-80 it closes this gap.
 - Fan Picks grading has no data yet; the decision rule is the same as Subvertadown's: several hundred
   graded player-stats with a consistent direction edge before any weight is considered.
 - `data/news/wiki_2026-09.jsonl` (139 MB) is not in the repo: over GitHub's 100 MB limit and LFS is

@@ -117,36 +117,54 @@ def espn_fantasy():
     Reports what it actually received rather than a bare count. Whether players_wl carries
     injuryStatus, and whether this host answers an unauthenticated datacenter request, cannot be
     established from a sandbox that ESPN blocks entirely, so the first live ticks are the test:
-    `field` says whether injuryStatus was present at all, `by_status` is the raw distribution, and
-    `ua` records which header shape got through. A zero OUT count with field=false means the view
-    is wrong, not that nobody is out — do not read it as a measurement.
+    `field` says whether injuryStatus was present at all, `by_status` is the raw distribution,
+    `via` names the view that carried it and `ua` the header shape that got through. A zero OUT
+    count with field=false means the view is wrong, not that nobody is out — do not read it as a
+    measurement; `tried` then lists what each candidate returned.
     """
     now = datetime.now(timezone.utc)
     season = A.season or (now.year if now.month >= 3 else now.year - 1)
-    url = (f"https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{season}"
-           f"/players?view=players_wl")
-    filt = json.dumps({"players": {"limit": 4000}})
+    base = f"https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{season}"
     ck = {k: v for k, v in (("espn_s2", os.environ.get("ESPN_S2")), ("SWID", os.environ.get("ESPN_SWID"))) if v}
-    last = None
-    for ua in ({}, {"User-Agent": "Mozilla/5.0"}):        # site.api wants no UA; this host may differ
-        h = dict(ua, **{"x-fantasy-filter": filt})
-        if ck: h["Cookie"] = "; ".join(f"{k}={v}" for k, v in ck.items())
-        try:
-            with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=45) as r:
-                d = json.load(r)
+    # Measured on a runner 2026-09-20: players_wl connects in 267ms with cookies accepted, but
+    # carries no injuryStatus at all — 11,618 players, every one None. It is the player-universe
+    # view (id, name, position, team) and nothing more. kona_player_info is the view the app's
+    # player cards read. Candidates are tried in order and the first one that actually carries the
+    # field wins; `via` records which, so a future failure says WHICH view stopped working.
+    lg = os.environ.get("ESPN_LEAGUE_ID", "1211359110")
+    cands = [
+        ("kona_season", f"{base}/players?view=kona_player_info",
+         {"players": {"filterActive": {"value": True}, "limit": 2000}}),
+        ("kona_league", f"{base}/segments/0/leagues/{lg}?view=kona_player_info",
+         {"players": {"filterActive": {"value": True}, "limit": 2000}}),
+        ("players_wl", f"{base}/players?view=players_wl", {"players": {"limit": 4000}}),
+    ]
+    tried, last = [], None
+    for via, url, filt in cands:
+        for ua in ({}, {"User-Agent": "Mozilla/5.0"}):    # site.api wants no UA; this host may differ
+            h = dict(ua, **{"x-fantasy-filter": json.dumps(filt)})
+            if ck: h["Cookie"] = "; ".join(f"{k}={v}" for k, v in ck.items())
+            try:
+                with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=45) as r:
+                    d = json.load(r)
+            except Exception as e:
+                last = f"{via}/{'none' if not ua else 'mozilla'}: {str(e)[:60]}"; continue
+            pls = d if isinstance(d, list) else (d.get("players") or [])
             by, out = {}, 0
-            for pl in d if isinstance(d, list) else d.get("players", []):
+            for pl in pls:
                 if not isinstance(pl, dict): continue
                 st = pl.get("injuryStatus") or (pl.get("player") or {}).get("injuryStatus")
                 by[str(st)] = by.get(str(st), 0) + 1
                 if is_out(st): out += 1
             field = any(k not in ("None", "") for k in by)
-            return {"out": out if field else None, "field": field, "players": len(d if isinstance(d, list) else d.get("players", [])),
+            if not field:
+                tried.append(f"{via}: {len(pls)} players, no injuryStatus"); break   # view is wrong, not the UA
+            return {"out": out, "field": True, "players": len(pls), "via": via,
                     "by_status": dict(sorted(by.items(), key=lambda kv: -kv[1])[:8]),
-                    "ua": "none" if not ua else "mozilla", "auth": bool(ck), "season": season}
-        except Exception as e:
-            last = f"{'none' if not ua else 'mozilla'}: {str(e)[:70]}"
-    return {"error": last, "auth": bool(ck), "season": season}
+                    "ua": "none" if not ua else "mozilla", "auth": bool(ck), "season": season,
+                    "tried": tried}
+    return {"out": None, "field": False, "tried": tried, "error": last,
+            "auth": bool(ck), "season": season}
 
 FN = {"espn_league": espn_league, "espn_team": espn_team, "sleeper": sleeper, "espn_fantasy": espn_fantasy}
 res = {}
