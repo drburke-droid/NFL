@@ -379,5 +379,100 @@
    },
    "warnings": []
   }
+ },
+ "2026-09-21T00:20_1g": {
+  "sent_at": "2026-09-20T23:03:04Z",
+  "rows": 31,
+  "file": "Burke_Model_Burke_2026_sun08pm_0920_2300.csv",
+  "slate": "Sun 09/20 08:20 PM ET slate (1 games)",
+  "credits_left": 2160,
+  "lineups": [
+   "schedule: 18 weeks; week 2 runs Fri 09/18 .. Tue 09/22",
+   "week 2: 1 games in this send (kickoffs Mon 00:20Z .. Mon 00:20Z)",
+   "injury report (nfl.com): 66 skill/K players listed; practice {'FP': 35, 'DNP': 18, 'LP': 13}; designations {'Questionable': 12, 'Out': 11, 'Doubtful': 4}",
+   "lineups: 456 statuses pulled {'espn': 204, 'sleeper': 101, 'espn+sleeper': 76, '+sleeper': 66, 'nfl-report': 9}; 0 Q, 2 OUT with a projection {'espn+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk2.csv",
+    "rows": 920,
+    "age_hours": 0.0,
+    "slate_skill": 27,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-09-20T23:02Z",
+    "credits_left": "226"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 21,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 5,
+     "rec_yds": 12,
+     "rec": 11,
+     "exp_td": 21
+    },
+    "no_line": [],
+    "eligible": 11,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk2.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "KC": [
+      "Harrison Butker"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 66,
+    "designations": {
+     "Questionable": 12,
+     "Out": 11,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 456,
+    "by_src": {
+     "espn": 204,
+     "sleeper": 101,
+     "espn+sleeper": 76,
+     "+sleeper": 66,
+     "nfl-report": 9
+    },
+    "q": 0,
+    "out": 2,
+    "out_by_src": {
+     "espn+sleeper": 2
+    }
+   },
+   "warnings": []
+  }
  }
 }
