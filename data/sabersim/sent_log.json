@@ -112,5 +112,97 @@
    },
    "warnings": []
   }
+ },
+ "2026-09-20T17:00_8g": {
+  "sent_at": "2026-09-20T15:42:55Z",
+  "rows": 253,
+  "file": "Burke_Model_Burke_2026_sun01pm_0920_1540.csv",
+  "slate": "Sun 09/20 01:00 PM ET slate (8 games)",
+  "credits_left": 2290,
+  "lineups": [
+   "schedule: 18 weeks; week 2 runs Fri 09/18 .. Tue 09/22",
+   "week 2: 8 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)",
+   "injury report (nfl.com): 66 skill/K players listed; practice {'FP': 35, 'DNP': 18, 'LP': 13}; designations {'Questionable': 12, 'Out': 11, 'Doubtful': 4}",
+   "lineups: 341 statuses pulled {'espn': 120, 'sleeper': 100, '+sleeper': 68, 'espn+sleeper': 42, 'nfl-report': 11}; 3 Q, 13 OUT with a projection {'espn+sleeper': 13}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk2.csv",
+    "rows": 920,
+    "age_hours": 0.0,
+    "slate_skill": 221,
+    "slate_k": 17,
+    "slate_dst": 16
+   },
+   "dk_lines": {
+    "slate_games": 8,
+    "with_lines": 8,
+    "fetched_at": "2026-09-20T15:41Z",
+    "credits_left": "356"
+   },
+   "dk_props": {
+    "slate_events": 8,
+    "events_with_props": 8,
+    "with_props": 185,
+    "by_stat": {
+     "pass_yds": 16,
+     "pass_tds": 16,
+     "rush_yds": 47,
+     "rec_yds": 98,
+     "rec": 97,
+     "exp_td": 185
+    },
+    "no_line": [
+     "Michael Pittman",
+     "Nico Collins",
+     "Tua Tagovailoa",
+     "Zay Flowers"
+    ],
+    "eligible": 77,
+    "name_aliases": [
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 36
+   },
+   "kdst": {
+    "file": "kdst_2026_wk2.csv",
+    "K": {
+     "hit": 17,
+     "of": 17
+    },
+    "DST": {
+     "hit": 16,
+     "of": 16
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 66,
+    "designations": {
+     "Questionable": 12,
+     "Out": 11,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 341,
+    "by_src": {
+     "espn": 120,
+     "sleeper": 100,
+     "+sleeper": 68,
+     "espn+sleeper": 42,
+     "nfl-report": 11
+    },
+    "q": 3,
+    "out": 13,
+    "out_by_src": {
+     "espn+sleeper": 13
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Tua Tagovailoa, Zay Flowers, Nico Collins, Michael Pittman"
+   ]
+  }
  }
 }
