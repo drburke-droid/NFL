@@ -81,6 +81,9 @@ jobs:
         # generation; that sample is redundant anyway, the send's own CSV records it.
         if: steps.win.outputs.in_window != 'true'
         continue-on-error: true
+        env:                       # only the espn_fantasy source reads these; it works unauthenticated
+          ESPN_S2: ${{ secrets.ESPN_S2 }}     # or not at all, and the probe reports which
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
         run: |
           python scripts/inactives_probe.py \
             --minutes-to "${{ steps.win.outputs.imminent_minutes_to }}" \

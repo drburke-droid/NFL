@@ -11,10 +11,16 @@ Sources sampled (all free, no auth):
                it returns $ref stubs rather than inline injuries (see the note in espn_team), so it
                reports its shape only. Only the teams playing inside the band are queried.
   sleeper      api.sleeper.app/v1/players/nfl           — injury_status; already a dependency
+  espn_fantasy lm-api-reads.fantasy.espn.com/.../players — ESPN's FANTASY api, a different service
+               from site.api and the one the Fantasy app renders. Added 2026-09-20 after the
+               observation that the app carries inactives on time while our site digest does not.
 
-Known dead ends, from research on 2026-09-14: ESPN publishes no pregame inactives endpoint — the
-core API's roster didNotPlay/active fields are populated from game participation, not from the
-inactive list, and a pregame endpoint is a standing unanswered request from its users. Of the
+Known dead ends, from research on 2026-09-14: ESPN's SITE and CORE apis publish no pregame
+inactives endpoint — the core API's roster didNotPlay/active fields are populated from game
+participation, not from the inactive list, and a pregame endpoint is a standing unanswered request
+from its users. That research did not cover ESPN's fantasy api, which is separately maintained and
+is what the Fantasy app reads; "no faster free feed found" was therefore a conclusion from an
+incomplete search, and espn_fantasy is here to close it. Of the
 commercial feeds, SportsDataIO is the one that explicitly documents an Inactive flag available
 "around 90 minutes before kickoff", but its free tier returns scrambled data, so it cannot be
 evaluated without buying it.
@@ -25,7 +31,7 @@ per tick to stdout; the Actions log is the store.
 
 Usage: python scripts/inactives_probe.py --minutes-to 83.4 --slate 2026-09-14T00:20_1g
 """
-import json, argparse, time, urllib.request
+import json, argparse, os, time, urllib.request
 from datetime import datetime, timezone
 
 OUT_WORDS = {"out", "injured reserve", "ir", "suspension", "sus", "pup", "dnr", "nfi", "inactive"}
@@ -39,7 +45,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--minutes-to", type=float, required=True)
 ap.add_argument("--slate", default="")
 ap.add_argument("--band", default="60,100", help="only sample inside this minutes-to-kickoff band")
-ap.add_argument("--sources", default="espn_league,espn_team,sleeper")
+ap.add_argument("--sources", default="espn_league,espn_team,sleeper,espn_fantasy")
+ap.add_argument("--season", type=int, default=0, help="fantasy season; 0 derives it from the date")
 A = ap.parse_args()
 lo, hi = (float(x) for x in A.band.split(","))
 if not (lo <= A.minutes_to <= hi):
@@ -104,7 +111,44 @@ def sleeper():
         if t: per[t] = per.get(t, 0) + 1
     return {"out": sum(per.values()), "teams": len(per), "per_team": dict(sorted(per.items()))}
 
-FN = {"espn_league": espn_league, "espn_team": espn_team, "sleeper": sleeper}
+def espn_fantasy():
+    """ESPN's fantasy api — the service behind the Fantasy app, never sampled before.
+
+    Reports what it actually received rather than a bare count. Whether players_wl carries
+    injuryStatus, and whether this host answers an unauthenticated datacenter request, cannot be
+    established from a sandbox that ESPN blocks entirely, so the first live ticks are the test:
+    `field` says whether injuryStatus was present at all, `by_status` is the raw distribution, and
+    `ua` records which header shape got through. A zero OUT count with field=false means the view
+    is wrong, not that nobody is out — do not read it as a measurement.
+    """
+    now = datetime.now(timezone.utc)
+    season = A.season or (now.year if now.month >= 3 else now.year - 1)
+    url = (f"https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{season}"
+           f"/players?view=players_wl")
+    filt = json.dumps({"players": {"limit": 4000}})
+    ck = {k: v for k, v in (("espn_s2", os.environ.get("ESPN_S2")), ("SWID", os.environ.get("ESPN_SWID"))) if v}
+    last = None
+    for ua in ({}, {"User-Agent": "Mozilla/5.0"}):        # site.api wants no UA; this host may differ
+        h = dict(ua, **{"x-fantasy-filter": filt})
+        if ck: h["Cookie"] = "; ".join(f"{k}={v}" for k, v in ck.items())
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=45) as r:
+                d = json.load(r)
+            by, out = {}, 0
+            for pl in d if isinstance(d, list) else d.get("players", []):
+                if not isinstance(pl, dict): continue
+                st = pl.get("injuryStatus") or (pl.get("player") or {}).get("injuryStatus")
+                by[str(st)] = by.get(str(st), 0) + 1
+                if is_out(st): out += 1
+            field = any(k not in ("None", "") for k in by)
+            return {"out": out if field else None, "field": field, "players": len(d if isinstance(d, list) else d.get("players", [])),
+                    "by_status": dict(sorted(by.items(), key=lambda kv: -kv[1])[:8]),
+                    "ua": "none" if not ua else "mozilla", "auth": bool(ck), "season": season}
+        except Exception as e:
+            last = f"{'none' if not ua else 'mozilla'}: {str(e)[:70]}"
+    return {"error": last, "auth": bool(ck), "season": season}
+
+FN = {"espn_league": espn_league, "espn_team": espn_team, "sleeper": sleeper, "espn_fantasy": espn_fantasy}
 res = {}
 for name in [x.strip() for x in A.sources.split(",") if x.strip()]:
     fn = FN.get(name)
