@@ -147,7 +147,7 @@ jobs:
         if: steps.win.outputs.grade_due == 'true'
         run: |
           python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
-          python scripts/fan_grade.py || echo "fan grade failed (continuing)"
+          python scripts/fan_grade.py --sends pkg/sends outputs/sabersim || echo "fan grade failed (continuing)"
 
       - name: Record the send
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'

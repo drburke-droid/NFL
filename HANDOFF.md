@@ -144,8 +144,17 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   `via` for whichever view actually carried the field. Reporting `field` rather than a bare count
   is what kept this from reading as "ESPN fantasy is no faster" and closing the question wrongly
   a second time. If it crosses meaningfully before T-80 it closes this gap.
-- Fan Picks grading has no data yet; the decision rule is the same as Subvertadown's: several hundred
-  graded player-stats with a consistent direction edge before any weight is considered.
+- Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
+  file baked days earlier, so scoring against it credits a fan with every point of error the news
+  removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
+  made it concrete: Clay faded Nico Collins to zero for +16.99 of a +17.23 total, and the send
+  already had Collins at 0.00 because he was ruled OUT while the bake still said 17.18. On the send
+  basis those three arrows are correctly neutral, and his 24 graded arrows go from 50% / +9.52 to
+  33% / -9.09. The mean baseline error also falls from 3.19 to 2.36 points, which is the same fact
+  from the other side: the send is a much harder baseline to beat than the bake. fan_grade takes
+  --sends (both workflows pass pkg/sends outputs/sabersim); --vs-bake restores the old basis for
+  comparison. The decision rule is unchanged, same as Subvertadown's: several hundred graded
+  player-stats with a consistent direction edge before any weight is considered.
 - `data/news/wiki_2026-09.jsonl` (139 MB) is not in the repo: over GitHub's 100 MB limit and LFS is
   exhausted. Regenerable by the news collector, or move it as a Release asset like the odds DB.
 - The Odds API key file holds 6 keys (~2.4k credits on 2026-09-16); the health line shows the

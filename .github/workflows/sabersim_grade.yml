@@ -32,7 +32,7 @@ jobs:
       - name: Grade
         run: |
           python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
-          python scripts/fan_grade.py || echo "fan grade failed (continuing)"
+          python scripts/fan_grade.py --sends pkg/sends outputs/sabersim || echo "fan grade failed (continuing)"
       - name: Publish
         run: |
           git config user.name "github-actions[bot]"
