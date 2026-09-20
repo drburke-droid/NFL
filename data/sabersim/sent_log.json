@@ -294,5 +294,90 @@
     "no DK props posted (news?): RJ Harvey, Brock Bowers"
    ]
   }
+ },
+ "2026-09-20T20:25_3g": {
+  "sent_at": "2026-09-20T19:08:11Z",
+  "rows": 90,
+  "file": "Burke_Model_Burke_2026_sun04pm_0920_1905.csv",
+  "slate": "Sun 09/20 04:25 PM ET slate (3 games)",
+  "credits_left": 2171,
+  "lineups": [
+   "schedule: 18 weeks; week 2 runs Fri 09/18 .. Tue 09/22",
+   "week 2: 3 games in this send (kickoffs Sun 20:25Z .. Sun 20:25Z)",
+   "injury report (nfl.com): 66 skill/K players listed; practice {'FP': 35, 'DNP': 18, 'LP': 13}; designations {'Questionable': 12, 'Out': 11, 'Doubtful': 4}",
+   "lineups: 409 statuses pulled {'espn': 164, 'sleeper': 102, '+sleeper': 70, 'espn+sleeper': 63, 'nfl-report': 10}; 1 Q, 4 OUT with a projection {'espn+sleeper': 2, 'ffa-tag': 1, '+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk2.csv",
+    "rows": 920,
+    "age_hours": 0.0,
+    "slate_skill": 78,
+    "slate_k": 6,
+    "slate_dst": 6
+   },
+   "dk_lines": {
+    "slate_games": 3,
+    "with_lines": 3,
+    "fetched_at": "2026-09-20T19:07Z",
+    "credits_left": "237"
+   },
+   "dk_props": {
+    "slate_events": 3,
+    "events_with_props": 3,
+    "with_props": 67,
+    "by_stat": {
+     "pass_yds": 6,
+     "pass_tds": 6,
+     "rush_yds": 18,
+     "rec_yds": 30,
+     "rec": 30,
+     "exp_td": 67
+    },
+    "no_line": [],
+    "eligible": 26,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 11
+   },
+   "kdst": {
+    "file": "kdst_2026_wk2.csv",
+    "K": {
+     "hit": 6,
+     "of": 6
+    },
+    "DST": {
+     "hit": 6,
+     "of": 6
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 66,
+    "designations": {
+     "Questionable": 12,
+     "Out": 11,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 409,
+    "by_src": {
+     "espn": 164,
+     "sleeper": 102,
+     "+sleeper": 70,
+     "espn+sleeper": 63,
+     "nfl-report": 10
+    },
+    "q": 1,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 2,
+     "ffa-tag": 1,
+     "+sleeper": 1
+    }
+   },
+   "warnings": []
+  }
  }
 }
