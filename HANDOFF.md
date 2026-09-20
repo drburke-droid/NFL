@@ -129,8 +129,15 @@ reads K's context columns today, but it was the same omission that left K/DST wi
 ## Open items
 
 - T-90 inactives gap (item 2). `scripts/inactives_probe.py` samples feeds each tick T-100..T-60 into
-  the Actions log; no faster free feed found (ESPN has no pregame inactives endpoint; SportsDataIO
-  documents one but is paid).
+  the Actions log. The earlier "no faster free feed found" was drawn from an incomplete search: it
+  covered ESPN's site and core APIs, which genuinely have no pregame inactives endpoint, but not
+  ESPN's FANTASY api — a separately maintained service, and the one the Fantasy app renders, which
+  does carry inactives on time. `espn_fantasy` now samples
+  `lm-api-reads.fantasy.espn.com/.../players?view=players_wl` alongside the others; the repo already
+  had working cookie auth for that host (fetch_espn*.py), it just was never pointed at injuries.
+  It reports the field's presence and the raw status distribution rather than a bare count, because
+  whether that view carries injuryStatus is unverified — ESPN blocks the cloud sandbox entirely, so
+  the first live ticks are the test. If it crosses meaningfully before T-80 it closes this gap.
 - Fan Picks grading has no data yet; the decision rule is the same as Subvertadown's: several hundred
   graded player-stats with a consistent direction edge before any weight is considered.
 - `data/news/wiki_2026-09.jsonl` (139 MB) is not in the repo: over GitHub's 100 MB limit and LFS is

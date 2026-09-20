@@ -51,7 +51,12 @@ def grade(rows, act):
         actual = float(getattr(a, COL[stat]) or 0.0) if a is not None else (0.0 if ingested else np.nan)
         base, adj, n = float(r.baseline), float(r.adjusted), int(r.arrows)
         d = dict(r._asdict()); d.pop("Index", None)
-        d.update({"pending": not ingested, "actual": None if not ingested else round(actual, 2)})
+        # every column exists on every row, graded or not: with all rows pending (a submission
+        # in before its games kick off) these were absent entirely and summarise() died on
+        # gd.direction, so a fan who submitted early broke the whole grade until his games ran
+        d.update({"pending": not ingested, "actual": None if not ingested else round(actual, 2),
+                  "direction": None, "err_base": np.nan, "err_adj": np.nan,
+                  "removed": np.nan, "removed_pts": np.nan})
         if ingested:
             move = actual - base
             d["direction"] = "neutral" if abs(move) < 1e-9 else ("hit" if np.sign(move) == np.sign(n) else "miss")
@@ -118,6 +123,18 @@ if not os.path.exists(LONG):
     json.dump({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": {"n": 0, "graded": 0, "pending": 0}, "by_fan": [], "rows": [], "note": "no submissions recorded yet"}, open(OUT, "w"), indent=1)
     print("no submissions recorded yet -> wrote an empty docs/fan/grade.json"); sys.exit(0)
 rows = pd.read_csv(LONG, dtype={"player_id": str}); rows = rows[rows.season == A.season].copy()
+# A fan who resubmits after tweaking his arrows produces a second code with a later submitted_at,
+# and the long table is append-only by design, so both submissions sit in it. Only his last word
+# counts: grading both would weigh every arrow he did not change twice over. The superseded rows
+# stay in the CSV as history — this is the one place that decides which of them is live.
+if len(rows):
+    latest = rows.groupby(["season", "week", "fan"]).submitted_at.transform("max")
+    superseded = rows.submitted_at != latest
+    if superseded.any():
+        for (wk, fan), d in rows[superseded].groupby(["week", "fan"]):
+            kept = rows[(rows.week == wk) & (rows.fan == fan) & ~superseded].submitted_at.iloc[0]
+            print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) superseded by a later submission ({kept})")
+        rows = rows[~superseded].copy()
 url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{A.season}.parquet"
 act = pd.read_parquet(url); act = act[act.season_type == "REG"]
 for c in COL.values():
