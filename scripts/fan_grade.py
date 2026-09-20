@@ -51,7 +51,12 @@ def grade(rows, act):
         actual = float(getattr(a, COL[stat]) or 0.0) if a is not None else (0.0 if ingested else np.nan)
         base, adj, n = float(r.baseline), float(r.adjusted), int(r.arrows)
         d = dict(r._asdict()); d.pop("Index", None)
-        d.update({"pending": not ingested, "actual": None if not ingested else round(actual, 2)})
+        # every column exists on every row, graded or not: with all rows pending (a submission
+        # in before its games kick off) these were absent entirely and summarise() died on
+        # gd.direction, so a fan who submitted early broke the whole grade until his games ran
+        d.update({"pending": not ingested, "actual": None if not ingested else round(actual, 2),
+                  "direction": None, "err_base": np.nan, "err_adj": np.nan,
+                  "removed": np.nan, "removed_pts": np.nan})
         if ingested:
             move = actual - base
             d["direction"] = "neutral" if abs(move) < 1e-9 else ("hit" if np.sign(move) == np.sign(n) else "miss")
