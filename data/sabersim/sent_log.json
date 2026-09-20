@@ -114,16 +114,16 @@
   }
  },
  "2026-09-20T17:00_8g": {
-  "sent_at": "2026-09-20T15:42:55Z",
+  "sent_at": "2026-09-20T15:47:12Z",
   "rows": 253,
-  "file": "Burke_Model_Burke_2026_sun01pm_0920_1540.csv",
+  "file": "Burke_Model_Burke_2026_sun01pm_0920_1544.csv",
   "slate": "Sun 09/20 01:00 PM ET slate (8 games)",
-  "credits_left": 2290,
+  "credits_left": 2240,
   "lineups": [
    "schedule: 18 weeks; week 2 runs Fri 09/18 .. Tue 09/22",
    "week 2: 8 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)",
    "injury report (nfl.com): 66 skill/K players listed; practice {'FP': 35, 'DNP': 18, 'LP': 13}; designations {'Questionable': 12, 'Out': 11, 'Doubtful': 4}",
-   "lineups: 341 statuses pulled {'espn': 120, 'sleeper': 100, '+sleeper': 68, 'espn+sleeper': 42, 'nfl-report': 11}; 3 Q, 13 OUT with a projection {'espn+sleeper': 13}"
+   "lineups: 360 statuses pulled {'espn': 136, 'sleeper': 100, '+sleeper': 66, 'espn+sleeper': 47, 'nfl-report': 11}; 3 Q, 15 OUT with a projection {'espn+sleeper': 13, 'espn': 1, '+sleeper': 1}"
   ],
   "health": {
    "ffa": {
@@ -137,8 +137,8 @@
    "dk_lines": {
     "slate_games": 8,
     "with_lines": 8,
-    "fetched_at": "2026-09-20T15:41Z",
-    "credits_left": "356"
+    "fetched_at": "2026-09-20T15:46Z",
+    "credits_left": "306"
    },
    "dk_props": {
     "slate_events": 8,
@@ -186,18 +186,20 @@
     }
    },
    "lineups": {
-    "statuses": 341,
+    "statuses": 360,
     "by_src": {
-     "espn": 120,
+     "espn": 136,
      "sleeper": 100,
-     "+sleeper": 68,
-     "espn+sleeper": 42,
+     "+sleeper": 66,
+     "espn+sleeper": 47,
      "nfl-report": 11
     },
     "q": 3,
-    "out": 13,
+    "out": 15,
     "out_by_src": {
-     "espn+sleeper": 13
+     "espn+sleeper": 13,
+     "espn": 1,
+     "+sleeper": 1
     }
    },
    "warnings": [
