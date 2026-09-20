@@ -206,5 +206,93 @@
     "no DK props posted (news?): Tua Tagovailoa, Zay Flowers, Nico Collins, Michael Pittman"
    ]
   }
+ },
+ "2026-09-20T20:05_2g": {
+  "sent_at": "2026-09-20T18:47:16Z",
+  "rows": 61,
+  "file": "Burke_Model_Burke_2026_sun04pm_0920_1845.csv",
+  "slate": "Sun 09/20 04:05 PM ET slate (2 games)",
+  "credits_left": 2200,
+  "lineups": [
+   "schedule: 18 weeks; week 2 runs Fri 09/18 .. Tue 09/22",
+   "week 2: 2 games in this send (kickoffs Sun 20:05Z .. Sun 20:05Z)",
+   "injury report (nfl.com): 66 skill/K players listed; practice {'FP': 35, 'DNP': 18, 'LP': 13}; designations {'Questionable': 12, 'Out': 11, 'Doubtful': 4}",
+   "lineups: 385 statuses pulled {'espn': 156, 'sleeper': 101, '+sleeper': 63, 'espn+sleeper': 55, 'nfl-report': 10}; 1 Q, 3 OUT with a projection {'espn+sleeper': 3}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk2.csv",
+    "rows": 920,
+    "age_hours": 0.0,
+    "slate_skill": 53,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-09-20T18:46Z",
+    "credits_left": "266"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 46,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 10,
+     "rec_yds": 20,
+     "rec": 20,
+     "exp_td": 46
+    },
+    "no_line": [
+     "Brock Bowers",
+     "RJ Harvey"
+    ],
+    "eligible": 19,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 7
+   },
+   "kdst": {
+    "file": "kdst_2026_wk2.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 66,
+    "designations": {
+     "Questionable": 12,
+     "Out": 11,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 385,
+    "by_src": {
+     "espn": 156,
+     "sleeper": 101,
+     "+sleeper": 63,
+     "espn+sleeper": 55,
+     "nfl-report": 10
+    },
+    "q": 1,
+    "out": 3,
+    "out_by_src": {
+     "espn+sleeper": 3
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): RJ Harvey, Brock Bowers"
+   ]
+  }
  }
 }
