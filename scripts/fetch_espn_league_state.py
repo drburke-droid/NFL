@@ -24,8 +24,15 @@ import requests
 
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 LEAGUE_ID = int(sys.argv[1]) if len(sys.argv) > 1 else 1211359110
-SEASON = int(sys.argv[2]) if len(sys.argv) > 2 else 2026
-OUT = os.path.join(ROOT, "outputs", "espn_league_state.json")
+# One or more seasons. Past seasons are what calibration needs: the weekly team scores that say
+# how far a team's week actually swings, which is the input the simulator currently guesses at.
+SEASONS = [int(a) for a in sys.argv[2:]] or [2026]
+CURRENT = max(SEASONS)
+
+
+def out_path(season):
+    """The newest season also writes the unsuffixed name that build_gm_league.py reads."""
+    return os.path.join(ROOT, "outputs", f"espn_league_state_{season}.json")
 RAW = os.path.join(ROOT, "data", "espn"); os.makedirs(RAW, exist_ok=True)
 
 
@@ -37,22 +44,18 @@ def cookies():
     return s2, swid
 
 
-def main():
-    s2, swid = cookies()
-    if not s2 or not swid:
-        print("No ESPN cookies. Set ESPN_S2 / ESPN_SWID, or create data/espn_cookies.json")
-        sys.exit(1)
-    url = (f"https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{SEASON}"
+def fetch(season, s2, swid):
+    url = (f"https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/{season}"
            f"/segments/0/leagues/{LEAGUE_ID}")
     params = [("view", v) for v in ("mSettings", "mTeam", "mMatchup", "mMatchupScore")]
     r = requests.get(url, params=params, cookies={"espn_s2": s2, "SWID": swid},
                      headers={"User-Agent": "Mozilla/5.0"}, timeout=30)
     if r.status_code != 200:
-        print(f"HTTP {r.status_code}: {r.text[:200]}")
-        print("401 -> cookies missing/expired; 404 -> bad leagueId/season.")
-        sys.exit(1)
+        # raise rather than exit: a season the league did not exist for must not abort the rest
+        raise RuntimeError(f"HTTP {r.status_code} ({r.text[:120]}) "
+                           "- 401 means cookies missing/expired, 404 a bad leagueId/season")
     data = r.json()
-    json.dump(data, open(os.path.join(RAW, f"league_state_{SEASON}.json"), "w"), indent=1)
+    json.dump(data, open(os.path.join(RAW, f"league_state_{season}.json"), "w"), indent=1)
 
     st = data.get("settings", {}) or {}
     sched_s = st.get("scheduleSettings", {}) or {}
@@ -90,7 +93,7 @@ def main():
         })
 
     out = {
-        "leagueId": LEAGUE_ID, "season": SEASON, "name": st.get("name"), "size": st.get("size"),
+        "leagueId": LEAGUE_ID, "season": season, "name": st.get("name"), "size": st.get("size"),
         "schedule_settings": {
             "matchup_periods": sched_s.get("matchupPeriodCount"),
             "playoff_team_count": sched_s.get("playoffTeamCount"),
@@ -114,10 +117,12 @@ def main():
         "teams": teams,
         "games": games,
     }
-    json.dump(out, open(OUT, "w"), indent=1)
+    json.dump(out, open(out_path(season), "w"), indent=1)
+    if season == CURRENT:
+        json.dump(out, open(os.path.join(ROOT, "outputs", "espn_league_state.json"), "w"), indent=1)
 
     s = out["schedule_settings"]
-    print(f"League {out['name']!r} ({out['size']} teams, {SEASON})")
+    print(f"League {out['name']!r} ({out['size']} teams, {season})")
     print(f"  regular season matchup periods : {s['matchup_periods']}")
     print(f"  playoff teams / round length   : {s['playoff_team_count']} / {s['playoff_round_length']}")
     print(f"  seeding rule / reseed          : {s['playoff_seeding_rule']} / {s['playoff_reseed']}")
@@ -125,7 +130,21 @@ def main():
     print(f"  games in schedule              : {len(games)}")
     played = [g for g in games if (g['home_points'] or 0) or (g['away_points'] or 0)]
     print(f"  games with a score so far      : {len(played)}")
-    print(f"  wrote {os.path.relpath(OUT, ROOT)}")
+    print(f"  wrote {os.path.relpath(out_path(season), ROOT)}")
+
+
+def main():
+    s2, swid = cookies()
+    if not s2 or not swid:
+        print("No ESPN cookies. Set ESPN_S2 / ESPN_SWID, or create data/espn_cookies.json")
+        sys.exit(1)
+    for season in SEASONS:
+        try:
+            fetch(season, s2, swid)
+        except SystemExit:
+            raise
+        except Exception as e:
+            print(f"  {season}: failed ({str(e)[:80]})")
 
 
 if __name__ == "__main__":
