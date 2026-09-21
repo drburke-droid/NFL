@@ -62,6 +62,11 @@ ap.add_argument("--market-weight", type=float, default=0.6,
 ap.add_argument("--p-play-doubt", type=float, default=0.2,
                 help="P(plays) for a Questionable player DK has not posted props for while teammates are priced "
                      "(2025 measured: 0.20 overall, 0.11 for FFA proj >= 8, n=54; Q WITH a DK line played 100%%)")
+ap.add_argument("--no-bias-cal", action="store_true",
+                help="skip the rolling bias correction read from docs/sabersim_accuracy.json "
+                     "(see scripts/bias_correction.py)")
+ap.add_argument("--bias-cal-weeks", type=int, default=4,
+                help="completed weeks of graded history the bias correction averages over")
 ap.add_argument("--no-lineups", action="store_true", help="skip the live ESPN/Sleeper status pull")
 ap.add_argument("--no-report", action="store_true", help="skip the official NFL injury report (practice status)")
 ap.add_argument("--no-dnp-haircut", action="store_true",
@@ -77,7 +82,7 @@ if not A.pkg or not os.path.isdir(os.path.join(A.pkg, "model_burke")):
     raise SystemExit("pass the Model_Burke package dir as argv[1] (the pkg/ folder from model_burke_pkg.zip, "
                      "i.e. the folder CONTAINING model_burke/), or set MODEL_BURKE_PKG")
 sys.path.insert(0, A.pkg); sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import name_match
+import name_match, bias_correction
 from model_burke import pipeline
 from model_burke.features import build_lagged_features
 
@@ -968,6 +973,28 @@ def eval_dnp(seasons=(2024, 2025)):
               f" · median actual/model {(d.actual_ppr / d.Model_Burke.clip(lower=1)).median():.2f} · by pos " + ", ".join(f"{pos} {np.abs(g.actual_ppr - g.Model_Burke).mean():.2f}->{np.abs(g.actual_ppr - g.Model_Burke * DNP_FAC.get(pos, 1.0)).mean():.2f} (n={len(g)})" for pos, g in d.groupby("position")))
     except Exception as e: print("  DNP check skipped:", str(e)[:60])
 eval_dnp()
+# ---- rolling bias correction ----
+# The send runs high on skill players: graded bias -0.394 in 2026 wk1 and -0.674 in wk2. Fitting
+# wk1 alone and applying it to wk2 out of sample moved MAE 3.609 -> 3.469. One constant for every
+# skill row -- the pooled bias is consistently negative but its composition is not (RB -0.047 ->
+# -1.288 across those two weeks), so a per-position fit would chase noise. It reorders nobody:
+# Spearman 0.7712 either way. See scripts/bias_correction.py.
+_bias, _bmeta = 0.0, {"applied": 0.0, "reason": "disabled"}
+if not A.no_bias_cal:
+    try:
+        with open(os.path.join(ROOT, "docs", "sabersim_accuracy.json")) as _f: _acc = json.load(_f)
+        _bias, _bmeta = bias_correction.recent_bias(_acc, season=SEASON, weeks=A.bias_cal_weeks)
+    except Exception as _e:
+        _bmeta = {"applied": 0.0, "reason": f"accuracy file unreadable: {str(_e)[:60]}"}
+if _bias:
+    p["proj"] = (p.proj + _bias).clip(lower=0)
+    if "play_mean" in p.columns: p["play_mean"] = (p.play_mean + _bias).clip(lower=0)
+    p["Model_Burke_mean"] = p.proj
+HEALTH["bias_cal"] = _bmeta
+print(f"  bias-cal: {_bias:+.3f} pts/player"
+      + (f" from {_bmeta.get('rows', 0):,} graded rows over wk " + ",".join(str(w['week']) for w in _bmeta.get("weeks", [])) if _bias
+         else f" (no correction: {_bmeta.get('reason', '')})"))
+
 _pm = p.play_mean if "play_mean" in p.columns else p.Model_Burke_mean
 _pp = p.p_play if "p_play" in p.columns else pd.Series(1.0, index=p.index)
 qs = np.array([local_quantiles(r.position, r.baseline_proj, m) for r, m in zip(p.itertuples(), _pm)])
