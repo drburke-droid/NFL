@@ -1,0 +1,3069 @@
+{
+ "schema_version": 1,
+ "league_id": "1211359110",
+ "name": "Kuhn and Friends",
+ "platform": "espn",
+ "season": 2026,
+ "my_team_id": "5",
+ "roster": {
+  "starters": [
+   {
+    "slot": "QB",
+    "count": 1
+   },
+   {
+    "slot": "RB",
+    "count": 2
+   },
+   {
+    "slot": "WR",
+    "count": 2
+   },
+   {
+    "slot": "TE",
+    "count": 1
+   },
+   {
+    "slot": "FLEX",
+    "count": 1
+   },
+   {
+    "slot": "K",
+    "count": 1
+   },
+   {
+    "slot": "DST",
+    "count": 1
+   }
+  ],
+  "bench": 7,
+  "ir": 0,
+  "flex_eligibility": {
+   "FLEX": [
+    "RB",
+    "WR",
+    "TE"
+   ]
+  }
+ },
+ "scoring": {
+  "per_stat": {
+   "fumbles_lost": -1.0,
+   "rush_tds": 6.0,
+   "rec": 1.0,
+   "rec_tds": 6.0,
+   "pass_2pt": 2.0,
+   "rush_yds": 0.1,
+   "rush_2pt": 2.0,
+   "pass_int": -1.0,
+   "pass_yds": 0.04,
+   "rec_yds": 0.1,
+   "pass_tds": 6.0,
+   "rec_2pt": 2.0
+  },
+  "bonuses": [],
+  "espn_raw": {
+   "206": 2.0,
+   "209": 1.0,
+   "93": 6.0,
+   "102": 6.0,
+   "103": 6.0,
+   "101": 6.0,
+   "63": 6.0,
+   "80": 3.0,
+   "104": 6.0,
+   "77": 4.0,
+   "86": 1.0,
+   "201": 6.0,
+   "198": 5.0
+  },
+  "note": "K and DST are not scored from a stat line here; they come from the Subvertadown/kdst blend. espn_raw holds the non-zero statIds this mapping does not decode."
+ },
+ "schedule": {
+  "regular_season_weeks": [
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14
+  ],
+  "playoff_weeks": [
+   15,
+   16,
+   17
+  ],
+  "championship_weeks": [
+   17
+  ],
+  "playoff_teams": 6,
+  "first_round_byes": 2,
+  "seeding": "record_then_points_for",
+  "tiebreakers": [
+   "points_for"
+  ],
+  "seeding_note": "Derived from the live standings, not assumed: every 1-0 team seeds above every 0-1 team, and within each group the order is points-for descending. ESPN's playoffSeedingRule TOTAL_POINTS_SCORED is the tiebreak, not the primary sort."
+ },
+ "keepers": {
+  "enabled": true,
+  "max_per_team": 3,
+  "cost_model": "auction",
+  "max_times_kept": 3,
+  "auction_escalation_pct": 0,
+  "inflation": {
+   "base": 5,
+   "conditions": [
+    {
+     "name": "missed_playoffs",
+     "delta": -2
+    },
+    {
+     "name": "missed_playoffs_and_drafted_champion",
+     "delta": -3
+    }
+   ],
+   "note": "+$5 default, +$3 for a team that missed the playoffs, +$0 for the one non-playoff owner who drafted the eventual champion in the side draft. The side-draft result is not in ESPN's API; see fetch_espn_standings.py."
+  },
+  "clock_note": "Keepers began in 2024, so the 3-year cap does not bind for 2026."
+ },
+ "acquisitions": {
+  "waiver_type": "faab",
+  "faab_budget": 100.0,
+  "faab_carryover": false,
+  "min_bid": 0,
+  "trade_deadline_week": 13,
+  "tradeable": {
+   "faab": true,
+   "draft_picks": false
+  },
+  "note": "ESPN reports acquisitionType WAIVERS_TRADITIONAL, but every team carries an acquisitionBudgetSpent and several are non-zero, so the league is being played as FAAB. Worth confirming before the sim prices a waiver claim."
+ },
+ "teams": [
+  {
+   "team_id": "1",
+   "name": "I Dowdle win",
+   "owner": "espn98580191",
+   "record": {
+    "w": 0,
+    "l": 1,
+    "t": 0
+   },
+   "points_for": 144.1,
+   "points_against": 176.62,
+   "playoff_seed": 7,
+   "faab_remaining": 98.0,
+   "roster": [
+    {
+     "player_id": "4038815",
+     "name": "Rico Dowdle",
+     "pos": "RB",
+     "nfl_team": "PIT",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4569587",
+     "name": "Wan'Dale Robinson",
+     "pos": "WR",
+     "nfl_team": "TEN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4360761",
+     "name": "Michael Wilson",
+     "pos": "WR",
+     "nfl_team": "ARI",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4569618",
+     "name": "Garrett Wilson",
+     "pos": "WR",
+     "nfl_team": "NYJ",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 23
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "3953687",
+     "name": "Brandon Aubrey",
+     "pos": "K",
+     "nfl_team": "DAL",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4259545",
+     "name": "D'Andre Swift",
+     "pos": "RB",
+     "nfl_team": "CHI",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 11
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4685702",
+     "name": "Quinshon Judkins",
+     "pos": "RB",
+     "nfl_team": "CLE",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4361579",
+     "name": "Javonte Williams",
+     "pos": "RB",
+     "nfl_team": "DAL",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 13
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3046779",
+     "name": "Jared Goff",
+     "pos": "QB",
+     "nfl_team": "DET",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3121422",
+     "name": "Terry McLaurin",
+     "pos": "WR",
+     "nfl_team": "WAS",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4385690",
+     "name": "Dalton Kincaid",
+     "pos": "TE",
+     "nfl_team": "BUF",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 7
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4036133",
+     "name": "T.J. Hockenson",
+     "pos": "TE",
+     "nfl_team": "MIN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 17
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4689114",
+     "name": "Jaxson Dart",
+     "pos": "QB",
+     "nfl_team": "NYG",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 8
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3116165",
+     "name": "Chris Godwin Jr.",
+     "pos": "WR",
+     "nfl_team": "TB",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4373626",
+     "name": "Tyler Allgeier",
+     "pos": "RB",
+     "nfl_team": "ARI",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16027",
+     "name": "Buccaneers D/ST",
+     "pos": "DST",
+     "nfl_team": "TB",
+     "slot": "DST",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "2",
+   "name": "Flex Luther",
+   "owner": "eyedocjj",
+   "record": {
+    "w": 1,
+    "l": 0,
+    "t": 0
+   },
+   "points_for": 140.16,
+   "points_against": 66.86,
+   "playoff_seed": 4,
+   "faab_remaining": 100.0,
+   "roster": [
+    {
+     "player_id": "4723086",
+     "name": "Colston Loveland",
+     "pos": "TE",
+     "nfl_team": "CHI",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 11
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4361370",
+     "name": "Chris Olave",
+     "pos": "WR",
+     "nfl_team": "NO",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 25
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4685278",
+     "name": "Luther Burden III",
+     "pos": "WR",
+     "nfl_team": "CHI",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 11
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4430807",
+     "name": "Bijan Robinson",
+     "pos": "RB",
+     "nfl_team": "ATL",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 68
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4426502",
+     "name": "Drake London",
+     "pos": "WR",
+     "nfl_team": "ATL",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 37
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4038941",
+     "name": "Justin Herbert",
+     "pos": "QB",
+     "nfl_team": "LAC",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4035538",
+     "name": "David Montgomery",
+     "pos": "RB",
+     "nfl_team": "HOU",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16020",
+     "name": "Jets D/ST",
+     "pos": "DST",
+     "nfl_team": "NYJ",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4686361",
+     "name": "Cam Little",
+     "pos": "K",
+     "nfl_team": "JAC",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4362249",
+     "name": "Jayden Reed",
+     "pos": "WR",
+     "nfl_team": "GB",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4373678",
+     "name": "Khalil Shakir",
+     "pos": "WR",
+     "nfl_team": "BUF",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 17
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3917792",
+     "name": "Daniel Jones",
+     "pos": "QB",
+     "nfl_team": "IND",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4428557",
+     "name": "Tyjae Spears",
+     "pos": "RB",
+     "nfl_team": "TEN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4683062",
+     "name": "Xavier Worthy",
+     "pos": "WR",
+     "nfl_team": "KC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 22
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4596334",
+     "name": "Keaton Mitchell",
+     "pos": "RB",
+     "nfl_team": "LAC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 4
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3046439",
+     "name": "Hunter Henry",
+     "pos": "TE",
+     "nfl_team": "NE",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "3",
+   "name": "This is the year!",
+   "owner": "funblood",
+   "record": {
+    "w": 1,
+    "l": 0,
+    "t": 0
+   },
+   "points_for": 128.36,
+   "points_against": 99.46,
+   "playoff_seed": 5,
+   "faab_remaining": 100.0,
+   "roster": [
+    {
+     "player_id": "5083076",
+     "name": "Harold Fannin Jr.",
+     "pos": "TE",
+     "nfl_team": "CLE",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 4
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429160",
+     "name": "De'Von Achane",
+     "pos": "RB",
+     "nfl_team": "MIA",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 14
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "4258173",
+     "name": "Nico Collins",
+     "pos": "WR",
+     "nfl_team": "HOU",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 36
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "3043078",
+     "name": "Derrick Henry",
+     "pos": "RB",
+     "nfl_team": "BAL",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 34
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "-16033",
+     "name": "Ravens D/ST",
+     "pos": "DST",
+     "nfl_team": "BAL",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4426348",
+     "name": "Jayden Daniels",
+     "pos": "QB",
+     "nfl_team": "WAS",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 14
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "17427",
+     "name": "Cairo Santos",
+     "pos": "K",
+     "nfl_team": "CHI",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4372016",
+     "name": "Jaylen Waddle",
+     "pos": "WR",
+     "nfl_team": "DEN",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 19
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4432620",
+     "name": "Parker Washington",
+     "pos": "WR",
+     "nfl_team": "JAC",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 24
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4360569",
+     "name": "Jordan Mason",
+     "pos": "RB",
+     "nfl_team": "MIN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 4
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4036378",
+     "name": "Jordan Love",
+     "pos": "QB",
+     "nfl_team": "GB",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "4702555",
+     "name": "Jonah Coleman",
+     "pos": "RB",
+     "nfl_team": "DEN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4696044",
+     "name": "Kaelon Black",
+     "pos": "RB",
+     "nfl_team": "SF",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "5083315",
+     "name": "Kenyon Sadiq",
+     "pos": "TE",
+     "nfl_team": "NYJ",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4869645",
+     "name": "Caleb Douglas",
+     "pos": "WR",
+     "nfl_team": "MIA",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4428850",
+     "name": "Dontayvion Wicks",
+     "pos": "WR",
+     "nfl_team": "PHI",
+     "slot": "WR",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 0
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "4",
+   "name": "3AM  No Limit",
+   "owner": "espn14211458",
+   "record": {
+    "w": 1,
+    "l": 0,
+    "t": 0
+   },
+   "points_for": 112.32,
+   "points_against": 89.0,
+   "playoff_seed": 6,
+   "faab_remaining": 100.0,
+   "roster": [
+    {
+     "player_id": "4429795",
+     "name": "Jahmyr Gibbs",
+     "pos": "RB",
+     "nfl_team": "DET",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 45
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "4696981",
+     "name": "Cam Skattebo",
+     "pos": "RB",
+     "nfl_team": "NYG",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 8
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4431452",
+     "name": "Drake Maye",
+     "pos": "QB",
+     "nfl_team": "NE",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4870808",
+     "name": "Jeremiyah Love",
+     "pos": "RB",
+     "nfl_team": "ARI",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 38
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4574716",
+     "name": "Harrison Mevis",
+     "pos": "K",
+     "nfl_team": "LAR",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4685472",
+     "name": "Tetairoa McMillan",
+     "pos": "WR",
+     "nfl_team": "CAR",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 21
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4360689",
+     "name": "Tyler Shough",
+     "pos": "QB",
+     "nfl_team": "NO",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4871023",
+     "name": "Carnell Tate",
+     "pos": "WR",
+     "nfl_team": "TEN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4239993",
+     "name": "Tee Higgins",
+     "pos": "WR",
+     "nfl_team": "CIN",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 12
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4371733",
+     "name": "Kenny Gainwell",
+     "pos": "RB",
+     "nfl_team": "TB",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 7
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3916433",
+     "name": "Jakobi Meyers",
+     "pos": "WR",
+     "nfl_team": "JAC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3042519",
+     "name": "Aaron Jones Sr.",
+     "pos": "RB",
+     "nfl_team": "MIN",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 17
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429025",
+     "name": "Quentin Johnston",
+     "pos": "WR",
+     "nfl_team": "LAC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 16
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4242355",
+     "name": "Jake Ferguson",
+     "pos": "TE",
+     "nfl_team": "DAL",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3116365",
+     "name": "Mark Andrews",
+     "pos": "TE",
+     "nfl_team": "BAL",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16003",
+     "name": "Bears D/ST",
+     "pos": "DST",
+     "nfl_team": "CHI",
+     "slot": "DST",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 0
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "5",
+   "name": "Glass Joe",
+   "owner": "BobbyeddyB",
+   "record": {
+    "w": 0,
+    "l": 1,
+    "t": 0
+   },
+   "points_for": 66.86,
+   "points_against": 140.16,
+   "playoff_seed": 12,
+   "faab_remaining": 100.0,
+   "roster": [
+    {
+     "player_id": "4362628",
+     "name": "Ja'Marr Chase",
+     "pos": "WR",
+     "nfl_team": "CIN",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 61
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4428331",
+     "name": "Rashee Rice",
+     "pos": "WR",
+     "nfl_team": "KC",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 32
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "3915511",
+     "name": "Joe Burrow",
+     "pos": "QB",
+     "nfl_team": "CIN",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4362081",
+     "name": "Cameron Dicker",
+     "pos": "K",
+     "nfl_team": "LAC",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4432710",
+     "name": "TreVeyon Henderson",
+     "pos": "RB",
+     "nfl_team": "NE",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 26
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3040151",
+     "name": "George Kittle",
+     "pos": "TE",
+     "nfl_team": "SF",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 24
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4360078",
+     "name": "Alec Pierce",
+     "pos": "WR",
+     "nfl_team": "IND",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 7
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4596448",
+     "name": "Bucky Irving",
+     "pos": "RB",
+     "nfl_team": "TB",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "5081397",
+     "name": "Dylan Sampson",
+     "pos": "RB",
+     "nfl_team": "CLE",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4701936",
+     "name": "Matthew Golden",
+     "pos": "WR",
+     "nfl_team": "GB",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429013",
+     "name": "Tank Bigsby",
+     "pos": "RB",
+     "nfl_team": "PHI",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4432773",
+     "name": "Brian Thomas Jr.",
+     "pos": "WR",
+     "nfl_team": "JAC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 7
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4597500",
+     "name": "Adonai Mitchell",
+     "pos": "WR",
+     "nfl_team": "NYJ",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16012",
+     "name": "Chiefs D/ST",
+     "pos": "DST",
+     "nfl_team": "KC",
+     "slot": "DST",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 0
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3149687",
+     "name": "Chris Brooks",
+     "pos": "RB",
+     "nfl_team": "GB",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 0
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4426385",
+     "name": "Zach Charbonnet",
+     "pos": "RB",
+     "nfl_team": "SEA",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 11
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "7",
+   "name": "CMC Music Factory",
+   "owner": "silverandblack.27",
+   "record": {
+    "w": 0,
+    "l": 1,
+    "t": 0
+   },
+   "points_for": 89.0,
+   "points_against": 112.32,
+   "playoff_seed": 11,
+   "faab_remaining": 97.0,
+   "roster": [
+    {
+     "player_id": "4426515",
+     "name": "Puka Nacua",
+     "pos": "WR",
+     "nfl_team": "LAR",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 16
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "12483",
+     "name": "Matthew Stafford",
+     "pos": "QB",
+     "nfl_team": "LAR",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4432665",
+     "name": "Brock Bowers",
+     "pos": "TE",
+     "nfl_team": "LVR",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 19
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "3117251",
+     "name": "Christian McCaffrey",
+     "pos": "RB",
+     "nfl_team": "SF",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 49
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4429615",
+     "name": "Zay Flowers",
+     "pos": "WR",
+     "nfl_team": "BAL",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 13
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "2577417",
+     "name": "Dak Prescott",
+     "pos": "QB",
+     "nfl_team": "DAL",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 4
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429023",
+     "name": "MarShawn Lloyd",
+     "pos": "RB",
+     "nfl_team": "GB",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 9
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "16737",
+     "name": "Mike Evans",
+     "pos": "WR",
+     "nfl_team": "SF",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4689936",
+     "name": "Jake Bates",
+     "pos": "K",
+     "nfl_team": "DET",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4047650",
+     "name": "DK Metcalf",
+     "pos": "WR",
+     "nfl_team": "PIT",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 26
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4569987",
+     "name": "Jaylen Warren",
+     "pos": "RB",
+     "nfl_team": "PIT",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4241416",
+     "name": "Chuba Hubbard",
+     "pos": "RB",
+     "nfl_team": "CAR",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4032473",
+     "name": "Rashid Shaheed",
+     "pos": "WR",
+     "nfl_team": "SEA",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3126486",
+     "name": "Deebo Samuel Sr.",
+     "pos": "WR",
+     "nfl_team": "SF",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 10
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429086",
+     "name": "Michael Mayer",
+     "pos": "TE",
+     "nfl_team": "LVR",
+     "slot": "TE",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16025",
+     "name": "49ers D/ST",
+     "pos": "DST",
+     "nfl_team": "SF",
+     "slot": "DST",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "8",
+   "name": "Gridiron of Grayskull",
+   "owner": "CBPainTrain",
+   "record": {
+    "w": 0,
+    "l": 1,
+    "t": 0
+   },
+   "points_for": 99.46,
+   "points_against": 128.36,
+   "playoff_seed": 10,
+   "faab_remaining": 78.0,
+   "roster": [
+    {
+     "player_id": "4431459",
+     "name": "Tyler Warren",
+     "pos": "TE",
+     "nfl_team": "IND",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 13
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4685382",
+     "name": "Omarion Hampton",
+     "pos": "RB",
+     "nfl_team": "LAC",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 45
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4360248",
+     "name": "Kyle Pitts Sr.",
+     "pos": "TE",
+     "nfl_team": "ATL",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 4
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "-16034",
+     "name": "Texans D/ST",
+     "pos": "DST",
+     "nfl_team": "HOU",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4431611",
+     "name": "Caleb Williams",
+     "pos": "QB",
+     "nfl_team": "CHI",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 17
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4685512",
+     "name": "Jadarian Price",
+     "pos": "RB",
+     "nfl_team": "SEA",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 16
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4431299",
+     "name": "Rome Odunze",
+     "pos": "WR",
+     "nfl_team": "CHI",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 13
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4047646",
+     "name": "A.J. Brown",
+     "pos": "WR",
+     "nfl_team": "NE",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 48
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4360234",
+     "name": "Evan McPherson",
+     "pos": "K",
+     "nfl_team": "CIN",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4608686",
+     "name": "Kyle Monangai",
+     "pos": "RB",
+     "nfl_team": "CHI",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 12
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429096",
+     "name": "Blake Corum",
+     "pos": "RB",
+     "nfl_team": "LAR",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4568490",
+     "name": "RJ Harvey",
+     "pos": "RB",
+     "nfl_team": "DEN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 31
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4688813",
+     "name": "Josh Downs",
+     "pos": "WR",
+     "nfl_team": "IND",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 9
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4361432",
+     "name": "Romeo Doubs",
+     "pos": "WR",
+     "nfl_team": "NE",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 13
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4880281",
+     "name": "Jordyn Tyson",
+     "pos": "WR",
+     "nfl_team": "NO",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "2977187",
+     "name": "Cooper Kupp",
+     "pos": "WR",
+     "nfl_team": "SEA",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 22
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "9",
+   "name": "Von Kaiser",
+   "owner": "espn19238790",
+   "record": {
+    "w": 1,
+    "l": 0,
+    "t": 0
+   },
+   "points_for": 176.62,
+   "points_against": 144.1,
+   "playoff_seed": 1,
+   "faab_remaining": 44.0,
+   "roster": [
+    {
+     "player_id": "4430737",
+     "name": "Kyren Williams",
+     "pos": "RB",
+     "nfl_team": "LAR",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 12
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "4426388",
+     "name": "Jameson Williams",
+     "pos": "WR",
+     "nfl_team": "DET",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 9
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4361307",
+     "name": "Trey McBride",
+     "pos": "TE",
+     "nfl_team": "ARI",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 9
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "4262921",
+     "name": "Justin Jefferson",
+     "pos": "WR",
+     "nfl_team": "MIN",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 52
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4040715",
+     "name": "Jalen Hurts",
+     "pos": "QB",
+     "nfl_team": "PHI",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 19
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4890973",
+     "name": "Ashton Jeanty",
+     "pos": "RB",
+     "nfl_team": "LVR",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 66
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4047365",
+     "name": "Josh Jacobs",
+     "pos": "RB",
+     "nfl_team": "GB",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 56
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4432708",
+     "name": "Marvin Harrison Jr.",
+     "pos": "WR",
+     "nfl_team": "ARI",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 42
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "3915416",
+     "name": "DJ Moore",
+     "pos": "WR",
+     "nfl_team": "BUF",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 20
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "-16021",
+     "name": "Eagles D/ST",
+     "pos": "DST",
+     "nfl_team": "PHI",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4249087",
+     "name": "Matt Gay",
+     "pos": "K",
+     "nfl_team": "LVR",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4685415",
+     "name": "Travis Hunter",
+     "pos": "WR",
+     "nfl_team": "JAC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429059",
+     "name": "Woody Marks",
+     "pos": "RB",
+     "nfl_team": "HOU",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 11
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4040761",
+     "name": "Devin Singletary",
+     "pos": "RB",
+     "nfl_team": "NYG",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 8
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4569559",
+     "name": "Devaughn Vele",
+     "pos": "WR",
+     "nfl_team": "NO",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 20
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4685720",
+     "name": "Bryce Young",
+     "pos": "QB",
+     "nfl_team": "CAR",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 15
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "11",
+   "name": "Maple Maulers",
+   "owner": "Rohabhabibo",
+   "record": {
+    "w": 0,
+    "l": 1,
+    "t": 0
+   },
+   "points_for": 114.46,
+   "points_against": 157.8,
+   "playoff_seed": 9,
+   "faab_remaining": 100.0,
+   "roster": [
+    {
+     "player_id": "4595348",
+     "name": "Malik Nabers",
+     "pos": "WR",
+     "nfl_team": "NYG",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 34
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4427366",
+     "name": "Breece Hall",
+     "pos": "RB",
+     "nfl_team": "NYJ",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 22
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4241478",
+     "name": "DeVonta Smith",
+     "pos": "WR",
+     "nfl_team": "PHI",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 20
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16014",
+     "name": "Rams D/ST",
+     "pos": "DST",
+     "nfl_team": "LAR",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3916387",
+     "name": "Lamar Jackson",
+     "pos": "QB",
+     "nfl_team": "BAL",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 32
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "2473037",
+     "name": "Jason Myers",
+     "pos": "K",
+     "nfl_team": "SEA",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4572680",
+     "name": "Tucker Kraft",
+     "pos": "TE",
+     "nfl_team": "GB",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 11
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4569173",
+     "name": "Rhamondre Stevenson",
+     "pos": "RB",
+     "nfl_team": "NE",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 15
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4569603",
+     "name": "Malik Washington",
+     "pos": "WR",
+     "nfl_team": "MIA",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4612826",
+     "name": "Ladd McConkey",
+     "pos": "WR",
+     "nfl_team": "LAC",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 4
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4678008",
+     "name": "Jonathon Brooks",
+     "pos": "RB",
+     "nfl_team": "CAR",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 24
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4576297",
+     "name": "AJ Barner",
+     "pos": "TE",
+     "nfl_team": "SEA",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 61
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4241463",
+     "name": "Jerry Jeudy",
+     "pos": "WR",
+     "nfl_team": "CLE",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 35
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4686612",
+     "name": "Tre' Harris",
+     "pos": "WR",
+     "nfl_team": "LAC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4682745",
+     "name": "Jaylen Wright",
+     "pos": "RB",
+     "nfl_team": "MIA",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4038441",
+     "name": "Justice Hill",
+     "pos": "RB",
+     "nfl_team": "BAL",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "12",
+   "name": "Empty Nesters",
+   "owner": "RPT0777",
+   "record": {
+    "w": 1,
+    "l": 0,
+    "t": 0
+   },
+   "points_for": 157.8,
+   "points_against": 114.46,
+   "playoff_seed": 3,
+   "faab_remaining": 97.0,
+   "roster": [
+    {
+     "player_id": "4426354",
+     "name": "George Pickens",
+     "pos": "WR",
+     "nfl_team": "DAL",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 12
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4567750",
+     "name": "Emeka Egbuka",
+     "pos": "WR",
+     "nfl_team": "TB",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 25
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4242335",
+     "name": "Jonathan Taylor",
+     "pos": "RB",
+     "nfl_team": "IND",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 34
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "-16007",
+     "name": "Broncos D/ST",
+     "pos": "DST",
+     "nfl_team": "DEN",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "2971573",
+     "name": "Ka'imi Fairbairn",
+     "pos": "K",
+     "nfl_team": "HOU",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3929630",
+     "name": "Saquon Barkley",
+     "pos": "RB",
+     "nfl_team": "PHI",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 61
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4360310",
+     "name": "Trevor Lawrence",
+     "pos": "QB",
+     "nfl_team": "JAC",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 4
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4882093",
+     "name": "Bhayshul Tuten",
+     "pos": "RB",
+     "nfl_team": "JAC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 8
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3121023",
+     "name": "Dallas Goedert",
+     "pos": "TE",
+     "nfl_team": "PHI",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4361050",
+     "name": "Isaiah Likely",
+     "pos": "TE",
+     "nfl_team": "NYG",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4870847",
+     "name": "Ja'Kobi Lane",
+     "pos": "WR",
+     "nfl_team": "BAL",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4248528",
+     "name": "Christian Watson",
+     "pos": "WR",
+     "nfl_team": "GB",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 14
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4695883",
+     "name": "Jalen Coker",
+     "pos": "WR",
+     "nfl_team": "CAR",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4870653",
+     "name": "KC Concepcion",
+     "pos": "WR",
+     "nfl_team": "CLE",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4685247",
+     "name": "Braelon Allen",
+     "pos": "RB",
+     "nfl_team": "NYJ",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3054850",
+     "name": "Alvin Kamara",
+     "pos": "RB",
+     "nfl_team": "NO",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 1
+    }
+   ]
+  },
+  {
+   "team_id": "13",
+   "name": "Ugh...Yeah...What...Football!",
+   "owner": "kdoggs80",
+   "record": {
+    "w": 1,
+    "l": 0,
+    "t": 0
+   },
+   "points_for": 169.26,
+   "points_against": 118.3,
+   "playoff_seed": 2,
+   "faab_remaining": 100.0,
+   "roster": [
+    {
+     "player_id": "4362238",
+     "name": "Chase Brown",
+     "pos": "RB",
+     "nfl_team": "CIN",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 6
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4430878",
+     "name": "Jaxon Smith-Njigba",
+     "pos": "WR",
+     "nfl_team": "SEA",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 13
+     },
+     "times_kept": 2
+    },
+    {
+     "player_id": "4567048",
+     "name": "Kenneth Walker III",
+     "pos": "RB",
+     "nfl_team": "KC",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 32
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4241389",
+     "name": "CeeDee Lamb",
+     "pos": "WR",
+     "nfl_team": "DAL",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 65
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "3918298",
+     "name": "Josh Allen",
+     "pos": "QB",
+     "nfl_team": "BUF",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 27
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16026",
+     "name": "Seahawks D/ST",
+     "pos": "DST",
+     "nfl_team": "SEA",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 15
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3139477",
+     "name": "Patrick Mahomes",
+     "pos": "QB",
+     "nfl_team": "KC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 18
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3055899",
+     "name": "Harrison Butker",
+     "pos": "K",
+     "nfl_team": "KC",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4430027",
+     "name": "Sam LaPorta",
+     "pos": "TE",
+     "nfl_team": "DET",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 16
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "3916148",
+     "name": "Tony Pollard",
+     "pos": "RB",
+     "nfl_team": "TEN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 15
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3128429",
+     "name": "Courtland Sutton",
+     "pos": "WR",
+     "nfl_team": "DEN",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 18
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4035687",
+     "name": "Michael Pittman Jr.",
+     "pos": "WR",
+     "nfl_team": "PIT",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4426338",
+     "name": "Bo Nix",
+     "pos": "QB",
+     "nfl_team": "DEN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 9
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "3929645",
+     "name": "Juwan Johnson",
+     "pos": "TE",
+     "nfl_team": "NO",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4697815",
+     "name": "Rachaad White",
+     "pos": "RB",
+     "nfl_team": "WAS",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 7
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4832955",
+     "name": "Emmett Johnson",
+     "pos": "RB",
+     "nfl_team": "KC",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    }
+   ]
+  },
+  {
+   "team_id": "14",
+   "name": "Paul's Perfect Team",
+   "owner": "ESPNFAN25233150",
+   "record": {
+    "w": 0,
+    "l": 1,
+    "t": 0
+   },
+   "points_for": 118.3,
+   "points_against": 169.26,
+   "playoff_seed": 8,
+   "faab_remaining": 100.0,
+   "roster": [
+    {
+     "player_id": "16800",
+     "name": "Davante Adams",
+     "pos": "WR",
+     "nfl_team": "LAR",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 36
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4379399",
+     "name": "James Cook III",
+     "pos": "RB",
+     "nfl_team": "BUF",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 26
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4374302",
+     "name": "Amon-Ra St. Brown",
+     "pos": "WR",
+     "nfl_team": "DET",
+     "slot": "WR",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 53
+     },
+     "times_kept": 1
+    },
+    {
+     "player_id": "4239996",
+     "name": "Travis Etienne Jr.",
+     "pos": "RB",
+     "nfl_team": "NO",
+     "slot": "RB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4686658",
+     "name": "Mike Washington Jr.",
+     "pos": "RB",
+     "nfl_team": "LVR",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 7
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16017",
+     "name": "Patriots D/ST",
+     "pos": "DST",
+     "nfl_team": "NE",
+     "slot": "DST",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4034949",
+     "name": "Eddy Pineiro",
+     "pos": "K",
+     "nfl_team": "SF",
+     "slot": "K",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4361741",
+     "name": "Brock Purdy",
+     "pos": "QB",
+     "nfl_team": "SF",
+     "slot": "QB",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 3
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4570037",
+     "name": "Terrance Ferguson",
+     "pos": "TE",
+     "nfl_team": "LAR",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 1
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4429205",
+     "name": "Jordan Addison",
+     "pos": "WR",
+     "nfl_team": "MIN",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "15847",
+     "name": "Travis Kelce",
+     "pos": "TE",
+     "nfl_team": "KC",
+     "slot": "TE",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 7
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4870795",
+     "name": "Makai Lemon",
+     "pos": "WR",
+     "nfl_team": "PHI",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 5
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "2976212",
+     "name": "Stefon Diggs",
+     "pos": "WR",
+     "nfl_team": "WAS",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 11
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4241985",
+     "name": "J.K. Dobbins",
+     "pos": "RB",
+     "nfl_team": "DEN",
+     "slot": "FLEX",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 18
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4575131",
+     "name": "Jacory Croskey-Merritt",
+     "pos": "RB",
+     "nfl_team": "WAS",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 17
+     },
+     "times_kept": 0
+    },
+    {
+     "player_id": "4432577",
+     "name": "C.J. Stroud",
+     "pos": "QB",
+     "nfl_team": "HOU",
+     "slot": "BENCH",
+     "acquired": "DRAFT",
+     "keeper_cost": {
+      "price": 2
+     },
+     "times_kept": 1
+    }
+   ]
+  }
+ ],
+ "matchups": [
+  {
+   "week": 1,
+   "home": "3",
+   "away": "8"
+  },
+  {
+   "week": 1,
+   "home": "14",
+   "away": "13"
+  },
+  {
+   "week": 1,
+   "home": "1",
+   "away": "9"
+  },
+  {
+   "week": 1,
+   "home": "4",
+   "away": "7"
+  },
+  {
+   "week": 1,
+   "home": "12",
+   "away": "11"
+  },
+  {
+   "week": 1,
+   "home": "2",
+   "away": "5"
+  },
+  {
+   "week": 2,
+   "home": "8",
+   "away": "13"
+  },
+  {
+   "week": 2,
+   "home": "9",
+   "away": "3"
+  },
+  {
+   "week": 2,
+   "home": "7",
+   "away": "14"
+  },
+  {
+   "week": 2,
+   "home": "11",
+   "away": "1"
+  },
+  {
+   "week": 2,
+   "home": "5",
+   "away": "4"
+  },
+  {
+   "week": 2,
+   "home": "2",
+   "away": "12"
+  },
+  {
+   "week": 3,
+   "home": "9",
+   "away": "8"
+  },
+  {
+   "week": 3,
+   "home": "13",
+   "away": "7"
+  },
+  {
+   "week": 3,
+   "home": "3",
+   "away": "11"
+  },
+  {
+   "week": 3,
+   "home": "14",
+   "away": "5"
+  },
+  {
+   "week": 3,
+   "home": "1",
+   "away": "2"
+  },
+  {
+   "week": 3,
+   "home": "4",
+   "away": "12"
+  },
+  {
+   "week": 4,
+   "home": "8",
+   "away": "7"
+  },
+  {
+   "week": 4,
+   "home": "11",
+   "away": "9"
+  },
+  {
+   "week": 4,
+   "home": "5",
+   "away": "13"
+  },
+  {
+   "week": 4,
+   "home": "2",
+   "away": "3"
+  },
+  {
+   "week": 4,
+   "home": "12",
+   "away": "14"
+  },
+  {
+   "week": 4,
+   "home": "4",
+   "away": "1"
+  },
+  {
+   "week": 5,
+   "home": "11",
+   "away": "8"
+  },
+  {
+   "week": 5,
+   "home": "7",
+   "away": "5"
+  },
+  {
+   "week": 5,
+   "home": "9",
+   "away": "2"
+  },
+  {
+   "week": 5,
+   "home": "13",
+   "away": "12"
+  },
+  {
+   "week": 5,
+   "home": "3",
+   "away": "4"
+  },
+  {
+   "week": 5,
+   "home": "14",
+   "away": "1"
+  },
+  {
+   "week": 6,
+   "home": "8",
+   "away": "5"
+  },
+  {
+   "week": 6,
+   "home": "2",
+   "away": "11"
+  },
+  {
+   "week": 6,
+   "home": "12",
+   "away": "7"
+  },
+  {
+   "week": 6,
+   "home": "4",
+   "away": "9"
+  },
+  {
+   "week": 6,
+   "home": "1",
+   "away": "13"
+  },
+  {
+   "week": 6,
+   "home": "14",
+   "away": "3"
+  },
+  {
+   "week": 7,
+   "home": "2",
+   "away": "8"
+  },
+  {
+   "week": 7,
+   "home": "5",
+   "away": "12"
+  },
+  {
+   "week": 7,
+   "home": "11",
+   "away": "4"
+  },
+  {
+   "week": 7,
+   "home": "7",
+   "away": "1"
+  },
+  {
+   "week": 7,
+   "home": "9",
+   "away": "14"
+  },
+  {
+   "week": 7,
+   "home": "13",
+   "away": "3"
+  },
+  {
+   "week": 8,
+   "home": "8",
+   "away": "12"
+  },
+  {
+   "week": 8,
+   "home": "4",
+   "away": "2"
+  },
+  {
+   "week": 8,
+   "home": "1",
+   "away": "5"
+  },
+  {
+   "week": 8,
+   "home": "14",
+   "away": "11"
+  },
+  {
+   "week": 8,
+   "home": "3",
+   "away": "7"
+  },
+  {
+   "week": 8,
+   "home": "13",
+   "away": "9"
+  },
+  {
+   "week": 9,
+   "home": "4",
+   "away": "8"
+  },
+  {
+   "week": 9,
+   "home": "12",
+   "away": "1"
+  },
+  {
+   "week": 9,
+   "home": "2",
+   "away": "14"
+  },
+  {
+   "week": 9,
+   "home": "5",
+   "away": "3"
+  },
+  {
+   "week": 9,
+   "home": "11",
+   "away": "13"
+  },
+  {
+   "week": 9,
+   "home": "7",
+   "away": "9"
+  },
+  {
+   "week": 10,
+   "home": "8",
+   "away": "1"
+  },
+  {
+   "week": 10,
+   "home": "14",
+   "away": "4"
+  },
+  {
+   "week": 10,
+   "home": "3",
+   "away": "12"
+  },
+  {
+   "week": 10,
+   "home": "13",
+   "away": "2"
+  },
+  {
+   "week": 10,
+   "home": "9",
+   "away": "5"
+  },
+  {
+   "week": 10,
+   "home": "7",
+   "away": "11"
+  },
+  {
+   "week": 11,
+   "home": "14",
+   "away": "8"
+  },
+  {
+   "week": 11,
+   "home": "1",
+   "away": "3"
+  },
+  {
+   "week": 11,
+   "home": "4",
+   "away": "13"
+  },
+  {
+   "week": 11,
+   "home": "12",
+   "away": "9"
+  },
+  {
+   "week": 11,
+   "home": "2",
+   "away": "7"
+  },
+  {
+   "week": 11,
+   "home": "5",
+   "away": "11"
+  },
+  {
+   "week": 12,
+   "home": "8",
+   "away": "3"
+  },
+  {
+   "week": 12,
+   "home": "13",
+   "away": "14"
+  },
+  {
+   "week": 12,
+   "home": "9",
+   "away": "1"
+  },
+  {
+   "week": 12,
+   "home": "7",
+   "away": "4"
+  },
+  {
+   "week": 12,
+   "home": "11",
+   "away": "12"
+  },
+  {
+   "week": 12,
+   "home": "5",
+   "away": "2"
+  },
+  {
+   "week": 13,
+   "home": "13",
+   "away": "8"
+  },
+  {
+   "week": 13,
+   "home": "3",
+   "away": "9"
+  },
+  {
+   "week": 13,
+   "home": "14",
+   "away": "7"
+  },
+  {
+   "week": 13,
+   "home": "1",
+   "away": "11"
+  },
+  {
+   "week": 13,
+   "home": "4",
+   "away": "5"
+  },
+  {
+   "week": 13,
+   "home": "12",
+   "away": "2"
+  },
+  {
+   "week": 14,
+   "home": "8",
+   "away": "9"
+  },
+  {
+   "week": 14,
+   "home": "7",
+   "away": "13"
+  },
+  {
+   "week": 14,
+   "home": "11",
+   "away": "3"
+  },
+  {
+   "week": 14,
+   "home": "5",
+   "away": "14"
+  },
+  {
+   "week": 14,
+   "home": "2",
+   "away": "1"
+  },
+  {
+   "week": 14,
+   "home": "12",
+   "away": "4"
+  }
+ ]
+}

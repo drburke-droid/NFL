@@ -1,0 +1,643 @@
+{
+  "schema_version": 1,
+  "league_id": "example",
+  "name": "Example 10-team keeper league",
+  "platform": "manual",
+  "season": 2026,
+  "roster": {
+    "starters": [
+      {
+        "slot": "QB",
+        "count": 1
+      },
+      {
+        "slot": "RB",
+        "count": 2
+      },
+      {
+        "slot": "WR",
+        "count": 2
+      },
+      {
+        "slot": "TE",
+        "count": 1
+      },
+      {
+        "slot": "FLEX",
+        "count": 1
+      },
+      {
+        "slot": "K",
+        "count": 1
+      },
+      {
+        "slot": "DST",
+        "count": 1
+      }
+    ],
+    "bench": 6,
+    "ir": 2,
+    "flex_eligibility": {
+      "FLEX": [
+        "RB",
+        "WR",
+        "TE"
+      ]
+    }
+  },
+  "scoring": {
+    "per_stat": {
+      "pass_yds": 0.04,
+      "pass_tds": 4,
+      "pass_int": -2,
+      "rush_yds": 0.1,
+      "rush_tds": 6,
+      "rec": 1,
+      "rec_yds": 0.1,
+      "rec_tds": 6,
+      "fumbles_lost": -2
+    },
+    "bonuses": [
+      {
+        "stat": "rush_yds",
+        "threshold": 100,
+        "points": 3
+      },
+      {
+        "stat": "rec_yds",
+        "threshold": 100,
+        "points": 3
+      }
+    ]
+  },
+  "schedule": {
+    "regular_season_weeks": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ],
+    "playoff_weeks": [
+      15,
+      16,
+      17
+    ],
+    "championship_weeks": [
+      17
+    ],
+    "playoff_teams": 6,
+    "first_round_byes": 2,
+    "seeding": "record_then_points_for",
+    "tiebreakers": [
+      "head_to_head",
+      "points_for"
+    ]
+  },
+  "keepers": {
+    "enabled": true,
+    "max_per_team": 3,
+    "cost_model": "draft_round",
+    "round_penalty": 1,
+    "undrafted_cost_round": 12,
+    "max_times_kept": 3,
+    "on_exhaust": "returns_to_draft_pool"
+  },
+  "acquisitions": {
+    "waiver_type": "faab",
+    "faab_budget": 100,
+    "faab_carryover": false,
+    "min_bid": 0,
+    "trade_deadline_week": 11,
+    "tradeable": {
+      "faab": true,
+      "draft_picks": false
+    }
+  },
+  "teams": [
+    {
+      "team_id": "t1",
+      "name": "Team Alice",
+      "owner": "alice",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": [
+        {
+          "player_id": "00-0036355",
+          "keeper_cost": {
+            "round": 4
+          },
+          "times_kept": 2
+        },
+        {
+          "player_id": "00-0034857",
+          "keeper_cost": {
+            "round": 9
+          },
+          "times_kept": 0
+        }
+      ]
+    },
+    {
+      "team_id": "t2",
+      "name": "Team Bob",
+      "owner": "bob",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": [
+        {
+          "player_id": "00-0033873",
+          "keeper_cost": {
+            "round": 2
+          },
+          "times_kept": 3
+        }
+      ]
+    },
+    {
+      "team_id": "t3",
+      "name": "Team Cara",
+      "owner": "cara",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    },
+    {
+      "team_id": "t4",
+      "name": "Team Dan",
+      "owner": "dan",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    },
+    {
+      "team_id": "t5",
+      "name": "Team Erin",
+      "owner": "erin",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    },
+    {
+      "team_id": "t6",
+      "name": "Team Frank",
+      "owner": "frank",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    },
+    {
+      "team_id": "t7",
+      "name": "Team Gina",
+      "owner": "gina",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    },
+    {
+      "team_id": "t8",
+      "name": "Team Hank",
+      "owner": "hank",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    },
+    {
+      "team_id": "t9",
+      "name": "Team Iris",
+      "owner": "iris",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    },
+    {
+      "team_id": "t10",
+      "name": "Team Jon",
+      "owner": "jon",
+      "record": {
+        "w": 0,
+        "l": 0,
+        "t": 0
+      },
+      "points_for": 0.0,
+      "points_against": 0.0,
+      "faab_remaining": 100,
+      "roster": []
+    }
+  ],
+  "matchups": [
+    {
+      "week": 1,
+      "home": "t1",
+      "away": "t10"
+    },
+    {
+      "week": 1,
+      "home": "t2",
+      "away": "t9"
+    },
+    {
+      "week": 1,
+      "home": "t3",
+      "away": "t8"
+    },
+    {
+      "week": 1,
+      "home": "t4",
+      "away": "t7"
+    },
+    {
+      "week": 1,
+      "home": "t5",
+      "away": "t6"
+    },
+    {
+      "week": 2,
+      "home": "t1",
+      "away": "t2"
+    },
+    {
+      "week": 2,
+      "home": "t3",
+      "away": "t10"
+    },
+    {
+      "week": 2,
+      "home": "t4",
+      "away": "t9"
+    },
+    {
+      "week": 2,
+      "home": "t5",
+      "away": "t8"
+    },
+    {
+      "week": 2,
+      "home": "t6",
+      "away": "t7"
+    },
+    {
+      "week": 3,
+      "home": "t1",
+      "away": "t3"
+    },
+    {
+      "week": 3,
+      "home": "t4",
+      "away": "t2"
+    },
+    {
+      "week": 3,
+      "home": "t5",
+      "away": "t10"
+    },
+    {
+      "week": 3,
+      "home": "t6",
+      "away": "t9"
+    },
+    {
+      "week": 3,
+      "home": "t7",
+      "away": "t8"
+    },
+    {
+      "week": 4,
+      "home": "t1",
+      "away": "t4"
+    },
+    {
+      "week": 4,
+      "home": "t5",
+      "away": "t3"
+    },
+    {
+      "week": 4,
+      "home": "t6",
+      "away": "t2"
+    },
+    {
+      "week": 4,
+      "home": "t7",
+      "away": "t10"
+    },
+    {
+      "week": 4,
+      "home": "t8",
+      "away": "t9"
+    },
+    {
+      "week": 5,
+      "home": "t1",
+      "away": "t5"
+    },
+    {
+      "week": 5,
+      "home": "t6",
+      "away": "t4"
+    },
+    {
+      "week": 5,
+      "home": "t7",
+      "away": "t3"
+    },
+    {
+      "week": 5,
+      "home": "t8",
+      "away": "t2"
+    },
+    {
+      "week": 5,
+      "home": "t9",
+      "away": "t10"
+    },
+    {
+      "week": 6,
+      "home": "t1",
+      "away": "t6"
+    },
+    {
+      "week": 6,
+      "home": "t7",
+      "away": "t5"
+    },
+    {
+      "week": 6,
+      "home": "t8",
+      "away": "t4"
+    },
+    {
+      "week": 6,
+      "home": "t9",
+      "away": "t3"
+    },
+    {
+      "week": 6,
+      "home": "t10",
+      "away": "t2"
+    },
+    {
+      "week": 7,
+      "home": "t1",
+      "away": "t7"
+    },
+    {
+      "week": 7,
+      "home": "t8",
+      "away": "t6"
+    },
+    {
+      "week": 7,
+      "home": "t9",
+      "away": "t5"
+    },
+    {
+      "week": 7,
+      "home": "t10",
+      "away": "t4"
+    },
+    {
+      "week": 7,
+      "home": "t2",
+      "away": "t3"
+    },
+    {
+      "week": 8,
+      "home": "t1",
+      "away": "t8"
+    },
+    {
+      "week": 8,
+      "home": "t9",
+      "away": "t7"
+    },
+    {
+      "week": 8,
+      "home": "t10",
+      "away": "t6"
+    },
+    {
+      "week": 8,
+      "home": "t2",
+      "away": "t5"
+    },
+    {
+      "week": 8,
+      "home": "t3",
+      "away": "t4"
+    },
+    {
+      "week": 9,
+      "home": "t1",
+      "away": "t9"
+    },
+    {
+      "week": 9,
+      "home": "t10",
+      "away": "t8"
+    },
+    {
+      "week": 9,
+      "home": "t2",
+      "away": "t7"
+    },
+    {
+      "week": 9,
+      "home": "t3",
+      "away": "t6"
+    },
+    {
+      "week": 9,
+      "home": "t4",
+      "away": "t5"
+    },
+    {
+      "week": 10,
+      "home": "t1",
+      "away": "t10"
+    },
+    {
+      "week": 10,
+      "home": "t2",
+      "away": "t9"
+    },
+    {
+      "week": 10,
+      "home": "t3",
+      "away": "t8"
+    },
+    {
+      "week": 10,
+      "home": "t4",
+      "away": "t7"
+    },
+    {
+      "week": 10,
+      "home": "t5",
+      "away": "t6"
+    },
+    {
+      "week": 11,
+      "home": "t1",
+      "away": "t2"
+    },
+    {
+      "week": 11,
+      "home": "t3",
+      "away": "t10"
+    },
+    {
+      "week": 11,
+      "home": "t4",
+      "away": "t9"
+    },
+    {
+      "week": 11,
+      "home": "t5",
+      "away": "t8"
+    },
+    {
+      "week": 11,
+      "home": "t6",
+      "away": "t7"
+    },
+    {
+      "week": 12,
+      "home": "t1",
+      "away": "t3"
+    },
+    {
+      "week": 12,
+      "home": "t4",
+      "away": "t2"
+    },
+    {
+      "week": 12,
+      "home": "t5",
+      "away": "t10"
+    },
+    {
+      "week": 12,
+      "home": "t6",
+      "away": "t9"
+    },
+    {
+      "week": 12,
+      "home": "t7",
+      "away": "t8"
+    },
+    {
+      "week": 13,
+      "home": "t1",
+      "away": "t4"
+    },
+    {
+      "week": 13,
+      "home": "t5",
+      "away": "t3"
+    },
+    {
+      "week": 13,
+      "home": "t6",
+      "away": "t2"
+    },
+    {
+      "week": 13,
+      "home": "t7",
+      "away": "t10"
+    },
+    {
+      "week": 13,
+      "home": "t8",
+      "away": "t9"
+    },
+    {
+      "week": 14,
+      "home": "t1",
+      "away": "t5"
+    },
+    {
+      "week": 14,
+      "home": "t6",
+      "away": "t4"
+    },
+    {
+      "week": 14,
+      "home": "t7",
+      "away": "t3"
+    },
+    {
+      "week": 14,
+      "home": "t8",
+      "away": "t2"
+    },
+    {
+      "week": 14,
+      "home": "t9",
+      "away": "t10"
+    }
+  ]
+}
