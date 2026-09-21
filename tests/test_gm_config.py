@@ -242,3 +242,32 @@ def test_real_league_carries_the_keeper_clock():
     kept = [e for t in c.teams for e in t["roster"] if e["times_kept"]]
     assert kept, "times_kept should be derived from draft history, not left at zero"
     assert all(0 <= e["times_kept"] <= 3 for t in c.teams for e in t["roster"])
+
+
+# ---------- an incomplete schedule corrupts records silently ----------
+
+def test_a_regular_week_missing_a_game_is_rejected(raw):
+    raw["matchups"] = [m for m in raw["matchups"]
+                       if not (m["week"] == 3 and m["home"] == raw["teams"][0]["team_id"])]
+    bad(raw, "regular week 3 is missing")
+
+
+def test_no_schedule_with_games_already_played_is_rejected(raw):
+    raw["teams"][0]["record"] = {"w": 1, "l": 0, "t": 0}
+    raw["matchups"] = []
+    bad(raw, "needs its schedule")
+
+
+def test_a_fresh_league_may_have_no_schedule_yet(raw):
+    raw["matchups"] = []
+    for t in raw["teams"]:
+        t["record"] = {"w": 0, "l": 0, "t": 0}
+    validate(raw)
+
+
+def test_an_odd_league_may_sit_one_team_out(raw):
+    raw["teams"] = raw["teams"][:-1]
+    dropped = {t["team_id"] for t in raw["teams"]}
+    raw["matchups"] = [m for m in raw["matchups"] if m["home"] in dropped and m["away"] in dropped]
+    raw["schedule"]["playoff_teams"] = 6
+    validate(raw)

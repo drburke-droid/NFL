@@ -85,6 +85,12 @@ def weekly_in_league_scoring(cfg, seasons):
     line = {v: d[k] for k, v in STAT_MAP.items() if k in d.columns}
     ps = cfg.raw["scoring"]["per_stat"]
     d["pts"] = sum(line[k] * ps.get(k, 0) for k in line)
+    # Threshold bonuses are part of the league's scoring, so a 100-yard game has to be worth what
+    # the league pays for it. Omitting them would quietly undervalue exactly the players who earn
+    # them. (Kuhn and Friends has none; other configs do.)
+    for b in cfg.raw["scoring"].get("bonuses", []):
+        if b["stat"] in line:
+            d["pts"] = d["pts"] + (line[b["stat"]] >= float(b["threshold"])) * float(b["points"])
     d["key"] = d.player_display_name.map(norm)
     return d[d.position.isin(SKILL)]
 

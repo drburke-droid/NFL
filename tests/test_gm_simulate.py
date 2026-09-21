@@ -216,3 +216,29 @@ def test_more_shrinkage_helps_the_worst_team():
     heavy = sim.run(c, sim.shrunk_team_scores(c, 20000, need, prior_games=12.0,
                                               rng=np.random.default_rng(4)), played_weeks=[1])
     assert heavy["teams"][worst]["p_playoffs"] > light["teams"][worst]["p_playoffs"]
+
+
+# ---------- completed weeks must not be replayed ----------
+
+def test_completed_weeks_are_inferred_from_the_standings():
+    c = load(REAL)
+    assert sim.completed_weeks(c) == [1], "one game played by every team means week 1 is done"
+
+
+def test_the_default_call_does_not_replay_finished_games():
+    """A config with live standings counted week 1 twice: once in points_for, once simulated."""
+    c = load(REAL)
+    _, future = sim.weeks_needed(c)
+    assert 1 not in future and future[0] == 2
+
+
+def test_an_explicit_played_weeks_still_overrides():
+    c = load(REAL)
+    _, future = sim.weeks_needed(c, played_weeks=[1, 2, 3])
+    assert future[0] == 4
+
+
+def test_a_fresh_league_simulates_every_week():
+    c = mini(reg_weeks=4, playoff_weeks=(5, 6, 7))
+    assert sim.completed_weeks(c) == [], "nobody has played, so nothing is complete"
+    assert sim.weeks_needed(c)[1] == [1, 2, 3, 4]

@@ -51,13 +51,31 @@ def bracket_order(size):
     return order
 
 
-def weeks_needed(cfg, played_weeks=()):
-    """How many score columns run() expects: remaining regular weeks, then one per playoff round."""
-    future = [w for w in cfg.regular_weeks if w not in set(played_weeks)]
+def completed_weeks(cfg):
+    """Regular weeks already baked into the config's records and points-for.
+
+    A config carrying live standings has those games counted twice unless the simulator is told
+    to skip them -- it would replay week 1 and add the result on top of a points_for that already
+    includes it. Games played is the honest source: every team having played one game means the
+    first week is done.
+    """
+    played = {t["record"]["w"] + t["record"]["l"] + t["record"]["t"] for t in cfg.teams}
+    n = max(played) if played else 0
+    return cfg.regular_weeks[:n]
+
+
+def weeks_needed(cfg, played_weeks=None):
+    """How many score columns run() expects: remaining regular weeks, then one per playoff round.
+
+    played_weeks defaults to whatever the standings already contain, so the common call cannot
+    silently double-count. Pass an explicit list to override.
+    """
+    done = set(completed_weeks(cfg) if played_weeks is None else played_weeks)
+    future = [w for w in cfg.regular_weeks if w not in done]
     return len(future) + len(cfg.playoff_weeks), future
 
 
-def run(cfg, weekly_scores, played_weeks=()):
+def run(cfg, weekly_scores, played_weeks=None):
     """Simulate the rest of the season.
 
     cfg           : a LeagueConfig; its teams carry the record and points-for so far
@@ -296,7 +314,7 @@ def apply_trade(est, moves, capacity=None):
     return out
 
 
-def evaluate_trade(cfg, est, moves, n_sims=20000, seed=0, played_weeks=(), mean_se=MEAN_SE):
+def evaluate_trade(cfg, est, moves, n_sims=20000, seed=0, played_weeks=None, mean_se=MEAN_SE):
     """Run the season with and without a trade and report what it changes.
 
     Both worlds share player draws, team offsets and the schedule, so the difference is the trade

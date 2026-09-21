@@ -185,3 +185,21 @@ def test_uncertainty_flattens_the_title_race():
 
 def test_default_uncertainty_is_the_measured_disagreement():
     assert 4.0 <= sim.MEAN_SE <= 6.5, "two independent views of these rosters disagree by ~5.1 pts"
+
+
+def test_threshold_bonuses_are_part_of_league_scoring(monkeypatch):
+    """A 100-yard bonus is what the league pays; omitting it undervalues whoever earns it."""
+    import pandas as pd
+    c = load(REAL)
+    raw = dict(c.raw)
+    raw["scoring"] = {**raw["scoring"], "bonuses": [{"stat": "rec_yds", "threshold": 100,
+                                                     "points": 3}]}
+    from gm.config import LeagueConfig
+    with_bonus = LeagueConfig(raw)
+    frame = pd.DataFrame([{"player_id": "x", "player_display_name": "A", "position": "WR",
+                           "team": "SF", "season": 2026, "week": 1, "receiving_yards": 120.0,
+                           "receptions": 5.0}])
+    monkeypatch.setattr(P.pd, "read_parquet", lambda *a, **k: frame)
+    plain = P.weekly_in_league_scoring(c, (2026,)).pts.iloc[0]
+    bonused = P.weekly_in_league_scoring(with_bonus, (2026,)).pts.iloc[0]
+    assert bonused == pytest.approx(plain + 3.0)

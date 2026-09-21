@@ -284,6 +284,20 @@ def validate(raw):
     for wk, played in sorted(by_week.items()):
         dupes = {t for t in played if played.count(t) > 1}
         _require(not dupes, f"matchups: week {wk} has team(s) {sorted(dupes)} playing more than once")
+    # A simulator handed a week with a missing game still scores every team but awards no win to
+    # the ones left out, so records and playoff odds come back quietly wrong rather than failing.
+    # An empty matchup table is the same bug at full size.
+    if raw.get("matchups"):
+        everyone = set(ids)
+        byes_allowed = len(ids) % 2            # an odd league sits exactly one team out each week
+        for wk in reg:
+            missing = everyone - set(by_week.get(wk, []))
+            _require(len(missing) <= byes_allowed,
+                     f"matchups: regular week {wk} is missing {sorted(missing)}")
+    else:
+        _require(all(t["record"]["w"] + t["record"]["l"] + t["record"]["t"] == 0
+                     for t in teams if "record" in t),
+                 "matchups: a league with games already played needs its schedule")
     return raw
 
 

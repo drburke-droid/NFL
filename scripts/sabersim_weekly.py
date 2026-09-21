@@ -987,8 +987,13 @@ if not A.no_bias_cal:
     except Exception as _e:
         _bmeta = {"applied": 0.0, "reason": f"accuracy file unreadable: {str(_e)[:60]}"}
 if _bias:
-    p["proj"] = (p.proj + _bias).clip(lower=0)
-    if "play_mean" in p.columns: p["play_mean"] = (p.play_mean + _bias).clip(lower=0)
+    # Only rows that still carry a projection. recent_bias can come back POSITIVE if the model
+    # ever runs low, and adding that to a player deliberately zeroed for being OUT would put a
+    # confirmed inactive back into the send with points against his name.
+    _live = p.proj > 0
+    p.loc[_live, "proj"] = (p.loc[_live, "proj"] + _bias).clip(lower=0)
+    if "play_mean" in p.columns:
+        p.loc[_live, "play_mean"] = (p.loc[_live, "play_mean"] + _bias).clip(lower=0)
     p["Model_Burke_mean"] = p.proj
 HEALTH["bias_cal"] = _bmeta
 print(f"  bias-cal: {_bias:+.3f} pts/player"
