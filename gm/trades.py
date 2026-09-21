@@ -24,8 +24,13 @@ fall. Keeper value is in the config and not yet in this search.
 """
 import numpy as np
 
+from . import keepers as kp
 from . import simulate as sim
 from .simulate import roster_capacity
+
+# A $200 budget buys a starting lineup worth about 124 points a week in this league, so this is
+# what a dollar of keeper surplus is worth in next season's weekly points.
+DOLLARS_TO_POINTS = 124.0 / 200.0
 
 
 def expected_lineup(cfg, means_by_pos):
@@ -88,8 +93,39 @@ def _packages(players, max_size, pool=None):
     return out
 
 
-def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, played_weeks=(),
-                max_package=3, max_combined=4, pool=12, max_per_team=3):
+def _title_slope(cfg, est, team_id, n_sims=4000, seed=0, played_weeks=None, bump=1.0):
+    """Title probability gained per extra point a week, for THIS team where it currently sits.
+
+    The win curve is the whole reason a trade is not worth the same to both sides, so converting
+    next season's dollars into title odds with one league-wide rate would throw away the thing the
+    simulator exists to compute. Measured by nudging the roster and re-running.
+    """
+    need, _ = sim.weeks_needed(cfg, played_weeks)
+    lifted = {k: ({**v, "mean": v["mean"] + bump / max(cfg.starting_size, 1)} if k[0] == team_id else v)
+              for k, v in est.items()}
+    rng = lambda: __import__("numpy").random.default_rng(seed)
+    a = sim.run(cfg, sim.player_team_scores(cfg, est, n_sims, need, rng=rng(), common_seed=seed),
+                played_weeks)["teams"][team_id]["p_title"]
+    b = sim.run(cfg, sim.player_team_scores(cfg, lifted, n_sims, need, rng=rng(), common_seed=seed),
+                played_weeks)["teams"][team_id]["p_title"]
+    return max(b - a, 0.0) / bump
+
+
+def _keeper_gain(board, team_id, roster, out_ids, in_players, cap, est):
+    """Change in a roster's best-three keeper surplus, cheaply, for stage-one ranking."""
+    if board is None:
+        return 0.0
+    before = [v["name"] for v in roster.values()]
+    kept = [v for pid, v in roster.items() if pid not in set(out_ids)] + list(in_players)
+    if len(kept) > cap:
+        kept = sorted(kept, key=lambda v: v["mean"] * v["p_play"])[len(kept) - cap:]
+    return (kp.team_keeper_value(board, team_id, [v["name"] for v in kept])
+            - kp.team_keeper_value(board, team_id, before))
+
+
+def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, played_weeks=None,
+                max_package=3, max_combined=4, pool=12, max_per_team=3,
+                board=None, keeper_discount=0.0):
     """Trades that raise BOTH teams' title odds, best first.
 
     Packages of up to max_package a side. Two-for-one matters more than it sounds: a one-for-one
@@ -98,10 +134,30 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
     mutual gain lives, because a roster is worth the best nine it can field, so a team with four
     startable receivers and a hole at back genuinely gains by sending two for one.
 
-    shortlist : how many stage-one candidates to evaluate exactly
-    top_n     : how many surviving proposals to return
+    shortlist     : how many stage-one candidates to evaluate exactly
+    top_n         : how many surviving proposals to return
+    board           : the keeper board from gm.keepers.load_board()
+    keeper_discount : how much next season counts against this one. 0 is pure win-now and the
+                      default; 1 treats a dollar of keeper surplus as worth its full value in
+                      next season's lineup. Keeper deltas are reported either way -- the knob
+                      only decides whether they enter the ranking.
+
+    With a board, the acceptance test loosens in the way a keeper league actually works: a trade
+    also survives if a side's title odds fall but its keeper value rises by enough. That is what
+    lets a seller sell, and a win-now-only objective can never find it.
     """
     est = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
+    stage1_keepers = DOLLARS_TO_POINTS * keeper_discount if board is not None else 0.0
+    # Dollars have to become title probability at THIS team's position on the win curve, not the
+    # league's average slope. A point a week is worth about two percentage points to a team on the
+    # bubble and almost nothing to one at 1% or 90%, so a single exchange rate would misprice
+    # exactly the teams that most need to sell. The slope is measured per team by nudging its
+    # roster a point a week and re-simulating -- two extra runs, once, not per candidate.
+    slope = {}
+    if keeper_discount and board is not None:
+        for t in [my_team] + [x["team_id"] for x in cfg.teams if x["team_id"] != my_team]:
+            slope[t] = _title_slope(cfg, est, t, n_sims=n_sims, seed=seed,
+                                    played_weeks=played_weeks)
     mine = {p: v for (t, p), v in est.items() if t == my_team}
     cap = roster_capacity(cfg)
     base_me = expected_lineup(cfg, _roster_means(est, my_team, capacity=cap))
@@ -119,11 +175,17 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                     continue                      # the far tail of shapes costs more than it finds
                 get = [theirs[i] for i in rp]
                 d_me = expected_lineup(cfg, _roster_means(est, my_team, gp, get, cap)) - base_me
-                if d_me <= 0:
-                    continue
                 d_them = expected_lineup(cfg, _roster_means(est, other, rp, give, cap)) - base_them
-                if d_them > 0:
-                    cands.append((d_me + d_them, d_me, d_them, other, gp, rp, give, get))
+                k_me = k_them = 0.0
+                if stage1_keepers:
+                    k_me = _keeper_gain(board, my_team, mine, gp, get, cap, est)
+                    k_them = _keeper_gain(board, other, theirs, rp, give, cap, est)
+                # Stage one must score on the same objective stage two will, or a seller's trade
+                # -- worse this year, better next -- is discarded before it is ever simulated.
+                s_me = d_me + stage1_keepers * k_me
+                s_them = d_them + stage1_keepers * k_them
+                if s_me > 0 and s_them > 0:
+                    cands.append((s_me + s_them, d_me, d_them, other, gp, rp, give, get))
     cands.sort(reverse=True, key=lambda c: c[0])
 
     out = []
@@ -131,8 +193,22 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
         moves = [(i, my_team, other) for i in gp] + [(i, other, my_team) for i in rp]
         r = sim.evaluate_trade(cfg, est, moves, n_sims=n_sims, seed=seed, played_weeks=played_weeks)
         me, them = r["delta"][my_team], r["delta"][other]
-        if me["p_title"]["delta"] > 0 and them["p_title"]["delta"] > 0:
+        k_me = k_them = 0.0
+        if board is not None:
+            after = sim.apply_trade(est, moves, cap)
+            rb = {t: [v["name"] for (x, _), v in est.items() if x == t] for t in (my_team, other)}
+            ra = {t: [v["name"] for (x, _), v in after.items() if x == t] for t in (my_team, other)}
+            kd = kp.keeper_delta(board, rb, ra, [my_team, other])
+            k_me, k_them = kd.get(str(my_team), 0.0), kd.get(str(other), 0.0)
+        # each side's dollars converted at its OWN slope
+        w_me = DOLLARS_TO_POINTS * keeper_discount * slope.get(my_team, 0.0)
+        w_them = DOLLARS_TO_POINTS * keeper_discount * slope.get(other, 0.0)
+        score_me = me["p_title"]["delta"] + w_me * k_me
+        score_them = them["p_title"]["delta"] + w_them * k_them
+        if score_me > 0 and score_them > 0:
             out.append({
+                "keeper_me": k_me, "keeper_them": k_them,
+                "score_me": score_me, "score_them": score_them,
                 "give": [v["name"] for v in give], "get": [v["name"] for v in get],
                 "with_team": other,
                 "my_p_title": me["p_title"]["delta"], "their_p_title": them["p_title"]["delta"],
@@ -140,7 +216,7 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 "my_points": me["exp_points_for"]["delta"],
                 "their_points": them["exp_points_for"]["delta"],
                 "stage1_me": d_me, "stage1_them": d_them})
-    out.sort(reverse=True, key=lambda d: d["my_p_title"])
+    out.sort(reverse=True, key=lambda d: d["score_me"])
     # One counterparty usually dominates -- here every surviving trade is with the team carrying
     # three quarterbacks. That is a real finding, but a list of eight variations on one deal is
     # less useful than a few genuine alternatives, so cap how many any single partner may fill.

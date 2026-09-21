@@ -172,3 +172,57 @@ def test_no_single_partner_can_fill_the_whole_list(league):
     from collections import Counter
     if len(r["proposals"]) > 2:
         assert max(Counter(p["with_team"] for p in r["proposals"]).values()) <= 2
+
+
+# ---------- the next-season term ----------
+
+def _board():
+    from gm import keepers as kp
+    return kp.load_board()
+
+
+def test_without_a_board_no_keeper_term_is_applied(league):
+    c, est = league
+    r = T.find_trades(c, est, c.raw["my_team_id"], shortlist=4, top_n=3, n_sims=1500, seed=1)
+    assert all(p["keeper_me"] == 0.0 and p["keeper_them"] == 0.0 for p in r["proposals"])
+
+
+def test_keeper_deltas_are_reported_even_at_zero_weight(league):
+    """Two honest numbers beat one score built on a made-up exchange rate."""
+    c, est = league
+    r = T.find_trades(c, est, c.raw["my_team_id"], shortlist=6, top_n=4, n_sims=1500, seed=1,
+                      board=_board(), keeper_discount=0.0)
+    assert r["proposals"]
+    assert all("keeper_me" in p and "keeper_them" in p for p in r["proposals"])
+    assert all(p["score_me"] == pytest.approx(p["my_p_title"]) for p in r["proposals"])
+
+
+def test_the_win_curve_prices_a_point_differently_for_each_team(league):
+    """Why one exchange rate will not do: a point a week is worth far more to a contender."""
+    c, est = league
+    keyed = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
+    best = max(c.teams, key=lambda t: t["points_for"])["team_id"]
+    worst = min(c.teams, key=lambda t: t["points_for"])["team_id"]
+    hot = T._title_slope(c, keyed, best, n_sims=2500, seed=1)
+    cold = T._title_slope(c, keyed, worst, n_sims=2500, seed=1)
+    assert hot > cold * 2, f"contender {hot:.5f} should value a point far above cellar {cold:.5f}"
+
+
+def test_weighting_next_season_changes_which_trades_survive(league):
+    """It mostly REJECTS: trades that buy this year by spending keeper value stop clearing."""
+    c, est = league
+    kw = dict(shortlist=15, top_n=8, n_sims=2500, seed=1, board=_board())
+    now = T.find_trades(c, est, c.raw["my_team_id"], keeper_discount=0.0, **kw)
+    later = T.find_trades(c, est, c.raw["my_team_id"], keeper_discount=1.0, **kw)
+    assert now["considered"] > later["considered"], \
+        "pricing next season must narrow what stage one is willing to put forward"
+    key = lambda r: {(tuple(p["give"]), tuple(p["get"])) for p in r["proposals"]}
+    assert key(now) != key(later), "the objective must actually change the answer"
+
+
+def test_proposals_rank_by_the_chosen_objective(league):
+    c, est = league
+    r = T.find_trades(c, est, c.raw["my_team_id"], shortlist=10, top_n=5, n_sims=1500, seed=1,
+                      board=_board(), keeper_discount=1.0)
+    s = [p["score_me"] for p in r["proposals"]]
+    assert s == sorted(s, reverse=True)
