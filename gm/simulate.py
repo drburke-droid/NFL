@@ -22,6 +22,8 @@ bracket, seeds 7 and 8 do not exist, and whoever is drawn against an empty chair
 reseeding off, as in Kuhn and Friends, the bracket is fixed after the first round, so the 4/5
 winner meets the 1 seed even when the 3/6 winner finished below them.
 """
+import zlib
+
 import numpy as np
 
 # Measured on Kuhn and Friends, 490 regular-season team-weeks across 2023-2025.
@@ -160,8 +162,20 @@ SCORE_FLOOR = -3.0   # a real fantasy week can go slightly negative, but not far
 MEAN_SE = 5.1
 
 
+def _player_rng(common_seed, player_id):
+    """A stream that belongs to the PLAYER, not to the roster he happens to be on.
+
+    This is what makes a trade measurable. P(title) for a mid-table team is a few percent, and
+    with 20,000 seasons the Monte Carlo error on it is larger than most trades are worth, so two
+    independent runs would mostly measure their own noise. Seeding each player's weeks from his
+    own id means every player who did not move draws exactly the same season in both worlds, and
+    the difference that survives is the trade.
+    """
+    return np.random.default_rng([common_seed, zlib.crc32(str(player_id).encode())])
+
+
 def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
-                       mean_se=MEAN_SE):
+                       mean_se=MEAN_SE, common_seed=None):
     """Weekly team scores built from a roster, so a trade can be run through the season.
 
     Each player either plays (Bernoulli on p_play) and draws from his own distribution, or scores
@@ -192,12 +206,30 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
 
         drawn = {}
         for pos, players in by_pos.items():
-            mu = np.array([p["mean"] for p in players])[None, None, :]
-            sd = np.array([p["sd"] for p in players])[None, None, :]
-            pp = np.array([p["p_play"] for p in players])[None, None, :]
-            s = rng.normal(mu, sd, size=(n_sims, n_cols, len(players)))
-            s = np.maximum(s, floor) * (rng.random((n_sims, n_cols, len(players))) < pp)
-            drawn[pos] = -np.sort(-s, axis=2)            # best first
+            if common_seed is None:
+                mu = np.array([p["mean"] for p in players])[None, None, :]
+                sd = np.array([p["sd"] for p in players])[None, None, :]
+                pp = np.array([p["p_play"] for p in players])[None, None, :]
+                s = np.maximum(rng.normal(mu, sd, size=(n_sims, n_cols, len(players))), floor)
+                played_mask = rng.random((n_sims, n_cols, len(players))) < pp
+                s = s * played_mask
+            else:
+                cols, masks = [], []
+                for pl in players:
+                    r = _player_rng(common_seed, pl["key"])
+                    x = np.maximum(r.normal(pl["mean"], pl["sd"], size=(n_sims, n_cols)), floor)
+                    m = r.random((n_sims, n_cols)) < pl["p_play"]
+                    cols.append(x * m); masks.append(m)
+                s = np.stack(cols, axis=2); played_mask = np.stack(masks, axis=2)
+            # A lineup is named BEFORE the week, so it is ordered by expectation and filtered by
+            # availability -- not by what the scores turned out to be. Sorting realized points
+            # would be hindsight, and it quietly pays teams for bench depth they could never have
+            # known to start: it valued a benched third quarterback at 26 season points.
+            rank = np.argsort([-pl["mean"] for pl in players], kind="stable")
+            s = s[:, :, rank]
+            avail = np.take(played_mask, rank, axis=2)
+            first = np.argsort(~avail, axis=2, kind="stable")   # available players, best-mean first
+            drawn[pos] = np.take_along_axis(s, first, axis=2)
 
         total = np.zeros((n_sims, n_cols))
         used = {}
@@ -223,6 +255,44 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
             total += (-np.sort(-left, axis=2))[:, :, :take].sum(axis=2)
 
         if offset is not None:
+            # keyed to the team, so a trade does not reshuffle how wrong we are about either side
             total = total + offset[:, ti][:, None]
         out[:, ti, :] = total
     return out
+
+
+def apply_trade(est, moves):
+    """A copy of the estimates with players moved between rosters.
+
+    moves: [(player_id, from_team, to_team), ...]
+    """
+    out = dict(est)
+    for pid, a, b in moves:
+        key = (a, str(pid))
+        if key not in out:
+            raise KeyError(f"player {pid!r} is not on team {a!r}")
+        out[(b, str(pid))] = out.pop(key)
+    return out
+
+
+def evaluate_trade(cfg, est, moves, n_sims=20000, seed=0, played_weeks=(), mean_se=MEAN_SE):
+    """Run the season with and without a trade and report what it changes.
+
+    Both worlds share player draws, team offsets and the schedule, so the difference is the trade
+    and not Monte Carlo noise. Reported per team involved, because the same trade is genuinely good
+    for one side and bad for the other -- that is the win curve, not a matter of opinion.
+    """
+    est = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
+    need, _ = weeks_needed(cfg, played_weeks)
+    before = run(cfg, player_team_scores(cfg, est, n_sims, need, rng=np.random.default_rng(seed),
+                                         mean_se=mean_se, common_seed=seed), played_weeks)
+    after = run(cfg, player_team_scores(cfg, apply_trade(est, moves), n_sims, need,
+                                        rng=np.random.default_rng(seed), mean_se=mean_se,
+                                        common_seed=seed), played_weeks)
+    involved = sorted({m[1] for m in moves} | {m[2] for m in moves})
+    delta = {}
+    for t in involved:
+        b, a = before["teams"][t], after["teams"][t]
+        delta[t] = {k: {"before": b[k], "after": a[k], "delta": a[k] - b[k]}
+                    for k in ("p_title", "p_playoffs", "exp_wins", "exp_points_for")}
+    return {"delta": delta, "before": before["teams"], "after": after["teams"], "moves": moves}

@@ -98,7 +98,34 @@ def test_a_player_with_no_snaps_this_year_is_marked_likely_hurt():
     if not absent:
         pytest.skip("nobody on a roster is currently absent")
     assert all(v["p_play"] == P.P_PLAY_ABSENT for v in absent)
-    assert all(v["p_play"] < P.P_PLAY for v in absent)
+
+
+def test_availability_rises_with_a_players_level():
+    """One flat figure benched real starters a fifth of the time; it has to follow the player."""
+    est = P.ros_estimates(load(REAL))
+    skill = [v for v in est.values() if v["pos"] in P.SKILL and v["source"] != "prior_only"]
+    big = max(skill, key=lambda v: v["mean"]); small = min(skill, key=lambda v: v["mean"])
+    assert big["p_play"] > small["p_play"]
+    assert big["p_play"] <= P.P_PLAY_CAP, "nobody is certain to play"
+
+
+def test_a_lineup_is_named_before_the_week_not_after():
+    """Starting the best AVAILABLE player by projection, never the one who turned out best.
+
+    Sorting realized points is hindsight, and it pays a team for bench depth it could not have
+    known to start -- it valued a benched third quarterback at 26 season points.
+    """
+    c = load(REAL)
+    est = stub(c, {p: 0 for p in ("QB", "RB", "WR", "TE", "K", "DST")})
+    tid = c.teams[0]["team_id"]
+    qbs = [k for k, v in est.items() if k[0] == tid and v["pos"] == "QB"]
+    if len(qbs) < 2:
+        pytest.skip("team carries one quarterback")
+    est[qbs[0]].update(mean=20.0, sd=1e-9, p_play=1.0)     # always starts on projection
+    est[qbs[1]].update(mean=1.0, sd=40.0, p_play=1.0)      # wild, but never the named starter
+    s = sim.player_team_scores(c, est, 4000, 1, rng=np.random.default_rng(3), mean_se=0.0)
+    assert s[:, 0, 0].mean() == pytest.approx(20.0, abs=0.5), \
+        "a high-variance bench QB must not be retroactively started"
 
 
 def test_variance_grows_with_the_player():

@@ -42,15 +42,22 @@ STAT_MAP = {"passing_yards": "pass_yds", "passing_tds": "pass_tds",
 
 SD_SLOPE, SD_INTERCEPT = 0.383, 2.229   # measured, 1154 player-seasons 2023-25, league scoring
 PRIOR_GAMES = 4.0                       # reproduces the measured 0.46 -> 0.72 shrinkage curve
-P_PLAY = 0.81                           # measured: 81% of remaining games are actually played
+# Availability rises steeply with a player's level, so one number for everyone is wrong in both
+# directions: 90% of players projected under 2 points score nothing in a given week, and none
+# projected above 17 do. A flat 0.81 benched real starters a fifth of the time, which cost the
+# simulated league 12 points a week once lineups stopped being set with hindsight.
+P_PLAY = 0.81                           # the pooled figure, kept as the fallback
+P_PLAY_BASE, P_PLAY_SLOPE, P_PLAY_CAP = 0.75, 0.030, 0.97
 P_PLAY_ABSENT = 0.45                    # a player with no snaps at all this season is hurt, not gone
 KDST_PPG = {"K": 8.85, "DST": 5.59}     # ESPN season totals / 17; K and DST are not differentiated
+# Re-solved after lineups stopped being set with hindsight, which had inflated every team by ~12
+# points a week and so made the earlier 0.70 too aggressive.
 # Player means built from a couple of games are noisy, and a lineup optimiser compounds that: it
 # keeps whichever estimates happen to be high, so a roster's summed mean is biased upward. Left
 # raw, simulated team means spread with sd 11.7 where this league's measured spread is 8.7 (8.2
 # over 2023-25, scaled to 2026's higher scoring). Pulling each player 30% toward his positional
 # mean lands both moments: between-team 8.70 against 8.68, within-team 21.8 against 21.7.
-MEAN_SHRINK = 0.70
+MEAN_SHRINK = 0.80
 TEAM_FIX = {"LVR": "LV", "JAC": "JAX", "LAR": "LA", "WSH": "WAS", "ARZ": "ARI"}
 SKILL = ("QB", "RB", "WR", "TE")
 
@@ -159,4 +166,10 @@ def ros_estimates(cfg, current_season=None, prior_season=None, weekly=None,
                 base = pos_mean[v["pos"]]
                 v["mean"] = base + mean_shrink * (v["raw_mean"] - base)
                 v["sd"] = SD_SLOPE * max(v["mean"], 0.0) + SD_INTERCEPT
+
+    # availability follows the final mean, so it is set after any shrinkage. A player with no
+    # snaps at all this season keeps his lowered figure -- being hurt is why he has none.
+    for v in est.values():
+        if v["pos"] in SKILL and v["source"] != "prior_only":
+            v["p_play"] = min(P_PLAY_CAP, P_PLAY_BASE + P_PLAY_SLOPE * max(v["mean"], 0.0))
     return est
