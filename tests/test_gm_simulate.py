@@ -184,3 +184,35 @@ def test_same_seed_gives_the_same_answer():
     a = sim.run(c, sim.shrunk_team_scores(c, 1000, need, rng=np.random.default_rng(11)), played_weeks=[1])
     b = sim.run(c, sim.shrunk_team_scores(c, 1000, need, rng=np.random.default_rng(11)), played_weeks=[1])
     assert a["teams"] == b["teams"]
+
+
+# ---------- the constants are measured, and must stay that way ----------
+
+def test_constants_match_the_measured_league():
+    """Both were guesses once. 490 team-weeks of 2023-25 say 20.5 and ~6-8; guard the values."""
+    assert sim.WEEKLY_SD == pytest.approx(20.5, abs=0.5), "weekly sd is measured, not chosen"
+    assert 6.0 <= sim.PRIOR_GAMES <= 8.0, "variance components say 6.25, direct regression 7.7"
+
+
+def test_shrinkage_actually_pulls_toward_the_league_mean():
+    c = load(REAL)
+    need, _ = sim.weeks_needed(c, played_weeks=[1])
+    s = sim.shrunk_team_scores(c, 3000, need, rng=np.random.default_rng(2))
+    per_team = s.mean(axis=(0, 2))
+    obs = np.array([t["points_for"] for t in c.teams], float)
+    league = obs.mean()
+    # every team's simulated mean must sit strictly between its observation and the league mean
+    assert ((per_team - league) / (obs - league) < 1.0).all(), "no team may keep its full observed mean"
+    assert ((per_team - league) / (obs - league) > 0.0).all(), "shrinkage must not flip a team's side"
+
+
+def test_more_shrinkage_helps_the_worst_team():
+    """A hard-shrunk prior pulls an outlying bad start back toward the field, and must raise its odds."""
+    c = load(REAL)
+    need, _ = sim.weeks_needed(c, played_weeks=[1])
+    worst = min(c.teams, key=lambda t: t["points_for"])["team_id"]
+    light = sim.run(c, sim.shrunk_team_scores(c, 20000, need, prior_games=1.0,
+                                              rng=np.random.default_rng(4)), played_weeks=[1])
+    heavy = sim.run(c, sim.shrunk_team_scores(c, 20000, need, prior_games=12.0,
+                                              rng=np.random.default_rng(4)), played_weeks=[1])
+    assert heavy["teams"][worst]["p_playoffs"] > light["teams"][worst]["p_playoffs"]

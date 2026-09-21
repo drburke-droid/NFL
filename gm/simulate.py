@@ -24,6 +24,18 @@ winner meets the 1 seed even when the 3/6 winner finished below them.
 """
 import numpy as np
 
+# Measured on Kuhn and Friends, 490 regular-season team-weeks across 2023-2025.
+# A team's week varies by 20.5 points around its own season average; the spread of true team
+# strength, once sampling noise is removed from the spread of season averages, is only 8.2. That
+# ratio is why a team's record early on says so little: week-to-week noise is 2.5x the real
+# difference between teams.
+WEEKLY_SD = 20.5
+# How many games of league-average pull to apply to an observed average. Two estimates agree the
+# answer is not small: variance components (within^2 / between^2) gives 6.25, and regressing
+# rest-of-season scoring on to-date scoring across weeks 2-11 gives a median of 7.7. Both say a
+# team's scoring average is still mostly noise at the point most trades get discussed.
+PRIOR_GAMES = 7.0
+
 
 def bracket_order(size):
     """Standard single-elimination seeding order: [1, 2] -> [1, 4, 2, 3] -> [1, 8, 4, 5, 2, 7, 3, 6]."""
@@ -122,13 +134,12 @@ def run(cfg, weekly_scores, played_weeks=()):
             "made": made, "weeks_simulated": future, "playoff_weeks": list(cfg.playoff_weeks)}
 
 
-def shrunk_team_scores(cfg, n_sims, n_cols, sd=28.0, prior_games=4.0, rng=None):
-    """A stand-in score generator so the engine runs end to end. Not a good model.
+def shrunk_team_scores(cfg, n_sims, n_cols, sd=WEEKLY_SD, prior_games=PRIOR_GAMES, rng=None):
+    """A team-level score generator: each team's mean shrunk toward the league mean.
 
-    With one or two games played a team's scoring average is close to pure noise, so it is pulled
-    hard toward the league mean -- prior_games is how many games of league-average pull to apply.
-    The weekly standard deviation is a flat default and is the weakest input in the whole pipeline;
-    replacing this function with a player-level model is the point of the exercise.
+    Both constants are measured from this league's own 490 regular-season team-weeks (2023-2025),
+    not chosen. It is still a team-level model and knows nothing about who is on a roster, so a
+    player-level generator should replace it -- but it is no longer guessing at its own inputs.
     """
     rng = rng or np.random.default_rng(0)
     played = np.array([max(1, t["record"]["w"] + t["record"]["l"] + t["record"]["t"])
