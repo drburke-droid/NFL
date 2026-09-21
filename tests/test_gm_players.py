@@ -32,7 +32,7 @@ def stub(cfg, means):
 def test_team_score_is_the_starting_lineup_not_the_roster():
     c = load(REAL)
     est = stub(c, {"QB": 10, "RB": 10, "WR": 10, "TE": 10, "K": 10, "DST": 10})
-    s = sim.player_team_scores(c, est, 8, 2, rng=np.random.default_rng(0))
+    s = sim.player_team_scores(c, est, 8, 2, rng=np.random.default_rng(0), mean_se=0.0)
     # 9 starters at 10 points each; the 7-man bench must not contribute
     assert s.mean() == pytest.approx(90.0, abs=0.01)
 
@@ -45,7 +45,7 @@ def test_flex_takes_the_best_leftover_across_eligible_positions():
     assert len(tes) >= 2, "need a spare TE to test the flex"
     for k in tes[:2]:
         est[k]["mean"] = 50.0                      # TE1 starts at TE, TE2 must take the flex
-    s = sim.player_team_scores(c, est, 4, 1, rng=np.random.default_rng(0))
+    s = sim.player_team_scores(c, est, 4, 1, rng=np.random.default_rng(0), mean_se=0.0)
     assert s[:, 0, 0].mean() == pytest.approx(100.0, abs=0.01)
 
 
@@ -61,8 +61,8 @@ def test_depth_beyond_the_flex_is_worth_nothing():
         a[k]["mean"] = 30.0
     b = {k: dict(v) for k, v in a.items()}
     b[wrs[3]]["mean"] = 30.0                       # a fourth 30-point receiver adds nothing
-    sa = sim.player_team_scores(c, a, 4, 1, rng=np.random.default_rng(1))[:, 0, 0].mean()
-    sb = sim.player_team_scores(c, b, 4, 1, rng=np.random.default_rng(1))[:, 0, 0].mean()
+    sa = sim.player_team_scores(c, a, 4, 1, rng=np.random.default_rng(1), mean_se=0.0)[:, 0, 0].mean()
+    sb = sim.player_team_scores(c, b, 4, 1, rng=np.random.default_rng(1), mean_se=0.0)[:, 0, 0].mean()
     assert sb == pytest.approx(sa, abs=0.01), "a fourth starter-quality WR has nowhere to play"
 
 
@@ -72,7 +72,7 @@ def test_an_absent_player_scores_nothing_and_the_next_man_plays():
     tid = c.teams[0]["team_id"]
     qbs = [k for k, v in est.items() if k[0] == tid and v["pos"] == "QB"]
     est[qbs[0]].update(mean=40.0, p_play=0.0)      # the starter never plays
-    s = sim.player_team_scores(c, est, 200, 1, rng=np.random.default_rng(2))
+    s = sim.player_team_scores(c, est, 200, 1, rng=np.random.default_rng(2), mean_se=0.0)
     assert s[:, 0, 0].mean() == pytest.approx(0.0, abs=0.01)
 
 
@@ -129,3 +129,32 @@ def test_calibrated_dispersion_matches_the_measured_league():
     within = (s - s.mean(axis=(0, 2), keepdims=True)).std()
     assert 7.5 <= between <= 10.0, f"between-team sd {between:.2f}, measured target 8.7"
     assert 19.5 <= within <= 24.0, f"within-team sd {within:.2f}, measured target 21.7"
+
+
+# ---------- uncertainty about a team, not just within a week ----------
+
+def test_parameter_uncertainty_is_a_season_long_offset_not_weekly_noise():
+    """A team's true strength is fixed within a season; we just do not know it."""
+    c = load(REAL)
+    est = P.ros_estimates(c)
+    s = sim.player_team_scores(c, est, 3000, 6, rng=np.random.default_rng(0), mean_se=25.0)
+    # a per-season offset correlates a team's weeks with each other; per-week noise would not
+    a, b = s[:, 0, 0], s[:, 0, 1]
+    assert np.corrcoef(a, b)[0, 1] > 0.3, "weeks of the same simulated season must move together"
+
+
+def test_uncertainty_flattens_the_title_race():
+    c = load(REAL)
+    est = P.ros_estimates(c)
+    need, _ = sim.weeks_needed(c, played_weeks=[1])
+    sure = sim.run(c, sim.player_team_scores(c, est, 6000, need, rng=np.random.default_rng(0),
+                                             mean_se=0.0), played_weeks=[1])
+    humble = sim.run(c, sim.player_team_scores(c, est, 6000, need, rng=np.random.default_rng(0),
+                                               mean_se=10.0), played_weeks=[1])
+    top_sure = max(v["p_title"] for v in sure["teams"].values())
+    top_humble = max(v["p_title"] for v in humble["teams"].values())
+    assert top_humble < top_sure, "admitting we might be wrong must reduce the favourite's odds"
+
+
+def test_default_uncertainty_is_the_measured_disagreement():
+    assert 4.0 <= sim.MEAN_SE <= 6.5, "two independent views of these rosters disagree by ~5.1 pts"

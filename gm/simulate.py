@@ -150,9 +150,18 @@ def shrunk_team_scores(cfg, n_sims, n_cols, sd=WEEKLY_SD, prior_games=PRIOR_GAME
 
 
 SCORE_FLOOR = -3.0   # a real fantasy week can go slightly negative, but not far
+# How wrong a team's estimated mean might be, in points per week. Two independent views of these
+# same rosters -- estimates built from 2026 form, and ESPN's 2025 season totals -- disagree with
+# sd 7.2 per team, implying about 5.1 of error each if they err independently. That is comparable
+# to the 8.7 spread between the teams themselves, so treating an estimate as exact makes the
+# leader look far more certain than the evidence supports. Drawn ONCE PER SIMULATED SEASON, not
+# per week: within a season a team has a fixed true strength that we happen not to know.
+# It is a lower bound -- two views sharing a bias would agree while both being wrong.
+MEAN_SE = 5.1
 
 
-def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR):
+def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
+                       mean_se=MEAN_SE):
     """Weekly team scores built from a roster, so a trade can be run through the season.
 
     Each player either plays (Bernoulli on p_play) and draws from his own distribution, or scores
@@ -167,6 +176,9 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR):
     """
     rng = rng or np.random.default_rng(0)
     order = [t["team_id"] for t in cfg.teams]
+    # one draw per team per simulated season: how wrong we are about this roster, held fixed
+    # across the weeks of that season
+    offset = rng.normal(0.0, mean_se, size=(n_sims, len(order))) if mean_se else None
     flex_elig = cfg.raw["roster"].get("flex_eligibility", {})
     dedicated = [(s, c) for s, c in cfg.starters if s not in flex_elig]
     flexes = [(s, c) for s, c in cfg.starters if s in flex_elig]
@@ -210,5 +222,7 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR):
             take = min(count, left.shape[2])
             total += (-np.sort(-left, axis=2))[:, :, :take].sum(axis=2)
 
+        if offset is not None:
+            total = total + offset[:, ti][:, None]
         out[:, ti, :] = total
     return out
