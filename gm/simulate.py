@@ -217,7 +217,8 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
     out = np.zeros((n_sims, len(order), n_cols))
 
     for ti, tid in enumerate(order):
-        roster = [v for (t, _), v in est.items() if t == tid]
+        roster = [{**v, "key": v.get("key", pid)} for (t, pid), v in est.items()
+                  if t == tid]
         by_pos = {}
         for v in roster:
             by_pos.setdefault(v["pos"], []).append(v)
