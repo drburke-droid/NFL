@@ -28,6 +28,10 @@ SCHEMA_VERSION = 1
 POSITIONS = ("QB", "RB", "WR", "TE", "K", "DST")
 # A slot is either a position or a multi-position slot defined in roster.flex_eligibility.
 COST_MODELS = ("draft_round", "auction", "none")
+# Inflation conditions are a fixed vocabulary, not an expression language. A league rule that
+# cannot be said with these names should get a new name here, where it is visible and testable,
+# rather than an eval() that silently accepts anything.
+INFLATION_CONDITIONS = ("missed_playoffs", "missed_playoffs_and_drafted_champion")
 WAIVER_TYPES = ("faab", "rolling", "reverse_standings")
 
 
@@ -116,6 +120,26 @@ class LeagueConfig:
                 return None
             return {"price": round(float(base) * (1 + float(k.get("auction_escalation_pct", 0)) / 100), 2)}
         return {}
+
+    def keeper_inflation(self, made_playoffs, drafted_champion=False):
+        """Next season's bump on this team's keeper prices, in auction dollars.
+
+        Kuhn and Friends charges +$5 by default, reduced to +$3 for a team that missed the
+        playoffs and to +$0 for the one non-playoff owner who drafted the eventual champion in
+        the side draft. That makes inflation a function of where a team FINISHES, so a simulator
+        cannot price next year's keepers until it has simulated this year's standings -- the two
+        are a loop, not a sequence. Deltas accumulate in listed order.
+        """
+        inf = self.raw.get("keepers", {}).get("inflation")
+        if not inf:
+            return 0.0
+        facts = {"missed_playoffs": not made_playoffs,
+                 "missed_playoffs_and_drafted_champion": (not made_playoffs) and drafted_champion}
+        bump = float(inf["base"])
+        for c in inf.get("conditions", []):
+            if facts.get(c["name"]):
+                bump += float(c["delta"])
+        return bump
 
     def expiring_next_year(self):
         """Players league-wide who hit their last keeper year -- next season's known supply.
@@ -222,6 +246,14 @@ def validate(raw):
                 _require(0 <= tk <= limit,
                          f"teams[{t['team_id']}].roster[{e.get('player_id')}]: times_kept {tk} "
                          f"outside 0..{limit}")
+
+        inf = k.get("inflation")
+        if inf is not None:
+            _require("base" in inf, "keepers.inflation: needs a 'base' bump")
+            for c in inf.get("conditions", []):
+                _require(c.get("name") in INFLATION_CONDITIONS,
+                         f"keepers.inflation: condition {c.get('name')!r} not in {INFLATION_CONDITIONS}")
+                _require("delta" in c, f"keepers.inflation: condition {c['name']!r} needs a 'delta'")
 
     # acquisitions
     acq = raw.get("acquisitions", {})
