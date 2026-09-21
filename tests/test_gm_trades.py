@@ -45,11 +45,23 @@ def test_expected_lineup_ignores_a_player_with_nowhere_to_play(league):
     assert T.expected_lineup(c, a) == T.expected_lineup(c, b), "a 2nd and 3rd QB cannot start"
 
 
-def test_packages_are_singles_and_pairs():
-    assert sorted(T._packages({"a": 1, "b": 2}, 1)) == [("a",), ("b",)]
-    p = T._packages({"a": 1, "b": 2, "c": 3}, 2)
-    assert len([x for x in p if len(x) == 1]) == 3
-    assert len([x for x in p if len(x) == 2]) == 3
+def _pl(**kw):
+    return {k: {"mean": v, "p_play": 1.0} for k, v in kw.items()}
+
+
+def test_packages_grow_with_the_allowed_size():
+    assert sorted(T._packages(_pl(a=1, b=2), 1)) == [("a",), ("b",)]
+    two = T._packages(_pl(a=1, b=2, c=3), 2)
+    assert len([x for x in two if len(x) == 1]) == 3
+    assert len([x for x in two if len(x) == 2]) == 3
+    three = T._packages(_pl(a=1, b=2, c=3), 3)
+    assert len([x for x in three if len(x) == 3]) == 1
+
+
+def test_the_pool_keeps_the_best_players_not_the_first_ones():
+    """Filler at the bottom of a full roster multiplies the search without adding a real trade."""
+    got = T._packages(_pl(dud=1.0, star=30.0, mid=10.0), 1, pool=2)
+    assert sorted(x[0] for x in got) == ["mid", "star"]
 
 
 # ---------- the filter ----------
@@ -101,3 +113,62 @@ def test_the_search_never_proposes_trading_with_yourself(league):
     me = c.raw["my_team_id"]
     r = T.find_trades(c, est, me, shortlist=4, top_n=4, n_sims=1500, seed=1, played_weeks=[1])
     assert all(p["with_team"] != me for p in r["proposals"])
+
+
+# ---------- rosters are full, so an uneven trade forces a cut ----------
+
+def test_an_uneven_trade_forces_the_receiver_to_drop(league):
+    c, est = league
+    keyed = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
+    cap = sim.roster_capacity(c)
+    me = c.raw["my_team_id"]
+    other = next(t["team_id"] for t in c.teams if t["team_id"] != me)
+    mine = [p for (t, p) in keyed if t == me][:1]
+    theirs = [p for (t, p) in keyed if t == other][:2]
+    moves = [(mine[0], me, other)] + [(x, other, me) for x in theirs]
+    after = sim.apply_trade(keyed, moves, cap)
+    size = lambda d, t: sum(1 for (x, _) in d if x == t)
+    assert size(after, me) == cap, "taking two back for one must not leave me over the limit"
+    assert size(after, other) == cap - 1
+
+
+def test_the_dropped_player_is_the_least_useful_one(league):
+    c, est = league
+    keyed = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
+    me = c.raw["my_team_id"]
+    other = next(t["team_id"] for t in c.teams if t["team_id"] != me)
+    mine = [p for (t, p) in keyed if t == me]
+    worst = min(mine, key=lambda p: keyed[(me, p)]["mean"] * keyed[(me, p)]["p_play"])
+    theirs = [p for (t, p) in keyed if t == other][:2]
+    moves = [(mine[0], me, other)] + [(x, other, me) for x in theirs]
+    after = sim.apply_trade(keyed, moves, sim.roster_capacity(c))
+    assert (me, worst) not in after, "a manager cuts his least useful player, not an arbitrary one"
+
+
+def test_no_capacity_means_no_trimming(league):
+    c, est = league
+    keyed = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
+    me = c.raw["my_team_id"]
+    other = next(t["team_id"] for t in c.teams if t["team_id"] != me)
+    theirs = [p for (t, p) in keyed if t == other][:2]
+    after = sim.apply_trade(keyed, [(x, other, me) for x in theirs])
+    assert sum(1 for (x, _) in after if x == me) == sim.roster_capacity(c) + 2
+
+
+def test_bigger_packages_open_up_more_trades(league):
+    """Three-a-side finds far more mutual gain than two, which found far more than one."""
+    c, est = league
+    kw = dict(shortlist=1, top_n=1, n_sims=500, seed=1, played_weeks=[1])
+    one = T.find_trades(c, est, c.raw["my_team_id"], max_package=1, max_combined=2, **kw)
+    two = T.find_trades(c, est, c.raw["my_team_id"], max_package=2, max_combined=3, **kw)
+    three = T.find_trades(c, est, c.raw["my_team_id"], max_package=3, max_combined=4, **kw)
+    assert one["considered"] < two["considered"] < three["considered"]
+
+
+def test_no_single_partner_can_fill_the_whole_list(league):
+    c, est = league
+    r = T.find_trades(c, est, c.raw["my_team_id"], shortlist=12, top_n=8, n_sims=1500, seed=1,
+                      played_weeks=[1], max_per_team=2)
+    from collections import Counter
+    if len(r["proposals"]) > 2:
+        assert max(Counter(p["with_team"] for p in r["proposals"]).values()) <= 2

@@ -25,6 +25,7 @@ fall. Keeper value is in the config and not yet in this search.
 import numpy as np
 
 from . import simulate as sim
+from .simulate import roster_capacity
 
 
 def expected_lineup(cfg, means_by_pos):
@@ -47,29 +48,48 @@ def expected_lineup(cfg, means_by_pos):
     return total
 
 
-def _roster_means(est, team_id, out_ids=(), in_players=()):
-    out = {}
+def _roster_means(est, team_id, out_ids=(), in_players=(), capacity=None):
+    """Expected weekly contributions by position, after a swap and any forced cut.
+
+    Rosters are full, so a team receiving more than it sends must drop somebody, and stage one has
+    to see that cost or it will rank uneven trades as free depth.
+    """
     drop = set(out_ids)
-    for (t, pid), v in est.items():
-        if t != team_id or pid in drop:
-            continue
-        out.setdefault(v["pos"], []).append(v["mean"] * v["p_play"])
-    for v in in_players:
+    kept = [v for (t, pid), v in est.items() if t == team_id and pid not in drop]
+    kept = kept + list(in_players)
+    if capacity is not None and len(kept) > capacity:
+        kept.sort(key=lambda v: v["mean"] * v["p_play"])
+        kept = kept[len(kept) - capacity:]
+    out = {}
+    for v in kept:
         out.setdefault(v["pos"], []).append(v["mean"] * v["p_play"])
     return out
 
 
-def _packages(players, max_size):
-    """Every 1-player and, if allowed, 2-player package a roster can send."""
-    ids = list(players)
+def _packages(players, max_size, pool=None):
+    """Every package of up to max_size players a roster might send.
+
+    Drawn from the `pool` best players by expected contribution rather than the whole roster. The
+    bottom of a full roster is filler that neither side can start, so including it multiplies the
+    search without adding a trade anyone would make. The pool is NOT restricted to low-value
+    players: consolidation means giving up real starters, so the search has to be able to offer
+    them.
+    """
+    ids = sorted(players, key=lambda i: -players[i]["mean"] * players[i]["p_play"])
+    if pool:
+        ids = ids[:pool]
     out = [(i,) for i in ids]
+    n = len(ids)
     if max_size >= 2:
-        out += [(ids[a], ids[b]) for a in range(len(ids)) for b in range(a + 1, len(ids))]
+        out += [(ids[a], ids[b]) for a in range(n) for b in range(a + 1, n)]
+    if max_size >= 3:
+        out += [(ids[a], ids[b], ids[c]) for a in range(n) for b in range(a + 1, n)
+                for c in range(b + 1, n)]
     return out
 
 
 def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, played_weeks=(),
-                max_package=2):
+                max_package=3, max_combined=4, pool=12, max_per_team=3):
     """Trades that raise BOTH teams' title odds, best first.
 
     Packages of up to max_package a side. Two-for-one matters more than it sounds: a one-for-one
@@ -83,24 +103,25 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
     """
     est = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
     mine = {p: v for (t, p), v in est.items() if t == my_team}
-    base_me = expected_lineup(cfg, _roster_means(est, my_team))
-    my_pkgs = _packages(mine, max_package)
+    cap = roster_capacity(cfg)
+    base_me = expected_lineup(cfg, _roster_means(est, my_team, capacity=cap))
+    my_pkgs = _packages(mine, max_package, pool)
 
     cands = []
     for other in [t["team_id"] for t in cfg.teams if t["team_id"] != my_team]:
         theirs = {p: v for (t, p), v in est.items() if t == other}
-        base_them = expected_lineup(cfg, _roster_means(est, other))
-        their_pkgs = _packages(theirs, max_package)
+        base_them = expected_lineup(cfg, _roster_means(est, other, capacity=cap))
+        their_pkgs = _packages(theirs, max_package, pool)
         for gp in my_pkgs:
             give = [mine[i] for i in gp]
             for rp in their_pkgs:
-                if len(gp) == 2 and len(rp) == 2:
-                    continue                      # two-for-two rarely adds over the simpler shapes
+                if len(gp) + len(rp) > max_combined:
+                    continue                      # the far tail of shapes costs more than it finds
                 get = [theirs[i] for i in rp]
-                d_me = expected_lineup(cfg, _roster_means(est, my_team, gp, get)) - base_me
+                d_me = expected_lineup(cfg, _roster_means(est, my_team, gp, get, cap)) - base_me
                 if d_me <= 0:
                     continue
-                d_them = expected_lineup(cfg, _roster_means(est, other, rp, give)) - base_them
+                d_them = expected_lineup(cfg, _roster_means(est, other, rp, give, cap)) - base_them
                 if d_them > 0:
                     cands.append((d_me + d_them, d_me, d_them, other, gp, rp, give, get))
     cands.sort(reverse=True, key=lambda c: c[0])
@@ -120,5 +141,14 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 "their_points": them["exp_points_for"]["delta"],
                 "stage1_me": d_me, "stage1_them": d_them})
     out.sort(reverse=True, key=lambda d: d["my_p_title"])
-    return {"proposals": out[:top_n], "considered": len(cands),
-            "simulated": min(shortlist, len(cands))}
+    # One counterparty usually dominates -- here every surviving trade is with the team carrying
+    # three quarterbacks. That is a real finding, but a list of eight variations on one deal is
+    # less useful than a few genuine alternatives, so cap how many any single partner may fill.
+    seen, kept = {}, []
+    for d in out:
+        n = seen.get(d["with_team"], 0)
+        if n < max_per_team:
+            seen[d["with_team"]] = n + 1
+            kept.append(d)
+    return {"proposals": kept[:top_n], "considered": len(cands),
+            "simulated": min(shortlist, len(cands)), "partners": len(seen)}

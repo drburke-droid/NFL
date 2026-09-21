@@ -261,10 +261,20 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
     return out
 
 
-def apply_trade(est, moves):
-    """A copy of the estimates with players moved between rosters.
+def roster_capacity(cfg):
+    """Starters plus bench. Every team in a settled league sits exactly on it."""
+    return cfg.starting_size + int(cfg.raw["roster"].get("bench", 0))
 
-    moves: [(player_id, from_team, to_team), ...]
+
+def apply_trade(est, moves, capacity=None):
+    """A copy of the estimates with players moved, and over-full rosters trimmed.
+
+    The trim is not bookkeeping. Rosters are full, so a team taking two players back for one has
+    to cut somebody, and that cut is a real cost the receiving side pays. Without it an uneven
+    trade quietly hands the receiver extra bench depth for free, which flatters exactly the
+    consolidation trades this search is built to find.
+
+    The player dropped is the one a manager would drop: lowest expected weekly contribution.
     """
     out = dict(est)
     for pid, a, b in moves:
@@ -272,6 +282,17 @@ def apply_trade(est, moves):
         if key not in out:
             raise KeyError(f"player {pid!r} is not on team {a!r}")
         out[(b, str(pid))] = out.pop(key)
+    if capacity is None:
+        return out
+    by_team = {}
+    for (t, pid), v in out.items():
+        by_team.setdefault(t, []).append((pid, v))
+    for t, players in by_team.items():
+        if len(players) <= capacity:
+            continue
+        players.sort(key=lambda kv: kv[1]["mean"] * kv[1]["p_play"])
+        for pid, _ in players[:len(players) - capacity]:
+            del out[(t, pid)]
     return out
 
 
@@ -286,9 +307,9 @@ def evaluate_trade(cfg, est, moves, n_sims=20000, seed=0, played_weeks=(), mean_
     need, _ = weeks_needed(cfg, played_weeks)
     before = run(cfg, player_team_scores(cfg, est, n_sims, need, rng=np.random.default_rng(seed),
                                          mean_se=mean_se, common_seed=seed), played_weeks)
-    after = run(cfg, player_team_scores(cfg, apply_trade(est, moves), n_sims, need,
-                                        rng=np.random.default_rng(seed), mean_se=mean_se,
-                                        common_seed=seed), played_weeks)
+    after = run(cfg, player_team_scores(cfg, apply_trade(est, moves, roster_capacity(cfg)),
+                                        n_sims, need, rng=np.random.default_rng(seed),
+                                        mean_se=mean_se, common_seed=seed), played_weeks)
     involved = sorted({m[1] for m in moves} | {m[2] for m in moves})
     delta = {}
     for t in involved:
