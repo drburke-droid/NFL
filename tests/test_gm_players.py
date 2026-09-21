@@ -1,0 +1,131 @@
+"""Player estimates and the lineup optimiser.
+
+The lineup tests matter most: a roster is worth the best nine it can field in a week, not the sum
+of its parts, and getting that wrong would misprice every trade involving depth.
+"""
+import os, sys
+import numpy as np, pytest
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, ROOT)
+from gm.config import load
+from gm import players as P
+from gm import simulate as sim
+
+REAL = os.path.join(ROOT, "gm", "leagues", "kuhn_2026.json")
+pytestmark = pytest.mark.skipif(not os.path.exists(REAL), reason="kuhn_2026.json not built")
+
+
+def stub(cfg, means):
+    """{(team, player): est} with fixed means and no randomness, so lineups are decidable."""
+    out = {}
+    for t in cfg.teams:
+        for e in t["roster"]:
+            out[(t["team_id"], e["player_id"])] = {
+                "name": e["name"], "pos": e["pos"], "mean": means.get(e["pos"], 10.0),
+                "sd": 1e-9, "p_play": 1.0, "source": "stub"}
+    return out
+
+
+# ---------- the lineup is the best available, not the whole roster ----------
+
+def test_team_score_is_the_starting_lineup_not_the_roster():
+    c = load(REAL)
+    est = stub(c, {"QB": 10, "RB": 10, "WR": 10, "TE": 10, "K": 10, "DST": 10})
+    s = sim.player_team_scores(c, est, 8, 2, rng=np.random.default_rng(0))
+    # 9 starters at 10 points each; the 7-man bench must not contribute
+    assert s.mean() == pytest.approx(90.0, abs=0.01)
+
+
+def test_flex_takes_the_best_leftover_across_eligible_positions():
+    c = load(REAL)
+    est = stub(c, {"QB": 0, "RB": 0, "WR": 0, "TE": 0, "K": 0, "DST": 0})
+    tid = c.teams[0]["team_id"]
+    tes = [k for k, v in est.items() if k[0] == tid and v["pos"] == "TE"]
+    assert len(tes) >= 2, "need a spare TE to test the flex"
+    for k in tes[:2]:
+        est[k]["mean"] = 50.0                      # TE1 starts at TE, TE2 must take the flex
+    s = sim.player_team_scores(c, est, 4, 1, rng=np.random.default_rng(0))
+    assert s[:, 0, 0].mean() == pytest.approx(100.0, abs=0.01)
+
+
+def test_depth_beyond_the_flex_is_worth_nothing():
+    c = load(REAL)
+    base = stub(c, {p: 0 for p in ("QB", "RB", "WR", "TE", "K", "DST")})
+    tid = c.teams[0]["team_id"]
+    wrs = [k for k, v in base.items() if k[0] == tid and v["pos"] == "WR"]
+    if len(wrs) < 4:
+        pytest.skip("team does not carry four receivers")
+    a = {k: dict(v) for k, v in base.items()}
+    for k in wrs[:3]:                              # WR1, WR2 start; WR3 takes the flex
+        a[k]["mean"] = 30.0
+    b = {k: dict(v) for k, v in a.items()}
+    b[wrs[3]]["mean"] = 30.0                       # a fourth 30-point receiver adds nothing
+    sa = sim.player_team_scores(c, a, 4, 1, rng=np.random.default_rng(1))[:, 0, 0].mean()
+    sb = sim.player_team_scores(c, b, 4, 1, rng=np.random.default_rng(1))[:, 0, 0].mean()
+    assert sb == pytest.approx(sa, abs=0.01), "a fourth starter-quality WR has nowhere to play"
+
+
+def test_an_absent_player_scores_nothing_and_the_next_man_plays():
+    c = load(REAL)
+    est = stub(c, {p: 0 for p in ("QB", "RB", "WR", "TE", "K", "DST")})
+    tid = c.teams[0]["team_id"]
+    qbs = [k for k, v in est.items() if k[0] == tid and v["pos"] == "QB"]
+    est[qbs[0]].update(mean=40.0, p_play=0.0)      # the starter never plays
+    s = sim.player_team_scores(c, est, 200, 1, rng=np.random.default_rng(2))
+    assert s[:, 0, 0].mean() == pytest.approx(0.0, abs=0.01)
+
+
+# ---------- estimates ----------
+
+def test_every_rostered_player_gets_an_estimate():
+    c = load(REAL)
+    est = P.ros_estimates(c)
+    assert len(est) == sum(len(t["roster"]) for t in c.teams)
+    assert all(v["sd"] > 0 and 0 <= v["p_play"] <= 1 for v in est.values())
+
+
+def test_sources_cover_the_fallback_chain():
+    est = P.ros_estimates(load(REAL))
+    srcs = {v["source"] for v in est.values()}
+    assert "blend" in srcs and "kdst_flat" in srcs
+    assert srcs <= {"blend", "current_only", "prior_only", "replacement", "kdst_flat"}
+
+
+def test_a_player_with_no_snaps_this_year_is_marked_likely_hurt():
+    est = P.ros_estimates(load(REAL))
+    absent = [v for v in est.values() if v["source"] == "prior_only"]
+    if not absent:
+        pytest.skip("nobody on a roster is currently absent")
+    assert all(v["p_play"] == P.P_PLAY_ABSENT for v in absent)
+    assert all(v["p_play"] < P.P_PLAY for v in absent)
+
+
+def test_variance_grows_with_the_player():
+    c = load(REAL)
+    est = P.ros_estimates(c)
+    skill = [v for v in est.values() if v["pos"] in P.SKILL]
+    big = max(skill, key=lambda v: v["mean"]); small = min(skill, key=lambda v: v["mean"])
+    assert big["sd"] > small["sd"], "absolute spread must grow with scoring level"
+    assert big["sd"] / max(big["mean"], .1) < small["sd"] / max(small["mean"], .1), \
+        "relative spread must shrink -- this is why a bad team wants stars"
+
+
+def test_shrinkage_pulls_toward_the_positional_mean():
+    c = load(REAL)
+    raw = P.ros_estimates(c, mean_shrink=1.0)
+    cal = P.ros_estimates(c, mean_shrink=0.7)
+    spread_raw = np.std([v["mean"] for v in raw.values() if v["pos"] == "WR"])
+    spread_cal = np.std([v["mean"] for v in cal.values() if v["pos"] == "WR"])
+    assert spread_cal < spread_raw
+
+
+def test_calibrated_dispersion_matches_the_measured_league():
+    """Between- and within-team spread must match what 490 team-weeks say, not just look sane."""
+    c = load(REAL)
+    need, _ = sim.weeks_needed(c, played_weeks=[1])
+    s = sim.player_team_scores(c, P.ros_estimates(c), 4000, need, rng=np.random.default_rng(0))
+    between = s.mean(axis=(0, 2)).std()
+    within = (s - s.mean(axis=(0, 2), keepdims=True)).std()
+    assert 7.5 <= between <= 10.0, f"between-team sd {between:.2f}, measured target 8.7"
+    assert 19.5 <= within <= 24.0, f"within-team sd {within:.2f}, measured target 21.7"

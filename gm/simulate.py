@@ -147,3 +147,68 @@ def shrunk_team_scores(cfg, n_sims, n_cols, sd=WEEKLY_SD, prior_games=PRIOR_GAME
     obs = np.array([t["points_for"] for t in cfg.teams], float) / played
     mu = (obs * played + obs.mean() * prior_games) / (played + prior_games)
     return rng.normal(mu[None, :, None], sd, size=(n_sims, len(mu), n_cols))
+
+
+SCORE_FLOOR = -3.0   # a real fantasy week can go slightly negative, but not far
+
+
+def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR):
+    """Weekly team scores built from a roster, so a trade can be run through the season.
+
+    Each player either plays (Bernoulli on p_play) and draws from his own distribution, or scores
+    nothing. The lineup is then set optimally, which matters more than it sounds: a roster is worth
+    the best nine it can field in a given week, not the sum of its parts, so depth at a position is
+    worth much less than the same points spread across positions. That is why a trade of two good
+    backs for one great one can lose value even when the totals match.
+
+    The optimal lineup is a sort, not a search. Fill each dedicated slot with the best at that
+    position; the flex then takes the best player left over, which can only be the next one down at
+    some eligible position. With every slot contributing to one sum, greedy is exact.
+    """
+    rng = rng or np.random.default_rng(0)
+    order = [t["team_id"] for t in cfg.teams]
+    flex_elig = cfg.raw["roster"].get("flex_eligibility", {})
+    dedicated = [(s, c) for s, c in cfg.starters if s not in flex_elig]
+    flexes = [(s, c) for s, c in cfg.starters if s in flex_elig]
+    out = np.zeros((n_sims, len(order), n_cols))
+
+    for ti, tid in enumerate(order):
+        roster = [v for (t, _), v in est.items() if t == tid]
+        by_pos = {}
+        for v in roster:
+            by_pos.setdefault(v["pos"], []).append(v)
+
+        drawn = {}
+        for pos, players in by_pos.items():
+            mu = np.array([p["mean"] for p in players])[None, None, :]
+            sd = np.array([p["sd"] for p in players])[None, None, :]
+            pp = np.array([p["p_play"] for p in players])[None, None, :]
+            s = rng.normal(mu, sd, size=(n_sims, n_cols, len(players)))
+            s = np.maximum(s, floor) * (rng.random((n_sims, n_cols, len(players))) < pp)
+            drawn[pos] = -np.sort(-s, axis=2)            # best first
+
+        total = np.zeros((n_sims, n_cols))
+        used = {}
+        for slot, count in dedicated:
+            a = drawn.get(slot)
+            if a is None:
+                continue
+            take = min(count, a.shape[2])
+            total += a[:, :, :take].sum(axis=2)
+            used[slot] = take
+
+        for slot, count in flexes:
+            # pool everything left over at each eligible position and take the best `count`.
+            # Exact for any number of flex slots, where charging the pick to a guessed position
+            # is not.
+            pool = [drawn[pos][:, :, used.get(pos, 0):]
+                    for pos in flex_elig.get(slot, []) if pos in drawn
+                    and used.get(pos, 0) < drawn[pos].shape[2]]
+            if not pool:
+                continue
+            left = np.concatenate(pool, axis=2)
+            take = min(count, left.shape[2])
+            total += (-np.sort(-left, axis=2))[:, :, :take].sum(axis=2)
+
+        out[:, ti, :] = total
+    return out
