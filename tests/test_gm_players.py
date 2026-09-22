@@ -81,15 +81,17 @@ def test_an_absent_player_scores_nothing_and_the_next_man_plays():
 def test_every_rostered_player_gets_an_estimate():
     c = load(REAL)
     est = P.ros_estimates(c)
-    assert len(est) == sum(len(t["roster"]) for t in c.teams)
+    real = {k: v for k, v in est.items() if k[0] != "FA"}
+    assert len(real) == sum(len(t["roster"]) for t in c.teams)
     assert all(v["sd"] > 0 and 0 <= v["p_play"] <= 1 for v in est.values())
+    assert {k[1] for k in est if k[0] == "FA"} == {"QB", "RB", "WR", "TE", "K", "DST"},         "one waiver player per position"
 
 
 def test_sources_cover_the_fallback_chain():
     est = P.ros_estimates(load(REAL))
     srcs = {v["source"] for v in est.values()}
     assert "blend" in srcs and "kdst_flat" in srcs
-    assert srcs <= {"blend", "current_only", "prior_only", "replacement", "kdst_flat"}
+    assert srcs <= {"blend", "current_only", "prior_only", "replacement", "kdst_flat", "waiver"}
 
 
 def test_a_player_with_no_snaps_this_year_is_marked_likely_hurt():
@@ -178,10 +180,11 @@ def test_the_stored_model_matches_the_feature_contract():
 
 def test_skill_players_with_history_are_priced_by_the_model():
     est = P.ros_estimates(load(REAL))
-    skill = [v for v in est.values() if v["pos"] in P.SKILL]
+    skill = [v for v in est.values() if v["pos"] in P.SKILL and v["source"] != "waiver"]
     fitted = [v for v in skill if v["model"] == "ridge"]
     assert len(fitted) > 0.9 * len(skill), "nearly every rostered skill player has a history to fit"
-    assert all(v["model"] == "flat" for v in est.values() if v["pos"] not in P.SKILL)
+    assert all(v["model"] == "flat" for v in est.values()
+               if v["pos"] not in P.SKILL and v["source"] != "waiver")
     assert P.ros_estimates.last_ridge["fitted"] == len(fitted)
 
 
@@ -195,6 +198,47 @@ def test_the_model_believes_hot_starts_less_than_the_blend_did():
         keys = [k for k, v in blend.items() if v["pos"] == pos and v["source"] == "blend"]
         top = sorted(keys, key=lambda k: -blend[k]["mean"])[:max(3, len(keys) // 4)]
         assert np.mean([ridge[k]["mean"] for k in top]) < np.mean([blend[k]["mean"] for k in top]), pos
+
+
+def test_a_player_on_bye_sits_and_the_next_man_starts():
+    """Week columns carry league weeks, so a bye lands in its own column and nowhere else."""
+    c = load(REAL)
+    est = stub(c, {p: 0 for p in ("QB", "RB", "WR", "TE", "K", "DST")})
+    tid = c.teams[0]["team_id"]
+    qbs = [k for k, v in est.items() if k[0] == tid and v["pos"] == "QB"]
+    if len(qbs) < 2:
+        pytest.skip("team carries one quarterback")
+    est[qbs[0]].update(mean=20.0, bye=7)
+    est[qbs[1]].update(mean=12.0, bye=9)
+    s = sim.player_team_scores(c, est, 4, 3, rng=np.random.default_rng(0), mean_se=0.0, weeks=[6, 7, 8])
+    assert np.allclose(s[:, 0, :], [[20.0, 12.0, 20.0]] * 4, atol=1e-6)
+
+
+def test_the_waiver_wire_fills_a_slot_the_roster_cannot():
+    """The only tight end on bye costs the gap to a streamer, not the whole slot."""
+    c = load(REAL)
+    est = stub(c, {p: 0 for p in ("QB", "RB", "WR", "TE", "K", "DST")})
+    tid = c.teams[0]["team_id"]
+    tes = [k for k, v in est.items() if k[0] == tid and v["pos"] == "TE"]
+    for k in tes:
+        est[k].update(mean=0.0)
+    est[tes[0]].update(mean=11.0, bye=8)
+    est[("FA", "TE")] = {"name": "waiver TE", "pos": "TE", "mean": 8.0, "sd": 1e-9, "p_play": 1.0,
+                         "source": "waiver", "bye": None}
+    s = sim.player_team_scores(c, est, 4, 2, rng=np.random.default_rng(0), mean_se=0.0, weeks=[7, 8])
+    # week 7: Kittle at TE and, with every flex option stubbed to zero, the streamer in the flex
+    assert np.allclose(s[:, 0, 0], 19.0, atol=1e-6)
+    # week 8: Kittle on bye, the one streamer moves to the TE slot, the flex has nobody
+    assert np.allclose(s[:, 0, 1], 8.0, atol=1e-6), "bye week: the streamer plays"
+
+
+def test_real_rosters_carry_byes_and_a_waiver_level():
+    est = P.ros_estimates(load(REAL))
+    byes = {v["bye"] for k, v in est.items() if k[0] != "FA"}
+    assert byes - {None} and all(5 <= b <= 14 for b in byes if b), "2026 byes run weeks 5-14"
+    fa = {k[1]: v["mean"] for k, v in est.items() if k[0] == "FA"}
+    assert 3 <= fa["RB"] <= 12 and 5 <= fa["WR"] <= 14 and 5 <= fa["TE"] <= 13 and fa["QB"] >= 12
+    assert fa["K"] == P.KDST_PPG["K"] and fa["DST"] == P.KDST_PPG["DST"]
 
 
 def test_lost_fumbles_are_charged_once(monkeypatch):

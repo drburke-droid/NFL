@@ -30,7 +30,13 @@ python scripts/gm_report.py                    # title odds for every team
 python scripts/gm_report.py --trades           # + trades worth proposing
 python scripts/gm_report.py --trades --keeper-discount 1     # judge trades on next season too
 python scripts/gm_report.py --check            # what is stale and how to refresh it
+python scripts/gm_report.py --roster           # my depth chart: pts/wk, bye, value over waiver, weeks started
 ```
+
+Each proposal prints the players moving (pts/wk, P(plays), bye, value over the waiver wire) and
+**your expected lineup delta for every remaining week**, so a trade that is +3 most weeks and -9
+in week 11 shows exactly that. Byes and waiver pickups are in the simulation (below), so a
+"lateral" trade between similar receivers reads as lateral: the deltas are small every week.
 
 `--sims` raises the simulation count (default 20,000) if the numbers feel jumpy; `--seed` makes a
 run reproducible. `--team <id>` views the league as another manager, which is how you check what a
@@ -106,8 +112,9 @@ against 8.68, within-team 22.7 against 21.7.
 - **The probabilities have never been checked against outcomes.** The moments are calibrated; the
   probabilities are not. Three seasons of history is three champions from one league, which cannot
   calibrate a title probability. A chart of it would look like evidence without being any.
-- **Roster churn is not modelled.** Injuries, waiver adds and other teams' trades over thirteen
-  weeks are all absent, so every team's odds are biased toward its current roster being permanent.
+- **Roster churn is only half modelled.** Waiver pickups that fill a hole are in (the virtual
+  waiver player); injuries that remove a starter for weeks, speculative adds and other teams'
+  trades are not, so every team's odds are biased toward its current roster being permanent.
   Least harmful for a trade comparison, where both sides share the assumption.
 - **The mean is fitted; availability is not.** `scripts/ros_player_study.py` scored every
   rest-of-season estimator walk-forward on 2019-25 (34,875 player-weeks since 2012, decision weeks
@@ -137,6 +144,15 @@ scripts/build_gm_league.py  ESPN pull -> league config
 tests/test_gm_*.py        118 tests; run `python -m pytest tests/ -k gm -q` (~4 min, the
                  trade search dominates)
 ```
+
+**Byes and the waiver wire are modelled.** Each score column is a league week (`week_columns`),
+so a player sits out his NFL bye in that column and the next man starts. Every team also carries
+one virtual waiver player per position, priced at the average of the best five unrostered players
+under the fitted model (K/DST at the flat values), who fills any slot the roster cannot -- the only
+tight end's bye costs the gap to a streamer, not the whole slot. The same rule means a bench player
+below the waiver level is worth nothing: the manager would pick up the free agent instead. Stage
+one of the trade search ranks on the average of the per-week lineups with both effects in, so a
+roster that loses five backs in week 11 is charged for it before anything is simulated.
 
 **A forced cut never empties a dedicated slot.** Rosters are full, so an uneven trade drops
 somebody, and the drop is the lowest expected contribution *that leaves every dedicated slot

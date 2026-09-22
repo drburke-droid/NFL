@@ -73,6 +73,8 @@ def main():
     ap.add_argument("--top", type=int, default=6)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--check", action="store_true", help="report input freshness and exit")
+    ap.add_argument("--roster", action="store_true",
+                    help="show my depth chart: ppg, bye, value over the waiver wire, weeks started")
     a = ap.parse_args()
 
     if a.check:
@@ -100,9 +102,16 @@ def main():
               + ("  [ffa stale: next week's file not uploaded yet]" if h["ffa_stale"] else ""))
     else:
         print("  player means: legacy blend (gm/ros_model.json not found)")
+    from gm.trades import waiver_levels, weekly_lineup, _roster_players
+    fa = waiver_levels(est)
+    weeks = sim.week_columns(cfg)
+    print("  waiver wire (best free agent, pts/wk): " + "  ".join(f"{p} {v:.1f}" for p, v in fa.items())
+          + "   byes and waiver fill are in the simulation")
     print()
+    if a.roster:
+        cmd_roster(cfg, est, me, fa, weeks, names)
     scores = sim.player_team_scores(cfg, est, a.sims, need, rng=np.random.default_rng(a.seed),
-                                    common_seed=a.seed)
+                                    common_seed=a.seed, weeks=weeks)
     r = sim.run(cfg, scores)
     print(f"  {'team':30s} {'W-L':>6} {'PF':>7} {'proj/wk':>8} {'playoffs':>9} {'title':>7} {'seed':>6}")
     per_team = scores.mean(axis=(0, 2))
@@ -144,6 +153,48 @@ def main():
         print(f"        you   P(title) {p['my_p_title']:+.4f}   P(playoffs) {p['my_p_playoffs']:+.4f}"
               f"   season pts {p['my_points']:+.0f}   keeper ${p['keeper_me']:+.0f}")
         print(f"        them  P(title) {p['their_p_title']:+.4f}   keeper ${p['keeper_them']:+.0f}")
+        for tag, pl in (("out", p["give_players"]), ("in ", p["get_players"])):
+            for v in pl:
+                print(f"        {tag}  {v['name']:24s} {v['pos']:3s} {v['mean']:5.1f} pts/wk  "
+                      f"plays {v['p_play']:.2f}  bye wk{v['bye'] or '-'}  "
+                      f"over waiver {v['mean'] * v['p_play'] - fa.get(v['pos'], 0):+.1f}")
+        d = p["weekly_me"]; wk = p["weeks"]
+        reg = [(w, x) for w, x in zip(wk, d) if w in cfg.regular_weeks]
+        print(f"        your lineup by week: " + "  ".join(f"wk{w} {x:+.1f}" for w, x in reg))
+        print(f"        average {np.mean(d):+.2f} pts/wk over {len(d)} weeks incl. playoffs")
+
+
+def cmd_roster(cfg, est, me, fa, weeks, names):
+    """My depth chart in one table: what each player is worth, when he sits, whether he starts."""
+    from gm.trades import expected_lineup
+    mine = [v for (t, _), v in est.items() if t == me]
+    # how many remaining weeks each player is in the expected starting lineup
+    starts = {v["name"]: 0 for v in mine}
+    flex = cfg.raw["roster"].get("flex_eligibility", {})
+    dedicated = {s: c for s, c in cfg.starters if s not in flex}
+    flexes = [(s, c) for s, c in cfg.starters if s in flex]
+    for w in weeks:
+        avail = sorted([v for v in mine if v.get("bye") != w], key=lambda v: -v["mean"] * v["p_play"])
+        used = {}
+        chosen = []
+        for v in avail:
+            need = dedicated.get(v["pos"], 0)
+            if used.get(v["pos"], 0) < need and v["mean"] * v["p_play"] >= fa.get(v["pos"], 0):
+                used[v["pos"]] = used.get(v["pos"], 0) + 1; chosen.append(v)
+        for slot, count in flexes:
+            left = [v for v in avail if v["pos"] in flex[slot] and v not in chosen
+                    and v["mean"] * v["p_play"] >= fa.get(v["pos"], 0)]
+            chosen += left[:count]
+        for v in chosen:
+            starts[v["name"]] += 1
+    print(f"  {names.get(me, me)}: depth chart  (waiver = best free agent at the position)")
+    print(f"  {'player':24s} {'pos':3s} {'pts/wk':>7} {'plays':>6} {'bye':>5} {'vs waiver':>10} {'starts':>7}")
+    for pos in ("QB", "RB", "WR", "TE", "K", "DST"):
+        for v in sorted([v for v in mine if v["pos"] == pos], key=lambda v: -v["mean"]):
+            print(f"  {v['name'][:24]:24s} {pos:3s} {v['mean']:7.1f} {v['p_play']:6.2f} "
+                  f"{('wk' + str(v['bye'])) if v.get('bye') else '-':>5} "
+                  f"{v['mean'] * v['p_play'] - fa.get(pos, 0):+10.1f} {starts[v['name']]:4d}/{len(weeks)}")
+    print()
 
 
 if __name__ == "__main__":

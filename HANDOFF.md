@@ -79,6 +79,14 @@ context.
    usually the flat DST (5.59), so receiving a star for free could score as a loss; cuts now skip
    the last holder of any dedicated slot. With honest means fewer trades help both sides (the
    search cleared 111 stage-one candidates against 386 before), and "nothing" is a real answer.
+   Later the same day: **NFL byes and the waiver wire are in the simulation.** Each score column
+   is a league week, players sit out their bye, and a virtual waiver player per position (best five
+   unrostered under the fitted model: RB ~7, WR ~10, TE ~9, QB ~20) fills any slot the roster
+   cannot -- so a one-TE roster is charged the gap to a streamer for its bye, and bench players
+   below waiver level are worth nothing. `gm_report.py --roster` prints the depth chart (pts/wk,
+   bye, value over waiver, weeks started) and every proposal prints the per-week lineup delta.
+   Glass Joe's bench receivers are at or below waiver; Irving and Henderson are the only backs
+   above it, and week 11 takes five backs at once.
 
 7. **New: the `gm/` package** — a rest-of-season league simulator and trade finder for the ESPN
    keeper league, with `scripts/gm_report.py` as its CLI. It shares NO import path with the send

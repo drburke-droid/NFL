@@ -194,12 +194,18 @@ def test_constants_match_the_measured_league():
     assert 6.0 <= sim.PRIOR_GAMES <= 8.0, "variance components say 6.25, direct regression 7.7"
 
 
+def played(c):
+    """Regular weeks the standings already contain -- the live config moves on every ESPN pull."""
+    return sim.completed_weeks(c)
+
+
 def test_shrinkage_actually_pulls_toward_the_league_mean():
     c = load(REAL)
-    need, _ = sim.weeks_needed(c, played_weeks=[1])
+    done = played(c)
+    need, _ = sim.weeks_needed(c, played_weeks=done)
     s = sim.shrunk_team_scores(c, 3000, need, rng=np.random.default_rng(2))
     per_team = s.mean(axis=(0, 2))
-    obs = np.array([t["points_for"] for t in c.teams], float)
+    obs = np.array([t["points_for"] for t in c.teams], float) / max(len(done), 1)   # per game
     league = obs.mean()
     # every team's simulated mean must sit strictly between its observation and the league mean
     assert ((per_team - league) / (obs - league) < 1.0).all(), "no team may keep its full observed mean"
@@ -222,14 +228,16 @@ def test_more_shrinkage_helps_the_worst_team():
 
 def test_completed_weeks_are_inferred_from_the_standings():
     c = load(REAL)
-    assert sim.completed_weeks(c) == [1], "one game played by every team means week 1 is done"
+    n = max(t["record"]["w"] + t["record"]["l"] + t["record"]["t"] for t in c.teams)
+    assert sim.completed_weeks(c) == list(range(1, n + 1)),         "a game played by every team means that week is done"
 
 
 def test_the_default_call_does_not_replay_finished_games():
     """A config with live standings counted week 1 twice: once in points_for, once simulated."""
     c = load(REAL)
+    done = played(c)
     _, future = sim.weeks_needed(c)
-    assert 1 not in future and future[0] == 2
+    assert not set(done) & set(future) and future[0] == max(done) + 1
 
 
 def test_an_explicit_played_weeks_still_overrides():
