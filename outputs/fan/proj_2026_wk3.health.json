@@ -45,10 +45,10 @@
  "lineups": {
   "statuses": 391,
   "by_src": {
-   "espn": 138,
-   "+sleeper": 105,
-   "sleeper": 101,
-   "espn+sleeper": 47
+   "espn": 137,
+   "+sleeper": 106,
+   "sleeper": 102,
+   "espn+sleeper": 46
   },
   "q": 15,
   "out": 43,
@@ -76,7 +76,7 @@
  },
  "csv": "proj_2026_wk3.csv",
  "rows": 485,
- "generated": "2026-09-22 16:02 ET",
+ "generated": "2026-09-22 16:12 ET",
  "kickoffs": [
   "Mon 09/28 08:15 PM ET",
   "Sun 09/27 01:00 PM ET",

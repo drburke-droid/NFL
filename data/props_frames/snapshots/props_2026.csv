@@ -8085,3 +8085,255 @@ snapshot_utc,source,season,week,event,commence,bookmaker,market,player,side,poin
 2026-09-22T19:27:27Z,props_watch,2026,1,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,59.5,1780
 2026-09-22T19:27:27Z,props_watch,2026,1,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,69.5,2600
 2026-09-22T19:27:27Z,props_watch,2026,1,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,79.5,3700
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Christian Watson,Over,66.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Christian Watson,Under,66.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Drake London,Over,65.5,-114
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Drake London,Under,65.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Matthew Golden,Over,53.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Matthew Golden,Under,53.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Tucker Kraft,Over,46.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Tucker Kraft,Under,46.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Bijan Robinson,Over,40.5,-114
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Bijan Robinson,Under,40.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Kyle Pitts,Over,36.5,-112
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Kyle Pitts,Under,36.5,-112
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Jahan Dotson,Over,18.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Jahan Dotson,Under,18.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Chris Brooks,Over,7.5,-108
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,Chris Brooks,Under,7.5,-116
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,MarShawn Lloyd,Over,4.5,-117
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds,MarShawn Lloyd,Under,4.5,-108
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,14.5,-2400
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,24.5,-950
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,39.5,-362
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,49.5,-225
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,59.5,-145
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,66.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,69.5,102
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,79.5,145
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,89.5,205
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,99.5,293
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,109.5,413
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,119.5,570
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,129.5,770
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,139.5,1040
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,149.5,1460
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,159.5,1940
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,169.5,2700
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Christian Watson,Over,179.5,3400
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,14.5,-2300
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,24.5,-950
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,39.5,-368
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,49.5,-224
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,59.5,-145
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,65.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,69.5,103
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,79.5,149
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,89.5,211
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,99.5,298
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,109.5,414
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,119.5,576
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,129.5,810
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,139.5,1140
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,149.5,1520
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,159.5,2100
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,169.5,2700
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Drake London,Over,179.5,3500
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,14.5,-1320
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,24.5,-520
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,39.5,-215
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,49.5,-132
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,53.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,59.5,116
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,69.5,175
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,79.5,256
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,89.5,367
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,99.5,528
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,109.5,750
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,119.5,1100
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,129.5,1540
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,139.5,2100
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,149.5,2900
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Matthew Golden,Over,159.5,3800
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,14.5,-920
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,24.5,-389
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,39.5,-159
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,46.5,-112
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,49.5,103
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,59.5,159
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,69.5,239
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,79.5,358
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,89.5,528
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,99.5,770
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,109.5,1080
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,119.5,1540
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,129.5,2200
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,139.5,2900
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Tucker Kraft,Over,149.5,3700
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,14.5,-970
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,24.5,-350
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,39.5,-122
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,40.5,-114
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,49.5,147
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,59.5,248
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,69.5,403
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,79.5,650
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,89.5,1020
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,99.5,1560
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,109.5,2300
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Bijan Robinson,Over,119.5,3300
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,14.5,-630
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,24.5,-260
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,36.5,-115
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,39.5,104
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,49.5,180
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,59.5,300
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,69.5,495
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,79.5,770
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,89.5,1200
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,99.5,1880
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,109.5,2700
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Kyle Pitts,Over,119.5,3900
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,14.5,-162
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,18.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,24.5,138
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,39.5,349
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,49.5,620
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,59.5,1060
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,69.5,1780
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,79.5,2700
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Jahan Dotson,Over,89.5,4000
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Chris Brooks,Over,7.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Chris Brooks,Over,14.5,215
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Chris Brooks,Over,24.5,467
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Chris Brooks,Over,39.5,1200
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Chris Brooks,Over,49.5,2000
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Chris Brooks,Over,59.5,3000
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,Chris Brooks,Over,69.5,4000
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,MarShawn Lloyd,Over,4.5,-117
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,MarShawn Lloyd,Over,14.5,374
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,MarShawn Lloyd,Over,24.5,860
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,MarShawn Lloyd,Over,39.5,2200
+2026-09-22T20:13:30Z,props_watch,2026,3,Atlanta Falcons @ Green Bay Packers,2026-09-25T00:15:00Z,draftkings,player_reception_yds_alternate,MarShawn Lloyd,Over,49.5,3200
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,Ladd McConkey,Over,54.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,Ladd McConkey,Under,54.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,DJ Moore,Over,49.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,DJ Moore,Under,49.5,-111
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,Quentin Johnston,Over,35.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,Quentin Johnston,Under,35.5,-114
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,Tre Harris,Over,33.5,-112
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds,Tre Harris,Under,33.5,-112
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,14.5,-1240
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,24.5,-545
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,39.5,-228
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,49.5,-140
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,54.5,-112
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,59.5,110
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,69.5,166
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,79.5,244
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,89.5,348
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,99.5,502
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,109.5,710
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,119.5,1000
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,129.5,1440
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,139.5,1980
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,149.5,2700
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Ladd McConkey,Over,159.5,3500
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,14.5,-1100
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,24.5,-452
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,39.5,-182
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,49.5,-113
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,59.5,138
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,69.5,207
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,79.5,306
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,89.5,453
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,99.5,650
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,109.5,960
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,119.5,1360
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,129.5,1940
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,DJ Moore,Over,139.5,2800
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,14.5,-519
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,24.5,-223
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,35.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,39.5,115
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,49.5,197
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,59.5,318
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,69.5,503
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,79.5,800
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,89.5,1240
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,99.5,1840
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,109.5,2700
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Quentin Johnston,Over,119.5,3700
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,14.5,-503
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,24.5,-207
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,33.5,-114
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,39.5,123
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,49.5,215
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,59.5,350
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,69.5,564
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,79.5,900
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,89.5,1400
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,99.5,2100
+2026-09-22T20:13:30Z,props_watch,2026,3,Los Angeles Chargers @ Buffalo Bills,2026-09-27T17:00:00Z,draftkings,player_reception_yds_alternate,Tre Harris,Over,109.5,3000
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,CeeDee Lamb,Over,85.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,CeeDee Lamb,Under,85.5,-114
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,George Pickens,Over,61.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,George Pickens,Under,61.5,-114
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,Jake Ferguson,Over,26.5,-116
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,Jake Ferguson,Under,26.5,-108
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,Javonte Williams,Over,16.5,-107
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds,Javonte Williams,Under,16.5,-117
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,39.5,-1020
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,49.5,-548
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,59.5,-329
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,69.5,-207
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,79.5,-138
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,85.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,89.5,105
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,99.5,150
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,109.5,209
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,119.5,294
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,129.5,402
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,139.5,563
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,149.5,770
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,159.5,1080
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,169.5,1460
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,179.5,1960
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,189.5,2600
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,CeeDee Lamb,Over,199.5,3400
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,14.5,-1480
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,24.5,-660
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,39.5,-285
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,49.5,-181
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,59.5,-120
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,61.5,-110
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,69.5,124
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,79.5,178
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,89.5,253
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,99.5,355
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,109.5,496
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,119.5,680
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,129.5,960
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,139.5,1300
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,149.5,1700
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,159.5,2300
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,169.5,3000
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,George Pickens,Over,179.5,3800
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,14.5,-335
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,24.5,-135
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,26.5,-116
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,39.5,198
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,49.5,358
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,59.5,600
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,69.5,1000
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,79.5,1580
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,89.5,2400
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Jake Ferguson,Over,99.5,3600
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,14.5,-136
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,16.5,-107
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,24.5,202
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,39.5,650
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,49.5,1180
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,59.5,1860
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,69.5,2700
+2026-09-22T20:13:30Z,props_watch,2026,3,Baltimore Ravens @ Dallas Cowboys,2026-09-27T20:25:00Z,draftkings,player_reception_yds_alternate,Javonte Williams,Over,79.5,3800
