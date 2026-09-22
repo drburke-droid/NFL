@@ -47,11 +47,21 @@ def schedule_week(season):
     return int(live.week.min()) if len(live) else int(s.week.max())
 
 
+ERRORS = {}
+
+
 def run(name, cmd, env=None, cwd=ROOT):
+    """Run a step, echo its output, and keep the tail of a failure for the status file -- the
+    Actions logs need a token to read, the committed status file does not."""
     t = time.time()
     print(f"\n== {name}: {' '.join(os.path.relpath(c, ROOT) if os.path.isabs(c) else c for c in cmd)}", flush=True)
-    r = subprocess.run(cmd, cwd=cwd, env={**os.environ, **(env or {})})
+    r = subprocess.run(cmd, cwd=cwd, env={**os.environ, **(env or {}), "PYTHONIOENCODING": "utf-8"},
+                       capture_output=True, text=True, encoding="utf-8", errors="replace")
+    out = (r.stdout or "") + (r.stderr or "")
+    print(out, end="" if out.endswith("\n") else "\n", flush=True)
     ok = r.returncode == 0
+    if not ok:
+        ERRORS[name] = [ln for ln in out.strip().splitlines() if ln.strip()][-25:]
     print(f"   {'ok' if ok else 'FAILED (rc %d)' % r.returncode} in {time.time() - t:.0f}s", flush=True)
     return ok
 
@@ -124,7 +134,8 @@ def main():
     step("props", lambda: run("props watch", [py, "scripts/props_watch.py", pkg]))
 
     status_doc = {"season": S, "week": W, "schedule_week": sched,
-                  "generated": datetime.now(timezone.utc).isoformat(timespec="minutes"), "steps": status}
+                  "generated": datetime.now(timezone.utc).isoformat(timespec="minutes"), "steps": status,
+                  "python": sys.version.split()[0], "platform": sys.platform, "errors": ERRORS}
     with open(STATUS, "w", encoding="utf-8") as fh:
         json.dump(status_doc, fh, indent=1)
     print("\nsummary:", json.dumps(status))
