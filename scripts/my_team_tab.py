@@ -98,4 +98,5 @@ payload = {"meta": {"generated_utc": datetime.now(timezone.utc).strftime("%Y-%m-
 os.makedirs(os.path.dirname(A.out), exist_ok=True)
 open(A.out, "w", encoding="utf-8").write("// baked by scripts/my_team_tab.py — do not edit\nconst MY_TEAM = " + json.dumps(payload, separators=(",", ":")) + ";\n")
 print(f"{me['name']} ({me.get('owner')}): {len(roster)} rostered, {sum(1 for r in roster if r['proj'] is not None)} with a week-{W.get('week')} projection; "
-      f"board {', '.join(f'{p} {len(b['free'])}' for p, b in board.items())}; stale={payload['meta']['stale']} -> {os.path.relpath(A.out, ROOT)}")
+      "board " + ", ".join(f"{p} {len(b['free'])}" for p, b in board.items())     # no nested quotes: 3.11 runs this too
+      + f"; stale={payload['meta']['stale']} -> {os.path.relpath(A.out, ROOT)}")
