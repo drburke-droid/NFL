@@ -223,6 +223,12 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   `docs/refresh_status.json` saying what ran. A Wednesday 18:00 UTC cron is the fallback. Locally
   the same thing is `python scripts/refresh_tabs.py --pkg <model_burke dir>`; `git pull` after an
   Actions run. Then press Preview on the next slate and read the health lines.
+  Runner facts learned on 2026-09-22: the job runs Python 3.12 (3.11 rejects nested f-string
+  quotes the tab scripts use); the ODDS_API_KEY secret is comma-separated and must be split into
+  one key per line (the workflow does; props_watch.py accepts either); two runs minutes apart
+  rebase onto each other and the newer bake wins. Actions logs can be read without gh: the git
+  credential store holds a github.com token, and `scripts/secret_keys_check.py` shows the pattern
+  (it verified the secret holds all six keys).
 - Game day: sends fire at T-80 automatically (external cron → workflow_dispatch every 5 min). If no
   receipt by T-72, press Run on that slate. `data/sabersim/sent_log.json` shows what each send pulled.
 - Morning after: the 8 am MDT tick grades sends (`docs/sabersim_accuracy.json`) and fan picks
