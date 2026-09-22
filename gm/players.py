@@ -60,6 +60,12 @@ PRIOR_GAMES = 4.0                       # the blend's prior weight; reproduces t
 P_PLAY = 0.81                           # the pooled figure, kept as the fallback
 P_PLAY_BASE, P_PLAY_SLOPE, P_PLAY_CAP = 0.75, 0.030, 0.97
 P_PLAY_ABSENT = 0.45                    # a player with no snaps at all this season is hurt, not gone
+# ESPN's injury designation, when the roster carries one, caps availability. Share of the remaining
+# regular season actually played by skill players listed with each status, measured on 5,573
+# listings 2016-25 (weeks 1-13): Out 0.485, Doubtful 0.543, Questionable 0.644. INJURY_RESERVE is
+# an ESPN roster state, not an NFL report status, so it has no measurement -- 0.10 is an
+# assumption standing in for "back for the stretch run, maybe".
+P_PLAY_STATUS = {"OUT": 0.485, "DOUBTFUL": 0.543, "QUESTIONABLE": 0.644, "INJURY_RESERVE": 0.10}
 KDST_PPG = {"K": 8.85, "DST": 5.59}     # ESPN season totals / 17; K and DST are not differentiated
 # The waiver wire is a real roster spot. A slot nobody on the roster can fill -- the only tight end
 # on bye, two backs hurt the same week -- is filled by the best free agent, not left empty, so
@@ -388,7 +394,9 @@ def ros_estimates(cfg, current_season=None, prior_season=None, weekly=None,
             est[(t["team_id"], e["player_id"])] = {
                 "name": e["name"], "pos": pos, "mean": float(mean), "sd": float(sd),
                 "p_play": float(p), "source": src, "model": how, "raw_mean": float(mean),
-                "nfl_team": nfl, "bye": byes.get(nfl)}
+                "nfl_team": nfl, "bye": byes.get(nfl), "injury": e.get("injury"),
+                "acquired": e.get("acquired"), "keeper_price": float((e.get("keeper_cost") or {}).get("price") or 0),
+                "times_kept": int(e.get("times_kept") or 0)}
 
     if mean_shrink < 1.0:
         pos_mean = {}
@@ -406,6 +414,9 @@ def ros_estimates(cfg, current_season=None, prior_season=None, weekly=None,
     for v in est.values():
         if v["pos"] in SKILL and v["source"] != "prior_only":
             v["p_play"] = min(P_PLAY_CAP, P_PLAY_BASE + P_PLAY_SLOPE * max(v["mean"], 0.0))
+        cap = P_PLAY_STATUS.get(str(v.get("injury") or "").upper())
+        if cap is not None and v["pos"] in SKILL:
+            v["p_play"] = min(v["p_play"], cap)
     # the waiver wire, one virtual player per position, keyed to the pseudo-team "FA"
     for pos, m in waiver.items():
         p = 1.0 if pos in KDST_PPG else min(P_PLAY_CAP, P_PLAY_BASE + P_PLAY_SLOPE * m)

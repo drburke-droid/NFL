@@ -79,6 +79,7 @@ def main():
             rost.append({"player_id": str(e["espn_id"]), "name": e["name"], "pos": e["pos"],
                          "nfl_team": e["team"], "slot": e["slot"], "acquired": e.get("acq"),
                          "keeper_cost": {"price": e.get("keeper_price") or 0},
+                         "injury": e.get("inj"),
                          "times_kept": kept_years.get(norm(e["name"]), 0)})
         teams.append({"team_id": str(t["team_id"]), "name": t["name"], "owner": t["owner"],
                       "record": {"w": t["wins"] or 0, "l": t["losses"] or 0, "t": t["ties"] or 0},

@@ -176,3 +176,15 @@ def test_a_forced_cut_never_empties_a_dedicated_slot():
     # every slot exactly filled: there is nothing honest to cut, so the old rule applies
     tight = [v for v in roster if v["name"] != "RB10.0"]
     assert [v["name"] for v in sim.forced_cuts(tight, 7, slots)] == ["DST5.6"]
+
+
+def test_a_forced_cut_spares_a_stash_with_keeper_value():
+    """Two backs with the same weekly value: the one worth something next year stays."""
+    mk = lambda pos, mean, hold=0.0, name=None: {"pos": pos, "mean": mean, "p_play": 1.0, "hold": hold,
+                                                 "name": name or f"{pos}{mean}"}
+    roster = [mk("QB", 20.0), mk("RB", 12.0), mk("RB", 10.0), mk("RB", 4.0, name="journeyman"),
+              mk("RB", 4.0, hold=3.0, name="stash"), mk("WR", 12.0), mk("WR", 11.0), mk("TE", 9.0),
+              mk("K", 8.8), mk("DST", 5.6)]
+    slots = {"QB": 1, "K": 1, "DST": 1, "RB": 2, "WR": 2, "TE": 1}
+    cut = sim.forced_cuts(roster, capacity=9, starters=slots)
+    assert [v["name"] for v in cut] == ["journeyman"]

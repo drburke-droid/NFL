@@ -98,3 +98,40 @@ def test_the_board_matches_the_current_rosters(board):
         skill = [e["name"] for e in t["roster"] if e["pos"] in ("QB", "RB", "WR", "TE")]
         missing = [n for n in skill if n not in on_board]
         assert len(missing) <= 2, f"team {t['id']} has {missing} on its roster but not its board"
+
+
+# ---------- next season, priced from this one ----------
+
+def _curve():
+    return kp.dollar_curve()
+
+
+def test_the_dollar_curve_is_monotone_and_convex_at_running_back():
+    xs, ys = _curve()["RB"]
+    assert all(b >= a for a, b in zip(ys, ys[1:])), "more points never costs less"
+    assert kp.dollars_at(_curve(), "RB", 14) - kp.dollars_at(_curve(), "RB", 11) >         kp.dollars_at(_curve(), "RB", 11) - kp.dollars_at(_curve(), "RB", 8), "the curve steepens"
+
+
+def test_uncertainty_is_worth_money_on_a_convex_curve():
+    """A young back at 7 ppg is worth more than $ at 7 ppg: the upside tail pays, the downside is floored."""
+    c = _curve()
+    assert kp.expected_dollars(c, "RB", 7.0, age=23) > kp.dollars_at(c, "RB", 7.0)
+    assert kp.expected_dollars(c, "RB", 7.0, age=23) > kp.expected_dollars(c, "RB", 7.0, age=29),         "a young player drifts up, an old one down"
+
+
+def test_next_season_board_prices_a_waiver_pickup_at_a_dollar_plus_the_bump():
+    from gm.config import load
+    from gm import players as P
+    cfg = load(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            "gm", "leagues", "kuhn_2026.json"))
+    est = P.ros_estimates(cfg)
+    b = kp.next_season_board(cfg, est)
+    adds = [e for t in b.values() for e in t["players"].values() if e["waiver"]]
+    drafted = [e for t in b.values() for e in t["players"].values() if not e["waiver"]]
+    assert adds and all(e["basis"] == 1.0 and e["cost"] == 1.0 + kp.NEXT_BUMP for e in adds)
+    assert all(e["cost"] == e["basis"] + kp.NEXT_BUMP for e in drafted)
+    # an injured player is valued at his healthy level (a rookie who has never played has none)
+    hurt = [e for t in b.values() for e in t["players"].values() if e.get("injury") in ("OUT", "INJURY_RESERVE")]
+    assert all(e["value"] >= 1.0 for e in hurt)
+    assert any(e["healthy_ppg"] > 5 and e["value"] > 1.0 for e in hurt), "a hurt veteran keeps his level"
+    assert all(e["surplus"] == round(e["value"] - e["cost"], 1) for e in adds + drafted)

@@ -24,8 +24,23 @@ sum of its best three surpluses, so what a player adds depends entirely on what 
 """
 import json
 import os
+import re
+
+import numpy as np
 
 MAX_KEEPERS = 3
+NEXT_BUMP = 5          # the owner's inflation bump next year is not known until the standings settle
+YOUNG = 24             # age at which the year-over-year drift flips sign (below: rises; above: fades)
+# Year-over-year change in a player's league-scored ppg, players with 6+ games both seasons, 2012-25
+# nflverse: (mean drift, sd) by position and whether he was 24 or younger. Young players drift up
+# by half a point and everyone else down by the same, and the spread is four points at RB/WR,
+# three at TE, five at QB. That spread is what gives a cheap young player option value: the dollar
+# curve is convex, so the expected dollars of an uncertain player exceed the dollars of his
+# expected level.
+YOY = {("QB", True): (0.69, 5.27), ("QB", False): (-0.46, 5.15),
+       ("RB", True): (0.30, 4.45), ("RB", False): (-0.87, 4.01),
+       ("WR", True): (0.58, 3.58), ("WR", False): (-0.88, 3.61),
+       ("TE", True): (0.46, 3.00), ("TE", False): (-0.45, 2.81)}
 
 
 def load_board(path=None, root=None):
@@ -96,4 +111,108 @@ def keeper_delta(board, rosters_before, rosters_after, teams):
             vals.append(surplus_under(e, bump))
         after = float(sum(sorted(vals, reverse=True)[:MAX_KEEPERS]))
         out[t] = after - before
+    return out
+
+
+# ----------------------------------------------------------------- next season, from this one
+def _norm(s):
+    s = str(s).lower().strip()
+    s = re.sub(r"[.'’-]", "", s)
+    s = re.sub(r"\s+(jr|sr|ii|iii|iv|v)$", "", s)
+    return re.sub(r"\s+", " ", s)
+
+
+def draft_tool_players(root=None):
+    """The draft tool's player file (docs/data.js): preseason projection and age by name."""
+    root = root or os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    s = open(os.path.join(root, "docs", "data.js"), encoding="utf-8").read()
+    P = json.loads(s.split("const PLAYERS = ")[1].rsplit(";", 1)[0])
+    return {(_norm(p["name"]), p["position"]): p for p in P}
+
+
+def _isotonic(x, y):
+    """Pool-adjacent-violators: the closest non-decreasing fit of y on sorted x."""
+    order = np.argsort(x)
+    xs, ys = np.asarray(x, float)[order], np.asarray(y, float)[order]
+    blocks = [[ys[i], 1] for i in range(len(ys))]
+    i = 0
+    while i < len(blocks) - 1:
+        if blocks[i][0] > blocks[i + 1][0]:
+            m, n = blocks[i], blocks[i + 1]
+            merged = [(m[0] * m[1] + n[0] * n[1]) / (m[1] + n[1]), m[1] + n[1]]
+            blocks[i:i + 2] = [merged]
+            i = max(i - 1, 0)
+        else:
+            i += 1
+    fitted = np.concatenate([[b[0]] * b[1] for b in blocks])
+    return xs, fitted
+
+
+def dollar_curve(board=None, players=None):
+    """{pos: (ppg grid, dollars)}: what this league pays at auction for a level of weekly scoring.
+
+    Fitted from the keeper board's calibrated values against the draft tool's projected ppg for
+    the same players, made monotone. The shape is the point: RB 8 ppg is $1, 11 is $6, 14 is $29.
+    """
+    board = board or load_board()
+    players = players or draft_tool_players()
+    pairs = {}
+    for t in board.values():
+        for name, e in t["players"].items():
+            p = players.get((_norm(name), e["pos"]))
+            if p and p.get("proj_ppg") is not None:
+                pairs.setdefault(e["pos"], []).append((float(p["proj_ppg"]), float(e["value"])))
+    return {pos: _isotonic(*zip(*v)) for pos, v in pairs.items() if len(v) >= 8}
+
+
+def dollars_at(curve, pos, ppg):
+    if pos not in curve:
+        return 1.0
+    xs, ys = curve[pos]
+    return float(np.interp(ppg, xs, ys, left=1.0, right=ys[-1]))
+
+
+def expected_dollars(curve, pos, ppg, age=None):
+    """Expected auction value next season for a player at `ppg` now: the dollar curve averaged over
+    the measured year-over-year distribution of his level. Convexity is what makes a $1 dart worth
+    more than the dollars at his expected level."""
+    drift, sd = YOY.get((pos, bool(age is not None and age <= YOUNG)), (0.0, 4.0))
+    grid = ppg + drift + sd * np.linspace(-2.5, 2.5, 41)
+    w = np.exp(-0.5 * np.linspace(-2.5, 2.5, 41) ** 2)
+    return float(np.sum(w * np.array([dollars_at(curve, pos, g) for g in grid])) / w.sum())
+
+
+def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
+    """A keeper board for NEXT season built from the current rosters and the fitted player means.
+
+    keepers_2026.js was the board for keeping INTO this season -- costs from the 2025 draft, values
+    from the 2026 preseason -- and that decision is made. What a trade changes is next year's:
+      cost   = this year's basis (the auction price; $1 for any waiver pickup, per league rule)
+               + the owner's bump (assumed NEXT_BUMP until the standings settle)
+      value  = expected auction dollars at the player's healthy level (the fitted rest-of-season
+               mean, which does not know he is hurt) after a measured year of drift and spread
+    Same shape as load_board() so the trade search reads it unchanged. Injured stashes are the
+    case this exists for: their weekly value is near zero, their keeper value is not.
+    """
+    curve = curve or dollar_curve()
+    players = players or draft_tool_players()
+    out = {}
+    for t in cfg.teams:
+        tid = str(t["team_id"])
+        out[tid] = {"bump": bump, "players": {}}
+        for (tt, pid), v in est.items():
+            if tt != tid or v["pos"] not in ("QB", "RB", "WR", "TE"):
+                continue
+            waiver = str(v.get("acquired") or "").upper() == "ADD"
+            basis = 1.0 if waiver else float(v.get("keeper_price") or 0.0)
+            p = players.get((_norm(v["name"]), v["pos"]))
+            age = (p.get("age") + 1) if p and p.get("age") else None
+            healthy = float(v.get("raw_mean", v["mean"]))
+            value = expected_dollars(curve, v["pos"], healthy, age)
+            cost = basis + bump
+            out[tid]["players"][v["name"]] = {
+                "name": v["name"], "pos": v["pos"], "value": round(value, 1), "basis": basis,
+                "waiver": waiver, "cost": cost, "surplus": round(value - cost, 1),
+                "healthy_ppg": round(healthy, 1), "age": age, "injury": v.get("injury"),
+                "times_kept": v.get("times_kept", 0)}
     return out

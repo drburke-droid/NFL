@@ -87,6 +87,15 @@ context.
    bye, value over waiver, weeks started) and every proposal prints the per-week lineup delta.
    Glass Joe's bench receivers are at or below waiver; Irving and Henderson are the only backs
    above it, and week 11 takes five backs at once.
+   Then, because "my backs are terrible" ignores WHY the bench is held: next-season keeper value
+   is now priced from this season (cost = this year's price, $1 for a waiver pickup, + $5 bump;
+   value = auction $ at the healthy level after a measured year of drift on a convex dollar curve),
+   ESPN injury designations cap availability at measured rates (Out .49 / Doubtful .54 / Q .64;
+   IR .10 assumed), forced cuts spare players with keeper surplus, and `--keeper-discount` defaults
+   to 1. The `--roster` table prints healthy level, next-year cost, value, surplus and a "why held"
+   tag. Its honest reading of the two stashes: Charbonnet (OUT, healthy ~8 ppg) is worth ~$6 next
+   year against a $6 cost -- break-even, not a bargain; Sampson (IR, $10 cost) is ~$6 under water
+   even with young-dart option value. Irving (+$28) and Burrow (+$19) are the keepers.
 
 7. **New: the `gm/` package** — a rest-of-season league simulator and trade finder for the ESPN
    keeper league, with `scripts/gm_report.py` as its CLI. It shares NO import path with the send

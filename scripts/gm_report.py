@@ -66,7 +66,7 @@ def main():
     ap.add_argument("--league", default=LEAGUE)
     ap.add_argument("--team", default=None, help="team_id to view as (default: my_team_id)")
     ap.add_argument("--trades", action="store_true", help="also search for trades worth proposing")
-    ap.add_argument("--keeper-discount", type=float, default=0.0,
+    ap.add_argument("--keeper-discount", type=float, default=1.0,
                     help="0 = judge trades on this season only; 1 = next season counts fully")
     ap.add_argument("--sims", type=int, default=20000)
     ap.add_argument("--shortlist", type=int, default=25, help="candidates to simulate exactly")
@@ -103,13 +103,25 @@ def main():
     else:
         print("  player means: legacy blend (gm/ros_model.json not found)")
     from gm.trades import waiver_levels, weekly_lineup, _roster_players
+    from gm import keepers as kp
     fa = waiver_levels(est)
     weeks = sim.week_columns(cfg)
+    try:
+        board = kp.next_season_board(cfg, est)
+        print(f"  next season: keeper cost = this year's price ($1 for a waiver pickup) + ${kp.NEXT_BUMP} bump; "
+              f"value = league auction $ at the player's healthy level after a measured year of drift"
+              + (f"; weighted {a.keeper_discount:g} in the search" if a.keeper_discount else "; not in the ranking"))
+    except Exception as ex:
+        board = None
+        print(f"  next season: no keeper board ({ex})")
+    n_inj = sum(1 for v in est.values() if v.get("injury") and v["injury"] != "ACTIVE")
+    print(f"  injuries: {n_inj} rostered players carry an ESPN designation; availability capped at the "
+          f"measured share of the season played (Out .49, Doubtful .54, Questionable .64, IR .10 assumed)")
     print("  waiver wire (best free agent, pts/wk): " + "  ".join(f"{p} {v:.1f}" for p, v in fa.items())
           + "   byes and waiver fill are in the simulation")
     print()
     if a.roster:
-        cmd_roster(cfg, est, me, fa, weeks, names)
+        cmd_roster(cfg, est, me, fa, weeks, names, board)
     scores = sim.player_team_scores(cfg, est, a.sims, need, rng=np.random.default_rng(a.seed),
                                     common_seed=a.seed, weeks=weeks)
     r = sim.run(cfg, scores)
@@ -128,10 +140,6 @@ def main():
         return
 
     from gm.trades import find_trades
-    board = None
-    if os.path.exists(BOARD):
-        from gm.keepers import load_board
-        board = load_board(BOARD)
     print()
     print(f"searching trades for {names.get(me, me)}"
           + (f", next season weighted {a.keeper_discount:g}" if a.keeper_discount else
@@ -164,8 +172,10 @@ def main():
         print(f"        average {np.mean(d):+.2f} pts/wk over {len(d)} weeks incl. playoffs")
 
 
-def cmd_roster(cfg, est, me, fa, weeks, names):
-    """My depth chart in one table: what each player is worth, when he sits, whether he starts."""
+def cmd_roster(cfg, est, me, fa, weeks, names, board=None):
+    """My depth chart in one table: what each player is worth now, when he sits, whether he starts,
+    and what he is worth next year -- the column that explains a $1 stash."""
+    from gm import keepers as kp
     from gm.trades import expected_lineup
     mine = [v for (t, _), v in est.items() if t == me]
     # how many remaining weeks each player is in the expected starting lineup
@@ -187,13 +197,38 @@ def cmd_roster(cfg, est, me, fa, weeks, names):
             chosen += left[:count]
         for v in chosen:
             starts[v["name"]] += 1
-    print(f"  {names.get(me, me)}: depth chart  (waiver = best free agent at the position)")
-    print(f"  {'player':24s} {'pos':3s} {'pts/wk':>7} {'plays':>6} {'bye':>5} {'vs waiver':>10} {'starts':>7}")
+    kb = (board or {}).get(str(me), {}).get("players", {})
+    top3 = sorted([e["surplus"] for e in kb.values()], reverse=True)[:3]
+    print(f"  {names.get(me, me)}: depth chart  (waiver = best free agent at the position; "
+          f"next-yr $ = keeper value - cost, best three count)")
+    print(f"  {'player':22s} {'pos':3s} {'pts/wk':>6} {'plays':>5} {'inj':>4} {'bye':>5} {'vs waiver':>9} "
+          f"{'starts':>7} {'healthy':>7} {'cost':>5} {'value':>5} {'next-yr $':>9}  why held")
     for pos in ("QB", "RB", "WR", "TE", "K", "DST"):
         for v in sorted([v for v in mine if v["pos"] == pos], key=lambda v: -v["mean"]):
-            print(f"  {v['name'][:24]:24s} {pos:3s} {v['mean']:7.1f} {v['p_play']:6.2f} "
-                  f"{('wk' + str(v['bye'])) if v.get('bye') else '-':>5} "
-                  f"{v['mean'] * v['p_play'] - fa.get(pos, 0):+10.1f} {starts[v['name']]:4d}/{len(weeks)}")
+            e = kb.get(v["name"])
+            inj = {"INJURY_RESERVE": "IR", "QUESTIONABLE": "Q", "DOUBTFUL": "D", "OUT": "OUT"}.get(str(v.get("injury") or ""), "")
+            over = v["mean"] * v["p_play"] - fa.get(pos, 0)
+            why = []
+            if starts[v["name"]] >= len(weeks) // 2:
+                why.append("starter")
+            elif over > 0:
+                why.append("covers byes")
+            if e:
+                if e["surplus"] > 0 and e["surplus"] in top3:
+                    why.append(f"keeper +${e['surplus']:.0f}")
+                elif e["surplus"] > 0:
+                    why.append(f"4th+ keeper +${e['surplus']:.0f}")
+                if inj and e["healthy_ppg"] > fa.get(pos, 0):
+                    why.append(f"healthy {e['healthy_ppg']:.0f} > waiver")
+                if e.get("age") and e["age"] - 1 <= kp.YOUNG and e["basis"] <= 5:
+                    why.append("cheap young dart")
+            if not why:
+                why.append("nothing: below waiver now, no keeper surplus")
+            print(f"  {v['name'][:22]:22s} {pos:3s} {v['mean']:6.1f} {v['p_play']:5.2f} {inj:>4} "
+                  f"{('wk' + str(v['bye'])) if v.get('bye') else '-':>5} {over:+9.1f} "
+                  f"{starts[v['name']]:4d}/{len(weeks)} "
+                  + (f"{e['healthy_ppg']:7.1f} {e['cost']:5.0f} {e['value']:5.1f} {e['surplus']:+9.1f}" if e else " " * 30)
+                  + "  " + ", ".join(why))
     print()
 
 

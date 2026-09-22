@@ -217,6 +217,11 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
     """
     est = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
     stage1_keepers = DOLLARS_TO_POINTS * keeper_discount if board is not None else 0.0
+    # what a player is worth beyond this season, in weekly points, so a forced cut spares a stash
+    for (t, p), v in est.items():
+        e = board.get(str(t), {}).get("players", {}).get(v["name"]) if board else None
+        v["hold"] = (stage1_keepers * max(kp.surplus_under(e, board[str(t)]["bump"]), 0.0)
+                     if e else 0.0)
     # Dollars have to become title probability at THIS team's position on the win curve, not the
     # league's average slope. A point a week is worth about two percentage points to a team on the
     # bubble and almost nothing to one at 1% or 90%, so a single exchange rate would misprice
