@@ -166,6 +166,8 @@ def main():
                 print(f"        {tag}  {v['name']:24s} {v['pos']:3s} {v['mean']:5.1f} pts/wk  "
                       f"plays {v['p_play']:.2f}  bye wk{v['bye'] or '-'}  "
                       f"over waiver {v['mean'] * v['p_play'] - fa.get(v['pos'], 0):+.1f}")
+        if p.get("my_cuts"):
+            print(f"        cut  {', '.join(p['my_cuts'])}   (roster is full; lowest weekly value plus keeper hold)")
         d = p["weekly_me"]; wk = p["weeks"]
         reg = [(w, x) for w, x in zip(wk, d) if w in cfg.regular_weeks]
         print(f"        your lineup by week: " + "  ".join(f"wk{w} {x:+.1f}" for w, x in reg))
