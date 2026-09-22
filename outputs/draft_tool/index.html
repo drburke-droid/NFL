@@ -405,6 +405,7 @@
     <button class="btn" id="mProps" title="Weekly Model_Burke evaluation of DraftKings reception-yards lines — the validated pocket is OVERS at ≥5% calibrated edge. Refresh with: python scripts/props_watch.py">📡 Props</button>
     <button class="btn" id="mTeam" title="My ESPN roster this week + the waiver wire, both scored in this league's scoring. Refresh with: python scripts/my_team_tab.py --pull --board">🏠 My Team</button>
     <a class="btn" href="sabersim.html" title="SaberSim sends: run now, download the latest CSV, upload the week's FFA file, paste the K/DST list, credit balance">🏈 SaberSim</a>
+    <a class="btn" href="fan.html" title="Fan Picks: beat the model. Fans pick a username, boost or fade any projected stat, and their picks are scored against the box scores on a running leaderboard. Submissions land in a drop box automatically. Recorded and graded, not used by the model.">🏆 Fan Picks</a>
     <a class="btn" href="sabersim_scoring.html" title="Scoring scenarios: pick which send counts for each slate — SaberSim only grades the last one that arrived 75+ minutes before kickoff — and see what the scorecard becomes">📊 Scoring</a>
     <a class="btn" href="https://claude.ai/code/artifact/9b6157c6-a8c0-466e-9968-8c025c9348c0" target="_blank" rel="noopener" title="Career skill curves for every QB/RB/WR/TE since 2011 — default Alpha view blends opponent-adjusted per-play skill with earned volume (validated: 2.4× the forward signal at WR; Chase WR25→WR2), plus true-skill / Elo / observed views — opens the Claude artifact; requires your claude.ai login">📉 Skill Curves ↗</a>
     <span class="muted" id="count"></span>
@@ -3928,7 +3929,7 @@ function renderTeam(){
     return;
   }
   const M=MY_TEAM, meta=M.meta, wk=meta.current_week;
-  const injc=s=>{const u=(s||"").toUpperCase(); if(!u||u==="ACTIVE"||u==="NA")return ""; const bad=/OUT|IR|SUSP|DOUBT/.test(u); return '<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:'+(bad?"#7a1f1f":"#6b4e00")+';color:#fff;margin-left:4px">'+u.replace("QUESTIONABLE","Q").replace("DOUBTFUL","D")+'</span>';};
+  const injc=s=>{let u=(s||"").toUpperCase().replace("INJURY_RESERVE","IR").replace("SUSPENSION","SUS"); if(!u||u==="ACTIVE"||u==="NA")return ""; const bad=/^(O|OUT|IR|SUS|SUSP|PUP|NFI)$|DOUBT/.test(u); return '<span style="font-size:10px;padding:1px 5px;border-radius:8px;background:'+(bad?"#7a1f1f":"#6b4e00")+';color:#fff;margin-left:4px">'+u.replace("QUESTIONABLE","Q").replace("DOUBTFUL","D").replace("DAY_TO_DAY","DTD")+'</span>';};
   const fmt=v=>v==null?'<span class="muted">—</span>':v.toFixed(1);
   const oppc=o=>o==="BYE"?'<b style="color:var(--bad)">BYE</b>':(o||'<span class="muted">—</span>');
   let h='<div class="dr-panel"><h3 style="margin:0 0 4px">🏠 '+meta.team+' <span class="muted" style="font-weight:normal">— '+meta.league+' · week '+wk+'</span></h3>'+
@@ -3939,7 +3940,7 @@ function renderTeam(){
   // ---- roster ----
   const starters=M.roster.filter(r=>r.slot!=="BENCH"&&r.slot!=="IR"), bench=M.roster.filter(r=>r.slot==="BENCH"), ir=M.roster.filter(r=>r.slot==="IR");
   const tot=starters.reduce((a,r)=>a+(r.proj||0),0);
-  const row=(r,dim)=>'<tr style="'+(dim?'opacity:.75':'')+'"><td class="muted">'+r.slot+'</td><td><b>'+r.name+'</b>'+(r.keeper?' <span class="chip" title="keeper ($'+r.keeper_price+')" style="font-size:10px;padding:0 5px">K $'+r.keeper_price+'</span>':'')+injc(r.inj_espn||r.inj_ffa)+'</td>'+
+  const row=(r,dim)=>'<tr style="'+((dim||r.out)?'opacity:.75':'')+'"><td class="muted">'+r.slot+'</td><td><b>'+r.name+'</b>'+(r.keeper?' <span class="chip" title="keeper ($'+r.keeper_price+')" style="font-size:10px;padding:0 5px">K $'+r.keeper_price+'</span>':'')+injc(r.inj_espn||r.inj_ffa)+'</td>'+
     '<td>'+r.pos+'</td><td>'+r.team+'</td><td>'+oppc(r.opp)+'</td><td style="text-align:right"><b>'+fmt(r.proj)+'</b></td><td style="text-align:right" class="muted">'+fmt(r.last_pts)+'</td><td style="text-align:right" class="muted">'+fmt(r.season_pts)+'</td></tr>';
   const head='<tr class="muted" style="font-size:11px"><th style="text-align:left">slot</th><th style="text-align:left">player</th><th style="text-align:left">pos</th><th style="text-align:left">team</th><th style="text-align:left">wk '+wk+'</th><th style="text-align:right">proj</th><th style="text-align:right">last wk</th><th style="text-align:right">season</th></tr>';
   h+='<div class="dr-panel"><h3>Lineup <span class="muted" style="font-weight:normal">— starters project to <b>'+tot.toFixed(1)+'</b> (K/DST included where scored)</span></h3>'+

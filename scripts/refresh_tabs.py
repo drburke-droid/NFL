@@ -131,6 +131,10 @@ def main():
         return (run("fan projections", [py, "scripts/sabersim_weekly.py", pkg, "--all-games", "--no-market", "--out", out])
                 and run("fan bake", [py, "scripts/fan_proj_bake.py", out, str(S), str(W)]))
     step("fan", fan)
+    # the game: pull the drop box, record new picks, grade what has box scores -> leaderboard
+    sends = [os.path.join(pkg, "sends")] if pkg else []
+    step("fanpicks", lambda: run("fan picks drop box", [py, "scripts/fan_inbox_pull.py", "--record", "--grade"]
+                                 + (["--sends"] + sends + [os.path.join(ROOT, "outputs", "sabersim")] if sends else [])))
     step("props", lambda: run("props watch", [py, "scripts/props_watch.py", pkg]))
 
     status_doc = {"season": S, "week": W, "schedule_week": sched,
