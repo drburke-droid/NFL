@@ -1,7 +1,9 @@
 {
- "form_action": "",
- "entry_user": "",
- "entry_code": "",
- "sheet_csv": "",
- "note": "Filled in once the Google Form drop box exists (scripts/fan_inbox_pull.py docstring). Empty = the page falls back to email / copy-the-code."
+ "form_action": "https://docs.google.com/forms/d/e/1FAIpQLSdv_wD6H95vzh3v77I4_15z3NVzRvCX-Ch4vKcyJaEqce2zMg/formResponse",
+ "entry_user": "entry.2050380618",
+ "entry_code": "entry.1506204279",
+ "sheet_csv": "https://docs.google.com/spreadsheets/d/1t6RE0rKdduPQABdiVKb0VGiIKSxC1SS9YlwctWKd4D4/gviz/tq?tqx=out:csv&sheet=Form%20Responses%201",
+ "form_view": "https://docs.google.com/forms/d/e/1FAIpQLSdv_wD6H95vzh3v77I4_15z3NVzRvCX-Ch4vKcyJaEqce2zMg/viewform",
+ "sheet_edit": "https://docs.google.com/spreadsheets/d/1t6RE0rKdduPQABdiVKb0VGiIKSxC1SS9YlwctWKd4D4/edit",
+ "note": "Google Form 'Fan Picks drop box' (created 2026-09-22 from the SaberSim owner's Google account); the sheet is shared read-only by link. scripts/fan_inbox_pull.py reads sheet_csv."
 }
