@@ -2,7 +2,7 @@
  "season": 2026,
  "week": 3,
  "schedule_week": 3,
- "generated": "2026-09-22T19:48+00:00",
+ "generated": "2026-09-22T19:57+00:00",
  "steps": {
   "espn": "ok",
   "pastes": "ok",
@@ -11,5 +11,42 @@
   "gm": "ok",
   "fan": "ok",
   "props": "failed"
+ },
+ "python": "3.11.16",
+ "platform": "linux",
+ "errors": {
+  "my team tab": [
+   "File \"/home/runner/work/NFL/NFL/scripts/my_team_tab.py\", line 101",
+   "    (', '.join(f'{p} {len(b['free'])}' for p, b in board.items()))",
+   "                             ^^^^",
+   "SyntaxError: f-string: f-string: unmatched '['"
+  ],
+  "props watch": [
+   "Traceback (most recent call last):",
+   "  File \"/home/runner/work/NFL/NFL/scripts/props_watch.py\", line 149, in <module>",
+   "    events, rem = get(f\"{API}/sports/americanfootball_nfl/events\")",
+   "                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/home/runner/work/NFL/NFL/scripts/props_watch.py\", line 58, in get",
+   "    with urllib.request.urlopen(f\"{url}{sep}apiKey={key}\", timeout=30) as r:",
+   "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 216, in urlopen",
+   "    return opener.open(url, data, timeout)",
+   "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 525, in open",
+   "    response = meth(req, response)",
+   "               ^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 634, in http_response",
+   "    response = self.parent.error(",
+   "               ^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 563, in error",
+   "    return self._call_chain(*args)",
+   "           ^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 496, in _call_chain",
+   "    result = func(*args)",
+   "             ^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/urllib/request.py\", line 643, in http_error_default",
+   "    raise HTTPError(req.full_url, code, msg, hdrs, fp)",
+   "urllib.error.HTTPError: HTTP Error 401: Unauthorized"
+  ]
  }
 }
