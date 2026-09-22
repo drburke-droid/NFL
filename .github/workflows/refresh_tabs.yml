@@ -1,0 +1,82 @@
+name: Refresh tabs
+
+# Every tab to the week of the newest FFA file, in one run. Fires when the SaberSim page uploads
+# an FFA weekly file or a Subvertadown paste (both land on main as commits), on demand, and on a
+# Wednesday-afternoon fallback so a missed trigger still refreshes before the Thursday game.
+# What it bakes and commits: docs/waiver.json, docs/myteam_2026.js, docs/fan/*.json,
+# docs/props_watch_2026.js (+ the outputs/draft_tool mirror), gm/leagues/kuhn_2026.json, the ESPN
+# pulls, the parsed Subvertadown table and K/DST override, and docs/refresh_status.json.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "data/ffanalytics/FFAn_weekly/raw_stats_*.csv"
+      - "data/subvertadown/raw/paste_*.txt"
+      - "data/kdst/paste_*.txt"
+      - "scripts/refresh_tabs.py"
+      - ".github/workflows/refresh_tabs.yml"
+  schedule:
+    - cron: "0 18 * 9-12,1 3"        # Wednesday 18:00 UTC, in season
+  workflow_dispatch:
+    inputs:
+      week: { description: "Week (blank = newest FFA file)", default: "" }
+      skip: { description: "Steps to skip, comma list (espn,pastes,board,myteam,gm,fan,props)", default: "" }
+
+permissions:
+  contents: write
+
+concurrency:
+  group: refresh-tabs
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch the private Model_Burke package
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ secrets.MODEL_BURKE_REPO }}
+          token: ${{ secrets.MODEL_BURKE_TOKEN }}
+          path: pkg
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements-sabersim.txt
+
+      - name: Install
+        run: pip install -q -r requirements-sabersim.txt requests
+
+      - name: Odds API key file (props only; the page's Preview/Run keep their own copy)
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+        run: |
+          if [ -n "$ODDS_API_KEY" ]; then printf '%s\n' "$ODDS_API_KEY" > data/odds_api_key.txt; fi
+
+      - name: Refresh every tab
+        env:
+          ESPN_S2: ${{ secrets.ESPN_S2 }}
+          ESPN_SWID: ${{ secrets.ESPN_SWID }}
+          MODEL_BURKE_PKG: ${{ github.workspace }}/pkg
+        run: |
+          python scripts/refresh_tabs.py ${{ inputs.week && format('--week {0}', inputs.week) || '' }} ${{ inputs.skip && format('--skip {0}', inputs.skip) || '' }} || echo "some steps failed (see summary); committing what refreshed"
+
+      - name: Commit what refreshed
+        run: |
+          rm -f data/odds_api_key.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/refresh_status.json docs/waiver.json docs/myteam_2026.js docs/fan docs/props_watch_2026.js \
+                  outputs/draft_tool/props_watch_2026.js outputs/fan outputs/espn_league.json \
+                  outputs/espn_league_state.json outputs/espn_league_state_*.json outputs/espn_standings.csv \
+                  outputs/espn_standings.json gm/leagues/kuhn_2026.json data/subvertadown/subvertadown_long.csv \
+                  data/kdst/kdst_*.csv data/props_frames/snapshots data/props_frames/watch_2026_rows.parquet \
+                  data/props_frames/lines_cache.json data/props_frames/mkt_cache_*.json data/props_frames/ledger_2026.csv 2>/dev/null || true
+          wk=$(python -c "import json;print(json.load(open('docs/refresh_status.json'))['week'])")
+          git commit -m "Tabs refreshed for 2026 wk${wk} (automated)" || { echo "nothing changed"; exit 0; }
+          git pull --rebase && git push
