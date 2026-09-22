@@ -24,6 +24,8 @@ until they appear in nflverse weekly data.
 import json, os, re, sys, sqlite3, time, urllib.error, urllib.request, warnings
 import numpy as np, pandas as pd
 warnings.filterwarnings("ignore")
+try: sys.stdout.reconfigure(encoding="utf-8")     # the alert lines carry emoji; cp1252 consoles choke
+except Exception: pass
 from sklearn.linear_model import LogisticRegression
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -92,11 +94,14 @@ wk_hist = [pd.read_sql("""SELECT player_id, player_display_name, position, seaso
 con.close()
 print(f"  2022-2025 from nfl_odds.db: {len(wk_hist[0]):,} rows")
 for yr in (2026,):
-    for url in (f"player_stats/player_stats_{yr}.parquet",
-                f"player_stats/stats_player_week_{yr}.parquet"):
+    # the nflverse release is stats_player/ (the old player_stats/ path 404s and left every run
+    # thinking it was week 1); the local cache gm/ keeps is tried first
+    for url in (os.path.join(ROOT, "data", "nflverse_cache", f"stats_player_week_{yr}.parquet"),
+                f"stats_player/stats_player_week_{yr}.parquet",
+                f"player_stats/player_stats_{yr}.parquet"):
         try:
-            w = pd.read_parquet(
-                "https://github.com/nflverse/nflverse-data/releases/download/" + url)
+            w = pd.read_parquet(url if os.path.exists(url) else
+                                "https://github.com/nflverse/nflverse-data/releases/download/" + url)
             w = w[w.position.isin(["QB", "RB", "WR", "TE"])]
             keep = [c for c in wk_hist[0].columns if c in w.columns]
             wk_hist.append(w[keep])
