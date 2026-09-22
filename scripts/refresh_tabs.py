@@ -135,7 +135,12 @@ def main():
 
     status_doc = {"season": S, "week": W, "schedule_week": sched,
                   "generated": datetime.now(timezone.utc).isoformat(timespec="minutes"), "steps": status,
-                  "python": sys.version.split()[0], "platform": sys.platform, "errors": ERRORS}
+                  "python": sys.version.split()[0], "platform": sys.platform, "errors": ERRORS,
+                  # how many Odds API keys the props step could rotate through (never the keys)
+                  "odds_keys": len([k for line in open(os.path.join(ROOT, "data", "odds_api_key.txt"))
+                                    if line.strip() and not line.startswith("#")
+                                    for k in re.split(r"[,;\s]+", line.strip()) if k])
+                  if os.path.exists(os.path.join(ROOT, "data", "odds_api_key.txt")) else 0}
     with open(STATUS, "w", encoding="utf-8") as fh:
         json.dump(status_doc, fh, indent=1)
     print("\nsummary:", json.dumps(status))
