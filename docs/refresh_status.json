@@ -2,7 +2,7 @@
  "season": 2026,
  "week": 3,
  "schedule_week": 3,
- "generated": "2026-09-22T20:13+00:00",
+ "generated": "2026-09-22T20:29+00:00",
  "steps": {
   "espn": "ok",
   "pastes": "ok",
@@ -10,6 +10,7 @@
   "myteam": "ok",
   "gm": "ok",
   "fan": "ok",
+  "fanpicks": "ok",
   "props": "ok"
  },
  "python": "3.12.14",
