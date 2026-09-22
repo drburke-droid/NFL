@@ -135,3 +135,18 @@ def test_next_season_board_prices_a_waiver_pickup_at_a_dollar_plus_the_bump():
     assert all(e["value"] >= 1.0 for e in hurt)
     assert any(e["healthy_ppg"] > 5 and e["value"] > 1.0 for e in hurt), "a hurt veteran keeps his level"
     assert all(e["surplus"] == round(e["value"] - e["cost"], 1) for e in adds + drafted)
+
+
+def test_the_bump_is_expected_over_the_playoff_race():
+    from gm.config import load
+    cfg = load(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                            "gm", "leagues", "kuhn_2026.json"))
+    assert kp.expected_bump(cfg, 1.0) == 5.0 and kp.expected_bump(cfg, 0.0) == 3.0
+    assert abs(kp.expected_bump(cfg, 0.35) - 3.7) < 1e-9
+    from gm import players as P
+    est = P.ros_estimates(cfg)
+    b = kp.next_season_board(cfg, est, bump={cfg.raw["my_team_id"]: 3.7})
+    me = b[cfg.raw["my_team_id"]]
+    assert me["bump"] == 3.7 and all(e["cost"] == e["basis"] + 3.7 for e in me["players"].values())
+    other = next(t for t in b if t != cfg.raw["my_team_id"])
+    assert b[other]["bump"] == kp.NEXT_BUMP, "teams not given a bump keep the default"
