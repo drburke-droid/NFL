@@ -311,6 +311,10 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 "score_me": score_me, "score_them": score_them,
                 "give": [v["name"] for v in give], "get": [v["name"] for v in get],
                 "give_players": give, "get_players": get,
+                "my_cuts": [v["name"] for v in rosters[my_team].values()
+                            if v["name"] not in {x["name"] for x in _after_cuts(
+                                [w for q, w in rosters[my_team].items() if q not in gp] + list(get), cap, slots)}
+                            and v["name"] not in {x["name"] for x in give}],
                 "weekly_me": [b - a for a, b in zip(
                     weekly_lineup(cfg, _roster_players(est, my_team, capacity=cap, starters=slots), weeks, fa),
                     weekly_lineup(cfg, _roster_players(est, my_team, gp, get, cap, slots), weeks, fa))],
