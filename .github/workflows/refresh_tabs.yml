@@ -88,4 +88,13 @@ jobs:
           git status --short | head -30
           wk=$(python -c "import json;print(json.load(open('docs/refresh_status.json'))['week'])")
           git commit -m "Tabs refreshed for 2026 wk${wk} (automated)" || { echo "nothing changed"; exit 0; }
-          git pull --rebase && git push
+          # two uploads minutes apart queue two runs; the second rebases onto the first's bake and
+          # every generated file conflicts. The newer bake wins (-X theirs favours the replayed
+          # commit during a rebase), and a push race simply retries.
+          for i in 1 2 3; do
+            git fetch origin main
+            git rebase -X theirs origin/main || { git rebase --abort; git reset --hard origin/main; echo "rebase failed, keeping origin"; exit 0; }
+            git push && exit 0
+            sleep 20
+          done
+          echo "push failed three times"; exit 1
