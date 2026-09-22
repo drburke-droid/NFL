@@ -250,6 +250,17 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   and see whether a more top-heavy split lowers MAE on the teammates of absent alphas.
 - **Bias constant provisional.** -0.528 now; refit weekly and watch whether it stabilises across
   weeks 3-4 before trusting the magnitude.
+- **Fan Picks is a game now (2026-09-22).** `docs/fan.html`: username kept on the device, a
+  per-browser id inside every code, "Lock them in" posts username + code to a Google Form in the
+  background (config `docs/fan/dropbox.json`; empty = the old email/copy flow), and a leaderboard
+  (season, this week, who's in -- the last read live from the form's sheet). Score = error removed
+  against the shipped projection, the same number as before. `scripts/fan_inbox_pull.py` reads the
+  sheet into `data/fan_adjustments/inbox/dropbox.txt`, records (`fan_adjust_record.py`, now with a
+  `fan_id` column) and grades (`fan_grade.py`, now with `by_fan_week`, `rank`, `best_call`); the
+  refresh workflow (`fanpicks` step) and the daily grade both run it. **The drop box itself still
+  has to be created**: a Google Form with two short-answer questions (Username, Code), its response
+  sheet shared read-only, and the form action URL, the two `entry.N` ids and the sheet's gviz CSV
+  URL pasted into `docs/fan/dropbox.json`. Until then submissions go by email as before.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
