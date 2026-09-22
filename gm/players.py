@@ -36,6 +36,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CACHE = os.path.join(ROOT, "data", "nflverse_cache")
 FFA_DIR = os.path.join(ROOT, "data", "ffanalytics", "FFAn_weekly")
 MODEL = os.path.join(ROOT, "gm", "ros_model.json")
+SCHEDULE = os.path.join(ROOT, "data", "schedule_{season}.csv")
 NFLVERSE = ("https://github.com/nflverse/nflverse-data/releases/download/stats_player/"
             "stats_player_week_{season}.parquet")
 FIRST_SEASON = 2012
@@ -60,6 +61,12 @@ P_PLAY = 0.81                           # the pooled figure, kept as the fallbac
 P_PLAY_BASE, P_PLAY_SLOPE, P_PLAY_CAP = 0.75, 0.030, 0.97
 P_PLAY_ABSENT = 0.45                    # a player with no snaps at all this season is hurt, not gone
 KDST_PPG = {"K": 8.85, "DST": 5.59}     # ESPN season totals / 17; K and DST are not differentiated
+# The waiver wire is a real roster spot. A slot nobody on the roster can fill -- the only tight end
+# on bye, two backs hurt the same week -- is filled by the best free agent, not left empty, so
+# every team carries one virtual "waiver" player per position at the level of the best unrostered
+# players. Five deep because the single best free agent is often a data artefact (a backup who
+# played twice) and a manager picks from what is actually there on Tuesday.
+FA_DEPTH = 5
 # Player means built from a couple of games are noisy, and a lineup optimiser compounds that: it
 # keeps whichever estimates happen to be high, so a roster's summed mean is biased upward. Left
 # raw, the blend's simulated team means spread with sd 11.7 where this league's measured spread is
@@ -162,6 +169,21 @@ def _weekly_all(cfg, current_season):
         _WEEKLY_CACHE[key] = weekly_in_league_scoring(cfg, range(FIRST_SEASON, current_season + 1),
                                                       current_season)
     return _WEEKLY_CACHE[key]
+
+
+def bye_weeks(season):
+    """{nfl team: bye week} from the season's schedule file; empty if the file is not there."""
+    p = SCHEDULE.format(season=season)
+    if not os.path.exists(p):
+        return {}
+    s = pd.read_csv(p, usecols=["game_type", "week", "away_team", "home_team"])
+    s = s[s.game_type == "REG"]
+    teams = set(s.away_team) | set(s.home_team)
+    out = {}
+    for w, g in s.groupby("week"):
+        for t in teams - set(g.away_team) - set(g.home_team):
+            out[t] = int(w)
+    return out
 
 
 def replacement_level(weekly, cfg):
@@ -303,6 +325,10 @@ def ros_estimates(cfg, current_season=None, prior_season=None, weekly=None,
     cur = weekly[weekly.season == current_season].groupby("key").pts.agg(["mean", "size"])
     pri = weekly[weekly.season == prior_season].groupby("key").pts.agg(["mean", "size"])
     repl = replacement_level(weekly, cfg)
+    byes = bye_weeks(current_season)
+    rostered = {(norm(e["name"]), e["pos"]) for t in cfg.teams for e in t["roster"]}
+    waiver = dict(KDST_PPG)
+    waiver.update({p: repl[p] for p in SKILL})
 
     fitted = {}
     if use_ridge:
@@ -317,10 +343,18 @@ def ros_estimates(cfg, current_season=None, prior_season=None, weekly=None,
         for _, r in latest.iterrows():
             fitted[(r["key"], r["position"])] = float(pred[r["player_id"]])
             has_ffa[(r["key"], r["position"])] = bool(pd.notna(r["ffa_next"]))
-        rostered = [(norm(e["name"]), e["pos"]) for t in cfg.teams for e in t["roster"] if e["pos"] in SKILL]
-        ffa_cover = float(np.mean([has_ffa.get(k, False) for k in rostered])) if rostered else 0.0
+        skill_rostered = [k for k in rostered if k[1] in SKILL]
+        ffa_cover = float(np.mean([has_ffa.get(k, False) for k in skill_rostered])) if skill_rostered else 0.0
+        # the best free agents at each position, by the same model, with at least one game played
+        fa = feats[feats.ytd_games.notna() & np.isfinite(pred)].assign(pred=pred)
+        fa = fa[[(k, p) not in rostered for k, p in zip(fa.key, fa.position)]]
+        for p in SKILL:
+            top = fa[fa.position == p].pred.sort_values(ascending=False).head(FA_DEPTH)
+            if len(top):
+                waiver[p] = float(max(top.mean(), 0.0))
         ros_estimates.last_ridge = {"week": week, "ffa_stale": stale, "ffa_coverage": ffa_cover,
-                                    "fitted": sum(k in fitted for k in rostered), "rostered": len(rostered)}
+                                    "fitted": sum(k in fitted for k in skill_rostered),
+                                    "rostered": len(skill_rostered), "waiver": dict(waiver)}
 
     est = {}
     for t in cfg.teams:
@@ -350,9 +384,11 @@ def ros_estimates(cfg, current_season=None, prior_season=None, weekly=None,
                 sd = None
             if sd is None:
                 sd = SD_SLOPE * max(mean, 0.0) + SD_INTERCEPT
+            nfl = TEAM_FIX.get(e.get("nfl_team"), e.get("nfl_team"))
             est[(t["team_id"], e["player_id"])] = {
                 "name": e["name"], "pos": pos, "mean": float(mean), "sd": float(sd),
-                "p_play": float(p), "source": src, "model": how, "raw_mean": float(mean)}
+                "p_play": float(p), "source": src, "model": how, "raw_mean": float(mean),
+                "nfl_team": nfl, "bye": byes.get(nfl)}
 
     if mean_shrink < 1.0:
         pos_mean = {}
@@ -370,6 +406,13 @@ def ros_estimates(cfg, current_season=None, prior_season=None, weekly=None,
     for v in est.values():
         if v["pos"] in SKILL and v["source"] != "prior_only":
             v["p_play"] = min(P_PLAY_CAP, P_PLAY_BASE + P_PLAY_SLOPE * max(v["mean"], 0.0))
+    # the waiver wire, one virtual player per position, keyed to the pseudo-team "FA"
+    for pos, m in waiver.items():
+        p = 1.0 if pos in KDST_PPG else min(P_PLAY_CAP, P_PLAY_BASE + P_PLAY_SLOPE * m)
+        est[("FA", pos)] = {"name": f"waiver {pos}", "pos": pos, "mean": float(m),
+                            "sd": float(SD_SLOPE * m + SD_INTERCEPT), "p_play": float(p),
+                            "source": "waiver", "model": "waiver", "raw_mean": float(m),
+                            "nfl_team": None, "bye": None}
     return est
 
 

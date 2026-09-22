@@ -75,6 +75,16 @@ def weeks_needed(cfg, played_weeks=None):
     return len(future) + len(cfg.playoff_weeks), future
 
 
+def week_columns(cfg, played_weeks=None):
+    """The league week each score column stands for: remaining regular weeks, then the playoffs.
+
+    This is what lets a bye land in the right column. A column is not "some future week"; it is
+    week 11, and every Packer on the roster sits it out.
+    """
+    _, future = weeks_needed(cfg, played_weeks)
+    return list(future) + list(cfg.playoff_weeks)
+
+
 def run(cfg, weekly_scores, played_weeks=None):
     """Simulate the rest of the season.
 
@@ -193,7 +203,7 @@ def _player_rng(common_seed, player_id):
 
 
 def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
-                       mean_se=MEAN_SE, common_seed=None):
+                       mean_se=MEAN_SE, common_seed=None, weeks=None):
     """Weekly team scores built from a roster, so a trade can be run through the season.
 
     Each player either plays (Bernoulli on p_play) and draws from his own distribution, or scores
@@ -201,6 +211,14 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
     the best nine it can field in a given week, not the sum of its parts, so depth at a position is
     worth much less than the same points spread across positions. That is why a trade of two good
     backs for one great one can lose value even when the totals match.
+
+    Two things a roster meets in a real season are in here too. With `weeks` (the league week of
+    each column, from week_columns), a player sits out his NFL bye, so depth is worth exactly what
+    it covers: a roster with five backs off in week 11 feels it, one with a spare receiver does
+    not. And every position has a virtual waiver player (the "FA" entries the estimator adds):
+    the best free agent fills any slot the roster cannot, so the only tight end's bye costs the
+    gap to a streamer, not the whole slot -- and a bench player below waiver level is worth
+    nothing, because the manager would pick up the free agent instead.
 
     The optimal lineup is a sort, not a search. Fill each dedicated slot with the best at that
     position; the flex then takes the best player left over, which can only be the next one down at
@@ -216,12 +234,15 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
     flexes = [(s, c) for s, c in cfg.starters if s in flex_elig]
     out = np.zeros((n_sims, len(order), n_cols))
 
+    waiver = {pos: {**v, "key": f"FA:{pos}", "bye": None} for (t, pos), v in est.items() if t == "FA"}
     for ti, tid in enumerate(order):
         roster = [{**v, "key": v.get("key", pid)} for (t, pid), v in est.items()
                   if t == tid]
         by_pos = {}
         for v in roster:
             by_pos.setdefault(v["pos"], []).append(v)
+        for pos, v in waiver.items():
+            by_pos.setdefault(pos, []).append(v)
 
         drawn = {}
         for pos, players in by_pos.items():
@@ -240,6 +261,11 @@ def player_team_scores(cfg, est, n_sims, n_cols, rng=None, floor=SCORE_FLOOR,
                     m = r.random((n_sims, n_cols)) < pl["p_play"]
                     cols.append(x * m); masks.append(m)
                 s = np.stack(cols, axis=2); played_mask = np.stack(masks, axis=2)
+            if weeks is not None:
+                on_bye = np.array([[pl.get("bye") == w for pl in players] for w in weeks])
+                if on_bye.any():
+                    s = s * ~on_bye[None]
+                    played_mask = played_mask & ~on_bye[None]
             # A lineup is named BEFORE the week, so it is ordered by expectation and filtered by
             # availability -- not by what the scores turned out to be. Sorting realized points
             # would be hindsight, and it quietly pays teams for bench depth they could never have
@@ -359,12 +385,13 @@ def evaluate_trade(cfg, est, moves, n_sims=20000, seed=0, played_weeks=None, mea
     """
     est = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
     need, _ = weeks_needed(cfg, played_weeks)
+    weeks = week_columns(cfg, played_weeks)
     before = run(cfg, player_team_scores(cfg, est, n_sims, need, rng=np.random.default_rng(seed),
-                                         mean_se=mean_se, common_seed=seed), played_weeks)
+                                         mean_se=mean_se, common_seed=seed, weeks=weeks), played_weeks)
     after = run(cfg, player_team_scores(cfg, apply_trade(est, moves, roster_capacity(cfg),
                                                          dedicated_starters(cfg)),
                                         n_sims, need, rng=np.random.default_rng(seed),
-                                        mean_se=mean_se, common_seed=seed), played_weeks)
+                                        mean_se=mean_se, common_seed=seed, weeks=weeks), played_weeks)
     involved = sorted({m[1] for m in moves} | {m[2] for m in moves})
     delta = {}
     for t in involved:

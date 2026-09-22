@@ -53,21 +53,90 @@ def expected_lineup(cfg, means_by_pos):
     return total
 
 
-def _roster_means(est, team_id, out_ids=(), in_players=(), capacity=None, starters=None):
-    """Expected weekly contributions by position, after a swap and any forced cut.
+def _slots(cfg):
+    """The lineup shape, resolved once: dedicated (pos, count) and flex (count, eligible positions)."""
+    flex = cfg.raw["roster"].get("flex_eligibility", {})
+    return ([(s, c) for s, c in cfg.starters if s not in flex],
+            [(c, tuple(flex[s])) for s, c in cfg.starters if s in flex])
+
+
+def _lineup(slots, by_pos):
+    """expected_lineup on a pre-resolved shape: the same sort, without re-reading the config."""
+    dedicated, flexes = slots
+    total, used = 0.0, {}
+    for pos, count in dedicated:
+        vals = by_pos.get(pos)
+        if vals:
+            vals.sort(reverse=True)
+            total += sum(vals[:count]); used[pos] = min(count, len(vals))
+    for count, elig in flexes:
+        pool = []
+        for pos in elig:
+            vals = by_pos.get(pos)
+            if vals:
+                pool += vals[used.get(pos, 0):]
+        if pool:
+            pool.sort(reverse=True); total += sum(pool[:count])
+    return total
+
+
+def _roster_players(est, team_id, out_ids=(), in_players=(), capacity=None, starters=None):
+    """The roster after a swap and any forced cut.
 
     Rosters are full, so a team receiving more than it sends must drop somebody, and stage one has
     to see that cost or it will rank uneven trades as free depth.
     """
     drop = set(out_ids)
     kept = [v for (t, pid), v in est.items() if t == team_id and pid not in drop]
-    kept = kept + list(in_players)
+    return _after_cuts(kept + list(in_players), capacity, starters)
+
+
+def _after_cuts(kept, capacity, starters):
     drop = sim.forced_cuts(kept, capacity, starters)
-    kept = [v for v in kept if not any(v is d for d in drop)]
+    return kept if not drop else [v for v in kept if not any(v is d for d in drop)]
+
+
+def _roster_means(est, team_id, out_ids=(), in_players=(), capacity=None, starters=None):
+    """Expected weekly contributions by position, after a swap and any forced cut (one average week)."""
     out = {}
-    for v in kept:
+    for v in _roster_players(est, team_id, out_ids, in_players, capacity, starters):
         out.setdefault(v["pos"], []).append(v["mean"] * v["p_play"])
     return out
+
+
+def waiver_levels(est):
+    """Expected weekly points of the virtual free agent at each position."""
+    return {pos: v["mean"] * v["p_play"] for (t, pos), v in est.items() if t == "FA"}
+
+
+def weekly_lineup(cfg, players, weeks, waiver=None):
+    """Expected starting-lineup points for each league week: byes out, waiver player in.
+
+    A player on bye contributes nothing that week and the next man (or the waiver player) starts.
+    This is the per-week picture a manager actually reasons about -- "who starts for me in week
+    11 when five of my backs are off?" -- and it is what stage one now ranks on.
+    """
+    # most weeks share the same lineup (nobody on bye), so solve once per distinct bye week
+    slots = cfg if isinstance(cfg, tuple) else _slots(cfg)
+    byes = {v.get("bye") for v in players}
+    cache = {}
+    out = []
+    for w in weeks:
+        key = w if w in byes else None
+        if key not in cache:
+            by_pos = {pos: [m] for pos, m in (waiver or {}).items()}
+            for v in players:
+                if v.get("bye") != w:
+                    by_pos.setdefault(v["pos"], []).append(v["mean"] * v["p_play"])
+            cache[key] = _lineup(slots, by_pos)
+        out.append(cache[key])
+    return out
+
+
+def season_lineup(cfg, players, weeks, waiver=None):
+    """Mean expected lineup points a week over the remaining weeks."""
+    pts = weekly_lineup(cfg, players, weeks, waiver)
+    return float(np.mean(pts)) if pts else 0.0
 
 
 def _packages(players, max_size, pool=None):
@@ -100,13 +169,14 @@ def _title_slope(cfg, est, team_id, n_sims=4000, seed=0, played_weeks=None, bump
     simulator exists to compute. Measured by nudging the roster and re-running.
     """
     need, _ = sim.weeks_needed(cfg, played_weeks)
+    weeks = sim.week_columns(cfg, played_weeks)
     lifted = {k: ({**v, "mean": v["mean"] + bump / max(cfg.starting_size, 1)} if k[0] == team_id else v)
               for k, v in est.items()}
     rng = lambda: __import__("numpy").random.default_rng(seed)
-    a = sim.run(cfg, sim.player_team_scores(cfg, est, n_sims, need, rng=rng(), common_seed=seed),
-                played_weeks)["teams"][team_id]["p_title"]
-    b = sim.run(cfg, sim.player_team_scores(cfg, lifted, n_sims, need, rng=rng(), common_seed=seed),
-                played_weeks)["teams"][team_id]["p_title"]
+    a = sim.run(cfg, sim.player_team_scores(cfg, est, n_sims, need, rng=rng(), common_seed=seed,
+                                            weeks=weeks), played_weeks)["teams"][team_id]["p_title"]
+    b = sim.run(cfg, sim.player_team_scores(cfg, lifted, n_sims, need, rng=rng(), common_seed=seed,
+                                            weeks=weeks), played_weeks)["teams"][team_id]["p_title"]
     return max(b - a, 0.0) / bump
 
 
@@ -160,13 +230,36 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
     mine = {p: v for (t, p), v in est.items() if t == my_team}
     cap = roster_capacity(cfg)
     slots = sim.dedicated_starters(cfg)
-    base_me = expected_lineup(cfg, _roster_means(est, my_team, capacity=cap, starters=slots))
+    weeks = sim.week_columns(cfg, played_weeks)
+    fa = waiver_levels(est)
+    rosters = {}
+    for (t, p), v in est.items():
+        rosters.setdefault(t, {})[p] = v
+    shape = _slots(cfg)
+
+    def lineup(team, out_ids=(), in_players=()):
+        kept = [v for p, v in rosters[team].items() if p not in out_ids] + list(in_players)
+        return season_lineup(shape, _after_cuts(kept, cap, slots), weeks, fa)
+
+    def quick(team, out_ids=(), in_players=()):
+        # one bye-free week: the screen that decides whether the per-week lineup is worth solving
+        kept = [v for p, v in rosters[team].items() if p not in out_ids] + list(in_players)
+        by_pos = {pos: [m] for pos, m in fa.items()}
+        for v in _after_cuts(kept, cap, slots):
+            by_pos.setdefault(v["pos"], []).append(v["mean"] * v["p_play"])
+        return _lineup(shape, by_pos)
+    # A bye moves the season average by at most a starter's share of one week in fifteen, so a
+    # trade that is more than a point a week under water without byes cannot clear with them.
+    SCREEN = -1.0
+    base_me = lineup(my_team)
+    quick_me = quick(my_team)
     my_pkgs = _packages(mine, max_package, pool)
 
     cands = []
     for other in [t["team_id"] for t in cfg.teams if t["team_id"] != my_team]:
         theirs = {p: v for (t, p), v in est.items() if t == other}
-        base_them = expected_lineup(cfg, _roster_means(est, other, capacity=cap, starters=slots))
+        base_them = lineup(other)
+        quick_them = quick(other)
         their_pkgs = _packages(theirs, max_package, pool)
         for gp in my_pkgs:
             give = [mine[i] for i in gp]
@@ -174,8 +267,10 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 if len(gp) + len(rp) > max_combined:
                     continue                      # the far tail of shapes costs more than it finds
                 get = [theirs[i] for i in rp]
-                d_me = expected_lineup(cfg, _roster_means(est, my_team, gp, get, cap, slots)) - base_me
-                d_them = expected_lineup(cfg, _roster_means(est, other, rp, give, cap, slots)) - base_them
+                if quick(my_team, gp, get) - quick_me < SCREEN or quick(other, rp, give) - quick_them < SCREEN:
+                    continue
+                d_me = lineup(my_team, gp, get) - base_me
+                d_them = lineup(other, rp, give) - base_them
                 k_me = k_them = 0.0
                 if stage1_keepers:
                     k_me = _keeper_gain(board, my_team, mine, gp, get, cap, slots)
@@ -210,6 +305,11 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 "keeper_me": k_me, "keeper_them": k_them,
                 "score_me": score_me, "score_them": score_them,
                 "give": [v["name"] for v in give], "get": [v["name"] for v in get],
+                "give_players": give, "get_players": get,
+                "weekly_me": [b - a for a, b in zip(
+                    weekly_lineup(cfg, _roster_players(est, my_team, capacity=cap, starters=slots), weeks, fa),
+                    weekly_lineup(cfg, _roster_players(est, my_team, gp, get, cap, slots), weeks, fa))],
+                "weeks": weeks,
                 "with_team": other,
                 "my_p_title": me["p_title"]["delta"], "their_p_title": them["p_title"]["delta"],
                 "my_p_playoffs": me["p_playoffs"]["delta"],
