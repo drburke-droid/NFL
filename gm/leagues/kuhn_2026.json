@@ -864,7 +864,7 @@
      "name": "Drake Maye",
      "pos": "QB",
      "nfl_team": "NE",
-     "slot": "QB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 6
@@ -916,7 +916,7 @@
      "name": "Tyler Shough",
      "pos": "QB",
      "nfl_team": "NO",
-     "slot": "BENCH",
+     "slot": "QB",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 10
