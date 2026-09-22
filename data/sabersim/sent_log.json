@@ -474,5 +474,106 @@
    },
    "warnings": []
   }
+ },
+ "2026-09-22T00:15_1g": {
+  "sent_at": "2026-09-21T22:58:32Z",
+  "rows": 33,
+  "file": "Burke_Model_Burke_2026_mon08pm_0921_2256.csv",
+  "slate": "Mon 09/21 08:15 PM ET slate (1 games)",
+  "credits_left": 2141,
+  "lineups": [
+   "schedule: 18 weeks; week 2 runs Fri 09/18 .. Tue 09/22",
+   "week 2: 1 games in this send (kickoffs Tue 00:15Z .. Tue 00:15Z)",
+   "injury report (nfl.com): 66 skill/K players listed; practice {'FP': 35, 'DNP': 18, 'LP': 13}; designations {'Questionable': 12, 'Out': 11, 'Doubtful': 4}",
+   "lineups: 382 statuses pulled {'espn': 126, '+sleeper': 103, 'sleeper': 101, 'espn+sleeper': 41, 'nfl-report': 8, 'nfl-report+sleeper': 3}; 0 Q, 2 OUT with a projection {'nfl-report+sleeper': 1, 'espn+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk2.csv",
+    "rows": 920,
+    "age_hours": 0.0,
+    "slate_skill": 29,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-09-21T22:57Z",
+    "credits_left": "207"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 24,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 16,
+     "rec": 14,
+     "exp_td": 24
+    },
+    "no_line": [
+     "Puka Nacua"
+    ],
+    "eligible": 8,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 5
+   },
+   "kdst": {
+    "file": "kdst_2026_wk2.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "LA": [
+      "Harrison Mevis"
+     ],
+     "NYG": [
+      "Dominic Zvada"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 66,
+    "designations": {
+     "Questionable": 12,
+     "Out": 11,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 382,
+    "by_src": {
+     "espn": 126,
+     "+sleeper": 103,
+     "sleeper": 101,
+     "espn+sleeper": 41,
+     "nfl-report": 8,
+     "nfl-report+sleeper": 3
+    },
+    "q": 0,
+    "out": 2,
+    "out_by_src": {
+     "nfl-report+sleeper": 1,
+     "espn+sleeper": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Puka Nacua"
+   ]
+  }
  }
 }
