@@ -93,6 +93,13 @@ def main():
     print(f"{cfg.raw['name']}  ({len(cfg.teams)} teams, {cfg.raw['season']})")
     print(f"  weeks complete: {len(done)}   simulating {future[0]}-{future[-1]} "
           f"plus playoffs {cfg.playoff_weeks}   [{a.sims:,} seasons]")
+    h = ros_estimates.last_ridge
+    if h:
+        print(f"  player means: fitted ridge through week {h['week']}, {h['fitted']}/{h['rostered']} "
+              f"skill players fitted, FFA next-week projection for {h['ffa_coverage']:.0%}"
+              + ("  [ffa stale: next week's file not uploaded yet]" if h["ffa_stale"] else ""))
+    else:
+        print("  player means: legacy blend (gm/ros_model.json not found)")
     print()
     scores = sim.player_team_scores(cfg, est, a.sims, need, rng=np.random.default_rng(a.seed),
                                     common_seed=a.seed)

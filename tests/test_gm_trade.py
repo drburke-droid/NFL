@@ -159,3 +159,20 @@ def test_only_the_involved_teams_are_reported(league):
     r = sim.evaluate_trade(c, est, [(ch[1], ch[0], ugh)], n_sims=1500, seed=5, played_weeks=[1])
     assert set(r["delta"]) == {ch[0], ugh}
     assert len(r["before"]) == len(c.teams)
+
+
+def test_a_forced_cut_never_empties_a_dedicated_slot():
+    """A manager taking on a receiver drops a bench back, not his only defence -- even when the
+    defence carries the lowest mean on the roster (it usually does: 5.59 flat)."""
+    mk = lambda pos, mean: {"pos": pos, "mean": mean, "p_play": 1.0, "name": f"{pos}{mean}"}
+    roster = [mk("DST", 5.6), mk("K", 8.9), mk("QB", 20.0), mk("RB", 7.8), mk("RB", 8.6),
+              mk("RB", 10.0), mk("WR", 12.0), mk("WR", 16.0), mk("TE", 9.0)]
+    slots = {"QB": 1, "K": 1, "DST": 1, "RB": 2, "WR": 2, "TE": 1}
+    cut = sim.forced_cuts(roster, capacity=8, starters=slots)
+    assert [v["name"] for v in cut] == ["RB7.8"], "the lowest cuttable, not the lowest"
+    assert [v["name"] for v in sim.forced_cuts(roster, 8)] == ["DST5.6"], "without slots it is the old rule"
+    two = sim.forced_cuts(roster + [mk("WR", 6.0)], 8, slots)
+    assert {v["name"] for v in two} == {"WR6.0", "RB7.8"}
+    # every slot exactly filled: there is nothing honest to cut, so the old rule applies
+    tight = [v for v in roster if v["name"] != "RB10.0"]
+    assert [v["name"] for v in sim.forced_cuts(tight, 7, slots)] == ["DST5.6"]
