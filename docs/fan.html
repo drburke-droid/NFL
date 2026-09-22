@@ -13,7 +13,7 @@
   .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
   .how { font-size:13px; color:var(--mut); } .how b { color:var(--ink); }
   label { display:block; color:var(--mut); font-size:12px; margin-bottom:4px; }
-  input[type=text], select, textarea { width:100%; background:#0f1115; color:var(--ink); border:1px solid #333845; border-radius:8px; padding:9px 11px; font-size:15px; font-family:inherit; }
+  input[type=text], input[type=password], select, textarea { width:100%; background:#0f1115; color:var(--ink); border:1px solid #333845; border-radius:8px; padding:9px 11px; font-size:15px; font-family:inherit; }
   .row { display:flex; gap:8px; flex-wrap:wrap; } .row > * { flex:1 1 140px; }
   .game { margin:16px 0 6px; font-size:12px; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
   .game b { color:var(--ink); font-size:13px; letter-spacing:0; text-transform:none; }
@@ -83,9 +83,10 @@
 
   <div class="card">
     <div class="row">
-      <div><label for="who">Your username (shows on the leaderboard)</label><input id="who" type="text" placeholder="pick a name and keep it all season" autocomplete="nickname" maxlength="24"></div>
+      <div style="flex:2 1 200px"><label for="who">Your username (shows on the leaderboard)</label><input id="who" type="text" placeholder="pick a name and keep it all season" autocomplete="nickname" maxlength="24"></div>
+      <div style="flex:1 1 120px"><label for="pin">Your PIN (4+ digits)</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="same PIN every week" autocomplete="off" maxlength="8"></div>
     </div>
-    <div class="how" style="margin-top:6px" id="whohow">Saved on this device. Submit as often as you like before kickoff — your latest picks are the ones that count.</div>
+    <div class="how" style="margin-top:6px" id="whohow">Username + PIN is you: use the same pair on any phone or laptop and your weeks add up in one entry. The PIN never leaves your device (the page sends a scrambled fingerprint of it), so nobody can post picks under your name without it. Both are saved here. Submit as often as you like before kickoff — your latest picks count.</div>
   </div>
 
   <div class="card how">
@@ -141,16 +142,33 @@ const STEP = 0.10, MIN_N = -10;
 const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
 const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const me = () => ($("who").value || "").trim().slice(0, 24);
-// a per-browser id rides along in the code, so two fans who type the same name can be told apart
-let FID = ls.get("fanpicks_id");
-if (!FID) { FID = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)).slice(0, 36); ls.set("fanpicks_id", FID); }
+// Identity = a hash of username + PIN, computed here and never reversed anywhere: the same person
+// reproduces it on any device, a name-alike without the PIN does not. A separate random id marks
+// this browser, for the data mining only.
+let DID = ls.get("fanpicks_id");
+if (!DID) { DID = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)).slice(0, 36); ls.set("fanpicks_id", DID); }
+let IDH = "";
+const pin = () => ($("pin").value || "").replace(/\D/g, "");
+async function identity() {
+  const name = me().toLowerCase(), p = pin();
+  if (!name || p.length < 4) { IDH = ""; return IDH; }
+  const msg = new TextEncoder().encode("fanpicks|" + name + "|" + p);
+  try {
+    const buf = await crypto.subtle.digest("SHA-256", msg);
+    IDH = [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, "0")).join("").slice(0, 20);
+  } catch (e) {                                   // no WebCrypto (very old browser): a weak but stable fallback
+    let h = 2166136261; for (const c of msg) { h ^= c; h = Math.imul(h, 16777619) >>> 0; }
+    IDH = "fnv" + h.toString(16);
+  }
+  return IDH;
+}
 
 fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.sheet_csv) liveIn(); }).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   D = d; KEY = "fanpicks_" + d.season + "_wk" + d.week + "_" + (d.bake_id || "");   // a re-bake renumbers players, so drafts are per bake
   try { picks = JSON.parse(ls.get(KEY) || "{}") || {}; } catch(e) { picks = {}; }
-  $("who").value = ls.get("fanpicks_who") || "";
+  $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; identity().then(renderLead);
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   render(); count(); sentNote(); leaderboard();
@@ -212,20 +230,23 @@ function sentNote() {
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
-$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); renderLead(); });
+$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(renderLead); });
+$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(renderLead); });
 $("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {}; ls.del(KEY); render(); count(); };
 
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
   const a = Object.entries(picks).map(([k, v]) => { const [i, s] = k.split(":").map(Number); return [i, s, v]; });
-  const j = {n: me(), u: FID, t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), a};
+  const j = {n: me(), u: IDH || DID, d: DID, t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), a};
   return "FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
 }
 const dropbox = () => !!(CFG.form_action && CFG.entry_user && CFG.entry_code);
-$("submit").onclick = () => {
+$("submit").onclick = async () => {
   if (!D) return;
   if (!Object.keys(picks).length) { $("draft").textContent = "· tap ▲ or ▼ on at least one stat first"; return; }
   if (!me()) { $("who").focus(); $("who").placeholder = "pick a username first"; return; }
+  if (pin().length < 4) { $("pin").focus(); $("pin").placeholder = "4+ digits, please"; $("draft").textContent = "· add a PIN so your weeks stay yours"; return; }
+  await identity();
   $("code").textContent = buildCode(); $("mstat").textContent = ""; $("mstat").className = "status";
   const n = Object.keys(picks).length;
   if (dropbox()) {
@@ -293,6 +314,7 @@ async function liveIn() {
 function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D.week && x.fan === me())); LIVE.push({fan: me(), week: D.week, submitted_at: new Date().toISOString(), arrows: Object.keys(picks).length}); renderLead(); }
 const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
 const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
+const isMe = f => (IDH && f.fan_id === IDH) || (!IDH && f.fan === me());
 function renderLead() {
   const el = $("lead"), you = $("you"); if (!D) return;
   const mine = me();
@@ -308,16 +330,16 @@ function renderLead() {
   if (TAB === "season") {
     const rows = G.by_fan;
     el.innerHTML = `<div class="gwrap"><table class="g"><tr><th></th><th class="l">fan</th><th>score</th><th>direction</th><th>arrows</th><th>weeks</th><th class="l">best call</th></tr>` +
-      rows.map(f => `<tr class="${f.fan === mine ? "me" : ""}"><td class="rk">${f.rank || ""}</td><td class="l">${esc(f.fan)}</td><td class="score">${pts(f.removed_pts)}</td><td>${pct(f.hit_rate)}</td><td>${f.graded}${f.pending ? ` <small style="color:var(--mut)">+${f.pending} pending</small>` : ""}</td><td>${(f.weeks || []).length}</td><td class="l">${f.best_call ? `${esc(f.best_call.player)} ${LABEL[f.best_call.stat] || f.best_call.stat} ${f.best_call.arrows > 0 ? "▲" : "▼"}${Math.abs(f.best_call.arrows)} ${pts(f.best_call.removed_pts)}` : "—"}</td></tr>`).join("") + `</table></div>`;
-    const m = rows.find(f => f.fan === mine);
+      rows.map(f => `<tr class="${isMe(f) ? "me" : ""}"><td class="rk">${f.rank || ""}</td><td class="l">${esc(f.fan)}</td><td class="score">${pts(f.removed_pts)}</td><td>${pct(f.hit_rate)}</td><td>${f.graded}${f.pending ? ` <small style="color:var(--mut)">+${f.pending} pending</small>` : ""}</td><td>${(f.weeks || []).length}</td><td class="l">${f.best_call ? `${esc(f.best_call.player)} ${LABEL[f.best_call.stat] || f.best_call.stat} ${f.best_call.arrows > 0 ? "▲" : "▼"}${Math.abs(f.best_call.arrows)} ${pts(f.best_call.removed_pts)}` : "—"}</td></tr>`).join("") + `</table></div>`;
+    const m = rows.find(f => isMe(f));
     you.innerHTML = mine ? (m ? `You are <b>#${m.rank}</b> of ${rows.length} with ${pts(m.removed_pts)} pts` : `${esc(mine)} is not on the board yet — submit picks and get graded`) : "";
   } else {
     const weeks = [...new Set((G.by_fan_week || []).filter(x => x.graded).map(x => x.week))].sort((a, b) => b - a);
     if (!weeks.length) { el.textContent = "no week has been graded yet"; you.textContent = ""; return; }
     const wk = weeks[0], rows = (G.by_fan_week || []).filter(x => x.week === wk && x.graded).sort((a, b) => (b.removed_pts || 0) - (a.removed_pts || 0));
     el.innerHTML = `<div class="how" style="margin-bottom:4px">Week ${wk}${wk !== D.week ? " (the latest week with box scores)" : ""}</div><div class="gwrap"><table class="g"><tr><th></th><th class="l">fan</th><th>score</th><th>direction</th><th>arrows</th><th>closer / farther</th></tr>` +
-      rows.map((f, i) => `<tr class="${f.fan === mine ? "me" : ""}"><td class="rk">${i + 1}</td><td class="l">${esc(f.fan)}</td><td class="score">${pts(f.removed_pts)}</td><td>${pct(f.hit_rate)}</td><td>${f.graded}</td><td>${f.closer} / ${f.farther}</td></tr>`).join("") + `</table></div>`;
-    const i = rows.findIndex(f => f.fan === mine);
+      rows.map((f, i) => `<tr class="${isMe(f) ? "me" : ""}"><td class="rk">${i + 1}</td><td class="l">${esc(f.fan)}</td><td class="score">${pts(f.removed_pts)}</td><td>${pct(f.hit_rate)}</td><td>${f.graded}</td><td>${f.closer} / ${f.farther}</td></tr>`).join("") + `</table></div>`;
+    const i = rows.findIndex(f => isMe(f));
     you.innerHTML = mine && i >= 0 ? `Week ${wk}: you are <b>#${i + 1}</b> of ${rows.length}` : "";
   }
 }

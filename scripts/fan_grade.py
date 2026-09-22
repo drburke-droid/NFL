@@ -139,7 +139,8 @@ def summarise(g):
                 "mae_base_pts": round(float((gd.err_base * gd.stat.map(PTS)).mean()), 3) if len(gd) else None,
                 "mae_adj_pts": round(float((gd.err_adj * gd.stat.map(PTS)).mean()), 3) if len(gd) else None}
     s = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": block(g)}
-    s["by_fan"] = sorted([dict(fan=f, weeks=sorted(int(w) for w in d.week.unique()), **block(d)) for f, d in g.groupby("fan")],
+    s["by_fan"] = sorted([dict(fan=f, fan_id=(str(d.fan_id.iloc[0]) if "fan_id" in d.columns else ""),
+                               weeks=sorted(int(w) for w in d.week.unique()), **block(d)) for f, d in g.groupby("fan")],
                          key=lambda x: (-(x["removed_pts"] or 0), -x["graded"], x["fan"]))
     for rank, f in enumerate(s["by_fan"], 1):          # the leaderboard: position and best call
         f["rank"] = rank
@@ -149,7 +150,8 @@ def summarise(g):
             f["best_call"] = {"week": int(b.week), "player": b.player, "stat": b.stat, "arrows": int(b.arrows),
                               "removed_pts": round(float(b.removed_pts), 2)}
     # weekly standings, so a fan who joins in week 6 has a race to win that week
-    s["by_fan_week"] = sorted([dict(fan=f, week=int(w), **block(d)) for (f, w), d in g.groupby(["fan", "week"])],
+    s["by_fan_week"] = sorted([dict(fan=f, fan_id=(str(d.fan_id.iloc[0]) if "fan_id" in d.columns else ""), week=int(w), **block(d))
+                               for (f, w), d in g.groupby(["fan", "week"])],
                               key=lambda x: (-x["week"], -(x["removed_pts"] or 0), -x["graded"], x["fan"]))
     s["by_stat"] = {st: block(d) for st, d in g.groupby("stat")}
     g["size"] = g.arrows.abs().clip(upper=4).map(lambda k: {1: "1", 2: "2", 3: "3", 4: "4+"}[int(k)])
@@ -195,7 +197,31 @@ if not os.path.exists(LONG):
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     json.dump({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": {"n": 0, "graded": 0, "pending": 0}, "by_fan": [], "rows": [], "note": "no submissions recorded yet"}, open(OUT, "w"), indent=1)
     print("no submissions recorded yet -> wrote an empty docs/fan/grade.json"); sys.exit(0)
-rows = pd.read_csv(LONG, dtype={"player_id": str}); rows = rows[rows.season == A.season].copy()
+rows = pd.read_csv(LONG, dtype={"player_id": str, "fan_id": str}); rows = rows[rows.season == A.season].copy()
+# WHO a row belongs to. Since 2026-09-22 the page hashes username + PIN into fan_id, so the same
+# person reproduces it on any device and a name-alike without the PIN does not. Rows from before
+# that (no fan_id) attach to the first PIN identity that later claims the same name -- the two
+# early fans keep their history when they pick a PIN. aliases.json merges identities by hand
+# ("forgot my PIN"): {old_fan_id: new_fan_id}. The display name is the one used most recently
+# under that identity; two identities that display the same name get the id's tail appended.
+ALIASES = os.path.join(ROOT, "data", "fan_adjustments", "aliases.json")
+if len(rows):
+    alias = json.load(open(ALIASES, encoding="utf-8")) if os.path.exists(ALIASES) else {}
+    fid = rows.fan_id.fillna("").astype(str).str.strip()
+    fid = fid.map(lambda x: alias.get(x, x))
+    named = rows.assign(_fid=fid)[fid != ""].sort_values("submitted_at")
+    first_id_for_name = {}
+    for r in named.itertuples():
+        first_id_for_name.setdefault(norm(r.fan), r._fid)
+    key = [f if f else ("name:" + norm(n) if norm(n) not in first_id_for_name else first_id_for_name[norm(n)])
+           for f, n in zip(fid, rows.fan)]
+    rows["fan_id"] = key
+    latest_name = rows.sort_values("submitted_at").groupby("fan_id").fan.last()
+    shown = {}
+    for k, nm in latest_name.items():
+        shown.setdefault(nm, []).append(k)
+    display = {k: (nm if len(ks) == 1 else f"{nm} ({k[-4:]})") for nm, ks in shown.items() for k in ks}
+    rows["fan"] = rows.fan_id.map(display)
 # A fan who resubmits after tweaking his arrows produces a second code with a later submitted_at,
 # and the long table is append-only by design, so both submissions sit in it. Only his last word
 # counts: grading both would weigh every arrow he did not change twice over. The superseded rows
