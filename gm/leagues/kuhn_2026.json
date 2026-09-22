@@ -152,13 +152,13 @@
    "name": "I Dowdle win",
    "owner": "espn98580191",
    "record": {
-    "w": 0,
+    "w": 1,
     "l": 1,
     "t": 0
    },
-   "points_for": 144.1,
-   "points_against": 176.62,
-   "playoff_seed": 7,
+   "points_for": 277.78,
+   "points_against": 269.02,
+   "playoff_seed": 5,
    "faab_remaining": 98.0,
    "roster": [
     {
@@ -361,12 +361,12 @@
    "owner": "eyedocjj",
    "record": {
     "w": 1,
-    "l": 0,
+    "l": 1,
     "t": 0
    },
-   "points_for": 140.16,
-   "points_against": 66.86,
-   "playoff_seed": 4,
+   "points_for": 219.04,
+   "points_against": 162.92,
+   "playoff_seed": 7,
    "faab_remaining": 100.0,
    "roster": [
     {
@@ -568,13 +568,13 @@
    "name": "This is the year!",
    "owner": "funblood",
    "record": {
-    "w": 1,
+    "w": 2,
     "l": 0,
     "t": 0
    },
-   "points_for": 128.36,
-   "points_against": 99.46,
-   "playoff_seed": 5,
+   "points_for": 243.0,
+   "points_against": 191.42,
+   "playoff_seed": 3,
    "faab_remaining": 100.0,
    "roster": [
     {
@@ -642,7 +642,7 @@
      "name": "Jayden Daniels",
      "pos": "QB",
      "nfl_team": "WAS",
-     "slot": "QB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 14
@@ -702,7 +702,7 @@
      "name": "Jordan Love",
      "pos": "QB",
      "nfl_team": "GB",
-     "slot": "BENCH",
+     "slot": "QB",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 6
@@ -777,12 +777,12 @@
    "owner": "espn14211458",
    "record": {
     "w": 1,
-    "l": 0,
+    "l": 1,
     "t": 0
    },
-   "points_for": 112.32,
-   "points_against": 89.0,
-   "playoff_seed": 6,
+   "points_for": 215.64,
+   "points_against": 197.68,
+   "playoff_seed": 8,
    "faab_remaining": 100.0,
    "roster": [
     {
@@ -984,13 +984,13 @@
    "name": "Glass Joe",
    "owner": "BobbyeddyB",
    "record": {
-    "w": 0,
+    "w": 1,
     "l": 1,
     "t": 0
    },
-   "points_for": 66.86,
-   "points_against": 140.16,
-   "playoff_seed": 12,
+   "points_for": 175.54,
+   "points_against": 243.48,
+   "playoff_seed": 9,
    "faab_remaining": 100.0,
    "roster": [
     {
@@ -1193,11 +1193,11 @@
    "owner": "silverandblack.27",
    "record": {
     "w": 0,
-    "l": 1,
+    "l": 2,
     "t": 0
    },
-   "points_for": 89.0,
-   "points_against": 112.32,
+   "points_for": 197.96,
+   "points_against": 299.2,
    "playoff_seed": 11,
    "faab_remaining": 97.0,
    "roster": [
@@ -1401,12 +1401,12 @@
    "owner": "CBPainTrain",
    "record": {
     "w": 0,
-    "l": 1,
+    "l": 2,
     "t": 0
    },
-   "points_for": 99.46,
-   "points_against": 128.36,
-   "playoff_seed": 10,
+   "points_for": 191.28,
+   "points_against": 334.68,
+   "playoff_seed": 12,
    "faab_remaining": 78.0,
    "roster": [
     {
@@ -1438,7 +1438,7 @@
      "name": "Kyle Pitts Sr.",
      "pos": "TE",
      "nfl_team": "ATL",
-     "slot": "BENCH",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 4
@@ -1486,7 +1486,7 @@
      "name": "Rome Odunze",
      "pos": "WR",
      "nfl_team": "CHI",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 13
@@ -1522,7 +1522,7 @@
      "name": "Kyle Monangai",
      "pos": "RB",
      "nfl_team": "CHI",
-     "slot": "FLEX",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 12
@@ -1558,7 +1558,7 @@
      "name": "Josh Downs",
      "pos": "WR",
      "nfl_team": "IND",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 9
@@ -1609,12 +1609,12 @@
    "owner": "espn19238790",
    "record": {
     "w": 1,
-    "l": 0,
+    "l": 1,
     "t": 0
    },
-   "points_for": 176.62,
-   "points_against": 144.1,
-   "playoff_seed": 1,
+   "points_for": 268.58,
+   "points_against": 258.74,
+   "playoff_seed": 6,
    "faab_remaining": 44.0,
    "roster": [
     {
@@ -1817,12 +1817,12 @@
    "owner": "Rohabhabibo",
    "record": {
     "w": 0,
-    "l": 1,
+    "l": 2,
     "t": 0
    },
-   "points_for": 114.46,
-   "points_against": 157.8,
-   "playoff_seed": 9,
+   "points_for": 206.86,
+   "points_against": 291.48,
+   "playoff_seed": 10,
    "faab_remaining": 100.0,
    "roster": [
     {
@@ -2024,13 +2024,13 @@
    "name": "Empty Nesters",
    "owner": "RPT0777",
    "record": {
-    "w": 1,
+    "w": 2,
     "l": 0,
     "t": 0
    },
-   "points_for": 157.8,
-   "points_against": 114.46,
-   "playoff_seed": 3,
+   "points_for": 253.86,
+   "points_against": 193.34,
+   "playoff_seed": 2,
    "faab_remaining": 97.0,
    "roster": [
     {
@@ -2050,7 +2050,7 @@
      "name": "Emeka Egbuka",
      "pos": "WR",
      "nfl_team": "TB",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 25
@@ -2182,7 +2182,7 @@
      "name": "Jalen Coker",
      "pos": "WR",
      "nfl_team": "CAR",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 2
@@ -2232,13 +2232,13 @@
    "name": "Ugh...Yeah...What...Football!",
    "owner": "kdoggs80",
    "record": {
-    "w": 1,
+    "w": 2,
     "l": 0,
     "t": 0
    },
-   "points_for": 169.26,
-   "points_against": 118.3,
-   "playoff_seed": 2,
+   "points_for": 375.58,
+   "points_against": 210.12,
+   "playoff_seed": 1,
    "faab_remaining": 100.0,
    "roster": [
     {
@@ -2440,13 +2440,13 @@
    "name": "Paul's Perfect Team",
    "owner": "ESPNFAN25233150",
    "record": {
-    "w": 0,
+    "w": 1,
     "l": 1,
     "t": 0
    },
-   "points_for": 118.3,
-   "points_against": 169.26,
-   "playoff_seed": 8,
+   "points_for": 305.18,
+   "points_against": 278.22,
+   "playoff_seed": 4,
    "faab_remaining": 100.0,
    "roster": [
     {
