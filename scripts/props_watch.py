@@ -83,16 +83,30 @@ def amer_profit(o):
 print("— weekly stats —")
 # 2022-2025 come from the local DB (nflv_weekly, refreshed by the normal data cascade);
 # only the in-progress 2026 season is pulled from nflverse each week.
-con = sqlite3.connect(os.path.join(ROOT, "db", "nfl_odds.db"))
-wk_hist = [pd.read_sql("""SELECT player_id, player_display_name, position, season, week,
-                          team, opponent_team, targets, carries, receptions,
-                          receiving_yards, rushing_yards, passing_yards, attempts,
-                          target_share, wopr, air_yards_share, receiving_air_yards,
-                          fantasy_points_ppr
-                          FROM nflv_weekly WHERE season BETWEEN 2022 AND 2025
-                          AND position IN ('QB','RB','WR','TE')""", con)]
-con.close()
-print(f"  2022-2025 from nfl_odds.db: {len(wk_hist[0]):,} rows")
+HIST_COLS = ["player_id", "player_display_name", "position", "season", "week", "team", "opponent_team",
+             "targets", "carries", "receptions", "receiving_yards", "rushing_yards", "passing_yards",
+             "attempts", "target_share", "wopr", "air_yards_share", "receiving_air_yards", "fantasy_points_ppr"]
+DBP = os.path.join(ROOT, "db", "nfl_odds.db")
+if os.path.exists(DBP):
+    con = sqlite3.connect(DBP)
+    wk_hist = [pd.read_sql(f"""SELECT {", ".join(HIST_COLS)}
+                              FROM nflv_weekly WHERE season BETWEEN 2022 AND 2025
+                              AND position IN ('QB','RB','WR','TE')""", con)]
+    con.close()
+    print(f"  2022-2025 from nfl_odds.db: {len(wk_hist[0]):,} rows")
+else:
+    # no DB on this machine (the Actions runner, a fresh clone): the same rows straight from nflverse
+    parts = []
+    for yr in range(2022, 2026):
+        local = os.path.join(ROOT, "data", "nflverse_cache", f"stats_player_week_{yr}.parquet")
+        w = pd.read_parquet(local if os.path.exists(local) else
+                            f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{yr}.parquet")
+        w = w[w.position.isin(["QB", "RB", "WR", "TE"])]
+        if "team" not in w.columns and "recent_team" in w.columns:
+            w = w.rename(columns={"recent_team": "team"})
+        parts.append(w[[c for c in HIST_COLS if c in w.columns]])
+    wk_hist = [pd.concat(parts, ignore_index=True)]
+    print(f"  2022-2025 from nflverse (no local DB): {len(wk_hist[0]):,} rows")
 for yr in (2026,):
     # the nflverse release is stats_player/ (the old player_stats/ path 404s and left every run
     # thinking it was week 1); the local cache gm/ keeps is tried first

@@ -215,9 +215,14 @@ reads K's context columns today, but it was the same omission that left K/DST wi
 
 ## Weekly routine (all from the SaberSim page unless noted)
 
-- Wed: upload the FFA raw-stats file (DraftKings profile, with `rec`), paste the Subvertadown tables,
-  press Preview on the next slate and read the health lines. Rebake My Team and Fan Picks (commands
-  above) and push. Re-uploading FFA mid-week: press Preview again and rebake the two tabs.
+- Wed: upload the FFA raw-stats file (DraftKings profile, with `rec`) and paste the Subvertadown
+  tables. **That is the whole routine for the tabs**: each upload lands on main as a commit and the
+  `Refresh tabs` workflow (`.github/workflows/refresh_tabs.yml`, driver `scripts/refresh_tabs.py`)
+  re-pulls ESPN, parses the pastes, and rebakes the waiver board, My Team, Fan Picks, Props Watch
+  and the gm league config for the week of the newest FFA file, then commits them with
+  `docs/refresh_status.json` saying what ran. A Wednesday 18:00 UTC cron is the fallback. Locally
+  the same thing is `python scripts/refresh_tabs.py --pkg <model_burke dir>`; `git pull` after an
+  Actions run. Then press Preview on the next slate and read the health lines.
 - Game day: sends fire at T-80 automatically (external cron → workflow_dispatch every 5 min). If no
   receipt by T-72, press Run on that slate. `data/sabersim/sent_log.json` shows what each send pulled.
 - Morning after: the 8 am MDT tick grades sends (`docs/sabersim_accuracy.json`) and fan picks
