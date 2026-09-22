@@ -182,6 +182,20 @@ def expected_dollars(curve, pos, ppg, age=None):
     return float(np.sum(w * np.array([dollars_at(curve, pos, g) for g in grid])) / w.sum())
 
 
+def expected_bump(cfg, p_playoffs):
+    """The owner's inflation bump next year, in expectation over whether he makes the playoffs.
+
+    The league pays +$5 on a keeper's price for a playoff team and +$3 for one that misses (+$0
+    for the non-playoff owner who drafted the champion, which is not predictable and is ignored).
+    A team at 35% to make it expects about $3.70, and that is what a $1 stash costs him to keep.
+    """
+    inf = cfg.raw.get("keepers", {}).get("inflation") or {}
+    base = float(inf.get("base", NEXT_BUMP))
+    missed = base + float(next((c["delta"] for c in inf.get("conditions", [])
+                                if c.get("name") == "missed_playoffs"), -2))
+    return base * p_playoffs + missed * (1.0 - p_playoffs)
+
+
 def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
     """A keeper board for NEXT season built from the current rosters and the fitted player means.
 
@@ -193,13 +207,15 @@ def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
                mean, which does not know he is hurt) after a measured year of drift and spread
     Same shape as load_board() so the trade search reads it unchanged. Injured stashes are the
     case this exists for: their weekly value is near zero, their keeper value is not.
+    `bump` is a number for every team or {team_id: bump} (see expected_bump).
     """
     curve = curve or dollar_curve()
     players = players or draft_tool_players()
     out = {}
     for t in cfg.teams:
         tid = str(t["team_id"])
-        out[tid] = {"bump": bump, "players": {}}
+        b = float(bump.get(tid, NEXT_BUMP)) if isinstance(bump, dict) else float(bump)
+        out[tid] = {"bump": b, "players": {}}
         for (tt, pid), v in est.items():
             if tt != tid or v["pos"] not in ("QB", "RB", "WR", "TE"):
                 continue
@@ -209,7 +225,7 @@ def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
             age = (p.get("age") + 1) if p and p.get("age") else None
             healthy = float(v.get("raw_mean", v["mean"]))
             value = expected_dollars(curve, v["pos"], healthy, age)
-            cost = basis + bump
+            cost = basis + b
             out[tid]["players"][v["name"]] = {
                 "name": v["name"], "pos": v["pos"], "value": round(value, 1), "basis": basis,
                 "waiver": waiver, "cost": cost, "surplus": round(value - cost, 1),

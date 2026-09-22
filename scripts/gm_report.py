@@ -106,25 +106,30 @@ def main():
     from gm import keepers as kp
     fa = waiver_levels(est)
     weeks = sim.week_columns(cfg)
-    try:
-        board = kp.next_season_board(cfg, est)
-        print(f"  next season: keeper cost = this year's price ($1 for a waiver pickup) + ${kp.NEXT_BUMP} bump; "
-              f"value = league auction $ at the player's healthy level after a measured year of drift"
-              + (f"; weighted {a.keeper_discount:g} in the search" if a.keeper_discount else "; not in the ranking"))
-    except Exception as ex:
-        board = None
-        print(f"  next season: no keeper board ({ex})")
     n_inj = sum(1 for v in est.values() if v.get("injury") and v["injury"] != "ACTIVE")
     print(f"  injuries: {n_inj} rostered players carry an ESPN designation; availability capped at the "
           f"measured share of the season played (Out .49, Doubtful .54, Questionable .64, IR .10 assumed)")
     print("  waiver wire (best free agent, pts/wk): " + "  ".join(f"{p} {v:.1f}" for p, v in fa.items())
           + "   byes and waiver fill are in the simulation")
     print()
-    if a.roster:
-        cmd_roster(cfg, est, me, fa, weeks, names, board)
     scores = sim.player_team_scores(cfg, est, a.sims, need, rng=np.random.default_rng(a.seed),
                                     common_seed=a.seed, weeks=weeks)
     r = sim.run(cfg, scores)
+    # next year's keeper cost depends on where each team finishes, so the board waits for the sim
+    try:
+        bumps = {t: kp.expected_bump(cfg, r["teams"][t]["p_playoffs"]) for t in r["teams"]}
+        board = kp.next_season_board(cfg, est, bump=bumps)
+        print(f"  next season: keeper cost = this year's price ($1 for a waiver pickup) + the owner's bump, "
+              f"$5 if he makes the playoffs and $3 if not, taken in expectation (yours ${bumps[me]:.2f} at "
+              f"{r['teams'][me]['p_playoffs']:.0%}); value = league auction $ at the healthy level after a "
+              f"measured year of drift" + (f"; weighted {a.keeper_discount:g} in the search"
+                                          if a.keeper_discount else "; not in the ranking"))
+    except Exception as ex:
+        board = None
+        print(f"  next season: no keeper board ({ex})")
+    print()
+    if a.roster:
+        cmd_roster(cfg, est, me, fa, weeks, names, board)
     print(f"  {'team':30s} {'W-L':>6} {'PF':>7} {'proj/wk':>8} {'playoffs':>9} {'title':>7} {'seed':>6}")
     per_team = scores.mean(axis=(0, 2))
     for i, t in enumerate(sorted(cfg.teams, key=lambda x: -r["teams"][x["team_id"]]["p_title"])):

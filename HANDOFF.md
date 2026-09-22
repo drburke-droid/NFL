@@ -94,7 +94,8 @@ context.
    IR .10 assumed), forced cuts spare players with keeper surplus, and `--keeper-discount` defaults
    to 1. The `--roster` table prints healthy level, next-year cost, value, surplus and a "why held"
    tag. Its honest reading of the two stashes: Charbonnet (OUT, healthy ~8 ppg) is worth ~$6 next
-   year against a $6 cost -- break-even, not a bargain; Sampson (IR, $10 cost) is ~$6 under water
+   year against a ~$5 cost (the bump is now expected over the playoff race: $5 in, $3 out; Glass
+   Joe at 38% expects $3.77) -- roughly break-even, +$1; Sampson (IR, ~$9 cost) is ~$5 under water
    even with young-dart option value. Irving (+$28) and Burrow (+$19) are the keepers.
 
 7. **New: the `gm/` package** — a rest-of-season league simulator and trade finder for the ESPN

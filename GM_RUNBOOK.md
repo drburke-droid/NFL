@@ -151,7 +151,8 @@ tests/test_gm_*.py        118 tests; run `python -m pytest tests/ -k gm -q` (~4 
 **Next season is priced from this one, not from last year's board.** `keepers_2026.js` was the
 board for keeping INTO 2026 and that decision is made. `gm/keepers.py:next_season_board` builds
 next year's from the current rosters: cost = this year's auction price ($1 for any waiver pickup,
-per league rule) + a $5 bump (the owner's real bump is not known until the standings settle);
+per league rule) + the owner's bump taken in expectation over the simulated playoff race ($5 if
+he makes it, $3 if not -- a team at 38% expects $3.77, so its $1 stashes cost $4.77 to keep);
 value = the league's auction dollars at the player's *healthy* level (the fitted mean, which does
 not know he is hurt), averaged over a measured year of drift and spread (young players +0.5 ppg,
 everyone else -0.5 to -0.9, sd 4 at RB/WR). The dollar curve is fitted from the 2026 board against
