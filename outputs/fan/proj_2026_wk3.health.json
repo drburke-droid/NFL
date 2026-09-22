@@ -24,7 +24,7 @@
  "ffa": {
   "file": "raw_stats_2026_wk3.csv",
   "rows": 922,
-  "age_hours": 0.2,
+  "age_hours": 0.0,
   "slate_skill": 428,
   "slate_k": 33,
   "slate_dst": 32
@@ -76,7 +76,7 @@
  },
  "csv": "proj_2026_wk3.csv",
  "rows": 485,
- "generated": "2026-09-22 15:37 ET",
+ "generated": "2026-09-22 15:47 ET",
  "kickoffs": [
   "Mon 09/28 08:15 PM ET",
   "Sun 09/27 01:00 PM ET",
