@@ -53,7 +53,7 @@ def expected_lineup(cfg, means_by_pos):
     return total
 
 
-def _roster_means(est, team_id, out_ids=(), in_players=(), capacity=None):
+def _roster_means(est, team_id, out_ids=(), in_players=(), capacity=None, starters=None):
     """Expected weekly contributions by position, after a swap and any forced cut.
 
     Rosters are full, so a team receiving more than it sends must drop somebody, and stage one has
@@ -62,9 +62,8 @@ def _roster_means(est, team_id, out_ids=(), in_players=(), capacity=None):
     drop = set(out_ids)
     kept = [v for (t, pid), v in est.items() if t == team_id and pid not in drop]
     kept = kept + list(in_players)
-    if capacity is not None and len(kept) > capacity:
-        kept.sort(key=lambda v: v["mean"] * v["p_play"])
-        kept = kept[len(kept) - capacity:]
+    drop = sim.forced_cuts(kept, capacity, starters)
+    kept = [v for v in kept if not any(v is d for d in drop)]
     out = {}
     for v in kept:
         out.setdefault(v["pos"], []).append(v["mean"] * v["p_play"])
@@ -111,14 +110,14 @@ def _title_slope(cfg, est, team_id, n_sims=4000, seed=0, played_weeks=None, bump
     return max(b - a, 0.0) / bump
 
 
-def _keeper_gain(board, team_id, roster, out_ids, in_players, cap, est):
+def _keeper_gain(board, team_id, roster, out_ids, in_players, cap, starters=None):
     """Change in a roster's best-three keeper surplus, cheaply, for stage-one ranking."""
     if board is None:
         return 0.0
     before = [v["name"] for v in roster.values()]
     kept = [v for pid, v in roster.items() if pid not in set(out_ids)] + list(in_players)
-    if len(kept) > cap:
-        kept = sorted(kept, key=lambda v: v["mean"] * v["p_play"])[len(kept) - cap:]
+    drop = sim.forced_cuts(kept, cap, starters)
+    kept = [v for v in kept if not any(v is d for d in drop)]
     return (kp.team_keeper_value(board, team_id, [v["name"] for v in kept])
             - kp.team_keeper_value(board, team_id, before))
 
@@ -160,13 +159,14 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                                     played_weeks=played_weeks)
     mine = {p: v for (t, p), v in est.items() if t == my_team}
     cap = roster_capacity(cfg)
-    base_me = expected_lineup(cfg, _roster_means(est, my_team, capacity=cap))
+    slots = sim.dedicated_starters(cfg)
+    base_me = expected_lineup(cfg, _roster_means(est, my_team, capacity=cap, starters=slots))
     my_pkgs = _packages(mine, max_package, pool)
 
     cands = []
     for other in [t["team_id"] for t in cfg.teams if t["team_id"] != my_team]:
         theirs = {p: v for (t, p), v in est.items() if t == other}
-        base_them = expected_lineup(cfg, _roster_means(est, other, capacity=cap))
+        base_them = expected_lineup(cfg, _roster_means(est, other, capacity=cap, starters=slots))
         their_pkgs = _packages(theirs, max_package, pool)
         for gp in my_pkgs:
             give = [mine[i] for i in gp]
@@ -174,12 +174,12 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 if len(gp) + len(rp) > max_combined:
                     continue                      # the far tail of shapes costs more than it finds
                 get = [theirs[i] for i in rp]
-                d_me = expected_lineup(cfg, _roster_means(est, my_team, gp, get, cap)) - base_me
-                d_them = expected_lineup(cfg, _roster_means(est, other, rp, give, cap)) - base_them
+                d_me = expected_lineup(cfg, _roster_means(est, my_team, gp, get, cap, slots)) - base_me
+                d_them = expected_lineup(cfg, _roster_means(est, other, rp, give, cap, slots)) - base_them
                 k_me = k_them = 0.0
                 if stage1_keepers:
-                    k_me = _keeper_gain(board, my_team, mine, gp, get, cap, est)
-                    k_them = _keeper_gain(board, other, theirs, rp, give, cap, est)
+                    k_me = _keeper_gain(board, my_team, mine, gp, get, cap, slots)
+                    k_them = _keeper_gain(board, other, theirs, rp, give, cap, slots)
                 # Stage one must score on the same objective stage two will, or a seller's trade
                 # -- worse this year, better next -- is discarded before it is ever simulated.
                 s_me = d_me + stage1_keepers * k_me
@@ -195,7 +195,7 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
         me, them = r["delta"][my_team], r["delta"][other]
         k_me = k_them = 0.0
         if board is not None:
-            after = sim.apply_trade(est, moves, cap)
+            after = sim.apply_trade(est, moves, cap, slots)
             rb = {t: [v["name"] for (x, _), v in est.items() if x == t] for t in (my_team, other)}
             ra = {t: [v["name"] for (x, _), v in after.items() if x == t] for t in (my_team, other)}
             kd = kp.keeper_delta(board, rb, ra, [my_team, other])

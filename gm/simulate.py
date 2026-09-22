@@ -285,15 +285,13 @@ def roster_capacity(cfg):
     return cfg.starting_size + int(cfg.raw["roster"].get("bench", 0))
 
 
-def apply_trade(est, moves, capacity=None):
-    """A copy of the estimates with players moved, and over-full rosters trimmed.
+def apply_trade(est, moves, capacity=None, starters=None):
+    """Move players between teams; with a capacity, cut the surplus a full roster cannot hold.
 
-    The trim is not bookkeeping. Rosters are full, so a team taking two players back for one has
-    to cut somebody, and that cut is a real cost the receiving side pays. Without it an uneven
-    trade quietly hands the receiver extra bench depth for free, which flatters exactly the
-    consolidation trades this search is built to find.
-
-    The player dropped is the one a manager would drop: lowest expected weekly contribution.
+    moves: [(player_id, from_team, to_team), ...]. Rosters in this league are full, so an uneven
+    trade forces the receiving side to drop somebody, and the drop is a real cost of the trade.
+    The player dropped is the one a manager would drop: lowest expected weekly contribution that
+    does not empty a dedicated starting slot (see forced_cuts).
     """
     out = dict(est)
     for pid, a, b in moves:
@@ -307,12 +305,49 @@ def apply_trade(est, moves, capacity=None):
     for (t, pid), v in out.items():
         by_team.setdefault(t, []).append((pid, v))
     for t, players in by_team.items():
-        if len(players) <= capacity:
-            continue
-        players.sort(key=lambda kv: kv[1]["mean"] * kv[1]["p_play"])
-        for pid, _ in players[:len(players) - capacity]:
+        for v in forced_cuts([w for _, w in players], capacity, starters):
+            pid = next(pid for pid, w in players if w is v)
             del out[(t, pid)]
     return out
+
+
+def dedicated_starters(cfg):
+    """Positions with a slot of their own and how many: {"QB": 1, "K": 1, "DST": 1, ...}."""
+    flex = cfg.raw["roster"].get("flex_eligibility", {})
+    return {slot: count for slot, count in cfg.starters if slot not in flex}
+
+
+def forced_cuts(players, capacity, starters=None):
+    """Which players a full roster drops to make room: the lowest expected contribution, except
+    that nobody is cut who is the last holder of a dedicated starting slot.
+
+    A manager taking on a third receiver drops a bench back, not his only defence. The lowest
+    mean on a roster is often the kicker or defence (flat 8.85 / 5.59), and cutting one leaves a
+    slot that scores nothing every week -- which made receiving a star for free look like a loss
+    once bench backs were priced above the defence.
+    """
+    if capacity is None or len(players) <= capacity:
+        return []
+    starters = starters or {}
+    order = sorted(players, key=lambda v: v["mean"] * v["p_play"])
+    counts = {}
+    for v in players:
+        counts[v["pos"]] = counts.get(v["pos"], 0) + 1
+    n_cut = len(players) - capacity
+    cuts = []
+    for v in order:
+        if len(cuts) == n_cut:
+            break
+        if counts.get(v["pos"], 0) - 1 < starters.get(v["pos"], 0):
+            continue
+        counts[v["pos"]] -= 1
+        cuts.append(v)
+    for v in order:                                   # nothing else to give: cut the lowest anyway
+        if len(cuts) == n_cut:
+            break
+        if not any(v is c for c in cuts):
+            cuts.append(v)
+    return cuts
 
 
 def evaluate_trade(cfg, est, moves, n_sims=20000, seed=0, played_weeks=None, mean_se=MEAN_SE):
@@ -326,7 +361,8 @@ def evaluate_trade(cfg, est, moves, n_sims=20000, seed=0, played_weeks=None, mea
     need, _ = weeks_needed(cfg, played_weeks)
     before = run(cfg, player_team_scores(cfg, est, n_sims, need, rng=np.random.default_rng(seed),
                                          mean_se=mean_se, common_seed=seed), played_weeks)
-    after = run(cfg, player_team_scores(cfg, apply_trade(est, moves, roster_capacity(cfg)),
+    after = run(cfg, player_team_scores(cfg, apply_trade(est, moves, roster_capacity(cfg),
+                                                         dedicated_starters(cfg)),
                                         n_sims, need, rng=np.random.default_rng(seed),
                                         mean_se=mean_se, common_seed=seed), played_weeks)
     involved = sorted({m[1] for m in moves} | {m[2] for m in moves})

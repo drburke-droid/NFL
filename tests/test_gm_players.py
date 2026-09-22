@@ -148,14 +148,65 @@ def test_shrinkage_pulls_toward_the_positional_mean():
 
 
 def test_calibrated_dispersion_matches_the_measured_league():
-    """Between- and within-team spread must match what 490 team-weeks say, not just look sane."""
+    """Between- and within-team spread must match what 490 team-weeks say, not just look sane.
+
+    The spread of true team strength is what was measured (8.7). In the simulator that is the
+    spread of the point estimates COMBINED with the season-long uncertainty about each team
+    (MEAN_SE): a fitted estimate is the regressed value, so its spread alone is meant to be
+    narrower. Checking the estimates on their own would demand an over-dispersed league.
+    """
     c = load(REAL)
     need, _ = sim.weeks_needed(c, played_weeks=[1])
     s = sim.player_team_scores(c, P.ros_estimates(c), 4000, need, rng=np.random.default_rng(0))
     between = s.mean(axis=(0, 2)).std()
+    total = np.hypot(between, sim.MEAN_SE)
     within = (s - s.mean(axis=(0, 2), keepdims=True)).std()
-    assert 7.5 <= between <= 10.0, f"between-team sd {between:.2f}, measured target 8.7"
+    assert 7.5 <= total <= 10.0, f"between-team sd {between:.2f} + uncertainty = {total:.2f}, target 8.7"
     assert 19.5 <= within <= 24.0, f"within-team sd {within:.2f}, measured target 21.7"
+
+
+# ---------- the fitted mean ----------
+
+def test_the_stored_model_matches_the_feature_contract():
+    m = P.load_model()
+    assert set(m["positions"]) == set(P.SKILL)
+    for p, spec in m["positions"].items():
+        assert spec["cols"] == P.MODEL_COLS, p
+        assert len(spec["coef"]) == len(spec["cols"]) + len(spec["na_cols"]), p
+    assert m["walk_forward"]["MAE"] < 3.31, "must beat the blend it replaced (3.305 walk-forward)"
+
+
+def test_skill_players_with_history_are_priced_by_the_model():
+    est = P.ros_estimates(load(REAL))
+    skill = [v for v in est.values() if v["pos"] in P.SKILL]
+    fitted = [v for v in skill if v["model"] == "ridge"]
+    assert len(fitted) > 0.9 * len(skill), "nearly every rostered skill player has a history to fit"
+    assert all(v["model"] == "flat" for v in est.values() if v["pos"] not in P.SKILL)
+    assert P.ros_estimates.last_ridge["fitted"] == len(fitted)
+
+
+def test_the_model_believes_hot_starts_less_than_the_blend_did():
+    """Walk-forward the blend ran 1.4 points high on the top quarter of each position: it took a
+    two-game start at face value. The fitted mean must regress those players harder."""
+    c = load(REAL)
+    blend = P.ros_estimates(c, model="blend", mean_shrink=1.0)
+    ridge = P.ros_estimates(c, model="ridge", mean_shrink=1.0)
+    for pos in P.SKILL:
+        keys = [k for k, v in blend.items() if v["pos"] == pos and v["source"] == "blend"]
+        top = sorted(keys, key=lambda k: -blend[k]["mean"])[:max(3, len(keys) // 4)]
+        assert np.mean([ridge[k]["mean"] for k in top]) < np.mean([blend[k]["mean"] for k in top]), pos
+
+
+def test_lost_fumbles_are_charged_once(monkeypatch):
+    """nflverse carries the three components and their total; summing all four charged twice."""
+    import pandas as pd
+    c = load(REAL)
+    frame = pd.DataFrame([{"player_id": "x", "player_display_name": "A", "position": "RB",
+                           "team": "SF", "season": 2026, "week": 1, "season_type": "REG",
+                           "rushing_fumbles_lost": 1.0, "fumbles_lost_total": 1.0}])
+    monkeypatch.setattr(P.pd, "read_parquet", lambda *a, **k: frame)
+    pts = P.weekly_in_league_scoring(c, (2026,)).pts.iloc[0]
+    assert pts == pytest.approx(c.raw["scoring"]["per_stat"]["fumbles_lost"])
 
 
 # ---------- uncertainty about a team, not just within a week ----------

@@ -17,7 +17,8 @@ pip install -r requirements-sabersim.txt
 
 `gm/` needs only pandas, numpy and the standard library — no Model_Burke package, no Odds API key,
 none of the send pipeline's inputs. If you can run `python scripts/gm_report.py --check`, you are
-set up.
+set up. The first run downloads the 2012-2024 nflverse weekly files (~25 MB) into
+`data/nflverse_cache/`, which is gitignored; the current season and last are fetched fresh every run.
 
 ESPN cookies are needed only to **refresh** league data, not to run the simulator on what is
 already committed. See `ESPN_SETUP.md`; locally they go in `data/espn_cookies.json` (gitignored).
@@ -41,12 +42,17 @@ Order matters — each step feeds the next.
 
 | step | command | writes |
 |---|---|---|
+| 0. FFA weekly file | the Wednesday FFA upload on the SaberSim page | `data/ffanalytics/FFAn_weekly/raw_stats_<S>_wk<W>.csv` |
 | 1. pull ESPN | Actions tab -> **Pull ESPN league** -> Run workflow | `outputs/espn_league.json`, `outputs/espn_league_state*.json`, drafts, standings |
 | 2. rebuild the config | `python scripts/build_gm_league.py` | `gm/leagues/kuhn_2026.json` |
 | 3. rebuild keeper values | `python scripts/predict_keepers.py` | `outputs/draft_tool/keepers_2026.js` |
 
 Step 1 runs in GitHub Actions because ESPN is unreachable from some networks and the cookies are
 already repo Secrets. It commits its output, so `git pull` afterwards.
+
+**Step 0 is what the player model reads for the coming week.** Until next week's FFA file is
+there, the current week's projection stands in and the report header says `ffa stale`. The
+model was fitted with the same rule, so a stale read is a slightly weaker estimate, not a wrong one.
 
 **The keeper board goes stale quietly.** It is built from a roster snapshot, so after any trade or
 waiver claim it values the wrong team — it once had Josh Allen on a roster he had left. There is a
@@ -88,7 +94,8 @@ let them drift:
 | shrinkage prior | ~7 games | variance components (6.25) and direct regression (7.7) |
 | player weekly sd | 0.383 x ppg + 2.23 | 1,154 player-seasons in *this league's* scoring |
 | availability | 0.75 + 0.030 x ppg, cap 0.97 | availability rises steeply with projection |
-| mean shrinkage | 0.80 | re-solved to match the two moments above |
+| player mean | per-position ridge, `gm/ros_model.json` | 26,690 player-weeks 2013-25, walk-forward MAE 3.11 vs 3.31 for the old blend |
+| mean shrinkage | 1.00 (ridge); 0.80 for the legacy blend | the ridge is already regressed: its 6.7 team spread + 5.1 uncertainty = 8.4 vs the 8.7 target |
 | uncertainty about a team | 5.1 pts/wk | disagreement between two independent roster views |
 
 The simulated league averages 124.2 points a week against an actual 126.4, between-team sd 8.72
@@ -102,11 +109,14 @@ against 8.68, within-team 22.7 against 21.7.
 - **Roster churn is not modelled.** Injuries, waiver adds and other teams' trades over thirteen
   weeks are all absent, so every team's odds are biased toward its current roster being permanent.
   Least harmful for a trade comparison, where both sides share the assumption.
-- **Estimates lean on two games.** The rest-of-season analysis found a single next-week projection
-  beats to-date scoring outright (MAE 2.645 vs 2.746 on 2025), and `gm/players.py` does not use it
-  — it is the fallback that analysis named, not the better thing it found. Wiring the walk-forward
-  pipeline in per player is the most likely fix for the one roster that reads 2.1 sd above the
-  field.
+- **The mean is fitted; availability is not.** `scripts/ros_player_study.py` scored every
+  rest-of-season estimator walk-forward on 2019-25 (34,875 player-weeks since 2012, decision weeks
+  2-12). The old games/(games+4) blend ran 0.55 high overall and 1.42 high on the top quarter of
+  each position: it believed hot starts. A per-position ridge on this season, the prior two, the
+  career and FFA's next-week projection is 6% better on MAE and unbiased; age and archetype added
+  nothing (age +0.01 MAE, archetype +0.02), and FFA alone was worse than history alone. That model
+  is what `gm/players.py` now uses. P(plays) is still the straight line above, fitted to nothing
+  but the pooled rate.
 - **K and DST are not differentiated.** Every kicker is 8.85 a week and every defence 5.59. They
   add the right noise without pretending to rank, which is roughly why nobody trades kickers.
 - **Acceptance is "should", not "will".** The search finds trades a rational manager ought to take.
@@ -118,6 +128,8 @@ gm/config.py     league schema + validation that rejects configs which would mak
                  lie rather than crash
 gm/simulate.py   the season simulator, trade evaluation, roster-limit enforcement
 gm/players.py    per-player rest-of-season estimates in league scoring
+gm/ros_model.json  the fitted ridge (coefficients, medians, gap flags) the estimates read
+scripts/ros_player_study.py  the study that fits it: --rebuild --fit-production after each season
 gm/keepers.py    next-season value, reading the board predict_keepers.py builds
 gm/trades.py     the two-stage league-wide search
 scripts/gm_report.py      the CLI
@@ -125,6 +137,13 @@ scripts/build_gm_league.py  ESPN pull -> league config
 tests/test_gm_*.py        118 tests; run `python -m pytest tests/ -k gm -q` (~4 min, the
                  trade search dominates)
 ```
+
+**A forced cut never empties a dedicated slot.** Rosters are full, so an uneven trade drops
+somebody, and the drop is the lowest expected contribution *that leaves every dedicated slot
+filled*: a team taking on a receiver cuts a bench back, not its only defence. The flat K/DST
+means (8.85 / 5.59) are usually the lowest on a roster, and the old rule cut them, which made
+receiving a star for free score as a loss once the fitted means priced bench backs above the
+defence.
 
 Three league rules are encoded because they are not guessable: keeper cost is last year's basis
 plus the **current owner's** inflation bump (so a player's price changes when traded), ESPN's
@@ -134,5 +153,6 @@ real cost the receiving side pays.
 
 ## Next piece of work
 
-Replace the to-date player means with the walk-forward projection, which measured better and is
-the most likely fix for the roster that currently takes 46% of titles.
+Done 2026-09-22: the player mean is the fitted ridge above. Next is availability — P(plays) is
+the one player quantity still set by a rule rather than fitted, and the same frame (a player's
+injury-report history is in `nflv_injuries`) could fit it walk-forward the same way.

@@ -61,7 +61,26 @@ context.
    with them and 4.052 without. Do not confuse this with the ad-hoc analysis frames, which drop
    unmatched rows instead — conflating the two is easy and I did it once in conversation.
 
-6. **New: the `gm/` package** — a rest-of-season league simulator and trade finder for the ESPN
+6. **The trade calculator's player means are now a fitted model (later on 09-22).** The
+   `gm/players.py` blend (this season and last at games/(games+4)) was scored walk-forward on
+   2019-25 against everything the 2012-26 weekly history can offer (`scripts/ros_player_study.py`,
+   report `outputs/reports/ros_player_study.md`): it ran +0.55 high overall and +1.42 high on the
+   top quarter of each position — it took two hot games at face value, which is exactly why it kept
+   proposing Mahomes for Burrow (25.5 vs 21.0 a week). A per-position ridge on this season, the
+   prior two, the career and FFA's next-week projection is 6% better on MAE (3.11 vs 3.32), lifts
+   rank correlation 0.55 -> 0.57 and is unbiased; **age and archetype add nothing** (fifth null
+   study for them), and FFA alone is worse than history alone. It is stored in `gm/ros_model.json`
+   and the runtime needs only numpy. Under it Mahomes is 22.8 and Burrow 22.0 — under a point a
+   week apart, a lateral move. Also fixed on the way: lost fumbles were charged twice (nflverse
+   carries components and a total), and the mean-shrink constant is 1.0 for the ridge (the 0.80
+   was solved for the blend; the ridge's 6.7 team spread plus the 5.1 uncertainty lands the 8.7
+   target). Refit after each season with `--rebuild --fit-production`. The change also exposed a
+   trade-search rule worth knowing: a forced cut took the lowest mean on the roster, which is
+   usually the flat DST (5.59), so receiving a star for free could score as a loss; cuts now skip
+   the last holder of any dedicated slot. With honest means fewer trades help both sides (the
+   search cleared 111 stage-one candidates against 386 before), and "nothing" is a real answer.
+
+7. **New: the `gm/` package** — a rest-of-season league simulator and trade finder for the ESPN
    keeper league, with `scripts/gm_report.py` as its CLI. It shares NO import path with the send
    pipeline in either direction. **See `GM_RUNBOOK.md`**, which carries its own setup, refresh order,
    measured constants and limitations. Next piece of work is named at the bottom of that file.
