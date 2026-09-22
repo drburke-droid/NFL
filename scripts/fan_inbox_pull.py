@@ -72,6 +72,8 @@ def main():
         if not h:
             continue
         S, W, name, sub, fid, n = h
+        if n == 0:
+            continue                      # a setup test or an empty submission: nothing to grade, nobody to list
         if cu is not None and len(r) > cu and r[cu].strip():
             name = r[cu].strip()[:60]
         codes.append(code)
