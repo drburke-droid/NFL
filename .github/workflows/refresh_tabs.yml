@@ -71,12 +71,13 @@ jobs:
           rm -f data/odds_api_key.txt
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/refresh_status.json docs/waiver.json docs/myteam_2026.js docs/fan docs/props_watch_2026.js \
-                  outputs/draft_tool/props_watch_2026.js outputs/fan outputs/espn_league.json \
-                  outputs/espn_league_state.json outputs/espn_league_state_*.json outputs/espn_standings.csv \
-                  outputs/espn_standings.json gm/leagues/kuhn_2026.json data/subvertadown/subvertadown_long.csv \
-                  data/kdst/kdst_*.csv data/props_frames/snapshots data/props_frames/watch_2026_rows.parquet \
-                  data/props_frames/lines_cache.json data/props_frames/mkt_cache_*.json data/props_frames/ledger_2026.csv 2>/dev/null || true
+          # tracked files that changed, plus the new per-week bakes; one bad pathspec must not
+          # abort the whole add (an ignored or missing path did exactly that on the first run)
+          git add -u
+          for p in docs/refresh_status.json docs/waiver.json docs/myteam_2026.js docs/fan docs/props_watch_2026.js                    outputs/draft_tool/props_watch_2026.js outputs/fan outputs/espn_league.json                    outputs/espn_league_state.json outputs/espn_league_state_2026.json outputs/espn_standings.csv                    gm/leagues/kuhn_2026.json data/subvertadown/subvertadown_long.csv data/kdst                    data/props_frames/snapshots data/props_frames/watch_2026_rows.parquet; do
+            [ -e "$p" ] && git add --ignore-errors "$p" || true
+          done
+          git status --short | head -30
           wk=$(python -c "import json;print(json.load(open('docs/refresh_status.json'))['week'])")
           git commit -m "Tabs refreshed for 2026 wk${wk} (automated)" || { echo "nothing changed"; exit 0; }
           git pull --rebase && git push
