@@ -1,0 +1,7 @@
+{
+ "form_action": "",
+ "entry_user": "",
+ "entry_code": "",
+ "sheet_csv": "",
+ "note": "Filled in once the Google Form drop box exists (scripts/fan_inbox_pull.py docstring). Empty = the page falls back to email / copy-the-code."
+}

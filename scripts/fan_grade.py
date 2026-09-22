@@ -141,6 +141,16 @@ def summarise(g):
     s = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": block(g)}
     s["by_fan"] = sorted([dict(fan=f, weeks=sorted(int(w) for w in d.week.unique()), **block(d)) for f, d in g.groupby("fan")],
                          key=lambda x: (-(x["removed_pts"] or 0), -x["graded"], x["fan"]))
+    for rank, f in enumerate(s["by_fan"], 1):          # the leaderboard: position and best call
+        f["rank"] = rank
+        d = g[(g.fan == f["fan"]) & ~g.pending & ~g.no_send]
+        if len(d):
+            b = d.loc[d.removed_pts.idxmax()]
+            f["best_call"] = {"week": int(b.week), "player": b.player, "stat": b.stat, "arrows": int(b.arrows),
+                              "removed_pts": round(float(b.removed_pts), 2)}
+    # weekly standings, so a fan who joins in week 6 has a race to win that week
+    s["by_fan_week"] = sorted([dict(fan=f, week=int(w), **block(d)) for (f, w), d in g.groupby(["fan", "week"])],
+                              key=lambda x: (-x["week"], -(x["removed_pts"] or 0), -x["graded"], x["fan"]))
     s["by_stat"] = {st: block(d) for st, d in g.groupby("stat")}
     g["size"] = g.arrows.abs().clip(upper=4).map(lambda k: {1: "1", 2: "2", 3: "3", 4: "4+"}[int(k)])
     s["by_size"] = {k: block(d) for k, d in g.groupby("size")}

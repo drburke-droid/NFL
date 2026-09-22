@@ -147,6 +147,7 @@ jobs:
         if: steps.win.outputs.grade_due == 'true'
         run: |
           python scripts/sabersim_grade.py --sends pkg/sends outputs/sabersim || echo "nothing to grade yet"
+          python scripts/fan_inbox_pull.py --record || echo "fan drop box pull failed (continuing)"
           python scripts/fan_grade.py --sends pkg/sends outputs/sabersim || echo "fan grade failed (continuing)"
 
       - name: Record the send
@@ -161,4 +162,7 @@ jobs:
             data/subvertadown/subvertadown_long.csv \
             docs/sabersim_accuracy.json \
             docs/fan/grade.json \
+            docs/fan/submissions.json \
+            data/fan_adjustments/fan_adjustments_long.csv \
+            data/fan_adjustments/inbox/dropbox.txt \
             outputs/reports/sabersim_accuracy.md

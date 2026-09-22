@@ -21,8 +21,20 @@ import os, sys, csv, json, base64, glob, re
 from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "fan_adjustments", "fan_adjustments_long.csv")
-FIELDS = ["received_at", "season", "week", "fan", "submitted_at", "bake_id", "comment", "player_index", "player_id", "player", "team", "pos",
+FIELDS = ["received_at", "season", "week", "fan", "submitted_at", "bake_id", "comment", "fan_id", "player_index", "player_id", "player", "team", "pos",
           "opp", "stat", "arrows", "pct", "baseline", "adjusted", "proj_pts"]
+
+
+def migrate(path):
+    """Rewrite an older long table so its header carries every field (fan_id arrived 2026-09-22)."""
+    if not os.path.exists(path): return
+    with open(path, encoding="utf-8") as fh:
+        rd = csv.DictReader(fh); old = rd.fieldnames or []; rows = list(rd)
+    if old == FIELDS: return
+    with open(path, "w", newline="", encoding="utf-8") as fh:
+        w = csv.DictWriter(fh, fieldnames=FIELDS); w.writeheader()
+        w.writerows({k: r.get(k, "") for k in FIELDS} for r in rows)
+    print(f"  migrated {os.path.relpath(path, ROOT)} to the current columns")
 
 def decode(code):
     m = re.match(r"^\s*FAN1\.(\d{4})\.(\d{1,2})\.([A-Za-z0-9_\-=]+)\s*$", code)
@@ -41,6 +53,7 @@ def rows_for(S, W, j):
     bake = json.load(open(fp, encoding="utf-8"))
     keys, players = bake["stat_keys"], bake["players"]
     fan = (j.get("n") or "anonymous").strip()[:60]; sub = j.get("t") or ""; com = (j.get("c") or "").strip()[:300]
+    fid = str(j.get("u") or "")[:40]      # the browser's own id, so two fans typing the same name can be told apart later
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     out = []
     for a in j.get("a", []):
@@ -49,7 +62,7 @@ def rows_for(S, W, j):
         if not (0 <= pi < len(players)) or not (0 <= si < len(keys)) or v == 0 or v < -10 or v > 100: continue
         p = players[pi]; stat = keys[si]
         if stat not in p["stats"]: continue
-        out.append({"received_at": now, "season": S, "week": W, "fan": fan, "submitted_at": sub, "bake_id": bake.get("bake_id", ""), "comment": com, "player_index": pi,
+        out.append({"received_at": now, "season": S, "week": W, "fan": fan, "submitted_at": sub, "bake_id": bake.get("bake_id", ""), "comment": com, "fan_id": fid, "player_index": pi,
                     "player_id": p["id"], "player": p["name"], "team": p["team"], "pos": p["pos"], "opp": p["opp"], "stat": stat,
                     "arrows": v, "pct": 10 * v, "baseline": p["stats"][stat], "adjusted": round(max(0.0, p["stats"][stat] * (1 + 0.1 * v)), 2),
                     "proj_pts": p["proj"]})
@@ -66,6 +79,7 @@ codes += [a for a in args if a.startswith("FAN1.")]
 if not codes: raise SystemExit("no codes given")
 
 os.makedirs(os.path.dirname(OUT), exist_ok=True)
+migrate(OUT)
 have = set()
 if os.path.exists(OUT):
     with open(OUT, encoding="utf-8") as fh:
