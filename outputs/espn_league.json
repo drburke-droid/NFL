@@ -404,9 +404,9 @@
      "keeper": true,
      "keeper_price": 8,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "DOUBTFUL",
      "season_pts": 278.6,
-     "last_pts": 32.6
+     "last_pts": 0.8
     },
     {
      "name": "Chris Godwin Jr.",
@@ -741,7 +741,7 @@
      "pos": "QB",
      "team": "WAS",
      "espn_id": 4426348,
-     "slot": "QB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 14,
      "acq": "DRAFT",
@@ -806,7 +806,7 @@
      "pos": "QB",
      "team": "GB",
      "espn_id": 4036378,
-     "slot": "BENCH",
+     "slot": "QB",
      "keeper": true,
      "keeper_price": 6,
      "acq": "DRAFT",
@@ -911,7 +911,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 128.7,
-     "last_pts": 14.1
+     "last_pts": 9.5
     },
     {
      "name": "Drake Maye",
@@ -950,7 +950,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 82.0,
-     "last_pts": 1.0
+     "last_pts": 4.0
     },
     {
      "name": "Tetairoa McMillan",
@@ -1190,7 +1190,7 @@
      "keeper": true,
      "keeper_price": 7,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "DOUBTFUL",
      "season_pts": 183.3,
      "last_pts": 2.1
     },
@@ -1328,9 +1328,9 @@
      "keeper": true,
      "keeper_price": 16,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "OUT",
      "season_pts": 376.0,
-     "last_pts": 12.4
+     "last_pts": 0.0
     },
     {
      "name": "Matthew Stafford",
@@ -1343,7 +1343,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 453.4,
-     "last_pts": 5.1
+     "last_pts": 36.0
     },
     {
      "name": "Brock Bowers",
@@ -1566,7 +1566,7 @@
      "pos": "TE",
      "team": "ATL",
      "espn_id": 4360248,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 4,
      "acq": "DRAFT",
@@ -1618,7 +1618,7 @@
      "pos": "WR",
      "team": "CHI",
      "espn_id": 4431299,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 13,
      "acq": "DRAFT",
@@ -1657,7 +1657,7 @@
      "pos": "RB",
      "team": "CHI",
      "espn_id": 4608686,
-     "slot": "FLEX",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 12,
      "acq": "DRAFT",
@@ -1676,7 +1676,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 122.2,
-     "last_pts": 5.4
+     "last_pts": 10.2
     },
     {
      "name": "RJ Harvey",
@@ -1696,7 +1696,7 @@
      "pos": "WR",
      "team": "IND",
      "espn_id": 4688813,
-     "slot": "BENCH",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 9,
      "acq": "DRAFT",
@@ -1762,7 +1762,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 265.3,
-     "last_pts": 15.5
+     "last_pts": 16.7
     },
     {
      "name": "Jameson Williams",
@@ -1931,7 +1931,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 108.8,
-     "last_pts": 13.8
+     "last_pts": 0.9
     },
     {
      "name": "Devaughn Vele",
@@ -1976,9 +1976,9 @@
      "keeper": true,
      "keeper_price": 34,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 57.1,
-     "last_pts": 12.9
+     "last_pts": 1.1
     },
     {
      "name": "Breece Hall",
@@ -2017,7 +2017,7 @@
      "acq": "DRAFT",
      "inj": null,
      "season_pts": 103.5,
-     "last_pts": 1.0
+     "last_pts": 10.0
     },
     {
      "name": "Lamar Jackson",
@@ -2106,7 +2106,7 @@
      "keeper": true,
      "keeper_price": 24,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "DOUBTFUL",
      "season_pts": 0.0,
      "last_pts": 2.1
     },
@@ -2201,7 +2201,7 @@
      "pos": "WR",
      "team": "TB",
      "espn_id": 4567750,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 25,
      "acq": "DRAFT",
@@ -2296,7 +2296,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "DOUBTFUL",
      "season_pts": 185.1,
      "last_pts": 1.4
     },
@@ -2311,7 +2311,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 62.7,
-     "last_pts": 27.8
+     "last_pts": 8.3
     },
     {
      "name": "Ja'Kobi Lane",
@@ -2344,7 +2344,7 @@
      "pos": "WR",
      "team": "CAR",
      "espn_id": 4695883,
-     "slot": "BENCH",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 2,
      "acq": "DRAFT",
@@ -2626,7 +2626,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 222.9,
-     "last_pts": 5.6
+     "last_pts": 39.5
     },
     {
      "name": "James Cook III",
@@ -2730,7 +2730,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 52.1,
-     "last_pts": 0.0
+     "last_pts": 17.4
     },
     {
      "name": "Jordan Addison",
