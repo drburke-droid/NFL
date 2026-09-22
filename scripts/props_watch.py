@@ -37,8 +37,9 @@ from model_burke import pipeline
 from model_burke.features import build_lagged_features
 
 # one key per line (gitignored); rotate to the next when one is out of credits
-KEYS = [k.strip() for k in open(os.path.join(ROOT, "data", "odds_api_key.txt"))
-        if k.strip() and not k.startswith("#")]
+KEYS = [k for line in open(os.path.join(ROOT, "data", "odds_api_key.txt"))
+        if line.strip() and not line.startswith("#")
+        for k in re.split(r"[,;\s]+", line.strip()) if k]     # one per line, or comma-separated
 _ki = [0]
 FRAMES = os.path.join(ROOT, "data", "props_frames")
 LEDGER = os.path.join(FRAMES, "ledger_2026.csv")

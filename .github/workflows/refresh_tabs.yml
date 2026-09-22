@@ -56,7 +56,15 @@ jobs:
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: |
-          if [ -n "$ODDS_API_KEY" ]; then printf '%s\n' "$ODDS_API_KEY" > data/odds_api_key.txt; fi
+          # the secret holds several keys separated by commas, semicolons, spaces or newlines (the
+          # same format sabersim_auto.py reads); one key per line is what the scripts rotate through
+          python - <<'EOF'
+          import os, re
+          keys = [k for k in re.split(r"[,;\s]+", os.environ.get("ODDS_API_KEY", "")) if k]
+          if keys:
+              open("data/odds_api_key.txt", "w").write("\n".join(keys) + "\n")
+          print(f"{len(keys)} key(s) written")
+          EOF
 
       - name: Refresh every tab
         env:
