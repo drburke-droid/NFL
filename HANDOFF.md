@@ -263,6 +263,12 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   sheet shared read-only by link and read as gviz CSV. The sheet's CSV carries no CORS header, so
   the page's live "who's in" falls back to the baked `submissions.json`; empty submissions (0
   arrows, e.g. the setup test row) are skipped by the puller.
+  **Identity is username + PIN** (added the same day): the page hashes them (SHA-256, first 20 hex)
+  into `fan_id`, so the same person reproduces it on any device and a name-alike without the PIN
+  becomes a separate player (shown with the id tail, e.g. "Clay (a1f3)"). The PIN never leaves the
+  browser. Rows from before PINs (no fan_id) attach to the first PIN identity that claims the same
+  name. "Forgot my PIN" = a new identity; merge it by hand in `data/fan_adjustments/aliases.json`
+  ({old_fan_id: new_fan_id}). `device_id` (random per browser) is also recorded, for the mining.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
