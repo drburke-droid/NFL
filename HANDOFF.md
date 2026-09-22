@@ -1,10 +1,70 @@
-# Handoff — state as of 2026-09-18 (week 2)
+# Handoff — state as of 2026-09-22 (week 2 closed, week 3 opens today)
 
 For picking the project up from another machine or the cloud console. Everything below is in this
 repo; the only things that are NOT are the Model_Burke package (private repo `model-burke-private`,
 or `pkg/` from the backup zip — see HOME_PC_RUNBOOK.md), the Odds API key file
 (`data/odds_api_key.txt`, gitignored), and Claude's memory notes (local `.claude` folder; the home
 PC gets them from the backup zip). This file carries the context those notes would otherwise hold.
+
+## What changed 2026-09-21 / 22
+
+Read this section first; it is the current state. Everything below it is older history kept for
+context.
+
+1. **The send is bias-corrected (#130, merged).** `scripts/bias_correction.py` reads the rolling
+   error out of `docs/sabersim_accuracy.json` and `sabersim_weekly.py` adds it to every skill-position
+   projection after `eval_dnp()`. It currently resolves to **-0.528 pts/player from 841 graded rows
+   over weeks 1-2** — the model runs high, so the constant is negative. Out of sample (fit wk1, apply
+   wk2) it moved MAE 3.609 -> 3.469 and bias -0.674 -> -0.304. It reorders nobody; it is a level
+   shift. `--no-bias-cal` disables it and `HEALTH["bias_cal"]` reports what was applied.
+   **Watch it settle**: the magnitude swung ~70% between the two weeks it is fit on, so treat the
+   current value as provisional until weeks 3-4 are in.
+
+2. **Week 2 is closed at 16/16 games.** Final: n 464, MAE 3.600, bias -0.611, Spearman 0.771,
+   80% coverage 0.800. Season to date n 934, MAE 3.739, bias -0.494, Spearman 0.774, cov 0.813.
+   On the same rows we beat FFA in both weeks (wk2 3.764 vs 3.929) and lose to DK in both
+   (wk2 4.208 vs 4.081). The DK gap is calibration, not ranking — the orderings agree.
+
+3. **The T-90 inactives question is answered, and the answer is not the one the probe was chasing.**
+   Monday night (NYG @ LA, one game, a clean read) the official inactive list did not reach ANY
+   feed until ~T-70: espn_league LAR 2->7 and NYG 1->8 between the 23:00 and 23:10 ticks, sleeper
+   likewise. The T-80 send is therefore structurally too early to ever see it, matching the ~T-73
+   seen on 2026-09-13. `espn_fantasy` does NOT lead — it was flat across the exact tick where the
+   other two registered the drop. It is healthy otherwise (`field: true, via: kona_season,
+   tried: []`), so the view question from 09-20 is settled; the latency premise is what failed.
+   **What actually caught Puka Nacua that night was the nfl.com injury report plus sleeper's status
+   field**, which had him OUT hours before the inactive list existed. Keep those two paths healthy;
+   chasing a faster inactives feed is the lower-value thread.
+
+4. **The OUT redistribution has a shape problem, not a size problem.** Nacua was correctly sent at
+   0.00. His vacated share was spread across four Rams receivers by projection weight, and the game
+   concentrated nearly all of it in the WR1 and the tight end:
+
+   | player | sent | actual | err |
+   |---|---|---|---|
+   | Davante Adams | 17.41 | 39.50 | +22.09 |
+   | Terrance Ferguson | 6.81 | 17.40 | +10.59 |
+   | Konata Mumpfield | 4.22 | 2.20 | -2.02 |
+   | Tutu Atwell | 3.33 | 2.90 | -0.43 |
+   | Xavier Smith | 3.20 | 0.00 | -3.20 |
+
+   Adams got +1.7 and needed something closer to +22, while the three small bumps all landed on
+   players who came in UNDER their boosted numbers. That points at `SHARES` in `sabersim_weekly.py`:
+   `s_top` too low and `s_rest` too high when the absent player is a genuine alpha. One game is not
+   a fit — but it is a specific, testable hypothesis, and the backtest to settle it (re-score past
+   OUT events under alternative share splits) is the highest-value open modelling item.
+
+5. **The grader zero-fills, and you should know it when reading MAE.** Once BOTH teams of a game
+   are in nflverse, a projected player with no box-score row is scored as an actual 0 — deliberate,
+   and correct (no row = no snaps). But it means an inactive we sent at 0.00 grades as a free
+   perfect row. Season-wide that is **40 of 934 rows (4.3%)** sitting at 0-vs-0. MNF reads MAE 3.791
+   with them and 4.052 without. Do not confuse this with the ad-hoc analysis frames, which drop
+   unmatched rows instead — conflating the two is easy and I did it once in conversation.
+
+6. **New: the `gm/` package** — a rest-of-season league simulator and trade finder for the ESPN
+   keeper league, with `scripts/gm_report.py` as its CLI. It shares NO import path with the send
+   pipeline in either direction. **See `GM_RUNBOOK.md`**, which carries its own setup, refresh order,
+   measured constants and limitations. Next piece of work is named at the bottom of that file.
 
 ## What changed 2026-09-18
 
@@ -128,22 +188,20 @@ reads K's context columns today, but it was the same omission that left K/DST wi
 
 ## Open items
 
-- T-90 inactives gap (item 2). `scripts/inactives_probe.py` samples feeds each tick T-100..T-60 into
-  the Actions log. The earlier "no faster free feed found" was drawn from an incomplete search: it
-  covered ESPN's site and core APIs, which genuinely have no pregame inactives endpoint, but not
-  ESPN's FANTASY api — a separately maintained service, and the one the Fantasy app renders, which
-  does carry inactives on time. `espn_fantasy` now samples
-  `lm-api-reads.fantasy.espn.com/.../players?view=players_wl` alongside the others; the repo already
-  had working cookie auth for that host (fetch_espn*.py), it just was never pointed at injuries.
-  It reports the field's presence and the raw status distribution rather than a bare count, because
-  Measured on the 2026-09-20 afternoon bands: the host answers an UNAUTHENTICATED datacenter
-  request in 267 ms — faster than espn_league (413 ms) and Sleeper (1322 ms) — and accepts the
-  cookies, so transport and auth are fine. But `players_wl` carries NO injuryStatus: 11,618
-  players, every one None. It is the player-universe view and nothing more. The probe now tries
-  `kona_player_info` (season, then league-scoped) first and falls back to players_wl, reporting
-  `via` for whichever view actually carried the field. Reporting `field` rather than a bare count
-  is what kept this from reading as "ESPN fantasy is no faster" and closing the question wrongly
-  a second time. If it crosses meaningfully before T-80 it closes this gap.
+- ~~T-90 inactives gap~~ **CLOSED 2026-09-22, negative result.** The probe did its job: the
+  official list lands ~T-70 on every clean read so far (09-13 ~T-73, 09-21 between the 23:00 and
+  23:10 ticks), which is AFTER the last send that clears SaberSim's T-75 cutoff. No free feed
+  fixes that, because the league does not publish earlier. `espn_fantasy` was the last candidate
+  and does not lead. `scripts/inactives_probe.py` can stay (it costs one step per tick and writes
+  nothing), but treat this thread as finished unless a paid feed with a documented pre-T-90 flag
+  is on the table. The working substitute is already in place and was proven on 09-21: the
+  nfl.com injury report + sleeper status + the DOUBT mixture had Nacua at P(plays) 0.18 a full
+  day early, so the send absorbed ~82% of the news before the inactive list existed.
+- **`SHARES` redistribution shape (new, highest-value modelling item).** See item 4 of the
+  2026-09-22 section. Re-score historical OUT events under alternative `s_top`/`s_rest` splits
+  and see whether a more top-heavy split lowers MAE on the teammates of absent alphas.
+- **Bias constant provisional.** -0.528 now; refit weekly and watch whether it stabilises across
+  weeks 3-4 before trusting the magnitude.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
