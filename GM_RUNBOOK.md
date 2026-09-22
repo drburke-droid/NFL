@@ -28,7 +28,7 @@ already committed. See `ESPN_SETUP.md`; locally they go in `data/espn_cookies.js
 ```
 python scripts/gm_report.py                    # title odds for every team
 python scripts/gm_report.py --trades           # + trades worth proposing
-python scripts/gm_report.py --trades --keeper-discount 1     # judge trades on next season too
+python scripts/gm_report.py --trades --keeper-discount 0     # this season only (default weights next season fully)
 python scripts/gm_report.py --check            # what is stale and how to refresh it
 python scripts/gm_report.py --roster           # my depth chart: pts/wk, bye, value over waiver, weeks started
 ```
@@ -79,6 +79,7 @@ everyone who does not move draws the identical season either side of the trade. 
 produces a delta of exactly 0.0000000000; anything non-zero is signal.
 
 **`--keeper-discount` is a preference, not a fact.** 0 judges a trade on this season alone; 1
+(the default since 2026-09-22, because that is how this owner actually reasons about a bench)
 treats next season's keeper surplus as fully comparable. Dollars convert to title probability at
 *each team's own* win-curve slope, measured by nudging that roster and re-simulating — a league
 average would misprice exactly the teams that most need to sell. Keeper deltas are reported at any
@@ -100,6 +101,8 @@ let them drift:
 | shrinkage prior | ~7 games | variance components (6.25) and direct regression (7.7) |
 | player weekly sd | 0.383 x ppg + 2.23 | 1,154 player-seasons in *this league's* scoring |
 | availability | 0.75 + 0.030 x ppg, cap 0.97 | availability rises steeply with projection |
+| injury caps | Out .485 / Doubtful .543 / Questionable .644; IR .10 assumed | share of the remaining season played, 5,573 listings 2016-25 |
+| year-over-year drift, sd | young +0.3..+0.7, old -0.5..-0.9; sd RB/WR 4, TE 3, QB 5 | players with 6+ games both seasons, 2012-25 |
 | player mean | per-position ridge, `gm/ros_model.json` | 26,690 player-weeks 2013-25, walk-forward MAE 3.11 vs 3.31 for the old blend |
 | mean shrinkage | 1.00 (ridge); 0.80 for the legacy blend | the ridge is already regressed: its 6.7 team spread + 5.1 uncertainty = 8.4 vs the 8.7 target |
 | uncertainty about a team | 5.1 pts/wk | disagreement between two independent roster views |
@@ -137,13 +140,31 @@ gm/simulate.py   the season simulator, trade evaluation, roster-limit enforcemen
 gm/players.py    per-player rest-of-season estimates in league scoring
 gm/ros_model.json  the fitted ridge (coefficients, medians, gap flags) the estimates read
 scripts/ros_player_study.py  the study that fits it: --rebuild --fit-production after each season
-gm/keepers.py    next-season value, reading the board predict_keepers.py builds
+gm/keepers.py    next-season value: the dollar curve, the year-over-year spread, next_season_board
 gm/trades.py     the two-stage league-wide search
 scripts/gm_report.py      the CLI
 scripts/build_gm_league.py  ESPN pull -> league config
 tests/test_gm_*.py        118 tests; run `python -m pytest tests/ -k gm -q` (~4 min, the
                  trade search dominates)
 ```
+
+**Next season is priced from this one, not from last year's board.** `keepers_2026.js` was the
+board for keeping INTO 2026 and that decision is made. `gm/keepers.py:next_season_board` builds
+next year's from the current rosters: cost = this year's auction price ($1 for any waiver pickup,
+per league rule) + a $5 bump (the owner's real bump is not known until the standings settle);
+value = the league's auction dollars at the player's *healthy* level (the fitted mean, which does
+not know he is hurt), averaged over a measured year of drift and spread (young players +0.5 ppg,
+everyone else -0.5 to -0.9, sd 4 at RB/WR). The dollar curve is fitted from the 2026 board against
+the draft tool's projections and is convex -- RB 8 ppg is $1, 11 is $6, 14 is $29 -- which is
+exactly why a cheap young player is worth more than the dollars at his expected level. The
+`--roster` table prints healthy level, cost, value, surplus and a "why held" tag per player, so a
+$1 stash is judged on the reason he is held rather than on this week's zero. A forced cut spares
+players with keeper surplus (their `hold`, in weekly points at the chosen discount).
+
+**Injury designations cap availability.** The ESPN status on each roster entry (carried into the
+config by build_gm_league.py) caps P(plays) at the measured share of the remaining season played
+by players listed with it: Out 0.485, Doubtful 0.543, Questionable 0.644 (5,573 listings 2016-25).
+INJURY_RESERVE is an ESPN roster state with no NFL-report equivalent, so its 0.10 is an assumption.
 
 **Byes and the waiver wire are modelled.** Each score column is a league week (`week_columns`),
 so a player sits out his NFL bye in that column and the next man starts. Every team also carries

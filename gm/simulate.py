@@ -355,7 +355,10 @@ def forced_cuts(players, capacity, starters=None):
     if capacity is None or len(players) <= capacity:
         return []
     starters = starters or {}
-    order = sorted(players, key=lambda v: v["mean"] * v["p_play"])
+    # "hold" is what a player is worth beyond this season -- keeper surplus in weekly points, set by
+    # the trade search from the keeper board -- so a $1 stash with next-year value outlasts a
+    # journeyman with the same weekly mean and none.
+    order = sorted(players, key=lambda v: v["mean"] * v["p_play"] + v.get("hold", 0.0))
     counts = {}
     for v in players:
         counts[v["pos"]] = counts.get(v["pos"], 0) + 1

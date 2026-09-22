@@ -298,3 +298,14 @@ def test_threshold_bonuses_are_part_of_league_scoring(monkeypatch):
     plain = P.weekly_in_league_scoring(c, (2026,)).pts.iloc[0]
     bonused = P.weekly_in_league_scoring(with_bonus, (2026,)).pts.iloc[0]
     assert bonused == pytest.approx(plain + 3.0)
+
+
+def test_an_espn_injury_designation_caps_availability():
+    est = P.ros_estimates(load(REAL))
+    tagged = [v for v in est.values() if v["pos"] in P.SKILL and str(v.get("injury") or "").upper() in P.P_PLAY_STATUS]
+    if not tagged:
+        pytest.skip("nobody on a roster carries a designation right now")
+    for v in tagged:
+        assert v["p_play"] <= P.P_PLAY_STATUS[v["injury"].upper()] + 1e-9
+    assert all(v["p_play"] >= 0.75 for v in est.values()
+               if v["pos"] in P.SKILL and v["source"] == "blend" and not v.get("injury")),         "an untagged regular is still available"
