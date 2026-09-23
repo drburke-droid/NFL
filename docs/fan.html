@@ -152,11 +152,11 @@ const LABEL = {pass_yds:"pass yds", pass_tds:"pass TD", pass_int:"INT", rush_yds
 const TEAMS = {ARI:"Arizona Cardinals", ATL:"Atlanta Falcons", BAL:"Baltimore Ravens", BUF:"Buffalo Bills", CAR:"Carolina Panthers", CHI:"Chicago Bears", CIN:"Cincinnati Bengals", CLE:"Cleveland Browns", DAL:"Dallas Cowboys", DEN:"Denver Broncos", DET:"Detroit Lions", GB:"Green Bay Packers", HOU:"Houston Texans", IND:"Indianapolis Colts", JAX:"Jacksonville Jaguars", KC:"Kansas City Chiefs", LA:"Los Angeles Rams", LAC:"Los Angeles Chargers", LV:"Las Vegas Raiders", MIA:"Miami Dolphins", MIN:"Minnesota Vikings", NE:"New England Patriots", NO:"New Orleans Saints", NYG:"New York Giants", NYJ:"New York Jets", PHI:"Philadelphia Eagles", PIT:"Pittsburgh Steelers", SEA:"Seattle Seahawks", SF:"San Francisco 49ers", TB:"Tampa Bay Buccaneers", TEN:"Tennessee Titans", WAS:"Washington Commanders"};
 const TEAM_FIX = {JAC:"JAX", LAR:"LA", LVR:"LV", WSH:"WAS", ARZ:"ARI", OAK:"LV", SD:"LAC", STL:"LA"};
 const canon = t => TEAM_FIX[t] || t;
-let FAV = ls.get("fanpicks_team") || "";
 const $ = id => document.getElementById(id);
 let D = null, KEY = "", picks = {}, CFG = {}, G = null, SUBS = null, LIVE = null;   // picks: "i:s" -> signed arrow presses
 const STEP = 0.10, MIN_N = -10;
 const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
+let FAV = ls.get("fanpicks_team") || "";        // the team the fan knows best; must follow ls
 const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
 const me = () => ($("who").value || "").trim().slice(0, 24);
 // Identity = a hash of username + PIN, computed here and never reversed anywhere: the same person
