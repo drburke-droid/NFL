@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fan Picks — you + BurkeV1</title>
+<title>Fan Picks — you + Burke_v1</title>
 <meta property="og:title" content="Football Expert — can people and a model build the perfect projection?">
-<meta property="og:description" content="Nudge BurkeV1's NFL projections where you know better. Every arrow is scored against the box score, and the calls that keep beating the machine earn a place in it. Standings in The Sunday Oracle.">
+<meta property="og:description" content="Nudge Burke_v1's NFL projections where you know better. Every arrow is scored against the box score, and the calls that keep beating the machine earn a place in it. Standings in The Sunday Oracle.">
 <meta property="og:image" content="https://drburke-droid.github.io/NFL/fan/cabinet.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,14 +76,15 @@
   .paper .head { font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:27px; line-height:1.12; margin:10px 0 4px; letter-spacing:-.01em; }
   .paper .deck { font-style:italic; font-size:14px; color:#333; margin:0 0 10px; line-height:1.35; }
   .paper .byline { font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#555; margin-bottom:8px; }
-  .paper .story { column-count:2; column-gap:22px; column-rule:1px solid #b9b09a; font-size:12.5px; line-height:1.5; text-align:justify; hyphens:auto; }
+  .paper .story { column-count:3; column-gap:24px; column-rule:1px solid #b9b09a; font-size:12.5px; line-height:1.5; text-align:justify; hyphens:auto; }
   .paper .story p { margin:0 0 9px; } .paper .story p:first-child::first-letter { font-family:'Playfair Display',Georgia,serif; font-size:40px; float:left; line-height:.8; padding:4px 5px 0 0; font-weight:700; }
   .paper .story h4 { font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin:8px 0 3px; border-bottom:1px solid #000; display:inline-block; text-align:left; }
   .paper .sep { border-top:1px solid #000; margin:12px 0 10px; }
   .paper .lead { display:flex; gap:26px; }
   .paper .lead > .storycol { flex:1.15 1 320px; min-width:0; }
   .paper .lead > .tablecol { flex:1 1 300px; min-width:0; }
-  @media (max-width:760px) { .paper { padding:18px 16px 22px; } .paper .lead { flex-direction:column; } .paper .story { column-count:1; } .paper .head { font-size:22px; } }
+  @media (max-width:900px) { .paper .story { column-count:2; } }
+  @media (max-width:760px) { .paper { padding:18px 16px 22px; } .paper .story { column-count:1; } .paper .head { font-size:22px; } }
   .paper::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0px,transparent 1px,transparent 2px),repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0px,transparent 1px,transparent 3px),repeating-linear-gradient(45deg,rgba(0,0,0,.01) 0px,transparent 1px,transparent 6px); }
   .paper::after { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 30% 20%,rgba(180,160,120,.18),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(160,140,100,.14),transparent 50%); }
   .paper > * { position:relative; z-index:1; }
@@ -123,8 +124,13 @@
   #attract .t1 { font-size:2.4vh; color:#ffcc33; line-height:1.4; }
   #attract .t2 { font-size:1.05vh; color:#7fe3ff; }
   #attract .go { font-size:1.25vh; color:#fff; animation:blink 1.1s steps(1) infinite; margin-top:.6vh; }
-  #attract .hs { font-size:.95vh; color:#9fe870; line-height:2; text-align:left; margin-top:.4vh; }
-  #attract .hs b { color:#ffd23f; font-weight:400; }
+  #attract .hst { font-size:.95vh; color:#ffd23f; margin-top:.4vh; }
+  #attract .hs { font-size:.95vh; color:#9fe870; line-height:2; text-align:left; height:11vh; overflow:hidden; width:64%; -webkit-mask-image:linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(transparent, #000 12%, #000 88%, transparent); }
+  #attract .hs .crawl { animation:crawl var(--crawl, 14s) linear infinite; }
+  #attract .hs div { display:flex; justify-content:space-between; gap:1vh; white-space:nowrap; }
+  #attract .hs .me { color:#ffd23f; text-shadow:0 0 .8vh rgba(255,210,63,.7); }
+  #attract .hs b { font-weight:400; }
+  @keyframes crawl { from { transform:translateY(0); } to { transform:translateY(-50%); } }
   #attract .coin { font-size:.85vh; color:#8a94a6; }
   @keyframes blink { 0%,55% { opacity:1 } 56%,100% { opacity:0 } }
   #crt { position:absolute; inset:0; display:none; overflow:auto; background:var(--bg); }
@@ -150,24 +156,32 @@
   #paperwrap .paper { max-width:1000px; width:100%; }
   #paperclose { position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px; color:#666; z-index:2; font-family:sans-serif; }
   #newsbtn { background:#2a2f3a; color:var(--ink); border:0; border-radius:8px; padding:11px 12px; font-size:14px; cursor:pointer; }
+  /* the glass, lit: amber and phosphor accents, a pixel-font title, glare and a curved-glass shadow */
+  #stage.on { --acc:#ffcc33; --card:#0f1620; --line:#22314a; --bg:#070b10; --ink:#e8eef6; --mut:#8fa0b8; }
+  #stage.on #crt h1 { font-family:'Press Start 2P',monospace; font-size:12px; color:#ffcc33; text-shadow:0 0 6px rgba(255,204,51,.55); line-height:1.5; }
+  #stage.on #crt .game b, #stage.on #crt .team { color:#9fe870; }
+  #stage.on #crt .big { background:#ffcc33; color:#111 !important; text-shadow:none; }
+  #stage.on #crt .st button { background:#1a2433; }
+  #stage.on #crt .st.up { border-color:#3fb950; } #stage.on #crt .st.dn { border-color:#f85149; }
+  #scan { background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0px,rgba(0,0,0,.18) 1px,transparent 1px,transparent 3px),radial-gradient(ellipse at 30% 0%,rgba(255,255,255,.07),transparent 45%),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.5) 100%); }
   /* phones: the cabinet stays. Landing = the whole machine scaled to the width; tap the screen and
      the face is recomposed: a strip of bezel across the top, a tall glass, the controls, a strip of
      control panel with the paper on it. Slices of cabinet.jpg at 100vw wide are 119.15vw tall. */
   #mtop, #mbottom { display:none; }
   /* the glass is only ~20vh tall once the whole machine fits a phone: fewer, smaller lines */
   body.mobile #attract .t1 { font-size:3vh; } body.mobile #attract .t2 { font-size:1.4vh; } body.mobile #attract .go { font-size:1.5vh; }
-  body.mobile #attract .hs { font-size:1.35vh; line-height:1.8; } body.mobile #attract .hs div:nth-child(n+5) { display:none; }
+  body.mobile #attract .hst { font-size:1.35vh; } body.mobile #attract .hs { font-size:1.35vh; line-height:1.8; height:11vh; width:76%; }
   body.mobile #attract .coin { display:none; } body.mobile #attract { gap:1.2vh; }
   body.mobile #fold .fm { font-size:2.4vh; } body.mobile #fold .fs { font-size:1.15vh; } body.mobile #fold .fl { font-size:1.35vh; } body.mobile #fold .ft { font-size:1.1vh; }
   body.mobile #stage.on #cab { transform:none !important; }
   body.mobile #stage.on #cab img, body.mobile #stage.on #fold { display:none; }
-  body.mobile #stage.on #screen { position:fixed; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none; display:flex; flex-direction:column; background:#07080c; }
+  body.mobile #stage.on #screen { position:fixed; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none; display:flex; flex-direction:column; background:#0b0a08 linear-gradient(90deg,#0a0907,#1a1610 6%,#0e0c09 12%,#0e0c09 88%,#1a1610 94%,#0a0907); }
   body.mobile #stage.on #mtop { display:block; flex:none; height:14.3vw; background:url(fan/cabinet.jpg) no-repeat 0 -20.3vw / 100% auto; }
   body.mobile #stage.on #mbottom { display:block; flex:none; height:19vw; position:relative; background:url(fan/cabinet.jpg) no-repeat 0 -70vw / 100% auto; }
-  body.mobile #stage.on #crt { position:relative; flex:1; overflow:auto; zoom:1 !important; margin:0 2.5vw; border-radius:10px 10px 0 0; box-shadow:inset 0 0 28px rgba(0,0,0,.85); }
+  body.mobile #stage.on #crt { position:relative; flex:1; overflow:auto; zoom:1 !important; margin:2vw 5vw 0; border-radius:16px 16px 0 0; box-shadow:inset 0 0 34px rgba(0,0,0,.9), 0 0 0 7px #0a0908, 0 0 0 9px #2b241b; }
   body.mobile #stage.on #crt main { padding:12px 12px 14px; }
-  body.mobile #stage.on .bar { position:relative; flex:none; zoom:1 !important; margin:0 2.5vw; border-radius:0 0 10px 10px; }
-  body.mobile #stage.on #scan { top:14.3vw; bottom:19vw; left:2.5vw; right:2.5vw; border-radius:10px; }
+  body.mobile #stage.on .bar { position:relative; flex:none; zoom:1 !important; margin:0 5vw 2vw; border-radius:0 0 16px 16px; border-top:1px solid #1c2636; box-shadow:0 0 0 7px #0a0908, 0 0 0 9px #2b241b; }
+  body.mobile #stage.on #scan { top:calc(14.3vw + 2vw); bottom:calc(19vw + 2vw); left:5vw; right:5vw; border-radius:16px; }
   body.mobile #stage.on #eject { zoom:1 !important; top:8px; right:10px; font-size:12px; padding:6px 9px; background:rgba(20,22,28,.85); }   /* on the bezel strip, clear of the title */
   #mpaper { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-3deg); background:#ddd5c3; color:#111; padding:5px 12px 6px; border-radius:2px; font-family:'Source Serif 4',Georgia,serif; box-shadow:0 5px 14px rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.15); white-space:nowrap; cursor:pointer; text-align:center; }
   #mpaper::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0px,transparent 1px,transparent 2px); }
@@ -192,8 +206,9 @@
   <div id="screen">
     <div id="attract">
       <div class="t1">FOOTBALL<br>EXPERT</div>
-      <div class="t2">YOU + BURKEV1</div>
-      <div class="hs" id="hs"></div>
+      <div class="t2">YOU + BURKE_V1</div>
+      <div class="hst">HIGH SCORES &middot; PTS OFF</div>
+      <div class="hs" id="hs"><div class="crawl" id="crawl"></div></div>
       <div class="go">▶ PLAY NOW — CLICK TO PLAY</div>
       <div class="coin">NO COINS REQUIRED · MAN + MACHINE</div>
     </div>
@@ -202,13 +217,13 @@
     <div id="mtop"></div>
     <div id="crt">
 <main>
-  <h1>🏆 Fan Picks — you + BurkeV1</h1>
+  <h1>🏆 Fan Picks — you + Burke_v1</h1>
   <p class="sub" id="sub">loading this week's projections…</p>
 
   <details class="card how" id="why"><summary style="cursor:pointer"><b>Why this exists, and how accuracy is measured</b> — tap to read</summary>
-    <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>BurkeV1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than BurkeV1's earn a place in it.
-    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade BurkeV1 the hard way, on players who played.</div>
-    <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), BurkeV1, and every fan's version of it.</div>
+    <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>Burke_v1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than Burke_v1's earn a place in it.
+    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade Burke_v1 the hard way, on players who played.</div>
+    <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), Burke_v1, and every fan's version of it.</div>
 </div>
   </details>
 
@@ -228,7 +243,7 @@
   </div>
 
   <div class="card how">
-    <b>How to play.</b> Below are BurkeV1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat <b>10%</b> (three ▲ = +30%; ten ▼ = zero). Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
+    <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat <b>10%</b> (three ▲ = +30%; ten ▼ = zero). Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
     <div class="legend"><span><b style="color:var(--up)">▲</b> +10% per press</span><span><b style="color:var(--down)">▼</b> −10% per press</span><span>arrows lock at kickoff</span></div>
   </div>
 
@@ -244,7 +259,7 @@
 
   <div class="card" id="gradecard" style="margin-top:18px">
     <b>The fine print</b>
-    <div class="how" style="margin-top:4px">Every arrow is scored once the game's box score is in, against the projection BurkeV1 actually shipped for that game. <b>Direction</b> = the real number moved the way the arrow said. <b>Error removed</b> = fantasy points closer (or farther) than BurkeV1, summed. Arrows placed after a game kicks off do not count. Shadow mode: nothing here changes BurkeV1 — yet.</div>
+    <div class="how" style="margin-top:4px">Every arrow is scored once the game's box score is in, against the projection Burke_v1 actually shipped for that game. <b>Direction</b> = the real number moved the way the arrow said. <b>Error removed</b> = fantasy points closer (or farther) than Burke_v1, summed. Arrows placed after a game kicks off do not count. Shadow mode: nothing here changes Burke_v1 — yet.</div>
     <div id="grade" class="how" style="margin-top:8px">loading…</div>
   </div>
 </main>
@@ -273,32 +288,33 @@
     <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">FRONT PAGE &middot; MODEL STANDINGS</span><span id="nppage">C1</span></div>
     <div class="dateline" style="justify-content:center;margin:-2px 0 4px;font-style:italic;font-size:10.5px">"All the projections fit to print"</div>
     <div class="rule1"></div>
+    <div class="colh" style="margin-top:10px">Season standings <small>every model, ranked by average error &middot; W-L = weeks beating Burke_v1</small></div>
+    <div id="npseason" class="np-empty">loading&hellip;</div>
+    <div class="you" id="you" style="color:#333"></div>
+    <div class="np-note">Error is the average number of fantasy points a model was off, over every player who took the field; lower is better. A <b>win</b> is a week with a lower error than Burke_v1's, a <b>loss</b> a week with a higher one. The big sites are scored on every week they publish; a fan's model only on the weeks that fan placed arrows.</div>
+    <div class="sep"></div>
     <div class="head">Man Meets Machine in Search of the Perfect Projection</div>
-    <div class="deck">BurkeV1 already ranks with the best fantasy sites in the business. It is not looking for a rival. It is looking for a partner.</div>
+    <div class="deck">Burke_v1 already ranks with the best fantasy sites in the business. It is not looking for a rival. It is looking for a partner.</div>
     <div class="byline">From the desk of the model &middot; Kuhn &amp; Friends, and anyone else who wants in</div>
-    <div class="lead">
-      <div class="storycol"><div class="story">
-        <p>Every projection system is blind to something. A model can read ten seasons of box scores, the weather, the Vegas line and the injury report, and still not know that a receiver limped off the practice field on Friday, that a coach has fallen out of love with his running back, or that a rookie has the whole locker room believing. People know those things. They just have never had a way to prove it.</p>
-        <p>This page is that way. Each week BurkeV1 posts its projected stat line for every skill player on the slate. You read them and, where you know better, you say so: a tap of <b>&#9650;</b> nudges a number up ten percent, a tap of <b>&#9660;</b> nudges it down. Leave alone whatever you agree with. Press <i>Lock them in</i> and your arrows become a model of their own &mdash; <b>you + BurkeV1</b> &mdash; that is scored after the games exactly the way the machine is scored: on every player who took the field, by how many fantasy points it was off.</p>
-        <h4>The homer's edge</h4>
-        <p>There is reason to think the fans will hold their own. The league behind this page has run for twenty-two seasons, and its draft history keeps whispering the same thing: the dart throws land a little more often when the thrower knows the team. A <i>dart throw</i>, in this league's language, is a cheap late-auction buy &mdash; a dollar or two, three at most &mdash; on a player the consensus rankings do not rate, taken on a hunch; it counts as a hit if he ends up worth a starting spot. Most darts miss, which is what makes them darts. But the ones thrown at a manager's own team, the roster he watches every week and argues about at dinner, have hit at a slightly better clip than the ones thrown at everyone else's. That is a small edge in a small sample, and the market prices those players the same for everybody. It is exactly the kind of thing this page is built to test properly: does knowing a team well tell you something the numbers miss, and can a model be taught to listen?</p>
-        <h4>A contest, and a collaboration</h4>
-        <p>The standings at right make it a contest, and it should be one. But the prize is not a trophy. Every arrow is an experiment. If your calls keep landing closer than the machine's on a kind of player it misjudges &mdash; tight ends, say, or the backs on your own team &mdash; that is a signal, and signals earn weight. The version of BurkeV1 that ships next season will carry the fingerprints of whoever turned out to be right, and the email box on the game is how we find you when it is time to build it.</p>
-        <p>There is a stranger prize, too. A fan who is reliably wrong is as useful as one who is reliably right &mdash; maybe more so, because a consistent miss is a signal the model can simply flip. If you fade a player every time the crowd is high on him and he keeps going off anyway, the model learns to do the opposite of you, and it gets better for it. So getting things right is not the only way to leave a mark. Getting things wrong the same way, week after week, leaves one too. The only fan who teaches the machine nothing is the one who is right about half the time.</p>
-        <p>Coming to these pages: <b>The Crowd + BurkeV1</b>, a single model built from everyone's arrows at once, so we can see whether many partial views add up to a better one than any of us holds alone.</p>
-        <h4>The fine print</h4>
-        <p>Every model is graded on the same player-games, and only on players who played; an inactive counts for or against nobody. Arrows lock at kickoff. <b>W-L</b> counts the weeks a fan's arrows beat the machine's number against the weeks they didn't; an untouched week is a tie. Your username and PIN are you, on any device. And the big sites are listed with the accuracy they publish themselves, so nobody is grading them but them.</p>
-      </div></div>
-      <div class="tablecol"><div class="colh">Season standings <small>every model, ranked by average error</small></div><div id="npseason" class="np-empty">loading&hellip;</div></div>
+    <div class="story">
+      <p>Every projection system is blind to something. A model can read ten seasons of box scores, the weather, the Vegas line and the injury report, and still not know that a receiver limped off the practice field on Friday, that a coach has fallen out of love with his running back, or that a rookie has the whole locker room believing. People know those things. They just have never had a way to prove it.</p>
+      <p>This page is that way. Each week Burke_v1 posts its projected stat line for every skill player on the slate. You read them and, where you know better, you say so: a tap of <b>&#9650;</b> nudges a number up ten percent, a tap of <b>&#9660;</b> nudges it down. Leave alone whatever you agree with. Press <i>Lock them in</i> and your arrows become a model of their own &mdash; <b>you + Burke_v1</b> &mdash; that is scored after the games exactly the way the machine is scored: on every player who took the field, by how many fantasy points it was off.</p>
+      <h4>The homer's edge</h4>
+      <p>There is reason to think the fans will hold their own. The league behind this page has run for twenty-two seasons, and its draft history keeps whispering the same thing: the dart throws land a little more often when the thrower knows the team. A <i>dart throw</i>, in this league's language, is a cheap late-auction buy &mdash; a dollar or two, three at most &mdash; on a player the consensus rankings do not rate, taken on a hunch; it counts as a hit if he ends up worth a starting spot. Most darts miss, which is what makes them darts. But the ones thrown at a manager's own team, the roster he watches every week and argues about at dinner, have hit at a slightly better clip than the ones thrown at everyone else's. That is a small edge in a small sample, and the market prices those players the same for everybody. It is exactly the kind of thing this page is built to test properly: does knowing a team well tell you something the numbers miss, and can a model be taught to listen?</p>
+      <h4>A contest, and a collaboration</h4>
+      <p>The standings above make it a contest, and it should be one. But the prize is not a trophy. Every arrow is an experiment. If your calls keep landing closer than the machine's on a kind of player it misjudges &mdash; tight ends, say, or the backs on your own team &mdash; that is a signal, and signals earn weight. The version of Burke_v1 that ships next season will carry the fingerprints of whoever turned out to be right, and the email box on the game is how we find you when it is time to build it.</p>
+      <p>There is a stranger prize, too. A fan who is reliably wrong is as useful as one who is reliably right &mdash; maybe more so, because a consistent miss is a signal the model can simply flip. If you fade a player every time the crowd is high on him and he keeps going off anyway, the model learns to do the opposite of you, and it gets better for it. So getting things right is not the only way to leave a mark. Getting things wrong the same way, week after week, leaves one too. The only fan who teaches the machine nothing is the one who is right about half the time.</p>
+      <p>Coming to these pages: <b>The Crowd + Burke_v1</b>, a single model built from everyone's arrows at once, so we can see whether many partial views add up to a better one than any of us holds alone.</p>
+      <h4>The fine print</h4>
+      <p>Every model is graded on the same player-games, and only on players who played; an inactive counts for or against nobody. Arrows lock at kickoff. A win in the standings is a week with a lower error than Burke_v1's; a fan who places no arrows in a week is neither scored nor charged for it. Your username and PIN are you, on any device. And the big sites are listed with the accuracy they publish themselves, so nobody is grading them but them.</p>
     </div>
     <div class="sep"></div>
     <div class="cols">
       <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading&hellip;</div></div>
       <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading&hellip;</div></div>
-      <div><div class="colh">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
+      <div><div class="colh">Best &amp; worst calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
+      <div><div class="colh">Sharpest &amp; busiest</div><div id="npsharp" class="np-empty">nothing graded yet</div></div>
     </div>
-    <div class="np-note">Error is the average number of fantasy points a model was off, over every player who took the field. Lower is better.</div>
-    <div class="you" id="you" style="color:#333"></div>
   </section>
 </div></div>
 
@@ -573,7 +589,7 @@ function standings() {
     let r = rows.find(x => x.site && x.name === site); if (!r) rows.push(r = {name: site, site: true, weekly: {}, removed: 0, w: 0, l: 0, t: 0, arrows: 0});
     r.weekly[w] = v;
   }
-  rows.push({name: "BurkeV1", base: true, weekly: Object.fromEntries(mw.map(w => [w.week, w.mae])), removed: 0, w: 0, l: 0, t: 0, arrows: 0});
+  rows.push({name: "Burke_v1", base: true, weekly: Object.fromEntries(mw.map(w => [w.week, w.mae])), removed: 0, w: 0, l: 0, t: 0, arrows: 0});
   const byFan = {};
   for (const r of (G && G.by_fan_week) || []) if (r.graded) (byFan[r.fan] = byFan[r.fan] || {id: r.fan_id, weeks: {}}).weeks[r.week] = r;
   for (const [fan, f] of Object.entries(byFan)) {
@@ -586,6 +602,19 @@ function standings() {
     rows.push({name: fan, fan: true, fan_id: f.id, weekly, removed, w, l, t, arrows});
   }
   for (const r of rows) r.err = avg(r.weekly);
+  // W-L for everyone, against Burke_v1's played-only error that week: sites on every week they
+  // publish, a fan's model only on the weeks that fan placed arrows
+  const base = rows.find(r => r.base);
+  for (const r of rows) {
+    if (r.base) continue;
+    r.w = r.l = r.t = 0;
+    for (const w of weeks) {
+      const mine = r.weekly[w], his = base.weekly[w];
+      if (mine == null || his == null) continue;
+      if (r.fan && !(byFan[r.name] && byFan[r.name].weeks[w])) continue;
+      if (mine < his - 0.0005) r.w++; else if (mine > his + 0.0005) r.l++; else r.t++;
+    }
+  }
   rows.sort((a, b) => a.err - b.err || (a.base ? -1 : b.base ? 1 : 0));
   return {weeks, rows, mw};
 }
@@ -599,33 +628,42 @@ function renderLead() {
   $("npinsub").textContent = ins.length ? `${ins.length} for week ${D.week}` : `week ${D.week}`;
   $("npin").innerHTML = ins.length ? ins.map(x => `<div class="np-line"><span${x.fan === mine ? ' style="font-weight:700"' : ""}>${esc(x.fan)}</span><b>${x.arrows} arrow${x.arrows === 1 ? "" : "s"}</b></div>`).join("") : `<div class="np-empty">nobody is in yet — be first</div>`;
   const best = ((G && G.rows) || []).filter(r => r.removed_pts != null).sort((a, b) => b.removed_pts - a.removed_pts).slice(0, 6);
-  $("npbest").innerHTML = best.length ? best.map(r => `<div class="np-line"><span>${esc(r.fan)}: ${r.player} ${LABEL[r.stat] || r.stat} ${r.arrows > 0 ? "▲" : "▼"}${Math.abs(r.arrows)} <span style="color:#777">wk${r.week}</span></span><b>+${r.removed_pts.toFixed(1)}</b></div>`).join("") : `<div class="np-empty">nothing graded yet</div>`;
+  const graded = ((G && G.rows) || []).filter(r => r.removed_pts != null);
+  const worst = [...graded].sort((a, b) => a.removed_pts - b.removed_pts).slice(0, 3);
+  const callLine = r => `<div class="np-line"><span>${esc(r.fan)}: ${r.player} ${LABEL[r.stat] || r.stat} ${r.arrows > 0 ? "▲" : "▼"}${Math.abs(r.arrows)} <span style="color:#777">wk${r.week}</span></span><b>${r.removed_pts > 0 ? "+" : ""}${r.removed_pts.toFixed(1)}</b></div>`;
+  $("npbest").innerHTML = best.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>best</span></div>` + best.slice(0, 3).map(callLine).join("") + `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>worst</span></div>` + worst.map(callLine).join("") : `<div class="np-empty">nothing graded yet</div>`;
+  const fans = ((G && G.by_fan) || []).filter(f => f.graded >= 5);
+  const sharp = [...fans].filter(f => f.hit_rate != null).sort((a, b) => b.hit_rate - a.hit_rate).slice(0, 3);
+  const busy = [...((G && G.by_fan) || [])].sort((a, b) => b.n - a.n).slice(0, 3);
+  $("npsharp").innerHTML = (sharp.length || busy.length) ? (sharp.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>direction right most often (5+ graded)</span></div>` + sharp.map(f => `<div class="np-line"><span>${esc(f.fan)}</span><b>${pct(f.hit_rate)} of ${f.graded}</b></div>`).join("") : "") + (busy.length ? `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>most arrows placed</span></div>` + busy.map(f => `<div class="np-line"><span>${esc(f.fan)}</span><b>${f.n}</b></div>`).join("") : "") : `<div class="np-empty">nothing graded yet</div>`;
   const st = standings();
   if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; $("hs").textContent = ""; $("foldlines").innerHTML = `<div class="fl"><span>no week graded yet</span></div>`; return; }
   const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? r.fan_id === IDH : r.name === mine) ? " me" : "");
-  const label = r => r.base ? "BurkeV1 (unedited)" : r.fan ? esc(r.name) + " + BurkeV1" : esc(r.name);
-  $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th>${st.weeks.map(w => `<th>wk ${w}</th>`).join("")}<th>avg</th><th>W-L</th><th>vs model</th></tr>` +
-    st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td>${st.weeks.map(w => `<td>${r.weekly[w] != null ? r.weekly[w].toFixed(2) : "—"}</td>`).join("")}<td><b>${r.err < Infinity ? r.err.toFixed(2) : "—"}</b></td><td>${r.fan ? `${r.w}-${r.l}${r.t ? "-" + r.t : ""}` : "—"}</td><td class="${r.removed > 0 ? "up" : r.removed < 0 ? "dn" : ""}">${r.fan ? (r.removed > 0 ? "+" : "") + r.removed.toFixed(1) : "—"}</td></tr>`).join("") + `</table>`;
+  const label = r => r.base ? "Burke_v1" : r.fan ? esc(r.name) + " + Burke_v1" : esc(r.name);
+  $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th>${st.weeks.map(w => `<th>wk ${w}</th>`).join("")}<th>avg</th><th>W-L vs Burke_v1</th></tr>` +
+    st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td>${st.weeks.map(w => `<td>${r.weekly[w] != null ? r.weekly[w].toFixed(2) : "—"}</td>`).join("")}<td><b>${r.err < Infinity ? r.err.toFixed(2) : "—"}</b></td><td class="${r.base ? "" : r.w > r.l ? "up" : r.l > r.w ? "dn" : ""}">${r.base ? "—" : `${r.w}-${r.l}${r.t ? "-" + r.t : ""}`}</td></tr>`).join("") + `</table>`;
   const wk = st.mw.length ? st.mw[st.mw.length - 1] : null;
   if (wk) {
     const wrows = st.rows.filter(r => r.weekly[wk.week] != null && (!r.fan || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded))).sort((a, b) => a.weekly[wk.week] - b.weekly[wk.week] || (a.base ? -1 : b.base ? 1 : 0));
     $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest with box scores</small>" : ""}`;
     $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
-      wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "BurkeV1" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
+      wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "Burke_v1" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
   } else { $("npweekh").textContent = "This week"; $("npweek").innerHTML = `<div class="np-empty">no week graded yet</div>`; }
   // the attract screen's HIGH SCORES and the folded paper on the control panel
-  const top = st.rows.slice(0, 5);
-  $("hs").innerHTML = `<div style="color:#ffd23f;margin-bottom:.4vh">HIGH SCORES · PTS OFF</div>` + top.map((r, i) => `<div>${i + 1}. ${esc(r.base ? "BURKEV1" : r.name.toUpperCase().slice(0, 14))} <b>${r.err.toFixed(2)}</b></div>`).join("");
-  $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "BurkeV1" : esc(r.name) + (r.fan ? " + BurkeV1" : "")}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
+  // every model crawls past on the attract screen, Burke_v1 lit; the list is doubled so the loop is seamless
+  const line = (r, i) => `<div class="${r.base ? "me" : ""}"><span>${i + 1}. ${esc(r.base ? "BURKE_V1" : r.name.toUpperCase().slice(0, 15))}</span><b>${r.err.toFixed(2)}</b></div>`;
+  const crawl = $("crawl"); crawl.innerHTML = st.rows.map(line).join("") + st.rows.map(line).join("");
+  crawl.style.setProperty("--crawl", (st.rows.length * 1.6) + "s");
+  $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "Burke_v1" : esc(r.name) + (r.fan ? " + Burke_v1" : "")}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
   const meRow = st.rows.findIndex(r => r.fan && (IDH ? r.fan_id === IDH : r.name === mine));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
-  $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} BurkeV1 by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + BurkeV1 is not on the board yet — lock in picks and get graded`) : "";
+  $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} Burke_v1 by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + Burke_v1 is not on the board yet — lock in picks and get graded`) : "";
 }
 function renderGrade() {
   const el = $("grade"), o = (G && G.overall) || {};
   if (!G || !o.n) { el.textContent = "no picks submitted yet — yours could be the first"; return; }
   let h = `<div><b>${o.n}</b> arrows from <b>${(G.by_fan || []).length}</b> fan${(G.by_fan || []).length === 1 ? "" : "s"} · <b>${o.graded}</b> graded · ${o.pending} waiting for box scores` +
-    (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than BurkeV1 on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
+    (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than Burke_v1 on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
   if (G.by_size && o.graded) {
     const sz = Object.entries(G.by_size).filter(([k, v]) => v.graded).map(([k, v]) => `${k}×: ${pct(v.hit_rate)} on ${v.graded}`).join(" · ");
     const dr = Object.entries(G.by_direction || {}).filter(([k, v]) => v.graded).map(([k, v]) => `${k}s ${pct(v.hit_rate)} (${v.graded})`).join(" · ");
