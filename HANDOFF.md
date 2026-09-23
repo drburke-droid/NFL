@@ -306,6 +306,15 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   paper in `#paperwrap`. Phones (`body.plain`, min side < 600px or portrait < 760) skip the
   cabinet entirely. Player cards use content-visibility:auto because repainting ~200 cards
   under the transform was the slow part. og:image is the cabinet, for sharing.
+  **Phones keep the cabinet (2026-09-23 pm).** `body.mobile` (width < 760 or short side < 600):
+  landing = the whole machine scaled to fit (`fit()` uses min(1, vw/W, vh/H)); tapping the screen
+  sets `#stage.on` and CSS recomposes the face instead of transforming: `#mtop` (a 14.3vw strip of
+  cabinet.jpg at background-position 0 -20.3vw, i.e. the bezel), a tall `#crt` with the same
+  scanlines, the controls bar, and `#mbottom` (19vw strip at 0 -70vw, the control panel) carrying
+  `#mpaper`, a small folded Oracle that opens the standings overlay. Slices assume the image at
+  100vw wide is 119.15vw tall. `docs/fan/phone_harness.html` frames the page at 430x860 and
+  390x700 for checking in a desktop browser (the Chrome extension cannot resize a maximised window
+  and refuses file:// URLs). The old `body.plain` CSS remains but nothing sets it.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
