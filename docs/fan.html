@@ -128,6 +128,7 @@
   #attract .hs { font-size:.95vh; color:#9fe870; line-height:2; text-align:left; height:11vh; overflow:hidden; width:64%; -webkit-mask-image:linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(transparent, #000 12%, #000 88%, transparent); }
   #attract .hs .crawl { display:block; animation:crawl var(--crawl, 14s) linear infinite; }
   #attract .hs .crawl > div { display:flex; justify-content:space-between; gap:1vh; white-space:nowrap; }
+  #attract .hs .crawl > div.gap { height:2lh; height:calc(2 * 2em); }
   #attract .hs .me { color:#ffd23f; text-shadow:0 0 .8vh rgba(255,210,63,.7); }
   #attract .hs b { font-weight:400; }
   @keyframes crawl { from { transform:translateY(0); } to { transform:translateY(-50%); } }
@@ -666,8 +667,10 @@ function renderLead() {
   // the attract screen's HIGH SCORES and the folded paper on the control panel
   // every model crawls past on the attract screen, Burke_v1 lit; the list is doubled so the loop is seamless
   const line = (r, i) => `<div class="${r.base ? "me" : ""}"><span>${i + 1}. ${esc(r.base ? "BURKE_V1" : r.name.toUpperCase().slice(0, 15))}</span><b>${r.err.toFixed(2)}</b></div>`;
-  const crawl = $("crawl"); crawl.innerHTML = st.rows.map(line).join("") + st.rows.map(line).join("");
-  crawl.style.setProperty("--crawl", (st.rows.length * 1.6) + "s");
+  // a two-line gap closes each pass, so the loop reads as a list that ends and starts again, not an endless one
+  const pass = st.rows.map(line).join("") + `<div class="gap"></div>`;
+  const crawl = $("crawl"); crawl.innerHTML = pass + pass;
+  crawl.style.setProperty("--crawl", ((st.rows.length + 2) * 1.6) + "s");
   $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "Burke_v1" : esc(r.name) + (r.fan ? " + Burke_v1" : "")}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
   const meRow = st.rows.findIndex(r => r.fan && (IDH ? r.fan_id === IDH : r.name === mine));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
