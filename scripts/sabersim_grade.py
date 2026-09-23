@@ -28,6 +28,7 @@ ap.add_argument("--sends", nargs="+", default=[os.path.join(ROOT, "outputs", "sa
 ap.add_argument("--season", type=int, default=2026)
 ap.add_argument("--week1-tuesday", default="2026-09-08", help="Tuesday that starts week 1 (weeks roll on Tuesdays)")
 ap.add_argument("--min-lead", type=float, default=75.0, help="minutes before kickoff a send must be generated to count")
+ap.add_argument("--rows-out", default=None, help="also write every graded row (send, actual, ffa, dk) to this CSV, for audits")
 A = ap.parse_args()
 W1 = date.fromisoformat(A.week1_tuesday)
 def norm(s):
@@ -88,6 +89,10 @@ def lookup(r):
     if isinstance(r.ID, str) and r.ID.startswith("00-"): return np.nan
     return by_last.get((r.nname.split()[-1], r.Team, r.Pos, w), np.nan)
 g = elig.copy(); g["actual"] = [lookup(r) for r in g.itertuples()]
+# "played" = the player has a box-score row that week. A player who dressed and scored nothing
+# still played; a player we zeroed out as inactive did not. The played-only error is the one to
+# show fans, because a pool full of inactives we sent at 0.00 flatters the all-rows number.
+g["played"] = g.actual.notna()
 g = g[g.Pos.isin(["QB", "RB", "WR", "TE", "K"])].copy()
 # a player with no box-score row after the game = 0 points (inactive / no touches) — but only for
 # GAMES nflverse has ingested: both teams of the game must have rows for that week, otherwise the
@@ -118,12 +123,19 @@ if bench:
 else:
     g["ffa"] = np.nan; g["dk"] = np.nan
 
+if A.rows_out:
+    g.to_csv(A.rows_out, index=False); print(f"  graded rows -> {A.rows_out} ({len(g)})")
+
 # ---------- 4. metrics ----------
 from scipy.stats import spearmanr
 def block(d):
     d = d.dropna(subset=["actual"])
     if d.empty: return None
+    pl = d[d.played] if "played" in d else d
     o = {"n": int(len(d)), "mae": round(float(d.err.abs().mean()), 3), "rmse": round(float(np.sqrt((d.err ** 2).mean())), 3),
+         "n_played": int(len(pl)), "mae_played": round(float(pl.err.abs().mean()), 3) if len(pl) else None,
+         "ffa_mae_played": round(float((pl.actual - pl.ffa).abs().mean()), 3) if len(pl.dropna(subset=["ffa"])) >= 8 and "ffa" in pl else None,
+         "model_mae_played_on_ffa_rows": round(float(pl.dropna(subset=["ffa"]).err.abs().mean()), 3) if "ffa" in pl and len(pl.dropna(subset=["ffa"])) >= 8 else None,
          "bias": round(float(d.err.mean()), 3),
          "spearman": round(float(spearmanr(d.Proj, d.actual)[0]), 3) if len(d) >= 8 else None,
          "cov80": round(float(((d.actual >= d.Floor_p10) & (d.actual <= d.Ceiling_p90)).mean()), 3) if "Floor_p10" in d else None,
