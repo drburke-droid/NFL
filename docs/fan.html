@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fan Picks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
 <style>
   :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; --line:#262a33; --up:#3fb950; --down:#f85149; --gold:#e3b341; }
   * { box-sizing:border-box; }
@@ -65,6 +67,35 @@
   .in-list { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
   .in-list span { background:#232833; border-radius:14px; padding:4px 10px; font-size:13px; } .in-list span.me { background:#2b3f7a; }
   .score { font-weight:700; }
+  /* the newspaper: newsprint, rules, serif masthead, tight columns (after the W.A.R. Street Journal) */
+  .paper { position:relative; background:#ddd5c3; color:#1a1a1a; border-radius:2px; box-shadow:0 8px 30px rgba(0,0,0,.6); padding:10px 14px 12px; margin-bottom:14px; overflow:hidden; font-family:'Source Serif 4',Georgia,serif; }
+  .paper::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0px,transparent 1px,transparent 2px),repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0px,transparent 1px,transparent 3px),repeating-linear-gradient(45deg,rgba(0,0,0,.01) 0px,transparent 1px,transparent 6px); }
+  .paper::after { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 30% 20%,rgba(180,160,120,.18),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(160,140,100,.14),transparent 50%); }
+  .paper > * { position:relative; z-index:1; }
+  .rule2 { border-top:2px solid #000; border-bottom:1px solid #000; height:4px; margin-bottom:4px; }
+  .rule1 { border-top:1px solid #000; border-bottom:1px solid #000; height:2px; }
+  .mast { font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:34px; letter-spacing:-.5px; line-height:1.05; text-align:center; margin:2px 0; }
+  .mast small { font-size:55%; }
+  .dateline { display:flex; justify-content:space-between; align-items:baseline; font-size:11px; color:#444; margin:4px 0 5px; }
+  .dateline .sec { letter-spacing:2px; font-weight:700; font-size:11px; }
+  .cols { display:flex; gap:16px; margin-top:8px; }
+  .cols > div { flex:1 1 200px; min-width:0; }
+  .colh { font-size:11px; font-weight:700; letter-spacing:1px; border-bottom:1px solid #000; padding-bottom:1px; margin-bottom:3px; text-transform:uppercase; }
+  .colh small { float:right; font-weight:400; letter-spacing:0; text-transform:none; color:#555; }
+  table.np { width:100%; border-collapse:collapse; font-size:11.5px; line-height:1.35; }
+  table.np th { font-size:9.5px; font-weight:700; letter-spacing:.5px; color:#333; border-bottom:1px solid #999; text-align:right; padding:0 3px 1px; }
+  table.np td { padding:1px 3px; text-align:right; white-space:nowrap; border-bottom:1px dotted #b8ae98; }
+  table.np th:first-child, table.np td:first-child, table.np th.l, table.np td.l { text-align:left; }
+  table.np td.nm { max-width:150px; overflow:hidden; text-overflow:ellipsis; }
+  table.np tr.base td { font-weight:700; }
+  table.np tr.me td { background:rgba(0,0,0,.07); }
+  table.np td.up { color:#1e5f2a; } table.np td.dn { color:#8a1c1c; }
+  .np-note { font-size:10.5px; color:#444; margin-top:6px; line-height:1.35; font-style:italic; }
+  .np-line { font-size:11px; line-height:1.35; display:flex; justify-content:space-between; gap:6px; }
+  .np-line span:first-child { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .np-line b { font-weight:600; }
+  .np-empty { font-size:11px; color:#666; font-style:italic; padding:4px 0; }
+  @media (max-width:640px) { .cols { flex-direction:column; gap:10px; } .mast { font-size:24px; } }
   .you { font-size:13px; color:var(--mut); margin-top:6px; } .you b { color:var(--gold); }
 </style>
 </head>
@@ -80,13 +111,20 @@
     <span id="whyacc"></span>
   </div>
 
-  <div class="card lead">
-    <h2>Leaderboard</h2>
-    <div class="how">Your score is how many fantasy points closer to reality your numbers were than the model's, added up over every arrow you placed. Above zero means you beat the model. Leave a stat alone and it neither helps nor hurts you.</div>
-    <div class="tabs" id="ltabs"><button data-t="season" class="on">Season</button><button data-t="week">This week</button><button data-t="in">Who's in</button></div>
-    <div id="lead" class="how">loading…</div>
-    <div class="you" id="you"></div>
-  </div>
+  <section class="paper" id="paper">
+    <div class="rule2"></div>
+    <div class="mast">THE PROJECTION P<small>.</small>O<small>.</small>S<small>.</small>T<small>.</small></div>
+    <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">MODEL STANDINGS</span><span id="nppage">C1</span></div>
+    <div class="rule1"></div>
+    <div class="cols">
+      <div style="flex:1.6 1 260px"><div class="colh">Season standings <small>every model, scored on every player who played</small></div><div id="npseason" class="np-empty">loading…</div></div>
+      <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading…</div></div>
+      <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading…</div>
+           <div class="colh" style="margin-top:8px">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
+    </div>
+    <div class="np-note">A fan's model is the model with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat the unedited model's number against the weeks they didn't. Untouched players score exactly as the model does, so a quiet week is a tie, not a loss.</div>
+    <div class="you" id="you" style="color:#333"></div>
+  </section>
 
   <div class="card">
     <div class="row">
@@ -338,14 +376,14 @@ $("copy").onclick = async () => {
 $("close").onclick = () => $("modal").classList.remove("on");
 $("modal").addEventListener("click", e => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
 
-// ---- leaderboard (docs/fan/grade.json + docs/fan/submissions.json, refreshed by the grade job; the sheet itself for "who's in" right now) ----
-let TAB = "season";
-$("ltabs").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; TAB = b.dataset.t; for (const x of $("ltabs").children) x.classList.toggle("on", x === b); renderLead(); });
+// ---- the newspaper (docs/fan/grade.json + sabersim_accuracy.json + submissions.json; the sheet itself for "who's in") ----
+let ACC = null;
 function leaderboard() {
   Promise.all([
     fetch("fan/grade.json?" + Date.now()).then(r => r.json()).catch(() => null),
-    fetch("fan/submissions.json?" + Date.now()).then(r => r.json()).catch(() => null)
-  ]).then(([g, s]) => { G = g; SUBS = s; renderLead(); renderGrade(); });
+    fetch("fan/submissions.json?" + Date.now()).then(r => r.json()).catch(() => null),
+    fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).catch(() => null)
+  ]).then(([g, s, a]) => { G = g; SUBS = s; ACC = a; renderLead(); renderGrade(); });
 }
 async function liveIn() {
   // the drop-box sheet, read straight from the browser: who has submitted since the last bake
@@ -360,40 +398,57 @@ async function liveIn() {
       const fan = (cu >= 0 && r[cu]) ? r[cu] : (j.n || "anonymous"), wk = +m[2], k = wk + "|" + fan;
       if (!seen[k] || (j.t || "") > seen[k].submitted_at) seen[k] = {fan, week: wk, submitted_at: j.t || "", arrows: (j.a || []).length};
     }
-    LIVE = Object.values(seen); renderLead();
+    LIVE = Object.values(seen).filter(x => x.arrows > 0); renderLead();
   } catch (e) { LIVE = null; }
 }
 function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D.week && x.fan === me())); LIVE.push({fan: me(), week: D.week, submitted_at: new Date().toISOString(), arrows: Object.keys(picks).length}); renderLead(); }
 const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
 const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
 const isMe = f => (IDH && f.fan_id === IDH) || (!IDH && f.fan === me());
+function standings() {
+  // every model on the same player-games: the unedited model, then the model with each fan's arrows
+  const weeks = ((ACC && ACC.weeks) || []).filter(w => w.n_played && w.mae_played).map(w => ({week: w.week, mae: w.mae_played, n: w.n_played}));
+  if (!weeks.length) return null;
+  const byFan = {};
+  for (const r of (G && G.by_fan_week) || []) if (r.graded) (byFan[r.fan] = byFan[r.fan] || {id: r.fan_id, weeks: {}}).weeks[r.week] = r;
+  const totalN = weeks.reduce((p, w) => p + w.n, 0), totalErr = weeks.reduce((p, w) => p + w.mae * w.n, 0);
+  const rows = [{name: "The model", base: true, err: totalErr / totalN, removed: 0, w: 0, l: 0, t: 0, weekly: Object.fromEntries(weeks.map(w => [w.week, w.mae])), arrows: 0}];
+  for (const [fan, f] of Object.entries(byFan)) {
+    let removed = 0, w = 0, l = 0, t = 0, arrows = 0; const weekly = {};
+    for (const wk of weeks) {
+      const r = f.weeks[wk.week]; const rem = r && r.removed_pts != null ? r.removed_pts : 0;
+      removed += rem; weekly[wk.week] = (wk.mae * wk.n - rem) / wk.n;
+      if (r) { arrows += r.graded; if (rem > 0.005) w++; else if (rem < -0.005) l++; else t++; }
+    }
+    rows.push({name: fan, fan_id: f.id, err: (totalErr - removed) / totalN, removed, w, l, t, weekly, arrows});
+  }
+  rows.sort((a, b) => a.err - b.err || (a.base ? -1 : 1));
+  return {weeks, rows};
+}
 function renderLead() {
-  const el = $("lead"), you = $("you"); if (!D) return;
+  if (!D) return;
   const mine = me();
-  if (TAB === "in") {
-    const src = LIVE || (SUBS && SUBS.entries) || [];
-    const wk = D.week, ins = src.filter(x => x.week === wk).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
-    el.innerHTML = ins.length ? `<b>${ins.length}</b> fan${ins.length === 1 ? "" : "s"} in for week ${wk}${LIVE ? "" : " (as of the last refresh)"}:<div class="in-list">` +
-      ins.map(x => `<span class="${x.fan === mine ? "me" : ""}">${esc(x.fan)} <small style="color:var(--mut)">${x.arrows} arrow${x.arrows === 1 ? "" : "s"}</small></span>`).join("") + `</div>` :
-      `nobody is in for week ${wk} yet — be first`;
-    you.textContent = ""; return;
-  }
-  if (!G || !G.by_fan || !G.by_fan.length) { el.textContent = "no picks graded yet — the first box scores put names on the board"; you.textContent = ""; return; }
-  if (TAB === "season") {
-    const rows = G.by_fan;
-    el.innerHTML = `<div class="gwrap"><table class="g"><tr><th></th><th class="l">fan</th><th>score</th><th>direction</th><th>arrows</th><th>weeks</th><th class="l">best call</th></tr>` +
-      rows.map(f => `<tr class="${isMe(f) ? "me" : ""}"><td class="rk">${f.rank || ""}</td><td class="l">${esc(f.fan)}</td><td class="score">${pts(f.removed_pts)}</td><td>${pct(f.hit_rate)}</td><td>${f.graded}${f.pending ? ` <small style="color:var(--mut)">+${f.pending} pending</small>` : ""}</td><td>${(f.weeks || []).length}</td><td class="l">${f.best_call ? `${esc(f.best_call.player)} ${LABEL[f.best_call.stat] || f.best_call.stat} ${f.best_call.arrows > 0 ? "▲" : "▼"}${Math.abs(f.best_call.arrows)} ${pts(f.best_call.removed_pts)}` : "—"}</td></tr>`).join("") + `</table></div>`;
-    const m = rows.find(f => isMe(f));
-    you.innerHTML = mine ? (m ? `You are <b>#${m.rank}</b> of ${rows.length} with ${pts(m.removed_pts)} pts` : `${esc(mine)} is not on the board yet — submit picks and get graded`) : "";
-  } else {
-    const weeks = [...new Set((G.by_fan_week || []).filter(x => x.graded).map(x => x.week))].sort((a, b) => b - a);
-    if (!weeks.length) { el.textContent = "no week has been graded yet"; you.textContent = ""; return; }
-    const wk = weeks[0], rows = (G.by_fan_week || []).filter(x => x.week === wk && x.graded).sort((a, b) => (b.removed_pts || 0) - (a.removed_pts || 0));
-    el.innerHTML = `<div class="how" style="margin-bottom:4px">Week ${wk}${wk !== D.week ? " (the latest week with box scores)" : ""}</div><div class="gwrap"><table class="g"><tr><th></th><th class="l">fan</th><th>score</th><th>direction</th><th>arrows</th><th>closer / farther</th></tr>` +
-      rows.map((f, i) => `<tr class="${isMe(f) ? "me" : ""}"><td class="rk">${i + 1}</td><td class="l">${esc(f.fan)}</td><td class="score">${pts(f.removed_pts)}</td><td>${pct(f.hit_rate)}</td><td>${f.graded}</td><td>${f.closer} / ${f.farther}</td></tr>`).join("") + `</table></div>`;
-    const i = rows.findIndex(f => isMe(f));
-    you.innerHTML = mine && i >= 0 ? `Week ${wk}: you are <b>#${i + 1}</b> of ${rows.length}` : "";
-  }
+  $("npdate").textContent = new Date().toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric", year: "numeric"});
+  $("nppage").textContent = `Week ${D.week} · ${D.season}`;
+  const src = LIVE || (SUBS && SUBS.entries) || [];
+  const ins = src.filter(x => x.week === D.week).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
+  $("npinsub").textContent = ins.length ? `${ins.length} for week ${D.week}` : `week ${D.week}`;
+  $("npin").innerHTML = ins.length ? ins.map(x => `<div class="np-line"><span${x.fan === mine ? ' style="font-weight:700"' : ""}>${esc(x.fan)}</span><b>${x.arrows} arrow${x.arrows === 1 ? "" : "s"}</b></div>`).join("") : `<div class="np-empty">nobody is in yet — be first</div>`;
+  const best = ((G && G.rows) || []).filter(r => r.removed_pts != null).sort((a, b) => b.removed_pts - a.removed_pts).slice(0, 6);
+  $("npbest").innerHTML = best.length ? best.map(r => `<div class="np-line"><span>${esc(r.fan)}: ${r.player} ${LABEL[r.stat] || r.stat} ${r.arrows > 0 ? "▲" : "▼"}${Math.abs(r.arrows)} <span style="color:#777">wk${r.week}</span></span><b>+${r.removed_pts.toFixed(1)}</b></div>`).join("") : `<div class="np-empty">nothing graded yet</div>`;
+  const st = standings();
+  if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; return; }
+  const cls = r => (r.base ? "base" : "") + (!r.base && (IDH ? r.fan_id === IDH : r.name === mine) ? " me" : "");
+  $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>W-L</th><th>error</th><th>vs model</th><th>arrows</th></tr>` +
+    st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "The model (unedited)" : esc(r.name) + " + model"}</td><td>${r.base ? "—" : `${r.w}-${r.l}${r.t ? "-" + r.t : ""}`}</td><td>${r.err.toFixed(3)}</td><td class="${r.removed > 0 ? "up" : r.removed < 0 ? "dn" : ""}">${r.base ? "—" : (r.removed > 0 ? "+" : "") + r.removed.toFixed(1) + " pts"}</td><td>${r.base ? "—" : r.arrows}</td></tr>`).join("") + `</table>`;
+  const wk = st.weeks[st.weeks.length - 1];
+  const wrows = st.rows.filter(r => r.base || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded)).sort((a, b) => a.weekly[wk.week] - b.weekly[wk.week] || (a.base ? -1 : 1));
+  $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest with box scores</small>" : ""}`;
+  $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
+    wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "The model" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(3)}</td></tr>`).join("") + `</table>`;
+  const meRow = st.rows.findIndex(r => !r.base && (IDH ? r.fan_id === IDH : r.name === mine));
+  const mr = meRow >= 0 ? st.rows[meRow] : null;
+  $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} the unedited model by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + model is not on the board yet — lock in picks and get graded`) : "";
 }
 function renderGrade() {
   const el = $("grade"), o = (G && G.overall) || {};
