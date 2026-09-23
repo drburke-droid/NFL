@@ -21,7 +21,7 @@ import os, sys, csv, json, base64, glob, re
 from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "fan_adjustments", "fan_adjustments_long.csv")
-FIELDS = ["received_at", "season", "week", "fan", "submitted_at", "bake_id", "comment", "fan_id", "device_id", "player_index", "player_id", "player", "team", "pos",
+FIELDS = ["received_at", "season", "week", "fan", "submitted_at", "bake_id", "comment", "fan_id", "device_id", "fan_team", "player_index", "player_id", "player", "team", "pos",
           "opp", "stat", "arrows", "pct", "baseline", "adjusted", "proj_pts"]
 
 
@@ -55,6 +55,7 @@ def rows_for(S, W, j):
     fan = (j.get("n") or "anonymous").strip()[:60]; sub = j.get("t") or ""; com = (j.get("c") or "").strip()[:300]
     fid = str(j.get("u") or "")[:40]      # identity: a hash of username + PIN the page computes (same person, any device)
     did = str(j.get("d") or "")[:40]      # the browser's own random id, kept for the data mining
+    fav = str(j.get("f") or "")[:4]       # the team the fan says he knows best: are fans sharper on their own team?
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     out = []
     for a in j.get("a", []):
@@ -63,7 +64,7 @@ def rows_for(S, W, j):
         if not (0 <= pi < len(players)) or not (0 <= si < len(keys)) or v == 0 or v < -10 or v > 100: continue
         p = players[pi]; stat = keys[si]
         if stat not in p["stats"]: continue
-        out.append({"received_at": now, "season": S, "week": W, "fan": fan, "submitted_at": sub, "bake_id": bake.get("bake_id", ""), "comment": com, "fan_id": fid, "device_id": did, "player_index": pi,
+        out.append({"received_at": now, "season": S, "week": W, "fan": fan, "submitted_at": sub, "bake_id": bake.get("bake_id", ""), "comment": com, "fan_id": fid, "device_id": did, "fan_team": fav, "player_index": pi,
                     "player_id": p["id"], "player": p["name"], "team": p["team"], "pos": p["pos"], "opp": p["opp"], "stat": stat,
                     "arrows": v, "pct": 10 * v, "baseline": p["stats"][stat], "adjusted": round(max(0.0, p["stats"][stat] * (1 + 0.1 * v)), 2),
                     "proj_pts": p["proj"]})
