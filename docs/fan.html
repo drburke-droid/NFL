@@ -3,9 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fan Picks</title>
+<title>Fan Picks — can you beat the machine?</title>
+<meta property="og:title" content="Football Expert — can you beat the machine?">
+<meta property="og:description" content="Boost or fade BurkeV1's NFL projections. Every pick is scored against the box score; the standings run in The Sunday Oracle.">
+<meta property="og:image" content="https://drburke-droid.github.io/NFL/fan/cabinet.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
 <style>
   :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; --line:#262a33; --up:#3fb950; --down:#f85149; --gold:#e3b341; }
   * { box-sizing:border-box; }
@@ -96,36 +100,81 @@
   .np-line b { font-weight:600; }
   .np-empty { font-size:11px; color:#666; font-style:italic; padding:4px 0; }
   @media (max-width:640px) { .cols { flex-direction:column; gap:10px; } .mast { font-size:24px; } }
+
+  /* ---- the arcade cabinet: the app lives on the CRT, the standings on a folded paper on the control panel ---- */
+  html, body { height:100%; }
+  body.arcade { overflow:hidden; background:#07080c; }
+  #stage { position:fixed; inset:0; overflow:hidden; background:radial-gradient(ellipse at 50% 25%, #221a3a 0%, #0b0a12 55%, #05060a 100%); }
+  #cab { position:absolute; left:0; top:0; transform-origin:0 0; transition:transform .9s cubic-bezier(.2,.7,.2,1); }
+  #cab img { display:block; height:100vh; width:auto; user-select:none; -webkit-user-drag:none; pointer-events:none; }
+  #screen { position:absolute; left:21.6%; top:23.5%; width:54.4%; height:34.4%; border-radius:3.5% / 5.5%; overflow:hidden; background:#0b0f14; box-shadow:inset 0 0 6vh rgba(0,0,0,.85); }
+  #attract { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.6vh; cursor:pointer; font-family:'Press Start 2P',monospace; color:#ffd23f; text-align:center; text-shadow:0 0 .8vh rgba(255,210,63,.55); background:radial-gradient(ellipse at 50% 40%, #16202a, #0b0f14 70%); }
+  #attract .t1 { font-size:2.4vh; color:#ffcc33; line-height:1.4; }
+  #attract .t2 { font-size:1.05vh; color:#7fe3ff; }
+  #attract .go { font-size:1.25vh; color:#fff; animation:blink 1.1s steps(1) infinite; margin-top:.6vh; }
+  #attract .hs { font-size:.95vh; color:#9fe870; line-height:2; text-align:left; margin-top:.4vh; }
+  #attract .hs b { color:#ffd23f; font-weight:400; }
+  #attract .coin { font-size:.85vh; color:#8a94a6; }
+  @keyframes blink { 0%,55% { opacity:1 } 56%,100% { opacity:0 } }
+  #crt { position:absolute; inset:0; display:none; overflow:auto; background:var(--bg); }
+  #stage.on #crt { display:block; } #stage.on #attract { display:none; }
+  #crt main { max-width:none; padding:1.2vh 1.4vh 9vh; }
+  #scan { position:absolute; inset:0; pointer-events:none; z-index:3; display:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0px,rgba(0,0,0,.16) 1px,transparent 1px,transparent 3px),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.45) 100%); }
+  #stage.on #scan { display:block; }
+  #screen .bar { position:absolute; left:0; right:0; bottom:0; z-index:4; }
+  #eject { position:absolute; right:1.2vh; top:.9vh; z-index:5; display:none; background:#232833; color:var(--mut); border:0; border-radius:6px; font-size:1.1vh; padding:.5vh .8vh; cursor:pointer; }
+  #stage.on #eject { display:block; }
+  #fold { position:absolute; left:40%; top:64.8%; width:21%; transform:rotate(-5deg); cursor:pointer; background:#ddd5c3; color:#111; border-radius:2px; box-shadow:0 .8vh 2vh rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.15); padding:1.1vh 1.2vh .9vh; font-family:'Source Serif 4',Georgia,serif; z-index:2; }
+  #fold::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0px,transparent 1px,transparent 2px); }
+  #fold .fm { font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:1.55vh; text-align:center; letter-spacing:-.03em; border-top:.2vh solid #000; border-bottom:.1vh solid #000; padding:.2vh 0; line-height:1.2; }
+  #fold .fs { font-size:.75vh; letter-spacing:.15em; text-align:center; font-weight:700; margin:.3vh 0 .2vh; }
+  #fold .fl { font-size:.85vh; line-height:1.5; display:flex; justify-content:space-between; }
+  #fold .fl b { font-weight:600; }
+  #fold .ft { font-size:.7vh; color:#555; text-align:center; font-style:italic; margin-top:.3vh; }
+  #fold:hover { transform:rotate(-5deg) translateY(-.4vh); }
+  #paperwrap { position:fixed; inset:0; background:rgba(0,0,0,.78); display:none; align-items:flex-start; justify-content:center; overflow:auto; z-index:30; padding:24px 10px; }
+  #paperwrap.on { display:flex; }
+  #paperwrap .paper { max-width:920px; width:100%; }
+  #paperclose { position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px; color:#666; z-index:2; font-family:sans-serif; }
+  #newsbtn { background:#2a2f3a; color:var(--ink); border:0; border-radius:8px; padding:11px 12px; font-size:14px; cursor:pointer; }
+  /* phones: no cabinet, the app plain, the paper behind a button */
+  body.plain { overflow:auto; }
+  body.plain #stage { position:static; background:none; overflow:visible; }
+  body.plain #cab { position:static; transform:none !important; }
+  body.plain #cab img, body.plain #attract, body.plain #scan, body.plain #fold, body.plain #eject { display:none !important; }
+  body.plain #screen { position:static; width:auto; height:auto; overflow:visible; border-radius:0; box-shadow:none; background:none; }
+  body.plain #crt { position:static; display:block; overflow:visible; }
+  body.plain #crt main { max-width:760px; padding:18px 14px 110px; }
+  body.plain #screen .bar { position:fixed; }
   .you { font-size:13px; color:var(--mut); margin-top:6px; } .you b { color:var(--gold); }
 </style>
 </head>
 <body>
+<div id="stage">
+<div id="cab">
+  <img id="cabimg" src="fan/cabinet.jpg" alt="Football Expert arcade cabinet">
+  <div id="screen">
+    <div id="attract">
+      <div class="t1">FOOTBALL<br>EXPERT</div>
+      <div class="t2">BURKEV1 vs. YOU</div>
+      <div class="hs" id="hs"></div>
+      <div class="go">▶ PLAY NOW — CLICK TO PLAY</div>
+      <div class="coin">NO COINS REQUIRED · 1 PLAYER</div>
+    </div>
+    <div id="scan"></div>
+    <button id="eject" title="back to the cabinet">⏏ cabinet</button>
+    <div id="crt">
 <main>
   <h1>🏆 Fan Picks — beat BurkeV1</h1>
   <p class="sub" id="sub">loading this week's projections…</p>
 
-  <div class="card how" id="why">
-    <b>Why this exists.</b> Behind this page is <b>BurkeV1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating BurkeV1, they earn a seat in it.
+  <details class="card how" id="why"><summary style="cursor:pointer"><b>Why this exists, and how accuracy is measured</b> — tap to read</summary>
+    <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>BurkeV1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating BurkeV1, they earn a seat in it.
     <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade BurkeV1 the hard way, on players who played.</div>
     <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), BurkeV1, and every fan's version of it.</div>
-    <span id="whyacc"></span>
-  </div>
+    <span id="whyacc"></span></div>
+  </details>
 
-  <section class="paper" id="paper">
-    <div class="rule2"></div>
-    <div class="mast">THE SUNDAY ORACLE</div>
-    <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">MODEL STANDINGS</span><span id="nppage">C1</span></div>
-    <div class="dateline" style="justify-content:center;margin:-2px 0 4px;font-style:italic;font-size:10.5px">"All the projections fit to print"</div>
-    <div class="rule1"></div>
-    <div class="cols">
-      <div style="flex:2.2 1 300px"><div class="colh">Season standings <small>every model, ranked by average error</small></div><div id="npseason" class="np-empty">loading…</div></div>
-      <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading…</div></div>
-      <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading…</div>
-           <div class="colh" style="margin-top:8px">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
-    </div>
-    <div class="np-note">The big sites appear with the weekly accuracy they publish themselves. <b>BurkeV1</b> is the model as shipped. A fan's model is BurkeV1 with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat BurkeV1's number against the weeks they didn't. Untouched players score exactly as BurkeV1 does, so a quiet week is a tie, not a loss.</div>
-    <div class="you" id="you" style="color:#333"></div>
-  </section>
 
   <div class="card">
     <div class="row">
@@ -162,11 +211,39 @@
     <div id="grade" class="how" style="margin-top:8px">loading…</div>
   </div>
 </main>
+    </div>
+    <div class="bar"><div class="in">
+      <div class="n"><b id="cnt">0</b> arrows <span id="draft"></span></div>
+      <button id="newsbtn" title="standings">📰</button>
+      <button class="sec" id="reset">Clear</button>
+      <button class="big" id="submit">Submit</button>
+    </div></div>
+  </div>
+  <div id="fold" title="read The Sunday Oracle">
+    <div class="fm">The Sunday Oracle</div>
+    <div class="fs">MODEL STANDINGS</div>
+    <div id="foldlines"><div class="fl"><span>loading…</span></div></div>
+    <div class="ft">tap to unfold</div>
+  </div>
+</div>
+</div>
 
-<div class="bar"><div class="in">
-  <div class="n"><b id="cnt">0</b> arrows <span id="draft"></span></div>
-  <button class="sec" id="reset">Clear</button>
-  <button class="big" id="submit">Submit</button>
+<div id="paperwrap"><div style="position:relative;width:100%;max-width:920px"><div id="paperclose">✕</div>
+  <section class="paper" id="paper">
+    <div class="rule2"></div>
+    <div class="mast">THE SUNDAY ORACLE</div>
+    <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">MODEL STANDINGS</span><span id="nppage">C1</span></div>
+    <div class="dateline" style="justify-content:center;margin:-2px 0 4px;font-style:italic;font-size:10.5px">"All the projections fit to print"</div>
+    <div class="rule1"></div>
+    <div class="cols">
+      <div style="flex:2.2 1 300px"><div class="colh">Season standings <small>every model, ranked by average error</small></div><div id="npseason" class="np-empty">loading…</div></div>
+      <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading…</div></div>
+      <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading…</div>
+           <div class="colh" style="margin-top:8px">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
+    </div>
+    <div class="np-note">The big sites appear with the weekly accuracy they publish themselves. <b>BurkeV1</b> is the model as shipped. A fan's model is BurkeV1 with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat BurkeV1's number against the weeks they didn't. Untouched players score exactly as BurkeV1 does, so a quiet week is a tie, not a loss.</div>
+    <div class="you" id="you" style="color:#333"></div>
+  </section>
 </div></div>
 
 <div class="modal" id="modal"><div class="sheet">
@@ -187,6 +264,30 @@
 // The drop box (docs/fan/dropbox.json): a Google Form the page posts to in the background, so fans
 // need no account and nobody forwards emails. Empty config = the older email / copy-the-code flow.
 const FAN_TO = "robert.edward.burke+picks@gmail.com";
+// ---- the cabinet ----
+const stage = document.getElementById("stage"), cab = document.getElementById("cab"), cabimg = document.getElementById("cabimg");
+const PLAIN = Math.min(innerWidth, innerHeight) < 600 || (innerWidth < 760 && innerHeight > innerWidth);
+document.body.classList.add(PLAIN ? "plain" : "arcade");
+function fit() {
+  if (PLAIN) return;
+  const H = cabimg.clientHeight || innerHeight, W = cabimg.clientWidth || H * 1149 / 1369;
+  let sc = 1, tx = (innerWidth - W) / 2, ty = 0;
+  if (stage.classList.contains("on")) {
+    // show the bezel and the top of the control panel: glass top (23.5%) minus a little bezel, down past the paper
+    const ry0 = 0.205 * H, ry1 = 0.755 * H, rx0 = 0.13 * W, rx1 = 0.87 * W;
+    sc = Math.min(innerHeight / (ry1 - ry0), innerWidth / (rx1 - rx0));
+    tx = (innerWidth - (rx1 - rx0) * sc) / 2 - rx0 * sc; ty = -ry0 * sc + (innerHeight - (ry1 - ry0) * sc) / 2;
+  }
+  cab.style.transform = `translate(${tx}px, ${ty}px) scale(${sc})`;
+}
+addEventListener("resize", fit); cabimg.addEventListener("load", fit); fit();
+document.getElementById("attract").onclick = () => { stage.classList.add("on"); fit(); };
+document.getElementById("eject").onclick = () => { stage.classList.remove("on"); fit(); };
+const openPaper = () => document.getElementById("paperwrap").classList.add("on"), closePaper = () => document.getElementById("paperwrap").classList.remove("on");
+document.getElementById("fold").onclick = openPaper; document.getElementById("newsbtn").onclick = openPaper; document.getElementById("paperclose").onclick = closePaper;
+document.getElementById("paperwrap").addEventListener("click", e => { if (e.target === document.getElementById("paperwrap")) closePaper(); });
+addEventListener("keydown", e => { if (e.key === "Escape") closePaper(); });
+
 const LABEL = {pass_yds:"pass yds", pass_tds:"pass TD", pass_int:"INT", rush_yds:"rush yds", rush_tds:"rush TD", rec:"rec", rec_yds:"rec yds", rec_tds:"rec TD"};
 const TEAMS = {ARI:"Arizona Cardinals", ATL:"Atlanta Falcons", BAL:"Baltimore Ravens", BUF:"Buffalo Bills", CAR:"Carolina Panthers", CHI:"Chicago Bears", CIN:"Cincinnati Bengals", CLE:"Cleveland Browns", DAL:"Dallas Cowboys", DEN:"Denver Broncos", DET:"Detroit Lions", GB:"Green Bay Packers", HOU:"Houston Texans", IND:"Indianapolis Colts", JAX:"Jacksonville Jaguars", KC:"Kansas City Chiefs", LA:"Los Angeles Rams", LAC:"Los Angeles Chargers", LV:"Las Vegas Raiders", MIA:"Miami Dolphins", MIN:"Minnesota Vikings", NE:"New England Patriots", NO:"New Orleans Saints", NYG:"New York Giants", NYJ:"New York Jets", PHI:"Philadelphia Eagles", PIT:"Pittsburgh Steelers", SEA:"Seattle Seahawks", SF:"San Francisco 49ers", TB:"Tampa Bay Buccaneers", TEN:"Tennessee Titans", WAS:"Washington Commanders"};
 const TEAM_FIX = {JAC:"JAX", LAR:"LA", LVR:"LV", WSH:"WAS", ARZ:"ARI", OAK:"LV", SD:"LAC", STL:"LA"};
@@ -438,7 +539,7 @@ function renderLead() {
   const best = ((G && G.rows) || []).filter(r => r.removed_pts != null).sort((a, b) => b.removed_pts - a.removed_pts).slice(0, 6);
   $("npbest").innerHTML = best.length ? best.map(r => `<div class="np-line"><span>${esc(r.fan)}: ${r.player} ${LABEL[r.stat] || r.stat} ${r.arrows > 0 ? "▲" : "▼"}${Math.abs(r.arrows)} <span style="color:#777">wk${r.week}</span></span><b>+${r.removed_pts.toFixed(1)}</b></div>`).join("") : `<div class="np-empty">nothing graded yet</div>`;
   const st = standings();
-  if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; return; }
+  if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; $("hs").textContent = ""; $("foldlines").innerHTML = `<div class="fl"><span>no week graded yet</span></div>`; return; }
   const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? r.fan_id === IDH : r.name === mine) ? " me" : "");
   const label = r => r.base ? "BurkeV1 (unedited)" : r.fan ? esc(r.name) + " + BurkeV1" : esc(r.name);
   $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th>${st.weeks.map(w => `<th>wk ${w}</th>`).join("")}<th>avg</th><th>W-L</th><th>vs model</th></tr>` +
@@ -450,6 +551,10 @@ function renderLead() {
     $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
       wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "BurkeV1" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
   } else { $("npweekh").textContent = "This week"; $("npweek").innerHTML = `<div class="np-empty">no week graded yet</div>`; }
+  // the attract screen's HIGH SCORES and the folded paper on the control panel
+  const top = st.rows.slice(0, 5);
+  $("hs").innerHTML = `<div style="color:#ffd23f;margin-bottom:.4vh">HIGH SCORES · PTS OFF</div>` + top.map((r, i) => `<div>${i + 1}. ${esc(r.base ? "BURKEV1" : r.name.toUpperCase().slice(0, 14))} <b>${r.err.toFixed(2)}</b></div>`).join("");
+  $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "BurkeV1" : esc(r.name) + (r.fan ? " + BurkeV1" : "")}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
   const meRow = st.rows.findIndex(r => r.fan && (IDH ? r.fan_id === IDH : r.name === mine));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
   $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} BurkeV1 by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + BurkeV1 is not on the board yet — lock in picks and get graded`) : "";
