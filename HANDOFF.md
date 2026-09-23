@@ -296,6 +296,16 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   Columns: season standings, this week, who's in + best calls. Computed in the page from
   grade.json (by_fan_week) + sabersim_accuracy.json (weeks[].mae_played/n_played). Fans also pick
   the team they know best (fan_team column); its game leads the list, their players first.
+  **The page is an arcade cabinet (2026-09-23).** `docs/fan/cabinet.jpg` (the user's "Football
+  Expert" render, 1149x1369) is the stage; the CRT glass is at left 21.6% / top 23.5% / 54.4% x
+  34.4% of the image, the control panel 64-73%. Attract mode on the glass (Press Start 2P, HIGH
+  SCORES = top 5 of the standings, PLAY NOW blinking); click -> `#stage.on`: `fit()` scales
+  `#cab` so y 20.5%-75.5% / x 13%-87% fill the viewport and counter-zooms the glass content
+  (`zoom = 1/scale`) so text draws at natural size; `⏏ cabinet` returns. A folded Sunday Oracle
+  (`#fold`, top-4 lines) sits on the control panel; tap (or the 📰 bar button) opens the full
+  paper in `#paperwrap`. Phones (`body.plain`, min side < 600px or portrait < 760) skip the
+  cabinet entirely. Player cards use content-visibility:auto because repainting ~200 cards
+  under the transform was the slow part. og:image is the cabinet, for sharing.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
