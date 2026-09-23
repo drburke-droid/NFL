@@ -269,6 +269,13 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   browser. Rows from before PINs (no fan_id) attach to the first PIN identity that claims the same
   name. "Forgot my PIN" = a new identity; merge it by hand in `data/fan_adjustments/aliases.json`
   ({old_fan_id: new_fan_id}). `device_id` (random per browser) is also recorded, for the mining.
+  The page opens with a purpose blurb (people vs. the model; the FFA consensus it beats is CBS,
+  ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker, NFL.com) and shows the live
+  scorecard from `docs/sabersim_accuracy.json` -- note it does NOT claim to beat the DraftKings
+  lines, because the season grade has DK ahead on MAE (4.10 vs 4.23 on the rows they price). An
+  optional email goes to a SECOND, private form ("Fan Picks contact list", not linked to a sheet)
+  with username + fan_id, sent once per identity+address after a lock-in; owner reads it in the
+  form's Responses tab. Links in `docs/fan/dropbox.json`.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2

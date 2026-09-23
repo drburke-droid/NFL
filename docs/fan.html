@@ -73,6 +73,10 @@
   <h1>🏆 Fan Picks — beat the model</h1>
   <p class="sub" id="sub">loading this week's projections…</p>
 
+  <div class="card how" id="why">
+    <b>Why this exists.</b> Behind this page is an NFL projection model that is already more accurate than the fantasy-industry consensus it was built to beat — the FantasyFootballAnalytics blend of <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — on every week graded so far, and it goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating the model, they earn a seat in it. <span id="whyacc"></span>
+  </div>
+
   <div class="card lead">
     <h2>Leaderboard</h2>
     <div class="how">Your score is how many fantasy points closer to reality your numbers were than the model's, added up over every arrow you placed. Above zero means you beat the model. Leave a stat alone and it neither helps nor hurts you.</div>
@@ -87,6 +91,10 @@
       <div style="flex:1 1 120px"><label for="pin">Your PIN (4+ digits)</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="same PIN every week" autocomplete="off" maxlength="8"></div>
     </div>
     <div class="how" style="margin-top:6px" id="whohow">Username + PIN is you: use the same pair on any phone or laptop and your weeks add up in one entry. The PIN never leaves your device (the page sends a scrambled fingerprint of it), so nobody can post picks under your name without it. Both are saved here. Submit as often as you like before kickoff — your latest picks count.</div>
+    <div class="row" style="margin-top:8px">
+      <div><label for="email">Email (optional) — so we can reach you if your picks prove to add accuracy to the model</label><input id="email" type="text" inputmode="email" placeholder="you@example.com" autocomplete="email" maxlength="80"></div>
+    </div>
+    <div class="how" style="margin-top:4px" id="emailhow">Goes to a private contact list only the model's owner can see, tied to your username and fingerprint, never shown on the board.</div>
   </div>
 
   <div class="card how">
@@ -164,11 +172,17 @@ async function identity() {
 }
 
 fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.sheet_csv) liveIn(); }).catch(() => {});
+// the scorecard behind the claim above, straight from the grader: model vs the consensus on the same rows
+fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).then(a => {
+  const o = a.overall || {};
+  if (o.ffa_n && o.model_mae_on_ffa_rows && o.ffa_mae)
+    $("whyacc").innerHTML = `<br><span style="color:var(--mut)">Scorecard, ${a.season} so far: model ${o.model_mae_on_ffa_rows.toFixed(2)} vs consensus ${o.ffa_mae.toFixed(2)} points of error per player on the same ${o.ffa_n.toLocaleString()} player-games${o.dk_n ? `; DraftKings lines ${o.dk_mae.toFixed(2)} vs model ${o.model_mae_on_dk_rows.toFixed(2)} on the ${o.dk_n} they price` : ""}. Lower is better.</span>`;
+}).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   D = d; KEY = "fanpicks_" + d.season + "_wk" + d.week + "_" + (d.bake_id || "");   // a re-bake renumbers players, so drafts are per bake
   try { picks = JSON.parse(ls.get(KEY) || "{}") || {}; } catch(e) { picks = {}; }
-  $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; identity().then(renderLead);
+  $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || ""; identity().then(renderLead);
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   render(); count(); sentNote(); leaderboard();
@@ -232,6 +246,17 @@ for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
 $("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(renderLead); });
 $("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(renderLead); });
+$("email").addEventListener("input", () => ls.set("fanpicks_email", $("email").value.trim()));
+async function sendContact() {
+  // the private contact form: separate from the drop box so addresses never sit in the readable sheet
+  const em = ($("email").value || "").trim();
+  if (!em || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em) || !CFG.contact_form_action || !IDH) return;
+  const stamp = IDH + "|" + em.toLowerCase();
+  if (ls.get("fanpicks_contact_sent") === stamp) return;            // once per identity + address
+  const body = new URLSearchParams();
+  body.append(CFG.entry_contact_user, me()); body.append(CFG.entry_contact_id, IDH); body.append(CFG.entry_contact_email, em);
+  try { await fetch(CFG.contact_form_action, {method: "POST", mode: "no-cors", body}); ls.set("fanpicks_contact_sent", stamp); } catch (e) {}
+}
 $("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {}; ls.del(KEY); render(); count(); };
 
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
@@ -272,7 +297,7 @@ $("send").onclick = async () => {
     const at = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
     ls.set(KEY + "_sent", at); ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
     $("mstat").className = "status ok"; $("mstat").textContent = `You're in. ${Object.keys(picks).length} arrows locked for week ${D.week} at ${at}. Come back after the games to see where you land.`;
-    $("send").textContent = "Locked in ✓"; sentNote(); addMeToIn();
+    $("send").textContent = "Locked in ✓"; sentNote(); addMeToIn(); sendContact();
   } catch (e) {
     $("send").disabled = false; $("send").textContent = "Lock them in";
     $("mstat").textContent = "That didn't go through (" + e.message + "). Copy the code below and text it instead."; $("copy").className = "big";

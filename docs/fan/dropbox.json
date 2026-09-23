@@ -5,5 +5,11 @@
  "sheet_csv": "https://docs.google.com/spreadsheets/d/1t6RE0rKdduPQABdiVKb0VGiIKSxC1SS9YlwctWKd4D4/gviz/tq?tqx=out:csv&sheet=Form%20Responses%201",
  "form_view": "https://docs.google.com/forms/d/e/1FAIpQLSdv_wD6H95vzh3v77I4_15z3NVzRvCX-Ch4vKcyJaEqce2zMg/viewform",
  "sheet_edit": "https://docs.google.com/spreadsheets/d/1t6RE0rKdduPQABdiVKb0VGiIKSxC1SS9YlwctWKd4D4/edit",
- "note": "Google Form 'Fan Picks drop box' (created 2026-09-22 from the SaberSim owner's Google account); the sheet is shared read-only by link. scripts/fan_inbox_pull.py reads sheet_csv."
+ "note": "Google Form 'Fan Picks drop box' (created 2026-09-22 from the SaberSim owner's Google account); the sheet is shared read-only by link. scripts/fan_inbox_pull.py reads sheet_csv.",
+ "contact_form_action": "https://docs.google.com/forms/d/e/1FAIpQLSeEGw3j2E23s3wiXrlmHF7BH2yeG8jkmm4xQrdfTbc5Z2C-yg/formResponse",
+ "entry_contact_user": "entry.2076761344",
+ "entry_contact_id": "entry.1700327670",
+ "entry_contact_email": "entry.670037618",
+ "contact_form_edit": "https://docs.google.com/forms/d/1dKwy7OmkaYPxg3j4RRJSNWDWbPxLL-ADDrMB1s9SkmE/edit",
+ "contact_note": "Private: 'Fan Picks contact list' form, NOT linked to any sheet; responses (username, player id, email) are readable only in the form's Responses tab by the owner."
 }
