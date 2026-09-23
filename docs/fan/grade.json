@@ -1,11 +1,224 @@
 {
- "generated": "2026-09-23T17:54Z",
+ "generated": "2026-09-23T21:43Z",
  "overall": {
-  "n": 0,
+  "n": 5,
   "graded": 0,
-  "pending": 0
+  "pending": 0,
+  "no_send": 5,
+  "hit_rate": null,
+  "hits": 0,
+  "misses": 0,
+  "closer": 0,
+  "farther": 0,
+  "removed_pts": null,
+  "mae_base_pts": null,
+  "mae_adj_pts": null
  },
- "by_fan": [],
+ "by_fan": [
+  {
+   "fan": "Rob_Burke",
+   "fan_id": "b38af5a43c63ac6e2961",
+   "weeks": [
+    3
+   ],
+   "n": 5,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 5,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null,
+   "rank": 1
+  }
+ ],
+ "by_fan_week": [
+  {
+   "fan": "Rob_Burke",
+   "fan_id": "b38af5a43c63ac6e2961",
+   "week": 3,
+   "n": 5,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 5,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ ],
+ "by_stat": {
+  "pass_tds": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "pass_yds": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rec": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rec_tds": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rec_yds": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
+ "by_size": {
+  "1": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "2": {
+   "n": 2,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 2,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "3": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "4+": {
+   "n": 1,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 1,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
+ "by_direction": {
+  "boost": {
+   "n": 5,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 5,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
+ "by_week": {
+  "3": {
+   "n": 5,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 5,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
  "rows": [],
- "note": "no submissions recorded yet"
+ "pending_games": [],
+ "season": 2026,
+ "basis": "send"
 }

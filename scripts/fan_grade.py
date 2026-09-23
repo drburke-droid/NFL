@@ -209,10 +209,10 @@ if len(rows):
     alias = json.load(open(ALIASES, encoding="utf-8")) if os.path.exists(ALIASES) else {}
     fid = rows.fan_id.fillna("").astype(str).str.strip()
     fid = fid.map(lambda x: alias.get(x, x))
-    named = rows.assign(_fid=fid)[fid != ""].sort_values("submitted_at")
+    named = rows.assign(fidkey=fid)[fid != ""].sort_values("submitted_at")
     first_id_for_name = {}
     for r in named.itertuples():
-        first_id_for_name.setdefault(norm(r.fan), r._fid)
+        first_id_for_name.setdefault(norm(r.fan), r.fidkey)
     key = [f if f else ("name:" + norm(n) if norm(n) not in first_id_for_name else first_id_for_name[norm(n)])
            for f, n in zip(fid, rows.fan)]
     rows["fan_id"] = key
