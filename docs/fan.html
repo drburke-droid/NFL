@@ -74,7 +74,13 @@
   <p class="sub" id="sub">loading this week's projections…</p>
 
   <div class="card how" id="why">
-    <b>Why this exists.</b> Behind this page is an NFL projection model that is already more accurate than the fantasy-industry consensus it was built to beat — the FantasyFootballAnalytics blend of <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — on every week graded so far, and it goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating the model, they earn a seat in it. <span id="whyacc"></span>
+    <b>Why this exists.</b> Behind this page is an NFL projection model that is already more accurate than <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b>, and it goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating the model, they earn a seat in it.
+    <div class="gwrap"><table class="g" style="font-size:12px;margin-top:8px"><tr><th class="l">points of error per player (lower is better)</th><th>week 1</th><th>week 2</th></tr>
+      <tr class="me"><td class="l"><b>this model</b></td><td><b>3.88</b></td><td><b>3.60</b></td></tr>
+      <tr><td class="l">numberFire</td><td>4.41</td><td>4.09</td></tr><tr><td class="l">FleaFlicker</td><td>4.44</td><td>4.10</td></tr><tr><td class="l">ESPN</td><td>4.58</td><td>4.08</td></tr>
+      <tr><td class="l">FantasySharks</td><td>4.64</td><td>4.05</td></tr><tr><td class="l">CBS</td><td>4.78</td><td>4.39</td></tr><tr><td class="l">FFToday</td><td>4.99</td><td>4.77</td></tr><tr><td class="l">FantasyPros</td><td>6.73</td><td>7.16</td></tr>
+    </table></div>
+    <span id="whyacc"></span>
   </div>
 
   <div class="card lead">
@@ -176,7 +182,7 @@ fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c 
 fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).then(a => {
   const o = a.overall || {};
   if (o.ffa_n && o.model_mae_on_ffa_rows && o.ffa_mae)
-    $("whyacc").innerHTML = `<br><span style="color:var(--mut)">Scorecard, ${a.season} so far: model ${o.model_mae_on_ffa_rows.toFixed(2)} vs consensus ${o.ffa_mae.toFixed(2)} points of error per player on the same ${o.ffa_n.toLocaleString()} player-games${o.dk_n ? `; DraftKings lines ${o.dk_mae.toFixed(2)} vs model ${o.model_mae_on_dk_rows.toFixed(2)} on the ${o.dk_n} they price` : ""}. Lower is better.</span>`;
+    $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: model ${o.model_mae_on_ffa_rows.toFixed(2)} vs the blend of those eight sites ${o.ffa_mae.toFixed(2)} points of error per player on the same ${o.ffa_n.toLocaleString()} player-games${o.dk_n ? `; DraftKings lines ${o.dk_mae.toFixed(2)} vs model ${o.model_mae_on_dk_rows.toFixed(2)} on the ${o.dk_n} they price` : ""}. Updated after every graded game.</span>`;
 }).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
