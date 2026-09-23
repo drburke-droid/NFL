@@ -150,7 +150,28 @@
   #paperwrap .paper { max-width:1000px; width:100%; }
   #paperclose { position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px; color:#666; z-index:2; font-family:sans-serif; }
   #newsbtn { background:#2a2f3a; color:var(--ink); border:0; border-radius:8px; padding:11px 12px; font-size:14px; cursor:pointer; }
-  /* phones: no cabinet, the app plain, the paper behind a button */
+  /* phones: the cabinet stays. Landing = the whole machine scaled to the width; tap the screen and
+     the face is recomposed: a strip of bezel across the top, a tall glass, the controls, a strip of
+     control panel with the paper on it. Slices of cabinet.jpg at 100vw wide are 119.15vw tall. */
+  #mtop, #mbottom { display:none; }
+  body.mobile #attract .t1 { font-size:4vh; } body.mobile #attract .t2 { font-size:1.8vh; } body.mobile #attract .go { font-size:2vh; }
+  body.mobile #attract .hs { font-size:1.55vh; line-height:1.9; } body.mobile #attract .coin { font-size:1.4vh; } body.mobile #attract { gap:2vh; }
+  body.mobile #fold .fm { font-size:2.4vh; } body.mobile #fold .fs { font-size:1.15vh; } body.mobile #fold .fl { font-size:1.35vh; } body.mobile #fold .ft { font-size:1.1vh; }
+  body.mobile #stage.on #cab { transform:none !important; }
+  body.mobile #stage.on #cab img, body.mobile #stage.on #fold { display:none; }
+  body.mobile #stage.on #screen { position:fixed; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none; display:flex; flex-direction:column; background:#07080c; }
+  body.mobile #stage.on #mtop { display:block; flex:none; height:14.3vw; background:url(fan/cabinet.jpg) no-repeat 0 -20.3vw / 100% auto; }
+  body.mobile #stage.on #mbottom { display:block; flex:none; height:19vw; position:relative; background:url(fan/cabinet.jpg) no-repeat 0 -70vw / 100% auto; }
+  body.mobile #stage.on #crt { position:relative; flex:1; overflow:auto; zoom:1 !important; margin:0 2.5vw; border-radius:10px 10px 0 0; box-shadow:inset 0 0 28px rgba(0,0,0,.85); }
+  body.mobile #stage.on #crt main { padding:12px 12px 14px; }
+  body.mobile #stage.on .bar { position:relative; flex:none; zoom:1 !important; margin:0 2.5vw; border-radius:0 0 10px 10px; }
+  body.mobile #stage.on #scan { top:14.3vw; bottom:19vw; left:2.5vw; right:2.5vw; border-radius:10px; }
+  body.mobile #stage.on #eject { zoom:1 !important; top:calc(14.3vw + 6px); right:calc(2.5vw + 6px); font-size:12px; padding:6px 9px; }
+  #mpaper { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-3deg); background:#ddd5c3; color:#111; padding:5px 12px 6px; border-radius:2px; font-family:'Source Serif 4',Georgia,serif; box-shadow:0 5px 14px rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.15); white-space:nowrap; cursor:pointer; text-align:center; }
+  #mpaper::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0px,transparent 1px,transparent 2px); }
+  #mpaper b { display:block; font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:15px; border-top:2px solid #000; border-bottom:1px solid #000; line-height:1.3; padding:1px 0; }
+  #mpaper span { display:block; font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; margin-top:2px; color:#333; }
+  /* the old plain fallback, kept for very small or odd viewports */
   body.plain { overflow:auto; }
   body.plain #stage { position:static; background:none; overflow:visible; }
   body.plain #cab { position:static; transform:none !important; }
@@ -176,6 +197,7 @@
     </div>
     <div id="scan"></div>
     <button id="eject" title="back to the cabinet">⏏ Back to cabinet</button>
+    <div id="mtop"></div>
     <div id="crt">
 <main>
   <h1>🏆 Fan Picks — you + BurkeV1</h1>
@@ -231,6 +253,7 @@
       <button class="sec" id="reset">Clear</button>
       <button class="big" id="submit">Submit</button>
     </div></div>
+    <div id="mbottom"><div id="mpaper" title="read The Sunday Oracle"><b>The Sunday Oracle</b><span>standings &middot; tap to read</span></div></div>
   </div>
   <div id="fold" title="read The Sunday Oracle">
     <div class="fm">The Sunday Oracle</div>
@@ -297,12 +320,16 @@
 const FAN_TO = "robert.edward.burke+picks@gmail.com";
 // ---- the cabinet ----
 const stage = document.getElementById("stage"), cab = document.getElementById("cab"), cabimg = document.getElementById("cabimg");
-const PLAIN = Math.min(innerWidth, innerHeight) < 600 || (innerWidth < 760 && innerHeight > innerWidth);
-document.body.classList.add(PLAIN ? "plain" : "arcade");
+const MOBILE = innerWidth < 760 || Math.min(innerWidth, innerHeight) < 600;
+const PLAIN = false;
+document.body.classList.add("arcade"); if (MOBILE) document.body.classList.add("mobile");
 function fit() {
-  if (PLAIN) return;
   const H = cabimg.clientHeight || innerHeight, W = cabimg.clientWidth || H * 1149 / 1369;
-  let sc = 1, tx = (innerWidth - W) / 2, ty = 0;
+  // landing: the whole machine, scaled down until it fits the viewport (phones are narrower than the cabinet)
+  let sc = Math.min(1, innerWidth / W, innerHeight / H), tx = (innerWidth - W * sc) / 2, ty = (innerHeight - H * sc) / 2;
+  if (stage.classList.contains("on") && MOBILE) {   // the face is recomposed by CSS; nothing to transform
+    cab.style.transform = "none"; return;
+  }
   if (stage.classList.contains("on")) {
     // show the bezel and the top of the control panel: glass top (23.5%) minus a little bezel, down past the paper
     const ry0 = 0.205 * H, ry1 = 0.755 * H, rx0 = 0.13 * W, rx1 = 0.87 * W;
@@ -319,7 +346,7 @@ addEventListener("resize", fit); cabimg.addEventListener("load", fit); fit();
 document.getElementById("attract").onclick = () => { stage.classList.add("on"); fit(); };
 document.getElementById("eject").onclick = () => { stage.classList.remove("on"); fit(); };
 const openPaper = () => document.getElementById("paperwrap").classList.add("on"), closePaper = () => document.getElementById("paperwrap").classList.remove("on");
-document.getElementById("fold").onclick = openPaper; document.getElementById("newsbtn").onclick = openPaper; document.getElementById("paperclose").onclick = closePaper;
+document.getElementById("fold").onclick = openPaper; document.getElementById("newsbtn").onclick = openPaper; document.getElementById("mpaper").onclick = openPaper; document.getElementById("paperclose").onclick = closePaper;
 document.getElementById("paperwrap").addEventListener("click", e => { if (e.target === document.getElementById("paperwrap")) closePaper(); });
 addEventListener("keydown", e => { if (e.key === "Escape") closePaper(); });
 
