@@ -289,7 +289,7 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   all-rows MAE; showing both there is the obvious follow-up.
   **Standings are a newspaper (2026-09-23)**, after the W.A.R. Street Journal in the user's
   WAR-street repo (newsprint #ddd5c3 + gradient texture, double rules, Playfair masthead "THE
-  PROJECTION P.O.S.T.", dateline, small-caps column heads). Rows = every model: the unedited model
+  SUNDAY ORACLE", dateline, small-caps column heads). Rows = every model: the unedited model
   plus "<fan> + model" (the model with that fan's arrows applied), all scored on the same played
   player-games: variant error for a week = (model mae_played x n_played - fan's removed_pts) /
   n_played, season = pooled; W-L = weeks the arrows helped vs hurt (untouched weeks are ties).
