@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fan Picks — can you beat the machine?</title>
-<meta property="og:title" content="Football Expert — can you beat the machine?">
-<meta property="og:description" content="Boost or fade BurkeV1's NFL projections. Every pick is scored against the box score; the standings run in The Sunday Oracle.">
+<title>Fan Picks — you + BurkeV1</title>
+<meta property="og:title" content="Football Expert — can people and a model build the perfect projection?">
+<meta property="og:description" content="Nudge BurkeV1's NFL projections where you know better. Every arrow is scored against the box score, and the calls that keep beating the machine earn a place in it. Standings in The Sunday Oracle.">
 <meta property="og:image" content="https://drburke-droid.github.io/NFL/fan/cabinet.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -72,7 +72,18 @@
   .in-list span { background:#232833; border-radius:14px; padding:4px 10px; font-size:13px; } .in-list span.me { background:#2b3f7a; }
   .score { font-weight:700; }
   /* the newspaper: newsprint, rules, serif masthead, tight columns (after the W.A.R. Street Journal) */
-  .paper { position:relative; background:#ddd5c3; color:#1a1a1a; border-radius:2px; box-shadow:0 8px 30px rgba(0,0,0,.6); padding:10px 14px 12px; margin-bottom:14px; overflow:hidden; font-family:'Source Serif 4',Georgia,serif; }
+  .paper { position:relative; background:#ddd5c3; color:#1a1a1a; border-radius:2px; box-shadow:0 8px 30px rgba(0,0,0,.6); padding:30px 40px 34px; margin-bottom:14px; overflow:hidden; font-family:'Source Serif 4',Georgia,serif; }
+  .paper .head { font-family:'Playfair Display',Georgia,serif; font-weight:700; font-size:27px; line-height:1.12; margin:10px 0 4px; letter-spacing:-.01em; }
+  .paper .deck { font-style:italic; font-size:14px; color:#333; margin:0 0 10px; line-height:1.35; }
+  .paper .byline { font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:#555; margin-bottom:8px; }
+  .paper .story { column-count:2; column-gap:22px; column-rule:1px solid #b9b09a; font-size:12.5px; line-height:1.5; text-align:justify; hyphens:auto; }
+  .paper .story p { margin:0 0 9px; } .paper .story p:first-child::first-letter { font-family:'Playfair Display',Georgia,serif; font-size:40px; float:left; line-height:.8; padding:4px 5px 0 0; font-weight:700; }
+  .paper .story h4 { font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin:8px 0 3px; border-bottom:1px solid #000; display:inline-block; }
+  .paper .sep { border-top:1px solid #000; margin:12px 0 10px; }
+  .paper .lead { display:flex; gap:26px; }
+  .paper .lead > .storycol { flex:1.15 1 320px; min-width:0; }
+  .paper .lead > .tablecol { flex:1 1 300px; min-width:0; }
+  @media (max-width:760px) { .paper { padding:18px 16px 22px; } .paper .lead { flex-direction:column; } .paper .story { column-count:1; } .paper .head { font-size:22px; } }
   .paper::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.04) 0px,transparent 1px,transparent 2px),repeating-linear-gradient(90deg,rgba(0,0,0,.02) 0px,transparent 1px,transparent 3px),repeating-linear-gradient(45deg,rgba(0,0,0,.01) 0px,transparent 1px,transparent 6px); }
   .paper::after { content:""; position:absolute; inset:0; pointer-events:none; background:radial-gradient(ellipse at 30% 20%,rgba(180,160,120,.18),transparent 60%),radial-gradient(ellipse at 70% 80%,rgba(160,140,100,.14),transparent 50%); }
   .paper > * { position:relative; z-index:1; }
@@ -135,7 +146,7 @@
   #fold:hover { transform:rotate(-5deg) translateY(-.4vh); }
   #paperwrap { position:fixed; inset:0; background:rgba(0,0,0,.78); display:none; align-items:flex-start; justify-content:center; overflow:auto; z-index:30; padding:24px 10px; }
   #paperwrap.on { display:flex; }
-  #paperwrap .paper { max-width:920px; width:100%; }
+  #paperwrap .paper { max-width:1000px; width:100%; }
   #paperclose { position:absolute; right:12px; top:8px; cursor:pointer; font-size:22px; color:#666; z-index:2; font-family:sans-serif; }
   #newsbtn { background:#2a2f3a; color:var(--ink); border:0; border-radius:8px; padding:11px 12px; font-size:14px; cursor:pointer; }
   /* phones: no cabinet, the app plain, the paper behind a button */
@@ -157,20 +168,20 @@
   <div id="screen">
     <div id="attract">
       <div class="t1">FOOTBALL<br>EXPERT</div>
-      <div class="t2">BURKEV1 vs. YOU</div>
+      <div class="t2">YOU + BURKEV1</div>
       <div class="hs" id="hs"></div>
       <div class="go">▶ PLAY NOW — CLICK TO PLAY</div>
-      <div class="coin">NO COINS REQUIRED · 1 PLAYER</div>
+      <div class="coin">NO COINS REQUIRED · MAN + MACHINE</div>
     </div>
     <div id="scan"></div>
     <button id="eject" title="back to the cabinet">⏏ cabinet</button>
     <div id="crt">
 <main>
-  <h1>🏆 Fan Picks — beat BurkeV1</h1>
+  <h1>🏆 Fan Picks — you + BurkeV1</h1>
   <p class="sub" id="sub">loading this week's projections…</p>
 
   <details class="card how" id="why"><summary style="cursor:pointer"><b>Why this exists, and how accuracy is measured</b> — tap to read</summary>
-    <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>BurkeV1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating BurkeV1, they earn a seat in it.
+    <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>BurkeV1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than BurkeV1's earn a place in it.
     <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade BurkeV1 the hard way, on players who played.</div>
     <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), BurkeV1, and every fan's version of it.</div>
     <span id="whyacc"></span></div>
@@ -222,27 +233,42 @@
   </div>
   <div id="fold" title="read The Sunday Oracle">
     <div class="fm">The Sunday Oracle</div>
-    <div class="fs">MODEL STANDINGS</div>
+    <div class="fs">MAN MEETS MACHINE &middot; STANDINGS</div>
     <div id="foldlines"><div class="fl"><span>loading…</span></div></div>
     <div class="ft">tap to unfold</div>
   </div>
 </div>
 </div>
 
-<div id="paperwrap"><div style="position:relative;width:100%;max-width:920px"><div id="paperclose">✕</div>
+<div id="paperwrap"><div style="position:relative;width:100%;max-width:1000px"><div id="paperclose">✕</div>
   <section class="paper" id="paper">
     <div class="rule2"></div>
     <div class="mast">THE SUNDAY ORACLE</div>
-    <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">MODEL STANDINGS</span><span id="nppage">C1</span></div>
+    <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">FRONT PAGE &middot; MODEL STANDINGS</span><span id="nppage">C1</span></div>
     <div class="dateline" style="justify-content:center;margin:-2px 0 4px;font-style:italic;font-size:10.5px">"All the projections fit to print"</div>
     <div class="rule1"></div>
-    <div class="cols">
-      <div style="flex:2.2 1 300px"><div class="colh">Season standings <small>every model, ranked by average error</small></div><div id="npseason" class="np-empty">loading…</div></div>
-      <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading…</div></div>
-      <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading…</div>
-           <div class="colh" style="margin-top:8px">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
+    <div class="head">Man Meets Machine in Search of the Perfect Projection</div>
+    <div class="deck">BurkeV1 already ranks with the best fantasy sites in the business. It is not looking for a rival. It is looking for a partner.</div>
+    <div class="byline">From the desk of the model &middot; Kuhn &amp; Friends, and anyone else who wants in</div>
+    <div class="lead">
+      <div class="storycol"><div class="story">
+        <p>Every projection system is blind to something. A model can read ten seasons of box scores, the weather, the Vegas line and the injury report, and still not know that a receiver limped off the practice field on Friday, that a coach has fallen out of love with his running back, or that a rookie has the whole locker room believing. People know those things. They just have never had a way to prove it.</p>
+        <p>This page is that way. Each week BurkeV1 posts its projected stat line for every skill player on the slate. You read them and, where you know better, you say so: a tap of <b>&#9650;</b> nudges a number up ten percent, a tap of <b>&#9660;</b> nudges it down. Leave alone whatever you agree with. Press <i>Lock them in</i> and your arrows become a model of their own &mdash; <b>you + BurkeV1</b> &mdash; that is scored after the games exactly the way the machine is scored: on every player who took the field, by how many fantasy points it was off.</p>
+        <h4>A contest, and a collaboration</h4>
+        <p>The standings at right make it a contest, and it should be one. But the prize is not a trophy. Every arrow is an experiment. If your calls keep landing closer than the machine's on a kind of player it misjudges &mdash; tight ends, say, or the backs on your own team &mdash; that is a signal, and signals earn weight. The version of BurkeV1 that ships next season will carry the fingerprints of whoever turned out to be right, and the email box on the game is how we find you when it is time to build it.</p>
+        <p>Coming to these pages: <b>The Crowd + BurkeV1</b>, a single model built from everyone's arrows at once, so we can see whether many partial views add up to a better one than any of us holds alone.</p>
+        <h4>The fine print</h4>
+        <p>Every model is graded on the same player-games, and only on players who played; an inactive counts for or against nobody. Arrows lock at kickoff. <b>W-L</b> counts the weeks a fan's arrows beat the machine's number against the weeks they didn't; an untouched week is a tie. Your username and PIN are you, on any device. And the big sites are listed with the accuracy they publish themselves, so nobody is grading them but them.</p>
+      </div></div>
+      <div class="tablecol"><div class="colh">Season standings <small>every model, ranked by average error</small></div><div id="npseason" class="np-empty">loading&hellip;</div></div>
     </div>
-    <div class="np-note">The big sites appear with the weekly accuracy they publish themselves. <b>BurkeV1</b> is the model as shipped. A fan's model is BurkeV1 with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat BurkeV1's number against the weeks they didn't. Untouched players score exactly as BurkeV1 does, so a quiet week is a tie, not a loss.</div>
+    <div class="sep"></div>
+    <div class="cols">
+      <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading&hellip;</div></div>
+      <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading&hellip;</div></div>
+      <div><div class="colh">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
+    </div>
+    <div class="np-note">Error is the average number of fantasy points a model was off, over every player who took the field. Lower is better.</div>
     <div class="you" id="you" style="color:#333"></div>
   </section>
 </div></div>
