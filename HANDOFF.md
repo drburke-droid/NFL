@@ -287,6 +287,15 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   pasted by hand as each week closes): wk1 4.47 (3rd of 8), wk2 4.09 (3rd, tied). The blurb says
   "ranks with the best", not "more accurate than". The SaberSim accuracy page still headlines the
   all-rows MAE; showing both there is the obvious follow-up.
+  **Standings are a newspaper (2026-09-23)**, after the W.A.R. Street Journal in the user's
+  WAR-street repo (newsprint #ddd5c3 + gradient texture, double rules, Playfair masthead "THE
+  PROJECTION P.O.S.T.", dateline, small-caps column heads). Rows = every model: the unedited model
+  plus "<fan> + model" (the model with that fan's arrows applied), all scored on the same played
+  player-games: variant error for a week = (model mae_played x n_played - fan's removed_pts) /
+  n_played, season = pooled; W-L = weeks the arrows helped vs hurt (untouched weeks are ties).
+  Columns: season standings, this week, who's in + best calls. Computed in the page from
+  grade.json (by_fan_week) + sabersim_accuracy.json (weeks[].mae_played/n_played). Fans also pick
+  the team they know best (fan_team column); its game leads the list, their players first.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
