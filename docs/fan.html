@@ -134,7 +134,8 @@
   #stage.on #scan { display:block; }
   #screen .bar { position:absolute; left:0; right:0; bottom:0; z-index:4; display:none; }
   #stage.on #screen .bar, body.plain #screen .bar { display:block; }
-  #eject { position:absolute; right:1.2vh; top:.9vh; z-index:5; display:none; background:#232833; color:var(--mut); border:0; border-radius:6px; font-size:1.1vh; padding:.5vh .8vh; cursor:pointer; }
+  #eject { position:absolute; right:10px; top:8px; z-index:5; display:none; background:#2a2f3a; color:var(--ink); border:1px solid #3a4150; border-radius:8px; font-size:14px; padding:8px 12px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.5); }
+  #eject:hover { background:#3a4150; }
   #stage.on #eject { display:block; }
   #fold { position:absolute; left:40%; top:64.8%; width:21%; transform:rotate(-5deg); cursor:pointer; background:#ddd5c3; color:#111; border-radius:2px; box-shadow:0 .8vh 2vh rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.15); padding:1.1vh 1.2vh .9vh; font-family:'Source Serif 4',Georgia,serif; z-index:2; }
   #fold::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0px,transparent 1px,transparent 2px); }
@@ -174,7 +175,7 @@
       <div class="coin">NO COINS REQUIRED · MAN + MACHINE</div>
     </div>
     <div id="scan"></div>
-    <button id="eject" title="back to the cabinet">⏏ cabinet</button>
+    <button id="eject" title="back to the cabinet">⏏ Back to cabinet</button>
     <div id="crt">
 <main>
   <h1>🏆 Fan Picks — you + BurkeV1</h1>
