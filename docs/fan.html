@@ -83,7 +83,7 @@
   .colh { font-size:11px; font-weight:700; letter-spacing:1px; border-bottom:1px solid #000; padding-bottom:1px; margin-bottom:3px; text-transform:uppercase; }
   .colh small { float:right; font-weight:400; letter-spacing:0; text-transform:none; color:#555; }
   table.np { width:100%; border-collapse:collapse; font-size:11.5px; line-height:1.35; }
-  table.np th { font-size:9.5px; font-weight:700; letter-spacing:.5px; color:#333; border-bottom:1px solid #999; text-align:right; padding:0 3px 1px; }
+  table.np th { font-size:9.5px; font-weight:700; letter-spacing:.5px; color:#333; border-bottom:1px solid #999; text-align:right; padding:0 3px 1px; white-space:nowrap; }
   table.np td { padding:1px 3px; text-align:right; white-space:nowrap; border-bottom:1px dotted #b8ae98; }
   table.np th:first-child, table.np td:first-child, table.np th.l, table.np td.l { text-align:left; }
   table.np td.nm { max-width:150px; overflow:hidden; text-overflow:ellipsis; }
@@ -117,7 +117,7 @@
     <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">MODEL STANDINGS</span><span id="nppage">C1</span></div>
     <div class="rule1"></div>
     <div class="cols">
-      <div style="flex:1.6 1 260px"><div class="colh">Season standings <small>every model, scored on every player who played</small></div><div id="npseason" class="np-empty">loading…</div></div>
+      <div style="flex:2.2 1 300px"><div class="colh">Season standings <small>every model, scored on every player who played</small></div><div id="npseason" class="np-empty">loading…</div></div>
       <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading…</div></div>
       <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading…</div>
            <div class="colh" style="margin-top:8px">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
