@@ -164,25 +164,30 @@
   #stage.on #crt .st button { background:#1a2433; }
   #stage.on #crt .st.up { border-color:#3fb950; } #stage.on #crt .st.dn { border-color:#f85149; }
   #scan { background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0px,rgba(0,0,0,.18) 1px,transparent 1px,transparent 3px),radial-gradient(ellipse at 30% 0%,rgba(255,255,255,.07),transparent 45%),radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.5) 100%); }
-  /* phones: the cabinet stays. Landing = the whole machine scaled to the width; tap the screen and
-     the face is recomposed: a strip of bezel across the top, a tall glass, the controls, a strip of
-     control panel with the paper on it. Slices of cabinet.jpg at 100vw wide are 119.15vw tall. */
-  #mtop, #mbottom { display:none; }
-  /* the glass is only ~20vh tall once the whole machine fits a phone: fewer, smaller lines */
+  /* phones: the cabinet stays. Landing = the wide machine fitted to the height. Tap the glass and the
+     face becomes the portrait cabinet (fan/cabinet_phone.jpg, 1142x1377) scaled to COVER the viewport:
+     marquee at the top, the control panel at the bottom, the rails just off the sides. fit() sets the
+     rendered image box (--fx --fy --fw --fh) and the glass inside it (--gx --gy --gw --gh); the app is
+     drawn on that glass the way the desktop draws on the wide cabinet's glass. #mglass is display:contents
+     everywhere else, so the desktop layout never sees it. */
+  #mface { display:none; } #mglass { display:contents; } #mpaper { display:none; }
+  /* the landing glass is only ~20vh tall once the whole machine fits a phone: fewer, smaller lines */
   body.mobile #attract .t1 { font-size:3vh; } body.mobile #attract .t2 { font-size:1.4vh; } body.mobile #attract .go { font-size:1.5vh; }
   body.mobile #attract .hst { font-size:1.35vh; } body.mobile #attract .hs { font-size:1.35vh; line-height:1.8; height:11vh; width:76%; }
   body.mobile #attract .coin { display:none; } body.mobile #attract { gap:1.2vh; }
   body.mobile #fold .fm { font-size:2.4vh; } body.mobile #fold .fs { font-size:1.15vh; } body.mobile #fold .fl { font-size:1.35vh; } body.mobile #fold .ft { font-size:1.1vh; }
   body.mobile #stage.on #cab { transform:none !important; }
-  body.mobile #stage.on #cab img, body.mobile #stage.on #fold { display:none; }
-  body.mobile #stage.on #screen { position:fixed; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none; display:flex; flex-direction:column; background:#0b0a08 linear-gradient(90deg,#0a0907,#1a1610 6%,#0e0c09 12%,#0e0c09 88%,#1a1610 94%,#0a0907); }
-  body.mobile #stage.on #mtop { display:block; flex:none; height:14.3vw; background:url(fan/cabinet.jpg) no-repeat 0 -20.3vw / 100% auto; }
-  body.mobile #stage.on #mbottom { display:block; flex:none; height:19vw; position:relative; background:url(fan/cabinet.jpg) no-repeat 0 -70vw / 100% auto; }
-  body.mobile #stage.on #crt { position:relative; flex:1; overflow:auto; zoom:1 !important; margin:2vw 5vw 0; border-radius:16px 16px 0 0; box-shadow:inset 0 0 34px rgba(0,0,0,.9), 0 0 0 7px #0a0908, 0 0 0 9px #2b241b; }
+  body.mobile #stage.on #cab img, body.mobile #stage.on #fold, body.mobile #stage.on #attract { display:none; }
+  body.mobile #stage.on #screen { position:fixed; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none; overflow:hidden; background:#050505; }
+  body.mobile #stage.on #mface { display:block; position:absolute; left:var(--fx); top:var(--fy); width:var(--fw); height:var(--fh); background:url(fan/cabinet_phone.jpg) no-repeat 0 0 / 100% 100%; animation:facein .5s ease-out; }
+  @keyframes facein { from { opacity:0; transform:scale(1.04); } to { opacity:1; transform:none; } }
+  body.mobile #stage.on #mglass { display:flex; flex-direction:column; position:absolute; left:var(--gx); top:var(--gy); width:var(--gw); height:var(--gh); border-radius:4% / 3%; overflow:hidden; background:#0b0f14; box-shadow:inset 0 0 40px rgba(0,0,0,.9); }
+  body.mobile #stage.on #crt { position:relative; inset:auto; flex:1; min-height:0; overflow:auto; zoom:1 !important; margin:0; border-radius:0; box-shadow:none; }
   body.mobile #stage.on #crt main { padding:12px 12px 14px; }
-  body.mobile #stage.on .bar { position:relative; flex:none; zoom:1 !important; margin:0 5vw 2vw; border-radius:0 0 16px 16px; border-top:1px solid #1c2636; box-shadow:0 0 0 7px #0a0908, 0 0 0 9px #2b241b; }
-  body.mobile #stage.on #scan { top:calc(14.3vw + 2vw); bottom:calc(19vw + 2vw); left:5vw; right:5vw; border-radius:16px; }
-  body.mobile #stage.on #eject { zoom:1 !important; top:8px; right:10px; font-size:12px; padding:6px 9px; background:rgba(20,22,28,.85); }   /* on the bezel strip, clear of the title */
+  body.mobile #stage.on .bar { position:relative; inset:auto; flex:none; zoom:1 !important; margin:0; border-radius:0; box-shadow:none; border-top:1px solid #1c2636; padding:8px 10px; }
+  body.mobile #stage.on #scan { inset:auto; left:var(--gx); top:var(--gy); width:var(--gw); height:var(--gh); border-radius:4% / 3%; }
+  body.mobile #stage.on #eject { zoom:1 !important; top:calc(var(--gy) - 36px); right:calc(100% - var(--gx) - var(--gw)); font-size:12px; padding:6px 9px; background:rgba(20,22,28,.85); }   /* on the bezel, above the glass */
+  body.mobile #stage.on #mpaper { display:block; left:calc(var(--fx) + var(--fw) * .5); top:calc(var(--fy) + var(--fh) * .865); z-index:5; }
   #mpaper { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) rotate(-3deg); background:#ddd5c3; color:#111; padding:5px 12px 6px; border-radius:2px; font-family:'Source Serif 4',Georgia,serif; box-shadow:0 5px 14px rgba(0,0,0,.65), inset 0 0 0 1px rgba(0,0,0,.15); white-space:nowrap; cursor:pointer; text-align:center; }
   #mpaper::before { content:""; position:absolute; inset:0; pointer-events:none; background:repeating-linear-gradient(0deg,rgba(0,0,0,.05) 0px,transparent 1px,transparent 2px); }
   #mpaper b { display:block; font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:15px; border-top:2px solid #000; border-bottom:1px solid #000; line-height:1.3; padding:1px 0; }
@@ -204,6 +209,7 @@
 <div id="cab">
   <img id="cabimg" src="fan/cabinet.jpg" alt="Football Expert arcade cabinet">
   <div id="screen">
+    <div id="mface"></div>
     <div id="attract">
       <div class="t1">FOOTBALL<br>EXPERT</div>
       <div class="t2">YOU + BURKE_V1</div>
@@ -214,7 +220,7 @@
     </div>
     <div id="scan"></div>
     <button id="eject" title="back to the cabinet">⏏ Back to cabinet</button>
-    <div id="mtop"></div>
+    <div id="mglass">
     <div id="crt">
 <main>
   <h1>🏆 Fan Picks — you + Burke_v1</h1>
@@ -270,7 +276,8 @@
       <button class="sec" id="reset">Clear</button>
       <button class="big" id="submit">Submit</button>
     </div></div>
-    <div id="mbottom"><div id="mpaper" title="read The Sunday Oracle"><b>The Sunday Oracle</b><span>standings &middot; tap to read</span></div></div>
+    </div>
+    <div id="mpaper" title="read The Sunday Oracle"><b>The Sunday Oracle</b><span>standings &middot; tap to read</span></div>
   </div>
   <div id="fold" title="read The Sunday Oracle">
     <div class="fm">The Sunday Oracle</div>
@@ -337,7 +344,7 @@
 // need no account and nobody forwards emails. Empty config = the older email / copy-the-code flow.
 const FAN_TO = "robert.edward.burke+picks@gmail.com";
 // ---- the cabinet ----
-const stage = document.getElementById("stage"), cab = document.getElementById("cab"), cabimg = document.getElementById("cabimg");
+const stage = document.getElementById("stage"), cab = document.getElementById("cab"), cabimg = document.getElementById("cabimg"), scr = document.getElementById("screen");
 const MOBILE = innerWidth < 760 || Math.min(innerWidth, innerHeight) < 600;
 const PLAIN = false;
 document.body.classList.add("arcade"); if (MOBILE) document.body.classList.add("mobile");
@@ -348,7 +355,12 @@ function fit() {
   // the panel (x 21%-76% of the image) inside the width -- black bars above and below looked wrong
   let sc = MOBILE ? Math.min(innerHeight / H, innerWidth / (0.56 * W)) : Math.min(1, innerWidth / W, innerHeight / H);
   let tx = MOBILE ? innerWidth / 2 - 0.485 * W * sc : (innerWidth - W * sc) / 2, ty = (innerHeight - H * sc) / 2;
-  if (stage.classList.contains("on") && MOBILE) {   // the face is recomposed by CSS; nothing to transform
+  if (stage.classList.contains("on") && MOBILE) {
+    // the portrait cabinet covers the viewport; its glass is x 23.2-76.9%, y 19.5-82.8% of the picture
+    const PW = 1142, PH = 1377, s = Math.max(innerWidth / PW, innerHeight / PH);
+    const fw = PW * s, fh = PH * s, fx = (innerWidth - fw) / 2, fy = (innerHeight - fh) / 2;
+    const v = { fx, fy, fw, fh, gx: fx + fw * 0.232, gy: fy + fh * 0.195, gw: fw * 0.537, gh: fh * 0.633 };
+    for (const k in v) scr.style.setProperty("--" + k, v[k].toFixed(1) + "px");
     cab.style.transform = "none"; return;
   }
   if (stage.classList.contains("on")) {
@@ -364,6 +376,7 @@ function fit() {
   document.querySelector("#screen .bar").style.zoom = 1 / sc;
 }
 addEventListener("resize", fit); cabimg.addEventListener("load", fit); fit();
+if (MOBILE) { const pre = new Image(); pre.src = "fan/cabinet_phone.jpg"; }   // so the tap is instant
 document.getElementById("attract").onclick = () => { stage.classList.add("on"); fit(); };
 document.getElementById("eject").onclick = () => { stage.classList.remove("on"); fit(); };
 const openPaper = () => document.getElementById("paperwrap").classList.add("on"), closePaper = () => document.getElementById("paperwrap").classList.remove("on");
