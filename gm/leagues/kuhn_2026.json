@@ -327,7 +327,7 @@
      "keeper_cost": {
       "price": 8
      },
-     "injury": "DOUBTFUL",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -512,7 +512,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "QUESTIONABLE",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -551,7 +551,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -645,7 +645,7 @@
      "keeper_cost": {
       "price": 36
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -684,7 +684,7 @@
      "keeper_cost": {
       "price": 14
      },
-     "injury": "DOUBTFUL",
+     "injury": "OUT",
      "times_kept": 1
     },
     {
@@ -762,7 +762,7 @@
      "keeper_cost": {
       "price": 2
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -973,7 +973,7 @@
      "keeper_cost": {
       "price": 5
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -986,7 +986,7 @@
      "keeper_cost": {
       "price": 17
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1062,7 +1062,7 @@
      "name": "Ja'Marr Chase",
      "pos": "WR",
      "nfl_team": "CIN",
-     "slot": "WR",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 61
@@ -1140,12 +1140,12 @@
      "name": "Alec Pierce",
      "pos": "WR",
      "nfl_team": "IND",
-     "slot": "FLEX",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 7
      },
-     "injury": "DOUBTFUL",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -1179,7 +1179,7 @@
      "name": "Matthew Golden",
      "pos": "WR",
      "nfl_team": "GB",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 10
@@ -1291,7 +1291,7 @@
      "keeper_cost": {
       "price": 16
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 2
     },
     {
@@ -1312,12 +1312,12 @@
      "name": "Brock Bowers",
      "pos": "TE",
      "nfl_team": "LVR",
-     "slot": "BENCH",
+     "slot": "TE",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 19
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -1338,12 +1338,12 @@
      "name": "Zay Flowers",
      "pos": "WR",
      "nfl_team": "BAL",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 13
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -1421,7 +1421,7 @@
      "keeper_cost": {
       "price": 5
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1455,7 +1455,7 @@
      "name": "Deebo Samuel Sr.",
      "pos": "WR",
      "nfl_team": "SF",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 10
@@ -1468,7 +1468,7 @@
      "name": "Michael Mayer",
      "pos": "TE",
      "nfl_team": "LVR",
-     "slot": "TE",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 1
@@ -1632,7 +1632,7 @@
      "keeper_cost": {
       "price": 12
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1658,7 +1658,7 @@
      "keeper_cost": {
       "price": 31
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2093,7 +2093,7 @@
      "keeper_cost": {
       "price": 24
      },
-     "injury": "DOUBTFUL",
+     "injury": "INJURY_RESERVE",
      "times_kept": 0
     },
     {
@@ -2343,7 +2343,7 @@
      "keeper_cost": {
       "price": 2
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2528,7 +2528,7 @@
      "keeper_cost": {
       "price": 15
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2554,7 +2554,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -2674,7 +2674,7 @@
      "keeper_cost": {
       "price": 3
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
