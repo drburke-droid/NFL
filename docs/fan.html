@@ -155,9 +155,9 @@
      control panel with the paper on it. Slices of cabinet.jpg at 100vw wide are 119.15vw tall. */
   #mtop, #mbottom { display:none; }
   /* the glass is only ~20vh tall once the whole machine fits a phone: fewer, smaller lines */
-  body.mobile #attract .t1 { font-size:2.3vh; } body.mobile #attract .t2 { font-size:1.1vh; } body.mobile #attract .go { font-size:1.25vh; }
-  body.mobile #attract .hs { font-size:1.05vh; line-height:1.7; } body.mobile #attract .hs div:nth-child(n+5) { display:none; }
-  body.mobile #attract .coin { display:none; } body.mobile #attract { gap:.9vh; }
+  body.mobile #attract .t1 { font-size:3vh; } body.mobile #attract .t2 { font-size:1.4vh; } body.mobile #attract .go { font-size:1.5vh; }
+  body.mobile #attract .hs { font-size:1.35vh; line-height:1.8; } body.mobile #attract .hs div:nth-child(n+5) { display:none; }
+  body.mobile #attract .coin { display:none; } body.mobile #attract { gap:1.2vh; }
   body.mobile #fold .fm { font-size:2.4vh; } body.mobile #fold .fs { font-size:1.15vh; } body.mobile #fold .fl { font-size:1.35vh; } body.mobile #fold .ft { font-size:1.1vh; }
   body.mobile #stage.on #cab { transform:none !important; }
   body.mobile #stage.on #cab img, body.mobile #stage.on #fold { display:none; }
@@ -327,8 +327,11 @@ const PLAIN = false;
 document.body.classList.add("arcade"); if (MOBILE) document.body.classList.add("mobile");
 function fit() {
   const H = cabimg.clientHeight || innerHeight, W = cabimg.clientWidth || H * 1149 / 1369;
-  // landing: the whole machine, scaled down until it fits the viewport (phones are narrower than the cabinet)
-  let sc = Math.min(1, innerWidth / W, innerHeight / H), tx = (innerWidth - W * sc) / 2, ty = (innerHeight - H * sc) / 2;
+  // landing: the whole machine fitted to the viewport. Desktop fits it whole; a phone fills the HEIGHT
+  // and crops the cabinet's outer rails, keeping the glass, the marquee lettering and the paper on
+  // the panel (x 21%-76% of the image) inside the width -- black bars above and below looked wrong
+  let sc = MOBILE ? Math.min(innerHeight / H, innerWidth / (0.56 * W)) : Math.min(1, innerWidth / W, innerHeight / H);
+  let tx = MOBILE ? innerWidth / 2 - 0.485 * W * sc : (innerWidth - W * sc) / 2, ty = (innerHeight - H * sc) / 2;
   if (stage.classList.contains("on") && MOBILE) {   // the face is recomposed by CSS; nothing to transform
     cab.style.transform = "none"; return;
   }
