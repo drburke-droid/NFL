@@ -1,0 +1,8 @@
+{
+ "note": "Published weekly accuracy of the big fantasy sites: mean absolute error in fantasy points per player (PPR). Pasted by hand from each site's public accuracy report as the week closes; the model's own number comes from docs/sabersim_accuracy.json (mae_played: players with a box-score row that week).",
+ "metric": "MAE, fantasy points per player, lower is better",
+ "weeks": {
+  "1": {"numberFire": 4.41, "FleaFlicker": 4.44, "ESPN": 4.58, "FantasySharks": 4.64, "CBS": 4.78, "FFToday": 4.99, "FantasyPros": 6.73},
+  "2": {"FantasySharks": 4.05, "ESPN": 4.08, "numberFire": 4.09, "FleaFlicker": 4.10, "CBS": 4.39, "FFToday": 4.77, "FantasyPros": 7.16}
+ }
+}

@@ -276,6 +276,17 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   optional email goes to a SECOND, private form ("Fan Picks contact list", not linked to a sheet)
   with username + fan_id, sent once per identity+address after a lock-in; owner reads it in the
   form's Responses tab. Links in `docs/fan/dropbox.json`.
+  **Zero rows flatter the headline MAE (found 2026-09-23).** 36% of graded skill rows scored 0 --
+  deep-bench players the DFS send carries at 0-3 pts, three quarters of whom never touched the
+  ball -- and the whole edge over the eight-site blend on identical rows was those rows (model
+  2.28 vs blend 2.65 on players who scored 0; on players who scored, blend 4.73 vs model 4.76).
+  The grader now emits `mae_played` / `n_played` (players with a box-score row that week; a
+  player who dressed and scored 0 still counts, an inactive we zeroed does not) at every level,
+  and `--rows-out` dumps the graded rows for audits. The fan page ranks the model by
+  `mae_played` in one table with the sites' published weekly MAE (`docs/fan/sites_accuracy.json`,
+  pasted by hand as each week closes): wk1 4.47 (3rd of 8), wk2 4.09 (3rd, tied). The blurb says
+  "ranks with the best", not "more accurate than". The SaberSim accuracy page still headlines the
+  all-rows MAE; showing both there is the obvious follow-up.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2

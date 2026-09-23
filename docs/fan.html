@@ -74,12 +74,9 @@
   <p class="sub" id="sub">loading this week's projections…</p>
 
   <div class="card how" id="why">
-    <b>Why this exists.</b> Behind this page is an NFL projection model that is already more accurate than <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b>, and it goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating the model, they earn a seat in it.
-    <div class="gwrap"><table class="g" style="font-size:12px;margin-top:8px"><tr><th class="l">points of error per player (lower is better)</th><th>week 1</th><th>week 2</th></tr>
-      <tr class="me"><td class="l"><b>this model</b></td><td><b>3.88</b></td><td><b>3.60</b></td></tr>
-      <tr><td class="l">numberFire</td><td>4.41</td><td>4.09</td></tr><tr><td class="l">FleaFlicker</td><td>4.44</td><td>4.10</td></tr><tr><td class="l">ESPN</td><td>4.58</td><td>4.08</td></tr>
-      <tr><td class="l">FantasySharks</td><td>4.64</td><td>4.05</td></tr><tr><td class="l">CBS</td><td>4.78</td><td>4.39</td></tr><tr><td class="l">FFToday</td><td>4.99</td><td>4.77</td></tr><tr><td class="l">FantasyPros</td><td>6.73</td><td>7.16</td></tr>
-    </table></div>
+    <b>Why this exists.</b> Behind this page is an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating the model, they earn a seat in it.
+    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade the model the hard way, on players who played.</div>
+    <div id="sitesrank" class="gwrap"></div>
     <span id="whyacc"></span>
   </div>
 
@@ -178,11 +175,21 @@ async function identity() {
 }
 
 fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.sheet_csv) liveIn(); }).catch(() => {});
-// the scorecard behind the claim above, straight from the grader: model vs the consensus on the same rows
-fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).then(a => {
+// the ranking behind the claim above: the sites' published weekly error (docs/fan/sites_accuracy.json,
+// pasted in as each week closes) with the model's own played-only error from the grader, ranked by
+// the average over the weeks a source has numbers for
+Promise.all([fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()), fetch("fan/sites_accuracy.json?" + Date.now()).then(r => r.json())]).then(([a, s]) => {
+  const weeks = Object.keys(s.weeks || {}).map(Number).sort((x, y) => x - y);
+  const ours = {}; for (const w of a.weeks || []) if (w.mae_played) ours[w.week] = w.mae_played;
+  const rows = {};
+  for (const w of weeks) for (const [site, v] of Object.entries(s.weeks[w])) (rows[site] = rows[site] || {})[w] = v;
+  rows["this model"] = {}; for (const w of weeks) if (ours[w]) rows["this model"][w] = ours[w];
+  const avg = r => { const v = weeks.map(w => r[w]).filter(x => x != null); return v.length ? v.reduce((p, c) => p + c, 0) / v.length : Infinity; };
+  const order = Object.entries(rows).sort((x, y) => avg(x[1]) - avg(y[1]));
+  $("sitesrank").innerHTML = `<table class="g" style="font-size:12px;margin-top:8px"><tr><th></th><th class="l">source</th>${weeks.map(w => `<th>week ${w}</th>`).join("")}<th>average</th></tr>` +
+    order.map(([name, r], i) => `<tr class="${name === "this model" ? "me" : ""}"><td class="rk">${i + 1}</td><td class="l">${name === "this model" ? "<b>this model</b>" : name}</td>${weeks.map(w => `<td>${r[w] != null ? r[w].toFixed(2) : "—"}</td>`).join("")}<td>${avg(r) < Infinity ? avg(r).toFixed(2) : "—"}</td></tr>`).join("") + `</table>`;
   const o = a.overall || {};
-  if (o.ffa_n && o.model_mae_on_ffa_rows && o.ffa_mae)
-    $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: model ${o.model_mae_on_ffa_rows.toFixed(2)} vs the blend of those eight sites ${o.ffa_mae.toFixed(2)} points of error per player on the same ${o.ffa_n.toLocaleString()} player-games${o.dk_n ? `; DraftKings lines ${o.dk_mae.toFixed(2)} vs model ${o.model_mae_on_dk_rows.toFixed(2)} on the ${o.dk_n} they price` : ""}. Updated after every graded game.</span>`;
+  if (o.mae_played) $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: the model has been ${o.mae_played.toFixed(2)} points off per player over ${o.n_played.toLocaleString()} player-games that were actually played${o.dk_n ? `; on the ${o.dk_n} players DraftKings prices, their lines were ${o.dk_mae.toFixed(2)} off and the model ${o.model_mae_on_dk_rows.toFixed(2)}` : ""}. The sites' numbers are their own published weekly accuracy. Updated after every graded game.</span>`;
 }).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
