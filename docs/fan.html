@@ -107,7 +107,7 @@
   <div class="card how" id="why">
     <b>Why this exists.</b> Behind this page is an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating the model, they earn a seat in it.
     <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade the model the hard way, on players who played.</div>
-    <div id="sitesrank" class="gwrap"></div>
+    <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), this model, and every fan's version of it.</div>
     <span id="whyacc"></span>
   </div>
 
@@ -117,12 +117,12 @@
     <div class="dateline"><span style="font-style:italic" id="npdate">…</span><span class="sec">MODEL STANDINGS</span><span id="nppage">C1</span></div>
     <div class="rule1"></div>
     <div class="cols">
-      <div style="flex:2.2 1 300px"><div class="colh">Season standings <small>every model, scored on every player who played</small></div><div id="npseason" class="np-empty">loading…</div></div>
+      <div style="flex:2.2 1 300px"><div class="colh">Season standings <small>every model, ranked by average error</small></div><div id="npseason" class="np-empty">loading…</div></div>
       <div><div class="colh" id="npweekh">This week</div><div id="npweek" class="np-empty">loading…</div></div>
       <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading…</div>
            <div class="colh" style="margin-top:8px">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
     </div>
-    <div class="np-note">A fan's model is the model with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat the unedited model's number against the weeks they didn't. Untouched players score exactly as the model does, so a quiet week is a tie, not a loss.</div>
+    <div class="np-note">The big sites appear with the weekly accuracy they publish themselves. A fan's model is the model with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat the unedited model's number against the weeks they didn't. Untouched players score exactly as the model does, so a quiet week is a tie, not a loss.</div>
     <div class="you" id="you" style="color:#333"></div>
   </section>
 
@@ -219,21 +219,10 @@ async function identity() {
 }
 
 fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.sheet_csv) liveIn(); }).catch(() => {});
-// the ranking behind the claim above: the sites' published weekly error (docs/fan/sites_accuracy.json,
-// pasted in as each week closes) with the model's own played-only error from the grader, ranked by
-// the average over the weeks a source has numbers for
-Promise.all([fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()), fetch("fan/sites_accuracy.json?" + Date.now()).then(r => r.json())]).then(([a, s]) => {
-  const weeks = Object.keys(s.weeks || {}).map(Number).sort((x, y) => x - y);
-  const ours = {}; for (const w of a.weeks || []) if (w.mae_played) ours[w.week] = w.mae_played;
-  const rows = {};
-  for (const w of weeks) for (const [site, v] of Object.entries(s.weeks[w])) (rows[site] = rows[site] || {})[w] = v;
-  rows["this model"] = {}; for (const w of weeks) if (ours[w]) rows["this model"][w] = ours[w];
-  const avg = r => { const v = weeks.map(w => r[w]).filter(x => x != null); return v.length ? v.reduce((p, c) => p + c, 0) / v.length : Infinity; };
-  const order = Object.entries(rows).sort((x, y) => avg(x[1]) - avg(y[1]));
-  $("sitesrank").innerHTML = `<table class="g" style="font-size:12px;margin-top:8px"><tr><th></th><th class="l">source</th>${weeks.map(w => `<th>week ${w}</th>`).join("")}<th>average</th></tr>` +
-    order.map(([name, r], i) => `<tr class="${name === "this model" ? "me" : ""}"><td class="rk">${i + 1}</td><td class="l">${name === "this model" ? "<b>this model</b>" : name}</td>${weeks.map(w => `<td>${r[w] != null ? r[w].toFixed(2) : "—"}</td>`).join("")}<td>${avg(r) < Infinity ? avg(r).toFixed(2) : "—"}</td></tr>`).join("") + `</table>`;
+// the season line under the blurb, straight from the grader
+fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).then(a => {
   const o = a.overall || {};
-  if (o.mae_played) $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: the model has been ${o.mae_played.toFixed(2)} points off per player over ${o.n_played.toLocaleString()} player-games that were actually played${o.dk_n ? `; on the ${o.dk_n} players DraftKings prices, their lines were ${o.dk_mae.toFixed(2)} off and the model ${o.model_mae_on_dk_rows.toFixed(2)}` : ""}. The sites' numbers are their own published weekly accuracy. Updated after every graded game.</span>`;
+  if (o.mae_played) $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: the model has been ${o.mae_played.toFixed(2)} points off per player over ${o.n_played.toLocaleString()} player-games that were actually played${o.dk_n ? `; on the ${o.dk_n} players DraftKings prices, their lines were ${o.dk_mae.toFixed(2)} off and the model ${o.model_mae_on_dk_rows.toFixed(2)}` : ""}. Updated after every graded game.</span>`;
 }).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
@@ -377,13 +366,14 @@ $("close").onclick = () => $("modal").classList.remove("on");
 $("modal").addEventListener("click", e => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
 
 // ---- the newspaper (docs/fan/grade.json + sabersim_accuracy.json + submissions.json; the sheet itself for "who's in") ----
-let ACC = null;
+let ACC = null, SITES = null;
 function leaderboard() {
   Promise.all([
     fetch("fan/grade.json?" + Date.now()).then(r => r.json()).catch(() => null),
     fetch("fan/submissions.json?" + Date.now()).then(r => r.json()).catch(() => null),
-    fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).catch(() => null)
-  ]).then(([g, s, a]) => { G = g; SUBS = s; ACC = a; renderLead(); renderGrade(); });
+    fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).catch(() => null),
+    fetch("fan/sites_accuracy.json?" + Date.now()).then(r => r.json()).catch(() => null)
+  ]).then(([g, s, a, w]) => { G = g; SUBS = s; ACC = a; SITES = w; renderLead(); renderGrade(); });
 }
 async function liveIn() {
   // the drop-box sheet, read straight from the browser: who has submitted since the last bake
@@ -406,24 +396,34 @@ const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
 const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
 const isMe = f => (IDH && f.fan_id === IDH) || (!IDH && f.fan === me());
 function standings() {
-  // every model on the same player-games: the unedited model, then the model with each fan's arrows
-  const weeks = ((ACC && ACC.weeks) || []).filter(w => w.n_played && w.mae_played).map(w => ({week: w.week, mae: w.mae_played, n: w.n_played}));
+  // every model on one list: the big sites (their published weekly error), the unedited model
+  // (its played-only error), and the model with each fan's arrows applied -- ranked by the average
+  // over the weeks each one has numbers for
+  const mw = ((ACC && ACC.weeks) || []).filter(w => w.n_played && w.mae_played).map(w => ({week: w.week, mae: w.mae_played, n: w.n_played}));
+  const sw = (SITES && SITES.weeks) || {};
+  const weeks = [...new Set([...mw.map(w => w.week), ...Object.keys(sw).map(Number)])].sort((a, b) => a - b);
   if (!weeks.length) return null;
+  const avg = weekly => { const v = weeks.map(w => weekly[w]).filter(x => x != null); return v.length ? v.reduce((p, c) => p + c, 0) / v.length : Infinity; };
+  const rows = [];
+  for (const w of weeks) for (const [site, v] of Object.entries(sw[w] || {})) {
+    let r = rows.find(x => x.site && x.name === site); if (!r) rows.push(r = {name: site, site: true, weekly: {}, removed: 0, w: 0, l: 0, t: 0, arrows: 0});
+    r.weekly[w] = v;
+  }
+  rows.push({name: "The model", base: true, weekly: Object.fromEntries(mw.map(w => [w.week, w.mae])), removed: 0, w: 0, l: 0, t: 0, arrows: 0});
   const byFan = {};
   for (const r of (G && G.by_fan_week) || []) if (r.graded) (byFan[r.fan] = byFan[r.fan] || {id: r.fan_id, weeks: {}}).weeks[r.week] = r;
-  const totalN = weeks.reduce((p, w) => p + w.n, 0), totalErr = weeks.reduce((p, w) => p + w.mae * w.n, 0);
-  const rows = [{name: "The model", base: true, err: totalErr / totalN, removed: 0, w: 0, l: 0, t: 0, weekly: Object.fromEntries(weeks.map(w => [w.week, w.mae])), arrows: 0}];
   for (const [fan, f] of Object.entries(byFan)) {
     let removed = 0, w = 0, l = 0, t = 0, arrows = 0; const weekly = {};
-    for (const wk of weeks) {
+    for (const wk of mw) {
       const r = f.weeks[wk.week]; const rem = r && r.removed_pts != null ? r.removed_pts : 0;
       removed += rem; weekly[wk.week] = (wk.mae * wk.n - rem) / wk.n;
       if (r) { arrows += r.graded; if (rem > 0.005) w++; else if (rem < -0.005) l++; else t++; }
     }
-    rows.push({name: fan, fan_id: f.id, err: (totalErr - removed) / totalN, removed, w, l, t, weekly, arrows});
+    rows.push({name: fan, fan: true, fan_id: f.id, weekly, removed, w, l, t, arrows});
   }
-  rows.sort((a, b) => a.err - b.err || (a.base ? -1 : 1));
-  return {weeks, rows};
+  for (const r of rows) r.err = avg(r.weekly);
+  rows.sort((a, b) => a.err - b.err || (a.base ? -1 : b.base ? 1 : 0));
+  return {weeks, rows, mw};
 }
 function renderLead() {
   if (!D) return;
@@ -438,15 +438,18 @@ function renderLead() {
   $("npbest").innerHTML = best.length ? best.map(r => `<div class="np-line"><span>${esc(r.fan)}: ${r.player} ${LABEL[r.stat] || r.stat} ${r.arrows > 0 ? "▲" : "▼"}${Math.abs(r.arrows)} <span style="color:#777">wk${r.week}</span></span><b>+${r.removed_pts.toFixed(1)}</b></div>`).join("") : `<div class="np-empty">nothing graded yet</div>`;
   const st = standings();
   if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; return; }
-  const cls = r => (r.base ? "base" : "") + (!r.base && (IDH ? r.fan_id === IDH : r.name === mine) ? " me" : "");
-  $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>W-L</th><th>error</th><th>vs model</th><th>arrows</th></tr>` +
-    st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "The model (unedited)" : esc(r.name) + " + model"}</td><td>${r.base ? "—" : `${r.w}-${r.l}${r.t ? "-" + r.t : ""}`}</td><td>${r.err.toFixed(3)}</td><td class="${r.removed > 0 ? "up" : r.removed < 0 ? "dn" : ""}">${r.base ? "—" : (r.removed > 0 ? "+" : "") + r.removed.toFixed(1) + " pts"}</td><td>${r.base ? "—" : r.arrows}</td></tr>`).join("") + `</table>`;
-  const wk = st.weeks[st.weeks.length - 1];
-  const wrows = st.rows.filter(r => r.base || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded)).sort((a, b) => a.weekly[wk.week] - b.weekly[wk.week] || (a.base ? -1 : 1));
-  $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest with box scores</small>" : ""}`;
-  $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
-    wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "The model" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(3)}</td></tr>`).join("") + `</table>`;
-  const meRow = st.rows.findIndex(r => !r.base && (IDH ? r.fan_id === IDH : r.name === mine));
+  const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? r.fan_id === IDH : r.name === mine) ? " me" : "");
+  const label = r => r.base ? "The model (unedited)" : r.fan ? esc(r.name) + " + model" : esc(r.name);
+  $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th>${st.weeks.map(w => `<th>wk ${w}</th>`).join("")}<th>avg</th><th>W-L</th><th>vs model</th></tr>` +
+    st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td>${st.weeks.map(w => `<td>${r.weekly[w] != null ? r.weekly[w].toFixed(2) : "—"}</td>`).join("")}<td><b>${r.err < Infinity ? r.err.toFixed(2) : "—"}</b></td><td>${r.fan ? `${r.w}-${r.l}${r.t ? "-" + r.t : ""}` : "—"}</td><td class="${r.removed > 0 ? "up" : r.removed < 0 ? "dn" : ""}">${r.fan ? (r.removed > 0 ? "+" : "") + r.removed.toFixed(1) : "—"}</td></tr>`).join("") + `</table>`;
+  const wk = st.mw.length ? st.mw[st.mw.length - 1] : null;
+  if (wk) {
+    const wrows = st.rows.filter(r => r.weekly[wk.week] != null && (!r.fan || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded))).sort((a, b) => a.weekly[wk.week] - b.weekly[wk.week] || (a.base ? -1 : b.base ? 1 : 0));
+    $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest with box scores</small>" : ""}`;
+    $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
+      wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "The model" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
+  } else { $("npweekh").textContent = "This week"; $("npweek").innerHTML = `<div class="np-empty">no week graded yet</div>`; }
+  const meRow = st.rows.findIndex(r => r.fan && (IDH ? r.fan_id === IDH : r.name === mine));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
   $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} the unedited model by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + model is not on the board yet — lock in picks and get graded`) : "";
 }
