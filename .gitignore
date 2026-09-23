@@ -42,3 +42,6 @@ data/props_frames/lines_cache.json
 # Model League: per-run prediction dumps are regenerable from the registry code hashes
 league/registry/submissions/
 league/baselines/run.log
+
+# nflverse download cache (game_shape_study.py) — regenerable, no need to version
+data/nflverse/
