@@ -185,7 +185,7 @@
     <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>BurkeV1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than BurkeV1's earn a place in it.
     <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade BurkeV1 the hard way, on players who played.</div>
     <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), BurkeV1, and every fan's version of it.</div>
-    <span id="whyacc"></span></div>
+</div>
   </details>
 
 
@@ -356,11 +356,6 @@ async function identity() {
 }
 
 fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.sheet_csv) liveIn(); }).catch(() => {});
-// the season line under the blurb, straight from the grader
-fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).then(a => {
-  const o = a.overall || {};
-  if (o.mae_played) $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: BurkeV1 has been ${o.mae_played.toFixed(2)} points off per player over ${o.n_played.toLocaleString()} player-games that were actually played${o.dk_n ? `; on the ${o.dk_n} players DraftKings prices, their lines were ${o.dk_mae.toFixed(2)} off and BurkeV1 ${o.model_mae_on_dk_rows.toFixed(2)}` : ""}. Updated after every graded game.</span>`;
-}).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   D = d; KEY = "fanpicks_" + d.season + "_wk" + d.week + "_" + (d.bake_id || "");   // a re-bake renumbers players, so drafts are per bake
