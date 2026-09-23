@@ -95,8 +95,10 @@
     </div>
     <div class="how" style="margin-top:6px" id="whohow">Username + PIN is you: use the same pair on any phone or laptop and your weeks add up in one entry. The PIN never leaves your device (the page sends a scrambled fingerprint of it), so nobody can post picks under your name without it. Both are saved here. Submit as often as you like before kickoff — your latest picks count.</div>
     <div class="row" style="margin-top:8px">
-      <div><label for="email">Email (optional) — so we can reach you if your picks prove to add accuracy to the model</label><input id="email" type="text" inputmode="email" placeholder="you@example.com" autocomplete="email" maxlength="80"></div>
+      <div style="flex:1 1 200px"><label for="fav">Your team — the one you know best</label><select id="fav"><option value="">pick a team</option></select></div>
+      <div style="flex:2 1 200px"><label for="email">Email (optional) — so we can reach you if your picks prove to add accuracy to the model</label><input id="email" type="text" inputmode="email" placeholder="you@example.com" autocomplete="email" maxlength="80"></div>
     </div>
+    <div class="how" style="margin-top:4px" id="favhow">Their game goes to the top of the list every week, your team's players first and the opponent's right after. It also lets us check whether fans are sharpest on the team they follow.</div>
     <div class="how" style="margin-top:4px" id="emailhow">Goes to a private contact list only the model's owner can see, tied to your username and fingerprint, never shown on the board.</div>
   </div>
 
@@ -147,6 +149,10 @@
 // need no account and nobody forwards emails. Empty config = the older email / copy-the-code flow.
 const FAN_TO = "robert.edward.burke+picks@gmail.com";
 const LABEL = {pass_yds:"pass yds", pass_tds:"pass TD", pass_int:"INT", rush_yds:"rush yds", rush_tds:"rush TD", rec:"rec", rec_yds:"rec yds", rec_tds:"rec TD"};
+const TEAMS = {ARI:"Arizona Cardinals", ATL:"Atlanta Falcons", BAL:"Baltimore Ravens", BUF:"Buffalo Bills", CAR:"Carolina Panthers", CHI:"Chicago Bears", CIN:"Cincinnati Bengals", CLE:"Cleveland Browns", DAL:"Dallas Cowboys", DEN:"Denver Broncos", DET:"Detroit Lions", GB:"Green Bay Packers", HOU:"Houston Texans", IND:"Indianapolis Colts", JAX:"Jacksonville Jaguars", KC:"Kansas City Chiefs", LA:"Los Angeles Rams", LAC:"Los Angeles Chargers", LV:"Las Vegas Raiders", MIA:"Miami Dolphins", MIN:"Minnesota Vikings", NE:"New England Patriots", NO:"New Orleans Saints", NYG:"New York Giants", NYJ:"New York Jets", PHI:"Philadelphia Eagles", PIT:"Pittsburgh Steelers", SEA:"Seattle Seahawks", SF:"San Francisco 49ers", TB:"Tampa Bay Buccaneers", TEN:"Tennessee Titans", WAS:"Washington Commanders"};
+const TEAM_FIX = {JAC:"JAX", LAR:"LA", LVR:"LV", WSH:"WAS", ARZ:"ARI", OAK:"LV", SD:"LAC", STL:"LA"};
+const canon = t => TEAM_FIX[t] || t;
+let FAV = ls.get("fanpicks_team") || "";
 const $ = id => document.getElementById(id);
 let D = null, KEY = "", picks = {}, CFG = {}, G = null, SUBS = null, LIVE = null;   // picks: "i:s" -> signed arrow presses
 const STEP = 0.10, MIN_N = -10;
@@ -198,6 +204,8 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || ""; identity().then(renderLead);
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
+  for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { const o = document.createElement("option"); o.value = ab; o.textContent = nm; $("fav").appendChild(o); }
+  $("fav").value = FAV;
   render(); count(); sentNote(); leaderboard();
 }).catch(e => { $("list").innerHTML = '<div class="empty">could not load this week\'s projections (' + e.message + ')</div>'; });
 
@@ -205,12 +213,17 @@ const norm = s => (s || "").toLowerCase();
 function render() {
   const g = $("game").value, pos = $("pos").value, q = norm($("q").value).trim();
   let h = "";
-  for (const game of D.games) {
+  // the fan's team leads: its game first, its players before the opponent's; every other game in kickoff order
+  const favGame = FAV ? D.games.find(x => x.teams.map(canon).includes(FAV)) : null;
+  const games = favGame ? [favGame, ...D.games.filter(x => x !== favGame)] : D.games;
+  if (FAV && !g && !q) h += `<div class="how" style="margin:6px 0 2px">${favGame ? `${TEAMS[FAV]} are up first this week (${favGame.kickoff.replace(" ET", "")}); everyone else follows in kickoff order.` : `${TEAMS[FAV]} are on a bye this week — games in kickoff order.`}</div>`;
+  for (const game of games) {
     if (g && game.game !== g) continue;
     const ps = D.players.filter(p => p.game === game.game && (!pos || p.pos === pos) && (!q || norm(p.name).includes(q) || norm(p.team) === q));
     if (!ps.length) continue;
     h += `<div class="game"><b>${game.away} @ ${game.home}</b><span>${game.kickoff}</span></div>`;
-    for (const team of [game.away, game.home]) {
+    const order = game === favGame && canon(game.home) === FAV ? [game.home, game.away] : [game.away, game.home];
+    for (const team of order) {
       const tp = ps.filter(p => p.team === team).sort((a, b) => b.proj - a.proj);
       if (!tp.length) continue;
       h += `<div class="team">${team}</div>`;
@@ -260,6 +273,7 @@ $("q").addEventListener("input", render);
 $("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(renderLead); });
 $("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(renderLead); });
 $("email").addEventListener("input", () => ls.set("fanpicks_email", $("email").value.trim()));
+$("fav").addEventListener("change", () => { FAV = $("fav").value; ls.set("fanpicks_team", FAV); if (D) render(); });
 async function sendContact() {
   // the private contact form: separate from the drop box so addresses never sit in the readable sheet
   const em = ($("email").value || "").trim();
@@ -275,7 +289,7 @@ $("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {};
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
   const a = Object.entries(picks).map(([k, v]) => { const [i, s] = k.split(":").map(Number); return [i, s, v]; });
-  const j = {n: me(), u: IDH || DID, d: DID, t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), a};
+  const j = {n: me(), u: IDH || DID, d: DID, f: FAV || "", t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), a};
   return "FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
 }
 const dropbox = () => !!(CFG.form_action && CFG.entry_user && CFG.entry_code);
