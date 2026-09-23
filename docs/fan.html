@@ -126,8 +126,8 @@
   #attract .go { font-size:1.25vh; color:#fff; animation:blink 1.1s steps(1) infinite; margin-top:.6vh; }
   #attract .hst { font-size:.95vh; color:#ffd23f; margin-top:.4vh; }
   #attract .hs { font-size:.95vh; color:#9fe870; line-height:2; text-align:left; height:11vh; overflow:hidden; width:64%; -webkit-mask-image:linear-gradient(transparent, #000 12%, #000 88%, transparent); mask-image:linear-gradient(transparent, #000 12%, #000 88%, transparent); }
-  #attract .hs .crawl { animation:crawl var(--crawl, 14s) linear infinite; }
-  #attract .hs div { display:flex; justify-content:space-between; gap:1vh; white-space:nowrap; }
+  #attract .hs .crawl { display:block; animation:crawl var(--crawl, 14s) linear infinite; }
+  #attract .hs .crawl > div { display:flex; justify-content:space-between; gap:1vh; white-space:nowrap; }
   #attract .hs .me { color:#ffd23f; text-shadow:0 0 .8vh rgba(255,210,63,.7); }
   #attract .hs b { font-weight:400; }
   @keyframes crawl { from { transform:translateY(0); } to { transform:translateY(-50%); } }
