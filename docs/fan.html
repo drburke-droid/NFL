@@ -101,13 +101,13 @@
 </head>
 <body>
 <main>
-  <h1>🏆 Fan Picks — beat the model</h1>
+  <h1>🏆 Fan Picks — beat BurkeV1</h1>
   <p class="sub" id="sub">loading this week's projections…</p>
 
   <div class="card how" id="why">
-    <b>Why this exists.</b> Behind this page is an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating the model, they earn a seat in it.
-    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade the model the hard way, on players who played.</div>
-    <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), this model, and every fan's version of it.</div>
+    <b>Why this exists.</b> Behind this page is <b>BurkeV1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The open question is whether people can make it better: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and if your picks keep beating BurkeV1, they earn a seat in it.
+    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade BurkeV1 the hard way, on players who played.</div>
+    <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), BurkeV1, and every fan's version of it.</div>
     <span id="whyacc"></span>
   </div>
 
@@ -123,7 +123,7 @@
       <div><div class="colh">Who's in <small id="npinsub"></small></div><div id="npin" class="np-empty">loading…</div>
            <div class="colh" style="margin-top:8px">Best calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
     </div>
-    <div class="np-note">The big sites appear with the weekly accuracy they publish themselves. A fan's model is the model with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat the unedited model's number against the weeks they didn't. Untouched players score exactly as the model does, so a quiet week is a tie, not a loss.</div>
+    <div class="np-note">The big sites appear with the weekly accuracy they publish themselves. <b>BurkeV1</b> is the model as shipped. A fan's model is BurkeV1 with that fan's arrows applied. Every model is scored on the same player-games: the average number of fantasy points it was off, over every player who took the field. Lower is better. <b>W-L</b> counts the weeks a fan's arrows beat BurkeV1's number against the weeks they didn't. Untouched players score exactly as BurkeV1 does, so a quiet week is a tie, not a loss.</div>
     <div class="you" id="you" style="color:#333"></div>
   </section>
 
@@ -142,7 +142,7 @@
   </div>
 
   <div class="card how">
-    <b>How to play.</b> Below are the model's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat <b>10%</b> (three ▲ = +30%; ten ▼ = zero). Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
+    <b>How to play.</b> Below are BurkeV1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat <b>10%</b> (three ▲ = +30%; ten ▼ = zero). Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
     <div class="legend"><span><b style="color:var(--up)">▲</b> +10% per press</span><span><b style="color:var(--down)">▼</b> −10% per press</span><span>arrows lock at kickoff</span></div>
   </div>
 
@@ -158,7 +158,7 @@
 
   <div class="card" id="gradecard" style="margin-top:18px">
     <b>The fine print</b>
-    <div class="how" style="margin-top:4px">Every arrow is scored once the game's box score is in, against the projection the model actually shipped for that game. <b>Direction</b> = the real number moved the way the arrow said. <b>Error removed</b> = fantasy points closer (or farther) than the model, summed. Arrows placed after a game kicks off do not count. Shadow mode: nothing here changes the model — yet.</div>
+    <div class="how" style="margin-top:4px">Every arrow is scored once the game's box score is in, against the projection BurkeV1 actually shipped for that game. <b>Direction</b> = the real number moved the way the arrow said. <b>Error removed</b> = fantasy points closer (or farther) than BurkeV1, summed. Arrows placed after a game kicks off do not count. Shadow mode: nothing here changes BurkeV1 — yet.</div>
     <div id="grade" class="how" style="margin-top:8px">loading…</div>
   </div>
 </main>
@@ -223,7 +223,7 @@ fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c 
 // the season line under the blurb, straight from the grader
 fetch("sabersim_accuracy.json?" + Date.now()).then(r => r.json()).then(a => {
   const o = a.overall || {};
-  if (o.mae_played) $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: the model has been ${o.mae_played.toFixed(2)} points off per player over ${o.n_played.toLocaleString()} player-games that were actually played${o.dk_n ? `; on the ${o.dk_n} players DraftKings prices, their lines were ${o.dk_mae.toFixed(2)} off and the model ${o.model_mae_on_dk_rows.toFixed(2)}` : ""}. Updated after every graded game.</span>`;
+  if (o.mae_played) $("whyacc").innerHTML = `<span style="color:var(--mut)">Season so far, ${a.season}: BurkeV1 has been ${o.mae_played.toFixed(2)} points off per player over ${o.n_played.toLocaleString()} player-games that were actually played${o.dk_n ? `; on the ${o.dk_n} players DraftKings prices, their lines were ${o.dk_mae.toFixed(2)} off and BurkeV1 ${o.model_mae_on_dk_rows.toFixed(2)}` : ""}. Updated after every graded game.</span>`;
 }).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
@@ -410,7 +410,7 @@ function standings() {
     let r = rows.find(x => x.site && x.name === site); if (!r) rows.push(r = {name: site, site: true, weekly: {}, removed: 0, w: 0, l: 0, t: 0, arrows: 0});
     r.weekly[w] = v;
   }
-  rows.push({name: "The model", base: true, weekly: Object.fromEntries(mw.map(w => [w.week, w.mae])), removed: 0, w: 0, l: 0, t: 0, arrows: 0});
+  rows.push({name: "BurkeV1", base: true, weekly: Object.fromEntries(mw.map(w => [w.week, w.mae])), removed: 0, w: 0, l: 0, t: 0, arrows: 0});
   const byFan = {};
   for (const r of (G && G.by_fan_week) || []) if (r.graded) (byFan[r.fan] = byFan[r.fan] || {id: r.fan_id, weeks: {}}).weeks[r.week] = r;
   for (const [fan, f] of Object.entries(byFan)) {
@@ -440,7 +440,7 @@ function renderLead() {
   const st = standings();
   if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; return; }
   const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? r.fan_id === IDH : r.name === mine) ? " me" : "");
-  const label = r => r.base ? "The model (unedited)" : r.fan ? esc(r.name) + " + model" : esc(r.name);
+  const label = r => r.base ? "BurkeV1 (unedited)" : r.fan ? esc(r.name) + " + BurkeV1" : esc(r.name);
   $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th>${st.weeks.map(w => `<th>wk ${w}</th>`).join("")}<th>avg</th><th>W-L</th><th>vs model</th></tr>` +
     st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td>${st.weeks.map(w => `<td>${r.weekly[w] != null ? r.weekly[w].toFixed(2) : "—"}</td>`).join("")}<td><b>${r.err < Infinity ? r.err.toFixed(2) : "—"}</b></td><td>${r.fan ? `${r.w}-${r.l}${r.t ? "-" + r.t : ""}` : "—"}</td><td class="${r.removed > 0 ? "up" : r.removed < 0 ? "dn" : ""}">${r.fan ? (r.removed > 0 ? "+" : "") + r.removed.toFixed(1) : "—"}</td></tr>`).join("") + `</table>`;
   const wk = st.mw.length ? st.mw[st.mw.length - 1] : null;
@@ -448,17 +448,17 @@ function renderLead() {
     const wrows = st.rows.filter(r => r.weekly[wk.week] != null && (!r.fan || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded))).sort((a, b) => a.weekly[wk.week] - b.weekly[wk.week] || (a.base ? -1 : b.base ? 1 : 0));
     $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest with box scores</small>" : ""}`;
     $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
-      wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "The model" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
+      wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "BurkeV1" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
   } else { $("npweekh").textContent = "This week"; $("npweek").innerHTML = `<div class="np-empty">no week graded yet</div>`; }
   const meRow = st.rows.findIndex(r => r.fan && (IDH ? r.fan_id === IDH : r.name === mine));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
-  $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} the unedited model by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + model is not on the board yet — lock in picks and get graded`) : "";
+  $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} BurkeV1 by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + BurkeV1 is not on the board yet — lock in picks and get graded`) : "";
 }
 function renderGrade() {
   const el = $("grade"), o = (G && G.overall) || {};
   if (!G || !o.n) { el.textContent = "no picks submitted yet — yours could be the first"; return; }
   let h = `<div><b>${o.n}</b> arrows from <b>${(G.by_fan || []).length}</b> fan${(G.by_fan || []).length === 1 ? "" : "s"} · <b>${o.graded}</b> graded · ${o.pending} waiting for box scores` +
-    (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than the model on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
+    (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than BurkeV1 on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
   if (G.by_size && o.graded) {
     const sz = Object.entries(G.by_size).filter(([k, v]) => v.graded).map(([k, v]) => `${k}×: ${pct(v.hit_rate)} on ${v.graded}`).join(" · ");
     const dr = Object.entries(G.by_direction || {}).filter(([k, v]) => v.graded).map(([k, v]) => `${k}s ${pct(v.hit_rate)} (${v.graded})`).join(" · ");
