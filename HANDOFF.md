@@ -306,15 +306,19 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   paper in `#paperwrap`. Phones (`body.plain`, min side < 600px or portrait < 760) skip the
   cabinet entirely. Player cards use content-visibility:auto because repainting ~200 cards
   under the transform was the slow part. og:image is the cabinet, for sharing.
-  **Phones keep the cabinet (2026-09-23 pm).** `body.mobile` (width < 760 or short side < 600):
-  landing = the whole machine scaled to fit (`fit()` uses min(1, vw/W, vh/H)); tapping the screen
-  sets `#stage.on` and CSS recomposes the face instead of transforming: `#mtop` (a 14.3vw strip of
-  cabinet.jpg at background-position 0 -20.3vw, i.e. the bezel), a tall `#crt` with the same
-  scanlines, the controls bar, and `#mbottom` (19vw strip at 0 -70vw, the control panel) carrying
-  `#mpaper`, a small folded Oracle that opens the standings overlay. Slices assume the image at
-  100vw wide is 119.15vw tall. `docs/fan/phone_harness.html` frames the page at 430x860 and
-  390x700 for checking in a desktop browser (the Chrome extension cannot resize a maximised window
-  and refuses file:// URLs). The old `body.plain` CSS remains but nothing sets it.
+  **Phones keep the cabinet (2026-09-23 pm, portrait face 2026-09-23 eve).** `body.mobile` (width
+  < 760 or short side < 600): landing = the wide cabinet.jpg fitted to the HEIGHT (rails cropped).
+  Tapping the glass sets `#stage.on` and the face becomes a second render, the user's portrait
+  cabinet `docs/fan/cabinet_phone.jpg` (1142x1377), scaled to COVER the viewport (`#mface`;
+  marquee top, control panel bottom, rails just off the sides on a 430-wide phone). `fit()` writes
+  the rendered image box and the glass rect as CSS vars on `#screen` (--fx/--fy/--fw/--fh and
+  --gx/--gy/--gw/--gh; the glass is x 23.2-76.9%, y 19.5-82.8% of the picture, measured with PIL);
+  `#mglass` (a flex column around `#crt` + the bar, display:contents on desktop) sits on that
+  rect with the scanline overlay, `#eject` on the bezel above it, `#mpaper` (the folded Oracle
+  that opens the standings) on the control panel at y 86.5%. `docs/fan/phone_harness.html` frames
+  the page at 430x860, cache-busted, for checking in a desktop browser (the Chrome extension
+  cannot resize a maximised window and refuses file:// URLs; scale the iframe with a CSS
+  transform to see the whole phone). The old `body.plain` CSS remains but nothing sets it.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
