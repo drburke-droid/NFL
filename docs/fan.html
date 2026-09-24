@@ -1125,7 +1125,9 @@ function standings() {
       if (mine < his - 0.0005) r.w++; else if (mine > his + 0.0005) r.l++; else r.t++;
     }
   }
-  rows.sort((a, b) => a.err - b.err || (a.base ? -1 : b.base ? 1 : 0));
+  // ranked on the hundredths the table shows; on a tie THE ORACLE ranks first (4.33 vs 4.3305 is a tie)
+  const c2 = x => Math.round(x * 100);
+  rows.sort((a, b) => c2(a.err) - c2(b.err) || (a.base ? -1 : b.base ? 1 : 0) || a.err - b.err);
   return {weeks, rows, mw};
 }
 function renderLead() {
@@ -1154,7 +1156,7 @@ function renderLead() {
     st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td>${st.weeks.map(w => `<td>${r.weekly[w] != null ? r.weekly[w].toFixed(2) : "—"}</td>`).join("")}<td><b>${r.err < Infinity ? r.err.toFixed(2) : "—"}</b></td><td class="${r.base ? "" : r.w > r.l ? "up" : r.l > r.w ? "dn" : ""}">${r.base ? "—" : `${r.w}-${r.l}${r.t ? "-" + r.t : ""}`}</td></tr>`).join("") + `</table>`;
   const wk = st.mw.length ? st.mw[st.mw.length - 1] : null;
   if (wk) {
-    const wrows = st.rows.filter(r => r.weekly[wk.week] != null && (!r.fan || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded))).sort((a, b) => a.weekly[wk.week] - b.weekly[wk.week] || (a.base ? -1 : b.base ? 1 : 0));
+    const wrows = st.rows.filter(r => r.weekly[wk.week] != null && (!r.fan || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded))).sort((a, b) => c2(a.weekly[wk.week]) - c2(b.weekly[wk.week]) || (a.base ? -1 : b.base ? 1 : 0) || a.weekly[wk.week] - b.weekly[wk.week]);
     $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest with box scores</small>" : ""}`;
     $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
       wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "<b>THE ORACLE</b>" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
