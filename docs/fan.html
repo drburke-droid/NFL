@@ -530,7 +530,7 @@ async function loadCode(c, from) {
   const have = Object.keys(picks).length;
   if (have && sig(picks) !== sig(got) && !confirm(`Replace the ${have} arrow${have === 1 ? "" : "s"} on this device with the ${n} from your ${from}?`)) return rsay("Kept the picks already on this device.");
   picks = got; ls.set(KEY, JSON.stringify(picks));
-  if (x.j.n && !$("who").value) { $("who").value = x.j.n; ls.set("fanpicks_who", x.j.n); identity().then(renderLead); }
+  if (x.j.n && !$("who").value) { $("who").value = x.j.n; ls.set("fanpicks_who", x.j.n); identity().then(() => { renderLead(); soonServer(); }); }
   render(); count();
   rsay(`Loaded ${n} arrow${n === 1 ? "" : "s"} from your ${from}${x.j.n ? " (" + x.j.n + ")" : ""}. Use the same username and PIN as before — a different PIN makes a new player — then Submit to lock them in from here.`);
 }
@@ -547,6 +547,31 @@ async function carryDraft() {
   if (!Object.keys(got).length || Object.keys(picks).length) return false;
   picks = got; ls.set(KEY, JSON.stringify(picks)); return true;
 }
+// ---- the Fan Picks API (apps_script/fanpicks_api.gs): your last lock-in, from whichever device ----
+// Only when docs/fan/dropbox.json names it ("api"); with no api the page behaves exactly as before.
+let srvKey = "", srvT = 0;
+const soonServer = () => { clearTimeout(srvT); srvT = setTimeout(checkServer, 700); };   // PIN typing: ask once it settles
+async function checkServer() {
+  if (!CFG.api || !IDH || !D) return;
+  const k = IDH + "|" + D.season + "|" + D.week; if (k === srvKey) return; srvKey = k;
+  let r = null;
+  try { r = await fetch(`${CFG.api}?a=mine&f=${encodeURIComponent(IDH)}&s=${D.season}&w=${D.week}&t=${Date.now()}`).then(x => x.json()); } catch (e) { return; }
+  if (!r || !r.ok || !r.code) return;
+  const x = decodeCode(r.code); if (!x) return;
+  const lc = ls.get(WKEY() + "_locked"), lx = lc && decodeCode(lc);
+  if (!lx || String(x.j.t || "") > String(lx.j.t || "")) ls.set(WKEY() + "_locked", r.code);   // the newest lock-in, from any device
+  const theirs = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE), n = Object.keys(theirs).length;
+  const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
+  const take = () => { picks = theirs; ls.set(KEY, JSON.stringify(picks)); render(); count(); };
+  if (!n) return count();
+  if (!Object.keys(picks).length) { take(); return rsay(`Welcome back — loaded the ${n} arrow${n === 1 ? "" : "s"} you locked in ${at}.`); }
+  count();
+  if (sig(picks) !== sig(theirs)) {
+    $("rmsg").innerHTML = `Your last lock-in (${esc(at)}, ${n} arrow${n === 1 ? "" : "s"}) is different from the picks on this device. <button class="sec" id="rsrv" style="padding:2px 10px">Load it</button>`;
+    $("rsrv").onclick = () => { take(); rsay(`Loaded the ${n} arrow${n === 1 ? "" : "s"} you locked in ${at}.`); };
+  }
+}
+const waitD = () => new Promise(res => { const t = setInterval(() => { if (D) { clearInterval(t); res(); } }, 100); });
 function armKickTimer() {                                              // lock each game's arrows as it kicks off
   const now = Date.now(), next = D.games.map(kickMs).filter(t => t > now).sort((a, b) => a - b)[0];
   if (next && next - now < 2147483647) setTimeout(() => { render(); count(); armKickTimer(); }, next - now + 1000);
@@ -560,11 +585,17 @@ const me = () => ($("who").value || "").trim().slice(0, 24);
 // this browser, for the data mining only.
 let DID = ls.get("fanpicks_id");
 if (!DID) { DID = (crypto.randomUUID ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2)).slice(0, 36); ls.set("fanpicks_id", DID); }
-let IDH = "";
+let IDH = "", PIDH = "";
+// the public face of the fingerprint: grade.json lists fans by this, never by fan_id (fan_rules.public_id)
+async function publicId(f) {
+  if (!f) return "";
+  try { const b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode("fanpicks-public|" + f)); return [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, "0")).join("").slice(0, 16); }
+  catch (e) { return ""; }
+}
 const pin = () => ($("pin").value || "").replace(/\D/g, "");
 async function identity() {
   const name = me().toLowerCase(), p = pin();
-  if (!name || p.length < 4) { IDH = ""; return IDH; }
+  if (!name || p.length < 4) { IDH = ""; PIDH = ""; return IDH; }
   const msg = new TextEncoder().encode("fanpicks|" + name + "|" + p);
   try {
     const buf = await crypto.subtle.digest("SHA-256", msg);
@@ -573,10 +604,11 @@ async function identity() {
     let h = 2166136261; for (const c of msg) { h ^= c; h = Math.imul(h, 16777619) >>> 0; }
     IDH = "fnv" + h.toString(16);
   }
+  PIDH = await publicId(IDH);
   return IDH;
 }
 
-fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.sheet_csv) liveIn(); }).catch(() => {});
+fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.api || CFG.sheet_csv) liveIn(); soonServer(); }).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   D = d; const K0 = "fanpicks_" + d.season + "_wk" + d.week + "_" + (d.bake_id || "");   // a re-bake renumbers players, so drafts are per bake
@@ -596,7 +628,7 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
     } catch(e) {}
     ls.set(KEY, JSON.stringify(picks)); if (ls.get(K0 + "_sent")) ls.set(KEY + "_sent", ls.get(K0 + "_sent")); ls.del(K0);
   }
-  $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || ""; identity().then(renderLead);
+  $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || ""; identity().then(() => { renderLead(); soonServer(); });
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { const o = document.createElement("option"); o.value = ab; o.textContent = nm; $("fav").appendChild(o); }
@@ -680,8 +712,8 @@ async function sentNote() {
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
-$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(renderLead); });
-$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(renderLead); });
+$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(() => { renderLead(); soonServer(); }); });
+$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(() => { renderLead(); soonServer(); }); });
 $("email").addEventListener("input", () => ls.set("fanpicks_email", $("email").value.trim()));
 $("fav").addEventListener("change", () => { FAV = $("fav").value; ls.set("fanpicks_team", FAV); if (D) render(); });
 async function sendContact() {
@@ -774,6 +806,14 @@ function leaderboard() {
   ]).then(([g, s, a, w]) => { G = g; SUBS = s; ACC = a; SITES = w; renderLead(); renderGrade(); });
 }
 async function liveIn() {
+  if (CFG.api) {
+    await waitD();
+    try {
+      const r = await fetch(`${CFG.api}?a=who&s=${D.season}&w=${D.week}&t=${Date.now()}`).then(x => x.json());
+      if (r && r.ok) { LIVE = (r.entries || []).filter(e => e.arrows > 0).map(e => ({fan: e.fan, week: D.week, submitted_at: e.t || "", arrows: e.arrows})); renderLead(); return; }
+    } catch (e) {}
+  }
+  if (!CFG.sheet_csv) return;
   // the drop-box sheet, read straight from the browser: who has submitted since the last bake
   try {
     const t = await fetch(CFG.sheet_csv + (CFG.sheet_csv.includes("?") ? "&" : "?") + "t=" + Date.now()).then(r => r.text());
@@ -792,7 +832,7 @@ async function liveIn() {
 function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D.week && x.fan === me())); LIVE.push({fan: me(), week: D.week, submitted_at: new Date().toISOString(), arrows: Object.keys(picks).length}); renderLead(); }
 const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
 const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
-const isMe = f => (IDH && f.fan_id === IDH) || (!IDH && f.fan === me());
+const isMe = f => IDH ? (f.pid === PIDH || f.fan_id === IDH) : f.fan === me();
 function standings() {
   // every model on one list: the big sites (their published weekly error), the unedited model
   // (its error on ORACLE_BASIS), and the model with each fan's arrows applied -- ranked by the average
@@ -814,7 +854,7 @@ function standings() {
   }
   rows.push({name: "Burke_v1", base: true, weekly: Object.fromEntries(mw.map(w => [w.week, w.mae])), removed: 0, w: 0, l: 0, t: 0, arrows: 0});
   const byFan = {};
-  for (const r of (G && G.by_fan_week) || []) if (r.graded) (byFan[r.fan] = byFan[r.fan] || {id: r.fan_id, weeks: {}}).weeks[r.week] = r;
+  for (const r of (G && G.by_fan_week) || []) if (r.graded) (byFan[r.fan] = byFan[r.fan] || {id: r.pid || r.fan_id, weeks: {}}).weeks[r.week] = r;
   for (const [fan, f] of Object.entries(byFan)) {
     let removed = 0, w = 0, l = 0, t = 0, arrows = 0; const weekly = {};
     for (const wk of mw) {
@@ -861,7 +901,7 @@ function renderLead() {
   $("npsharp").innerHTML = (sharp.length || busy.length) ? (sharp.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>direction right most often (5+ graded)</span></div>` + sharp.map(f => `<div class="np-line"><span>${esc(f.fan)}</span><b>${pct(f.hit_rate)} of ${f.graded}</b></div>`).join("") : "") + (busy.length ? `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>most arrows placed</span></div>` + busy.map(f => `<div class="np-line"><span>${esc(f.fan)}</span><b>${f.n}</b></div>`).join("") : "") : `<div class="np-empty">nothing graded yet</div>`;
   const st = standings();
   if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; $("crawl").innerHTML = ""; $("foldlines").innerHTML = `<div class="fl"><span>no week graded yet</span></div>`; return; }
-  const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? r.fan_id === IDH : r.name === mine) ? " me" : "");
+  const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? (r.fan_id === PIDH || r.fan_id === IDH) : r.name === mine) ? " me" : "");
   const label = r => r.base ? "Burke_v1" : r.fan ? esc(r.name) + " + Burke_v1" : esc(r.name);
   $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th>${st.weeks.map(w => `<th>wk ${w}</th>`).join("")}<th>avg</th><th>W-L vs Burke_v1</th></tr>` +
     st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td>${st.weeks.map(w => `<td>${r.weekly[w] != null ? r.weekly[w].toFixed(2) : "—"}</td>`).join("")}<td><b>${r.err < Infinity ? r.err.toFixed(2) : "—"}</b></td><td class="${r.base ? "" : r.w > r.l ? "up" : r.l > r.w ? "dn" : ""}">${r.base ? "—" : `${r.w}-${r.l}${r.t ? "-" + r.t : ""}`}</td></tr>`).join("") + `</table>`;
@@ -880,7 +920,7 @@ function renderLead() {
   const crawl = $("crawl"); crawl.innerHTML = pass + pass;
   crawl.style.setProperty("--crawl", ((st.rows.length + 2) * 1.6) + "s");
   $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "Burke_v1" : esc(r.name) + (r.fan ? " + Burke_v1" : "")}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
-  const meRow = st.rows.findIndex(r => r.fan && (IDH ? r.fan_id === IDH : r.name === mine));
+  const meRow = st.rows.findIndex(r => r.fan && (IDH ? (r.fan_id === PIDH || r.fan_id === IDH) : r.name === mine));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
   $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} Burke_v1 by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + Burke_v1 is not on the board yet — lock in picks and get graded`) : "";
 }

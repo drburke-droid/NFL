@@ -374,6 +374,20 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   picks there with no link. That needs the page to read submissions back, and it can't read the
   Google sheet (no CORS); the repo only gets them at the daily pull, and more frequent commits to
   main re-trigger the send workflow. Options are in the 2026-09-24 conversation.
+- **Fan Picks API (option 3, built 2026-09-24; live once deployed).** `apps_script/fanpicks_api.gs` is
+  a read-only Apps Script web app on the drop-box response sheet: `?a=mine&f=<fingerprint>&s=&w=`
+  (a fan's latest locked set for the week) and `?a=who&s=&w=` (names + arrow counts). The page asks it
+  once username + PIN settle: a device with no picks loads the last lock-in ("Welcome back"), a device
+  with different picks gets a "Load it" button, and "who's in" goes live (the sheet read never worked
+  from a browser -- no CORS). Everything is gated on `"api"` in `docs/fan/dropbox.json`; empty = the
+  page behaves as before. Setup: `apps_script/README.md`. Tested: the script under Node with stubbed
+  Google services on real codes (8 checks), the page against a mocked API in Chromium (12 checks).
+  *Fingerprints are no longer published:* `grade.json` used to list every fan's fan_id beside the
+  name, which with this API would have let anyone read a leader's picks before kickoff. It now
+  carries `pid` = `fan_rules.public_id(fan_id)` (sha256 of "fanpicks-public|" + fan_id, 16 hex); the
+  page computes the same to find "you" (`publicId()`; a test pins the two). Residual: PINs are 4+
+  digits, so a determined person can still brute-force one from a name; the response sheet is
+  still readable by link (next step: Actions pull through the script with a token, then unshare).
 - **The Oracle ranks Burke_v1 on ALL projected players, inactives included (owner's call, 2026-09-24).**
   `ORACLE_BASIS = "all"` in `docs/fan.html` reads `mae_vs_sites_all` (every skill player projected,
   an inactive scored 0) instead of the played-only `mae_vs_sites`. On it Burke_v1 is **1st of 8**
