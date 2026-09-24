@@ -453,8 +453,9 @@ function fit() {
   document.querySelector("#screen .bar").style.zoom = 1 / sc;
 }
 addEventListener("resize", fit); cabimg.addEventListener("load", fit); fit();
+let deckRz = 0; addEventListener("resize", () => { clearTimeout(deckRz); deckRz = setTimeout(() => { if (typeof deckRender === "function") deckRender(); }, 150); });
 if (MOBILE) { const pre = new Image(); pre.src = "fan/cabinet_phone.jpg"; }   // so the tap is instant
-document.getElementById("attract").onclick = () => { stage.classList.add("on"); fit(); };
+document.getElementById("attract").onclick = () => { stage.classList.add("on"); fit(); if (typeof deckRender === "function") deckRender(); };   // the deck sizes itself to the lit glass
 // the arcade's buttons click under the thumb (phones with a vibration motor; a no-op elsewhere)
 document.getElementById("crt").addEventListener("click", e => { if (MOBILE && navigator.vibrate && e.target.closest("button")) navigator.vibrate(e.target.closest(".big") ? [14, 40, 14] : 9); });
 document.getElementById("eject").onclick = () => { stage.classList.remove("on"); fit(); };
