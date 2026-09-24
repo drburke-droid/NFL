@@ -77,7 +77,7 @@
   #play { background:#0b0f14; }
   #pkstage { position:absolute; left:0; right:0; top:0; bottom:56px; }
   .pk-hint { position:absolute; top:8px; left:0; right:0; text-align:center; font-family:'Press Start 2P',monospace; font-size:9px; color:#ffd23f; text-shadow:0 0 6px rgba(0,0,0,1), 0 0 10px rgba(255,210,63,.55); z-index:4; pointer-events:none; animation:blink 1.6s steps(1) infinite; }
-  #pkprog { position:absolute; left:0; right:0; bottom:60px; text-align:center; font-family:'Press Start 2P',monospace; font-size:7px; color:#9fe870; text-shadow:0 0 4px rgba(0,0,0,1); pointer-events:none; z-index:4; }
+  #pkprog { position:absolute; right:10px; top:9px; text-align:right; font-family:'Press Start 2P',monospace; font-size:7px; color:#9fe870; text-shadow:0 0 4px rgba(0,0,0,1); pointer-events:none; z-index:4; }
   .pk-foot { position:absolute; left:0; right:0; bottom:0; height:56px; display:flex; align-items:center; justify-content:space-between; gap:5px; padding:0 8px; background:#0b0f14; border-top:1px solid #1c2636; font-family:'Press Start 2P',monospace; }
   .pk-foot button { font-family:inherit; font-size:9px; padding:10px 8px; border:2px solid; background:#0f1115; cursor:pointer; line-height:1; white-space:nowrap; }
   .pk-foot .sm { font-size:7px; padding:9px 6px; color:#8fa0b8; border-color:#2b3a4d; }
@@ -126,6 +126,7 @@
   .paper .story p { margin:0 0 9px; } .paper .story p:first-child::first-letter { font-family:'Playfair Display',Georgia,serif; font-size:40px; float:left; line-height:.8; padding:4px 5px 0 0; font-weight:700; }
   .paper .story h4 { font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin:8px 0 3px; border-bottom:1px solid #000; display:inline-block; text-align:left; }
   .paper .sep { border-top:1px solid #000; margin:12px 0 10px; }
+  .paper .story.one { column-count:1; } .paper .story.one p { margin:6px 0; } .paper .story.one p:first-child::first-letter { font-size:inherit; float:none; padding:0; }
   .paper .lead { display:flex; gap:26px; }
   .paper .lead > .storycol { flex:1.15 1 320px; min-width:0; }
   .paper .lead > .tablecol { flex:1 1 300px; min-width:0; }
@@ -289,21 +290,16 @@
   <h1>🏆 Fan Picks — you + Burke_v1</h1>
   <p class="sub" id="sub">loading this week's projections…</p>
 
-  <details class="card how" id="why"><summary style="cursor:pointer"><b>Why this exists, and how accuracy is measured</b> — tap to read</summary>
-    <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>Burke_v1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than Burke_v1's earn a place in it.
-    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every skill player Burke_v1 projected that week &mdash; players ruled out included, at zero, so catching an inactive in time counts as a hit and missing one counts against. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Points are <b>DraftKings</b> scoring (full PPR, 4-point passing TD, −1 per interception and fumble lost, +3 at 300 passing, 100 rushing or 100 receiving yards), the scoring the big sites publish their own accuracy in. The big sites' figures are the ones they publish.</div>
-    <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), Burke_v1, and every fan's version of it.</div>
-</div>
-  </details>
+  <div class="card how" id="whyline">&#128240; <b>Read The Sunday Oracle</b> for what this is, why it exists and how accuracy is measured &mdash; the front page tells the whole story. <button class="sec" id="whybtn" style="padding:6px 10px;font-size:13px;margin-left:6px">Open the paper</button></div>
 
 
   <div class="card" id="idcard">
     <div id="idmini"><span>Playing as <b id="idminiwho"></b><span id="idminiteam"></span></span><button id="idedit">edit</button></div>
     <div class="row">
-      <div style="flex:2 1 200px"><label for="who">Your username (shows on the leaderboard)</label><input id="who" type="text" placeholder="pick a name and keep it all season" autocomplete="nickname" maxlength="24"></div>
+      <div style="flex:2 1 200px"><label for="who">Your tag &mdash; 3 letters, arcade style (shows on the leaderboard)</label><input id="who" type="text" placeholder="AAA" autocomplete="off" maxlength="3" style="text-transform:uppercase;letter-spacing:.12em"></div>
       <div style="flex:1 1 120px"><label for="pin">Your PIN (4+ digits)</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="same PIN every week" autocomplete="off" maxlength="8"></div>
     </div>
-    <div class="how" style="margin-top:6px" id="whohow">Username + PIN is you: use the same pair on any phone or laptop and your weeks add up in one entry. The PIN never leaves your device (the page sends a scrambled fingerprint of it), so nobody can post picks under your name without it. Both are saved here. Submit as often as you like: each game counts the last set you lock in before it kicks off.</div>
+    <div class="how" style="margin-top:6px" id="whohow">Your three letters + PIN are you: use the same pair on any phone or laptop and your weeks add up in one entry. The PIN never leaves your device (the page sends a scrambled fingerprint of it), so nobody can post picks under your name without it. Both are saved here. Submit as often as you like: each game counts the last set you lock in before it kicks off.</div>
     <div class="row" style="margin-top:8px;align-items:flex-end">
       <div style="flex:2 1 220px"><label for="rcode">Picks from another device? Paste your link or code</label><input id="rcode" type="text" placeholder="the link you saved, or a FAN1 code" autocomplete="off" spellcheck="false"></div>
       <div style="flex:0 0 auto;display:flex;gap:6px"><button class="sec" id="rload">Load</button><button class="sec" id="rcopy">Copy my link</button></div>
@@ -348,9 +344,10 @@
     <div id="ready">
       <div class="rt">QUICK PICKS</div>
       <div class="rs" id="rwhos">WHO'S PLAYING?</div>
-      <div class="rrow"><input id="rwho" type="text" placeholder="USERNAME" maxlength="24" autocomplete="nickname"><input id="rpin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="PIN" maxlength="8" autocomplete="off"><select id="rfav"><option value="">YOUR TEAM</option></select></div>
+      <div class="rrow"><input id="rwho" type="text" placeholder="AAA" maxlength="3" autocomplete="off" style="text-transform:uppercase;letter-spacing:.15em"><input id="rpin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="PIN" maxlength="8" autocomplete="off"><select id="rfav"><option value="">YOUR TEAM</option></select></div>
       <div class="rh">ONE PLAYER AT A TIME WITH HIS PROJECTED POINTS<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>A SWIPE MOVES HIS WHOLE LINE 10%<br>SUBMIT WHEN YOU'RE DONE. PICKS LOCK AT KICKOFF</div>
       <button class="go" id="rstart">▶ PRESS START</button>
+      <button class="alt" id="rpaper">&#128240; READ THE SUNDAY ORACLE: WHAT THIS IS AND WHY</button>
       <button class="alt" id="rmore">WANT MORE CONTROL? JUDGE EVERY STAT</button>
     </div>
     <div id="play">
@@ -404,6 +401,13 @@
       <p>Coming to these pages: <b>The Crowd + Burke_v1</b>, a single model built from everyone's arrows at once, so we can see whether many partial views add up to a better one than any of us holds alone.</p>
       <h4>The fine print</h4>
       <p>Burke_v1 and every fan model are graded on the same player-games: every skill player projected that week, a player ruled out counting as zero. Arrows lock at kickoff. A win in the standings is a week with a lower error than Burke_v1's; a fan who places no arrows in a week is neither scored nor charged for it. Your username and PIN are you, on any device. And the big sites are listed with the accuracy they publish themselves, so nobody is grading them but them.</p>
+    </div>
+    <div class="sep"></div>
+    <div class="colh">What this is, and why <small>from the model's owner</small></div>
+    <div class="story one">
+    <p><b>Why this exists.</b> Behind this page is <b>Burke_v1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than Burke_v1's earn a place in it.
+    <p><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every skill player Burke_v1 projected that week &mdash; players ruled out included, at zero, so catching an inactive in time counts as a hit and missing one counts against. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Points are <b>DraftKings</b> scoring (full PPR, 4-point passing TD, −1 per interception and fumble lost, +3 at 300 passing, 100 rushing or 100 receiving yards), the scoring the big sites publish their own accuracy in. The big sites' figures are the ones they publish.</p>
+    <p>The standings above rank every model the same way: the big sites (their own published weekly accuracy), Burke_v1, and every fan's version of it.</p>
     </div>
     <div class="sep"></div>
     <div class="cols">
@@ -473,7 +477,7 @@ document.getElementById("attract").onclick = () => { stage.classList.add("on"); 
 document.getElementById("crt").addEventListener("click", e => { if (MOBILE && navigator.vibrate && e.target.closest("button")) navigator.vibrate(e.target.closest(".big") ? [14, 40, 14] : 9); });
 document.getElementById("eject").onclick = () => { stage.classList.remove("on"); fit(); if (typeof screens === "function") { PLAYING = false; screens(); } };
 const openPaper = () => document.getElementById("paperwrap").classList.add("on"), closePaper = () => document.getElementById("paperwrap").classList.remove("on");
-document.getElementById("fold").onclick = openPaper; document.getElementById("newsbtn").onclick = openPaper; document.getElementById("mpaper").onclick = openPaper; document.getElementById("paperclose").onclick = closePaper;
+document.getElementById("fold").onclick = openPaper; document.getElementById("newsbtn").onclick = openPaper; document.getElementById("rpaper").onclick = openPaper; document.getElementById("whybtn").onclick = openPaper; document.getElementById("mpaper").onclick = openPaper; document.getElementById("paperclose").onclick = closePaper;
 document.getElementById("paperwrap").addEventListener("click", e => { if (e.target === document.getElementById("paperwrap")) closePaper(); });
 addEventListener("keydown", e => { if (e.key === "Escape") closePaper(); });
 
@@ -870,11 +874,13 @@ $("dkmenu").onclick = () => { PLAYING = false; screens(); readyText(); };
 // the ready screen's fields are the identity card's fields, in pixels
 function readyText() {
   const n = me(), t = FAV && TEAMS[FAV] ? TEAMS[FAV].split(" ").pop().toUpperCase() : "";
-  $("rwhos").textContent = n ? `PLAYER 1: ${n.toUpperCase()}${t ? " · " + t + " FAN" : ""}` : "WHO'S PLAYING? PICK A NAME AND A PIN";
+  $("rwhos").textContent = n ? `PLAYER 1: ${n.toUpperCase()}${t ? " · " + t + " FAN" : ""}` : "WHO'S PLAYING? ENTER 3 LETTERS AND A PIN";
   if ($("rwho").value !== $("who").value) $("rwho").value = $("who").value;
   if ($("rpin").value !== $("pin").value) $("rpin").value = $("pin").value;
   if ($("rfav").value !== FAV) $("rfav").value = FAV;
 }
+const tag = v => (v || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 3);
+for (const id of ["who", "rwho"]) $(id).addEventListener("input", () => { const v = tag($(id).value); if ($(id).value !== v) $(id).value = v; }, true);   // capture: before the other handlers read it
 const mirror = (from, to, ev) => $(from).addEventListener("input", () => { $(to).value = $(from).value; $(to).dispatchEvent(new Event(ev)); readyText(); });
 mirror("rwho", "who", "input"); mirror("rpin", "pin", "input"); $("rfav").addEventListener("change", () => { $("fav").value = $("rfav").value; $("fav").dispatchEvent(new Event("change")); readyText(); });
 $("who").addEventListener("input", readyText); $("pin").addEventListener("input", readyText); $("fav").addEventListener("change", readyText);
@@ -973,7 +979,7 @@ const dropbox = () => !!(CFG.form_action && CFG.entry_user && CFG.entry_code);
 $("submit").onclick = async () => {
   if (!D) return;
   if (!Object.keys(picks).length) { $("draft").textContent = MODE === "swipe" ? "· swipe at least one player first" : "· tap ▲ or ▼ on at least one stat first"; return; }
-  if (!me()) { $("who").focus(); $("who").placeholder = "pick a username first"; return; }
+  if (!me()) { $("who").focus(); $("who").placeholder = "3 letters first"; if (MODE === "swipe") { PLAYING = false; screens(); $("rwho").focus(); } return; }
   if (pin().length < 4) { $("pin").focus(); $("pin").placeholder = "4+ digits, please"; $("draft").textContent = "· add a PIN so your weeks stay yours"; return; }
   await identity();
   $("code").textContent = buildCode(); $("mstat").textContent = ""; $("mstat").className = "status";
