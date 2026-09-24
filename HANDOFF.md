@@ -468,7 +468,16 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   no "homer's edge" section); "What this is, and why" under it holds the why + how-measured text.
   Rob_Burke's data was deleted the same evening (sheet row, rows, inbox, published files, this
   browser's localStorage); `fan_grade.py` now writes an empty grade for an empty table.
-- **Standings basis = `ORACLE_BASIS = "all"` again (owner's call after seeing all three, 2026-09-24 late; "median" was live for an hour).** THE ORACLE and the fan
+- **Standings basis = `ORACLE_BASIS = "live"` (owner's rule, 2026-09-24 evening; "all" and "median" each had an hour).**
+  `sabersim_grade.py` publishes `mae_vs_sites_live` (+ n / med / bias, `sat_kept`, `sat_dropped`): the
+  all-players pool minus season-long absentees. A player who sat this week stays in only if he has a
+  box-score row from an earlier week this season (`FIRST_WEEK`), or, in week 1 where nobody has
+  played yet, if the send tagged him OUT before kickoff (the call we made). IR / PUP / suspended /
+  never-activated depth players stop being free perfect rows. Numbers: wk1 4.57 (14 OUT calls kept,
+  102 dropped), wk2 4.09 (33 kept, 62 dropped), avg 4.33 = 3rd-4th of 8 against the sites' published
+  means; "all" was 1st (3.89), played-only 5th (4.53). The page falls back to "all" for a week without
+  the live fields. The grade workflow accepts workflow_dispatch through the API (used three times
+  tonight) when the send workflow is outside its window and will not re-grade. THE ORACLE and the fan
   models rank on `med_vs_sites` (MEDIAN absolute error, DraftKings, skill positions, players who
   played), which `sabersim_grade.py` now publishes beside the mean (`med_vs_sites_all` too). The sites'
   numbers are the MEANS they publish, so this is not like for like: the paper's note says so in
