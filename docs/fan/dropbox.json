@@ -12,6 +12,6 @@
  "entry_contact_email": "entry.670037618",
  "contact_form_edit": "https://docs.google.com/forms/d/1dKwy7OmkaYPxg3j4RRJSNWDWbPxLL-ADDrMB1s9SkmE/edit",
  "contact_note": "Private: 'Fan Picks contact list' form, NOT linked to any sheet; responses (username, player id, email) are readable only in the form's Responses tab by the owner.",
- "api": "",
- "api_note": "The Fan Picks API web app (apps_script/fanpicks_api.gs), deployed from the response sheet: paste its /exec URL into api. Empty = the page runs without it (no sign-in-anywhere; 'who's in' from the baked file)."
+ "api": "https://script.google.com/macros/s/AKfycbzu0oPstQHPMWmJrpOymVIrIzO-SKdBLsNfeNXnML86oIQJpsM0Ryx-5ffoBn3YGWT6/exec",
+ "api_note": "Fan Picks API web app (apps_script/fanpicks_api.gs), deployed 2026-09-24 as v1 from the response sheet's bound script 'Fan Picks API' (execute as owner, access: anyone). To update the code: Deploy > Manage deployments > edit > Version: New version, which keeps this URL. Empty = the page runs without it."
 }
