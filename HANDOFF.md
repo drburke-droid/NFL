@@ -435,6 +435,13 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   Full-control tag after a swipe were checked by code only (the extension wedged) -- eyeball them.
   Skip exists on purpose (a forced guess on an unknown player is noise, not signal); remove `#dkskip`
   and the ArrowDown key to make every card a call.
+  *Card v2 (same evening):* the photo sits behind the whole card at its own 4:3 proportions (118% wide,
+  shoulders off the sides) under one full-card gradient, the name / matchup / projected points /
+  Burke_v1 line / last-two-weeks chips in front. The bake writes `lw` = DraftKings points per earlier
+  week (nflverse stats_player_week via dk_scoring.actual_frame; null = no box score). Trap fixed on
+  the way: `#cab img { height:100vh }` was the cabinet picture's rule and matched every img in the
+  cabinet, so headshots were blown up on desktop and display:none on phones -- it is `#cabimg` now.
+  The deck re-measures the glass (`crt.clientHeight - 150`) when the screen lights and on resize.
 - **Fan Picks API: DEPLOYED and live 2026-09-24 09:04 MT.** Bound script "Fan Picks API" on the response
   sheet, deployment v1 (execute as owner, access anyone); the /exec URL is `api` in
   `docs/fan/dropbox.json`. Verified from the live page: `?a=who` and `?a=mine` both 200 with
