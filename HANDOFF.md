@@ -468,7 +468,7 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   no "homer's edge" section); "What this is, and why" under it holds the why + how-measured text.
   Rob_Burke's data was deleted the same evening (sheet row, rows, inbox, published files, this
   browser's localStorage); `fan_grade.py` now writes an empty grade for an empty table.
-- **Standings basis = `ORACLE_BASIS = "median"` (owner's call, 2026-09-24 late).** THE ORACLE and the fan
+- **Standings basis = `ORACLE_BASIS = "all"` again (owner's call after seeing all three, 2026-09-24 late; "median" was live for an hour).** THE ORACLE and the fan
   models rank on `med_vs_sites` (MEDIAN absolute error, DraftKings, skill positions, players who
   played), which `sabersim_grade.py` now publishes beside the mean (`med_vs_sites_all` too). The sites'
   numbers are the MEANS they publish, so this is not like for like: the paper's note says so in

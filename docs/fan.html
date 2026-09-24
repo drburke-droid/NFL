@@ -388,7 +388,7 @@
     <div class="colh" style="margin-top:10px">Season standings <small>every model, ranked by average error &middot; W-L = weeks beating THE ORACLE</small></div>
     <div id="npseason" class="np-empty">loading&hellip;</div>
     <div class="you" id="you" style="color:#333"></div>
-    <div class="np-note" id="npnote">Error is fantasy points off per player; lower is better. THE ORACLE and the fan models: the <b>median</b> miss over the skill players who played that week, full-PPR scoring. The big sites: the mean accuracy each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
+    <div class="np-note" id="npnote">Error is fantasy points off per player; lower is better. THE ORACLE and the fan models: the average miss over every skill player projected that week, a player ruled out counting as zero, full-PPR scoring. The big sites: the mean accuracy each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
     <div class="sep"></div>
     <div class="head">Man Meets Machine</div>
     <div class="deck">THE ORACLE already ranks with the best projection sites in the business. It is not looking for a rival. It is looking for a partner.</div>
@@ -1036,7 +1036,7 @@ let ACC = null, SITES = null;
 // 2026-09-24): "all" = every skill player projected, inactives at zero (mae_vs_sites_all); "played"
 // = only players with a box-score row (mae_vs_sites). "all" is the most favourable basis for us, and
 // the page copy above says what it counts. Change the copy with it if this is ever switched back.
-const ORACLE_BASIS = "median";
+const ORACLE_BASIS = "all";
 function leaderboard() {
   Promise.all([
     fetch("fan/grade.json?" + Date.now()).then(r => r.json()).catch(() => null),
