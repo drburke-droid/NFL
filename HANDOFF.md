@@ -462,6 +462,12 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   (`tag()` upper-cases and keeps A-Z0-9, max 3, on both name fields). Identity is still
   hash(name + PIN), so a fan who had a long name (Rob_Burke) keeps it until he edits the field; a new
   tag + the same PIN is a NEW identity, merged by hand in data/fan_adjustments/aliases.json if wanted.
+- **Names (2026-09-24 late): the paper is THE GRIDIRON ORACLE, the model is THE ORACLE** (bold capitals in
+  the standings, crawl and fold; "you + THE ORACLE" for a fan's model; "Burke_v1" survives only in
+  scripts' comments and in this file's history). The front page was cut to ~200 words (no league name,
+  no "homer's edge" section); "What this is, and why" under it holds the why + how-measured text.
+  Rob_Burke's data was deleted the same evening (sheet row, rows, inbox, published files, this
+  browser's localStorage); `fan_grade.py` now writes an empty grade for an empty table.
 - **Fan Picks API: DEPLOYED and live 2026-09-24 09:04 MT.** Bound script "Fan Picks API" on the response
   sheet, deployment v1 (execute as owner, access anyone); the /exec URL is `api` in
   `docs/fan/dropbox.json`. Verified from the live page: `?a=who` and `?a=mine` both 200 with
