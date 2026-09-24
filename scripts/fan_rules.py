@@ -70,3 +70,17 @@ def live_arrows(rows):
             current[i] = bool(before) and sub[i] == before[-1]
     live = current & ~late
     return live, late, ~late & ~current
+
+
+def public_id(fan_id):
+    """What the public grade file shows instead of a fan's fan_id.
+
+    fan_id is the fingerprint of username + PIN, and it is the key the Fan Picks API (apps_script/)
+    hands a fan's own picks back by, so it must not be published: until 2026-09-24 grade.json carried
+    it beside every name, and anyone could have read a leader's picks before kickoff. The page
+    computes this same value from the fingerprint to find "you" in the standings. docs/fan.html
+    publicId() must match it.
+    """
+    import hashlib
+    f = str(fan_id or "").strip()
+    return hashlib.sha256(("fanpicks-public|" + f).encode("utf-8")).hexdigest()[:16] if f else ""

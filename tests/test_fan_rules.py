@@ -117,3 +117,16 @@ def test_fans_are_kept_apart():
     other = rows.assign(fan="B", submitted_at="2026-09-26T20:00Z")          # B's one set is later than all of A's
     live, _, _ = fan_rules.live_arrows(pd.concat([rows, other], ignore_index=True))
     assert live[:len(rows)].tolist() == fan_rules.live_arrows(rows)[0].tolist()
+
+
+def test_public_id_is_what_the_page_computes():
+    """grade.json names fans by public_id; the page finds "you" by computing the same thing in the
+    browser. If the two drift, every fan silently stops seeing himself in the standings."""
+    import hashlib, re
+    page = open(os.path.join(ROOT, "docs", "fan.html"), encoding="utf-8").read()
+    m = re.search(r'encode\("(fanpicks-public\|)" \+ f\)\).*?slice\(0, (\d+)\)', page, re.S)
+    assert m, "publicId() not found in docs/fan.html"
+    f = "a1b2c3d4e5f60718293a"
+    assert fan_rules.public_id(f) == hashlib.sha256((m.group(1) + f).encode()).hexdigest()[:int(m.group(2))]
+    assert fan_rules.public_id("") == ""
+    assert fan_rules.public_id(f) != f[:16]                  # not just a prefix of the fingerprint

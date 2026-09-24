@@ -145,7 +145,7 @@ def summarise(g):
                 "mae_base_pts": round(float((gd.err_base * gd.stat.map(PTS)).mean()), 3) if len(gd) else None,
                 "mae_adj_pts": round(float((gd.err_adj * gd.stat.map(PTS)).mean()), 3) if len(gd) else None}
     s = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": block(g)}
-    s["by_fan"] = sorted([dict(fan=f, fan_id=(str(d.fan_id.iloc[0]) if "fan_id" in d.columns else ""),
+    s["by_fan"] = sorted([dict(fan=f, pid=fan_rules.public_id(d.fan_id.iloc[0] if "fan_id" in d.columns else ""),
                                weeks=sorted(int(w) for w in d.week.unique()), **block(d)) for f, d in g.groupby("fan")],
                          key=lambda x: (-(x["removed_pts"] or 0), -x["graded"], x["fan"]))
     for rank, f in enumerate(s["by_fan"], 1):          # the leaderboard: position and best call
@@ -156,7 +156,7 @@ def summarise(g):
             f["best_call"] = {"week": int(b.week), "player": b.player, "stat": b.stat, "arrows": int(b.arrows),
                               "removed_pts": round(float(b.removed_pts), 2)}
     # weekly standings, so a fan who joins in week 6 has a race to win that week
-    s["by_fan_week"] = sorted([dict(fan=f, fan_id=(str(d.fan_id.iloc[0]) if "fan_id" in d.columns else ""), week=int(w), **block(d))
+    s["by_fan_week"] = sorted([dict(fan=f, pid=fan_rules.public_id(d.fan_id.iloc[0] if "fan_id" in d.columns else ""), week=int(w), **block(d))
                                for (f, w), d in g.groupby(["fan", "week"])],
                               key=lambda x: (-x["week"], -(x["removed_pts"] or 0), -x["graded"], x["fan"]))
     s["by_stat"] = {st: block(d) for st, d in g.groupby("stat")}
