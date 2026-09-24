@@ -406,11 +406,14 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   Decimal-with-miss-penalties (8.34). Copy from the Standard tab. Kickers are outside the sites
   comparison entirely (it is QB/RB/WR/TE). The grader's rule text calls K scoring "DK kicker
   scoring"; DraftKings classic has no kicker, so read that as Standard.
-- **gm/ tests are red on main (found 2026-09-24, not caused by the above).** 15 fail and 29 error
-  identically with or without the DraftKings change. `gm/players.py:ffa_file_scored` needs a
-  `player` column; this week's `data/ffanalytics/FFAn_weekly/raw_stats_2026_wk3.csv` is FFA's
-  points-summary export (`first_name`, `last_name`, `points`, `sd_pts`...), not the raw-stats one.
-  Re-export week 3 as raw stats, or teach the reader the other layout.
+- **gm/ tests were red on main 2026-09-24: the FFA scrape workflow clobbered the week-3 upload.**
+  The owner's raw-stats upload (commit 5852955, 09-22) was overwritten on Wed 09-23 10:00 UTC by
+  `.github/workflows/ffa_weekly.yml`, whose R template writes ffanalytics' points-summary table
+  (`first_name`/`last_name`/`points`, no stat columns) under the same filename. The 09-23 refresh
+  then failed its board, fan and props steps ("not a stat-level projection file"). Fixed 09-24: the
+  upload restored from 5852955 (200 tests green), and the scrape now exits if the week's file
+  already exists and refuses to commit a file without `player`/`pass_yds` columns. The R script
+  still needs the real stat-level recipe from the home PC before it is useful.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
