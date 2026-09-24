@@ -95,6 +95,11 @@
   .dk-nm { font-size:18px; font-weight:800; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .dk-meta { font-size:11px; color:var(--mut); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .dk-pts { display:flex; align-items:center; gap:10px; margin-top:4px; } .dk-pts b { font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; } .dk-pts span { font-size:10px; color:var(--mut); line-height:1.35; }
   .dk-line { font-size:10.5px; color:var(--mut); margin-top:4px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  /* a stat line wider than the card becomes a ticker: the text is doubled and slides left one copy per loop */
+  .dk-line .tk { display:inline-block; }
+  .dk-line.marq { text-overflow:clip; -webkit-mask-image:linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent); mask-image:linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent); }
+  .dk-line.marq .tk { animation:ticker var(--d, 10s) linear infinite; will-change:transform; }
+  @keyframes ticker { to { transform:translateX(-50%); } }
   .dk-last { display:flex; gap:5px; margin-top:5px; flex-wrap:nowrap; overflow:hidden; } .dk-last span { font-size:10px; color:var(--mut); background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:8px; padding:2px 7px; white-space:nowrap; } .dk-last b { color:var(--ink); font-size:11px; }
   .dk-stamp { position:absolute; top:34px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:24px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.4); z-index:3; font-family:'Press Start 2P',monospace; font-size:14px; }
   .dk-stamp.up { left:14px; color:var(--up); border-color:var(--up); transform:rotate(-12deg); } .dk-stamp.dn { right:14px; color:var(--down); border-color:var(--down); transform:rotate(12deg); }
@@ -915,7 +920,7 @@ function dkCard(p, under) {
   return `<div class="dk-card${under ? " under" : ""}" data-i="${p.i}">${dkImg(p)}<div class="dk-stamp up">Boost</div><div class="dk-stamp dn">Fade</div>${had}` +
     `<div class="dk-body"><div class="dk-nm">${esc(p.name)}${chip}</div><div class="dk-meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}${game ? " · " + esc(game.kickoff.replace(" ET", "")) : ""}</div>` +
     `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected fantasy<br>points this week</span></div>` +
-    `<div class="dk-line">ORACLE: ${esc(line)}</div>${last}</div></div>`;
+    `<div class="dk-line"><span class="tk">ORACLE: ${esc(line)}</span></div>${last}</div></div>`;
 }
 function deckRender() {
   if (!D || MODE !== "swipe" || !PLAYING) return;
@@ -931,6 +936,17 @@ function deckRender() {
   const p = DECK[DI], q = DECK[DI + 1];
   st.innerHTML = (q ? dkCard(q, true) : "") + dkCard(p, false);
   bindSwipe(st.lastElementChild);
+  tickers(st);
+}
+// a stat line that does not fit the card scrolls across it, arcade-ticker style, at about 40 px a second
+function tickers(root) {
+  for (const el of root.querySelectorAll(".dk-line")) {
+    const tk = el.querySelector(".tk"); if (!tk) continue;
+    if (tk.scrollWidth <= el.clientWidth + 1) continue;
+    const seg = tk.innerHTML + " &nbsp;&nbsp;·&nbsp;&nbsp; ";
+    tk.innerHTML = seg + seg; el.classList.add("marq");
+    el.style.setProperty("--d", Math.max(6, (tk.scrollWidth / 2) / 40).toFixed(1) + "s");
+  }
 }
 function bindSwipe(el) {
   let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false, t0 = 0;
