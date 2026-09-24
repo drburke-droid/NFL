@@ -29,6 +29,8 @@
   .hd { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
   .nm { font-weight:600; } .meta { font-size:12px; color:var(--mut); }
   .pts { font-size:12px; color:var(--mut); white-space:nowrap; } .pts b { color:var(--ink); font-size:14px; }
+  .pts small { font-size:10px; text-decoration:line-through; margin-right:3px; } .pts b.up { color:var(--up); } .pts b.dn { color:var(--down); }
+  .pts .d { font-size:11px; font-weight:600; margin-left:3px; } .pts .d.up { color:var(--up); } .pts .d.dn { color:var(--down); }
   .chip { display:inline-block; font-size:10px; padding:1px 6px; border-radius:8px; margin-left:4px; vertical-align:middle; color:#fff; background:#6b4e00; }
   .chip.out { background:#7a1f1f; }
   .stats { display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:6px; margin-top:6px; }
@@ -251,7 +253,7 @@
   </div>
 
   <div class="card how">
-    <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat <b>10%</b> (three ▲ = +30%; ten ▼ = zero). Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
+    <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat <b>10%</b> (three ▲ = +30%; ten ▼ = zero). The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
     <div class="legend"><span><b style="color:var(--up)">▲</b> +10% per press</span><span><b style="color:var(--down)">▼</b> −10% per press</span><span>arrows lock at kickoff</span></div>
   </div>
 
@@ -393,6 +395,30 @@ const canon = t => TEAM_FIX[t] || t;
 const $ = id => document.getElementById(id);
 let D = null, KEY = "", picks = {}, CFG = {}, G = null, SUBS = null, LIVE = null;   // picks: "i:s" -> signed arrow presses
 const STEP = 0.10, MIN_N = -10;
+// What one unit of each stat is worth in fantasy points: standard PPR, the scoring Burke_v1's
+// projection is built on. INT is -2 because that is what the shipped number uses -- rebuilding
+// the week-3 bake from its own stat lines, -2 leaves QBs 0.41 pts off on average and -1 leaves
+// them 0.96 off. (fan_grade.py's PTS table is a different thing: it turns an error measured in
+// stat units into points of error, so its INT entry is a magnitude, not a score.)
+const PTS = {pass_yds:0.04, pass_tds:4, pass_int:-2, rush_yds:0.1, rush_tds:6, rec:1, rec_yds:0.1, rec_tds:6};
+// The card's projection with this device's arrows applied. Priced as a CHANGE on top of the shipped
+// number rather than rebuilt from the stat line, so an untouched card shows exactly what shipped --
+// the stat line leaves out fumbles and rounds, and rebuilding would move every card a little.
+function projNow(p) {
+  let d = 0;
+  for (const [k, v] of Object.entries(p.stats)) {
+    if (v == null || !(k in PTS)) continue;
+    const a = picks[p.i + ":" + D.stat_keys.indexOf(k)] || 0;
+    if (a) d += (Math.max(0, v * (1 + STEP * a)) - v) * PTS[k];
+  }
+  return {now: p.proj + d, d};
+}
+function ptsHtml(p) {
+  const {now, d} = projNow(p);
+  if (Math.abs(d) < 0.05) return `proj <b>${p.proj.toFixed(1)}</b> pts`;
+  const c = d > 0 ? "up" : "dn";
+  return `proj <small>${p.proj.toFixed(1)}</small><b class="${c}">${Math.max(0, now).toFixed(1)}</b> pts<span class="d ${c}">${d > 0 ? "+" : "−"}${Math.abs(d).toFixed(1)}</span>`;
+}
 const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
 let FAV = ls.get("fanpicks_team") || "";        // the team the fan knows best; must follow ls
 const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -459,7 +485,7 @@ function render() {
 function card(p) {
   const touched = Object.keys(picks).some(k => k.split(":")[0] == p.i);
   const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
-  return `<div class="p${touched ? " touched" : ""}" data-i="${p.i}"><div class="hd"><div><span class="nm">${p.name}</span>${chip}<div class="meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}</div></div><div class="pts">proj <b>${p.proj.toFixed(1)}</b> pts</div></div>` +
+  return `<div class="p${touched ? " touched" : ""}" data-i="${p.i}"><div class="hd"><div><span class="nm">${p.name}</span>${chip}<div class="meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}</div></div><div class="pts">${ptsHtml(p)}</div></div>` +
     `<div class="stats">` + Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => stat(p.i, k, v)).join("") + `</div></div>`;
 }
 const fmt = (k, v) => k.endsWith("tds") || k === "pass_int" || k === "rec" ? v.toFixed(1) : String(Math.round(v));
@@ -482,7 +508,7 @@ $("list").addEventListener("click", e => {
   ls.set(KEY, JSON.stringify(picks));
   const p = D.players[+st.dataset.i], k = D.stat_keys[+st.dataset.s];
   st.outerHTML = stat(p.i, k, p.stats[k]);
-  const card_ = document.querySelector(`.p[data-i="${p.i}"]`); if (card_) card_.classList.toggle("touched", Object.keys(picks).some(x => x.split(":")[0] == p.i));
+  const card_ = document.querySelector(`.p[data-i="${p.i}"]`); if (card_) { card_.classList.toggle("touched", Object.keys(picks).some(x => x.split(":")[0] == p.i)); const pt = card_.querySelector(".pts"); if (pt) pt.innerHTML = ptsHtml(p); }
   count();
 });
 function count() { const n = Object.keys(picks).length; $("cnt").textContent = n; $("draft").textContent = n ? "· saved on this device" : ""; }

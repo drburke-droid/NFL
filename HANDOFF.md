@@ -298,8 +298,9 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   the team they know best (fan_team column); its game leads the list, their players first.
   **The page is an arcade cabinet (2026-09-23).** `docs/fan/cabinet.jpg` (the user's "Football
   Expert" render, 1149x1369) is the stage; the CRT glass is at left 21.6% / top 23.5% / 54.4% x
-  34.4% of the image, the control panel 64-73%. Attract mode on the glass (Press Start 2P, HIGH
-  SCORES = top 5 of the standings, PLAY NOW blinking); click -> `#stage.on`: `fit()` scales
+  34.4% of the image, the control panel 64-73%. Attract mode on the glass (Press Start 2P; HIGH SCORES is the FULL standings crawling
+  upward -- every model, Burke_v1 included -- with a two-line gap before the loop restarts so it
+  reads as a list; PLAY NOW blinking); click -> `#stage.on`: `fit()` scales
   `#cab` so y 20.5%-75.5% / x 13%-87% fill the viewport and counter-zooms the glass content
   (`zoom = 1/scale`) so text draws at natural size; `⏏ cabinet` returns. A folded Sunday Oracle
   (`#fold`, top-4 lines) sits on the control panel; tap (or the 📰 bar button) opens the full
@@ -319,6 +320,23 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   the page at 430x860, cache-busted, for checking in a desktop browser (the Chrome extension
   cannot resize a maximised window and refuses file:// URLs; scale the iframe with a CSS
   transform to see the whole phone). The old `body.plain` CSS remains but nothing sets it.
+- **Cards show live projected points (2026-09-24).** Each tap reprices the card: `projNow(p)` in
+  `docs/fan.html` adds (adjusted stat - shipped stat) x PPR value for every touched stat ON TOP OF
+  the shipped `proj`, rather than rebuilding the total from the stat line -- the line omits fumbles
+  and is rounded, so a rebuild would nudge every untouched card. Verified in Chromium: 0 of 341
+  untouched cards differ from the bake, and 17 taps on Ja'Marr Chase's rec TD (0.6 -> 1.62) read
+  18.7 -> 24.8, +6.1. The list stays sorted by the shipped number so cards do not move under a
+  thumb. The model's name is **Burke_v1** everywhere fans see it (was BurkeV1).
+  Two things this exposed, both left alone because they change scoring:
+  1. **An INT is -2 in the projection but 1 in `fan_grade.py`'s `PTS`.** The card uses -2 because
+     that reproduces the shipped number (week-3 QBs: mean residual 0.41 at -2, 0.96 at -1).
+     fan_grade's table converts an error in stat units into points of error, so its sign does not
+     matter -- but its magnitude does, and at 1 an INT call earns half the credit its fantasy value
+     implies. Changing it rescores every INT arrow ever graded.
+  2. **Whole-unit calls are expensive at 10% a tap.** "Chase scores one more TD" is 17 presses on a
+     0.6 projection. The arrow unit is baked into grading (`adjusted = baseline x (1 + 0.1 x n)`
+     in fan_grade.py and in every recorded code), so a different step for TD stats is a scoring
+     change, not a UI one.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2
