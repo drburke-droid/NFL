@@ -575,5 +575,97 @@
     "no DK props posted (news?): Puka Nacua"
    ]
   }
+ },
+ "2026-09-25T00:15_1g": {
+  "sent_at": "2026-09-24T22:57:59Z",
+  "rows": 26,
+  "file": "Burke_Model_Burke_2026_thu08pm_0924_2255.csv",
+  "slate": "Thu 09/24 08:15 PM ET slate (1 games)",
+  "credits_left": 2034,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 1 games in this send (kickoffs Fri 00:15Z .. Fri 00:15Z)",
+   "injury report (nfl.com): 87 skill/K players listed; practice {'DNP': 40, 'FP': 25, 'LP': 22}; designations {'Out': 1}",
+   "lineups: 378 statuses pulled {'espn': 183, 'sleeper': 99, '+sleeper': 80, 'espn+sleeper': 16}; 0 Q, 1 OUT with a projection {'espn+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 25,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-09-24T22:57Z",
+    "credits_left": "100"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 22,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 7,
+     "rec_yds": 12,
+     "rec": 13,
+     "exp_td": 22
+    },
+    "no_line": [],
+    "eligible": 8,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 3
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "ATL": [
+      "Nick Folk"
+     ],
+     "GB": [
+      "Trey Smack"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 87,
+    "designations": {
+     "Out": 1
+    }
+   },
+   "lineups": {
+    "statuses": 378,
+    "by_src": {
+     "espn": 183,
+     "sleeper": 99,
+     "+sleeper": 80,
+     "espn+sleeper": 16
+    },
+    "q": 0,
+    "out": 1,
+    "out_by_src": {
+     "espn+sleeper": 1
+    }
+   },
+   "warnings": []
+  }
  }
 }
