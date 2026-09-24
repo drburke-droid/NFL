@@ -171,6 +171,7 @@ def block(d):
     if len(vs):
         e = vs.actual_dks - vs.proj_dks
         o.update({"n_vs_sites": int(len(vs)), "mae_vs_sites": round(float(e.abs().mean()), 3),
+                  "med_vs_sites": round(float(e.abs().median()), 3),        # the typical miss; the Oracle's board may rank on it
                   "bias_vs_sites": round(float(e.mean()), 3)})
     # The same, over EVERY skill player we projected, inactives included (scored 0 once the game is
     # in). This is the figure the Fan Picks Oracle ranks on (owner's choice, 2026-09-24). It is the
@@ -181,6 +182,7 @@ def block(d):
     if len(va):
         e = va.actual_dks - va.proj_dks
         o.update({"n_vs_sites_all": int(len(va)), "mae_vs_sites_all": round(float(e.abs().mean()), 3),
+                  "med_vs_sites_all": round(float(e.abs().median()), 3),
                   "bias_vs_sites_all": round(float(e.mean()), 3)})
     return o
 weeks = []
@@ -275,7 +277,7 @@ SCALE = {
 }
 out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead, "scale": SCALE,
        "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
-       "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0",
+       "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0; med_vs_sites / med_vs_sites_all: the MEDIAN absolute error on each basis (the sites publish means, so a median is not like for like)",
        "weeks": weeks, "overall": overall,
        "misses": [{"week": int(r.week), "player": r.Player, "pos": r.Pos, "team": r.Team, "proj": round(float(r.Proj), 1), "actual": round(float(r.actual), 1)} for r in misses.itertuples()]}
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True); os.makedirs(os.path.join(ROOT, "outputs", "reports"), exist_ok=True)

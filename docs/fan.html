@@ -73,6 +73,8 @@
   #ready input, #ready select { font-family:'Press Start 2P',monospace; font-size:8px; background:#0f1115; color:#ffd23f; border:2px solid #2b3a4d; border-radius:0; padding:8px 6px; flex:1 1 0; width:auto; min-width:0; text-shadow:none; }
   #ready input::placeholder { color:#4b5a70; }
   #ready .go { font-size:12px; color:#fff; background:none; border:0; cursor:pointer; animation:blink 1.1s steps(1) infinite; font-family:inherit; padding:6px; text-shadow:0 0 8px rgba(255,255,255,.5); }
+  #ready .rc { font-size:6px; color:#4b5a70; text-shadow:none; margin-top:4px; letter-spacing:.05em; }
+  .paper .copy { font-size:9.5px; color:#555; text-align:center; border-top:1px solid #000; margin-top:14px; padding-top:6px; letter-spacing:.04em; }
   #ready .alt { font-size:7px; color:#9fe870; background:none; border:2px solid #2b3a4d; padding:8px 10px; cursor:pointer; font-family:inherit; line-height:1.7; text-shadow:none; }
   #play { background:#0b0f14; }
   #pkstage { position:absolute; left:0; right:0; top:0; bottom:56px; }
@@ -345,10 +347,11 @@
       <div class="rt">QUICK PICKS</div>
       <div class="rs" id="rwhos">WHO'S PLAYING?</div>
       <div class="rrow"><input id="rwho" type="text" placeholder="AAA" maxlength="3" autocomplete="off" style="text-transform:uppercase;letter-spacing:.15em"><input id="rpin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="PIN" maxlength="8" autocomplete="off"><select id="rfav"><option value="">YOUR TEAM</option></select></div>
-      <div class="rh">ONE PLAYER AT A TIME WITH HIS PROJECTED POINTS<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>A SWIPE MOVES HIS WHOLE LINE 10%<br>SUBMIT WHEN YOU'RE DONE. PICKS LOCK AT KICKOFF</div>
+      <div class="rh">FADE OR BOOST ONE PLAYER AT A TIME<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>A SWIPE MOVES HIS WHOLE LINE 10%<br>SUBMIT WHEN YOU'RE DONE. PICKS LOCK AT KICKOFF</div>
       <button class="go" id="rstart">▶ PRESS START</button>
       <button class="alt" id="rpaper">&#128240; READ THE PAPER: WHAT THIS IS AND WHY</button>
       <button class="alt" id="rmore">WANT MORE CONTROL? JUDGE EVERY STAT</button>
+      <div class="rc">&copy; 2026 ROB BURKE</div>
     </div>
     <div id="play">
       <div class="pk-hint">◀ SWIPE ▶</div>
@@ -385,7 +388,7 @@
     <div class="colh" style="margin-top:10px">Season standings <small>every model, ranked by average error &middot; W-L = weeks beating THE ORACLE</small></div>
     <div id="npseason" class="np-empty">loading&hellip;</div>
     <div class="you" id="you" style="color:#333"></div>
-    <div class="np-note">Error is the average number of fantasy points a model was off; lower is better. THE ORACLE and the fan models are scored on every skill player projected that week, inactives at zero; the big sites as each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
+    <div class="np-note" id="npnote">Error is fantasy points off per player; lower is better. THE ORACLE and the fan models: the <b>median</b> miss over the skill players who played that week, DraftKings scoring. The big sites: the mean accuracy each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
     <div class="sep"></div>
     <div class="head">Man Meets Machine</div>
     <div class="deck">THE ORACLE already ranks with the best projection sites in the business. It is not looking for a rival. It is looking for a partner.</div>
@@ -411,6 +414,7 @@
       <div><div class="colh">Best &amp; worst calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
       <div><div class="colh">Sharpest &amp; busiest</div><div id="npsharp" class="np-empty">nothing graded yet</div></div>
     </div>
+    <div class="copy">&copy; 2026 Rob Burke &middot; The Gridiron Oracle and THE ORACLE projection model &middot; all rights reserved</div>
   </section>
 </div></div>
 
@@ -857,7 +861,7 @@ function setMode(m) {
   MODE = m; ls.set("fanpicks_mode", m); PLAYING = false; screens(); readyText();
   $("modetitle").textContent = m === "swipe" ? "Quick picks" : "Full control";
   $("modehow").innerHTML = m === "swipe"
-    ? `One player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a swipe moves his whole line 10%. No numbers to fiddle with.`
+    ? `Fade or boost one player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a swipe moves his whole line 10%. No numbers to fiddle with.`
     : `Every stat of every player, ▲ and ▼ a set amount each: half a touchdown, one catch, ten yards. For when you know a receiver is an 80-yard guy, not a 90.`;
   $("modebtn").textContent = m === "swipe" ? "Want more control? Judge every stat →" : "← Quick picks: one swipe per player";
   if (D) render();
@@ -1032,7 +1036,7 @@ let ACC = null, SITES = null;
 // 2026-09-24): "all" = every skill player projected, inactives at zero (mae_vs_sites_all); "played"
 // = only players with a box-score row (mae_vs_sites). "all" is the most favourable basis for us, and
 // the page copy above says what it counts. Change the copy with it if this is ever switched back.
-const ORACLE_BASIS = "all";
+const ORACLE_BASIS = "median";
 function leaderboard() {
   Promise.all([
     fetch("fan/grade.json?" + Date.now()).then(r => r.json()).catch(() => null),
@@ -1075,7 +1079,11 @@ function standings() {
   // over the weeks each one has numbers for
   // mae_vs_sites is scored the way the sites score themselves (DraftKings, QB/RB/WR/TE, players who
   // played); mae_played is PPR with kickers and would rank THE ORACLE against them on a different basis
-  const pick = w => ORACLE_BASIS === "all" && w.mae_vs_sites_all && w.n_vs_sites_all ? {week: w.week, mae: w.mae_vs_sites_all, n: w.n_vs_sites_all}
+  // "median": THE ORACLE's typical miss (median absolute error over players who played, DraftKings points);
+  // the sites publish MEANS, so the paper says so in the note. Falls back to the mean bases until the grader
+  // has published med_vs_sites for a week.
+  const pick = w => ORACLE_BASIS === "median" && w.med_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.med_vs_sites, n: w.n_vs_sites}
+                   : (ORACLE_BASIS === "all" || ORACLE_BASIS === "median") && w.mae_vs_sites_all && w.n_vs_sites_all ? {week: w.week, mae: w.mae_vs_sites_all, n: w.n_vs_sites_all}
                    : w.mae_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.mae_vs_sites, n: w.n_vs_sites} : null;
   const mw = ((ACC && ACC.weeks) || []).map(w => pick(w) ? pick(w)
                                                   : w.mae_played && w.n_played ? {week: w.week, mae: w.mae_played, n: w.n_played} : null).filter(Boolean);
