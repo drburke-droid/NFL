@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-24T18:47Z",
+ "generated_at": "2026-09-24T19:09Z",
  "season": 2026,
  "min_lead_min": 75.0,
  "scale": {
@@ -96,7 +96,7 @@
   }
  },
  "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
- "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0; med_vs_sites / med_vs_sites_all: the MEDIAN absolute error on each basis (the sites publish means, so a median is not like for like)",
+ "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0; med_vs_sites / med_vs_sites_all: the MEDIAN absolute error on each basis (the sites publish means, so a median is not like for like); mae_vs_sites_live: the all-players pool without season-long absentees (a player who sat stays only if he has played earlier this season)",
  "weeks": [
   {
    "n": 470,
@@ -126,6 +126,12 @@
    "mae_vs_sites_all": 4.053,
    "med_vs_sites_all": 2.508,
    "bias_vs_sites_all": -0.399,
+   "n_vs_sites_live": 322,
+   "mae_vs_sites_live": 4.77,
+   "med_vs_sites_live": 3.098,
+   "bias_vs_sites_live": 0.201,
+   "sat_kept": 0,
+   "sat_dropped": 116,
    "week": 1,
    "sends": 6,
    "games": 16,
@@ -170,7 +176,13 @@
      "n_vs_sites_all": 63,
      "mae_vs_sites_all": 4.348,
      "med_vs_sites_all": 2.051,
-     "bias_vs_sites_all": -0.105
+     "bias_vs_sites_all": -0.105,
+     "n_vs_sites_live": 34,
+     "mae_vs_sites_live": 6.959,
+     "med_vs_sites_live": 5.481,
+     "bias_vs_sites_live": 0.903,
+     "sat_kept": 0,
+     "sat_dropped": 29
     },
     "RB": {
      "n": 110,
@@ -196,7 +208,13 @@
      "n_vs_sites_all": 110,
      "mae_vs_sites_all": 4.221,
      "med_vs_sites_all": 2.905,
-     "bias_vs_sites_all": -0.008
+     "bias_vs_sites_all": -0.008,
+     "n_vs_sites_live": 81,
+     "mae_vs_sites_live": 4.967,
+     "med_vs_sites_live": 3.334,
+     "bias_vs_sites_live": 0.756,
+     "sat_kept": 0,
+     "sat_dropped": 29
     },
     "TE": {
      "n": 100,
@@ -222,7 +240,13 @@
      "n_vs_sites_all": 100,
      "mae_vs_sites_all": 3.208,
      "med_vs_sites_all": 2.128,
-     "bias_vs_sites_all": -0.398
+     "bias_vs_sites_all": -0.398,
+     "n_vs_sites_live": 73,
+     "mae_vs_sites_live": 3.645,
+     "med_vs_sites_live": 2.224,
+     "bias_vs_sites_live": 0.203,
+     "sat_kept": 0,
+     "sat_dropped": 27
     },
     "WR": {
      "n": 165,
@@ -251,7 +275,13 @@
      "n_vs_sites_all": 165,
      "mae_vs_sites_all": 4.341,
      "med_vs_sites_all": 2.917,
-     "bias_vs_sites_all": -0.772
+     "bias_vs_sites_all": -0.772,
+     "n_vs_sites_live": 134,
+     "mae_vs_sites_live": 4.709,
+     "med_vs_sites_live": 3.032,
+     "bias_vs_sites_live": -0.314,
+     "sat_kept": 0,
+     "sat_dropped": 31
     }
    }
   },
@@ -283,6 +313,12 @@
    "mae_vs_sites_all": 3.727,
    "med_vs_sites_all": 2.567,
    "bias_vs_sites_all": -0.686,
+   "n_vs_sites_live": 370,
+   "mae_vs_sites_live": 4.089,
+   "med_vs_sites_live": 2.826,
+   "bias_vs_sites_live": -0.539,
+   "sat_kept": 33,
+   "sat_dropped": 62,
    "week": 2,
    "sends": 6,
    "games": 16,
@@ -330,7 +366,13 @@
      "n_vs_sites_all": 67,
      "mae_vs_sites_all": 4.418,
      "med_vs_sites_all": 2.631,
-     "bias_vs_sites_all": -0.487
+     "bias_vs_sites_all": -0.487,
+     "n_vs_sites_live": 41,
+     "mae_vs_sites_live": 6.326,
+     "med_vs_sites_live": 5.851,
+     "bias_vs_sites_live": 0.099,
+     "sat_kept": 2,
+     "sat_dropped": 26
     },
     "RB": {
      "n": 106,
@@ -359,7 +401,13 @@
      "n_vs_sites_all": 106,
      "mae_vs_sites_all": 3.0,
      "med_vs_sites_all": 2.266,
-     "bias_vs_sites_all": -1.346
+     "bias_vs_sites_all": -1.346,
+     "n_vs_sites_live": 99,
+     "mae_vs_sites_live": 3.121,
+     "med_vs_sites_live": 2.346,
+     "bias_vs_sites_live": -1.35,
+     "sat_kept": 5,
+     "sat_dropped": 7
     },
     "TE": {
      "n": 98,
@@ -388,7 +436,13 @@
      "n_vs_sites_all": 98,
      "mae_vs_sites_all": 3.485,
      "med_vs_sites_all": 2.584,
-     "bias_vs_sites_all": -0.749
+     "bias_vs_sites_all": -0.749,
+     "n_vs_sites_live": 82,
+     "mae_vs_sites_live": 3.84,
+     "med_vs_sites_live": 2.808,
+     "bias_vs_sites_live": -0.57,
+     "sat_kept": 13,
+     "sat_dropped": 16
     },
     "WR": {
      "n": 161,
@@ -417,7 +471,13 @@
      "n_vs_sites_all": 161,
      "mae_vs_sites_all": 4.065,
      "med_vs_sites_all": 2.905,
-     "bias_vs_sites_all": -0.297
+     "bias_vs_sites_all": -0.297,
+     "n_vs_sites_live": 148,
+     "mae_vs_sites_live": 4.254,
+     "med_vs_sites_live": 2.905,
+     "bias_vs_sites_live": -0.155,
+     "sat_kept": 13,
+     "sat_dropped": 13
     }
    }
   }
@@ -450,6 +510,12 @@
   "mae_vs_sites_all": 3.891,
   "med_vs_sites_all": 2.552,
   "bias_vs_sites_all": -0.542,
+  "n_vs_sites_live": 659,
+  "mae_vs_sites_live": 4.528,
+  "med_vs_sites_live": 2.949,
+  "bias_vs_sites_live": -0.106,
+  "sat_kept": 0,
+  "sat_dropped": 211,
   "by_pos": {
    "K": {
     "n": 64,
@@ -493,7 +559,13 @@
     "n_vs_sites_all": 130,
     "mae_vs_sites_all": 4.384,
     "med_vs_sites_all": 2.297,
-    "bias_vs_sites_all": -0.302
+    "bias_vs_sites_all": -0.302,
+    "n_vs_sites_live": 73,
+    "mae_vs_sites_live": 6.794,
+    "med_vs_sites_live": 5.797,
+    "bias_vs_sites_live": 0.476,
+    "sat_kept": 0,
+    "sat_dropped": 57
    },
    "RB": {
     "n": 216,
@@ -522,7 +594,13 @@
     "n_vs_sites_all": 216,
     "mae_vs_sites_all": 3.622,
     "med_vs_sites_all": 2.412,
-    "bias_vs_sites_all": -0.664
+    "bias_vs_sites_all": -0.664,
+    "n_vs_sites_live": 175,
+    "mae_vs_sites_live": 4.024,
+    "med_vs_sites_live": 2.685,
+    "bias_vs_sites_live": -0.374,
+    "sat_kept": 0,
+    "sat_dropped": 41
    },
    "TE": {
     "n": 198,
@@ -551,7 +629,13 @@
     "n_vs_sites_all": 198,
     "mae_vs_sites_all": 3.345,
     "med_vs_sites_all": 2.419,
-    "bias_vs_sites_all": -0.572
+    "bias_vs_sites_all": -0.572,
+    "n_vs_sites_live": 142,
+    "mae_vs_sites_live": 3.768,
+    "med_vs_sites_live": 2.534,
+    "bias_vs_sites_live": 0.099,
+    "sat_kept": 0,
+    "sat_dropped": 56
    },
    "WR": {
     "n": 326,
@@ -580,7 +664,13 @@
     "n_vs_sites_all": 326,
     "mae_vs_sites_all": 4.205,
     "med_vs_sites_all": 2.905,
-    "bias_vs_sites_all": -0.537
+    "bias_vs_sites_all": -0.537,
+    "n_vs_sites_live": 269,
+    "mae_vs_sites_live": 4.643,
+    "med_vs_sites_live": 3.084,
+    "bias_vs_sites_live": -0.199,
+    "sat_kept": 0,
+    "sat_dropped": 57
    }
   }
  },

@@ -1,4 +1,4 @@
-# SaberSim send accuracy — 2026 (graded 2026-09-24T18:47Z)
+# SaberSim send accuracy — 2026 (graded 2026-09-24T19:09Z)
 
 latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded
 
