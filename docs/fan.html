@@ -158,7 +158,7 @@
   body.arcade { overflow:hidden; background:#07080c; }
   #stage { position:fixed; inset:0; overflow:hidden; background:radial-gradient(ellipse at 50% 25%, #221a3a 0%, #0b0a12 55%, #05060a 100%); }
   #cab { position:absolute; left:0; top:0; transform-origin:0 0; transition:transform .9s cubic-bezier(.2,.7,.2,1); }
-  #cab img { display:block; height:100vh; width:auto; user-select:none; -webkit-user-drag:none; pointer-events:none; }
+  #cabimg { display:block; height:100vh; width:auto; user-select:none; -webkit-user-drag:none; pointer-events:none; }   /* the cabinet picture only: the deck cards carry their own images */
   #screen { position:absolute; left:21.6%; top:23.5%; width:54.4%; height:34.4%; border-radius:3.5% / 5.5%; overflow:hidden; background:#0b0f14; box-shadow:inset 0 0 6vh rgba(0,0,0,.85); }
   #attract { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.6vh; cursor:pointer; font-family:'Press Start 2P',monospace; color:#ffd23f; text-align:center; text-shadow:0 0 .8vh rgba(255,210,63,.55); background:radial-gradient(ellipse at 50% 40%, #16202a, #0b0f14 70%); }
   #attract .t1 { font-size:2.4vh; color:#ffcc33; line-height:1.4; }
@@ -218,7 +218,7 @@
   body.mobile #attract .coin { display:none; } body.mobile #attract { gap:1.2vh; }
   body.mobile #fold .fm { font-size:2.4vh; } body.mobile #fold .fs { font-size:1.15vh; } body.mobile #fold .fl { font-size:1.35vh; } body.mobile #fold .ft { font-size:1.1vh; }
   body.mobile #stage.on #cab { transform:none !important; }
-  body.mobile #stage.on #cab img, body.mobile #stage.on #fold, body.mobile #stage.on #attract { display:none; }
+  body.mobile #stage.on #cabimg, body.mobile #stage.on #fold, body.mobile #stage.on #attract { display:none; }
   body.mobile #stage.on #screen { position:fixed; inset:0; width:auto; height:auto; border-radius:0; box-shadow:none; overflow:hidden; background:#050505; }
   body.mobile #stage.on #mface { display:block; position:absolute; left:var(--fx); top:var(--fy); width:var(--fw); height:var(--fh); background:url(fan/cabinet_phone.jpg) no-repeat 0 0 / 100% 100%; animation:facein .5s ease-out; }
   @keyframes facein { from { opacity:0; transform:scale(1.04); } to { opacity:1; transform:none; } }
