@@ -1089,6 +1089,7 @@ function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D
 const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
 const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
 const isMe = f => IDH ? (f.pid === PIDH || f.fan_id === IDH) : f.fan === me();
+const c2 = x => Math.round(x * 100);        // the hundredths a table shows (shared by the season table, the week table and the crawl)
 function standings() {
   // every model on one list: the big sites (their published weekly error), the unedited model
   // (its error on ORACLE_BASIS), and the model with each fan's arrows applied -- ranked by the average
@@ -1142,7 +1143,6 @@ function standings() {
     }
   }
   // ranked on the hundredths the table shows; on a tie THE ORACLE ranks first (4.33 vs 4.3305 is a tie)
-  const c2 = x => Math.round(x * 100);
   rows.sort((a, b) => c2(a.err) - c2(b.err) || (a.base ? -1 : b.base ? 1 : 0) || a.err - b.err);
   return {weeks, rows, mw};
 }
