@@ -56,6 +56,30 @@ def headshots(season):
     except Exception as e:
         print(f"  headshots: {e} (cards will show initials)"); return {}
 HEAD = headshots(S)
+
+def last_weeks(season, week):
+    """gsis_id -> {week: DraftKings points} for the season's weeks before `week`, from the nflverse
+    stats_player_week release scored by scripts/dk_scoring.py (the Quick-picks card's "last 2 weeks").
+    Cached a day under data/nflverse_cache; any failure means no history on the card, never no bake."""
+    import time, urllib.request
+    try:
+        import pandas as pd
+        sys.path.insert(0, os.path.join(ROOT, "scripts")); import dk_scoring
+        d = os.path.join(ROOT, "data", "nflverse_cache"); os.makedirs(d, exist_ok=True)
+        fp = os.path.join(d, f"stats_player_week_{season}.parquet")
+        if not os.path.exists(fp) or time.time() - os.path.getmtime(fp) > 86400:
+            url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{season}.parquet"
+            with urllib.request.urlopen(url, timeout=120) as r, open(fp, "wb") as fh: fh.write(r.read())
+        a = pd.read_parquet(fp)
+        a = a[(a.season_type == "REG") & (a.week < week) & a.position.isin(dk_scoring.SKILL)].copy()
+        a["dk"] = dk_scoring.actual_frame(a)
+        out = {}
+        for r in a.itertuples():
+            out.setdefault(r.player_id, {})[int(r.week)] = round(float(r.dk), 1)
+        return out
+    except Exception as e:
+        print(f"  last weeks: {e} (cards will show no history)"); return {}
+LAST = last_weeks(S, W)
 players, games = [], {}
 def f(v):
     try: return round(float(v), 2)
@@ -88,7 +112,9 @@ for r in rows:
                     # card shows the whole DraftKings projection (docs/fan.html dkPoints)
                     "fl": f(r.get("fumbles_lost")) or 0.0,
                     # the Quick-picks card: the league's headshot (nflverse roster), ESPN's id as a fallback
-                    "img": HEAD.get(r.get("ID") or "", ("", ""))[0], "espn": HEAD.get(r.get("ID") or "", ("", ""))[1]})
+                    "img": HEAD.get(r.get("ID") or "", ("", ""))[0], "espn": HEAD.get(r.get("ID") or "", ("", ""))[1],
+                    # DraftKings points in each earlier week of the season, null = no box-score row (bye, inactive, not yet in the league)
+                    "lw": [LAST.get(r.get("ID") or "", {}).get(w) for w in range(1, W)]})
 for g in games.values(): g["teams"] = sorted(g["teams"])
 order = sorted(games.values(), key=lambda g: (datetime.strptime(f"{S} " + g["kickoff"][4:], "%Y %m/%d %I:%M %p ET"), g["game"]))
 bake_id = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
