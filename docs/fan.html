@@ -963,7 +963,7 @@ addEventListener("keydown", e => {
   if (MODE !== "swipe" || !D || e.target.matches("input,textarea,select") || $("paperwrap").classList.contains("on") || !stage.classList.contains("on")) return;
   if (!PLAYING) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("rstart").click(); } return; }
   if (e.key === "ArrowRight") decide(1); else if (e.key === "ArrowLeft") decide(-1); else if (e.key === "ArrowDown") { e.preventDefault(); $("dkskip").click(); } else if (e.key === "Escape") $("dkmenu").click();
-});});
+});
 
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
