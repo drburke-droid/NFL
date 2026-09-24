@@ -75,3 +75,45 @@ def test_recorder_floors_presses_past_zero(bake):
     _, _, rows = rows_for(2026, 3, {"n": "t", "t": "x", "b": b["bake_id"], "r": "u1", "a": [[pi, si, -40]]})
     assert rows[0]["arrows"] == fan_rules.min_presses("u1", "rec_tds", base)
     assert rows[0]["adjusted"] == 0.0
+
+
+def _sets():
+    """One fan, week 3. Locks in Thursday afternoon, comes back Saturday and locks in again.
+    TNF kicks off Fri 00:15Z; the Sunday games at 17:00Z."""
+    import pandas as pd
+    tnf, sun = pd.Timestamp("2026-09-25T00:15Z"), pd.Timestamp("2026-09-27T17:00Z")
+    thu, sat = "2026-09-24T18:00Z", "2026-09-26T15:00Z"
+    rows = [  # (submitted_at, game kickoff, what)
+        (thu, tnf, "thu set, TNF arrow"),
+        (thu, sun, "thu set, Sunday arrow he later changed"),
+        (thu, sun, "thu set, Sunday arrow he later removed"),
+        (sat, tnf, "sat set, TNF arrow (the page still showed it)"),
+        (sat, sun, "sat set, Sunday arrow"),
+        (sat, pd.NaT, "sat set, game with no kickoff on file"),
+    ]
+    return pd.DataFrame([dict(season=2026, week=3, fan="A", submitted_at=s, _kick=k, what=w) for s, k, w in rows])
+
+
+def test_coming_back_midweek_keeps_the_early_games():
+    rows = _sets()
+    live, late, sup = fan_rules.live_arrows(rows)
+    got = dict(zip(rows.what, zip(live, late, sup)))
+    assert got["thu set, TNF arrow"] == (True, False, False)                 # the arrow the old rule lost
+    assert got["sat set, Sunday arrow"] == (True, False, False)
+    assert got["sat set, TNF arrow (the page still showed it)"] == (False, True, False)
+    assert got["thu set, Sunday arrow he later changed"] == (False, False, True)
+    assert got["thu set, Sunday arrow he later removed"] == (False, False, True)   # removed stays removed
+    assert got["sat set, game with no kickoff on file"] == (True, False, False)
+
+
+def test_every_arrow_is_exactly_one_of_live_late_superseded():
+    live, late, sup = fan_rules.live_arrows(_sets())
+    assert ((live.astype(int) + late.astype(int) + sup.astype(int)) == 1).all()
+
+
+def test_fans_are_kept_apart():
+    import pandas as pd
+    rows = _sets()
+    other = rows.assign(fan="B", submitted_at="2026-09-26T20:00Z")          # B's one set is later than all of A's
+    live, _, _ = fan_rules.live_arrows(pd.concat([rows, other], ignore_index=True))
+    assert live[:len(rows)].tolist() == fan_rules.live_arrows(rows)[0].tolist()

@@ -353,6 +353,27 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   draft saved on a device under the old rule converts to units on load, by where the arrow LANDED
   (ten ▼ still means zero). Verified in Chromium: the page's gamma matches scipy to 1e-6, and every
   card, tap, floor, conversion and Oracle number matched an independent Python computation.
+- **Fans can come back during the week, on any device (2026-09-24).**
+  *Grading fix first, because it was losing picks:* the grader kept only a fan's latest set for the
+  week, THEN dropped arrows placed after their game kicked off -- so locking in Thursday afternoon and
+  again on Saturday threw away every Thursday-night arrow. `fan_rules.live_arrows` now decides per
+  game: each game counts the last set locked in BEFORE it kicked off (a set that leaves a game out
+  still removes its arrows). `fan_grade.py` uses it; tests cover the Thursday-then-Saturday case.
+  *Same device:* drafts are keyed per bake, and a mid-week re-bake renumbers players, so every draft
+  used to vanish on re-bake (there were six re-bakes on 09-22). The page now carries a draft forward
+  by player id (`carryDraft`/`remap` in `docs/fan.html`). After a lock-in it keeps the locked code
+  (`fanpicks_<S>_wk<W>_locked`) and the status line reads "locked in Thu 7:14 PM (12 arrows) — 3
+  changes not locked in yet". Arrows on a game lock at kickoff: the bake now carries `kick_utc` per
+  game (backfilled for week 3's live bake), buttons disable, and a timer re-renders at each kickoff.
+  *Another device:* "Copy my link" (or the button after lock-in) gives `fan.html#p=FAN1...` -- the
+  username, time, bake and arrows, NOT the PIN or the fingerprint made from it. Opening it on any
+  device loads the picks (remapped if the page has been re-baked since), fills the username, and
+  asks before replacing picks already there; a paste box takes a link or a FAN1 code. The PIN is
+  still needed to lock in, so a forwarded link cannot enter picks as its owner.
+  *Not built -- owner's decision:* signing in on a new device with username + PIN and finding your
+  picks there with no link. That needs the page to read submissions back, and it can't read the
+  Google sheet (no CORS); the repo only gets them at the daily pull, and more frequent commits to
+  main re-trigger the send workflow. Options are in the 2026-09-24 conversation.
 - **The Oracle ranks Burke_v1 on ALL projected players, inactives included (owner's call, 2026-09-24).**
   `ORACLE_BASIS = "all"` in `docs/fan.html` reads `mae_vs_sites_all` (every skill player projected,
   an inactive scored 0) instead of the played-only `mae_vs_sites`. On it Burke_v1 is **1st of 8**
