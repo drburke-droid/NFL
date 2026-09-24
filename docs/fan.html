@@ -58,6 +58,38 @@
   .code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; word-break:break-all; background:#0f1115; border:1px solid var(--line); border-radius:8px; padding:10px; margin:8px 0; max-height:160px; overflow:auto; }
   .status { font-size:13px; color:var(--mut); margin-top:8px; min-height:18px; } .ok { color:var(--ok); }
   .legend { font-size:12px; color:var(--mut); margin-top:6px; } .legend span { margin-right:10px; }
+  /* Quick picks: one player at a time; swipe right to boost him, left to fade him. body.swipe / body.full pick the mode. */
+  body.swipe #howcard, body.swipe #filtercard, body.swipe #list { display:none; }
+  body.full #deck { display:none; }
+  body.swipe.mobile #crt h1, body.swipe.mobile #crt .sub { display:none; }
+  #modecard .row { align-items:center; } #modecard b { font-size:15px; }
+  .card.mini > .row, .card.mini > .how { display:none; } .card.mini #idmini { display:flex; } #idmini { display:none; justify-content:space-between; align-items:center; gap:8px; font-size:13px; color:var(--mut); flex-wrap:wrap; } #idmini b { color:var(--ink); }
+  #idmini button { background:none; border:1px solid var(--line); color:var(--mut); border-radius:8px; padding:4px 10px; font-size:12px; cursor:pointer; }
+  .dk-stage { position:relative; height:clamp(330px, 52vh, 480px); margin:8px auto 6px; max-width:430px; touch-action:pan-y; }
+  body.mobile #stage.on .dk-stage { height:clamp(300px, calc(var(--gh) - 260px), 420px); }
+  .dk-card { position:absolute; inset:0; background:linear-gradient(180deg,#151b26,#0d1117); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 12px 34px rgba(0,0,0,.55); user-select:none; -webkit-user-select:none; will-change:transform; display:flex; flex-direction:column; touch-action:pan-y; }
+  .dk-card.under { transform:scale(.95) translateY(12px); opacity:.55; pointer-events:none; }
+  .dk-card.fly { transition:transform .34s cubic-bezier(.2,.7,.2,1), opacity .34s; } .dk-card.back { transition:transform .22s ease; }
+  .dk-img { flex:1 1 auto; min-height:0; position:relative; background:radial-gradient(ellipse at 50% 35%, #2b3548, #0d1117 78%); display:flex; align-items:center; justify-content:center; }
+  .dk-img img { width:100%; height:100%; object-fit:cover; object-position:50% 12%; display:block; -webkit-user-drag:none; pointer-events:none; }
+  .dk-img .ini { font-size:64px; font-weight:800; color:#33405a; letter-spacing:.04em; }
+  .dk-img .grad { position:absolute; left:0; right:0; bottom:0; height:45%; background:linear-gradient(180deg, transparent, #0d1117); }
+  .dk-body { padding:6px 14px 14px; flex:none; }
+  .dk-nm { font-size:22px; font-weight:800; line-height:1.15; } .dk-meta { font-size:13px; color:var(--mut); margin-top:2px; }
+  .dk-pts { display:flex; align-items:center; gap:10px; margin-top:8px; } .dk-pts b { font-size:42px; font-weight:800; line-height:1; letter-spacing:-.02em; } .dk-pts span { font-size:12px; color:var(--mut); line-height:1.4; }
+  .dk-stamp { position:absolute; top:20px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:26px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.35); }
+  .dk-stamp.up { left:16px; color:var(--up); border-color:var(--up); transform:rotate(-14deg); } .dk-stamp.dn { right:16px; color:var(--down); border-color:var(--down); transform:rotate(14deg); }
+  .dk-had { position:absolute; top:10px; left:50%; transform:translateX(-50%); font-size:11px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.65); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; }
+  .dk-had.up { color:var(--up); } .dk-had.dn { color:var(--down); }
+  .dk-actions { display:flex; gap:10px; align-items:center; justify-content:center; margin-top:8px; max-width:430px; margin-left:auto; margin-right:auto; }
+  .dk-btn { flex:1 1 0; border:0; border-radius:12px; padding:14px 8px; font-size:16px; font-weight:700; cursor:pointer; color:#fff; }
+  .dk-btn.dn { background:#8a2626; } .dk-btn.up { background:#1f8a40; } .dk-btn:active { filter:brightness(1.2); }
+  .dk-skip { flex:0 0 auto; background:none; border:1px solid var(--line); color:var(--mut); border-radius:10px; padding:12px 12px; font-size:12px; cursor:pointer; }
+  .dk-foot { display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--mut); margin:8px auto 0; gap:8px; flex-wrap:wrap; max-width:430px; }
+  .dk-foot button { background:none; border:0; color:var(--mut); text-decoration:underline; cursor:pointer; font-size:12px; padding:0; }
+  .dk-done { text-align:center; padding:40px 18px; color:var(--mut); font-size:14px; line-height:1.5; margin:auto; } .dk-done b { color:var(--ink); }
+  .swipedtag { font-size:11px; color:var(--mut); margin-top:6px; } .swipedtag.up b { color:var(--up); } .swipedtag.dn b { color:var(--down); }
+  .swipedtag button { background:none; border:0; color:var(--mut); text-decoration:underline; cursor:pointer; font-size:11px; padding:0; }
   .empty { color:var(--mut); padding:20px 0; text-align:center; }
   table.g { border-collapse:collapse; width:100%; font-size:13px; margin-top:6px; }
   table.g th, table.g td { padding:5px 6px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; }
@@ -254,7 +286,8 @@
   </details>
 
 
-  <div class="card">
+  <div class="card" id="idcard">
+    <div id="idmini"><span>Playing as <b id="idminiwho"></b><span id="idminiteam"></span></span><button id="idedit">edit</button></div>
     <div class="row">
       <div style="flex:2 1 200px"><label for="who">Your username (shows on the leaderboard)</label><input id="who" type="text" placeholder="pick a name and keep it all season" autocomplete="nickname" maxlength="24"></div>
       <div style="flex:1 1 120px"><label for="pin">Your PIN (4+ digits)</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="same PIN every week" autocomplete="off" maxlength="8"></div>
@@ -273,12 +306,25 @@
     <div class="how" style="margin-top:4px" id="emailhow">The email is so we can reach you if your picks prove to add accuracy to the model. It goes to a private contact list only the model's owner can see, tied to your username and fingerprint, never shown on the board.</div>
   </div>
 
-  <div class="card how">
+  <div class="card" id="modecard">
+    <div class="row">
+      <div style="flex:2 1 220px"><b id="modetitle">Quick picks</b><div class="how" id="modehow"></div></div>
+      <button class="sec" id="modebtn" style="flex:0 1 auto"></button>
+    </div>
+  </div>
+
+  <div id="deck">
+    <div class="dk-stage" id="dkstage"><div class="dk-card"><div class="dk-done">loading…</div></div></div>
+    <div class="dk-actions"><button class="dk-btn dn" id="dkfade">◀ Fade</button><button class="dk-skip" id="dkskip" title="no opinion — next player">skip</button><button class="dk-btn up" id="dkboost">Boost ▶</button></div>
+    <div class="dk-foot"><span id="dkprog"></span><span><button id="dkundo">↶ undo</button></span></div>
+  </div>
+
+  <div class="card how" id="howcard">
     <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat a set amount: <b>half a touchdown</b> (or interception), <b>one catch</b>, <b>10 rushing or receiving yards</b>, <b>25 passing yards</b>. ▼ stops at zero. The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land. Come back any time: your picks stay on this device, your link opens them on any other, and a game's arrows lock when it kicks off.
     <div class="legend"><span><b style="color:var(--up)">▲</b> <b style="color:var(--down)">▼</b> ½ TD · 1 catch · 10 yds · 25 pass yds</span><span>DraftKings scoring</span><span>arrows lock at kickoff</span></div>
   </div>
 
-  <div class="card">
+  <div class="card" id="filtercard">
     <div class="row">
       <div><label for="game">Game</label><select id="game"><option value="">all games</option></select></div>
       <div><label for="pos">Position</label><select id="pos"><option value="">all</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div>
@@ -296,7 +342,7 @@
 </main>
     </div>
     <div class="bar"><div class="in">
-      <div class="n"><b id="cnt">0</b> arrows <span id="draft"></span></div>
+      <div class="n"><b id="cnt">0</b> picks <span id="draft"></span></div>
       <button id="newsbtn" title="standings">📰</button>
       <button class="sec" id="reset">Clear</button>
       <button class="big" id="submit">Submit</button>
@@ -423,6 +469,11 @@ let D = null, KEY = "", picks = {}, CFG = {}, G = null, SUBS = null, LIVE = null
 // of the projection, which made "one more TD" on a 0.6 projection seventeen taps. Codes carry the
 // rule ("r"); a code without one is scored under the old percentage rule by fan_adjust_record/fan_grade.
 const RULE = "u1";
+// Quick picks (2026-09-25): a SWIPE on a whole player is stored as a pick with stat index -1 (fan_rules.SWIPE_STAT)
+// and value +1 (boost) / -1 (fade); it moves every stat in his line SWIPE_PCT. The recorder expands it into
+// one row per stat under rule "s1". A player carries either a swipe or stat arrows, never both.
+const SW = -1, SWIPE_PCT = 0.10;
+const swipeOf = i => picks[i + ":" + SW] || 0;
 const STEP_U = {pass_yds:25, pass_tds:0.5, pass_int:0.5, rush_yds:10, rush_tds:0.5, rec:1, rec_yds:10, rec_tds:0.5};
 const MAX_N = 100;
 const adjOf = (k, v, a) => Math.max(0, v + STEP_U[k] * a);
@@ -472,7 +523,7 @@ function lineOf(p, withPicks) {
   for (const [k, v] of Object.entries(p.stats)) {
     if (v == null) continue;
     const a = withPicks ? (picks[p.i + ":" + D.stat_keys.indexOf(k)] || 0) : 0;
-    L[k] = a ? adjOf(k, v, a) : v;
+    L[k] = (a ? adjOf(k, v, a) : v) * (withPicks ? 1 + SWIPE_PCT * swipeOf(p.i) : 1);
   }
   return L;
 }
@@ -507,10 +558,13 @@ function remap(src, obj, pct) {
   for (const p of D.players) { if (p.id) byId.set(p.id, p.i); byName.set(p.name + "|" + p.pos, p.i); }
   const out = {};
   for (const [key, n0] of Object.entries(obj || {})) {
-    const [i, si] = key.split(":").map(Number), p = src.players[i], k = src.stat_keys[si];
-    if (!p || !k || !(k in STEP_U)) continue;
+    const [i, si] = key.split(":").map(Number), p = src.players[i];
+    if (!p) continue;
     const j = same ? i : (p.id && byId.has(p.id)) ? byId.get(p.id) : byName.get(p.name + "|" + p.pos);
     if (j == null) continue;
+    if (si === SW) { if (n0) out[j + ":" + SW] = n0 > 0 ? 1 : -1; continue; }      // a swipe follows the player
+    const k = src.stat_keys[si];
+    if (!k || !(k in STEP_U)) continue;
     const v = D.players[j].stats[k]; if (v == null) continue;
     let n = n0;
     if (pct) { const v0 = p.stats[k] || 0, land = Math.max(0, v0 * (1 + 0.1 * n0)); n = land === 0 ? minN(k, v) : Math.round((land - v0) / STEP_U[k]); }
@@ -667,7 +721,7 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { const o = document.createElement("option"); o.value = ab; o.textContent = nm; $("fav").appendChild(o); }
   $("fav").value = FAV;
-  render(); count(); leaderboard(); armKickTimer();
+  idMini(); render(); count(); leaderboard(); armKickTimer();
   carryDraft().then(moved => { if (moved) { render(); count(); rsay("Brought your picks forward to this week's updated projections."); } });
   if (location.hash.startsWith("#p=")) {                 // opened from a saved link
     const c = decodeURIComponent(location.hash.slice(3));
@@ -700,12 +754,14 @@ function render() {
     }
   }
   $("list").innerHTML = h || '<div class="empty">nothing matches</div>';
+  DECK = []; deckRender();
 }
 function card(p) {
-  const touched = Object.keys(picks).some(k => k.split(":")[0] == p.i);
+  const touched = Object.keys(picks).some(k => k.split(":")[0] == p.i), sw = swipeOf(p.i);
   const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
+  const tag = sw ? `<div class="swipedtag ${sw > 0 ? "up" : "dn"}">You <b>${sw > 0 ? "boosted" : "faded"}</b> his whole line 10% with a swipe in Quick picks. Tap a stat to fine-tune instead, or <button data-unswipe="${p.i}">undo the swipe</button>.</div>` : "";
   return `<div class="p${touched ? " touched" : ""}" data-i="${p.i}"><div class="hd"><div><span class="nm">${p.name}</span>${chip}<div class="meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}</div></div><div class="pts">${ptsHtml(p)}</div></div>` +
-    `<div class="stats">` + Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => stat(p.i, k, v)).join("") + `</div></div>`;
+    `<div class="stats">` + Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => stat(p.i, k, v)).join("") + `</div>${tag}</div>`;
 }
 const fmt = (k, v) => k.endsWith("tds") || k === "pass_int" || k === "rec" ? v.toFixed(1) : String(Math.round(v));
 function stat(i, k, v) {
@@ -721,14 +777,17 @@ $("list").addEventListener("click", e => {
   const b = e.target.closest("button");
   if (!b) return;
   if (b.dataset.team) { const m = document.querySelector(`[data-more="${b.dataset.team}"]`); m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace("hide", "show") : b.textContent.replace("show", "hide"); return; }
+  if (b.dataset.unswipe) { const i = +b.dataset.unswipe; delete picks[i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); const c = b.closest(".p"); if (c) c.outerHTML = card(D.players[i]); count(); return; }
   const st = b.closest(".st"); if (!st) return;
   const key = st.dataset.i + ":" + st.dataset.s, d = +b.dataset.d;
   const p0 = D.players[+st.dataset.i], k0 = D.stat_keys[+st.dataset.s];
   if (started(p0)) { $("draft").textContent = "· that game has kicked off — its arrows are locked"; return; }
   let a = Math.min(MAX_N, Math.max(minN(k0, p0.stats[k0]), (picks[key] || 0) + d));
   if (a === 0) delete picks[key]; else picks[key] = a;
+  const hadSwipe = swipeOf(p0.i); delete picks[p0.i + ":" + SW];        // exact arrows replace a swipe on the same player
   ls.set(KEY, JSON.stringify(picks));
   const p = D.players[+st.dataset.i], k = D.stat_keys[+st.dataset.s];
+  if (hadSwipe) { const c = st.closest(".p"); if (c) { c.outerHTML = card(p); count(); return; } }
   st.outerHTML = stat(p.i, k, p.stats[k]);
   const card_ = document.querySelector(`.p[data-i="${p.i}"]`); if (card_) { card_.classList.toggle("touched", Object.keys(picks).some(x => x.split(":")[0] == p.i)); const pt = card_.querySelector(".pts"); if (pt) pt.innerHTML = ptsHtml(p); }
   count();
@@ -741,7 +800,7 @@ async function sentNote() {
   const locked = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE);
   let changed = 0; for (const k of new Set([...Object.keys(locked), ...Object.keys(picks)])) if ((locked[k] || 0) !== (picks[k] || 0)) changed++;
   const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
-  $("draft").textContent = `· locked in ${at} (${(x.j.a || []).length} arrow${(x.j.a || []).length === 1 ? "" : "s"})` +
+  $("draft").textContent = `· locked in ${at} (${(x.j.a || []).length} pick${(x.j.a || []).length === 1 ? "" : "s"})` +
     (changed ? ` — ${changed} change${changed === 1 ? "" : "s"} not locked in yet` : " — all locked in");
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
@@ -750,6 +809,7 @@ $("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value
 $("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(() => { renderLead(); soonServer(); }); });
 $("email").addEventListener("input", () => ls.set("fanpicks_email", $("email").value.trim()));
 $("fav").addEventListener("change", () => { FAV = $("fav").value; ls.set("fanpicks_team", FAV); if (D) render(); });
+$("pin").addEventListener("change", () => idMini()); $("who").addEventListener("change", () => idMini());
 async function sendContact() {
   // the private contact form: separate from the drop box so addresses never sit in the readable sheet
   const em = ($("email").value || "").trim();
@@ -761,6 +821,106 @@ async function sendContact() {
   try { await fetch(CFG.contact_form_action, {method: "POST", mode: "no-cors", body}); ls.set("fanpicks_contact_sent", stamp); } catch (e) {}
 }
 $("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {}; ls.del(KEY); render(); count(); };
+// the identity card folds to one line once username + PIN are in, so the deck sits near the top
+function idMini(force) {
+  const ok = me() && pin().length >= 4 && !force;
+  $("idcard").classList.toggle("mini", !!ok);
+  if (ok) { $("idminiwho").textContent = me(); $("idminiteam").textContent = FAV && TEAMS[FAV] ? ` · ${TEAMS[FAV]} fan` : ""; }
+}
+$("idedit").onclick = () => idMini(true);
+
+// ---- Quick picks: the deck ----
+let MODE = ls.get("fanpicks_mode") || "swipe", DECK = [], DI = 0, HIST = [];
+function setMode(m) {
+  MODE = m; ls.set("fanpicks_mode", m);
+  document.body.classList.toggle("swipe", m === "swipe"); document.body.classList.toggle("full", m !== "swipe");
+  $("modetitle").textContent = m === "swipe" ? "Quick picks" : "Full control";
+  $("modehow").innerHTML = m === "swipe"
+    ? `One player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a swipe moves his whole line 10%. No numbers to fiddle with.`
+    : `Every stat of every player, ▲ and ▼ a set amount each: half a touchdown, one catch, ten yards. For when you know a receiver is an 80-yard guy, not a 90.`;
+  $("modebtn").textContent = m === "swipe" ? "Want more control? Judge every stat →" : "← Quick picks: one swipe per player";
+  if (D) { DECK = []; deckRender(); }
+}
+$("modebtn").onclick = () => setMode(MODE === "swipe" ? "full" : "swipe");
+setMode(MODE);
+const judged = p => Object.keys(picks).some(k => k.split(":")[0] == p.i);
+function deckBuild() {
+  // your team's players first, then the opponent's, then everyone else by projected points; players whose game has kicked off are out
+  const favGame = FAV ? D.games.find(x => x.teams.map(canon).includes(FAV)) : null;
+  const live = D.players.filter(p => !started(p) && dk0(p) >= 3), byPts = (a, b) => dk0(b) - dk0(a);
+  const mine = favGame ? live.filter(p => p.game === favGame.game && canon(p.team) === FAV).sort(byPts) : [];
+  const opp = favGame ? live.filter(p => p.game === favGame.game && canon(p.team) !== FAV).sort(byPts) : [];
+  DECK = [...mine, ...opp, ...live.filter(p => !favGame || p.game !== favGame.game).sort(byPts)];
+  const f = DECK.findIndex(p => !judged(p)); DI = f < 0 ? DECK.length : f; HIST = [];
+}
+const ESPN = e => e ? `https://a.espncdn.com/i/headshots/nfl/players/full/${e}.png` : "";
+function dkImg(p) {
+  const ini = esc(p.name.split(/\s+/).map(w => w[0] || "").join("").slice(0, 3).toUpperCase());
+  const src = p.img ? p.img.replace("f_auto,q_auto", "f_auto,q_auto,w_600") : ESPN(p.espn), fb = p.img ? ESPN(p.espn) : "";
+  if (!src) return `<div class="dk-img"><div class="ini">${ini}</div><div class="grad"></div></div>`;
+  return `<div class="dk-img"><img src="${src}" alt="" data-fb="${fb}" data-ini="${ini}" onerror="if(this.dataset.fb&&this.src!==this.dataset.fb){this.src=this.dataset.fb}else{const d=document.createElement('div');d.className='ini';d.textContent=this.dataset.ini;this.replaceWith(d)}"><div class="grad"></div></div>`;
+}
+function dkCard(p, under) {
+  const game = D.games.find(g => g.game === p.game), sw = swipeOf(p.i);
+  const arrows = Object.keys(picks).filter(k => k.split(":")[0] == p.i && !k.endsWith(":" + SW)).length;
+  const base = dk0(p), now = dkPoints(lineOf(p, true));
+  const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
+  const line = Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => `${fmt(k, v)} ${LABEL[k]}`).join(" · ");
+  const had = sw ? `<div class="dk-had ${sw > 0 ? "up" : "dn"}">you ${sw > 0 ? "boosted" : "faded"} him → ${now.toFixed(1)} pts · swipe again to change</div>`
+            : arrows ? `<div class="dk-had">you set ${arrows} stat arrow${arrows === 1 ? "" : "s"} on him in Full control → ${now.toFixed(1)} pts</div>` : "";
+  return `<div class="dk-card${under ? " under" : ""}" data-i="${p.i}">${dkImg(p)}<div class="dk-stamp up">Boost</div><div class="dk-stamp dn">Fade</div>${had}` +
+    `<div class="dk-body"><div class="dk-nm">${esc(p.name)}${chip}</div><div class="dk-meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}${game ? " · " + esc(game.kickoff.replace(" ET", "")) : ""}</div>` +
+    `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected DraftKings points<br>Burke_v1 line: ${esc(line)}</span></div></div></div>`;
+}
+function deckRender() {
+  if (!D || MODE !== "swipe") return;
+  if (!DECK.length) deckBuild();
+  const st = $("dkstage"), nb = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v > 0).length, nf = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v < 0).length;
+  $("dkprog").textContent = `Week ${D.week} · ${Math.min(DI + 1, DECK.length)} of ${DECK.length} · ${nb} boosted · ${nf} faded`;
+  $("dkundo").style.visibility = HIST.length ? "" : "hidden";
+  if (DI >= DECK.length) {
+    st.innerHTML = `<div class="dk-card"><div class="dk-done"><b>${DECK.length ? "That's every player on the board." : "Nothing left to judge this week: every game has kicked off."}</b><br>${nb} boosted, ${nf} faded. Press <b>Submit</b> to lock them in, and come back any time: each game counts your last lock-in before it kicks off.<br><br><button class="sec" id="dktop">Go through them again</button></div></div>`;
+    const t = $("dktop"); if (t) t.onclick = () => { DI = 0; HIST = []; deckRender(); };
+    return;
+  }
+  const p = DECK[DI], q = DECK[DI + 1];
+  st.innerHTML = (q ? dkCard(q, true) : "") + dkCard(p, false);
+  bindSwipe(st.lastElementChild);
+}
+function bindSwipe(el) {
+  let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false, t0 = 0;
+  const up = el.querySelector(".dk-stamp.up"), dn = el.querySelector(".dk-stamp.dn");
+  const draw = () => { el.style.transform = `translate(${dx}px, ${dy * 0.15}px) rotate(${dx / 18}deg)`; up.style.opacity = Math.min(1, Math.max(0, dx / 80)); dn.style.opacity = Math.min(1, Math.max(0, -dx / 80)); };
+  el.addEventListener("pointerdown", e => { if (e.button) return; on = true; x0 = e.clientX; y0 = e.clientY; t0 = Date.now(); dx = dy = 0; el.classList.remove("back", "fly"); try { el.setPointerCapture(e.pointerId); } catch (x) {} });
+  el.addEventListener("pointermove", e => { if (!on) return; dx = e.clientX - x0; dy = e.clientY - y0; draw(); });
+  const end = () => {
+    if (!on) return; on = false;
+    const v = Math.abs(dx) / Math.max(1, Date.now() - t0);                 // px per ms: a quick flick counts
+    if (Math.abs(dx) > 90 || (Math.abs(dx) > 40 && v > 0.6)) decide(dx > 0 ? 1 : -1);
+    else { el.classList.add("back"); el.style.transform = ""; up.style.opacity = 0; dn.style.opacity = 0; }
+  };
+  el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
+}
+function flyOff(dir, then) {
+  const el = $("dkstage").lastElementChild; if (!el) return then();
+  el.classList.add("fly"); el.style.transform = dir ? `translate(${dir * (Math.max(innerWidth, 500) + 200)}px, -30px) rotate(${dir * 24}deg)` : "translateY(60px) scale(.9)"; el.style.opacity = "0";
+  setTimeout(then, 280);
+}
+function decide(dir) {
+  const p = DECK[DI]; if (!p) return;
+  if (started(p)) { $("dkprog").textContent = "that game has kicked off — locked"; DI++; deckRender(); return; }
+  for (const k of Object.keys(picks)) if (k.split(":")[0] == p.i) delete picks[k];      // one opinion per player
+  picks[p.i + ":" + SW] = dir; ls.set(KEY, JSON.stringify(picks)); HIST.push(DI);
+  if (MOBILE && navigator.vibrate) navigator.vibrate(dir > 0 ? [10, 30, 10] : 14);
+  flyOff(dir, () => { DI++; deckRender(); count(); });
+}
+$("dkboost").onclick = () => decide(1); $("dkfade").onclick = () => decide(-1);
+$("dkskip").onclick = () => { if (DI < DECK.length) { HIST.push(DI); flyOff(0, () => { DI++; deckRender(); }); } };
+$("dkundo").onclick = () => { if (!HIST.length) return; DI = HIST.pop(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
+addEventListener("keydown", e => {
+  if (MODE !== "swipe" || !D || e.target.matches("input,textarea,select") || $("paperwrap").classList.contains("on")) return;
+  if (e.key === "ArrowRight") decide(1); else if (e.key === "ArrowLeft") decide(-1); else if (e.key === "ArrowDown") { e.preventDefault(); $("dkskip").click(); }
+});
 
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
@@ -771,14 +931,14 @@ function buildCode() {
 const dropbox = () => !!(CFG.form_action && CFG.entry_user && CFG.entry_code);
 $("submit").onclick = async () => {
   if (!D) return;
-  if (!Object.keys(picks).length) { $("draft").textContent = "· tap ▲ or ▼ on at least one stat first"; return; }
+  if (!Object.keys(picks).length) { $("draft").textContent = MODE === "swipe" ? "· swipe at least one player first" : "· tap ▲ or ▼ on at least one stat first"; return; }
   if (!me()) { $("who").focus(); $("who").placeholder = "pick a username first"; return; }
   if (pin().length < 4) { $("pin").focus(); $("pin").placeholder = "4+ digits, please"; $("draft").textContent = "· add a PIN so your weeks stay yours"; return; }
   await identity();
   $("code").textContent = buildCode(); $("mstat").textContent = ""; $("mstat").className = "status";
   const n = Object.keys(picks).length;
   if (dropbox()) {
-    $("mtitle").textContent = `${n} arrow${n === 1 ? "" : "s"} for week ${D.week}, playing as ${me()}`;
+    $("mtitle").textContent = `${n} pick${n === 1 ? "" : "s"} for week ${D.week}, playing as ${me()}`;
     $("mhow").innerHTML = "Press <b>Lock them in</b> and you're on the board. Come back and change them whenever you like: each game counts the last set you lock in before it kicks off, so your earlier games keep their arrows.";
     $("send").style.display = ""; $("send").disabled = false; $("send").textContent = "Lock them in"; $("mail").style.display = "none"; $("copy").className = "sec";
   } else {
@@ -799,7 +959,7 @@ $("send").onclick = async () => {
     await fetch(CFG.form_action, {method: "POST", mode: "no-cors", body});   // opaque response by design: the form answers with a redirect
     const at = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
     ls.set(KEY + "_sent", at); ls.set(WKEY() + "_locked", code); $("mlink").style.display = ""; ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
-    $("mstat").className = "status ok"; $("mstat").textContent = `You're in. ${Object.keys(picks).length} arrows locked for week ${D.week} at ${at}. Come back to change them before each game, or after the games to see where you land.`;
+    $("mstat").className = "status ok"; $("mstat").textContent = `You're in. ${Object.keys(picks).length} picks locked for week ${D.week} at ${at}. Come back to change them before each game, or after the games to see where you land.`;
     $("send").textContent = "Locked in ✓"; sentNote(); addMeToIn(); sendContact();
   } catch (e) {
     $("send").disabled = false; $("send").textContent = "Lock them in";

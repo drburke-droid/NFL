@@ -142,3 +142,33 @@ def test_two_lock_ins_seconds_apart_resolve_to_the_later():
                          [("2026-09-24T10:00:07Z", "first try"), ("2026-09-24T10:00:41Z", "the fix")]])
     live, _, sup = fan_rules.live_arrows(rows)
     assert dict(zip(rows.what, live)) == {"first try": False, "the fix": True}
+
+
+def test_swipe_rule_moves_the_whole_line_ten_percent():
+    assert fan_rules.rule_of("s1") == "s1"
+    assert fan_rules.adjusted("s1", "rec_yds", 82.35, 1) == pytest.approx(90.585)
+    assert fan_rules.adjusted("s1", "rec_tds", 0.6, -1) == pytest.approx(0.54)
+    assert fan_rules.min_presses("s1", "rush_yds", 76) == -1
+    assert fan_rules.SWIPE_STAT == -1
+
+
+def test_recorder_expands_a_swipe_into_one_s1_row_per_stat(tmp_path, monkeypatch):
+    ns = recorder()
+    bake = {"bake_id": "b1", "stat_keys": ["pass_yds", "pass_tds", "pass_int", "rush_yds", "rush_tds", "rec", "rec_yds", "rec_tds"],
+            "players": [{"i": 0, "id": "00-1", "name": "A One", "team": "ATL", "opp": "GB", "pos": "RB", "proj": 19.2,
+                         "stats": {"rush_yds": 76.0, "rush_tds": 0.4, "rec": 4.0, "rec_yds": 40.0, "rec_tds": 0.2}},
+                        {"i": 1, "id": "00-2", "name": "B Two", "team": "GB", "opp": "ATL", "pos": "WR", "proj": 12.0,
+                         "stats": {"rec": 5.0, "rec_yds": 60.0, "rec_tds": 0.3}}]}
+    d = tmp_path / "docs" / "fan"; d.mkdir(parents=True)
+    (d / "proj_2026_wk3.json").write_text(json.dumps(bake), encoding="utf-8")
+    monkeypatch.setitem(ns, "ROOT", str(tmp_path))
+    fan, sub, rows = ns["rows_for"](2026, 3, {"n": "Z", "t": "2026-09-25T01:00:00Z", "r": "u1",
+                                              "a": [[0, -1, 1], [1, -1, -3], [1, 6, 2]]})
+    sw = [r for r in rows if r["rule"] == "s1"]
+    assert len(sw) == 5 + 3                                         # every stat in each swiped line
+    a = {r["stat"]: r for r in sw if r["player"] == "A One"}
+    assert a["rush_yds"]["arrows"] == 1 and a["rush_yds"]["adjusted"] == pytest.approx(83.6) and a["rush_yds"]["pct"] == 10.0
+    b = {r["stat"]: r for r in sw if r["player"] == "B Two"}
+    assert b["rec"]["arrows"] == -1 and b["rec"]["adjusted"] == pytest.approx(4.5)   # -3 is clamped to one swipe
+    u = [r for r in rows if r["rule"] == "u1"]
+    assert len(u) == 1 and u[0]["stat"] == "rec_yds" and u[0]["adjusted"] == pytest.approx(80.0)   # +2 x 10 yds
