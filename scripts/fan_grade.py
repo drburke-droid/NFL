@@ -228,44 +228,34 @@ if len(rows):
         shown.setdefault(nm, []).append(k)
     display = {k: (nm if len(ks) == 1 else f"{nm} ({k[-4:]})") for nm, ks in shown.items() for k in ks}
     rows["fan"] = rows.fan_id.map(display)
-# A fan who resubmits after tweaking his arrows produces a second code with a later submitted_at,
-# and the long table is append-only by design, so both submissions sit in it. Only his last word
-# counts: grading both would weigh every arrow he did not change twice over. The superseded rows
-# stay in the CSV as history — this is the one place that decides which of them is live.
-if len(rows):
-    latest = rows.groupby(["season", "week", "fan"]).submitted_at.transform("max")
-    superseded = rows.submitted_at != latest
-    if superseded.any():
-        for (wk, fan), d in rows[superseded].groupby(["week", "fan"]):
-            kept = rows[(rows.week == wk) & (rows.fan == fan) & ~superseded].submitted_at.iloc[0]
-            print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) superseded by a later submission ({kept})")
-        rows = rows[~superseded].copy()
-# An arrow is a forecast or it is nothing. The page bakes the whole week, so a fan scrolling it on
-# Sunday can still put arrows on Thursday's game, and nflverse has that box score — the grader would
-# score those instantly against a result the fan could already have read. Clay's first submission had
-# 21 of 52 arrows on Detroit @ Buffalo, three days after it was played. Kickoff comes from the
-# schedule rather than the bake, so this holds for rows recorded before bake ids existed.
+# Fans come back during the week and lock in again, and the long table is append-only, so every set
+# they sent sits in it. fan_rules.live_arrows decides which arrows are live: per game, the last set
+# locked in BEFORE that game kicked off. An arrow placed after its game kicked off never counts --
+# the page bakes the whole week, so a fan scrolling on Sunday could otherwise "call" Thursday's game
+# against a box score he could already read (Clay's first submission had 21 of 52 arrows on Detroit
+# @ Buffalo three days after it was played). Kickoff comes from the schedule, not the bake, so this
+# holds for rows recorded before bake ids existed.
 _sch = os.path.join(ROOT, "data", f"schedule_{A.season}.csv")
-if len(rows) and os.path.exists(_sch):
-    _s = pd.read_csv(_sch)
-    _s = _s[(_s.season == A.season) & (_s.game_type == "REG")]
-    _k = pd.to_datetime(_s.gameday.astype(str) + " " + _s.gametime.fillna("13:00").astype(str),
-                        errors="coerce").dt.tz_localize("America/New_York", ambiguous="NaT",
-                                                        nonexistent="shift_forward").dt.tz_convert("UTC")
+if len(rows):
     kick = {}
-    for r, k in zip(_s.itertuples(), _k):
-        if pd.notna(k):
-            kick[(int(r.week), r.home_team)] = k
-            kick[(int(r.week), r.away_team)] = k
+    if os.path.exists(_sch):
+        _s = pd.read_csv(_sch)
+        _s = _s[(_s.season == A.season) & (_s.game_type == "REG")]
+        _k = pd.to_datetime(_s.gameday.astype(str) + " " + _s.gametime.fillna("13:00").astype(str),
+                            errors="coerce").dt.tz_localize("America/New_York", ambiguous="NaT",
+                                                            nonexistent="shift_forward").dt.tz_convert("UTC")
+        for r, k in zip(_s.itertuples(), _k):
+            if pd.notna(k):
+                kick[(int(r.week), r.home_team)] = k
+                kick[(int(r.week), r.away_team)] = k
     rows["_kick"] = [kick.get((int(w), t)) for w, t in zip(rows.week, rows.team)]
-    _sub = pd.to_datetime(rows.submitted_at, errors="coerce", utc=True)
-    late = rows._kick.notna() & _sub.notna() & (_sub > rows._kick)
-    if late.any():
-        for (fan, wk), d in rows[late].groupby(["fan", "week"]):
-            games = ", ".join(sorted({f"{r.team} v {r.opp}" for r in d.itertuples()}))
-            print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) dropped — submitted after kickoff ({games})")
-        rows = rows[~late].copy()
-    rows = rows.drop(columns=["_kick"])
+    live, late, superseded = fan_rules.live_arrows(rows)
+    for (fan, wk), d in rows[late].groupby(["fan", "week"]):
+        games = ", ".join(sorted({f"{r.team} v {r.opp}" for r in d.itertuples()}))
+        print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) dropped — submitted after kickoff ({games})")
+    for (fan, wk), d in rows[superseded].groupby(["fan", "week"]):
+        print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) superseded by a later set locked in before their game")
+    rows = rows[live].drop(columns=["_kick"]).copy()
 url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{A.season}.parquet"
 act = pd.read_parquet(url); act = act[act.season_type == "REG"]
 for c in COL.values():

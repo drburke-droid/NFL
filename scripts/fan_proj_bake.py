@@ -18,6 +18,8 @@ Outputs:
 
 Usage: python scripts/fan_proj_bake.py <csv> <season> <week>
 """
+from zoneinfo import ZoneInfo
+import re
 import os, sys, json, csv
 from datetime import datetime, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -40,13 +42,24 @@ players, games = [], {}
 def f(v):
     try: return round(float(v), 2)
     except (TypeError, ValueError): return None
+
+def kick_utc(label, season):
+    """'Thu 09/24 08:15 PM ET' -> '2026-09-25T00:15Z'. The page locks a game's arrows at this instant;
+    January games belong to the season that started the September before."""
+    m = re.match(r"^\w{3} (\d{2})/(\d{2}) (\d{2}):(\d{2}) (AM|PM) ET$", str(label or ""))
+    if not m: return ""
+    mo, dd, hh, mi = int(m[1]), int(m[2]), int(m[3]) % 12 + (12 if m[5] == "PM" else 0), int(m[4])
+    t = datetime(int(season) + (1 if mo < 8 else 0), mo, dd, hh, mi, tzinfo=ZoneInfo("America/New_York"))
+    return t.astimezone(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ")
+
 for r in rows:
     pos = r["Pos"]
     if pos not in STATS: continue
     proj = f(r["Proj"]) or 0.0
     if proj < MIN_PROJ or (r.get("Status") or "") == "OUT": continue
     game = r["Game"]; away, home = [NAME2ABBR.get(g.strip(), g.strip()) for g in game.split("@")]
-    games.setdefault(game, {"game": game, "kickoff": r["Kickoff"], "away": away, "home": home, "teams": set()})["teams"].add(r["Team"])
+    games.setdefault(game, {"game": game, "kickoff": r["Kickoff"], "kick_utc": kick_utc(r["Kickoff"], S),
+                            "away": away, "home": home, "teams": set()})["teams"].add(r["Team"])
     opp = r.get("Opp") or (home if r["Team"] == away else away if r["Team"] == home else "")
     stats = {k: f(r.get(k)) for k in STATS[pos]}
     if pos == "WR" and (stats.get("rush_yds") or 0) < 3: stats.pop("rush_yds", None)   # only show a WR's rushing when it is a real part of his line

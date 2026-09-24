@@ -43,6 +43,7 @@
   .st button { background:#232833; color:var(--ink); border:0; border-radius:6px; width:30px; height:28px; font-size:14px; cursor:pointer; padding:0; }
   .st button:active { background:#2f3644; }
   .st.up { border-color:#2a7a40; } .st.dn { border-color:#8a2a2a; }
+  .st.lock button { opacity:.3; cursor:not-allowed; } .game .ko { color:var(--warn); }
   @media (max-width:520px) { .stats { grid-template-columns:1fr; } }
   .more { background:none; border:1px dashed var(--line); color:var(--mut); border-radius:8px; padding:6px; width:100%; font-size:12px; cursor:pointer; margin:2px 0 6px; }
   .bar { position:fixed; left:0; right:0; bottom:0; background:#12151c; border-top:1px solid var(--line); padding:10px 14px calc(10px + env(safe-area-inset-bottom, 0px)); }
@@ -243,7 +244,12 @@
       <div style="flex:2 1 200px"><label for="who">Your username (shows on the leaderboard)</label><input id="who" type="text" placeholder="pick a name and keep it all season" autocomplete="nickname" maxlength="24"></div>
       <div style="flex:1 1 120px"><label for="pin">Your PIN (4+ digits)</label><input id="pin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="same PIN every week" autocomplete="off" maxlength="8"></div>
     </div>
-    <div class="how" style="margin-top:6px" id="whohow">Username + PIN is you: use the same pair on any phone or laptop and your weeks add up in one entry. The PIN never leaves your device (the page sends a scrambled fingerprint of it), so nobody can post picks under your name without it. Both are saved here. Submit as often as you like before kickoff — your latest picks count.</div>
+    <div class="how" style="margin-top:6px" id="whohow">Username + PIN is you: use the same pair on any phone or laptop and your weeks add up in one entry. The PIN never leaves your device (the page sends a scrambled fingerprint of it), so nobody can post picks under your name without it. Both are saved here. Submit as often as you like: each game counts the last set you lock in before it kicks off.</div>
+    <div class="row" style="margin-top:8px;align-items:flex-end">
+      <div style="flex:2 1 220px"><label for="rcode">Picks from another device? Paste your link or code</label><input id="rcode" type="text" placeholder="the link you saved, or a FAN1 code" autocomplete="off" spellcheck="false"></div>
+      <div style="flex:0 0 auto;display:flex;gap:6px"><button class="sec" id="rload">Load</button><button class="sec" id="rcopy">Copy my link</button></div>
+    </div>
+    <div class="how" style="margin-top:4px" id="rmsg">Your picks stay saved on this device. To carry on from another phone or computer, copy your link and open it there &mdash; email or text it to yourself.</div>
     <div class="row" style="margin-top:8px;align-items:flex-end">
       <div style="flex:1 1 200px"><label for="fav">Your team — the one you know best</label><select id="fav"><option value="">pick a team</option></select></div>
       <div style="flex:1 1 200px"><label for="email">Email (optional)</label><input id="email" type="text" inputmode="email" placeholder="you@example.com" autocomplete="email" maxlength="80"></div>
@@ -253,7 +259,7 @@
   </div>
 
   <div class="card how">
-    <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat a set amount: <b>half a touchdown</b> (or interception), <b>one catch</b>, <b>10 rushing or receiving yards</b>, <b>25 passing yards</b>. ▼ stops at zero. The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
+    <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat a set amount: <b>half a touchdown</b> (or interception), <b>one catch</b>, <b>10 rushing or receiving yards</b>, <b>25 passing yards</b>. ▼ stops at zero. The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land. Come back any time: your picks stay on this device, your link opens them on any other, and a game's arrows lock when it kicks off.
     <div class="legend"><span><b style="color:var(--up)">▲</b> <b style="color:var(--down)">▼</b> ½ TD · 1 catch · 10 yds · 25 pass yds</span><span>DraftKings scoring</span><span>arrows lock at kickoff</span></div>
   </div>
 
@@ -337,6 +343,7 @@
     <button class="big" id="send" style="display:none">Lock them in</button>
     <a class="big" id="mail" style="text-align:center;text-decoration:none;display:none">Email it</a>
     <button class="sec" id="copy">Copy code</button>
+    <button class="sec" id="mlink" style="display:none">Link for another device</button>
     <button class="sec" id="close">Close</button>
   </div>
   <details style="margin-top:8px"><summary class="how" style="cursor:pointer">show the code</summary><div class="code" id="code"></div></details>
@@ -461,6 +468,89 @@ function ptsHtml(p) {
   const c = d > 0 ? "up" : "dn";
   return `proj <small>${base.toFixed(1)}</small><b class="${c}">${Math.max(0, now).toFixed(1)}</b> pts<span class="d ${c}">${d > 0 ? "+" : "−"}${Math.abs(d).toFixed(1)}</span>`;
 }
+// ---- coming back: picks that follow a fan across re-bakes, kickoffs and devices ----
+const kickMs = g => g && g.kick_utc ? Date.parse(g.kick_utc) : NaN;
+const started = p => { const t = kickMs(D.games.find(g => g.game === p.game)); return !isNaN(t) && Date.now() >= t; };
+const WKEY = () => "fanpicks_" + D.season + "_wk" + D.week;          // per week, whichever bake
+const sig = o => Object.keys(o).sort().map(k => k + "=" + o[k]).join(",");
+const BAKES = {};
+async function bakeOf(b) {                                             // a frozen bake, to read old row numbers
+  if (!b || b === D.bake_id) return D;
+  if (!(b in BAKES)) BAKES[b] = await fetch(`fan/proj_${D.season}_wk${D.week}_${b}.json`).then(r => r.ok ? r.json() : null).catch(() => null);
+  return BAKES[b];
+}
+// Picks keyed by another bake's row numbers, moved onto this bake by player id (name + position when a
+// player has no id). A re-bake renumbers everyone, so without this a mid-week re-bake emptied every
+// draft. A player the new bake dropped (ruled out) drops out; presses are clamped to the new zero floor.
+// `pct` = the picks were made under the old 10%-a-press rule: keep where each arrow landed, in units.
+function remap(src, obj, pct) {
+  if (!src) return {};
+  const same = src === D || src.bake_id === D.bake_id;
+  const byId = new Map(), byName = new Map();
+  for (const p of D.players) { if (p.id) byId.set(p.id, p.i); byName.set(p.name + "|" + p.pos, p.i); }
+  const out = {};
+  for (const [key, n0] of Object.entries(obj || {})) {
+    const [i, si] = key.split(":").map(Number), p = src.players[i], k = src.stat_keys[si];
+    if (!p || !k || !(k in STEP_U)) continue;
+    const j = same ? i : (p.id && byId.has(p.id)) ? byId.get(p.id) : byName.get(p.name + "|" + p.pos);
+    if (j == null) continue;
+    const v = D.players[j].stats[k]; if (v == null) continue;
+    let n = n0;
+    if (pct) { const v0 = p.stats[k] || 0, land = Math.max(0, v0 * (1 + 0.1 * n0)); n = land === 0 ? minN(k, v) : Math.round((land - v0) / STEP_U[k]); }
+    const u = Math.min(MAX_N, Math.max(minN(k, v), n));
+    if (u) out[j + ":" + D.stat_keys.indexOf(k)] = u;
+  }
+  return out;
+}
+function decodeCode(c) {
+  const m = String(c || "").match(/FAN1\.(\d{4})\.(\d{1,2})\.([A-Za-z0-9_\-]+)/);
+  if (!m) return null;
+  try {
+    const b = m[3].replace(/-/g, "+").replace(/_/g, "/");
+    return {season: +m[1], week: +m[2], j: JSON.parse(decodeURIComponent(escape(atob(b + "=".repeat((4 - b.length % 4) % 4)))))};
+  } catch (e) { return null; }
+}
+const codePicks = j => Object.fromEntries((j.a || []).map(([i, si, n]) => [i + ":" + si, n]));
+// The link that opens this page with your picks on any device: username, time, bake and arrows. Not the
+// PIN, and not the fingerprint made from it, so a link that gets passed around cannot sign in as you.
+function resumeLink() {
+  const a = Object.entries(picks).map(([k, v]) => { const [i, si] = k.split(":").map(Number); return [i, si, v]; });
+  const j = {n: me(), t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", r: RULE, a};
+  return location.origin + location.pathname + "#p=FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
+}
+const rsay = t => { $("rmsg").textContent = t; };
+async function loadCode(c, from) {
+  const x = decodeCode(c);
+  if (!x) return rsay("That doesn't look like a Fan Picks link or code.");
+  if (x.season !== D.season || x.week !== D.week) return rsay(`That ${from} is for week ${x.week} of ${x.season}; this is week ${D.week}.`);
+  const src = await bakeOf(x.j.b);
+  if (!src) return rsay(`Couldn't read the projections that ${from} was made on.`);
+  const got = remap(src, codePicks(x.j), x.j.r !== RULE), n = Object.keys(got).length;
+  if (!n) return rsay(`None of the arrows in that ${from} are on this week's board any more.`);
+  const have = Object.keys(picks).length;
+  if (have && sig(picks) !== sig(got) && !confirm(`Replace the ${have} arrow${have === 1 ? "" : "s"} on this device with the ${n} from your ${from}?`)) return rsay("Kept the picks already on this device.");
+  picks = got; ls.set(KEY, JSON.stringify(picks));
+  if (x.j.n && !$("who").value) { $("who").value = x.j.n; ls.set("fanpicks_who", x.j.n); identity().then(renderLead); }
+  render(); count();
+  rsay(`Loaded ${n} arrow${n === 1 ? "" : "s"} from your ${from}${x.j.n ? " (" + x.j.n + ")" : ""}. Use the same username and PIN as before — a different PIN makes a new player — then Submit to lock them in from here.`);
+}
+// A draft left under an earlier bake of this week (the page was re-baked since): bring it forward.
+async function carryDraft() {
+  if (Object.keys(picks).length) return false;
+  const pre = WKEY() + "_", olds = [];
+  try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i), m = k && k.startsWith(pre) && k.match(/_(\d+)_u1$/); if (m && m[1] !== String(D.bake_id)) olds.push([m[1], k]); } } catch (e) { return false; }
+  if (!olds.length) return false;
+  olds.sort(); const [b, k] = olds[olds.length - 1];
+  let old = {}; try { old = JSON.parse(ls.get(k) || "{}") || {}; } catch (e) {}
+  const got = remap(await bakeOf(b), old, false);
+  for (const [, ok] of olds) ls.del(ok);
+  if (!Object.keys(got).length || Object.keys(picks).length) return false;
+  picks = got; ls.set(KEY, JSON.stringify(picks)); return true;
+}
+function armKickTimer() {                                              // lock each game's arrows as it kicks off
+  const now = Date.now(), next = D.games.map(kickMs).filter(t => t > now).sort((a, b) => a - b)[0];
+  if (next && next - now < 2147483647) setTimeout(() => { render(); count(); armKickTimer(); }, next - now + 1000);
+}
 const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
 let FAV = ls.get("fanpicks_team") || "";        // the team the fan knows best; must follow ls
 const esc = s => String(s == null ? "" : s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
@@ -511,7 +601,13 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { const o = document.createElement("option"); o.value = ab; o.textContent = nm; $("fav").appendChild(o); }
   $("fav").value = FAV;
-  render(); count(); sentNote(); leaderboard();
+  render(); count(); leaderboard(); armKickTimer();
+  carryDraft().then(moved => { if (moved) { render(); count(); rsay("Brought your picks forward to this week's updated projections."); } });
+  if (location.hash.startsWith("#p=")) {                 // opened from a saved link
+    const c = decodeURIComponent(location.hash.slice(3));
+    try { history.replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    loadCode(c, "link");
+  }
 }).catch(e => { $("list").innerHTML = '<div class="empty">could not load this week\'s projections (' + e.message + ')</div>'; });
 
 const norm = s => (s || "").toLowerCase();
@@ -526,7 +622,7 @@ function render() {
     if (g && game.game !== g) continue;
     const ps = D.players.filter(p => p.game === game.game && (!pos || p.pos === pos) && (!q || norm(p.name).includes(q) || norm(p.team) === q));
     if (!ps.length) continue;
-    h += `<div class="game"><b>${game.away} @ ${game.home}</b><span>${game.kickoff}</span></div>`;
+    h += `<div class="game"><b>${game.away} @ ${game.home}</b><span>${Date.now() >= kickMs(game) ? '<span class="ko">kicked off · arrows locked</span>' : game.kickoff}</span></div>`;
     const order = game === favGame && canon(game.home) === FAV ? [game.home, game.away] : [game.away, game.home];
     for (const team of order) {
       const tp = ps.filter(p => p.team === team).sort((a, b) => dk0(b) - dk0(a));
@@ -549,10 +645,11 @@ const fmt = (k, v) => k.endsWith("tds") || k === "pass_int" || k === "rec" ? v.t
 function stat(i, k, v) {
   const s = D.stat_keys.indexOf(k), a = picks[i + ":" + s] || 0;
   const adj = adjOf(k, v, a);
-  const cls = a > 0 ? "up" : a < 0 ? "dn" : "";
+  const lock = started(D.players[i]);
+  const cls = (a > 0 ? "up" : a < 0 ? "dn" : "") + (lock ? " lock" : "");
   const arr = a ? (a > 0 ? "+" : "−") + fmt(k, Math.abs(a * STEP_U[k])) : "";
   const val = a ? `<small>${fmt(k, v)}</small>${fmt(k, adj)}` : fmt(k, v);
-  return `<div class="st ${cls}" data-i="${i}" data-s="${s}"><span class="k">${LABEL[k]}</span><span class="v">${val}</span><span class="arr ${a > 0 ? "up" : a < 0 ? "down" : ""}">${arr}</span><button data-d="-1" title="−${fmt(k, STEP_U[k])} ${LABEL[k]}">▼</button><button data-d="1" title="+${fmt(k, STEP_U[k])} ${LABEL[k]}">▲</button></div>`;
+  return `<div class="st ${cls}" data-i="${i}" data-s="${s}"><span class="k">${LABEL[k]}</span><span class="v">${val}</span><span class="arr ${a > 0 ? "up" : a < 0 ? "down" : ""}">${arr}</span><button data-d="-1" title="−${fmt(k, STEP_U[k])} ${LABEL[k]}"${lock ? " disabled" : ""}>▼</button><button data-d="1" title="+${fmt(k, STEP_U[k])} ${LABEL[k]}"${lock ? " disabled" : ""}>▲</button></div>`;
 }
 $("list").addEventListener("click", e => {
   const b = e.target.closest("button");
@@ -561,6 +658,7 @@ $("list").addEventListener("click", e => {
   const st = b.closest(".st"); if (!st) return;
   const key = st.dataset.i + ":" + st.dataset.s, d = +b.dataset.d;
   const p0 = D.players[+st.dataset.i], k0 = D.stat_keys[+st.dataset.s];
+  if (started(p0)) { $("draft").textContent = "· that game has kicked off — its arrows are locked"; return; }
   let a = Math.min(MAX_N, Math.max(minN(k0, p0.stats[k0]), (picks[key] || 0) + d));
   if (a === 0) delete picks[key]; else picks[key] = a;
   ls.set(KEY, JSON.stringify(picks));
@@ -569,10 +667,16 @@ $("list").addEventListener("click", e => {
   const card_ = document.querySelector(`.p[data-i="${p.i}"]`); if (card_) { card_.classList.toggle("touched", Object.keys(picks).some(x => x.split(":")[0] == p.i)); const pt = card_.querySelector(".pts"); if (pt) pt.innerHTML = ptsHtml(p); }
   count();
 });
-function count() { const n = Object.keys(picks).length; $("cnt").textContent = n; $("draft").textContent = n ? "· saved on this device" : ""; }
-function sentNote() {
-  const s = ls.get(KEY + "_sent");
-  if (s) $("draft").textContent = `· locked in at ${s}${Object.keys(picks).length ? " — edit and submit again any time before kickoff" : ""}`;
+function count() { const n = Object.keys(picks).length; $("cnt").textContent = n; $("draft").textContent = n ? "· saved on this device" : ""; sentNote(); }
+async function sentNote() {
+  const lc = D && ls.get(WKEY() + "_locked");
+  if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}`; return; }
+  const x = decodeCode(lc); if (!x || x.week !== D.week) return;
+  const locked = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE);
+  let changed = 0; for (const k of new Set([...Object.keys(locked), ...Object.keys(picks)])) if ((locked[k] || 0) !== (picks[k] || 0)) changed++;
+  const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
+  $("draft").textContent = `· locked in ${at} (${(x.j.a || []).length} arrow${(x.j.a || []).length === 1 ? "" : "s"})` +
+    (changed ? ` — ${changed} change${changed === 1 ? "" : "s"} not locked in yet` : " — all locked in");
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
@@ -609,7 +713,7 @@ $("submit").onclick = async () => {
   const n = Object.keys(picks).length;
   if (dropbox()) {
     $("mtitle").textContent = `${n} arrow${n === 1 ? "" : "s"} for week ${D.week}, playing as ${me()}`;
-    $("mhow").innerHTML = "Press <b>Lock them in</b> and you're on the board. You can come back and submit again before kickoff — the latest set counts.";
+    $("mhow").innerHTML = "Press <b>Lock them in</b> and you're on the board. Come back and change them whenever you like: each game counts the last set you lock in before it kicks off, so your earlier games keep their arrows.";
     $("send").style.display = ""; $("send").disabled = false; $("send").textContent = "Lock them in"; $("mail").style.display = "none"; $("copy").className = "sec";
   } else {
     $("mtitle").textContent = "Your picks are ready";
@@ -628,8 +732,8 @@ $("send").onclick = async () => {
     const body = new URLSearchParams(); body.append(CFG.entry_user, me()); body.append(CFG.entry_code, code);
     await fetch(CFG.form_action, {method: "POST", mode: "no-cors", body});   // opaque response by design: the form answers with a redirect
     const at = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
-    ls.set(KEY + "_sent", at); ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
-    $("mstat").className = "status ok"; $("mstat").textContent = `You're in. ${Object.keys(picks).length} arrows locked for week ${D.week} at ${at}. Come back after the games to see where you land.`;
+    ls.set(KEY + "_sent", at); ls.set(WKEY() + "_locked", code); $("mlink").style.display = ""; ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
+    $("mstat").className = "status ok"; $("mstat").textContent = `You're in. ${Object.keys(picks).length} arrows locked for week ${D.week} at ${at}. Come back to change them before each game, or after the games to see where you land.`;
     $("send").textContent = "Locked in ✓"; sentNote(); addMeToIn(); sendContact();
   } catch (e) {
     $("send").disabled = false; $("send").textContent = "Lock them in";
@@ -642,6 +746,16 @@ $("copy").onclick = async () => {
   catch (e) { const r = document.createRange(); r.selectNodeContents($("code")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); $("mstat").textContent = "select the code above and copy it"; }
 };
 $("close").onclick = () => $("modal").classList.remove("on");
+async function shareLink(el) {
+  if (!Object.keys(picks).length) return rsay("Tap some arrows first — then your link carries them.");
+  const url = resumeLink();
+  try { if (navigator.share) { await navigator.share({title: "My Fan Picks", text: `My Fan Picks for week ${D.week}`, url}); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+  try { await navigator.clipboard.writeText(url); rsay("Link copied — open it on your other device (email or text it to yourself). It holds your picks, not your PIN."); if (el) el.textContent = "Copied ✓"; }
+  catch (e) { prompt("Copy this link and open it on your other device:", url); }
+}
+$("rcopy").onclick = () => shareLink($("rcopy"));
+$("mlink").onclick = () => shareLink($("mlink"));
+$("rload").onclick = () => { const v = $("rcode").value.trim(); if (v) loadCode(v, v.includes("#p=") ? "link" : "code"); };
 $("modal").addEventListener("click", e => { if (e.target === $("modal")) $("modal").classList.remove("on"); });
 
 // ---- the newspaper (docs/fan/grade.json + sabersim_accuracy.json + submissions.json; the sheet itself for "who's in") ----
