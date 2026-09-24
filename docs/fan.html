@@ -324,7 +324,7 @@
 
   <div class="card how" id="howcard">
     <b>How to play.</b> Below are THE ORACLE's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat a set amount: <b>half a touchdown</b> (or interception), <b>one catch</b>, <b>10 rushing or receiving yards</b>, <b>25 passing yards</b>. ▼ stops at zero. The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land. Come back any time: your picks stay on this device, your link opens them on any other, and a game's arrows lock when it kicks off.
-    <div class="legend"><span><b style="color:var(--up)">▲</b> <b style="color:var(--down)">▼</b> ½ TD · 1 catch · 10 yds · 25 pass yds</span><span>DraftKings scoring</span><span>arrows lock at kickoff</span></div>
+    <div class="legend"><span><b style="color:var(--up)">▲</b> <b style="color:var(--down)">▼</b> ½ TD · 1 catch · 10 yds · 25 pass yds</span><span>full-PPR scoring</span><span>arrows lock at kickoff</span></div>
   </div>
 
   <div class="card" id="filtercard">
@@ -388,7 +388,7 @@
     <div class="colh" style="margin-top:10px">Season standings <small>every model, ranked by average error &middot; W-L = weeks beating THE ORACLE</small></div>
     <div id="npseason" class="np-empty">loading&hellip;</div>
     <div class="you" id="you" style="color:#333"></div>
-    <div class="np-note" id="npnote">Error is fantasy points off per player; lower is better. THE ORACLE and the fan models: the <b>median</b> miss over the skill players who played that week, DraftKings scoring. The big sites: the mean accuracy each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
+    <div class="np-note" id="npnote">Error is fantasy points off per player; lower is better. THE ORACLE and the fan models: the <b>median</b> miss over the skill players who played that week, full-PPR scoring. The big sites: the mean accuracy each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
     <div class="sep"></div>
     <div class="head">Man Meets Machine</div>
     <div class="deck">THE ORACLE already ranks with the best projection sites in the business. It is not looking for a rival. It is looking for a partner.</div>
@@ -404,8 +404,8 @@
     <div class="sep"></div>
     <div class="colh">What this is, and why <small>from the model's owner</small></div>
     <div class="story one">
-      <p><b>Why.</b> THE ORACLE is an NFL projection model that ranks with <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b>, and goes head-to-head with the DraftKings prop lines every game. The question this page asks is simple: can people and the machine together beat either one alone?</p>
-      <p><b>How accuracy is measured.</b> A projection is a guess at a player's fantasy points. After the game we take the gap between the guess and the box score, ignore which way it missed, and average it over every skill player projected that week, inactives at zero. A <b>4.0</b> means the typical projection was four points off. <b>Lower is better.</b> Points are DraftKings scoring, the scoring the big sites publish their own accuracy in.</p>
+      <p><b>Why.</b> THE ORACLE is an NFL projection model that ranks with <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b>, and goes head-to-head with the sportsbook prop lines every game. The question this page asks is simple: can people and the machine together beat either one alone?</p>
+      <p><b>How accuracy is measured.</b> A projection is a guess at a player's fantasy points. After the game we take the gap between the guess and the box score, ignore which way it missed, and average it over every skill player projected that week, inactives at zero. A <b>4.0</b> means the typical projection was four points off. <b>Lower is better.</b> Points are full-PPR fantasy scoring, the same scoring the big sites publish their accuracy in.</p>
     </div>
     <div class="sep"></div>
     <div class="cols">
@@ -914,7 +914,7 @@ function dkCard(p, under) {
   const last = lw.length ? `<div class="dk-last">${lw.map(([w, v]) => `<span>wk ${w} <b>${v == null ? "—" : v.toFixed(1)}</b></span>`).join("")}<span>proj <b>${base.toFixed(1)}</b></span></div>` : "";
   return `<div class="dk-card${under ? " under" : ""}" data-i="${p.i}">${dkImg(p)}<div class="dk-stamp up">Boost</div><div class="dk-stamp dn">Fade</div>${had}` +
     `<div class="dk-body"><div class="dk-nm">${esc(p.name)}${chip}</div><div class="dk-meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}${game ? " · " + esc(game.kickoff.replace(" ET", "")) : ""}</div>` +
-    `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected DraftKings<br>points this week</span></div>` +
+    `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected fantasy<br>points this week</span></div>` +
     `<div class="dk-line">ORACLE: ${esc(line)}</div>${last}</div></div>`;
 }
 function deckRender() {
