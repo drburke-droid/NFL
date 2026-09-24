@@ -353,6 +353,24 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   draft saved on a device under the old rule converts to units on load, by where the arrow LANDED
   (ten ▼ still means zero). Verified in Chromium: the page's gamma matches scipy to 1e-6, and every
   card, tap, floor, conversion and Oracle number matched an independent Python computation.
+- **The Oracle ranks Burke_v1 on ALL projected players, inactives included (owner's call, 2026-09-24).**
+  `ORACLE_BASIS = "all"` in `docs/fan.html` reads `mae_vs_sites_all` (every skill player projected,
+  an inactive scored 0) instead of the played-only `mae_vs_sites`. On it Burke_v1 is **1st of 8**
+  (wk1 4.05, wk2 3.73; played-only was 5th, 4.77 / 4.30). Know what it rests on: an inactive we zeroed
+  at T-80 grades as a perfect row, and against the FFA consensus those rows are MORE than the whole
+  edge (18 inactives FFA's Saturday file still had at 3+ pts are worth -0.18 of a -0.13 gap; played
+  only, the two are level at +0.02). It is also not necessarily the pool FFA grades the sites on --
+  the consensus itself ranks 5th on our played pool, which suggests theirs is easier. The page copy
+  was reworded to say what is counted (no "like for like", no "only players who took the field").
+  Set `ORACLE_BASIS = "played"` and restore that copy to go back. The owner is weighing a real
+  eight-site ranking from per-source projections (ffanalytics with sources kept separate), which
+  would remove the need for either choice.
+- **Kickers: Subvertadown publishes "Standard" (3/3/3/4/5 by distance) and "Decimal" (0.1/yd).** Our
+  grading is Standard's brackets + 1 per PAT, no miss penalty. The pastes carry no label; their mean
+  (8.46 over 96 kicker-weeks) matches our Standard (8.37 league mean 2023-25) but cannot rule out
+  Decimal-with-miss-penalties (8.34). Copy from the Standard tab. Kickers are outside the sites
+  comparison entirely (it is QB/RB/WR/TE). The grader's rule text calls K scoring "DK kicker
+  scoring"; DraftKings classic has no kicker, so read that as Standard.
 - **gm/ tests are red on main (found 2026-09-24, not caused by the above).** 15 fail and 29 error
   identically with or without the DraftKings change. `gm/players.py:ffa_file_scored` needs a
   `player` column; this week's `data/ffanalytics/FFAn_weekly/raw_stats_2026_wk3.csv` is FFA's

@@ -1,5 +1,5 @@
 {
- "note": "Published weekly accuracy of the big fantasy sites: mean absolute error per player in DraftKings fantasy points, QB/RB/WR/TE, from Fantasy Football Analytics' DFS accuracy page. Pasted by hand as each week closes. The model's own number is mae_vs_sites in docs/sabersim_accuracy.json -- the same scoring, positions and players (those with a box-score row that week) -- so the two rank together.",
+ "note": "Published weekly accuracy of the big fantasy sites: mean absolute error per player in DraftKings fantasy points, QB/RB/WR/TE, from Fantasy Football Analytics' DFS accuracy page. Pasted by hand as each week closes. The Oracle ranks Burke_v1 on mae_vs_sites_all in docs/sabersim_accuracy.json -- every skill player projected, inactives at 0 (ORACLE_BASIS in docs/fan.html). That is not necessarily the sites' own player pool; mae_vs_sites is the played-only figure.",
  "metric": "MAE, fantasy points per player, lower is better",
  "weeks": {
   "1": {"numberFire": 4.41, "FleaFlicker": 4.44, "ESPN": 4.58, "FantasySharks": 4.64, "CBS": 4.78, "FFToday": 4.99, "FantasyPros": 6.73},

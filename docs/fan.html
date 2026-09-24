@@ -232,7 +232,7 @@
 
   <details class="card how" id="why"><summary style="cursor:pointer"><b>Why this exists, and how accuracy is measured</b> — tap to read</summary>
     <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>Burke_v1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than Burke_v1's earn a place in it.
-    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade Burke_v1 the hard way, on players who played. Points are <b>DraftKings</b> scoring (full PPR, 4-point passing TD, −1 per interception and fumble lost, +3 at 300 passing, 100 rushing or 100 receiving yards), the scoring the big sites publish their own accuracy in, so the comparison is like for like.</div>
+    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every skill player Burke_v1 projected that week &mdash; players ruled out included, at zero, so catching an inactive in time counts as a hit and missing one counts against. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Points are <b>DraftKings</b> scoring (full PPR, 4-point passing TD, −1 per interception and fumble lost, +3 at 300 passing, 100 rushing or 100 receiving yards), the scoring the big sites publish their own accuracy in. The big sites' figures are the ones they publish.</div>
     <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), Burke_v1, and every fan's version of it.</div>
 </div>
   </details>
@@ -302,14 +302,14 @@
     <div class="colh" style="margin-top:10px">Season standings <small>every model, ranked by average error &middot; W-L = weeks beating Burke_v1</small></div>
     <div id="npseason" class="np-empty">loading&hellip;</div>
     <div class="you" id="you" style="color:#333"></div>
-    <div class="np-note">Error is the average number of fantasy points a model was off, over every player who took the field; lower is better. A <b>win</b> is a week with a lower error than Burke_v1's, a <b>loss</b> a week with a higher one. The big sites are scored on every week they publish; a fan's model only on the weeks that fan placed arrows.</div>
+    <div class="np-note">Error is the average number of fantasy points a model was off; lower is better. Burke_v1 and the fan models are scored on every skill player projected that week, a player ruled out counting as zero; the big sites as each publishes it. A <b>win</b> is a week with a lower error than Burke_v1's, a <b>loss</b> a week with a higher one. The big sites are scored on every week they publish; a fan's model only on the weeks that fan placed arrows.</div>
     <div class="sep"></div>
     <div class="head">Man Meets Machine in Search of the Perfect Projection</div>
     <div class="deck">Burke_v1 already ranks with the best fantasy sites in the business. It is not looking for a rival. It is looking for a partner.</div>
     <div class="byline">From the desk of the model &middot; Kuhn &amp; Friends, and anyone else who wants in</div>
     <div class="story">
       <p>Every projection system is blind to something. A model can read ten seasons of box scores, the weather, the Vegas line and the injury report, and still not know that a receiver limped off the practice field on Friday, that a coach has fallen out of love with his running back, or that a rookie has the whole locker room believing. People know those things. They just have never had a way to prove it.</p>
-      <p>This page is that way. Each week Burke_v1 posts its projected stat line for every skill player on the slate. You read them and, where you know better, you say so: a tap of <b>&#9650;</b> adds a set amount &mdash; half a touchdown, a catch, ten yards &mdash; and a tap of <b>&#9660;</b> takes it away. Leave alone whatever you agree with. Press <i>Lock them in</i> and your arrows become a model of their own &mdash; <b>you + Burke_v1</b> &mdash; that is scored after the games exactly the way the machine is scored: on every player who took the field, by how many fantasy points it was off.</p>
+      <p>This page is that way. Each week Burke_v1 posts its projected stat line for every skill player on the slate. You read them and, where you know better, you say so: a tap of <b>&#9650;</b> adds a set amount &mdash; half a touchdown, a catch, ten yards &mdash; and a tap of <b>&#9660;</b> takes it away. Leave alone whatever you agree with. Press <i>Lock them in</i> and your arrows become a model of their own &mdash; <b>you + Burke_v1</b> &mdash; that is scored after the games exactly the way the machine is scored: on every player it projected, by how many fantasy points it was off.</p>
       <h4>The homer's edge</h4>
       <p>There is reason to think the fans will hold their own. The league behind this page has run for twenty-two seasons, and its draft history keeps whispering the same thing: the dart throws land a little more often when the thrower knows the team. A <i>dart throw</i>, in this league's language, is a cheap late-auction buy &mdash; a dollar or two, three at most &mdash; on a player the consensus rankings do not rate, taken on a hunch; it counts as a hit if he ends up worth a starting spot. Most darts miss, which is what makes them darts. But the ones thrown at a manager's own team, the roster he watches every week and argues about at dinner, have hit at a slightly better clip than the ones thrown at everyone else's. That is a small edge in a small sample, and the market prices those players the same for everybody. It is exactly the kind of thing this page is built to test properly: does knowing a team well tell you something the numbers miss, and can a model be taught to listen?</p>
       <h4>A contest, and a collaboration</h4>
@@ -317,7 +317,7 @@
       <p>There is a stranger prize, too. A fan who is reliably wrong is as useful as one who is reliably right &mdash; maybe more so, because a consistent miss is a signal the model can simply flip. If you fade a player every time the crowd is high on him and he keeps going off anyway, the model learns to do the opposite of you, and it gets better for it. So getting things right is not the only way to leave a mark. Getting things wrong the same way, week after week, leaves one too. The only fan who teaches the machine nothing is the one who is right about half the time.</p>
       <p>Coming to these pages: <b>The Crowd + Burke_v1</b>, a single model built from everyone's arrows at once, so we can see whether many partial views add up to a better one than any of us holds alone.</p>
       <h4>The fine print</h4>
-      <p>Every model is graded on the same player-games, and only on players who played; an inactive counts for or against nobody. Arrows lock at kickoff. A win in the standings is a week with a lower error than Burke_v1's; a fan who places no arrows in a week is neither scored nor charged for it. Your username and PIN are you, on any device. And the big sites are listed with the accuracy they publish themselves, so nobody is grading them but them.</p>
+      <p>Burke_v1 and every fan model are graded on the same player-games: every skill player projected that week, a player ruled out counting as zero. Arrows lock at kickoff. A win in the standings is a week with a lower error than Burke_v1's; a fan who places no arrows in a week is neither scored nor charged for it. Your username and PIN are you, on any device. And the big sites are listed with the accuracy they publish themselves, so nobody is grading them but them.</p>
     </div>
     <div class="sep"></div>
     <div class="cols">
@@ -646,6 +646,11 @@ $("modal").addEventListener("click", e => { if (e.target === $("modal")) $("moda
 
 // ---- the newspaper (docs/fan/grade.json + sabersim_accuracy.json + submissions.json; the sheet itself for "who's in") ----
 let ACC = null, SITES = null;
+// Which Burke_v1 figure the Oracle ranks against the sites' published numbers (owner's choice,
+// 2026-09-24): "all" = every skill player projected, inactives at zero (mae_vs_sites_all); "played"
+// = only players with a box-score row (mae_vs_sites). "all" is the most favourable basis for us, and
+// the page copy above says what it counts. Change the copy with it if this is ever switched back.
+const ORACLE_BASIS = "all";
 function leaderboard() {
   Promise.all([
     fetch("fan/grade.json?" + Date.now()).then(r => r.json()).catch(() => null),
@@ -676,11 +681,13 @@ const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "ne
 const isMe = f => (IDH && f.fan_id === IDH) || (!IDH && f.fan === me());
 function standings() {
   // every model on one list: the big sites (their published weekly error), the unedited model
-  // (its played-only error), and the model with each fan's arrows applied -- ranked by the average
+  // (its error on ORACLE_BASIS), and the model with each fan's arrows applied -- ranked by the average
   // over the weeks each one has numbers for
   // mae_vs_sites is scored the way the sites score themselves (DraftKings, QB/RB/WR/TE, players who
   // played); mae_played is PPR with kickers and would rank Burke_v1 against them on a different basis
-  const mw = ((ACC && ACC.weeks) || []).map(w => w.mae_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.mae_vs_sites, n: w.n_vs_sites}
+  const pick = w => ORACLE_BASIS === "all" && w.mae_vs_sites_all && w.n_vs_sites_all ? {week: w.week, mae: w.mae_vs_sites_all, n: w.n_vs_sites_all}
+                   : w.mae_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.mae_vs_sites, n: w.n_vs_sites} : null;
+  const mw = ((ACC && ACC.weeks) || []).map(w => pick(w) ? pick(w)
                                                   : w.mae_played && w.n_played ? {week: w.week, mae: w.mae_played, n: w.n_played} : null).filter(Boolean);
   const sw = (SITES && SITES.weeks) || {};
   const weeks = [...new Set([...mw.map(w => w.week), ...Object.keys(sw).map(Number)])].sort((a, b) => a - b);
@@ -704,7 +711,7 @@ function standings() {
     rows.push({name: fan, fan: true, fan_id: f.id, weekly, removed, w, l, t, arrows});
   }
   for (const r of rows) r.err = avg(r.weekly);
-  // W-L for everyone, against Burke_v1's played-only error that week: sites on every week they
+  // W-L for everyone, against Burke_v1's error that week (ORACLE_BASIS): sites on every week they
   // publish, a fan's model only on the weeks that fan placed arrows
   const base = rows.find(r => r.base);
   for (const r of rows) {
