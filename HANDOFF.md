@@ -1,3 +1,36 @@
+# Handoff — state as of 2026-09-24 (week 3 Thursday)
+
+## What changed 2026-09-24: Proj is the playing median; the bias correction reads played rows
+
+Branch `median-proj`, awaiting merge. Read the 09-21/22 section after this one.
+
+1. **Proj = the median of the player's distribution given he plays** (was the mean). The
+   scoreboards we are ranked on, the sites' published accuracy and our own Accuracy page, are MAE
+   over players who appeared, and MAE is minimised by the median. Misses are right-skewed, so the
+   mean sits 1.1-1.3 PPR above the median. On 2025 played rows (n 5,887, walk-forward history in
+   the run parquet) the mean point scored MAE 4.269, WORSE than FFA 4.190; the median point 4.123,
+   better than FFA. Every send in weeks 1-3 carried the mean. Two reasons for the switch, both in
+   the comment block above `p["mean_ev"]` in `sabersim_weekly.py`: the scoreboard, and a reader
+   building a projection off ours wants the typical outcome for a player who suits up with the
+   risk shown separately. New **Mean** column (after Median) = P(plays) x playing mean, the
+   optimiser quantity. Floor/Median/Ceiling keep the inactive mixture; Note carries P(plays).
+   `HEALTH["proj_kind"] = "playing_median"`. Stat lines still reconcile to Proj.
+2. **The bias correction was measuring inactives.** It read the all-rows mean error, inactives
+   scored 0 included: wk1 all-rows -0.55, played-only +0.11, the whole gap from 116 inactives we
+   had left at 2-3 points. It helped MAE only by accident (a downward shift moved the mean point
+   toward the median). It now reads `med_err_played` (median of actual - Median column over
+   played rows, weighted by `n_played`), which the grader emits from this commit on together with
+   `bias_played`. Grades made earlier lack the key and are skipped, so the first sends after the
+   merge carry **no correction** until the next grade lands (health record says so). Same caps.
+3. `tests/test_bias_correction.py` covers the new keys and the skip of old grades (12 pass).
+   Dry run 2026-09-24 12:42 ET, ATL @ GB, 26 rows: Proj == Median on every non-OUT skill row,
+   Mean > Proj on 21 of 22, Jayden Reed OUT at 0 everywhere.
+4. Study landed alongside: `scripts/game_script_oracle_study.py` ->
+   `outputs/reports/game_script_oracle_study.md`. Game scripts are not discrete, a perfect
+   pregame call of a 5-way script is worth 2.2% MAE (QB 10%, TE nothing), a line-based pick
+   LOSES 1.3-1.9%, reader break-even 54-64% accuracy vs ~30% achievable. Do not wire a script
+   tweak into projections.
+
 # Handoff — state as of 2026-09-22 (week 2 closed, week 3 opens today)
 
 For picking the project up from another machine or the cloud console. Everything below is in this
