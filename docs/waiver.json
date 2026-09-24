@@ -62,6 +62,18 @@
    ],
    "free": [
     {
+     "name": "Jaxson Dart",
+     "pos": "QB",
+     "team": "NYG",
+     "n": "jaxson dart",
+     "pts": 24.29,
+     "inj": "Q",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Jacoby Brissett",
      "pos": "QB",
      "team": "ARI",
@@ -98,18 +110,6 @@
      "match": ""
     },
     {
-     "name": "Kyler Murray",
-     "pos": "QB",
-     "team": "MIN",
-     "n": "kyler murray",
-     "pts": 17.82,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
      "name": "Baker Mayfield",
      "pos": "QB",
      "team": "TB",
@@ -128,18 +128,6 @@
      "n": "aaron rodgers",
      "pts": 17.07,
      "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Sam Darnold",
-     "pos": "QB",
-     "team": "SEA",
-     "n": "sam darnold",
-     "pts": 17.05,
-     "inj": "Q",
      "out": false,
      "rostered": false,
      "owner": "",
@@ -204,6 +192,18 @@
      "rostered": false,
      "owner": "",
      "match": ""
+    },
+    {
+     "name": "Drew Lock",
+     "pos": "QB",
+     "team": "SEA",
+     "n": "drew lock",
+     "pts": 9.23,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
     }
    ],
    "worst_of_mine": 22.48
@@ -260,6 +260,18 @@
     }
    ],
    "free": [
+    {
+     "name": "Braelon Allen",
+     "pos": "RB",
+     "team": "NYJ",
+     "n": "braelon allen",
+     "pts": 5.74,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
     {
      "name": "Brian Robinson",
      "pos": "RB",
@@ -391,18 +403,6 @@
      "rostered": false,
      "owner": "",
      "match": ""
-    },
-    {
-     "name": "Raheim Sanders",
-     "pos": "RB",
-     "team": "CLE",
-     "n": "raheim sanders",
-     "pts": 3.0,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
     }
    ],
    "worst_of_mine": 4.11
@@ -496,23 +496,11 @@
      "match": ""
     },
     {
-     "name": "Denzel Boston",
+     "name": "Quentin Johnston",
      "pos": "WR",
-     "team": "CLE",
-     "n": "denzel boston",
-     "pts": 8.95,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Tre Tucker",
-     "pos": "WR",
-     "team": "LVR",
-     "n": "tre tucker",
-     "pts": 8.86,
+     "team": "LAC",
+     "n": "quentin johnston",
+     "pts": 9.34,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -561,6 +549,18 @@
      "team": "DAL",
      "n": "ryan flournoy",
      "pts": 7.3,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Cooper Kupp",
+     "pos": "WR",
+     "team": "SEA",
+     "n": "cooper kupp",
+     "pts": 7.13,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -646,18 +646,6 @@
     }
    ],
    "free": [
-    {
-     "name": "Dalton Schultz",
-     "pos": "TE",
-     "team": "HOU",
-     "n": "dalton schultz",
-     "pts": 9.45,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
     {
      "name": "Brenton Strange",
      "pos": "TE",
@@ -785,6 +773,18 @@
      "n": "chigoziem okonkwo",
      "pts": 5.64,
      "inj": "Q",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Dawson Knox",
+     "pos": "TE",
+     "team": "BUF",
+     "n": "dawson knox",
+     "pts": 5.33,
+     "inj": "NA",
      "out": false,
      "rostered": false,
      "owner": "",

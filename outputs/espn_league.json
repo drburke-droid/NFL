@@ -396,19 +396,6 @@
      "last_pts": 5.9
     },
     {
-     "name": "Jaxson Dart",
-     "pos": "QB",
-     "team": "NYG",
-     "espn_id": 4689114,
-     "slot": "BENCH",
-     "keeper": true,
-     "keeper_price": 8,
-     "acq": "DRAFT",
-     "inj": "OUT",
-     "season_pts": 278.6,
-     "last_pts": 0.8
-    },
-    {
      "name": "Chris Godwin Jr.",
      "pos": "WR",
      "team": "TB",
@@ -435,17 +422,30 @@
      "last_pts": 3.9
     },
     {
-     "name": "Buccaneers D/ST",
+     "name": "Panthers D/ST",
      "pos": "DST",
-     "team": "TB",
-     "espn_id": -16027,
+     "team": "CAR",
+     "espn_id": -16029,
      "slot": "DST",
      "keeper": true,
      "keeper_price": 2,
      "acq": "ADD",
      "inj": null,
-     "season_pts": 73.5,
-     "last_pts": 1.0
+     "season_pts": 83.0,
+     "last_pts": 20.0
+    },
+    {
+     "name": "Sam Darnold",
+     "pos": "QB",
+     "team": "SEA",
+     "espn_id": 3912547,
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 8,
+     "acq": "ADD",
+     "inj": "QUESTIONABLE",
+     "season_pts": 305.4,
+     "last_pts": 0.0
     }
    ]
   },
@@ -724,19 +724,6 @@
      "last_pts": 17.7
     },
     {
-     "name": "Ravens D/ST",
-     "pos": "DST",
-     "team": "BAL",
-     "espn_id": -16033,
-     "slot": "DST",
-     "keeper": true,
-     "keeper_price": 1,
-     "acq": "DRAFT",
-     "inj": null,
-     "season_pts": 82.0,
-     "last_pts": 1.5
-    },
-    {
      "name": "Jayden Daniels",
      "pos": "QB",
      "team": "WAS",
@@ -787,19 +774,6 @@
      "inj": "ACTIVE",
      "season_pts": 184.7,
      "last_pts": 16.8
-    },
-    {
-     "name": "Jordan Mason",
-     "pos": "RB",
-     "team": "MIN",
-     "espn_id": 4360569,
-     "slot": "BENCH",
-     "keeper": true,
-     "keeper_price": 4,
-     "acq": "DRAFT",
-     "inj": "INJURY_RESERVE",
-     "season_pts": 129.9,
-     "last_pts": 0.0
     },
     {
      "name": "Jordan Love",
@@ -878,6 +852,32 @@
      "inj": "ACTIVE",
      "season_pts": 75.8,
      "last_pts": 12.4
+    },
+    {
+     "name": "Denzel Boston",
+     "pos": "WR",
+     "team": "CLE",
+     "espn_id": 4832800,
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 18,
+     "acq": "ADD",
+     "inj": "ACTIVE",
+     "season_pts": 34.4,
+     "last_pts": 20.5
+    },
+    {
+     "name": "Bengals D/ST",
+     "pos": "DST",
+     "team": "CIN",
+     "espn_id": -16004,
+     "slot": "DST",
+     "keeper": true,
+     "keeper_price": 1,
+     "acq": "ADD",
+     "inj": null,
+     "season_pts": 65.0,
+     "last_pts": 10.0
     }
    ]
   },
@@ -1044,19 +1044,6 @@
      "last_pts": 10.5
     },
     {
-     "name": "Quentin Johnston",
-     "pos": "WR",
-     "team": "LAC",
-     "espn_id": 4429025,
-     "slot": "BENCH",
-     "keeper": true,
-     "keeper_price": 16,
-     "acq": "DRAFT",
-     "inj": "ACTIVE",
-     "season_pts": 172.2,
-     "last_pts": 2.4
-    },
-    {
      "name": "Jake Ferguson",
      "pos": "TE",
      "team": "DAL",
@@ -1094,6 +1081,19 @@
      "inj": null,
      "season_pts": 87.5,
      "last_pts": 6.5
+    },
+    {
+     "name": "Tre Tucker",
+     "pos": "WR",
+     "team": "LVR",
+     "espn_id": 4428718,
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 2,
+     "acq": "ADD",
+     "inj": "ACTIVE",
+     "season_pts": 161.7,
+     "last_pts": 22.9
     }
    ]
   },
@@ -1731,17 +1731,17 @@
      "last_pts": 0.0
     },
     {
-     "name": "Cooper Kupp",
-     "pos": "WR",
-     "team": "SEA",
-     "espn_id": 2977187,
+     "name": "Kyler Murray",
+     "pos": "QB",
+     "team": "MIN",
+     "espn_id": 3917315,
      "slot": "BENCH",
      "keeper": true,
-     "keeper_price": 22,
+     "keeper_price": 12,
      "acq": "ADD",
      "inj": "ACTIVE",
-     "season_pts": 118.3,
-     "last_pts": 4.0
+     "season_pts": 93.8,
+     "last_pts": 0.0
     }
    ]
   },
@@ -2366,19 +2366,6 @@
      "last_pts": 8.2
     },
     {
-     "name": "Braelon Allen",
-     "pos": "RB",
-     "team": "NYJ",
-     "espn_id": 4685247,
-     "slot": "BENCH",
-     "keeper": true,
-     "keeper_price": 1,
-     "acq": "DRAFT",
-     "inj": "ACTIVE",
-     "season_pts": 16.3,
-     "last_pts": 8.5
-    },
-    {
      "name": "Alvin Kamara",
      "pos": "RB",
      "team": "NO",
@@ -2390,6 +2377,19 @@
      "inj": "ACTIVE",
      "season_pts": 102.7,
      "last_pts": 7.2
+    },
+    {
+     "name": "Dalton Schultz",
+     "pos": "TE",
+     "team": "HOU",
+     "espn_id": 3117256,
+     "slot": "BENCH",
+     "keeper": true,
+     "keeper_price": 7,
+     "acq": "ADD",
+     "inj": "ACTIVE",
+     "season_pts": 177.7,
+     "last_pts": 26.0
     }
    ]
   },
@@ -2728,7 +2728,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 52.1,
      "last_pts": 17.4
     },

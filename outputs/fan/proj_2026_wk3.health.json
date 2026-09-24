@@ -41,21 +41,26 @@
   }
  },
  "dk_kickers": null,
- "injury_report": null,
+ "injury_report": {
+  "src": "nfl.com",
+  "listed": 73,
+  "designations": {
+   "Out": 1
+  }
+ },
  "lineups": {
   "statuses": 390,
   "by_src": {
-   "espn": 135,
-   "+sleeper": 107,
-   "sleeper": 103,
-   "espn+sleeper": 45
+   "espn": 199,
+   "sleeper": 97,
+   "+sleeper": 78,
+   "espn+sleeper": 16
   },
-  "q": 15,
-  "out": 43,
+  "q": 46,
+  "out": 16,
   "out_by_src": {
-   "espn+sleeper": 27,
-   "+sleeper": 14,
-   "espn": 2
+   "espn+sleeper": 14,
+   "ffa-tag": 2
   }
  },
  "bias_cal": {
@@ -75,8 +80,8 @@
   "raw": -0.5223
  },
  "csv": "proj_2026_wk3.csv",
- "rows": 485,
- "generated": "2026-09-22 16:27 ET",
+ "rows": 482,
+ "generated": "2026-09-24 10:47 ET",
  "kickoffs": [
   "Mon 09/28 08:15 PM ET",
   "Sun 09/27 01:00 PM ET",

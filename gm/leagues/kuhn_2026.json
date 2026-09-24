@@ -159,7 +159,7 @@
    "points_for": 277.78,
    "points_against": 269.02,
    "playoff_seed": 5,
-   "faab_remaining": 98.0,
+   "faab_remaining": 96.0,
    "roster": [
     {
      "player_id": "4038815",
@@ -318,19 +318,6 @@
      "times_kept": 0
     },
     {
-     "player_id": "4689114",
-     "name": "Jaxson Dart",
-     "pos": "QB",
-     "nfl_team": "NYG",
-     "slot": "BENCH",
-     "acquired": "DRAFT",
-     "keeper_cost": {
-      "price": 8
-     },
-     "injury": "OUT",
-     "times_kept": 0
-    },
-    {
      "player_id": "3116165",
      "name": "Chris Godwin Jr.",
      "pos": "WR",
@@ -357,16 +344,29 @@
      "times_kept": 0
     },
     {
-     "player_id": "-16027",
-     "name": "Buccaneers D/ST",
+     "player_id": "-16029",
+     "name": "Panthers D/ST",
      "pos": "DST",
-     "nfl_team": "TB",
+     "nfl_team": "CAR",
      "slot": "DST",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 2
      },
      "injury": null,
+     "times_kept": 0
+    },
+    {
+     "player_id": "3912547",
+     "name": "Sam Darnold",
+     "pos": "QB",
+     "nfl_team": "SEA",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 8
+     },
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     }
    ]
@@ -607,7 +607,7 @@
    "points_for": 243.0,
    "points_against": 191.42,
    "playoff_seed": 3,
-   "faab_remaining": 100.0,
+   "faab_remaining": 81.0,
    "roster": [
     {
      "player_id": "5083076",
@@ -662,19 +662,6 @@
      "times_kept": 1
     },
     {
-     "player_id": "-16033",
-     "name": "Ravens D/ST",
-     "pos": "DST",
-     "nfl_team": "BAL",
-     "slot": "DST",
-     "acquired": "DRAFT",
-     "keeper_cost": {
-      "price": 1
-     },
-     "injury": null,
-     "times_kept": 0
-    },
-    {
      "player_id": "4426348",
      "name": "Jayden Daniels",
      "pos": "QB",
@@ -724,19 +711,6 @@
       "price": 24
      },
      "injury": "ACTIVE",
-     "times_kept": 0
-    },
-    {
-     "player_id": "4360569",
-     "name": "Jordan Mason",
-     "pos": "RB",
-     "nfl_team": "MIN",
-     "slot": "BENCH",
-     "acquired": "DRAFT",
-     "keeper_cost": {
-      "price": 4
-     },
-     "injury": "INJURY_RESERVE",
      "times_kept": 0
     },
     {
@@ -816,6 +790,32 @@
      },
      "injury": "ACTIVE",
      "times_kept": 0
+    },
+    {
+     "player_id": "4832800",
+     "name": "Denzel Boston",
+     "pos": "WR",
+     "nfl_team": "CLE",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 18
+     },
+     "injury": "ACTIVE",
+     "times_kept": 0
+    },
+    {
+     "player_id": "-16004",
+     "name": "Bengals D/ST",
+     "pos": "DST",
+     "nfl_team": "CIN",
+     "slot": "DST",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 1
+     },
+     "injury": null,
+     "times_kept": 0
     }
    ]
   },
@@ -831,7 +831,7 @@
    "points_for": 215.64,
    "points_against": 197.68,
    "playoff_seed": 8,
-   "faab_remaining": 100.0,
+   "faab_remaining": 98.0,
    "roster": [
     {
      "player_id": "4429795",
@@ -990,19 +990,6 @@
      "times_kept": 0
     },
     {
-     "player_id": "4429025",
-     "name": "Quentin Johnston",
-     "pos": "WR",
-     "nfl_team": "LAC",
-     "slot": "BENCH",
-     "acquired": "DRAFT",
-     "keeper_cost": {
-      "price": 16
-     },
-     "injury": "ACTIVE",
-     "times_kept": 0
-    },
-    {
      "player_id": "4242355",
      "name": "Jake Ferguson",
      "pos": "TE",
@@ -1039,6 +1026,19 @@
       "price": 0
      },
      "injury": null,
+     "times_kept": 0
+    },
+    {
+     "player_id": "4428718",
+     "name": "Tre Tucker",
+     "pos": "WR",
+     "nfl_team": "LVR",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 2
+     },
+     "injury": "ACTIVE",
      "times_kept": 0
     }
    ]
@@ -1503,7 +1503,7 @@
    "points_for": 191.28,
    "points_against": 334.68,
    "playoff_seed": 12,
-   "faab_remaining": 78.0,
+   "faab_remaining": 66.0,
    "roster": [
     {
      "player_id": "4431459",
@@ -1701,14 +1701,14 @@
      "times_kept": 0
     },
     {
-     "player_id": "2977187",
-     "name": "Cooper Kupp",
-     "pos": "WR",
-     "nfl_team": "SEA",
+     "player_id": "3917315",
+     "name": "Kyler Murray",
+     "pos": "QB",
+     "nfl_team": "MIN",
      "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
-      "price": 22
+      "price": 12
      },
      "injury": "ACTIVE",
      "times_kept": 0
@@ -2175,7 +2175,7 @@
    "points_for": 253.86,
    "points_against": 193.34,
    "playoff_seed": 2,
-   "faab_remaining": 97.0,
+   "faab_remaining": 90.0,
    "roster": [
     {
      "player_id": "4426354",
@@ -2360,19 +2360,6 @@
      "times_kept": 0
     },
     {
-     "player_id": "4685247",
-     "name": "Braelon Allen",
-     "pos": "RB",
-     "nfl_team": "NYJ",
-     "slot": "BENCH",
-     "acquired": "DRAFT",
-     "keeper_cost": {
-      "price": 1
-     },
-     "injury": "ACTIVE",
-     "times_kept": 0
-    },
-    {
      "player_id": "3054850",
      "name": "Alvin Kamara",
      "pos": "RB",
@@ -2384,6 +2371,19 @@
      },
      "injury": "ACTIVE",
      "times_kept": 1
+    },
+    {
+     "player_id": "3117256",
+     "name": "Dalton Schultz",
+     "pos": "TE",
+     "nfl_team": "HOU",
+     "slot": "BENCH",
+     "acquired": "ADD",
+     "keeper_cost": {
+      "price": 7
+     },
+     "injury": "ACTIVE",
+     "times_kept": 0
     }
    ]
   },
@@ -2739,7 +2739,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
