@@ -374,7 +374,12 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   picks there with no link. That needs the page to read submissions back, and it can't read the
   Google sheet (no CORS); the repo only gets them at the daily pull, and more frequent commits to
   main re-trigger the send workflow. Options are in the 2026-09-24 conversation.
-- **Fan Picks API (option 3, built 2026-09-24; live once deployed).** `apps_script/fanpicks_api.gs` is
+- **Fan Picks API: DEPLOYED and live 2026-09-24 09:04 MT.** Bound script "Fan Picks API" on the response
+  sheet, deployment v1 (execute as owner, access anyone); the /exec URL is `api` in
+  `docs/fan/dropbox.json`. Verified from the live page: `?a=who` and `?a=mine` both 200 with
+  `Access-Control-Allow-Origin: *`, no console errors, "who's in" showing the live row. Code changes
+  go out as a NEW VERSION of the same deployment (Deploy > Manage deployments) so the URL holds.
+  Built as: `apps_script/fanpicks_api.gs` is
   a read-only Apps Script web app on the drop-box response sheet: `?a=mine&f=<fingerprint>&s=&w=`
   (a fan's latest locked set for the week) and `?a=who&s=&w=` (names + arrow counts). The page asks it
   once username + PIN settle: a device with no picks loads the last lock-in ("Welcome back"), a device
