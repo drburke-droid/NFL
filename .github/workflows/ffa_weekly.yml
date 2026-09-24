@@ -43,8 +43,20 @@ jobs:
           d0 = date(2026, 9, 8); print("week=%d" % ((date.today() - d0).days // 7 + 1))
           EOF
           fi
-      - name: Scrape
-        run: Rscript scripts/ffa_weekly_scrape.R "${{ inputs.season || '2026' }}" "${{ steps.wk.outputs.week }}"
+      - name: Scrape (never over a hand upload; never a file the generator cannot score)
+        # 2026-09-23: this scrape overwrote the owner's week-3 raw-stats upload with the ffanalytics
+        # points-summary table (first_name/last_name/points; no stat columns), and every downstream
+        # bake failed for a day. A file that already exists for the week is the owner's and wins;
+        # a scraped file without the stat columns is discarded instead of committed.
+        run: |
+          S="${{ inputs.season || '2026' }}"; W="${{ steps.wk.outputs.week }}"
+          F="data/ffanalytics/FFAn_weekly/raw_stats_${S}_wk${W}.csv"
+          if [ -s "$F" ]; then echo "$F already exists (uploaded by hand) - leaving it alone"; exit 0; fi
+          Rscript scripts/ffa_weekly_scrape.R "$S" "$W"
+          if ! head -1 "$F" | grep -q '"player"' || ! head -1 "$F" | grep -q 'pass_yds'; then
+            echo "::error::$F is not a stat-level file (no player/pass_yds columns) - not committing it"
+            git checkout -- "$F" 2>/dev/null || rm -f "$F"; exit 1
+          fi
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
