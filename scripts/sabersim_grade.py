@@ -111,6 +111,10 @@ g = g[g.Pos.isin(["QB", "RB", "WR", "TE", "K"])].copy()
 # GAMES nflverse has ingested: both teams of the game must have rows for that week, otherwise the
 # whole game waits for the next grade (a week-level check graded a whole slate as zeros on 2026-09-10)
 have = a.groupby("week").team.apply(set).to_dict()
+# the first week each player has a box-score row this season: the "live" pool below keeps a player who sat
+# only if he has played earlier in the season (so a late OUT call we got right still counts, but a
+# season-long absentee -- IR, PUP, suspended, never activated -- is not a free perfect row)
+FIRST_WEEK = a.groupby("player_id").week.min().to_dict()
 # older sends can carry a blank Opp on their K and DST rows (the game-lines table was missing that
 # game); the send's own skill rows know the opponent, so recover it from them rather than dropping
 # the whole game as not-yet-ingested
@@ -184,6 +188,19 @@ def block(d):
         o.update({"n_vs_sites_all": int(len(va)), "mae_vs_sites_all": round(float(e.abs().mean()), 3),
                   "med_vs_sites_all": round(float(e.abs().median()), 3),
                   "bias_vs_sites_all": round(float(e.mean()), 3)})
+        # "live": the all-players pool minus the season-long absentees -- a player who sat this week stays in
+        # only if he has a box-score row from an earlier week this season (owner's rule, 2026-09-24). In week 1
+        # nobody has played before, so the live pool is the played pool plus nothing.
+        wk = int(va.week.iloc[0]) if "week" in va and len(va) else 0
+        pid = va.ID.astype(str) if "ID" in va else pd.Series("", index=va.index)
+        keep = (va.played.astype(str).str.lower() == "true") | pid.map(lambda i: FIRST_WEEK.get(i, 99) < wk)
+        vl = va[keep]
+        if len(vl):
+            e = vl.actual_dks - vl.proj_dks
+            o.update({"n_vs_sites_live": int(len(vl)), "mae_vs_sites_live": round(float(e.abs().mean()), 3),
+                      "med_vs_sites_live": round(float(e.abs().median()), 3),
+                      "bias_vs_sites_live": round(float(e.mean()), 3),
+                      "sat_kept": int(((vl.played.astype(str).str.lower() != "true")).sum()), "sat_dropped": int(len(va) - len(vl))})
     return o
 weeks = []
 for wk, d in g.groupby("week"):
@@ -277,7 +294,7 @@ SCALE = {
 }
 out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead, "scale": SCALE,
        "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
-       "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0; med_vs_sites / med_vs_sites_all: the MEDIAN absolute error on each basis (the sites publish means, so a median is not like for like)",
+       "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0; med_vs_sites / med_vs_sites_all: the MEDIAN absolute error on each basis (the sites publish means, so a median is not like for like); mae_vs_sites_live: the all-players pool without season-long absentees (a player who sat stays only if he has played earlier this season)",
        "weeks": weeks, "overall": overall,
        "misses": [{"week": int(r.week), "player": r.Player, "pos": r.Pos, "team": r.Team, "proj": round(float(r.Proj), 1), "actual": round(float(r.actual), 1)} for r in misses.itertuples()]}
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True); os.makedirs(os.path.join(ROOT, "outputs", "reports"), exist_ok=True)
