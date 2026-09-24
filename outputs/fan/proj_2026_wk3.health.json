@@ -23,9 +23,9 @@
  "market": "skipped (--no-market)",
  "ffa": {
   "file": "raw_stats_2026_wk3.csv",
-  "rows": 922,
+  "rows": 919,
   "age_hours": 0.0,
-  "slate_skill": 428,
+  "slate_skill": 430,
   "slate_k": 33,
   "slate_dst": 32
  },
@@ -57,10 +57,9 @@
    "espn+sleeper": 16
   },
   "q": 46,
-  "out": 16,
+  "out": 10,
   "out_by_src": {
-   "espn+sleeper": 14,
-   "ffa-tag": 2
+   "espn+sleeper": 10
   }
  },
  "bias_cal": {
@@ -80,8 +79,8 @@
   "raw": -0.5223
  },
  "csv": "proj_2026_wk3.csv",
- "rows": 482,
- "generated": "2026-09-24 10:47 ET",
+ "rows": 487,
+ "generated": "2026-09-24 10:52 ET",
  "kickoffs": [
   "Mon 09/28 08:15 PM ET",
   "Sun 09/27 01:00 PM ET",
