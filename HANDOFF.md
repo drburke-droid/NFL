@@ -468,6 +468,14 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   no "homer's edge" section); "What this is, and why" under it holds the why + how-measured text.
   Rob_Burke's data was deleted the same evening (sheet row, rows, inbox, published files, this
   browser's localStorage); `fan_grade.py` now writes an empty grade for an empty table.
+- **Standings basis = `ORACLE_BASIS = "median"` (owner's call, 2026-09-24 late).** THE ORACLE and the fan
+  models rank on `med_vs_sites` (MEDIAN absolute error, DraftKings, skill positions, players who
+  played), which `sabersim_grade.py` now publishes beside the mean (`med_vs_sites_all` too). The sites'
+  numbers are the MEANS they publish, so this is not like for like: the paper's note says so in
+  words. Falls back to `mae_vs_sites_all` then `mae_vs_sites` for a week without the median. The
+  like-for-like figure (mean, played only) had THE ORACLE 5th of 8; "all" (inactives at zero) 1st.
+  Ready-screen copy: "FADE OR BOOST ONE PLAYER AT A TIME". Copyright line (Rob Burke) at the paper's
+  foot and under the ready screen; the owner wants to show the page to SaberSim.
 - **Fan Picks API: DEPLOYED and live 2026-09-24 09:04 MT.** Bound script "Fan Picks API" on the response
   sheet, deployment v1 (execute as owner, access anyone); the /exec URL is `api` in
   `docs/fan/dropbox.json`. Verified from the live page: `?a=who` and `?a=mine` both 200 with
