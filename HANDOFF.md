@@ -320,6 +320,14 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   the page at 430x860, cache-busted, for checking in a desktop browser (the Chrome extension
   cannot resize a maximised window and refuses file:// URLs; scale the iframe with a CSS
   transform to see the whole phone). The old `body.plain` CSS remains but nothing sets it.
+  *CRT effects on the phone glass (2026-09-24):* `#mglass` and `#scan` take `filter:url(#barrel)`, an
+  inline SVG `feDisplacementMap` over a 128x128 map baked as a data-URI PNG (R = x shift, G = y shift,
+  128 = none, growing with x*r^2; scale 16 = ~8px at the corners, 0 at the centre;
+  `color-interpolation-filters="sRGB"` matters or the map is read in linear light). Plus a power-on
+  animation (`crton`, scaleY from a line), a steps() flicker (`flick`), red/cyan text fringing on
+  `#crt main`, glare and a 9s rolling band on `#scan::before/::after`, and `navigator.vibrate` ticks on
+  the buttons. Desktop glass untouched. Not measured on a real phone: an SVG filter over a scrolling
+  container re-rasterises on scroll; if it stutters, drop the filter from `#mglass` first.
 - **Everything fans see is DraftKings points now, and arrows move in units (2026-09-24).**
   *Why DraftKings:* the sites' weekly accuracy we rank against (`docs/fan/sites_accuracy.json`, from
   Fantasy Football Analytics' DFS accuracy page) is graded in DraftKings points on QB/RB/WR/TE. Our
