@@ -455,6 +455,13 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   multi-line end marker leaves the rest behind (a stray `});` broke the script, a stray `</div>`
   closed the glass early on phones and put the Submit bar on the marquee). tests: the html.parser
   nesting check in the 2026-09-24 conversation is worth keeping as a habit for markup edits.
+  *Same evening, three more:* the card's counter (`#pkprog`) sits top-right beside the SWIPE hint; the
+  "why this exists / how accuracy is measured" text left the page for The Sunday Oracle (section
+  "What this is, and why", after the story), with a "READ THE PAPER" button on the ready screen and a
+  one-line pointer card (`#whyline`) in Full control; **names are three-character arcade tags** now
+  (`tag()` upper-cases and keeps A-Z0-9, max 3, on both name fields). Identity is still
+  hash(name + PIN), so a fan who had a long name (Rob_Burke) keeps it until he edits the field; a new
+  tag + the same PIN is a NEW identity, merged by hand in data/fan_adjustments/aliases.json if wanted.
 - **Fan Picks API: DEPLOYED and live 2026-09-24 09:04 MT.** Bound script "Fan Picks API" on the response
   sheet, deployment v1 (execute as owner, access anyone); the /exec URL is `api` in
   `docs/fan/dropbox.json`. Verified from the live page: `?a=who` and `?a=mine` both 200 with
