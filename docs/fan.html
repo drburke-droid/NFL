@@ -67,16 +67,21 @@
   #idmini button { background:none; border:1px solid var(--line); color:var(--mut); border-radius:8px; padding:4px 10px; font-size:12px; cursor:pointer; }
   .dk-stage { position:relative; height:clamp(330px, 52vh, 480px); margin:8px auto 6px; max-width:430px; touch-action:pan-y; }
   body.mobile #stage.on .dk-stage { height:clamp(300px, calc(var(--gh) - 260px), 420px); }
-  .dk-card { position:absolute; inset:0; background:linear-gradient(180deg,#151b26,#0d1117); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 12px 34px rgba(0,0,0,.55); user-select:none; -webkit-user-select:none; will-change:transform; display:flex; flex-direction:column; touch-action:pan-y; }
+  .dk-card { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 30%, #2b3548, #0d1117 75%); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 12px 34px rgba(0,0,0,.55); user-select:none; -webkit-user-select:none; will-change:transform; touch-action:pan-y; }
   .dk-card.under { transform:scale(.95) translateY(12px); opacity:.55; pointer-events:none; }
   .dk-card.fly { transition:transform .34s cubic-bezier(.2,.7,.2,1), opacity .34s; } .dk-card.back { transition:transform .22s ease; }
-  .dk-img { flex:1 1 auto; min-height:0; position:relative; background:radial-gradient(ellipse at 50% 35%, #2b3548, #0d1117 78%); display:flex; align-items:center; justify-content:center; }
-  .dk-img img { width:100%; height:100%; object-fit:cover; object-position:50% 12%; display:block; -webkit-user-drag:none; pointer-events:none; }
-  .dk-img .ini { font-size:64px; font-weight:800; color:#33405a; letter-spacing:.04em; }
-  .dk-img .grad { position:absolute; left:0; right:0; bottom:0; height:45%; background:linear-gradient(180deg, transparent, #0d1117); }
-  .dk-body { padding:6px 14px 14px; flex:none; }
+  /* the picture sits behind the whole card at its own proportions (the league's headshots are 4:3, head in the
+     middle), a little wider than the card so the shoulders run off the sides; one gradient over the whole card
+     carries it into the text -- no seam where a picture box would end */
+  .dk-img { position:absolute; inset:0; overflow:hidden; }
+  .dk-img img { position:absolute; left:-9%; top:0; width:118%; height:auto; display:block; -webkit-user-drag:none; pointer-events:none; }
+  .dk-img .ini { position:absolute; left:0; right:0; top:14%; text-align:center; font-size:64px; font-weight:800; color:#33405a; letter-spacing:.04em; }
+  .dk-img .grad { position:absolute; inset:0; background:linear-gradient(180deg, rgba(13,17,23,0) 30%, rgba(13,17,23,.55) 52%, rgba(13,17,23,.96) 68%, #0d1117 100%); }
+  .dk-body { position:absolute; left:0; right:0; bottom:0; padding:6px 14px 12px; }
+  .dk-line { font-size:12px; color:var(--mut); margin-top:6px; line-height:1.4; }
+  .dk-last { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; } .dk-last span { font-size:11px; color:var(--mut); background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:8px; padding:3px 8px; } .dk-last b { color:var(--ink); font-size:12px; }
   .dk-nm { font-size:22px; font-weight:800; line-height:1.15; } .dk-meta { font-size:13px; color:var(--mut); margin-top:2px; }
-  .dk-pts { display:flex; align-items:center; gap:10px; margin-top:8px; } .dk-pts b { font-size:42px; font-weight:800; line-height:1; letter-spacing:-.02em; } .dk-pts span { font-size:12px; color:var(--mut); line-height:1.4; }
+  .dk-pts { display:flex; align-items:center; gap:10px; margin-top:8px; } .dk-pts b { font-size:44px; font-weight:800; line-height:1; letter-spacing:-.02em; text-shadow:0 2px 12px rgba(0,0,0,.6); } .dk-pts span { font-size:12px; color:var(--mut); line-height:1.4; }
   .dk-stamp { position:absolute; top:20px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:26px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.35); }
   .dk-stamp.up { left:16px; color:var(--up); border-color:var(--up); transform:rotate(-14deg); } .dk-stamp.dn { right:16px; color:var(--down); border-color:var(--down); transform:rotate(14deg); }
   .dk-had { position:absolute; top:10px; left:50%; transform:translateX(-50%); font-size:11px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.65); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; }
@@ -871,9 +876,13 @@ function dkCard(p, under) {
   const line = Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => `${fmt(k, v)} ${LABEL[k]}`).join(" · ");
   const had = sw ? `<div class="dk-had ${sw > 0 ? "up" : "dn"}">you ${sw > 0 ? "boosted" : "faded"} him → ${now.toFixed(1)} pts · swipe again to change</div>`
             : arrows ? `<div class="dk-had">you set ${arrows} stat arrow${arrows === 1 ? "" : "s"} on him in Full control → ${now.toFixed(1)} pts</div>` : "";
+  // the season so far: his DraftKings points in each earlier week (the bake's lw; null = no box score that week)
+  const lw = Array.isArray(p.lw) ? p.lw.map((v, k) => [k + 1, v]).slice(-2) : [];
+  const last = lw.length ? `<div class="dk-last">${lw.map(([w, v]) => `<span>wk ${w} <b>${v == null ? "—" : v.toFixed(1)}</b></span>`).join("")}<span>proj <b>${base.toFixed(1)}</b></span></div>` : "";
   return `<div class="dk-card${under ? " under" : ""}" data-i="${p.i}">${dkImg(p)}<div class="dk-stamp up">Boost</div><div class="dk-stamp dn">Fade</div>${had}` +
     `<div class="dk-body"><div class="dk-nm">${esc(p.name)}${chip}</div><div class="dk-meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}${game ? " · " + esc(game.kickoff.replace(" ET", "")) : ""}</div>` +
-    `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected DraftKings points<br>Burke_v1 line: ${esc(line)}</span></div></div></div>`;
+    `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected DraftKings<br>points this week</span></div>` +
+    `<div class="dk-line">Burke_v1 line: ${esc(line)}</div>${last}</div></div>`;
 }
 function deckRender() {
   if (!D || MODE !== "swipe") return;
