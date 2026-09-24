@@ -204,6 +204,10 @@ if not os.path.exists(LONG):
     json.dump({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": {"n": 0, "graded": 0, "pending": 0}, "by_fan": [], "rows": [], "note": "no submissions recorded yet"}, open(OUT, "w"), indent=1)
     print("no submissions recorded yet -> wrote an empty docs/fan/grade.json"); sys.exit(0)
 rows = pd.read_csv(LONG, dtype={"player_id": str, "fan_id": str}); rows = rows[rows.season == A.season].copy()
+if not len(rows):                                   # a table with a header and no rows (every submission deleted) is an empty grade, not a crash
+    os.makedirs(os.path.dirname(OUT), exist_ok=True)
+    json.dump({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": {"n": 0, "graded": 0, "pending": 0}, "by_fan": [], "by_fan_week": [], "rows": [], "note": "no submissions recorded yet"}, open(OUT, "w"), indent=1)
+    print("no submissions recorded for the season -> wrote an empty docs/fan/grade.json"); sys.exit(0)
 # WHO a row belongs to. Since 2026-09-22 the page hashes username + PIN into fan_id, so the same
 # person reproduces it on any device and a name-alike without the PIN does not. Rows from before
 # that (no fan_id) attach to the first PIN identity that later claims the same name -- the two
