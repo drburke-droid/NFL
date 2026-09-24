@@ -415,6 +415,26 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   picks there with no link. That needs the page to read submissions back, and it can't read the
   Google sheet (no CORS); the repo only gets them at the daily pull, and more frequent commits to
   main re-trigger the send workflow. Options are in the 2026-09-24 conversation.
+- **Quick picks = swipe mode (2026-09-24 pm, default for everyone).** `docs/fan.html` opens on a mode
+  line under the identity card: **Quick picks** (one player at a time, headshot, projected DraftKings
+  points, swipe right = boost / left = fade, buttons and arrow keys too, "skip" and "undo") or, one
+  button away, **Full control** (the old per-stat ▲▼ list). `fanpicks_mode` in localStorage remembers
+  it. A swipe is a pick keyed `"<i>:-1"` (stat index -1 = `fan_rules.SWIPE_STAT`) with +1/-1, and moves
+  the player's whole line `SWIPE_PCT` = 10%; it rides in the code's `a` list like any arrow, so the
+  Apps Script counts it and old codes are unaffected. `fan_adjust_record.py` expands it into one row
+  per stat under rule **s1**; the grader and the fan model then see ordinary rows (`rule == "s1"` marks
+  a swipe for the data mining). A player carries a swipe OR stat arrows, never both: swiping deletes his
+  arrows, tapping a stat deletes his swipe (the Full-control card shows a "swiped" tag with undo).
+  Deck order: the fan's team's players, then the opponent's, then everyone else by projected points;
+  players under 3 DK points and games already kicked off are left out; it resumes at the first
+  unjudged player. The identity card folds to one line once username + PIN are in, and the page
+  scrolls to the deck. `fan_proj_bake.py` now writes `img` (nflverse roster `headshot_url`, cached a
+  day in data/nflverse_cache) and `espn` (ESPN id, the card's fallback picture) per player; week 3's
+  live bake was backfilled in place (356 of 366 have a picture). Verified in Chrome on the desktop
+  cabinet: a drag boosts, the deck advances, counts update, headshots load; the phone layout and the
+  Full-control tag after a swipe were checked by code only (the extension wedged) -- eyeball them.
+  Skip exists on purpose (a forced guess on an unknown player is noise, not signal); remove `#dkskip`
+  and the ArrowDown key to make every card a call.
 - **Fan Picks API: DEPLOYED and live 2026-09-24 09:04 MT.** Bound script "Fan Picks API" on the response
   sheet, deployment v1 (execute as owner, access anyone); the /exec URL is `api` in
   `docs/fan/dropbox.json`. Verified from the live page: `?a=who` and `?a=mine` both 200 with
