@@ -388,7 +388,7 @@
     <div class="colh" style="margin-top:10px">Season standings <small>every model, ranked by average error &middot; W-L = weeks beating THE ORACLE</small></div>
     <div id="npseason" class="np-empty">loading&hellip;</div>
     <div class="you" id="you" style="color:#333"></div>
-    <div class="np-note" id="npnote">Error is fantasy points off per player; lower is better. THE ORACLE and the fan models: the average miss over every skill player projected that week, a player ruled out counting as zero, full-PPR scoring. The big sites: the mean accuracy each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
+    <div class="np-note" id="npnote">Error is fantasy points off per player; lower is better. THE ORACLE and the fan models: the average miss over every skill player projected that week who has played this season, a player ruled out counting as zero, full-PPR scoring. The big sites: the mean accuracy each publishes. A <b>win</b> is a week with a lower error than THE ORACLE's. A fan's model counts only the weeks that fan played.</div>
     <div class="sep"></div>
     <div class="head">Man Meets Machine</div>
     <div class="deck">THE ORACLE already ranks with the best projection sites in the business. It is not looking for a rival. It is looking for a partner.</div>
@@ -1036,7 +1036,7 @@ let ACC = null, SITES = null;
 // 2026-09-24): "all" = every skill player projected, inactives at zero (mae_vs_sites_all); "played"
 // = only players with a box-score row (mae_vs_sites). "all" is the most favourable basis for us, and
 // the page copy above says what it counts. Change the copy with it if this is ever switched back.
-const ORACLE_BASIS = "all";
+const ORACLE_BASIS = "live";
 function leaderboard() {
   Promise.all([
     fetch("fan/grade.json?" + Date.now()).then(r => r.json()).catch(() => null),
@@ -1082,8 +1082,11 @@ function standings() {
   // "median": THE ORACLE's typical miss (median absolute error over players who played, DraftKings points);
   // the sites publish MEANS, so the paper says so in the note. Falls back to the mean bases until the grader
   // has published med_vs_sites for a week.
+  // "live": every skill player projected who has played this season, a sat player at zero (no IR / never-active
+  // free rows); falls back to "all" for a week the grader has not published it for.
   const pick = w => ORACLE_BASIS === "median" && w.med_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.med_vs_sites, n: w.n_vs_sites}
-                   : (ORACLE_BASIS === "all" || ORACLE_BASIS === "median") && w.mae_vs_sites_all && w.n_vs_sites_all ? {week: w.week, mae: w.mae_vs_sites_all, n: w.n_vs_sites_all}
+                   : ORACLE_BASIS === "live" && w.mae_vs_sites_live && w.n_vs_sites_live ? {week: w.week, mae: w.mae_vs_sites_live, n: w.n_vs_sites_live}
+                   : (ORACLE_BASIS === "all" || ORACLE_BASIS === "median" || ORACLE_BASIS === "live") && w.mae_vs_sites_all && w.n_vs_sites_all ? {week: w.week, mae: w.mae_vs_sites_all, n: w.n_vs_sites_all}
                    : w.mae_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.mae_vs_sites, n: w.n_vs_sites} : null;
   const mw = ((ACC && ACC.weeks) || []).map(w => pick(w) ? pick(w)
                                                   : w.mae_played && w.n_played ? {week: w.week, mae: w.mae_played, n: w.n_played} : null).filter(Boolean);
