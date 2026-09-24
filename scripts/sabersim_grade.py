@@ -193,7 +193,10 @@ def block(d):
         # nobody has played before, so the live pool is the played pool plus nothing.
         wk = int(va.week.iloc[0]) if "week" in va and len(va) else 0
         pid = va.ID.astype(str) if "ID" in va else pd.Series("", index=va.index)
-        keep = (va.played.astype(str).str.lower() == "true") | pid.map(lambda i: FIRST_WEEK.get(i, 99) < wk)
+        # week 1 has no earlier games to prove anyone active, so there a player we tagged OUT before kickoff
+        # still counts (the call we made); from week 2 a sat player needs a box score from an earlier week
+        out_call = va.Status.astype(str).str.upper().eq("OUT") if "Status" in va else pd.Series(False, index=va.index)
+        keep = (va.played.astype(str).str.lower() == "true") | pid.map(lambda i: FIRST_WEEK.get(i, 99) < wk) | (out_call & (wk == 1))
         vl = va[keep]
         if len(vl):
             e = vl.actual_dks - vl.proj_dks
