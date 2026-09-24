@@ -722,6 +722,7 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { const o = document.createElement("option"); o.value = ab; o.textContent = nm; $("fav").appendChild(o); }
   $("fav").value = FAV;
   idMini(); render(); count(); leaderboard(); armKickTimer();
+  if (MODE === "swipe" && $("idcard").classList.contains("mini")) setTimeout(showDeck, 50);
   carryDraft().then(moved => { if (moved) { render(); count(); rsay("Brought your picks forward to this week's updated projections."); } });
   if (location.hash.startsWith("#p=")) {                 // opened from a saved link
     const c = decodeURIComponent(location.hash.slice(3));
@@ -839,9 +840,11 @@ function setMode(m) {
     ? `One player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a swipe moves his whole line 10%. No numbers to fiddle with.`
     : `Every stat of every player, ▲ and ▼ a set amount each: half a touchdown, one catch, ten yards. For when you know a receiver is an 80-yard guy, not a 90.`;
   $("modebtn").textContent = m === "swipe" ? "Want more control? Judge every stat →" : "← Quick picks: one swipe per player";
-  if (D) { DECK = []; deckRender(); }
+  if (D) render();                                   // render() rebuilds the deck too
 }
-$("modebtn").onclick = () => setMode(MODE === "swipe" ? "full" : "swipe");
+$("modebtn").onclick = () => { setMode(MODE === "swipe" ? "full" : "swipe"); showDeck(); };
+// the mode line and the deck to the top of the glass (the identity card is folded once it is filled in)
+const showDeck = () => { const t = $("modecard"); if (t) try { t.scrollIntoView({block: "start", behavior: "smooth"}); } catch (e) { t.scrollIntoView(); } };
 setMode(MODE);
 const judged = p => Object.keys(picks).some(k => k.split(":")[0] == p.i);
 function deckBuild() {
@@ -884,6 +887,8 @@ function deckRender() {
     return;
   }
   const p = DECK[DI], q = DECK[DI + 1];
+  const room = ($("crt").clientHeight || innerHeight) - 150;              // buttons, progress line, padding
+  st.style.height = Math.max(250, Math.min(480, room)) + "px";
   st.innerHTML = (q ? dkCard(q, true) : "") + dkCard(p, false);
   bindSwipe(st.lastElementChild);
 }
