@@ -17,7 +17,7 @@ Env (all optional except the key and SMTP creds when actually sending):
   MODEL_BURKE_PKG   path to the folder CONTAINING model_burke/  (default ./pkg)
   SMTP_USER / SMTP_PASS   sender login (Gmail: 2-step verification + App Password)
   SMTP_HOST / SMTP_PORT   default smtp.gmail.com / 465 (SSL)
-  MAIL_TO           default analysts+robert@sabersim.com. If MAIL_CC is set, MAIL_TO gets the clean external
+  MAIL_TO           default robert.edward.burke@gmail.com (the owner; SaberSim is no longer on the list, 2026-09-24). If MAIL_CC is set, MAIL_TO gets the clean external
                     email and MAIL_CC gets a receipt (ops line + CSV copy); without MAIL_CC the send itself
                     carries the ops line (test phase)
   PUBLISH_DIR       if set, the CSV is also copied there (the workflow points it at the private repo
@@ -204,7 +204,7 @@ low = left is not None and left < warn
 
 # ---- email ----
 user, pw = os.environ.get("SMTP_USER"), os.environ.get("SMTP_PASS")
-to = os.environ.get("MAIL_TO", "analysts+robert@sabersim.com"); cc = os.environ.get("MAIL_CC", "")
+to = os.environ.get("MAIL_TO", "robert.edward.burke@gmail.com"); cc = os.environ.get("MAIL_CC", "")
 if A.dry_run or not (user and pw):
     out(sent=False, dry_run=True, file=os.path.basename(csv_path), rows=n_rows, credits_left=left, low_credits=low, reason="dry run" if A.dry_run else "SMTP_USER/SMTP_PASS not set")
     sys.exit(0)

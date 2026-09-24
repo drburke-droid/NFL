@@ -15,8 +15,8 @@ name: SaberSim send
 #   MODEL_BURKE_TOKEN   fine-grained PAT with Contents: READ AND WRITE on that private repo (write lets the
 #                       run push each CSV to sends/ there, which the Pages "Run now" page downloads)
 # Variables (Settings -> Secrets and variables -> Actions -> Variables tab):
-#   MAIL_TO             recipient. Week 1 test: your own address. Week 2: delete the variable (or set
-#                       it to analysts+robert@sabersim.com) and the sends go to SaberSim.
+#   MAIL_TO             recipient. Since 2026-09-24 the sends go to the owner only (the repo variable
+#                       and the default below); SaberSim's analysts address is no longer used.
 #   SEND_WINDOW         optional, default "78,82" — a single attempt at T-80. Inactives are RELEASED at T-90 but
 #                       feeds need several minutes to carry them: on 2026-09-13 the T-90 tick emailed at
 #                       T-87.6 with 8 OUT, and the T-68 rerun had 21 — 13 inactives missed, Alvin Kamara
@@ -124,7 +124,7 @@ jobs:
           SMTP_USER: ${{ secrets.SMTP_USER }}
           SMTP_PASS: ${{ secrets.SMTP_PASS }}
           MAIL_CC: ${{ secrets.MAIL_CC }}
-          MAIL_TO: ${{ vars.MAIL_TO || 'analysts+robert@sabersim.com' }}
+          MAIL_TO: ${{ vars.MAIL_TO || 'robert.edward.burke@gmail.com' }}
           MODEL_BURKE_PKG: ${{ github.workspace }}/pkg
           PUBLISH_DIR: ${{ github.workspace }}/pkg/sends
           CREDIT_WARN: ${{ vars.CREDIT_WARN || '120' }}
