@@ -505,17 +505,20 @@ function remap(src, obj, pct) {
 function decodeCode(c) {
   const m = String(c || "").match(/FAN1\.(\d{4})\.(\d{1,2})\.([A-Za-z0-9_\-]+)/);
   if (!m) return null;
-  try {
-    const b = m[3].replace(/-/g, "+").replace(/_/g, "/");
-    return {season: +m[1], week: +m[2], j: JSON.parse(decodeURIComponent(escape(atob(b + "=".repeat((4 - b.length % 4) % 4)))))};
-  } catch (e) { return null; }
+  let j;
+  try { const b = m[3].replace(/-/g, "+").replace(/_/g, "/"); j = JSON.parse(decodeURIComponent(escape(atob(b + "=".repeat((4 - b.length % 4) % 4))))); }
+  catch (e) { return null; }
+  if (!j || typeof j !== "object" || Array.isArray(j)) return null;        // only an object is a set of picks
+  if (j.a === undefined || j.a === null) j.a = [];
+  else if (!Array.isArray(j.a)) return null;                                 // ...and a real one carries a list of arrows
+  return {season: +m[1], week: +m[2], j};
 }
 const codePicks = j => Object.fromEntries((j.a || []).map(([i, si, n]) => [i + ":" + si, n]));
 // The link that opens this page with your picks on any device: username, time, bake and arrows. Not the
 // PIN, and not the fingerprint made from it, so a link that gets passed around cannot sign in as you.
 function resumeLink() {
   const a = Object.entries(picks).map(([k, v]) => { const [i, si] = k.split(":").map(Number); return [i, si, v]; });
-  const j = {n: me(), t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", r: RULE, a};
+  const j = {n: me(), t: new Date().toISOString().slice(0, 19) + "Z", b: D.bake_id || "", r: RULE, a};
   return location.origin + location.pathname + "#p=FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
 }
 const rsay = t => { $("rmsg").textContent = t; };
@@ -549,18 +552,32 @@ async function carryDraft() {
 }
 // ---- the Fan Picks API (apps_script/fanpicks_api.gs): your last lock-in, from whichever device ----
 // Only when docs/fan/dropbox.json names it ("api"); with no api the page behaves exactly as before.
-let srvKey = "", srvT = 0;
+// srvDone: identities already answered; srvBusy: the one being asked. A key is only marked done once an
+// answer arrives, so a lookup that fails (offline, a script cold start) is asked again -- after a pause,
+// when the browser comes back online, or the next time the username/PIN settle.
+let srvDone = "", srvBusy = "", srvT = 0, srvTries = 0;
 const soonServer = () => { clearTimeout(srvT); srvT = setTimeout(checkServer, 700); };   // PIN typing: ask once it settles
+window.addEventListener("online", soonServer);
 async function checkServer() {
   if (!CFG.api || !IDH || !D) return;
-  const k = IDH + "|" + D.season + "|" + D.week; if (k === srvKey) return; srvKey = k;
+  const id = IDH, k = id + "|" + D.season + "|" + D.week;
+  if (k === srvDone || k === srvBusy) return;
+  srvBusy = k;
   let r = null;
-  try { r = await fetch(`${CFG.api}?a=mine&f=${encodeURIComponent(IDH)}&s=${D.season}&w=${D.week}&t=${Date.now()}`).then(x => x.json()); } catch (e) { return; }
-  if (!r || !r.ok || !r.code) return;
+  try { r = await fetch(`${CFG.api}?a=mine&f=${encodeURIComponent(id)}&s=${D.season}&w=${D.week}&t=${Date.now()}`).then(x => x.json()); } catch (e) { r = null; }
+  if (srvBusy === k) srvBusy = "";
+  if (!r || !r.ok) { if (id === IDH && srvTries++ < 3) { clearTimeout(srvT); srvT = setTimeout(checkServer, 15000); } return; }
+  srvDone = k; srvTries = 0;
+  // The fan may have changed username or PIN while this was in flight (a shared device, a slow cold
+  // start). An answer for the identity he has left must not load that person's picks into this one.
+  if (id !== IDH) return soonServer();
+  if (!r.code) return;
   const x = decodeCode(r.code); if (!x) return;
   const lc = ls.get(WKEY() + "_locked"), lx = lc && decodeCode(lc);
-  if (!lx || String(x.j.t || "") > String(lx.j.t || "")) ls.set(WKEY() + "_locked", r.code);   // the newest lock-in, from any device
-  const theirs = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE), n = Object.keys(theirs).length;
+  if (!lx || String(x.j.t || "") >= String(lx.j.t || "")) ls.set(WKEY() + "_locked", r.code);   // the newest lock-in, from any device; the server's copy wins a tie
+  const src = await bakeOf(x.j.b);
+  if (id !== IDH) return soonServer();                                    // ...or while the old bake loaded
+  const theirs = remap(src, codePicks(x.j), x.j.r !== RULE), n = Object.keys(theirs).length;
   const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
   const take = () => { picks = theirs; ls.set(KEY, JSON.stringify(picks)); render(); count(); };
   if (!n) return count();
@@ -731,7 +748,7 @@ $("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {};
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
   const a = Object.entries(picks).map(([k, v]) => { const [i, s] = k.split(":").map(Number); return [i, s, v]; });
-  const j = {n: me(), u: IDH || DID, d: DID, f: FAV || "", t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), r: RULE, a};
+  const j = {n: me(), u: IDH || DID, d: DID, f: FAV || "", t: new Date().toISOString().slice(0, 19) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), r: RULE, a};
   return "FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
 }
 const dropbox = () => !!(CFG.form_action && CFG.entry_user && CFG.entry_code);
