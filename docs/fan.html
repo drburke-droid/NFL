@@ -58,41 +58,47 @@
   .code { font-family:ui-monospace,Menlo,Consolas,monospace; font-size:12px; word-break:break-all; background:#0f1115; border:1px solid var(--line); border-radius:8px; padding:10px; margin:8px 0; max-height:160px; overflow:auto; }
   .status { font-size:13px; color:var(--mut); margin-top:8px; min-height:18px; } .ok { color:var(--ok); }
   .legend { font-size:12px; color:var(--mut); margin-top:6px; } .legend span { margin-right:10px; }
-  /* Quick picks: one player at a time; swipe right to boost him, left to fade him. body.swipe / body.full pick the mode. */
-  body.swipe #howcard, body.swipe #filtercard, body.swipe #list { display:none; }
-  body.full #deck { display:none; }
-  body.swipe.mobile #crt h1, body.swipe.mobile #crt .sub { display:none; }
-  #modecard .row { align-items:center; } #modecard b { font-size:15px; }
-  .card.mini > .row, .card.mini > .how { display:none; } .card.mini #idmini { display:flex; } #idmini { display:none; justify-content:space-between; align-items:center; gap:8px; font-size:13px; color:var(--mut); flex-wrap:wrap; } #idmini b { color:var(--ink); }
-  #idmini button { background:none; border:1px solid var(--line); color:var(--mut); border-radius:8px; padding:4px 10px; font-size:12px; cursor:pointer; }
-  .dk-stage { position:relative; height:clamp(330px, 52vh, 480px); margin:8px auto 6px; max-width:430px; touch-action:pan-y; }
-  body.mobile #stage.on .dk-stage { height:clamp(300px, calc(var(--gh) - 260px), 420px); }
-  .dk-card { position:absolute; inset:0; background:radial-gradient(ellipse at 50% 30%, #2b3548, #0d1117 75%); border:1px solid var(--line); border-radius:18px; overflow:hidden; box-shadow:0 12px 34px rgba(0,0,0,.55); user-select:none; -webkit-user-select:none; will-change:transform; touch-action:pan-y; }
-  .dk-card.under { transform:scale(.95) translateY(12px); opacity:.55; pointer-events:none; }
+  /* Quick picks lives ON the glass and nothing scrolls: a ready screen (who's playing, how to play, PRESS START,
+     the way to Full control), then one card at a time, the face in the top two thirds and the facts in a panel
+     below. Pixel type for the game's own words, plain type for the player's numbers. body.swipe / body.full is
+     the mode; body.ready / body.playing is which screen. Full control is the old scrolling page. */
+  body.swipe #crt main { display:none; } body.swipe #crt { overflow:hidden; }
+  #ready, #play { display:none; position:absolute; left:0; right:0; top:0; bottom:64px; }        /* the Submit bar sits over the glass's foot */
+  body.mobile #stage.on #ready, body.mobile #stage.on #play { bottom:0; }                        /* on phones the bar is below the glass */
+  body.swipe.ready #ready { display:flex; } body.swipe.playing #play { display:block; }
+  #ready { flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:12px 14px; text-align:center; font-family:'Press Start 2P',monospace; color:#ffd23f; background:radial-gradient(ellipse at 50% 40%, #16202a, #0b0f14 70%); text-shadow:0 0 6px rgba(255,210,63,.4); }
+  #ready .rt { font-size:17px; color:#ffcc33; line-height:1.5; } #ready .rs { font-size:9px; color:#7fe3ff; line-height:1.9; }
+  #ready .rh { font-size:8px; color:#9fe870; line-height:2; max-width:460px; } #ready .rh b { color:#fff; font-weight:normal; }
+  #ready .rrow { display:flex; gap:6px; justify-content:center; width:100%; max-width:460px; }
+  #ready input, #ready select { font-family:'Press Start 2P',monospace; font-size:8px; background:#0f1115; color:#ffd23f; border:2px solid #2b3a4d; border-radius:0; padding:8px 6px; flex:1 1 0; width:auto; min-width:0; text-shadow:none; }
+  #ready input::placeholder { color:#4b5a70; }
+  #ready .go { font-size:12px; color:#fff; background:none; border:0; cursor:pointer; animation:blink 1.1s steps(1) infinite; font-family:inherit; padding:6px; text-shadow:0 0 8px rgba(255,255,255,.5); }
+  #ready .alt { font-size:7px; color:#9fe870; background:none; border:2px solid #2b3a4d; padding:8px 10px; cursor:pointer; font-family:inherit; line-height:1.7; text-shadow:none; }
+  #play { background:#0b0f14; }
+  #pkstage { position:absolute; left:0; right:0; top:0; bottom:56px; }
+  .pk-hint { position:absolute; top:8px; left:0; right:0; text-align:center; font-family:'Press Start 2P',monospace; font-size:9px; color:#ffd23f; text-shadow:0 0 6px rgba(0,0,0,1), 0 0 10px rgba(255,210,63,.55); z-index:4; pointer-events:none; animation:blink 1.6s steps(1) infinite; }
+  #pkprog { position:absolute; left:0; right:0; bottom:60px; text-align:center; font-family:'Press Start 2P',monospace; font-size:7px; color:#9fe870; text-shadow:0 0 4px rgba(0,0,0,1); pointer-events:none; z-index:4; }
+  .pk-foot { position:absolute; left:0; right:0; bottom:0; height:56px; display:flex; align-items:center; justify-content:space-between; gap:5px; padding:0 8px; background:#0b0f14; border-top:1px solid #1c2636; font-family:'Press Start 2P',monospace; }
+  .pk-foot button { font-family:inherit; font-size:9px; padding:10px 8px; border:2px solid; background:#0f1115; cursor:pointer; line-height:1; white-space:nowrap; }
+  .pk-foot .sm { font-size:7px; padding:9px 6px; color:#8fa0b8; border-color:#2b3a4d; }
+  #dkfade { color:#ff7070; border-color:#8a2626; flex:1 1 0; } #dkboost { color:#7cfc7c; border-color:#1f8a40; flex:1 1 0; } #dkfade:active, #dkboost:active { filter:brightness(1.4); }
+  .dk-card { position:absolute; inset:0; background:#0d1117; overflow:hidden; user-select:none; -webkit-user-select:none; will-change:transform; touch-action:none; }
+  .dk-card.under { transform:scale(.96); opacity:.5; pointer-events:none; }
   .dk-card.fly { transition:transform .34s cubic-bezier(.2,.7,.2,1), opacity .34s; } .dk-card.back { transition:transform .22s ease; }
-  /* the picture sits behind the whole card at its own proportions (the league's headshots are 4:3, head in the
-     middle), a little wider than the card so the shoulders run off the sides; one gradient over the whole card
-     carries it into the text -- no seam where a picture box would end */
-  .dk-img { position:absolute; inset:0; overflow:hidden; }
-  .dk-img img { position:absolute; left:-9%; top:0; width:118%; height:auto; display:block; -webkit-user-drag:none; pointer-events:none; }
-  .dk-img .ini { position:absolute; left:0; right:0; top:14%; text-align:center; font-size:64px; font-weight:800; color:#33405a; letter-spacing:.04em; }
-  .dk-img .grad { position:absolute; inset:0; background:linear-gradient(180deg, rgba(13,17,23,0) 30%, rgba(13,17,23,.55) 52%, rgba(13,17,23,.96) 68%, #0d1117 100%); }
-  .dk-body { position:absolute; left:0; right:0; bottom:0; padding:6px 14px 12px; }
-  .dk-line { font-size:12px; color:var(--mut); margin-top:6px; line-height:1.4; }
-  .dk-last { display:flex; gap:6px; margin-top:8px; flex-wrap:wrap; } .dk-last span { font-size:11px; color:var(--mut); background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:8px; padding:3px 8px; } .dk-last b { color:var(--ink); font-size:12px; }
-  .dk-nm { font-size:22px; font-weight:800; line-height:1.15; } .dk-meta { font-size:13px; color:var(--mut); margin-top:2px; }
-  .dk-pts { display:flex; align-items:center; gap:10px; margin-top:8px; } .dk-pts b { font-size:44px; font-weight:800; line-height:1; letter-spacing:-.02em; text-shadow:0 2px 12px rgba(0,0,0,.6); } .dk-pts span { font-size:12px; color:var(--mut); line-height:1.4; }
-  .dk-stamp { position:absolute; top:20px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:26px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.35); }
-  .dk-stamp.up { left:16px; color:var(--up); border-color:var(--up); transform:rotate(-14deg); } .dk-stamp.dn { right:16px; color:var(--down); border-color:var(--down); transform:rotate(14deg); }
-  .dk-had { position:absolute; top:10px; left:50%; transform:translateX(-50%); font-size:11px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.65); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; }
+  .dk-img { position:absolute; left:0; right:0; top:0; height:66%; background:radial-gradient(ellipse at 50% 40%, #2b3548, #0d1117 80%); overflow:hidden; }
+  .dk-img img { width:100%; height:100%; object-fit:cover; object-position:50% 22%; display:block; -webkit-user-drag:none; pointer-events:none; }
+  .dk-img .ini { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:64px; font-weight:800; color:#33405a; letter-spacing:.04em; }
+  .dk-img .grad { position:absolute; left:0; right:0; bottom:0; height:28%; background:linear-gradient(180deg, rgba(13,17,23,0), #0d1117); }
+  .dk-body { position:absolute; left:0; right:0; top:66%; bottom:0; padding:4px 14px 8px; background:#0d1117; overflow:hidden; }
+  .dk-nm { font-size:18px; font-weight:800; line-height:1.15; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .dk-meta { font-size:11px; color:var(--mut); margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dk-pts { display:flex; align-items:center; gap:10px; margin-top:4px; } .dk-pts b { font-size:30px; font-weight:800; line-height:1; letter-spacing:-.02em; } .dk-pts span { font-size:10px; color:var(--mut); line-height:1.35; }
+  .dk-line { font-size:10.5px; color:var(--mut); margin-top:4px; line-height:1.35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dk-last { display:flex; gap:5px; margin-top:5px; flex-wrap:nowrap; overflow:hidden; } .dk-last span { font-size:10px; color:var(--mut); background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:8px; padding:2px 7px; white-space:nowrap; } .dk-last b { color:var(--ink); font-size:11px; }
+  .dk-stamp { position:absolute; top:34px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:24px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.4); z-index:3; font-family:'Press Start 2P',monospace; font-size:14px; }
+  .dk-stamp.up { left:14px; color:var(--up); border-color:var(--up); transform:rotate(-12deg); } .dk-stamp.dn { right:14px; color:var(--down); border-color:var(--down); transform:rotate(12deg); }
+  .dk-had { position:absolute; top:30px; left:50%; transform:translateX(-50%); font-size:10px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.7); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; z-index:3; }
   .dk-had.up { color:var(--up); } .dk-had.dn { color:var(--down); }
-  .dk-actions { display:flex; gap:10px; align-items:center; justify-content:center; margin-top:8px; max-width:430px; margin-left:auto; margin-right:auto; }
-  .dk-btn { flex:1 1 0; border:0; border-radius:12px; padding:14px 8px; font-size:16px; font-weight:700; cursor:pointer; color:#fff; }
-  .dk-btn.dn { background:#8a2626; } .dk-btn.up { background:#1f8a40; } .dk-btn:active { filter:brightness(1.2); }
-  .dk-skip { flex:0 0 auto; background:none; border:1px solid var(--line); color:var(--mut); border-radius:10px; padding:12px 12px; font-size:12px; cursor:pointer; }
-  .dk-foot { display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--mut); margin:8px auto 0; gap:8px; flex-wrap:wrap; max-width:430px; }
-  .dk-foot button { background:none; border:0; color:var(--mut); text-decoration:underline; cursor:pointer; font-size:12px; padding:0; }
-  .dk-done { text-align:center; padding:40px 18px; color:var(--mut); font-size:14px; line-height:1.5; margin:auto; } .dk-done b { color:var(--ink); }
+  .dk-done { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px 18px; color:var(--mut); font-size:13px; line-height:1.5; gap:10px; } .dk-done b { color:var(--ink); }
   .swipedtag { font-size:11px; color:var(--mut); margin-top:6px; } .swipedtag.up b { color:var(--up); } .swipedtag.dn b { color:var(--down); }
   .swipedtag button { background:none; border:0; color:var(--mut); text-decoration:underline; cursor:pointer; font-size:11px; padding:0; }
   .empty { color:var(--mut); padding:20px 0; text-align:center; }
@@ -318,10 +324,6 @@
     </div>
   </div>
 
-  <div id="deck">
-    <div class="dk-stage" id="dkstage"><div class="dk-card"><div class="dk-done">loading…</div></div></div>
-    <div class="dk-actions"><button class="dk-btn dn" id="dkfade">◀ Fade</button><button class="dk-skip" id="dkskip" title="no opinion — next player">skip</button><button class="dk-btn up" id="dkboost">Boost ▶</button></div>
-    <div class="dk-foot"><span id="dkprog"></span><span><button id="dkundo">↶ undo</button></span></div>
   </div>
 
   <div class="card how" id="howcard">
@@ -345,6 +347,20 @@
     <div id="grade" class="how" style="margin-top:8px">loading…</div>
   </div>
 </main>
+    <div id="ready">
+      <div class="rt">QUICK PICKS</div>
+      <div class="rs" id="rwhos">WHO'S PLAYING?</div>
+      <div class="rrow"><input id="rwho" type="text" placeholder="USERNAME" maxlength="24" autocomplete="nickname"><input id="rpin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="PIN" maxlength="8" autocomplete="off"><select id="rfav"><option value="">YOUR TEAM</option></select></div>
+      <div class="rh">ONE PLAYER AT A TIME WITH HIS PROJECTED POINTS<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>A SWIPE MOVES HIS WHOLE LINE 10%<br>SUBMIT WHEN YOU'RE DONE. PICKS LOCK AT KICKOFF</div>
+      <button class="go" id="rstart">▶ PRESS START</button>
+      <button class="alt" id="rmore">WANT MORE CONTROL? JUDGE EVERY STAT</button>
+    </div>
+    <div id="play">
+      <div class="pk-hint">◀ SWIPE ▶</div>
+      <div id="pkstage"></div>
+      <div id="pkprog"></div>
+      <div class="pk-foot"><button id="dkfade">◀ FADE</button><button class="sm" id="dkskip" title="no opinion">SKIP</button><button class="sm" id="dkundo">UNDO</button><button class="sm" id="dkmenu" title="back to the start screen">MENU</button><button id="dkboost">BOOST ▶</button></div>
+    </div>
     </div>
     <div class="bar"><div class="in">
       <div class="n"><b id="cnt">0</b> picks <span id="draft"></span></div>
@@ -453,12 +469,11 @@ function fit() {
   document.querySelector("#screen .bar").style.zoom = 1 / sc;
 }
 addEventListener("resize", fit); cabimg.addEventListener("load", fit); fit();
-let deckRz = 0; addEventListener("resize", () => { clearTimeout(deckRz); deckRz = setTimeout(() => { if (typeof deckRender === "function") deckRender(); }, 150); });
 if (MOBILE) { const pre = new Image(); pre.src = "fan/cabinet_phone.jpg"; }   // so the tap is instant
-document.getElementById("attract").onclick = () => { stage.classList.add("on"); fit(); if (typeof deckRender === "function") deckRender(); };   // the deck sizes itself to the lit glass
+document.getElementById("attract").onclick = () => { stage.classList.add("on"); fit(); if (typeof screens === "function") { PLAYING = false; screens(); readyText(); } };
 // the arcade's buttons click under the thumb (phones with a vibration motor; a no-op elsewhere)
 document.getElementById("crt").addEventListener("click", e => { if (MOBILE && navigator.vibrate && e.target.closest("button")) navigator.vibrate(e.target.closest(".big") ? [14, 40, 14] : 9); });
-document.getElementById("eject").onclick = () => { stage.classList.remove("on"); fit(); };
+document.getElementById("eject").onclick = () => { stage.classList.remove("on"); fit(); if (typeof screens === "function") { PLAYING = false; screens(); } };
 const openPaper = () => document.getElementById("paperwrap").classList.add("on"), closePaper = () => document.getElementById("paperwrap").classList.remove("on");
 document.getElementById("fold").onclick = openPaper; document.getElementById("newsbtn").onclick = openPaper; document.getElementById("mpaper").onclick = openPaper; document.getElementById("paperclose").onclick = closePaper;
 document.getElementById("paperwrap").addEventListener("click", e => { if (e.target === document.getElementById("paperwrap")) closePaper(); });
@@ -725,10 +740,9 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || ""; identity().then(() => { renderLead(); soonServer(); });
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
-  for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { const o = document.createElement("option"); o.value = ab; o.textContent = nm; $("fav").appendChild(o); }
-  $("fav").value = FAV;
+  for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { for (const id of ["fav", "rfav"]) { const o = document.createElement("option"); o.value = ab; o.textContent = id === "rfav" ? nm.toUpperCase() : nm; $(id).appendChild(o); } }
+  $("fav").value = FAV; readyText();
   idMini(); render(); count(); leaderboard(); armKickTimer();
-  if (MODE === "swipe" && $("idcard").classList.contains("mini")) setTimeout(showDeck, 50);
   carryDraft().then(moved => { if (moved) { render(); count(); rsay("Brought your picks forward to this week's updated projections."); } });
   if (location.hash.startsWith("#p=")) {                 // opened from a saved link
     const c = decodeURIComponent(location.hash.slice(3));
@@ -836,22 +850,37 @@ function idMini(force) {
 }
 $("idedit").onclick = () => idMini(true);
 
-// ---- Quick picks: the deck ----
-let MODE = ls.get("fanpicks_mode") || "swipe", DECK = [], DI = 0, HIST = [];
+// ---- Quick picks: a ready screen, then the deck; all of it on the glass, nothing scrolls ----
+let MODE = ls.get("fanpicks_mode") || "swipe", PLAYING = false, DECK = [], DI = 0, HIST = [];
+function screens() {
+  document.body.classList.toggle("swipe", MODE === "swipe"); document.body.classList.toggle("full", MODE !== "swipe");
+  document.body.classList.toggle("ready", MODE === "swipe" && !PLAYING); document.body.classList.toggle("playing", MODE === "swipe" && PLAYING);
+}
 function setMode(m) {
-  MODE = m; ls.set("fanpicks_mode", m);
-  document.body.classList.toggle("swipe", m === "swipe"); document.body.classList.toggle("full", m !== "swipe");
+  MODE = m; ls.set("fanpicks_mode", m); PLAYING = false; screens(); readyText();
   $("modetitle").textContent = m === "swipe" ? "Quick picks" : "Full control";
   $("modehow").innerHTML = m === "swipe"
     ? `One player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a swipe moves his whole line 10%. No numbers to fiddle with.`
     : `Every stat of every player, ▲ and ▼ a set amount each: half a touchdown, one catch, ten yards. For when you know a receiver is an 80-yard guy, not a 90.`;
   $("modebtn").textContent = m === "swipe" ? "Want more control? Judge every stat →" : "← Quick picks: one swipe per player";
-  if (D) render();                                   // render() rebuilds the deck too
+  if (D) render();
 }
-$("modebtn").onclick = () => { setMode(MODE === "swipe" ? "full" : "swipe"); showDeck(); };
-// the mode line and the deck to the top of the glass (the identity card is folded once it is filled in)
-const showDeck = () => { const t = $("modecard"); if (t) try { t.scrollIntoView({block: "start", behavior: "smooth"}); } catch (e) { t.scrollIntoView(); } };
-setMode(MODE);
+$("modebtn").onclick = () => setMode(MODE === "swipe" ? "full" : "swipe");
+$("rmore").onclick = () => { setMode("full"); try { $("modecard").scrollIntoView({block: "start"}); } catch (e) {} };
+$("rstart").onclick = () => { PLAYING = true; screens(); DECK = []; deckRender(); };
+$("dkmenu").onclick = () => { PLAYING = false; screens(); readyText(); };
+// the ready screen's fields are the identity card's fields, in pixels
+function readyText() {
+  const n = me(), t = FAV && TEAMS[FAV] ? TEAMS[FAV].split(" ").pop().toUpperCase() : "";
+  $("rwhos").textContent = n ? `PLAYER 1: ${n.toUpperCase()}${t ? " · " + t + " FAN" : ""}` : "WHO'S PLAYING? PICK A NAME AND A PIN";
+  if ($("rwho").value !== $("who").value) $("rwho").value = $("who").value;
+  if ($("rpin").value !== $("pin").value) $("rpin").value = $("pin").value;
+  if ($("rfav").value !== FAV) $("rfav").value = FAV;
+}
+const mirror = (from, to, ev) => $(from).addEventListener("input", () => { $(to).value = $(from).value; $(to).dispatchEvent(new Event(ev)); readyText(); });
+mirror("rwho", "who", "input"); mirror("rpin", "pin", "input"); $("rfav").addEventListener("change", () => { $("fav").value = $("rfav").value; $("fav").dispatchEvent(new Event("change")); readyText(); });
+$("who").addEventListener("input", readyText); $("pin").addEventListener("input", readyText); $("fav").addEventListener("change", readyText);
+screens(); setMode(MODE);
 const judged = p => Object.keys(picks).some(k => k.split(":")[0] == p.i);
 function deckBuild() {
   // your team's players first, then the opponent's, then everyone else by projected points; players whose game has kicked off are out
@@ -876,29 +905,27 @@ function dkCard(p, under) {
   const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
   const line = Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => `${fmt(k, v)} ${LABEL[k]}`).join(" · ");
   const had = sw ? `<div class="dk-had ${sw > 0 ? "up" : "dn"}">you ${sw > 0 ? "boosted" : "faded"} him → ${now.toFixed(1)} pts · swipe again to change</div>`
-            : arrows ? `<div class="dk-had">you set ${arrows} stat arrow${arrows === 1 ? "" : "s"} on him in Full control → ${now.toFixed(1)} pts</div>` : "";
+            : arrows ? `<div class="dk-had">${arrows} stat arrow${arrows === 1 ? "" : "s"} on him from Full control → ${now.toFixed(1)} pts</div>` : "";
   // the season so far: his DraftKings points in each earlier week (the bake's lw; null = no box score that week)
   const lw = Array.isArray(p.lw) ? p.lw.map((v, k) => [k + 1, v]).slice(-2) : [];
   const last = lw.length ? `<div class="dk-last">${lw.map(([w, v]) => `<span>wk ${w} <b>${v == null ? "—" : v.toFixed(1)}</b></span>`).join("")}<span>proj <b>${base.toFixed(1)}</b></span></div>` : "";
   return `<div class="dk-card${under ? " under" : ""}" data-i="${p.i}">${dkImg(p)}<div class="dk-stamp up">Boost</div><div class="dk-stamp dn">Fade</div>${had}` +
     `<div class="dk-body"><div class="dk-nm">${esc(p.name)}${chip}</div><div class="dk-meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}${game ? " · " + esc(game.kickoff.replace(" ET", "")) : ""}</div>` +
     `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected DraftKings<br>points this week</span></div>` +
-    `<div class="dk-line">Burke_v1 line: ${esc(line)}</div>${last}</div></div>`;
+    `<div class="dk-line">Burke_v1: ${esc(line)}</div>${last}</div></div>`;
 }
 function deckRender() {
-  if (!D || MODE !== "swipe") return;
+  if (!D || MODE !== "swipe" || !PLAYING) return;
   if (!DECK.length) deckBuild();
-  const st = $("dkstage"), nb = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v > 0).length, nf = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v < 0).length;
-  $("dkprog").textContent = `Week ${D.week} · ${Math.min(DI + 1, DECK.length)} of ${DECK.length} · ${nb} boosted · ${nf} faded`;
-  $("dkundo").style.visibility = HIST.length ? "" : "hidden";
+  const st = $("pkstage"), nb = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v > 0).length, nf = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v < 0).length;
+  $("pkprog").textContent = `${Math.min(DI + 1, DECK.length)}/${DECK.length} · ${nb}▲ ${nf}▼`;
+  $("dkundo").disabled = !HIST.length;
   if (DI >= DECK.length) {
-    st.innerHTML = `<div class="dk-card"><div class="dk-done"><b>${DECK.length ? "That's every player on the board." : "Nothing left to judge this week: every game has kicked off."}</b><br>${nb} boosted, ${nf} faded. Press <b>Submit</b> to lock them in, and come back any time: each game counts your last lock-in before it kicks off.<br><br><button class="sec" id="dktop">Go through them again</button></div></div>`;
+    st.innerHTML = `<div class="dk-card"><div class="dk-done"><b>${DECK.length ? "That's every player on the board." : "Nothing left to judge: every game has kicked off."}</b><span>${nb} boosted, ${nf} faded. Press <b>Submit</b> to lock them in; come back any time, each game counts your last lock-in before it kicks off.</span><button class="sec" id="dktop">Go through them again</button></div></div>`;
     const t = $("dktop"); if (t) t.onclick = () => { DI = 0; HIST = []; deckRender(); };
     return;
   }
   const p = DECK[DI], q = DECK[DI + 1];
-  const room = ($("crt").clientHeight || innerHeight) - 150;              // buttons, progress line, padding
-  st.style.height = Math.max(250, Math.min(480, room)) + "px";
   st.innerHTML = (q ? dkCard(q, true) : "") + dkCard(p, false);
   bindSwipe(st.lastElementChild);
 }
@@ -917,13 +944,13 @@ function bindSwipe(el) {
   el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
 }
 function flyOff(dir, then) {
-  const el = $("dkstage").lastElementChild; if (!el) return then();
+  const el = $("pkstage").lastElementChild; if (!el) return then();
   el.classList.add("fly"); el.style.transform = dir ? `translate(${dir * (Math.max(innerWidth, 500) + 200)}px, -30px) rotate(${dir * 24}deg)` : "translateY(60px) scale(.9)"; el.style.opacity = "0";
   setTimeout(then, 280);
 }
 function decide(dir) {
   const p = DECK[DI]; if (!p) return;
-  if (started(p)) { $("dkprog").textContent = "that game has kicked off — locked"; DI++; deckRender(); return; }
+  if (started(p)) { $("pkprog").textContent = "KICKED OFF · LOCKED"; DI++; deckRender(); return; }
   for (const k of Object.keys(picks)) if (k.split(":")[0] == p.i) delete picks[k];      // one opinion per player
   picks[p.i + ":" + SW] = dir; ls.set(KEY, JSON.stringify(picks)); HIST.push(DI);
   if (MOBILE && navigator.vibrate) navigator.vibrate(dir > 0 ? [10, 30, 10] : 14);
@@ -933,9 +960,10 @@ $("dkboost").onclick = () => decide(1); $("dkfade").onclick = () => decide(-1);
 $("dkskip").onclick = () => { if (DI < DECK.length) { HIST.push(DI); flyOff(0, () => { DI++; deckRender(); }); } };
 $("dkundo").onclick = () => { if (!HIST.length) return; DI = HIST.pop(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
 addEventListener("keydown", e => {
-  if (MODE !== "swipe" || !D || e.target.matches("input,textarea,select") || $("paperwrap").classList.contains("on")) return;
-  if (e.key === "ArrowRight") decide(1); else if (e.key === "ArrowLeft") decide(-1); else if (e.key === "ArrowDown") { e.preventDefault(); $("dkskip").click(); }
-});
+  if (MODE !== "swipe" || !D || e.target.matches("input,textarea,select") || $("paperwrap").classList.contains("on") || !stage.classList.contains("on")) return;
+  if (!PLAYING) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("rstart").click(); } return; }
+  if (e.key === "ArrowRight") decide(1); else if (e.key === "ArrowLeft") decide(-1); else if (e.key === "ArrowDown") { e.preventDefault(); $("dkskip").click(); } else if (e.key === "Escape") $("dkmenu").click();
+});});
 
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
