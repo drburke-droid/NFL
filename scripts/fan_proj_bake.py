@@ -38,6 +38,24 @@ NAME2ABBR = {"Arizona Cardinals": "ARI", "Atlanta Falcons": "ATL", "Baltimore Ra
     "Tampa Bay Buccaneers": "TB", "Tennessee Titans": "TEN", "Washington Commanders": "WAS"}
 rows = list(csv.DictReader(open(src, encoding="utf-8")))
 gen = rows[0].get("Generated", "") if rows else ""
+
+def headshots(season):
+    """gsis_id -> (headshot_url, espn_id) from the nflverse roster release, for the Quick-picks card.
+    Cached a day under data/nflverse_cache (gitignored); any failure means no pictures, never no bake."""
+    import time, urllib.request
+    d = os.path.join(ROOT, "data", "nflverse_cache"); os.makedirs(d, exist_ok=True)
+    fp = os.path.join(d, f"roster_{season}.csv")
+    try:
+        if not os.path.exists(fp) or time.time() - os.path.getmtime(fp) > 86400:
+            url = f"https://github.com/nflverse/nflverse-data/releases/download/rosters/roster_{season}.csv"
+            with urllib.request.urlopen(url, timeout=60) as r, open(fp, "wb") as fh: fh.write(r.read())
+        out = {}
+        for r in csv.DictReader(open(fp, encoding="utf-8")):
+            if r.get("gsis_id"): out[r["gsis_id"]] = (r.get("headshot_url") or "", r.get("espn_id") or "")
+        return out
+    except Exception as e:
+        print(f"  headshots: {e} (cards will show initials)"); return {}
+HEAD = headshots(S)
 players, games = [], {}
 def f(v):
     try: return round(float(v), 2)
@@ -68,7 +86,9 @@ for r in rows:
                     "stats": stats,
                     # projected fumbles lost: not a tappable stat, but DraftKings charges -1 each and the
                     # card shows the whole DraftKings projection (docs/fan.html dkPoints)
-                    "fl": f(r.get("fumbles_lost")) or 0.0})
+                    "fl": f(r.get("fumbles_lost")) or 0.0,
+                    # the Quick-picks card: the league's headshot (nflverse roster), ESPN's id as a fallback
+                    "img": HEAD.get(r.get("ID") or "", ("", ""))[0], "espn": HEAD.get(r.get("ID") or "", ("", ""))[1]})
 for g in games.values(): g["teams"] = sorted(g["teams"])
 order = sorted(games.values(), key=lambda g: (datetime.strptime(f"{S} " + g["kickoff"][4:], "%Y %m/%d %I:%M %p ET"), g["game"]))
 bake_id = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
@@ -78,4 +98,5 @@ out = {"season": S, "week": W, "generated": gen, "baked": datetime.now(timezone.
 d = os.path.join(ROOT, "docs", "fan"); os.makedirs(d, exist_ok=True)
 for name in ("proj_latest.json", f"proj_{S}_wk{W}.json", f"proj_{S}_wk{W}_{bake_id}.json"):   # the stamped copy is what codes decode against
     with open(os.path.join(d, name), "w", encoding="utf-8") as fh: json.dump(out, fh, separators=(",", ":"))
+print(f"  headshots for {sum(1 for p in players if p['img'])} of {len(players)} players")
 print(f"baked {len(players)} players in {len(order)} games ({S} wk{W}, generated {gen}) -> docs/fan/proj_latest.json + proj_{S}_wk{W}.json")

@@ -974,11 +974,14 @@ def eval_dnp(seasons=(2024, 2025)):
     except Exception as e: print("  DNP check skipped:", str(e)[:60])
 eval_dnp()
 # ---- rolling bias correction ----
-# The send runs high on skill players: graded bias -0.394 in 2026 wk1 and -0.674 in wk2. Fitting
-# wk1 alone and applying it to wk2 out of sample moved MAE 3.609 -> 3.469. One constant for every
-# skill row -- the pooled bias is consistently negative but its composition is not (RB -0.047 ->
-# -1.288 across those two weeks), so a per-position fit would chase noise. It reorders nobody:
-# Spearman 0.7712 either way. See scripts/bias_correction.py.
+# One constant for every skill row, read from the grade: the median error of the send's Median
+# column over players who PLAYED in the last few weeks (scripts/bias_correction.py). It is a
+# safety net for 2026-specific drift, not the main event. The first version (2026-09-17) read
+# the all-rows mean error, which was -0.5 in wk1 while the played-only mean was +0.1: it was
+# measuring the inactives we had left at 2-3 points, and it helped MAE only by accident, because
+# a downward shift moved the mean point toward the median. Proj is now the median itself (below).
+# The constant is applied to the playing mean BEFORE the quantiles are cut, so it moves Proj,
+# Median, Mean and the band together and reorders nobody.
 _bias, _bmeta = 0.0, {"applied": 0.0, "reason": "disabled"}
 if not A.no_bias_cal:
     try:
@@ -1014,10 +1017,27 @@ def mix_quantiles(qrow, pplay):
         if tau <= 1 - pplay: out.append(0.0)
         else: out.append(float(np.interp((tau - (1 - pplay)) / pplay, QS, qrow)))
     return np.array(out)
+qs_play = qs.copy()                    # quantiles GIVEN the player plays
 qs = np.array([mix_quantiles(q, pp_) for q, pp_ in zip(qs, _pp)])
 for i, q in enumerate(QS): p[f"mb_p{int(q*100)}"] = qs[:, i]
 p["Model_Burke"] = p.mb_p50
 p["sd"] = (p.mb_p75 - p.mb_p25) / 1.35
+# ---- which point goes out as Proj (decided 2026-09-24) ----
+# Proj = the median of the player's distribution given that he plays. Two reasons:
+#  * The scoreboards we are ranked on (the sites' published accuracy, our own Accuracy page)
+#    are MAE over players who appeared in the box score, and MAE is minimised by the median.
+#    Misses are right-skewed, so the mean sits ~1.1-1.3 PPR above the median; on 2025 played
+#    rows the mean point scored MAE 4.269 (WORSE than FFA 4.190) while the median point
+#    scored 4.123 (better than FFA). Every 2026 send to date carried the mean.
+#  * A reader building a projection off ours wants the typical outcome for a player who
+#    suits up, plus the risk shown separately -- not the two multiplied together.
+# The expected value (P(plays) x playing mean, the optimiser quantity) stays in the Mean
+# column; Floor/Median/Ceiling keep the inactive mixture so the risk is visible; the Note
+# carries P(plays). OUT rows stay at 0 everywhere.
+p["mean_ev"] = p.proj
+_out = p.status.eq("OUT") if "status" in p.columns else pd.Series(False, index=p.index)
+p["proj"] = np.where(_out, 0.0, np.maximum(qs_play[:, 2], 0.0))
+HEALTH["proj_kind"] = "playing_median"
 
 # ---------- 6. assemble CSV ----------
 def rows(df, kind):
@@ -1027,6 +1047,7 @@ def rows(df, kind):
                         "Game": o.game, "Kickoff": o.kickoff_et,
                         "Proj": o.proj.round(2),
                         "Median": (o.Model_Burke if kind == "skill" else o.proj).round(2),
+                        "Mean": (o.mean_ev if kind == "skill" else o.proj).round(2),
                         "Floor_p10": (o.mb_p10 if kind == "skill" else (o.proj * 0.35).clip(lower=0)).round(2),
                         "p25": (o.mb_p25 if kind == "skill" else o.proj * 0.65).round(2),
                         "p75": (o.mb_p75 if kind == "skill" else o.proj * 1.35).round(2),
@@ -1059,7 +1080,7 @@ STATCOLS = ["pass_yds", "pass_tds", "pass_int", "rush_yds", "rush_tds", "rec", "
 for c in STATCOLS:
     if c not in out.columns: out[c] = np.nan
 out = out[[c for c in out.columns if c not in STATCOLS + ["Generated"]] + STATCOLS + (["Generated"] if "Generated" in out.columns else [])]
-for c in ("Median", "Floor_p10", "p25", "p75", "Ceiling_p90", "StdDev"):
+for c in ("Median", "Mean", "Floor_p10", "p25", "p75", "Ceiling_p90", "StdDev"):
     out.loc[out.Status == "OUT", c] = 0.0
 out = out[out.Proj.notna() & ((out.Proj > 0.3) | (out.Status == "OUT"))].sort_values(["_kick", "Proj"], ascending=[True, False]).drop(columns="_kick")
 # provenance columns (a comment line would break strict CSV readers)

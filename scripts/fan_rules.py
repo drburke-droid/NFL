@@ -5,6 +5,14 @@ both turn presses into a number through `adjusted()` here, so the two can never 
 
   pct10  (codes with no "r", through 2026-09-24)  each press = 10% of the baseline; -10 = zero
   u1     (from 2026-09-24)                        each press = a set amount in the stat's own units
+  s1     (from 2026-09-25, Quick picks)           a SWIPE on the whole player: every stat in his line
+                                                  moves SWIPE_PCT (10%) the way he was swiped
+
+s1 is how a swipe is stored. In Quick picks a fan sees one player and his projected points and
+swipes right (boost) or left (fade), with no stat to fine-tune; the code carries it as an arrow
+entry whose stat index is SWIPE_STAT (-1) and whose presses are +1 / -1. The recorder expands that
+into one row per stat of the player's line under rule s1, so the grader and the fan's model see
+ordinary per-stat rows; `rule == "s1"` is what tells the data mining a row came from a swipe.
 
 u1 exists because a percentage made small stats unreachable: "one more touchdown" on a 0.6-TD
 projection was seventeen presses. Its steps are the calls fans actually make -- half a touchdown or
@@ -14,8 +22,10 @@ carries the same table; tests/test_dk_scoring.py fails if the two drift.
 """
 STEP_U = {"pass_yds": 25.0, "pass_tds": 0.5, "pass_int": 0.5, "rush_yds": 10.0, "rush_tds": 0.5,
           "rec": 1.0, "rec_yds": 10.0, "rec_tds": 0.5}
-RULES = ("pct10", "u1")
+RULES = ("pct10", "u1", "s1")
 LEGACY = "pct10"
+SWIPE_STAT = -1          # the stat index a code uses for "the whole player"
+SWIPE_PCT = 0.10         # one swipe moves every stat in the line this much
 
 
 def rule_of(value):
@@ -27,6 +37,8 @@ def adjusted(rule, stat, base, n):
     """The fan's number for one stat: `base` moved by `n` presses under `rule`, never below zero."""
     if rule == "u1":
         return max(0.0, float(base) + STEP_U[stat] * int(n))
+    if rule == "s1":
+        return max(0.0, float(base) * (1 + SWIPE_PCT * int(n)))
     return max(0.0, float(base) * (1 + 0.1 * int(n)))
 
 
@@ -35,6 +47,8 @@ def min_presses(rule, stat, base):
     if rule == "u1":
         import math
         return -math.ceil(float(base or 0) / STEP_U[stat] - 1e-9)
+    if rule == "s1":
+        return -1                                  # a swipe is one step either way
     return -10
 
 

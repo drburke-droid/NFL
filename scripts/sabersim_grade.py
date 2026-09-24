@@ -151,6 +151,11 @@ def block(d):
          "ffa_mae_played": round(float((pl.actual - pl.ffa).abs().mean()), 3) if len(pl.dropna(subset=["ffa"])) >= 8 and "ffa" in pl else None,
          "model_mae_played_on_ffa_rows": round(float(pl.dropna(subset=["ffa"]).err.abs().mean()), 3) if "ffa" in pl and len(pl.dropna(subset=["ffa"])) >= 8 else None,
          "bias": round(float(d.err.mean()), 3),
+         # played-only calibration: the mean error, and the median error of the send's Median column
+         # (= the median-of-distribution point Proj now carries). bias_correction.py reads med_err_played;
+         # the all-rows `bias` above is dominated by inactives we left at 2-3 points and must not drive it.
+         "bias_played": round(float(pl.err.mean()), 3) if len(pl) else None,
+         "med_err_played": round(float((pl.actual - (pl.Median if "Median" in pl else pl.Proj)).median()), 3) if len(pl) else None,
          "spearman": round(float(spearmanr(d.Proj, d.actual)[0]), 3) if len(d) >= 8 else None,
          "cov80": round(float(((d.actual >= d.Floor_p10) & (d.actual <= d.Ceiling_p90)).mean()), 3) if "Floor_p10" in d else None,
          "median_mae": round(float((d.actual - d.Median).abs().mean()), 3) if "Median" in d else None}
