@@ -441,7 +441,20 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   week (nflverse stats_player_week via dk_scoring.actual_frame; null = no box score). Trap fixed on
   the way: `#cab img { height:100vh }` was the cabinet picture's rule and matched every img in the
   cabinet, so headshots were blown up on desktop and display:none on phones -- it is `#cabimg` now.
-  The deck re-measures the glass (`crt.clientHeight - 150`) when the screen lights and on resize.
+  *Card v3 / on the glass (later that evening):* Quick picks no longer lives in the scrolling page at all.
+  `#ready` and `#play` are absolute overlays inside `#crt` (bottom:64px on desktop for the Submit bar,
+  bottom:0 on phones where the bar is a flex sibling); `body.ready` / `body.playing` pick the screen,
+  `body.swipe #crt { overflow:hidden }` and `main` hidden, so nothing scrolls. Ready = Press Start 2P:
+  QUICK PICKS, "PLAYER 1: NAME · TEAM FAN", username / PIN / team fields mirrored to the identity card's
+  (`mirror()`), four lines of how-to, blinking "PRESS START" (Enter/Space too), "WANT MORE CONTROL?"
+  -> Full control. Every tap of the attract glass and every eject returns to ready (`PLAYING=false`).
+  Play = the card fills the stage: `.dk-img` top 66% (`object-fit:cover`, head at 22%), `.dk-body`
+  the bottom 34% (name, matchup, points, line, last-two-weeks chips, all ellipsised), a blinking
+  "◀ SWIPE ▶" pixel hint on top, `#pkprog` ("12/247 · 5▲ 3▼") and a pixel footer FADE / SKIP / UNDO /
+  MENU / BOOST. Two traps hit while cutting blocks by marker: a cut that ends at the FIRST line of a
+  multi-line end marker leaves the rest behind (a stray `});` broke the script, a stray `</div>`
+  closed the glass early on phones and put the Submit bar on the marquee). tests: the html.parser
+  nesting check in the 2026-09-24 conversation is worth keeping as a habit for markup edits.
 - **Fan Picks API: DEPLOYED and live 2026-09-24 09:04 MT.** Bound script "Fan Picks API" on the response
   sheet, deployment v1 (execute as owner, access anyone); the /exec URL is `api` in
   `docs/fan/dropbox.json`. Verified from the live page: `?a=who` and `?a=mine` both 200 with
