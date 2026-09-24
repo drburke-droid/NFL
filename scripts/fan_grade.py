@@ -2,8 +2,11 @@
 actuals and reports whether the fans were right; nothing here feeds the model.
 
 Every recorded row (data/fan_adjustments/fan_adjustments_long.csv, from fan_adjust_record.py) is one
-fan's arrow on one player-stat: the baseline the fan saw, the adjusted value the page showed
-(baseline x (1 + 0.1 x arrows)), and the arrows themselves. Once nflverse has the game's box score:
+fan's arrow on one player-stat: the baseline the fan saw, the adjusted value the page showed, the
+arrows themselves and the rule they were pressed under (scripts/fan_rules.py: "u1" = a set amount in
+the stat's units per press; the original "pct10" = 10% of the baseline per press). The fan's number
+is rebuilt from what we SENT with the fan's own presses under the fan's own rule, so a code keeps
+meaning what it meant when it was locked in. Once nflverse has the game's box score:
 
   direction hit   the actual moved from the baseline in the arrow's direction (actual == baseline is
                   neutral and excluded from the rate)
@@ -24,6 +27,8 @@ import os, re, sys, csv, json, glob, argparse
 from datetime import datetime, timezone, date
 from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import fan_rules
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ET = ZoneInfo("America/New_York")
 ap = argparse.ArgumentParser()
@@ -108,7 +113,8 @@ def grade(rows, act):
             sl = SENT.get((wk, norm(r.player), r.pos))
             sb = sl.get(stat, np.nan) if sl else np.nan
             base, basis = (float(sb), "send") if pd.notna(sb) else (np.nan, "no_send")
-        adj = base * (1 + 0.1 * n) if pd.notna(base) else np.nan
+        rule = fan_rules.rule_of(getattr(r, "rule", None))       # rows recorded before rules existed = pct10
+        adj = fan_rules.adjusted(rule, stat, base, n) if pd.notna(base) else np.nan
         d = dict(r._asdict()); d.pop("Index", None)
         d.update({"basis": basis, "base": None if pd.isna(base) else round(base, 3),
                   "adj": None if pd.isna(adj) else round(adj, 3), "no_send": basis == "no_send"})

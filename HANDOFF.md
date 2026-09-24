@@ -320,23 +320,44 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   the page at 430x860, cache-busted, for checking in a desktop browser (the Chrome extension
   cannot resize a maximised window and refuses file:// URLs; scale the iframe with a CSS
   transform to see the whole phone). The old `body.plain` CSS remains but nothing sets it.
-- **Cards show live projected points (2026-09-24).** Each tap reprices the card: `projNow(p)` in
-  `docs/fan.html` adds (adjusted stat - shipped stat) x PPR value for every touched stat ON TOP OF
-  the shipped `proj`, rather than rebuilding the total from the stat line -- the line omits fumbles
-  and is rounded, so a rebuild would nudge every untouched card. Verified in Chromium: 0 of 341
-  untouched cards differ from the bake, and 17 taps on Ja'Marr Chase's rec TD (0.6 -> 1.62) read
-  18.7 -> 24.8, +6.1. The list stays sorted by the shipped number so cards do not move under a
-  thumb. The model's name is **Burke_v1** everywhere fans see it (was BurkeV1).
-  Two things this exposed, both left alone because they change scoring:
-  1. **An INT is -2 in the projection but 1 in `fan_grade.py`'s `PTS`.** The card uses -2 because
-     that reproduces the shipped number (week-3 QBs: mean residual 0.41 at -2, 0.96 at -1).
-     fan_grade's table converts an error in stat units into points of error, so its sign does not
-     matter -- but its magnitude does, and at 1 an INT call earns half the credit its fantasy value
-     implies. Changing it rescores every INT arrow ever graded.
-  2. **Whole-unit calls are expensive at 10% a tap.** "Chase scores one more TD" is 17 presses on a
-     0.6 projection. The arrow unit is baked into grading (`adjusted = baseline x (1 + 0.1 x n)`
-     in fan_grade.py and in every recorded code), so a different step for TD stats is a scoring
-     change, not a UI one.
+- **Everything fans see is DraftKings points now, and arrows move in units (2026-09-24).**
+  *Why DraftKings:* the sites' weekly accuracy we rank against (`docs/fan/sites_accuracy.json`, from
+  Fantasy Football Analytics' DFS accuracy page) is graded in DraftKings points on QB/RB/WR/TE. Our
+  `mae_played` is nflverse PPR (INT and fumble lost -2, no bonuses) AND includes kickers, so the
+  Oracle was ranking two different measurements. The FFA page is blocked from the cloud container;
+  the DraftKings basis rests on the search index's reading of it and on the owner's own account --
+  **confirm the scoring and which players it counts on the page itself**; a different player pool
+  (e.g. a projection floor) would still make the numbers incomparable.
+  *What changed:* `scripts/dk_scoring.py` rescores the box score (actual) and the projected stat line
+  (projection) in DraftKings points -- the stat line is scoring-neutral, so no retraining. The +3
+  yardage bonuses are projected as expectations, 3 x P(yards >= line), from gammas fitted on
+  2018-25 player-games (shapes 10.9 pass / 1.83 rush / 1.81 rec) and checked on our own 2026 wk1-2
+  projections: 18.2 / 24.8 / 33.0 expected bonuses vs 18 / 20 / 33 observed. `sabersim_grade.py`
+  now also emits `mae_vs_sites` / `n_vs_sites` / `bias_vs_sites` (DraftKings, skill only, played
+  only) at every level; `mae_played` is untouched because the SaberSim page and the bias correction
+  read it. The Oracle ranks Burke_v1 on `mae_vs_sites`.
+  **Result: like for like, Burke_v1 is 5th of 8 in both weeks** (wk1 4.77 behind numberFire 4.41,
+  FleaFlicker 4.44, ESPN 4.58, FantasySharks 4.64; wk2 4.30 behind FantasySharks 4.05, ESPN 4.08,
+  numberFire 4.09, FleaFlicker 4.10), not the 3rd the PPR-with-kickers number showed. The blurb's
+  "ranks with the best" was written on the old basis -- owner's call whether it stands.
+  *Cards:* the card shows the stat line in DraftKings points (`dkPoints` in `docs/fan.html`, same
+  constants as dk_scoring.py; `tests/test_dk_scoring.py` reads them out of the page and fails on
+  drift). The bake now carries `fl` (projected fumbles lost); week 3's live bake was backfilled from
+  `outputs/fan/proj_2026_wk3.csv`, frozen per-bake copies left alone. Each tap reprices the card,
+  including the bonus odds (+20 rec yds on an 82-yard receiver is +2.0 linear and +0.6 of bonus).
+  *Arrow rule u1:* a press = half a TD or INT, one catch, 10 rush/rec yards, 25 pass yards; ▼ stops
+  at zero. Two presses is one more touchdown. Codes carry `"r": "u1"`; `scripts/fan_rules.py` is the
+  one place a press becomes a number, used by both `fan_adjust_record.py` (new `rule`, `delta`
+  columns; `pct` keeps meaning 10 x presses on old codes) and `fan_grade.py`. A code with no rule is
+  scored under the old 10% rule forever, so Rob_Burke's week-3 submission means what it meant. A
+  draft saved on a device under the old rule converts to units on load, by where the arrow LANDED
+  (ten ▼ still means zero). Verified in Chromium: the page's gamma matches scipy to 1e-6, and every
+  card, tap, floor, conversion and Oracle number matched an independent Python computation.
+- **gm/ tests are red on main (found 2026-09-24, not caused by the above).** 15 fail and 29 error
+  identically with or without the DraftKings change. `gm/players.py:ffa_file_scored` needs a
+  `player` column; this week's `data/ffanalytics/FFAn_weekly/raw_stats_2026_wk3.csv` is FFA's
+  points-summary export (`first_name`, `last_name`, `points`, `sd_pts`...), not the raw-stats one.
+  Re-export week 3 as raw stats, or teach the reader the other layout.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2

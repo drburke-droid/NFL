@@ -232,7 +232,7 @@
 
   <details class="card how" id="why"><summary style="cursor:pointer"><b>Why this exists, and how accuracy is measured</b> — tap to read</summary>
     <div style="margin-top:6px"><b>Why this exists.</b> Behind this page is <b>Burke_v1</b>, an NFL projection model that already ranks with the best fantasy sites in the business — <b>CBS, ESPN, FantasyPros, FantasySharks, FFToday, numberFire, FleaFlicker and NFL.com</b> — and goes head-to-head with the DraftKings player-prop lines every game. The question this page exists to answer is whether people and the machine together can build a better model than either alone: one sharp fan, or the combined lean of many, might see things the numbers don't. Every arrow you place is scored against what really happened, and the calls that keep landing closer than Burke_v1's earn a place in it.
-    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade Burke_v1 the hard way, on players who played.</div>
+    <div style="margin-top:8px"><b>How accuracy is measured, in plain words.</b> Every projection is a guess at a player's fantasy points. After the game we take the difference between the guess and what he really scored, ignore whether it was too high or too low, and average those misses over every player who actually took the field. A <b>4.0</b> means the typical projection was about four fantasy points off. <b>Lower is better.</b> Players who were inactive don't count for or against anyone — we grade Burke_v1 the hard way, on players who played. Points are <b>DraftKings</b> scoring (full PPR, 4-point passing TD, −1 per interception and fumble lost, +3 at 300 passing, 100 rushing or 100 receiving yards), the scoring the big sites publish their own accuracy in, so the comparison is like for like.</div>
     <div class="how" style="margin-top:6px">The standings below rank every model the same way: the big sites (their own published weekly accuracy), Burke_v1, and every fan's version of it.</div>
 </div>
   </details>
@@ -253,8 +253,8 @@
   </div>
 
   <div class="card how">
-    <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat <b>10%</b> (three ▲ = +30%; ten ▼ = zero). The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
-    <div class="legend"><span><b style="color:var(--up)">▲</b> +10% per press</span><span><b style="color:var(--down)">▼</b> −10% per press</span><span>arrows lock at kickoff</span></div>
+    <b>How to play.</b> Below are Burke_v1's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat a set amount: <b>half a touchdown</b> (or interception), <b>one catch</b>, <b>10 rushing or receiving yards</b>, <b>25 passing yards</b>. ▼ stops at zero. The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land.
+    <div class="legend"><span><b style="color:var(--up)">▲</b> <b style="color:var(--down)">▼</b> ½ TD · 1 catch · 10 yds · 25 pass yds</span><span>DraftKings scoring</span><span>arrows lock at kickoff</span></div>
   </div>
 
   <div class="card">
@@ -309,7 +309,7 @@
     <div class="byline">From the desk of the model &middot; Kuhn &amp; Friends, and anyone else who wants in</div>
     <div class="story">
       <p>Every projection system is blind to something. A model can read ten seasons of box scores, the weather, the Vegas line and the injury report, and still not know that a receiver limped off the practice field on Friday, that a coach has fallen out of love with his running back, or that a rookie has the whole locker room believing. People know those things. They just have never had a way to prove it.</p>
-      <p>This page is that way. Each week Burke_v1 posts its projected stat line for every skill player on the slate. You read them and, where you know better, you say so: a tap of <b>&#9650;</b> nudges a number up ten percent, a tap of <b>&#9660;</b> nudges it down. Leave alone whatever you agree with. Press <i>Lock them in</i> and your arrows become a model of their own &mdash; <b>you + Burke_v1</b> &mdash; that is scored after the games exactly the way the machine is scored: on every player who took the field, by how many fantasy points it was off.</p>
+      <p>This page is that way. Each week Burke_v1 posts its projected stat line for every skill player on the slate. You read them and, where you know better, you say so: a tap of <b>&#9650;</b> adds a set amount &mdash; half a touchdown, a catch, ten yards &mdash; and a tap of <b>&#9660;</b> takes it away. Leave alone whatever you agree with. Press <i>Lock them in</i> and your arrows become a model of their own &mdash; <b>you + Burke_v1</b> &mdash; that is scored after the games exactly the way the machine is scored: on every player who took the field, by how many fantasy points it was off.</p>
       <h4>The homer's edge</h4>
       <p>There is reason to think the fans will hold their own. The league behind this page has run for twenty-two seasons, and its draft history keeps whispering the same thing: the dart throws land a little more often when the thrower knows the team. A <i>dart throw</i>, in this league's language, is a cheap late-auction buy &mdash; a dollar or two, three at most &mdash; on a player the consensus rankings do not rate, taken on a hunch; it counts as a hit if he ends up worth a starting spot. Most darts miss, which is what makes them darts. But the ones thrown at a manager's own team, the roster he watches every week and argues about at dinner, have hit at a slightly better clip than the ones thrown at everyone else's. That is a small edge in a small sample, and the market prices those players the same for everybody. It is exactly the kind of thing this page is built to test properly: does knowing a team well tell you something the numbers miss, and can a model be taught to listen?</p>
       <h4>A contest, and a collaboration</h4>
@@ -394,30 +394,72 @@ const TEAM_FIX = {JAC:"JAX", LAR:"LA", LVR:"LV", WSH:"WAS", ARZ:"ARI", OAK:"LV",
 const canon = t => TEAM_FIX[t] || t;
 const $ = id => document.getElementById(id);
 let D = null, KEY = "", picks = {}, CFG = {}, G = null, SUBS = null, LIVE = null;   // picks: "i:s" -> signed arrow presses
-const STEP = 0.10, MIN_N = -10;
-// What one unit of each stat is worth in fantasy points: standard PPR, the scoring Burke_v1's
-// projection is built on. INT is -2 because that is what the shipped number uses -- rebuilding
-// the week-3 bake from its own stat lines, -2 leaves QBs 0.41 pts off on average and -1 leaves
-// them 0.96 off. (fan_grade.py's PTS table is a different thing: it turns an error measured in
-// stat units into points of error, so its INT entry is a magnitude, not a score.)
-const PTS = {pass_yds:0.04, pass_tds:4, pass_int:-2, rush_yds:0.1, rush_tds:6, rec:1, rec_yds:0.1, rec_tds:6};
-// The card's projection with this device's arrows applied. Priced as a CHANGE on top of the shipped
-// number rather than rebuilt from the stat line, so an untouched card shows exactly what shipped --
-// the stat line leaves out fumbles and rounds, and rebuilding would move every card a little.
-function projNow(p) {
-  let d = 0;
-  for (const [k, v] of Object.entries(p.stats)) {
-    if (v == null || !(k in PTS)) continue;
-    const a = picks[p.i + ":" + D.stat_keys.indexOf(k)] || 0;
-    if (a) d += (Math.max(0, v * (1 + STEP * a)) - v) * PTS[k];
-  }
-  return {now: p.proj + d, d};
+// Arrow rule "u1" (2026-09-24): each tap moves a stat a set amount in its own units, sized so a
+// tap is a call a fan actually makes -- half a touchdown, one catch, ten yards -- instead of a tenth
+// of the projection, which made "one more TD" on a 0.6 projection seventeen taps. Codes carry the
+// rule ("r"); a code without one is scored under the old percentage rule by fan_adjust_record/fan_grade.
+const RULE = "u1";
+const STEP_U = {pass_yds:25, pass_tds:0.5, pass_int:0.5, rush_yds:10, rush_tds:0.5, rec:1, rec_yds:10, rec_tds:0.5};
+const MAX_N = 100;
+const adjOf = (k, v, a) => Math.max(0, v + STEP_U[k] * a);
+const minN = (k, v) => -Math.ceil((v || 0) / STEP_U[k] - 1e-9);       // ▼ stops at zero
+// DraftKings scoring -- the scoring the big sites' published accuracy is graded in, so the card, the
+// grade and the standings all speak the same points. scripts/dk_scoring.py holds the same constants
+// (and says where they come from); tests/test_dk_scoring.py fails if the two copies drift.
+const DK = {pass_yds:0.04, pass_tds:4, pass_int:-1, rush_yds:0.1, rush_tds:6, rec:1, rec_yds:0.1, rec_tds:6, fumbles_lost:-1};
+const DK_BONUS_AT = {pass_yds:300, rush_yds:100, rec_yds:100}, DK_BONUS_PTS = 3;
+const DK_SHAPE = {pass_yds:10.9, rush_yds:1.83, rec_yds:1.81};
+// The +3 bonuses are priced as expectations, 3 x P(yards >= line | projected yards) under a gamma
+// with the fitted shape: a projection is a mean, and an 85-yard receiver clears 100 about a third
+// of the time. lgamma/gammaQ are the textbook Lanczos and series / continued-fraction routines.
+function lgamma(z) {
+  const c = [0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61503916999185,
+             12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7];
+  if (z < 0.5) return Math.log(Math.PI / Math.sin(Math.PI * z)) - lgamma(1 - z);
+  z -= 1; let x = c[0]; for (let i = 1; i < 9; i++) x += c[i] / (z + i);
+  const t = z + 7.5; return 0.5 * Math.log(2 * Math.PI) + (z + 0.5) * Math.log(t) - t + Math.log(x);
 }
+function gammaQ(a, x) {                                  // regularized upper incomplete gamma
+  if (x <= 0) return 1;
+  const lead = Math.exp(-x + a * Math.log(x) - lgamma(a));
+  if (x < a + 1) {
+    let ap = a, sum = 1 / a, del = sum;
+    for (let n = 0; n < 500; n++) { ap += 1; del *= x / ap; sum += del; if (Math.abs(del) < Math.abs(sum) * 1e-14) break; }
+    return 1 - sum * lead;
+  }
+  let b = x + 1 - a, c = 1e300, d = 1 / b, h = d;
+  for (let i = 1; i < 500; i++) {
+    const an = -i * (i - a); b += 2; d = an * d + b; if (Math.abs(d) < 1e-300) d = 1e-300;
+    c = b + an / c; if (Math.abs(c) < 1e-300) c = 1e-300; d = 1 / d; const del = d * c; h *= del; if (Math.abs(del - 1) < 1e-14) break;
+  }
+  return lead * h;
+}
+const pBonus = (k, m) => m > 0 ? gammaQ(DK_SHAPE[k], DK_BONUS_AT[k] * DK_SHAPE[k] / m) : 0;
+function dkPoints(L) {
+  let t = 0;
+  for (const [k, w] of Object.entries(DK)) t += (L[k] || 0) * w;
+  for (const k in DK_BONUS_AT) t += DK_BONUS_PTS * pBonus(k, L[k] || 0);
+  return t;
+}
+// A player's stat line, with or without this device's arrows. `fl` (projected fumbles lost) rides
+// along from the bake so the card is the whole DraftKings projection, not only the tappable stats.
+function lineOf(p, withPicks) {
+  const L = {fumbles_lost: p.fl || 0};
+  for (const [k, v] of Object.entries(p.stats)) {
+    if (v == null) continue;
+    const a = withPicks ? (picks[p.i + ":" + D.stat_keys.indexOf(k)] || 0) : 0;
+    L[k] = a ? adjOf(k, v, a) : v;
+  }
+  return L;
+}
+// The card shows Burke_v1's stat line in DraftKings points, rescored here rather than read from
+// p.proj: p.proj is the model's own PPR total (INT and fumbles at -2, no bonuses), a different scoring.
+const dk0 = p => (p._dk0 ??= dkPoints(lineOf(p, false)));
 function ptsHtml(p) {
-  const {now, d} = projNow(p);
-  if (Math.abs(d) < 0.05) return `proj <b>${p.proj.toFixed(1)}</b> pts`;
+  const base = dk0(p), now = dkPoints(lineOf(p, true)), d = now - base;
+  if (Math.abs(d) < 0.05) return `proj <b>${base.toFixed(1)}</b> pts`;
   const c = d > 0 ? "up" : "dn";
-  return `proj <small>${p.proj.toFixed(1)}</small><b class="${c}">${Math.max(0, now).toFixed(1)}</b> pts<span class="d ${c}">${d > 0 ? "+" : "−"}${Math.abs(d).toFixed(1)}</span>`;
+  return `proj <small>${base.toFixed(1)}</small><b class="${c}">${Math.max(0, now).toFixed(1)}</b> pts<span class="d ${c}">${d > 0 ? "+" : "−"}${Math.abs(d).toFixed(1)}</span>`;
 }
 const ls = { get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }, set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }, del(k){ try { localStorage.removeItem(k); } catch(e){} } };
 let FAV = ls.get("fanpicks_team") || "";        // the team the fan knows best; must follow ls
@@ -447,8 +489,23 @@ async function identity() {
 fetch("fan/dropbox.json?" + Date.now()).then(r => r.json()).then(c => { CFG = c || {}; if (CFG.sheet_csv) liveIn(); }).catch(() => {});
 
 fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
-  D = d; KEY = "fanpicks_" + d.season + "_wk" + d.week + "_" + (d.bake_id || "");   // a re-bake renumbers players, so drafts are per bake
+  D = d; const K0 = "fanpicks_" + d.season + "_wk" + d.week + "_" + (d.bake_id || "");   // a re-bake renumbers players, so drafts are per bake
+  KEY = K0 + "_" + RULE;                                 // ...and per arrow rule: a press means something different under each
   try { picks = JSON.parse(ls.get(KEY) || "{}") || {}; } catch(e) { picks = {}; }
+  if (!Object.keys(picks).length && ls.get(K0)) {        // a draft made under the percentage rule: keep the intent, in units
+    try {
+      for (const [key, n] of Object.entries(JSON.parse(ls.get(K0)) || {})) {
+        const [i, si] = key.split(":").map(Number), p = d.players[i], k = d.stat_keys[si], v = p && p.stats[k];
+        if (v == null || !(k in STEP_U)) continue;
+        // convert where the old arrow LANDED, not the size of the move: ten ▼ meant zero, and must
+        // still mean zero rather than whatever whole number of steps sits nearest
+        const land = Math.max(0, v * (1 + 0.1 * n));
+        const u = land === 0 ? minN(k, v) : Math.max(minN(k, v), Math.min(MAX_N, Math.round((land - v) / STEP_U[k])));
+        if (u) picks[key] = u;
+      }
+    } catch(e) {}
+    ls.set(KEY, JSON.stringify(picks)); if (ls.get(K0 + "_sent")) ls.set(KEY + "_sent", ls.get(K0 + "_sent")); ls.del(K0);
+  }
   $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || ""; identity().then(renderLead);
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
@@ -472,10 +529,10 @@ function render() {
     h += `<div class="game"><b>${game.away} @ ${game.home}</b><span>${game.kickoff}</span></div>`;
     const order = game === favGame && canon(game.home) === FAV ? [game.home, game.away] : [game.away, game.home];
     for (const team of order) {
-      const tp = ps.filter(p => p.team === team).sort((a, b) => b.proj - a.proj);
+      const tp = ps.filter(p => p.team === team).sort((a, b) => dk0(b) - dk0(a));
       if (!tp.length) continue;
       h += `<div class="team">${team}</div>`;
-      const main = q ? tp : tp.filter(p => p.proj >= 3), rest = q ? [] : tp.filter(p => p.proj < 3);
+      const main = q ? tp : tp.filter(p => dk0(p) >= 3), rest = q ? [] : tp.filter(p => dk0(p) < 3);
       h += main.map(card).join("");
       if (rest.length) h += `<button class="more" data-team="${team}-${game.game}">show ${rest.length} more ${team} player${rest.length > 1 ? "s" : ""} (under 3 pts)</button><div hidden data-more="${team}-${game.game}">${rest.map(card).join("")}</div>`;
     }
@@ -491,11 +548,11 @@ function card(p) {
 const fmt = (k, v) => k.endsWith("tds") || k === "pass_int" || k === "rec" ? v.toFixed(1) : String(Math.round(v));
 function stat(i, k, v) {
   const s = D.stat_keys.indexOf(k), a = picks[i + ":" + s] || 0;
-  const adj = Math.max(0, v * (1 + STEP * a));
+  const adj = adjOf(k, v, a);
   const cls = a > 0 ? "up" : a < 0 ? "dn" : "";
-  const arr = a ? (a > 0 ? "+" : "−") + Math.abs(a * 10) + "%" : "";
+  const arr = a ? (a > 0 ? "+" : "−") + fmt(k, Math.abs(a * STEP_U[k])) : "";
   const val = a ? `<small>${fmt(k, v)}</small>${fmt(k, adj)}` : fmt(k, v);
-  return `<div class="st ${cls}" data-i="${i}" data-s="${s}"><span class="k">${LABEL[k]}</span><span class="v">${val}</span><span class="arr ${a > 0 ? "up" : a < 0 ? "down" : ""}">${arr}</span><button data-d="-1" title="fade 10%">▼</button><button data-d="1" title="boost 10%">▲</button></div>`;
+  return `<div class="st ${cls}" data-i="${i}" data-s="${s}"><span class="k">${LABEL[k]}</span><span class="v">${val}</span><span class="arr ${a > 0 ? "up" : a < 0 ? "down" : ""}">${arr}</span><button data-d="-1" title="−${fmt(k, STEP_U[k])} ${LABEL[k]}">▼</button><button data-d="1" title="+${fmt(k, STEP_U[k])} ${LABEL[k]}">▲</button></div>`;
 }
 $("list").addEventListener("click", e => {
   const b = e.target.closest("button");
@@ -503,7 +560,8 @@ $("list").addEventListener("click", e => {
   if (b.dataset.team) { const m = document.querySelector(`[data-more="${b.dataset.team}"]`); m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace("hide", "show") : b.textContent.replace("show", "hide"); return; }
   const st = b.closest(".st"); if (!st) return;
   const key = st.dataset.i + ":" + st.dataset.s, d = +b.dataset.d;
-  let a = (picks[key] || 0) + d; a = Math.max(MIN_N, a);
+  const p0 = D.players[+st.dataset.i], k0 = D.stat_keys[+st.dataset.s];
+  let a = Math.min(MAX_N, Math.max(minN(k0, p0.stats[k0]), (picks[key] || 0) + d));
   if (a === 0) delete picks[key]; else picks[key] = a;
   ls.set(KEY, JSON.stringify(picks));
   const p = D.players[+st.dataset.i], k = D.stat_keys[+st.dataset.s];
@@ -537,7 +595,7 @@ $("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {};
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
 function buildCode() {
   const a = Object.entries(picks).map(([k, v]) => { const [i, s] = k.split(":").map(Number); return [i, s, v]; });
-  const j = {n: me(), u: IDH || DID, d: DID, f: FAV || "", t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), a};
+  const j = {n: me(), u: IDH || DID, d: DID, f: FAV || "", t: new Date().toISOString().slice(0, 16) + "Z", b: D.bake_id || "", c: ($("cmt").value || "").trim().slice(0, 300), r: RULE, a};
   return "FAN1." + D.season + "." + D.week + "." + b64url(JSON.stringify(j));
 }
 const dropbox = () => !!(CFG.form_action && CFG.entry_user && CFG.entry_code);
@@ -620,7 +678,10 @@ function standings() {
   // every model on one list: the big sites (their published weekly error), the unedited model
   // (its played-only error), and the model with each fan's arrows applied -- ranked by the average
   // over the weeks each one has numbers for
-  const mw = ((ACC && ACC.weeks) || []).filter(w => w.n_played && w.mae_played).map(w => ({week: w.week, mae: w.mae_played, n: w.n_played}));
+  // mae_vs_sites is scored the way the sites score themselves (DraftKings, QB/RB/WR/TE, players who
+  // played); mae_played is PPR with kickers and would rank Burke_v1 against them on a different basis
+  const mw = ((ACC && ACC.weeks) || []).map(w => w.mae_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.mae_vs_sites, n: w.n_vs_sites}
+                                                  : w.mae_played && w.n_played ? {week: w.week, mae: w.mae_played, n: w.n_played} : null).filter(Boolean);
   const sw = (SITES && SITES.weeks) || {};
   const weeks = [...new Set([...mw.map(w => w.week), ...Object.keys(sw).map(Number)])].sort((a, b) => a - b);
   if (!weeks.length) return null;

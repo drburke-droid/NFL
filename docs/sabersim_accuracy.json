@@ -96,6 +96,7 @@
   }
  },
  "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
+ "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together",
  "weeks": [
   {
    "n": 470,
@@ -147,7 +148,10 @@
      "median_mae": 3.662,
      "ffa_n": 59,
      "ffa_mae": 4.311,
-     "model_mae_on_ffa_rows": 4.209
+     "model_mae_on_ffa_rows": 4.209,
+     "n_vs_sites": 34,
+     "mae_vs_sites": 6.959,
+     "bias_vs_sites": 0.903
     },
     "RB": {
      "n": 110,
@@ -163,7 +167,10 @@
      "median_mae": 3.692,
      "ffa_n": 93,
      "ffa_mae": 4.488,
-     "model_mae_on_ffa_rows": 4.39
+     "model_mae_on_ffa_rows": 4.39,
+     "n_vs_sites": 81,
+     "mae_vs_sites": 4.967,
+     "bias_vs_sites": 0.756
     },
     "TE": {
      "n": 100,
@@ -179,7 +186,10 @@
      "median_mae": 2.882,
      "ffa_n": 85,
      "ffa_mae": 3.448,
-     "model_mae_on_ffa_rows": 3.399
+     "model_mae_on_ffa_rows": 3.399,
+     "n_vs_sites": 73,
+     "mae_vs_sites": 3.645,
+     "bias_vs_sites": 0.203
     },
     "WR": {
      "n": 165,
@@ -198,9 +208,15 @@
      "model_mae_on_ffa_rows": 4.393,
      "dk_n": 10,
      "dk_mae": 4.015,
-     "model_mae_on_dk_rows": 4.323
+     "model_mae_on_dk_rows": 4.323,
+     "n_vs_sites": 134,
+     "mae_vs_sites": 4.709,
+     "bias_vs_sites": -0.314
     }
-   }
+   },
+   "n_vs_sites": 322,
+   "mae_vs_sites": 4.77,
+   "bias_vs_sites": 0.201
   },
   {
    "n": 464,
@@ -255,7 +271,10 @@
      "model_mae_on_ffa_rows": 4.615,
      "dk_n": 32,
      "dk_mae": 7.583,
-     "model_mae_on_dk_rows": 7.584
+     "model_mae_on_dk_rows": 7.584,
+     "n_vs_sites": 39,
+     "mae_vs_sites": 6.65,
+     "bias_vs_sites": 0.104
     },
     "RB": {
      "n": 106,
@@ -274,7 +293,10 @@
      "model_mae_on_ffa_rows": 3.007,
      "dk_n": 92,
      "dk_mae": 2.969,
-     "model_mae_on_dk_rows": 3.163
+     "model_mae_on_dk_rows": 3.163,
+     "n_vs_sites": 94,
+     "mae_vs_sites": 3.212,
+     "bias_vs_sites": -1.347
     },
     "TE": {
      "n": 98,
@@ -293,7 +315,10 @@
      "model_mae_on_ffa_rows": 3.572,
      "dk_n": 85,
      "dk_mae": 3.623,
-     "model_mae_on_dk_rows": 3.725
+     "model_mae_on_dk_rows": 3.725,
+     "n_vs_sites": 69,
+     "mae_vs_sites": 3.898,
+     "bias_vs_sites": -0.012
     },
     "WR": {
      "n": 161,
@@ -312,9 +337,15 @@
      "model_mae_on_ffa_rows": 4.023,
      "dk_n": 137,
      "dk_mae": 4.294,
-     "model_mae_on_dk_rows": 4.421
+     "model_mae_on_dk_rows": 4.421,
+     "n_vs_sites": 135,
+     "mae_vs_sites": 4.577,
+     "bias_vs_sites": -0.083
     }
-   }
+   },
+   "n_vs_sites": 337,
+   "mae_vs_sites": 4.297,
+   "bias_vs_sites": -0.4
   }
  ],
  "overall": {
@@ -366,7 +397,10 @@
     "model_mae_on_ffa_rows": 4.417,
     "dk_n": 35,
     "dk_mae": 7.452,
-    "model_mae_on_dk_rows": 7.456
+    "model_mae_on_dk_rows": 7.456,
+    "n_vs_sites": 73,
+    "mae_vs_sites": 6.794,
+    "bias_vs_sites": 0.476
    },
    "RB": {
     "n": 216,
@@ -385,7 +419,10 @@
     "model_mae_on_ffa_rows": 3.677,
     "dk_n": 96,
     "dk_mae": 3.121,
-    "model_mae_on_dk_rows": 3.322
+    "model_mae_on_dk_rows": 3.322,
+    "n_vs_sites": 175,
+    "mae_vs_sites": 4.024,
+    "bias_vs_sites": -0.374
    },
    "TE": {
     "n": 198,
@@ -404,7 +441,10 @@
     "model_mae_on_ffa_rows": 3.489,
     "dk_n": 90,
     "dk_mae": 3.572,
-    "model_mae_on_dk_rows": 3.655
+    "model_mae_on_dk_rows": 3.655,
+    "n_vs_sites": 142,
+    "mae_vs_sites": 3.768,
+    "bias_vs_sites": 0.099
    },
    "WR": {
     "n": 326,
@@ -423,9 +463,15 @@
     "model_mae_on_ffa_rows": 4.199,
     "dk_n": 147,
     "dk_mae": 4.275,
-    "model_mae_on_dk_rows": 4.415
+    "model_mae_on_dk_rows": 4.415,
+    "n_vs_sites": 269,
+    "mae_vs_sites": 4.643,
+    "bias_vs_sites": -0.199
    }
-  }
+  },
+  "n_vs_sites": 659,
+  "mae_vs_sites": 4.528,
+  "bias_vs_sites": -0.106
  },
  "misses": [
   {
