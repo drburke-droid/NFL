@@ -55,12 +55,19 @@ function decode_(code) {
   if (!m) return null;
   var b = m[3].replace(/-/g, "+").replace(/_/g, "/").replace(/=+$/, "");
   while (b.length % 4) b += "=";
+  var j;
   try {
-    var j = JSON.parse(Utilities.newBlob(Utilities.base64Decode(b)).getDataAsString("UTF-8"));
-    return {season: +m[1], week: +m[2], j: j};
+    j = JSON.parse(Utilities.newBlob(Utilities.base64Decode(b)).getDataAsString("UTF-8"));
   } catch (err) {
     return null;
   }
+  // The code comes through a public form, so anything can arrive. Only a JSON object is a set of
+  // picks: a payload of null (or a number, or a list) used to make every lookup below throw, and one
+  // such row took the API down for every fan until someone deleted it by hand.
+  if (!j || typeof j !== "object" || Array.isArray(j)) return null;
+  if (j.a === undefined || j.a === null) j.a = [];
+  else if (!Array.isArray(j.a)) return null;          // a real code always carries a list of arrows
+  return {season: +m[1], week: +m[2], j: j};
 }
 
 function mine_(p) {
@@ -68,10 +75,15 @@ function mine_(p) {
   if (!/^[0-9a-z]{8,40}$/.test(f) || !s || !w) return {ok: false, error: "bad request"};
   var best = null;
   rows_().forEach(function (r) {
-    var x = decode_(r.code);
-    if (!x || x.season !== s || x.week !== w || String(x.j.u || "") !== f) return;
-    var t = String(x.j.t || "");
-    if (!best || t > best.t) best = {code: r.code, t: t, n: (x.j.a || []).length};
+    try {
+      var x = decode_(r.code);
+      if (!x || x.season !== s || x.week !== w || String(x.j.u || "") !== f) return;
+      var t = String(x.j.t || "");
+      // ">=": rows are in submission order, so on a tie the later row is the later lock-in. Codes made
+      // before 2026-09-24 carry their time only to the minute, and two sets locked in within the same
+      // minute used to return the OLDER one.
+      if (!best || t >= best.t) best = {code: r.code, t: t, n: x.j.a.length};
+    } catch (err) { /* one bad row never takes the lookup down */ }
   });
   return best ? {ok: true, code: best.code, t: best.t, n: best.n} : {ok: true, code: null};
 }
@@ -80,12 +92,14 @@ function who_(p) {
   var s = +p.s, w = +p.w, seen = {};
   if (!s || !w) return {ok: false, error: "bad request"};
   rows_().forEach(function (r) {
-    var x = decode_(r.code);
-    if (!x || x.season !== s || x.week !== w) return;
-    var n = (x.j.a || []).length;
-    if (!n) return;
-    var key = String(x.j.u || x.j.n || r.user), t = String(x.j.t || "");
-    if (!seen[key] || t > seen[key].t) seen[key] = {fan: String(x.j.n || r.user || "anonymous").slice(0, 24), arrows: n, t: t};
+    try {
+      var x = decode_(r.code);
+      if (!x || x.season !== s || x.week !== w) return;
+      var key = String(x.j.u || x.j.n || r.user), t = String(x.j.t || "");
+      // ">=" for the same reason as mine_: the later row wins a tie. A later EMPTY set still counts as
+      // the fan's latest word, so it replaces what came before and is filtered out at the end.
+      if (!seen[key] || t >= seen[key].t) seen[key] = {fan: String(x.j.n || r.user || "anonymous").slice(0, 24), arrows: x.j.a.length, t: t};
+    } catch (err) { /* skip it */ }
   });
-  return {ok: true, entries: Object.keys(seen).map(function (k) { return seen[k]; })};
+  return {ok: true, entries: Object.keys(seen).map(function (k) { return seen[k]; }).filter(function (e) { return e.arrows > 0; })};
 }

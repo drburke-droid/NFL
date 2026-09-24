@@ -130,3 +130,15 @@ def test_public_id_is_what_the_page_computes():
     assert fan_rules.public_id(f) == hashlib.sha256((m.group(1) + f).encode()).hexdigest()[:int(m.group(2))]
     assert fan_rules.public_id("") == ""
     assert fan_rules.public_id(f) != f[:16]                  # not just a prefix of the fingerprint
+
+
+def test_two_lock_ins_seconds_apart_resolve_to_the_later():
+    """Codes were stamped to the minute until 2026-09-24, so a fan who fixed a pick and locked in
+    again within the same minute collided with himself: the recorder kept the first set as a
+    duplicate, and the API returned the older one. Codes now carry seconds."""
+    import pandas as pd
+    k = pd.Timestamp("2026-09-27T17:00Z")
+    rows = pd.DataFrame([dict(season=2026, week=3, fan="A", submitted_at=t, _kick=k, what=w) for t, w in
+                         [("2026-09-24T10:00:07Z", "first try"), ("2026-09-24T10:00:41Z", "the fix")]])
+    live, _, sup = fan_rules.live_arrows(rows)
+    assert dict(zip(rows.what, live)) == {"first try": False, "the fix": True}
