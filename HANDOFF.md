@@ -478,6 +478,10 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   means; "all" was 1st (3.89), played-only 5th (4.53). The page falls back to "all" for a week without
   the live fields. The grade workflow accepts workflow_dispatch through the API (used three times
   tonight) when the send workflow is outside its window and will not re-grade. THE ORACLE and the fan
+- **SaberSim no longer receives the sends (2026-09-24 evening, owner's call).** The repo variable
+  `MAIL_TO` and the defaults in `scripts/sabersim_auto.py` and `.github/workflows/sabersim_send.yml`
+  now point at the owner's own Gmail (the sending account). The sends themselves keep running on the
+  same schedule because the grade, the accuracy page and the Oracle standings are built from them.
   models rank on `med_vs_sites` (MEDIAN absolute error, DraftKings, skill positions, players who
   played), which `sabersim_grade.py` now publishes beside the mean (`med_vs_sites_all` too). The sites'
   numbers are the MEANS they publish, so this is not like for like: the paper's note says so in
