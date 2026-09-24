@@ -298,8 +298,9 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   the team they know best (fan_team column); its game leads the list, their players first.
   **The page is an arcade cabinet (2026-09-23).** `docs/fan/cabinet.jpg` (the user's "Football
   Expert" render, 1149x1369) is the stage; the CRT glass is at left 21.6% / top 23.5% / 54.4% x
-  34.4% of the image, the control panel 64-73%. Attract mode on the glass (Press Start 2P, HIGH
-  SCORES = top 5 of the standings, PLAY NOW blinking); click -> `#stage.on`: `fit()` scales
+  34.4% of the image, the control panel 64-73%. Attract mode on the glass (Press Start 2P; HIGH SCORES is the FULL standings crawling
+  upward -- every model, Burke_v1 included -- with a two-line gap before the loop restarts so it
+  reads as a list; PLAY NOW blinking); click -> `#stage.on`: `fit()` scales
   `#cab` so y 20.5%-75.5% / x 13%-87% fill the viewport and counter-zooms the glass content
   (`zoom = 1/scale`) so text draws at natural size; `⏏ cabinet` returns. A folded Sunday Oracle
   (`#fold`, top-4 lines) sits on the control panel; tap (or the 📰 bar button) opens the full
@@ -319,6 +320,62 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   the page at 430x860, cache-busted, for checking in a desktop browser (the Chrome extension
   cannot resize a maximised window and refuses file:// URLs; scale the iframe with a CSS
   transform to see the whole phone). The old `body.plain` CSS remains but nothing sets it.
+- **Everything fans see is DraftKings points now, and arrows move in units (2026-09-24).**
+  *Why DraftKings:* the sites' weekly accuracy we rank against (`docs/fan/sites_accuracy.json`, from
+  Fantasy Football Analytics' DFS accuracy page) is graded in DraftKings points on QB/RB/WR/TE. Our
+  `mae_played` is nflverse PPR (INT and fumble lost -2, no bonuses) AND includes kickers, so the
+  Oracle was ranking two different measurements. The FFA page is blocked from the cloud container;
+  the DraftKings basis rests on the search index's reading of it and on the owner's own account --
+  **confirm the scoring and which players it counts on the page itself**; a different player pool
+  (e.g. a projection floor) would still make the numbers incomparable.
+  *What changed:* `scripts/dk_scoring.py` rescores the box score (actual) and the projected stat line
+  (projection) in DraftKings points -- the stat line is scoring-neutral, so no retraining. The +3
+  yardage bonuses are projected as expectations, 3 x P(yards >= line), from gammas fitted on
+  2018-25 player-games (shapes 10.9 pass / 1.83 rush / 1.81 rec) and checked on our own 2026 wk1-2
+  projections: 18.2 / 24.8 / 33.0 expected bonuses vs 18 / 20 / 33 observed. `sabersim_grade.py`
+  now also emits `mae_vs_sites` / `n_vs_sites` / `bias_vs_sites` (DraftKings, skill only, played
+  only) at every level; `mae_played` is untouched because the SaberSim page and the bias correction
+  read it. The Oracle ranks Burke_v1 on `mae_vs_sites`.
+  **Result: like for like, Burke_v1 is 5th of 8 in both weeks** (wk1 4.77 behind numberFire 4.41,
+  FleaFlicker 4.44, ESPN 4.58, FantasySharks 4.64; wk2 4.30 behind FantasySharks 4.05, ESPN 4.08,
+  numberFire 4.09, FleaFlicker 4.10), not the 3rd the PPR-with-kickers number showed. The blurb's
+  "ranks with the best" was written on the old basis -- owner's call whether it stands.
+  *Cards:* the card shows the stat line in DraftKings points (`dkPoints` in `docs/fan.html`, same
+  constants as dk_scoring.py; `tests/test_dk_scoring.py` reads them out of the page and fails on
+  drift). The bake now carries `fl` (projected fumbles lost); week 3's live bake was backfilled from
+  `outputs/fan/proj_2026_wk3.csv`, frozen per-bake copies left alone. Each tap reprices the card,
+  including the bonus odds (+20 rec yds on an 82-yard receiver is +2.0 linear and +0.6 of bonus).
+  *Arrow rule u1:* a press = half a TD or INT, one catch, 10 rush/rec yards, 25 pass yards; ▼ stops
+  at zero. Two presses is one more touchdown. Codes carry `"r": "u1"`; `scripts/fan_rules.py` is the
+  one place a press becomes a number, used by both `fan_adjust_record.py` (new `rule`, `delta`
+  columns; `pct` keeps meaning 10 x presses on old codes) and `fan_grade.py`. A code with no rule is
+  scored under the old 10% rule forever, so Rob_Burke's week-3 submission means what it meant. A
+  draft saved on a device under the old rule converts to units on load, by where the arrow LANDED
+  (ten ▼ still means zero). Verified in Chromium: the page's gamma matches scipy to 1e-6, and every
+  card, tap, floor, conversion and Oracle number matched an independent Python computation.
+- **The Oracle ranks Burke_v1 on ALL projected players, inactives included (owner's call, 2026-09-24).**
+  `ORACLE_BASIS = "all"` in `docs/fan.html` reads `mae_vs_sites_all` (every skill player projected,
+  an inactive scored 0) instead of the played-only `mae_vs_sites`. On it Burke_v1 is **1st of 8**
+  (wk1 4.05, wk2 3.73; played-only was 5th, 4.77 / 4.30). Know what it rests on: an inactive we zeroed
+  at T-80 grades as a perfect row, and against the FFA consensus those rows are MORE than the whole
+  edge (18 inactives FFA's Saturday file still had at 3+ pts are worth -0.18 of a -0.13 gap; played
+  only, the two are level at +0.02). It is also not necessarily the pool FFA grades the sites on --
+  the consensus itself ranks 5th on our played pool, which suggests theirs is easier. The page copy
+  was reworded to say what is counted (no "like for like", no "only players who took the field").
+  Set `ORACLE_BASIS = "played"` and restore that copy to go back. The owner is weighing a real
+  eight-site ranking from per-source projections (ffanalytics with sources kept separate), which
+  would remove the need for either choice.
+- **Kickers: Subvertadown publishes "Standard" (3/3/3/4/5 by distance) and "Decimal" (0.1/yd).** Our
+  grading is Standard's brackets + 1 per PAT, no miss penalty. The pastes carry no label; their mean
+  (8.46 over 96 kicker-weeks) matches our Standard (8.37 league mean 2023-25) but cannot rule out
+  Decimal-with-miss-penalties (8.34). Copy from the Standard tab. Kickers are outside the sites
+  comparison entirely (it is QB/RB/WR/TE). The grader's rule text calls K scoring "DK kicker
+  scoring"; DraftKings classic has no kicker, so read that as Standard.
+- **gm/ tests are red on main (found 2026-09-24, not caused by the above).** 15 fail and 29 error
+  identically with or without the DraftKings change. `gm/players.py:ffa_file_scored` needs a
+  `player` column; this week's `data/ffanalytics/FFAn_weekly/raw_stats_2026_wk3.csv` is FFA's
+  points-summary export (`first_name`, `last_name`, `points`, `sd_pts`...), not the raw-stats one.
+  Re-export week 3 as raw stats, or teach the reader the other layout.
 - Fan Picks are graded against THE SEND, not the frozen bake (changed 2026-09-20). The page shows a
   file baked days earlier, so scoring against it credits a fan with every point of error the news
   removed between bake and kickoff — reading the injury report scores as forecasting skill. Week 2

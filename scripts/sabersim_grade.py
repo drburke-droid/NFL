@@ -21,6 +21,8 @@ import os, re, sys, glob, json, argparse
 from datetime import datetime, timedelta, date
 from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import dk_scoring   # the scoring the big sites publish their accuracy in; see mae_vs_sites below
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ET = ZoneInfo("America/New_York")
 ap = argparse.ArgumentParser()
@@ -70,14 +72,20 @@ a["nname"] = a.player_display_name.map(norm)
 z = lambda c: a[c].fillna(0) if c in a.columns else 0
 a["k_pts"] = 3 * (z("fg_made_0_19") + z("fg_made_20_29") + z("fg_made_30_39")) + 4 * z("fg_made_40_49") + 5 * (z("fg_made_50_59") + z("fg_made_60_")) + z("pat_made")
 a["actual"] = np.where(a.position == "K", a.k_pts, a.fantasy_points_ppr)
-act = a[["player_id", "nname", "position", "week", "actual"]]
+# the same box score rescored in DraftKings points, skill positions only (the sites grade no K)
+a["actual_dks"] = np.where(a.position.isin(dk_scoring.SKILL), dk_scoring.actual_frame(a), np.nan)
+act = a[["player_id", "nname", "position", "week", "actual", "actual_dks"]]
 elig["nname"] = elig.Player.map(norm)
 act = act.assign(team=a.team.values, last=a.player_display_name.map(lambda n: norm(n).split()[-1]))
-by_id = {(r.player_id, int(r.week)): r.actual for r in act.itertuples() if isinstance(r.player_id, str)}
-by_name = act.groupby(["nname", "position", "week"]).actual.sum().to_dict()
-lt = act.groupby(["last", "team", "position", "week"]).actual.agg(["sum", "size"])
-by_last = {k: v for k, v in lt["sum"].items() if lt.loc[k, "size"] == 1}      # only when unambiguous
-def lookup(r):
+def tables(col):
+    """the three match tables for one actual-points column; both scorings match players identically"""
+    by_id = {(r.player_id, int(r.week)): getattr(r, col) for r in act.itertuples() if isinstance(r.player_id, str)}
+    by_name = act.groupby(["nname", "position", "week"])[col].sum(min_count=1).to_dict()
+    lt = act.groupby(["last", "team", "position", "week"])[col].agg(["sum", "size"])
+    by_last = {k: v for k, v in lt["sum"].items() if lt.loc[k, "size"] == 1}      # only when unambiguous
+    return by_id, by_name, by_last
+def lookup(r, t):
+    by_id, by_name, by_last = t
     w = int(r.week)
     if isinstance(r.ID, str) and (r.ID, w) in by_id: return by_id[(r.ID, w)]
     if (r.nname, r.Pos, w) in by_name: return by_name[(r.nname, r.Pos, w)]
@@ -88,7 +96,12 @@ def lookup(r):
     # 40.8 in 2026 wk2.)
     if isinstance(r.ID, str) and r.ID.startswith("00-"): return np.nan
     return by_last.get((r.nname.split()[-1], r.Team, r.Pos, w), np.nan)
-g = elig.copy(); g["actual"] = [lookup(r) for r in g.itertuples()]
+T_PPR, T_DKS = tables("actual"), tables("actual_dks")
+g = elig.copy(); g["actual"] = [lookup(r, T_PPR) for r in g.itertuples()]
+g["actual_dks"] = [lookup(r, T_DKS) for r in g.itertuples()]
+# our projection in the same DraftKings points: the stat line the send carries, rescored, with the
+# yardage bonuses as expectations (dk_scoring explains why not a step at the threshold)
+g["proj_dks"] = np.where(g.Pos.isin(dk_scoring.SKILL), dk_scoring.projected_frame(g), np.nan)
 # "played" = the player has a box-score row that week. A player who dressed and scored nothing
 # still played; a player we zeroed out as inactive did not. The played-only error is the one to
 # show fans, because a pool full of inactives we sent at 0.00 flatters the all-rows number.
@@ -107,6 +120,7 @@ g["Opp"] = [r.Opp if isinstance(r.Opp, str) else next(iter(_gm.get(r.Game, set()
 ok = g.apply(lambda r: r.Team in have.get(int(r.week), set()) and r.Opp in have.get(int(r.week), set()), axis=1)
 skipped = g[~ok].groupby("week").Game.unique().to_dict()
 g = g[ok].copy(); g["actual"] = g.actual.fillna(0.0)
+g["actual_dks"] = np.where(g.Pos.isin(dk_scoring.SKILL), g.actual_dks.fillna(0.0), np.nan)
 if g.empty: raise SystemExit("no graded games yet: " + "; ".join(f"wk{k}: {len(v)} game(s) awaiting box scores" for k, v in skipped.items()))
 g["err"] = g.actual - g.Proj
 
@@ -145,6 +159,24 @@ def block(d):
         if len(dd) >= 8:
             o[f"{lab}_n"] = int(len(dd)); o[f"{lab}_mae"] = round(float((dd.actual - dd[col]).abs().mean()), 3)
             o[f"model_mae_on_{lab}_rows"] = round(float(dd.err.abs().mean()), 3)
+    # The number to rank against the sites' published weekly accuracy: same scoring (DraftKings),
+    # same positions (QB/RB/WR/TE, no K), same players (those with a box-score row that week).
+    # mae_played above stays PPR because the SaberSim page and the bias correction read it.
+    vs = pl[pl.Pos.isin(dk_scoring.SKILL)].dropna(subset=["actual_dks", "proj_dks"]) if "proj_dks" in pl else pl.iloc[0:0]
+    if len(vs):
+        e = vs.actual_dks - vs.proj_dks
+        o.update({"n_vs_sites": int(len(vs)), "mae_vs_sites": round(float(e.abs().mean()), 3),
+                  "bias_vs_sites": round(float(e.mean()), 3)})
+    # The same, over EVERY skill player we projected, inactives included (scored 0 once the game is
+    # in). This is the figure the Fan Picks Oracle ranks on (owner's choice, 2026-09-24). It is the
+    # most favourable basis for Burke_v1 and not the sites' own: an inactive we zeroed before
+    # kickoff grades as a perfect row, and in weeks 1-2 those rows are more than the whole edge
+    # over the eight-site consensus. mae_vs_sites above is the played-only figure.
+    va = d[d.Pos.isin(dk_scoring.SKILL)].dropna(subset=["actual_dks", "proj_dks"]) if "proj_dks" in d else d.iloc[0:0]
+    if len(va):
+        e = va.actual_dks - va.proj_dks
+        o.update({"n_vs_sites_all": int(len(va)), "mae_vs_sites_all": round(float(e.abs().mean()), 3),
+                  "bias_vs_sites_all": round(float(e.mean()), 3)})
     return o
 weeks = []
 for wk, d in g.groupby("week"):
@@ -238,6 +270,7 @@ SCALE = {
 }
 out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead, "scale": SCALE,
        "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
+       "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0",
        "weeks": weeks, "overall": overall,
        "misses": [{"week": int(r.week), "player": r.Player, "pos": r.Pos, "team": r.Team, "proj": round(float(r.Proj), 1), "actual": round(float(r.actual), 1)} for r in misses.itertuples()]}
 os.makedirs(os.path.join(ROOT, "docs"), exist_ok=True); os.makedirs(os.path.join(ROOT, "outputs", "reports"), exist_ok=True)

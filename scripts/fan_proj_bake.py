@@ -52,7 +52,10 @@ for r in rows:
     if pos == "WR" and (stats.get("rush_yds") or 0) < 3: stats.pop("rush_yds", None)   # only show a WR's rushing when it is a real part of his line
     players.append({"i": len(players), "id": r.get("ID") or "", "name": r["Player"], "team": r["Team"], "opp": opp, "pos": pos,
                     "game": game, "proj": proj, "status": r.get("Status") or "", "inj": r.get("Injury") or "", "note": (r.get("Note") or "")[:80],
-                    "stats": stats})
+                    "stats": stats,
+                    # projected fumbles lost: not a tappable stat, but DraftKings charges -1 each and the
+                    # card shows the whole DraftKings projection (docs/fan.html dkPoints)
+                    "fl": f(r.get("fumbles_lost")) or 0.0})
 for g in games.values(): g["teams"] = sorted(g["teams"])
 order = sorted(games.values(), key=lambda g: (datetime.strptime(f"{S} " + g["kickoff"][4:], "%Y %m/%d %I:%M %p ET"), g["game"]))
 bake_id = datetime.now(timezone.utc).strftime("%Y%m%d%H%M")
