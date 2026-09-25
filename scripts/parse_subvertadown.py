@@ -114,10 +114,13 @@ else:                                               # ---- full site tables ----
 if rows:
     out = os.path.join(ROOT, "data", "subvertadown", "subvertadown_long.csv"); os.makedirs(os.path.dirname(out), exist_ok=True)
     new = not os.path.exists(out)
-    if not new:      # idempotent: a paste for this season/week is appended once, however often the runner re-parses it
+    if not new:      # idempotent per DAY: re-parsing the same paste appends nothing, but a fresh paste for the same
+                     # week later in the week (Subvertadown updates Tue -> Fri) is a new snapshot. Readers take the
+                     # latest snapshot at or before the game week (sabersim_grade / sabersim_scenarios sv_lookup).
+        today = date.today().isoformat()
         with open(out, encoding="utf-8") as f:
-            if any(r["season"] == str(S) and r["week_of_paste"] == str(W) for r in csv.DictReader(f)):
-                print("long table already has this season/week paste; not appending"); rows = []
+            if any(r["season"] == str(S) and r["week_of_paste"] == str(W) and r["snapshot"] == today for r in csv.DictReader(f)):
+                print("long table already has today's paste for this season/week; not appending"); rows = []
 if rows:
     with open(out, "a", newline="", encoding="utf-8") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
