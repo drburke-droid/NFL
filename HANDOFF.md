@@ -478,6 +478,14 @@ reads K's context columns today, but it was the same omission that left K/DST wi
   means; "all" was 1st (3.89), played-only 5th (4.53). The page falls back to "all" for a week without
   the live fields. The grade workflow accepts workflow_dispatch through the API (used three times
   tonight) when the send workflow is outside its window and will not re-grade. THE ORACLE and the fan
+- **Friday re-pastes now count (2026-09-25).** `parse_subvertadown.py` used to skip any paste for a
+  season/week already in the long table, so the owner's Friday Subvertadown refresh was silently dropped
+  (Fri 09-25: 1,219 of 3,216 week-3 values had moved since Tuesday). It is idempotent per DAY now: a new
+  snapshot per paste date; `sv_lookup` in sabersim_grade / sabersim_scenarios takes the latest paste
+  (sort by week_of_paste, snapshot). The K/DST override file is rebuilt from the paste every run anyway.
+  Same morning: `props_watch.py` crashed ("Input y contains NaN") because earlier-2026 rows without a
+  box-score actual reached the residual model's training set once week 3 began; the pipeline now sees
+  graded history plus only the current week's rows.
 - **SaberSim no longer receives the sends (2026-09-24 evening, owner's call).** The repo variable
   `MAIL_TO` and the defaults in `scripts/sabersim_auto.py` and `.github/workflows/sabersim_send.yml`
   now point at the owner's own Gmail (the sending account). The sends themselves keep running on the

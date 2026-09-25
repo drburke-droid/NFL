@@ -252,7 +252,11 @@ full = pd.concat([train, cur[[c for c in cur.columns if c in train.columns
                  ignore_index=True)
 full["market_proj"] = np.nan
 import model_burke.schema as _sch
-ev, _ = pipeline.run(full[full.actual_ppr.notna() | (full.season == 2026)], verbose=False)
+# rows the walk-forward may see: graded history, plus THIS week's rows to predict. An earlier 2026 week
+# without a box-score row (the player never caught a pass, or sat) has no residual, and once such a
+# row is older than the current week it lands in the training set and sklearn refuses the NaN target
+# (first seen wk3 2026, when weeks 1-2 rows with no actual became "history")
+ev, _ = pipeline.run(full[full.actual_ppr.notna() | ((full.season == 2026) & (full.week == cur_week_2026))], verbose=False)
 
 # calibrated P(over) — logistic on all graded rows, applied to the current week
 ev["sd"] = ((ev.mb_p75 - ev.mb_p25) / 1.35).clip(lower=1e-3)
