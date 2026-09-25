@@ -1,10 +1,9 @@
 {
  "season": 2026,
  "week": 3,
- "slate_games": 16,
+ "slate_games": 15,
  "games": [
   "Arizona Cardinals @ San Francisco 49ers",
-  "Atlanta Falcons @ Green Bay Packers",
   "Baltimore Ravens @ Dallas Cowboys",
   "Carolina Panthers @ Cleveland Browns",
   "Cincinnati Bengals @ Pittsburgh Steelers",
@@ -25,68 +24,73 @@
   "file": "raw_stats_2026_wk3.csv",
   "rows": 919,
   "age_hours": 0.0,
-  "slate_skill": 430,
-  "slate_k": 33,
-  "slate_dst": 32
+  "slate_skill": 405,
+  "slate_k": 31,
+  "slate_dst": 30
  },
  "kdst": {
   "file": "kdst_2026_wk3.csv",
   "K": {
-   "hit": 33,
-   "of": 33
+   "hit": 31,
+   "of": 31
   },
   "DST": {
-   "hit": 32,
-   "of": 32
+   "hit": 30,
+   "of": 30
   }
  },
  "dk_kickers": null,
  "injury_report": {
   "src": "nfl.com",
-  "listed": 73,
+  "listed": 87,
   "designations": {
    "Out": 1
   }
  },
  "lineups": {
-  "statuses": 390,
+  "statuses": 376,
   "by_src": {
-   "espn": 199,
+   "espn": 182,
    "sleeper": 97,
    "+sleeper": 78,
-   "espn+sleeper": 16
+   "espn+sleeper": 19
   },
-  "q": 46,
+  "q": 43,
   "out": 10,
   "out_by_src": {
    "espn+sleeper": 10
   }
  },
  "bias_cal": {
-  "applied": -0.5223,
-  "rows": 870,
+  "applied": -0.0331,
+  "rows": 678,
   "weeks": [
    {
     "week": 1,
-    "n": 438
+    "n": 322
    },
    {
     "week": 2,
-    "n": 432
+    "n": 337
+   },
+   {
+    "week": 3,
+    "n": 19
    }
   ],
   "reason": "",
-  "raw": -0.5223
+  "basis": "med_err_played",
+  "raw": -0.0331
  },
+ "proj_kind": "playing_median",
  "csv": "proj_2026_wk3.csv",
- "rows": 487,
- "generated": "2026-09-24 10:52 ET",
+ "rows": 419,
+ "generated": "2026-09-25 11:14 ET",
  "kickoffs": [
   "Mon 09/28 08:15 PM ET",
   "Sun 09/27 01:00 PM ET",
   "Sun 09/27 04:05 PM ET",
   "Sun 09/27 04:25 PM ET",
-  "Sun 09/27 08:20 PM ET",
-  "Thu 09/24 08:15 PM ET"
+  "Sun 09/27 08:20 PM ET"
  ]
 }

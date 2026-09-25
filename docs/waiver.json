@@ -62,18 +62,6 @@
    ],
    "free": [
     {
-     "name": "Jaxson Dart",
-     "pos": "QB",
-     "team": "NYG",
-     "n": "jaxson dart",
-     "pts": 24.29,
-     "inj": "Q",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
      "name": "Jacoby Brissett",
      "pos": "QB",
      "team": "ARI",
@@ -211,18 +199,6 @@
      "team": "WAS",
      "n": "marcus mariota",
      "pts": 13.53,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Drew Lock",
-     "pos": "QB",
-     "team": "SEA",
-     "n": "drew lock",
-     "pts": 9.23,
      "inj": "NA",
      "out": false,
      "rostered": false,

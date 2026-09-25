@@ -366,7 +366,7 @@
      "keeper_cost": {
       "price": 8
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     }
    ]
@@ -684,7 +684,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -775,7 +775,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "QUESTIONABLE",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -783,7 +783,7 @@
      "name": "Dontayvion Wicks",
      "pos": "WR",
      "nfl_team": "PHI",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 0
@@ -796,7 +796,7 @@
      "name": "Denzel Boston",
      "pos": "WR",
      "nfl_team": "CLE",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 18
@@ -1197,7 +1197,7 @@
      "keeper_cost": {
       "price": 3
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1223,7 +1223,7 @@
      "keeper_cost": {
       "price": 10
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1658,7 +1658,7 @@
      "keeper_cost": {
       "price": 31
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     },
     {
@@ -1747,7 +1747,7 @@
      "name": "Jameson Williams",
      "pos": "WR",
      "nfl_team": "DET",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 9
@@ -1916,7 +1916,7 @@
      "name": "Devaughn Vele",
      "pos": "WR",
      "nfl_team": "NO",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 20
@@ -1963,7 +1963,7 @@
      "keeper_cost": {
       "price": 34
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 1
     },
     {
@@ -1989,7 +1989,7 @@
      "keeper_cost": {
       "price": 20
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2739,7 +2739,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     },
     {
@@ -2804,7 +2804,7 @@
      "keeper_cost": {
       "price": 18
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     },
     {

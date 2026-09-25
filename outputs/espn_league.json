@@ -443,7 +443,7 @@
      "keeper": true,
      "keeper_price": 8,
      "acq": "ADD",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 305.4,
      "last_pts": 0.0
     }
@@ -505,7 +505,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 373.8,
-     "last_pts": 11.1
+     "last_pts": 35.3
     },
     {
      "name": "Drake London",
@@ -518,7 +518,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 202.9,
-     "last_pts": 8.9
+     "last_pts": 28.4
     },
     {
      "name": "Justin Herbert",
@@ -583,7 +583,7 @@
      "acq": "DRAFT",
      "inj": "OUT",
      "season_pts": 48.5,
-     "last_pts": 1.4
+     "last_pts": 0.0
     },
     {
      "name": "Khalil Shakir",
@@ -745,7 +745,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 132.0,
      "last_pts": 5.0
     },
@@ -786,7 +786,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 289.1,
-     "last_pts": 17.8
+     "last_pts": 23.5
     },
     {
      "name": "Jonah Coleman",
@@ -836,7 +836,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "OUT",
      "season_pts": 18.3,
      "last_pts": 3.9
     },
@@ -845,7 +845,7 @@
      "pos": "WR",
      "team": "PHI",
      "espn_id": 4428850,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": false,
      "keeper_price": 0,
      "acq": "ADD",
@@ -858,7 +858,7 @@
      "pos": "WR",
      "team": "CLE",
      "espn_id": 4832800,
-     "slot": "BENCH",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 18,
      "acq": "ADD",
@@ -1231,7 +1231,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 70.0,
-     "last_pts": 9.8
+     "last_pts": 21.0
     },
     {
      "name": "Tank Bigsby",
@@ -1242,7 +1242,7 @@
      "keeper": true,
      "keeper_price": 3,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 53.8,
      "last_pts": 11.8
     },
@@ -1268,7 +1268,7 @@
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 88.9,
      "last_pts": 12.3
     },
@@ -1296,7 +1296,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 32.7,
-     "last_pts": 3.6
+     "last_pts": 1.4
     },
     {
      "name": "Zach Charbonnet",
@@ -1408,7 +1408,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 0.0,
-     "last_pts": 9.6
+     "last_pts": 3.8
     },
     {
      "name": "Mike Evans",
@@ -1572,7 +1572,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 210.8,
-     "last_pts": 2.5
+     "last_pts": 1.5
     },
     {
      "name": "Texans D/ST",
@@ -1687,7 +1687,7 @@
      "keeper": true,
      "keeper_price": 31,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 207.6,
      "last_pts": 0.0
     },
@@ -1769,7 +1769,7 @@
      "pos": "WR",
      "team": "DET",
      "espn_id": 4426388,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 9,
      "acq": "DRAFT",
@@ -1938,7 +1938,7 @@
      "pos": "WR",
      "team": "NO",
      "espn_id": 4569559,
-     "slot": "BENCH",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 20,
      "acq": "ADD",
@@ -1976,7 +1976,7 @@
      "keeper": true,
      "keeper_price": 34,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 57.1,
      "last_pts": 1.1
     },
@@ -2002,7 +2002,7 @@
      "keeper": true,
      "keeper_price": 20,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 201.8,
      "last_pts": 27.7
     },
@@ -2056,7 +2056,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 117.2,
-     "last_pts": 3.5
+     "last_pts": 6.6
     },
     {
      "name": "Rhamondre Stevenson",
@@ -2337,7 +2337,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 132.4,
-     "last_pts": 14.1
+     "last_pts": 22.6
     },
     {
      "name": "Jalen Coker",
@@ -2728,7 +2728,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 52.1,
      "last_pts": 17.4
     },
@@ -2793,7 +2793,7 @@
      "keeper": true,
      "keeper_price": 18,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 115.9,
      "last_pts": 3.6
     },
