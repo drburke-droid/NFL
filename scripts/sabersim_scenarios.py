@@ -367,7 +367,7 @@ if os.path.exists(svp):
             d = L0[(L0.table == table) & (L0.team == team) & (L0.week == str(wk)) & (L0.week_of_paste <= wk)]
             if player is not None: d = d[d.player.map(norm) == norm(player)]
             if d.empty: return np.nan
-            return float(d.sort_values("week_of_paste").iloc[-1].value)
+            return float(d.sort_values(["week_of_paste", "snapshot"]).iloc[-1].value)   # the latest paste for that week
         for r in s.drop_duplicates(["Team", "Pos", "week"]).itertuples():
             if r.Pos in ("RB", "WR", "TE"):
                 v = sv_lookup(f"{r.Pos.lower()}_bonus", r.Team, r.week)

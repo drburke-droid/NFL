@@ -222,7 +222,7 @@ if os.path.exists(svp):
         d = L0[(L0.table == table) & (L0.team == team) & (L0.week == str(wk)) & (L0.week_of_paste <= wk)]
         if player is not None: d = d[d.player.map(norm) == norm(player)]
         if d.empty: return np.nan
-        return float(d.sort_values("week_of_paste").iloc[-1].value)
+        return float(d.sort_values(["week_of_paste", "snapshot"]).iloc[-1].value)   # the latest paste for that week
     def sv_base(table, team, wk):
         d = L0[(L0.table == table) & (L0.team == team) & (L0.week == "baseline") & (L0.week_of_paste <= wk)]
         return float(d.sort_values("week_of_paste").iloc[-1].value) if len(d) else np.nan
