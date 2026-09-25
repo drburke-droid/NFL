@@ -1,4 +1,4 @@
-# SaberSim send accuracy — 2026 (graded 2026-09-24T19:13Z)
+# SaberSim send accuracy — 2026 (graded 2026-09-25T14:00Z)
 
 latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded
 
@@ -6,16 +6,17 @@ latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | 6 | 16 | 470 | 3.876 | 5.476 | -0.379 | 0.776 | 0.826 | 4.171 (model 4.139) | 4.466 (model 4.625) |
 | 2 | 6 | 16 | 464 | 3.6 | 5.11 | -0.611 | 0.771 | 0.8 | 3.929 (model 3.764) | 4.081 (model 4.208) |
+| 3 | 1 | 1 | 24 | 4.257 | 6.02 | +1.982 | 0.766 | 0.75 | 4.571 (model 4.193) | 4.362 (model 4.393) |
 
-**Overall:** n 934 · MAE 3.739 · RMSE 5.297 · bias -0.494 · Spearman 0.774 · 80% coverage 0.813
+**Overall:** n 958 · MAE 3.752 · RMSE 5.317 · bias -0.432 · Spearman 0.772 · 80% coverage 0.811
 
 | pos | n | MAE | RMSE | bias | 80% cov |
 |---|---|---|---|---|---|
-| K | 64 | 3.324 | 4.212 | -0.11 | 0.797 |
-| QB | 130 | 4.258 | 6.195 | -0.22 | 0.831 |
-| RB | 216 | 3.485 | 4.984 | -0.647 | 0.824 |
-| TE | 198 | 3.3 | 4.587 | -0.574 | 0.818 |
-| WR | 326 | 4.048 | 5.69 | -0.529 | 0.798 |
+| K | 66 | 3.373 | 4.257 | -0.18 | 0.788 |
+| QB | 132 | 4.224 | 6.153 | -0.186 | 0.833 |
+| RB | 221 | 3.536 | 5.076 | -0.545 | 0.824 |
+| TE | 204 | 3.306 | 4.581 | -0.575 | 0.814 |
+| WR | 335 | 4.055 | 5.707 | -0.418 | 0.797 |
 
 ## Scale (2025 reference, full slate pool)
 
@@ -35,11 +36,11 @@ Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fai
 
 ## Subvertadown check
 
-- On 482 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 53% of the time (50% = coin flip).
-- Adding the full team bonus, shared by projection, would have moved MAE from 3.68 to 3.65; half of it: 3.66.
-- Correlation between the bonus and our error: +0.06.
+- On 493 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 53% of the time (50% = coin flip).
+- Adding the full team bonus, shared by projection, would have moved MAE from 3.70 to 3.67; half of it: 3.68.
+- Correlation between the bonus and our error: +0.07.
 - Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.
-- QB: on 66 graded starters Subvertadown's projection MAE was 7.59 vs ours 6.67; a 50/50 blend 7.12.
+- QB: on 68 graded starters Subvertadown's projection MAE was 7.41 vs ours 6.54; a 50/50 blend 6.96.
 
 Largest misses:
 

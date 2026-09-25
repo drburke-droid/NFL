@@ -1,12 +1,238 @@
 {
- "generated": "2026-09-24T19:14Z",
+ "generated": "2026-09-25T14:00Z",
  "overall": {
-  "n": 0,
+  "n": 43,
   "graded": 0,
-  "pending": 0
+  "pending": 0,
+  "no_send": 43,
+  "hit_rate": null,
+  "hits": 0,
+  "misses": 0,
+  "closer": 0,
+  "farther": 0,
+  "removed_pts": null,
+  "mae_base_pts": null,
+  "mae_adj_pts": null
  },
- "by_fan": [],
- "by_fan_week": [],
+ "by_fan": [
+  {
+   "fan": "REB",
+   "pid": "07d4562b12d59b0c",
+   "weeks": [
+    3
+   ],
+   "n": 43,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 43,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null,
+   "rank": 1
+  }
+ ],
+ "by_fan_week": [
+  {
+   "fan": "REB",
+   "pid": "07d4562b12d59b0c",
+   "week": 3,
+   "n": 43,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 43,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ ],
+ "by_stat": {
+  "pass_int": {
+   "n": 4,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 4,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "pass_tds": {
+   "n": 4,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 4,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "pass_yds": {
+   "n": 4,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 4,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rec": {
+   "n": 7,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 7,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rec_tds": {
+   "n": 7,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 7,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rec_yds": {
+   "n": 7,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 7,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rush_tds": {
+   "n": 5,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 5,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "rush_yds": {
+   "n": 5,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 5,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
+ "by_size": {
+  "1": {
+   "n": 43,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 43,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
+ "by_direction": {
+  "boost": {
+   "n": 12,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 12,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  },
+  "fade": {
+   "n": 31,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 31,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
+ "by_week": {
+  "3": {
+   "n": 43,
+   "graded": 0,
+   "pending": 0,
+   "no_send": 43,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null
+  }
+ },
  "rows": [],
- "note": "no submissions recorded yet"
+ "pending_games": [],
+ "season": 2026,
+ "basis": "send"
 }
