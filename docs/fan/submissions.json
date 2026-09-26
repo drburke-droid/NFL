@@ -1,6 +1,6 @@
 {
- "generated": "2026-09-25T15:15Z",
- "n_codes": 1,
+ "generated": "2026-09-26T14:00Z",
+ "n_codes": 2,
  "entries": [
   {
    "season": 2026,
@@ -9,6 +9,14 @@
    "submitted_at": "2026-09-24T21:09:40Z",
    "arrows": 11,
    "received": "9/24/2026 15:09:41"
+  },
+  {
+   "season": 2026,
+   "week": 3,
+   "fan": "ERS",
+   "submitted_at": "2026-09-25T19:26:53Z",
+   "arrows": 25,
+   "received": "9/25/2026 13:27:01"
   }
  ]
 }

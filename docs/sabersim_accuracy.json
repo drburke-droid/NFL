@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-25T14:05Z",
+ "generated_at": "2026-09-26T14:00Z",
  "season": 2026,
  "min_lead_min": 75.0,
  "scale": {
@@ -955,7 +955,7 @@
   "bonus": {
    "all": {
     "n": 760,
-    "n_strong": 493,
+    "n_strong": 490,
     "dir_hit": 0.53,
     "mae_model": 3.703,
     "mae_full_bonus": 3.67,
@@ -965,14 +965,14 @@
    "by_pos": {
     "RB": {
      "n": 221,
-     "n_strong": 142,
-     "dir_hit": 0.57,
-     "mean_err_fav": -0.89,
+     "n_strong": 139,
+     "dir_hit": 0.58,
+     "mean_err_fav": -0.86,
      "mean_err_unfav": -1.28,
      "mae_model": 3.536,
-     "mae_full_bonus": 3.498,
-     "mae_half_bonus": 3.514,
-     "corr_bonus_err": 0.025
+     "mae_full_bonus": 3.497,
+     "mae_half_bonus": 3.513,
+     "corr_bonus_err": 0.027
     },
     "TE": {
      "n": 204,
@@ -981,9 +981,9 @@
      "mean_err_fav": -0.28,
      "mean_err_unfav": -0.88,
      "mae_model": 3.306,
-     "mae_full_bonus": 3.28,
+     "mae_full_bonus": 3.279,
      "mae_half_bonus": 3.29,
-     "corr_bonus_err": 0.084
+     "corr_bonus_err": 0.085
     },
     "WR": {
      "n": 335,
@@ -999,7 +999,7 @@
    }
   },
   "commentary": [
-   "On 493 RB/WR/TE player-games where Subvertadown flagged a matchup of at least \u00b10.5 team points, the direction of our error matched the flag 53% of the time (50% = coin flip).",
+   "On 490 RB/WR/TE player-games where Subvertadown flagged a matchup of at least \u00b10.5 team points, the direction of our error matched the flag 53% of the time (50% = coin flip).",
    "Adding the full team bonus, shared by projection, would have moved MAE from 3.70 to 3.67; half of it: 3.68.",
    "Correlation between the bonus and our error: +0.07.",
    "Directional only \u2014 a signal needs several hundred player-games before \u00b10.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.",
@@ -1008,8 +1008,8 @@
   "qb": {
    "n": 68,
    "mae_model": 6.538,
-   "mae_subvertadown": 7.408,
-   "mae_blend50": 6.958,
+   "mae_subvertadown": 7.411,
+   "mae_blend50": 6.959,
    "rows": [
     {
      "player": "Drake Maye",
@@ -1544,7 +1544,7 @@
      "team": "ATL",
      "week": 3,
      "model": 12.6,
-     "subvertadown": 13.1,
+     "subvertadown": 13.3,
      "actual": 14.0
     },
     {
@@ -1552,7 +1552,7 @@
      "team": "GB",
      "week": 3,
      "model": 15.9,
-     "subvertadown": 16.6,
+     "subvertadown": 16.2,
      "actual": 18.5
     }
    ]
