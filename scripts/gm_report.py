@@ -7,6 +7,7 @@ race; add --trades for proposals.
     python scripts/gm_report.py --trades
     python scripts/gm_report.py --trades --keeper-discount 1.0
     python scripts/gm_report.py --check          # what is stale and how to refresh it
+    python scripts/gm_report.py --brand          # trades a name-driven manager would take (gm/brand.py)
 
 The numbers are simulated, not looked up, so they move a little run to run. --sims raises the
 count if you want them steadier; --seed makes any run reproducible.
@@ -73,9 +74,18 @@ def main():
     ap.add_argument("--top", type=int, default=6)
     ap.add_argument("--seed", type=int, default=1)
     ap.add_argument("--check", action="store_true", help="report input freshness and exit")
+    ap.add_argument("--brand", action="store_true",
+                    help="search for trades that help you and LOOK like a win to the other side by brand "
+                         "name (ESPN auction price, owner fandom), even if the simulator says he loses")
+    ap.add_argument("--their-floor", type=float, default=-3.0,
+                    help="--brand: the most the other side's lineup may drop, pts/wk (he would notice more)")
+    ap.add_argument("--min-perceived", type=float, default=0.0,
+                    help="--brand: how many brand $ the trade must look like it wins him")
     ap.add_argument("--roster", action="store_true",
                     help="show my depth chart: ppg, bye, value over the waiver wire, weeks started")
     a = ap.parse_args()
+    if a.brand:
+        a.trades = True
 
     if a.check:
         return cmd_check()
@@ -145,15 +155,20 @@ def main():
         return
 
     from gm.trades import find_trades
+    accept = None
+    if a.brand:
+        accept = cmd_brand(est, me, fa, names)
     print()
     print(f"searching trades for {names.get(me, me)}"
           + (f", next season weighted {a.keeper_discount:g}" if a.keeper_discount else
              ", this season only")
           + "  (a minute or two)")
     res = find_trades(cfg, est, me, shortlist=a.shortlist, top_n=a.top, n_sims=a.sims,
-                      seed=a.seed, board=board, keeper_discount=a.keeper_discount)
+                      seed=a.seed, board=board, keeper_discount=a.keeper_discount,
+                      accept=accept, their_floor=a.their_floor, min_perceived=a.min_perceived)
     print(f"  {res['considered']} candidates cleared stage one, {res['simulated']} simulated, "
-          f"{len(res['proposals'])} help both sides")
+          f"{len(res['proposals'])} " + ("help you and look like a win to the other side" if a.brand
+                                         else "help both sides"))
     if not res["proposals"]:
         print("\n  Nothing clears the bar. That is an answer: at this keeper discount every trade\n"
               "  on offer costs you more than it returns. Try --keeper-discount 0 to see the\n"
@@ -165,18 +180,61 @@ def main():
         print(f"  GET   {', '.join(p['get'])}   ({names.get(p['with_team'], p['with_team'])})")
         print(f"        you   P(title) {p['my_p_title']:+.4f}   P(playoffs) {p['my_p_playoffs']:+.4f}"
               f"   season pts {p['my_points']:+.0f}   keeper ${p['keeper_me']:+.0f}")
-        print(f"        them  P(title) {p['their_p_title']:+.4f}   keeper ${p['keeper_them']:+.0f}")
+        if p.get("perceived_them") is not None:
+            print(f"        them  looks like +${p['perceived_them']:.0f} of names to him (fandom incl.)   "
+                  f"actually P(title) {p['their_p_title']:+.4f}   keeper ${p['keeper_them']:+.0f}")
+        else:
+            print(f"        them  P(title) {p['their_p_title']:+.4f}   keeper ${p['keeper_them']:+.0f}")
         for tag, pl in (("out", p["give_players"]), ("in ", p["get_players"])):
             for v in pl:
+                name_tag = f"  name ${BRAND_SAL.get(bnorm(v['name']), 0):.0f}" if a.brand else ""
                 print(f"        {tag}  {v['name']:24s} {v['pos']:3s} {v['mean']:5.1f} pts/wk  "
                       f"plays {v['p_play']:.2f}  bye wk{v['bye'] or '-'}  "
-                      f"over waiver {v['mean'] * v['p_play'] - fa.get(v['pos'], 0):+.1f}")
+                      f"over waiver {v['mean'] * v['p_play'] - fa.get(v['pos'], 0):+.1f}{name_tag}")
         if p.get("my_cuts"):
             print(f"        cut  {', '.join(p['my_cuts'])}   (roster is full; lowest weekly value plus keeper hold)")
         d = p["weekly_me"]; wk = p["weeks"]
         reg = [(w, x) for w, x in zip(wk, d) if w in cfg.regular_weeks]
         print(f"        your lineup by week: " + "  ".join(f"wk{w} {x:+.1f}" for w, x in reg))
         print(f"        average {np.mean(d):+.2f} pts/wk over {len(d)} weeks incl. playoffs")
+
+
+BRAND_SAL = {}
+
+
+def bnorm(n):
+    from gm.players import norm
+    return norm(n)
+
+
+def cmd_brand(est, me, fa, names):
+    """The brand table, then the acceptance test the search uses: what a trade LOOKS like to the
+    other manager in ESPN auction dollars, scaled by his measured fandom (gm/brand.py)."""
+    from gm import brand as br
+    sal, fandom = br.load_salaries(), br.load_fandom()
+    BRAND_SAL.update(sal)
+    curve = br.market_curve(est, sal, fa)
+    print()
+    print(f"brand vs production: the public market (ESPN 2026 average auction $) pays ${curve[0]:.1f} + "
+          f"${curve[1]:.2f} per pt/wk over the waiver wire (r={curve[2]:.2f}, {curve[3]} players);")
+    print("  premium = name $ minus the $ that curve gives this projection. + sell the name, - buy the production")
+    rows = []
+    for (t, pid), v in est.items():
+        if v["pos"] in br.SKILL:
+            prem, fair = br.premium(v, sal, fa, curve)
+            rows.append((t, v, prem, fair))
+    print(f"\n  your roster          {'pos':3s} {'pts/wk':>6} {'name $':>7} {'fair $':>7} {'premium':>8}")
+    for t, v, prem, fair in sorted([r for r in rows if r[0] == me], key=lambda r: -r[2]):
+        print(f"  {v['name'][:20]:20s} {v['pos']:3s} {br.ppw(v):6.1f} {br.brand(v, sal):7.1f} {fair:7.1f} {prem:+8.1f}")
+    print(f"\n  buy low: production without the name, on other rosters (above waiver)")
+    buys = sorted([r for r in rows if r[0] != me and br.ppw(r[1]) > fa.get(r[1]["pos"], 0)], key=lambda r: r[2])[:10]
+    for t, v, prem, fair in buys:
+        fan = " (his team: fan)" if fandom.get(str(t), {}).get(v.get("nfl_team") or "") else ""
+        print(f"  {v['name'][:20]:20s} {v['pos']:3s} {br.ppw(v):6.1f} {br.brand(v, sal):7.1f} {fair:7.1f} {prem:+8.1f}"
+              f"   {names.get(t, t)}{fan}")
+    fans = ", ".join(f"{names.get(t, t)} {'/'.join(f'{k} {x:.2f}x' for k, x in f.items())}" for t, f in fandom.items())
+    print(f"\n  owner fandom (measured, 2023-25 bids): {fans}")
+    return lambda other, receive, send: br.perceived(other, receive, send, sal, fandom)
 
 
 def cmd_roster(cfg, est, me, fa, weeks, names, board=None):

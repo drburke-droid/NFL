@@ -194,7 +194,7 @@ def _keeper_gain(board, team_id, roster, out_ids, in_players, cap, starters=None
 
 def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, played_weeks=None,
                 max_package=3, max_combined=4, pool=12, max_per_team=3,
-                board=None, keeper_discount=0.0):
+                board=None, keeper_discount=0.0, accept=None, their_floor=-3.0, min_perceived=0.0):
     """Trades that raise BOTH teams' title odds, best first.
 
     Packages of up to max_package a side. Two-for-one matters more than it sounds: a one-for-one
@@ -214,6 +214,15 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
     With a board, the acceptance test loosens in the way a keeper league actually works: a trade
     also survives if a side's title odds fall but its keeper value rises by enough. That is what
     lets a seller sell, and a win-now-only objective can never find it.
+
+    accept          : replaces the other side's half of the test. None (the default) is the
+                      mutual test above. A function (other, receive, send) -> $ says how good the
+                      trade LOOKS to the other manager (gm.brand.perceived): a trade then survives
+                      if it helps you on the simulator and looks like a win to him by at least
+                      min_perceived, even though the simulator says he loses. That is the trade a
+                      name-driven manager accepts. their_floor (pts/wk) caps how much worse his
+                      lineup may get, since a manager does notice his starters getting worse.
+                      Stage one then ranks by your gain alone.
     """
     est = {(t, str(p)): {**v, "key": str(p)} for (t, p), v in est.items()}
     stage1_keepers = DOLLARS_TO_POINTS * keeper_discount if board is not None else 0.0
@@ -272,7 +281,8 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 if len(gp) + len(rp) > max_combined:
                     continue                      # the far tail of shapes costs more than it finds
                 get = [theirs[i] for i in rp]
-                if quick(my_team, gp, get) - quick_me < SCREEN or quick(other, rp, give) - quick_them < SCREEN:
+                if quick(my_team, gp, get) - quick_me < SCREEN or \
+                        quick(other, rp, give) - quick_them < (SCREEN if accept is None else their_floor):
                     continue
                 d_me = lineup(my_team, gp, get) - base_me
                 d_them = lineup(other, rp, give) - base_them
@@ -284,12 +294,17 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
                 # -- worse this year, better next -- is discarded before it is ever simulated.
                 s_me = d_me + stage1_keepers * k_me
                 s_them = d_them + stage1_keepers * k_them
-                if s_me > 0 and s_them > 0:
-                    cands.append((s_me + s_them, d_me, d_them, other, gp, rp, give, get))
+                if accept is None:
+                    if s_me > 0 and s_them > 0:
+                        cands.append((s_me + s_them, d_me, d_them, other, gp, rp, give, get, None))
+                elif s_me > 0 and d_them >= their_floor:
+                    pv = accept(other, give, get)          # what he receives is what I give
+                    if pv >= min_perceived:
+                        cands.append((s_me, d_me, d_them, other, gp, rp, give, get, pv))
     cands.sort(reverse=True, key=lambda c: c[0])
 
     out = []
-    for _, d_me, d_them, other, gp, rp, give, get in cands[:shortlist]:
+    for _, d_me, d_them, other, gp, rp, give, get, pv in cands[:shortlist]:
         moves = [(i, my_team, other) for i in gp] + [(i, other, my_team) for i in rp]
         r = sim.evaluate_trade(cfg, est, moves, n_sims=n_sims, seed=seed, played_weeks=played_weeks)
         me, them = r["delta"][my_team], r["delta"][other]
@@ -305,8 +320,9 @@ def find_trades(cfg, est, my_team, shortlist=25, top_n=8, n_sims=8000, seed=0, p
         w_them = DOLLARS_TO_POINTS * keeper_discount * slope.get(other, 0.0)
         score_me = me["p_title"]["delta"] + w_me * k_me
         score_them = them["p_title"]["delta"] + w_them * k_them
-        if score_me > 0 and score_them > 0:
+        if score_me > 0 and (score_them > 0 if accept is None else True):
             out.append({
+                "perceived_them": pv,
                 "keeper_me": k_me, "keeper_them": k_them,
                 "score_me": score_me, "score_them": score_them,
                 "give": [v["name"] for v in give], "get": [v["name"] for v in get],
