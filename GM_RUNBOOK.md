@@ -42,6 +42,24 @@ in week 11 shows exactly that. Byes and waiver pickups are in the simulation (be
 run reproducible. `--team <id>` views the league as another manager, which is how you check what a
 counterparty should think of your offer.
 
+### Trades that only have to LOOK good to them (`--brand`)
+
+```
+python scripts/gm_report.py --brand                          # help me, look like a win to them
+python scripts/gm_report.py --brand --their-floor -1.5       # cap how much they can actually lose
+python scripts/gm_report.py --brand --min-perceived 10       # need a bigger name gap before proposing
+```
+
+The default search keeps a trade only if the simulator says BOTH sides gain. `--brand` drops that:
+a trade survives if it helps you and looks like a win to the other owner, where "looks" is ESPN's
+2026 average auction price of the names received minus the names sent (gm/brand.py), scaled by
+that owner's measured fandom for the NFL team (owner_bias_2026.js). `--their-floor` (default -3
+pts/wk) caps how bad the trade can actually be for them at stage one, so the list isn't just
+fleecings nobody would take twice. The report prints the market curve ($ per pt/wk over waiver),
+which of your players are over-branded (sell) and under-branded (keep), buy-low names across
+the league, and for each proposal both what it looks like to them and what it actually does.
+A perceived gain models acceptance; it does not predict it.
+
 ## Refreshing after games or a roster move
 
 Order matters — each step feeds the next.
@@ -142,6 +160,7 @@ gm/ros_model.json  the fitted ridge (coefficients, medians, gap flags) the estim
 scripts/ros_player_study.py  the study that fits it: --rebuild --fit-production after each season
 gm/keepers.py    next-season value: the dollar curve, the year-over-year spread, next_season_board
 gm/trades.py     the two-stage league-wide search
+gm/brand.py      name value (ESPN auction $), owner fandom, the market curve, for --brand
 scripts/gm_report.py      the CLI
 scripts/build_gm_league.py  ESPN pull -> league config
 tests/test_gm_*.py        118 tests; run `python -m pytest tests/ -k gm -q` (~4 min, the
