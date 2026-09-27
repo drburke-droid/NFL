@@ -667,5 +667,168 @@
    },
    "warnings": []
   }
+ },
+ "2026-09-27T17:00_9g": {
+  "sent_at": "2026-09-27T15:42:07Z",
+  "rows": 252,
+  "file": "Burke_Model_Burke_2026_sun01pm_0927_1540.csv",
+  "slate": "Sun 09/27 01:00 PM ET slate (9 games)",
+  "credits_left": 1891,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 9 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 351 statuses pulled {'espn': 114, 'sleeper': 97, '+sleeper': 86, 'espn+sleeper': 35, 'nfl-report': 16, 'nfl-report+sleeper': 3}; 9 Q, 17 OUT with a projection {'espn+sleeper': 12, '+sleeper': 3, 'nfl-report+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 241,
+    "slate_k": 19,
+    "slate_dst": 18
+   },
+   "dk_lines": {
+    "slate_games": 9,
+    "with_lines": 9,
+    "fetched_at": "2026-09-27T15:41Z",
+    "credits_left": "389"
+   },
+   "dk_props": {
+    "slate_events": 9,
+    "events_with_props": 9,
+    "with_props": 199,
+    "by_stat": {
+     "pass_yds": 18,
+     "pass_tds": 18,
+     "rush_yds": 51,
+     "rec_yds": 103,
+     "rec": 103,
+     "exp_td": 199
+    },
+    "no_line": [
+     "Adonai Mitchell",
+     "Jayden Daniels",
+     "Nico Collins",
+     "Rico Dowdle",
+     "Tyjae Spears"
+    ],
+    "eligible": 82,
+    "name_aliases": [
+     "joshua palmer -> josh palmer"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 42
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 19,
+     "of": 19
+    },
+    "DST": {
+     "hit": 18,
+     "of": 18
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 18,
+    "by_team": {
+     "BUF": [
+      "Tyler Bass"
+     ],
+     "CAR": [
+      "Ryan Fitzgerald"
+     ],
+     "CIN": [
+      "Evan McPherson"
+     ],
+     "CLE": [
+      "Andre Szmyt"
+     ],
+     "DET": [
+      "Jake Bates"
+     ],
+     "HOU": [
+      "Kaimi Fairbairn"
+     ],
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "JAX": [
+      "Cam Little"
+     ],
+     "KC": [
+      "Harrison Butker"
+     ],
+     "LAC": [
+      "Cameron Dicker"
+     ],
+     "MIA": [
+      "Riley Patterson"
+     ],
+     "NE": [
+      "Andres Borregales"
+     ],
+     "NYG": [
+      "Dominic Zvada"
+     ],
+     "NYJ": [
+      "Jason Sanders"
+     ],
+     "PIT": [
+      "Chris Boswell"
+     ],
+     "SEA": [
+      "Jason Myers"
+     ],
+     "TEN": [
+      "Joey Slye"
+     ],
+     "WAS": [
+      "Drew Stevens"
+     ]
+    },
+    "not_the_one_we_send": {
+     "HOU": {
+      "sending": "Ka'imi Fairbairn",
+      "dk_prices": [
+       "Kaimi Fairbairn"
+      ]
+     }
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 351,
+    "by_src": {
+     "espn": 114,
+     "sleeper": 97,
+     "+sleeper": 86,
+     "espn+sleeper": 35,
+     "nfl-report": 16,
+     "nfl-report+sleeper": 3
+    },
+    "q": 9,
+    "out": 17,
+    "out_by_src": {
+     "espn+sleeper": 12,
+     "+sleeper": 3,
+     "nfl-report+sleeper": 2
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Jayden Daniels, Rico Dowdle, Tyjae Spears, Nico Collins, Adonai Mitchell"
+   ]
+  }
  }
 }
