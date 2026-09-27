@@ -750,6 +750,35 @@ async function publicId(f) {
   catch (e) { return ""; }
 }
 const pin = () => ($("pin").value || "").replace(/\D/g, "");
+// Picks on a device belong to one player (owner, 2026-09-27: a fan whose tag was lost typed a new one, and
+// the new identity inherited -- and, with the auto lock-in, locked in -- all 73 of the old one's picks).
+// WKEY()_owner is the fingerprint the board belongs to; on a device from before this, the fingerprint of its
+// last lock-in, else whoever signs in first. When a different tag + PIN signs in, the board is put away under
+// its owner and that player's own comes out (empty for a newcomer; the server fills it if he locked in
+// elsewhere). Signing back in brings the old board back. Nothing is sent by the switch itself.
+async function claimBoard() {
+  if (!D || !IDH || !KEY) return;
+  const ok = WKEY() + "_owner", mine_ = () => ls.set(ok, JSON.stringify({id: IDH, n: me()}));
+  let own = null; try { own = JSON.parse(ls.get(ok) || "null"); } catch (e) {}
+  if (!own || !own.id) { const lc = ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc);
+    own = x && x.week === D.week && x.j.u ? {id: x.j.u, n: x.j.n || ""} : {id: IDH, n: me()}; ls.set(ok, JSON.stringify(own)); }
+  if (own.id === IDH) return;
+  // the same tag with a new PIN, on picks made this visit: a PIN typo being fixed -- the board follows. A board
+  // restored from storage does not follow a new PIN: that is someone without the PIN, and the PIN is what guards it.
+  if (EDITED && (own.n || "").toLowerCase() === me().toLowerCase()) return mine_();
+  const owner = own.id;
+  const n0 = Object.keys(picks).length;
+  if (n0) ls.set(WKEY() + "_stash_" + owner, JSON.stringify({b: D.bake_id, p: picks}));
+  let mine = {};
+  try { const st = JSON.parse(ls.get(WKEY() + "_stash_" + IDH) || "null"); if (st && st.p) mine = st.b === D.bake_id ? st.p : remap(await bakeOf(st.b), st.p, false); } catch (e) {}
+  ls.del(WKEY() + "_stash_" + IDH);
+  picks = mine; ls.set(KEY, JSON.stringify(picks)); mine_();
+  EDITED = false; clearTimeout(AUTO_T); AUTO_T = null; dropPend();
+  srvDone = ""; soonServer();
+  render(); count(); if (typeof PLAYING !== "undefined" && PLAYING) { DECK = []; DI = 0; HIST = []; deckRender(); }
+  const k = Object.keys(picks).length;
+  if (n0 || k) rsay(k ? `Welcome back — your ${k} pick${k === 1 ? " on this device is" : "s on this device are"} back.` : "The picks on this device belong to another player, so they're put away (they come back when that tag and PIN sign in). Your board starts fresh.");
+}
 async function identity() {
   const name = me().toLowerCase(), p = pin();
   if (!name || p.length < 4) { IDH = ""; PIDH = ""; return IDH; }
@@ -785,7 +814,9 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
     } catch(e) {}
     ls.set(KEY, JSON.stringify(picks)); if (ls.get(K0 + "_sent")) ls.set(KEY + "_sent", ls.get(K0 + "_sent")); ls.del(K0);
   }
-  $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || ""; identity().then(() => { renderLead(); soonServer(); });
+  $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || "";
+  if (!$("who").value) { const lc = ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc); if (x && x.j.n) { $("who").value = tag(x.j.n); ls.set("fanpicks_who", $("who").value); } }   // the tag went missing: the last lock-in here knows it
+  identity().then(async () => { await claimBoard(); renderLead(); soonServer(); });
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { for (const id of ["fav", "rfav"]) { const o = document.createElement("option"); o.value = ab; o.textContent = id === "rfav" ? nm.toUpperCase() : nm; $(id).appendChild(o); } }
@@ -884,7 +915,7 @@ const picksSig = () => idKey() + "|" + JSON.stringify(Object.entries(picks).sort
 const hadLock = () => {
   const lc = D && ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc);
   if (!lc) return !!(D && EDITED && ls.get(KEY + "_sent"));      // a lock-in from before _locked existed: only its time is known
-  return !!(x && x.week === D.week && (x.j.a || []).length);
+  return !!(x && x.week === D.week && (x.j.a || []).length && (!IDH || !x.j.u || x.j.u === IDH));   // only your own lock-in can be withdrawn
 };
 const autoOK = () => !!(D && dropbox() && ready());
 const hasSomething = () => Object.keys(picks).length > 0 || hadLock();
@@ -927,7 +958,8 @@ async function sentNote() {
   // picks with, so once they are edited on this visit they count as not locked in
   if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}` + (EDITED ? " — changes since not locked in yet" : ""); nudge(!s || EDITED); return; }
   const x = decodeCode(lc); if (!x || x.week !== D.week) { nudge(true); return; }
-  if (IDH && x.j.u && x.j.u !== IDH && Object.keys(picks).length) {   // the last lock-in on this device was someone else's tag/PIN
+  if (IDH && x.j.u && x.j.u !== IDH) {             // the last lock-in on this device was someone else's tag/PIN
+    if (!Object.keys(picks).length) { $("draft").textContent = ""; nudge(false); return; }
     $("draft").textContent = "· not locked in under this tag and PIN yet — press Submit or make a pick"; nudge(true); return;
   }
   const locked = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE);
@@ -939,8 +971,8 @@ async function sentNote() {
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
-$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(() => { renderLead(); soonServer(); if (D) sentNote(); }); autoSoon(); });
-$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(() => { renderLead(); soonServer(); if (D) sentNote(); }); autoSoon(); });
+$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(async () => { await claimBoard(); renderLead(); soonServer(); if (D) sentNote(); }); autoSoon(); });
+$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(async () => { await claimBoard(); renderLead(); soonServer(); if (D) sentNote(); }); autoSoon(); });
 $("email").addEventListener("input", () => ls.set("fanpicks_email", $("email").value.trim()));
 $("fav").addEventListener("change", () => { FAV = $("fav").value; ls.set("fanpicks_team", FAV); if (D) render(); });
 $("pin").addEventListener("change", () => idMini()); $("who").addEventListener("change", () => idMini());
