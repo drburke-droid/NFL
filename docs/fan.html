@@ -190,9 +190,10 @@
   #attract .coin { font-size:.85vh; color:#8a94a6; }
   @keyframes blink { 0%,55% { opacity:1 } 56%,100% { opacity:0 } }
   /* Submit pulses while there are picks not yet locked in, and goes still once they are (sentNote) */
-  #submit.nudge { animation:nudge 1.1s ease-in-out infinite; position:relative; z-index:1; }
-  @keyframes nudge { 0%,100% { box-shadow:0 0 0 0 rgba(255,204,51,0); transform:scale(1); } 50% { box-shadow:0 0 0 3px rgba(255,204,51,.6), 0 0 16px rgba(255,204,51,.85); transform:scale(1.08); } }
-  @media (prefers-reduced-motion: reduce) { #submit.nudge { animation:none; box-shadow:0 0 0 3px rgba(255,204,51,.85); } }
+  #submit.nudge { animation:nudge 1.1s ease-in-out infinite; }
+  @keyframes nudge { 0%,100% { filter:brightness(1); box-shadow:inset 0 0 0 2px rgba(255,255,255,0); } 50% { filter:brightness(1.3); box-shadow:inset 0 0 0 2px #fff, inset 0 0 12px rgba(255,255,255,.7); } }
+  @media (prefers-reduced-motion: reduce) { #submit.nudge { animation:none; box-shadow:inset 0 0 0 2px #fff; } }
+  #stage.on #screen .bar .big { color:#111 !important; font-weight:700; }   /* dark on the arcade's amber: white on yellow can't be read */
   #crt { position:absolute; inset:0; display:none; overflow:auto; background:var(--bg); }
   #stage.on #crt { display:block; } #stage.on #attract { display:none; }
   #crt main { max-width:none; padding:1.2vh 1.4vh 9vh; }
