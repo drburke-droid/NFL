@@ -830,5 +830,110 @@
     "no DK props posted (news?): Jayden Daniels, Rico Dowdle, Tyjae Spears, Nico Collins, Adonai Mitchell"
    ]
   }
+ },
+ "2026-09-27T20:05_2g": {
+  "sent_at": "2026-09-27T18:46:23Z",
+  "rows": 52,
+  "file": "Burke_Model_Burke_2026_sun04pm_0927_1844.csv",
+  "slate": "Sun 09/27 04:05 PM ET slate (2 games)",
+  "credits_left": 1871,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 2 games in this send (kickoffs Sun 20:05Z .. Sun 20:05Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 400 statuses pulled {'espn': 147, 'sleeper': 98, '+sleeper': 80, 'espn+sleeper': 59, 'nfl-report': 15, 'nfl-report+sleeper': 1}; 1 Q, 2 OUT with a projection {'espn': 1, 'espn+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 50,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-09-27T18:45Z",
+    "credits_left": "371"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 44,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 11,
+     "rec_yds": 24,
+     "rec": 23,
+     "exp_td": 44
+    },
+    "no_line": [],
+    "eligible": 19,
+    "name_aliases": [
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 4,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ],
+     "MIN": [
+      "Will Reichard"
+     ],
+     "SF": [
+      "Eddy Pineiro"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 400,
+    "by_src": {
+     "espn": 147,
+     "sleeper": 98,
+     "+sleeper": 80,
+     "espn+sleeper": 59,
+     "nfl-report": 15,
+     "nfl-report+sleeper": 1
+    },
+    "q": 1,
+    "out": 2,
+    "out_by_src": {
+     "espn": 1,
+     "espn+sleeper": 1
+    }
+   },
+   "warnings": []
+  }
  }
 }
