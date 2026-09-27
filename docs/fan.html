@@ -585,8 +585,10 @@ const sig = o => Object.keys(o).sort().map(k => k + "=" + o[k]).join(",");
 const BAKES = {};
 async function bakeOf(b) {                                             // a frozen bake, to read old row numbers
   if (!b || b === D.bake_id) return D;
-  if (!(b in BAKES)) BAKES[b] = await fetch(`fan/proj_${D.season}_wk${D.week}_${b}.json`).then(r => r.ok ? r.json() : null).catch(() => null);
-  return BAKES[b];
+  if (b in BAKES) return BAKES[b];
+  // only a definite answer is cached (the file, or a 404 saying there is none); a network failure is asked again next time
+  try { const r = await fetch(`fan/proj_${D.season}_wk${D.week}_${b}.json`), j = r.ok ? await r.json() : null; if (r.ok || r.status === 404) BAKES[b] = j; return j; }
+  catch (e) { return null; }
 }
 // Picks keyed by another bake's row numbers, moved onto this bake by player id (name + position when a
 // player has no id). A re-bake renumbers everyone, so without this a mid-week re-bake emptied every
@@ -667,7 +669,7 @@ async function carryDraft() {
 // srvDone: identities already answered; srvBusy: the one being asked. A key is only marked done once an
 // answer arrives, so a lookup that fails (offline, a script cold start) is asked again -- after a pause,
 // when the browser comes back online, or the next time the username/PIN settle.
-let srvDone = "", srvBusy = "", srvT = 0, srvTries = 0, SRV_CLEARED = false;
+let srvDone = "", srvBusy = "", srvT = 0, srvTries = 0, bakeTries = 0, SRV_CLEARED = false;
 const soonServer = () => { clearTimeout(srvT); srvT = setTimeout(checkServer, 700); };   // PIN typing: ask once it settles
 window.addEventListener("online", soonServer);
 async function checkServer() {
@@ -690,6 +692,11 @@ async function checkServer() {
   if (newer) ls.set(WKEY() + "_locked", r.code);   // the newest lock-in, from any device; the server's copy wins a tie
   const src = await bakeOf(x.j.b);
   if (id !== IDH) return soonServer();                                    // ...or while the old bake loaded
+  if (!src && (x.j.a || []).length) {             // the bake behind that lock-in did not load: nothing to compare, leave the picks be
+    if (!(x.j.b in BAKES) && bakeTries++ < 3) { srvDone = ""; clearTimeout(srvT); srvT = setTimeout(checkServer, 15000); }   // a network failure: ask again
+    return count();
+  }
+  bakeTries = 0;
   const theirs = remap(src, codePicks(x.j), x.j.r !== RULE), n = Object.keys(theirs).length;
   const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
   const take = () => { picks = theirs; ls.set(KEY, JSON.stringify(picks)); if (Object.keys(picks).length) ls.set(WKEY() + "_autosig", picksSig()); render(); count(); };
@@ -700,9 +707,7 @@ async function checkServer() {
   if (!EDITED && !clean && lx && lx.j.u === x.j.u) { const mine = remap(await bakeOf(lx.j.b), codePicks(lx.j), lx.j.r !== RULE); clean = sig(mine) === sig(picks); }
   if (id !== IDH) return soonServer();
   if (!n) {
-    if ((x.j.a || []).length) {                     // arrows that did not map: the old bake failed to load, not a withdrawal
-      srvDone = ""; clearTimeout(srvT); srvT = setTimeout(checkServer, 15000); return count();
-    }
+    if ((x.j.a || []).length) return count();       // arrows on players no longer on this board: not a withdrawal, nothing to load
     if (newer) SRV_CLEARED = true;                  // an older-bake draft still being carried forward must not bring them back
     if (newer && clean && Object.keys(picks).length) { take(); return rsay(`Your picks were cleared on another device (${at}).`); }
     return count();
