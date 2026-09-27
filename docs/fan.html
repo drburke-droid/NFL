@@ -504,7 +504,7 @@ const TEAMS = {ARI:"Arizona Cardinals", ATL:"Atlanta Falcons", BAL:"Baltimore Ra
 const TEAM_FIX = {JAC:"JAX", LAR:"LA", LVR:"LV", WSH:"WAS", ARZ:"ARI", OAK:"LV", SD:"LAC", STL:"LA"};
 const canon = t => TEAM_FIX[t] || t;
 const $ = id => document.getElementById(id);
-let D = null, KEY = "", picks = {}, CFG = {}, G = null, SUBS = null, LIVE = null;   // picks: "i:s" -> signed arrow presses
+let D = null, KEY = "", picks = {}, CFG = {}, G = null, SUBS = null, LIVE = null, LIVE_WEEKS = null;   // LIVE_WEEKS: weeks the live source answers for (null = every week)   // picks: "i:s" -> signed arrow presses
 // Arrow rule "u1" (2026-09-24): each tap moves a stat a set amount in its own units, sized so a
 // tap is a call a fan actually makes -- half a touchdown, one catch, ten yards -- instead of a tenth
 // of the projection, which made "one more TD" on a 0.6 projection seventeen taps. Codes carry the
@@ -659,7 +659,7 @@ async function carryDraft() {
   let old = {}; try { old = JSON.parse(ls.get(k) || "{}") || {}; } catch (e) {}
   const got = remap(await bakeOf(b), old, false);
   for (const [, ok] of olds) ls.del(ok);
-  if (!Object.keys(got).length || Object.keys(picks).length) return false;
+  if (!Object.keys(got).length || Object.keys(picks).length || SRV_CLEARED) return false;   // a newer withdrawal from another device wins
   picks = got; ls.set(KEY, JSON.stringify(picks)); return true;
 }
 // ---- the Fan Picks API (apps_script/fanpicks_api.gs): your last lock-in, from whichever device ----
@@ -667,7 +667,7 @@ async function carryDraft() {
 // srvDone: identities already answered; srvBusy: the one being asked. A key is only marked done once an
 // answer arrives, so a lookup that fails (offline, a script cold start) is asked again -- after a pause,
 // when the browser comes back online, or the next time the username/PIN settle.
-let srvDone = "", srvBusy = "", srvT = 0, srvTries = 0;
+let srvDone = "", srvBusy = "", srvT = 0, srvTries = 0, SRV_CLEARED = false;
 const soonServer = () => { clearTimeout(srvT); srvT = setTimeout(checkServer, 700); };   // PIN typing: ask once it settles
 window.addEventListener("online", soonServer);
 async function checkServer() {
@@ -700,6 +700,10 @@ async function checkServer() {
   if (!EDITED && !clean && lx && lx.j.u === x.j.u) { const mine = remap(await bakeOf(lx.j.b), codePicks(lx.j), lx.j.r !== RULE); clean = sig(mine) === sig(picks); }
   if (id !== IDH) return soonServer();
   if (!n) {
+    if ((x.j.a || []).length) {                     // arrows that did not map: the old bake failed to load, not a withdrawal
+      srvDone = ""; clearTimeout(srvT); srvT = setTimeout(checkServer, 15000); return count();
+    }
+    if (newer) SRV_CLEARED = true;                  // an older-bake draft still being carried forward must not bring them back
     if (newer && clean && Object.keys(picks).length) { take(); return rsay(`Your picks were cleared on another device (${at}).`); }
     return count();
   }
@@ -1220,7 +1224,7 @@ async function liveIn() {
     await waitD();
     try {
       const r = await fetch(`${CFG.api}?a=who&s=${D.season}&w=${D.week}&t=${Date.now()}`).then(x => x.json());
-      if (r && r.ok) { LIVE = (r.entries || []).filter(e => e.arrows > 0).map(e => ({fan: e.fan, week: D.week, submitted_at: e.t || "", arrows: e.arrows})); renderLead(); return; }
+      if (r && r.ok) { LIVE = (r.entries || []).filter(e => e.arrows > 0).map(e => ({fan: e.fan, season: D.season, week: D.week, submitted_at: e.t || "", arrows: e.arrows})); LIVE_WEEKS = new Set([D.week]); renderLead(); return; }
     } catch (e) {}
   }
   if (!CFG.sheet_csv) return;
@@ -1233,13 +1237,13 @@ async function liveIn() {
     for (const r of rows) {
       const m = /^FAN1\.(\d{4})\.(\d{1,2})\.([A-Za-z0-9_\-]+)/.exec(r[ci] || ""); if (!m) continue;
       let j = {}; try { j = JSON.parse(decodeURIComponent(escape(atob(m[3].replace(/-/g, "+").replace(/_/g, "/") + "=".repeat((4 - m[3].length % 4) % 4))))); } catch (e) {}
-      const fan = (cu >= 0 && r[cu]) ? r[cu] : (j.n || "anonymous"), wk = +m[2], k = wk + "|" + fan;
-      if (!seen[k] || (j.t || "") > seen[k].submitted_at) seen[k] = {fan, week: wk, submitted_at: j.t || "", arrows: (j.a || []).length};
+      const fan = (cu >= 0 && r[cu]) ? r[cu] : (j.n || "anonymous"), ssn = +m[1], wk = +m[2], k = ssn + "|" + wk + "|" + fan;
+      if (!seen[k] || (j.t || "") > seen[k].submitted_at) seen[k] = {fan, season: ssn, week: wk, submitted_at: j.t || "", arrows: (j.a || []).length};
     }
-    LIVE = Object.values(seen).filter(x => x.arrows > 0); renderLead();
+    LIVE = Object.values(seen).filter(x => x.arrows > 0); LIVE_WEEKS = null; renderLead();
   } catch (e) { LIVE = null; }
 }
-function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D.week && x.fan === me())); LIVE.push({fan: me(), week: D.week, submitted_at: new Date().toISOString(), arrows: Object.keys(picks).length}); renderLead(); }
+function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D.week && x.fan === me())); LIVE.push({fan: me(), season: D.season, week: D.week, submitted_at: new Date().toISOString(), arrows: Object.keys(picks).length}); renderLead(); }
 const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
 const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
 const isMe = f => IDH ? (f.pid === PIDH || f.fan_id === IDH) : f.fan === me();
@@ -1313,7 +1317,8 @@ function renderLead() {
   $("npdate").textContent = new Date().toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric", year: "numeric"});
   $("nppage").textContent = `Week ${D.week} · ${D.season}`;
   const src = LIVE || (SUBS && SUBS.entries) || [];
-  const ins = src.filter(x => x.week === D.week && x.arrows > 0).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
+  const thisSeason = x => x.season == null || +x.season === D.season;
+  const ins = src.filter(x => thisSeason(x) && x.week === D.week && x.arrows > 0).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
   $("npinsub").textContent = ins.length ? `${ins.length} for week ${D.week}` : `week ${D.week}`;
   $("npin").innerHTML = ins.length ? ins.map(x => `<div class="np-line"><span${x.fan === mine ? ' style="font-weight:700"' : ""}>${esc(x.fan)}</span><b>${x.arrows} arrow${x.arrows === 1 ? "" : "s"}</b></div>`).join("") : `<div class="np-empty">nobody is in yet — be first</div>`;
   const best = ((G && G.rows) || []).filter(r => r.removed_pts != null).sort((a, b) => b.removed_pts - a.removed_pts).slice(0, 6);
@@ -1326,9 +1331,9 @@ function renderLead() {
   // busiest = the who's-in list over the season: the same live source, the same names, the same count (a swipe
   // is one arrow). The graded file is a day behind and counts every stat a swipe moves, so its list never
   // matched. Weeks the live source does not cover (the API answers for this week only) come from submissions.json.
-  const tally = {}, add = x => { if (x.arrows > 0) tally[x.fan] = (tally[x.fan] || 0) + x.arrows; };
+  const tally = {}, add = x => { if (x.arrows > 0 && thisSeason(x)) tally[x.fan] = (tally[x.fan] || 0) + x.arrows; };
   src.forEach(add);
-  if (LIVE && SUBS && SUBS.entries) { const lw = new Set(LIVE.map(x => x.week)); SUBS.entries.filter(x => !lw.has(x.week)).forEach(add); }
+  if (LIVE && LIVE_WEEKS && SUBS && SUBS.entries) SUBS.entries.filter(x => !LIVE_WEEKS.has(x.week)).forEach(add);
   const busy = Object.entries(tally).map(([fan, n]) => ({fan, n})).sort((a, b) => b.n - a.n || a.fan.localeCompare(b.fan)).slice(0, 3);
   $("npsharp").innerHTML = (sharp.length || busy.length) ? (sharp.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>direction right most often (5+ graded)</span></div>` + sharp.map(f => `<div class="np-line"><span>${esc(f.fan)}</span><b>${pct(f.hit_rate)} of ${f.graded}</b></div>`).join("") : "") + (busy.length ? `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>most arrows this season</span></div>` + busy.map(f => `<div class="np-line"><span>${esc(f.fan)}</span><b>${f.n}</b></div>`).join("") : "") : `<div class="np-empty">nothing graded yet</div>`;
   const st = standings();
