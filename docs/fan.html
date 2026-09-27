@@ -189,6 +189,10 @@
   @keyframes crawl { from { transform:translateY(0); } to { transform:translateY(-50%); } }
   #attract .coin { font-size:.85vh; color:#8a94a6; }
   @keyframes blink { 0%,55% { opacity:1 } 56%,100% { opacity:0 } }
+  /* Submit pulses while there are picks not yet locked in, and goes still once they are (sentNote) */
+  #submit.nudge { animation:nudge 1.1s ease-in-out infinite; position:relative; z-index:1; }
+  @keyframes nudge { 0%,100% { box-shadow:0 0 0 0 rgba(255,204,51,0); transform:scale(1); } 50% { box-shadow:0 0 0 3px rgba(255,204,51,.6), 0 0 16px rgba(255,204,51,.85); transform:scale(1.08); } }
+  @media (prefers-reduced-motion: reduce) { #submit.nudge { animation:none; box-shadow:0 0 0 3px rgba(255,204,51,.85); } }
   #crt { position:absolute; inset:0; display:none; overflow:auto; background:var(--bg); }
   #stage.on #crt { display:block; } #stage.on #attract { display:none; }
   #crt main { max-width:none; padding:1.2vh 1.4vh 9vh; }
@@ -821,15 +825,17 @@ $("list").addEventListener("click", e => {
   count();
 });
 function count() { const n = Object.keys(picks).length; $("cnt").textContent = n; $("draft").textContent = n ? "· saved on this device" : ""; sentNote(); }
+const nudge = on => $("submit").classList.toggle("nudge", !!on && Object.keys(picks).length > 0);
 async function sentNote() {
   const lc = D && ls.get(WKEY() + "_locked");
-  if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}`; return; }
-  const x = decodeCode(lc); if (!x || x.week !== D.week) return;
+  if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}`; nudge(!s); return; }
+  const x = decodeCode(lc); if (!x || x.week !== D.week) { nudge(true); return; }
   const locked = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE);
   let changed = 0; for (const k of new Set([...Object.keys(locked), ...Object.keys(picks)])) if ((locked[k] || 0) !== (picks[k] || 0)) changed++;
   const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
   $("draft").textContent = `· locked in ${at} (${(x.j.a || []).length} pick${(x.j.a || []).length === 1 ? "" : "s"})` +
     (changed ? ` — ${changed} change${changed === 1 ? "" : "s"} not locked in yet` : " — all locked in");
+  nudge(changed);
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
