@@ -148,7 +148,7 @@ def test_swipe_rule_moves_the_whole_line_ten_percent():
     assert fan_rules.rule_of("s1") == "s1"
     assert fan_rules.adjusted("s1", "rec_yds", 82.35, 1) == pytest.approx(90.585)
     assert fan_rules.adjusted("s1", "rec_tds", 0.6, -1) == pytest.approx(0.54)
-    assert fan_rules.min_presses("s1", "rush_yds", 76) == -1
+    assert fan_rules.min_presses("s1", "rush_yds", 76) == -3               # a swipe goes up to 3 steps (30%)
     assert fan_rules.SWIPE_STAT == -1
 
 
@@ -169,7 +169,7 @@ def test_recorder_expands_a_swipe_into_one_s1_row_per_stat(tmp_path, monkeypatch
     a = {r["stat"]: r for r in sw if r["player"] == "A One"}
     assert a["rush_yds"]["arrows"] == 1 and a["rush_yds"]["adjusted"] == pytest.approx(83.6) and a["rush_yds"]["pct"] == 10.0
     b = {r["stat"]: r for r in sw if r["player"] == "B Two"}
-    assert b["rec"]["arrows"] == -1 and b["rec"]["adjusted"] == pytest.approx(4.5)   # -3 is clamped to one swipe
+    assert b["rec"]["arrows"] == -3 and b["rec"]["adjusted"] == pytest.approx(3.5)   # a full pull: -30% (5 -> 3.5)
     u = [r for r in rows if r["rule"] == "u1"]
     assert len(u) == 1 and u[0]["stat"] == "rec_yds" and u[0]["adjusted"] == pytest.approx(80.0)   # +2 x 10 yds
 
@@ -197,3 +197,18 @@ def test_recorder_writes_one_marker_for_an_empty_set(bake):
     assert set(rows[0]) == set(recorder()["FIELDS"])
     _, _, none = rows_for(2026, 3, {"n": "t", "t": "x", "b": b["bake_id"], "r": "u1"})     # no "a" at all: not a withdrawal
     assert none == []
+
+
+def test_a_swipe_carries_its_size_one_to_three_steps(bake):
+    """How far the card was pulled: 10%, 20% or 30% on every stat in the line. Older codes carry +-1;
+    anything past 3 steps is clamped rather than dropped."""
+    b, pi, _ = bake
+    rows_for = recorder()["rows_for"]
+    p = b["players"][pi]
+    for v, want in [(1, 1), (-2, -2), (3, 3), (-3, -3), (7, 3), (-9, -3)]:
+        _, _, rows = rows_for(2026, 3, {"n": "t", "t": "x", "b": b["bake_id"], "r": "u1", "a": [[pi, fan_rules.SWIPE_STAT, v]]})
+        assert rows and all(r["arrows"] == want and r["rule"] == "s1" for r in rows)
+        for r in rows:
+            base = p["stats"][r["stat"]] or 0.0
+            assert r["adjusted"] == pytest.approx(round(max(0.0, base * (1 + 0.1 * want)), 2))
+    assert fan_rules.min_presses("s1", "rec_yds", 50.0) == -fan_rules.SWIPE_MAX

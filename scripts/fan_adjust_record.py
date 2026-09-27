@@ -87,8 +87,9 @@ def rows_for(S, W, j):
         if not (0 <= pi < len(players)) or v == 0 or v > 100: continue
         p = players[pi]
         if si == fan_rules.SWIPE_STAT:
-            # Quick picks: a swipe on the whole player = one s1 row per stat in his line, +1 or -1
-            v = 1 if v > 0 else -1
+            # Quick picks: a swipe on the whole player = one s1 row per stat in his line, 1-3 steps of 10%
+            # either way (how far the fan pulled; codes before 2026-09-27 carry only +-1)
+            v = max(-fan_rules.SWIPE_MAX, min(fan_rules.SWIPE_MAX, v))
             for stat in keys:
                 if p["stats"].get(stat) is None: continue
                 r = row(p, pi, stat, v, "s1")
