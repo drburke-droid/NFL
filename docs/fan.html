@@ -103,6 +103,9 @@
   @keyframes ticker { to { transform:translateX(-50%); } }
   .dk-last { display:flex; gap:5px; margin-top:5px; flex-wrap:nowrap; overflow:hidden; } .dk-last span { font-size:10px; color:var(--mut); background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:8px; padding:2px 7px; white-space:nowrap; } .dk-last b { color:var(--ink); font-size:11px; }
   .dk-stamp { position:absolute; top:34px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:24px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.4); z-index:3; font-family:'Press Start 2P',monospace; font-size:14px; }
+  /* the size of the move, fixed mid-glass: on a long pull the card (and its stamp) is mostly off screen */
+  #pktier { position:absolute; left:50%; top:34%; transform:translate(-50%, -50%); z-index:5; pointer-events:none; opacity:0; font-family:'Press Start 2P',monospace; font-size:15px; padding:9px 14px; border:3px solid; border-radius:8px; background:rgba(7,11,16,.82); white-space:nowrap; transition:opacity .08s; }
+  #pktier.up { color:var(--up); border-color:var(--up); } #pktier.dn { color:var(--down); border-color:var(--down); }
   .dk-stamp.up { left:14px; color:var(--up); border-color:var(--up); transform:rotate(-12deg); } .dk-stamp.dn { right:14px; color:var(--down); border-color:var(--down); transform:rotate(12deg); }
   .dk-had { position:absolute; top:30px; left:50%; transform:translateX(-50%); font-size:10px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.7); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; z-index:3; }
   .dk-had.up { color:var(--up); } .dk-had.dn { color:var(--down); }
@@ -360,7 +363,7 @@
       <div class="rt">QUICK PICKS</div>
       <div class="rs" id="rwhos">WHO'S PLAYING?</div>
       <div class="rrow"><input id="rwho" type="text" placeholder="AAA" maxlength="3" autocomplete="off" style="text-transform:uppercase;letter-spacing:.15em"><input id="rpin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="PIN" maxlength="8" autocomplete="off"><select id="rfav"><option value="">YOUR TEAM</option></select></div>
-      <div class="rh">FADE OR BOOST ONE PLAYER AT A TIME<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>A SWIPE MOVES HIS WHOLE LINE 10%<br>EVERY SWIPE LOCKS IN BY ITSELF. PICKS LOCK AT KICKOFF</div>
+      <div class="rh">FADE OR BOOST ONE PLAYER AT A TIME<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>PULL FURTHER FOR A BIGGER MOVE: 10%, 20% OR 30%<br>EVERY SWIPE LOCKS IN BY ITSELF. PICKS LOCK AT KICKOFF</div>
       <button class="go" id="rstart">▶ PRESS START</button>
       <button class="alt" id="rpaper">&#128240; READ THE PAPER: WHAT THIS IS AND WHY</button>
       <button class="alt" id="rmore">WANT MORE CONTROL? JUDGE EVERY STAT</button>
@@ -370,6 +373,7 @@
       <div class="pk-hint">◀ SWIPE ▶</div>
       <div id="pkstage"></div>
       <div id="pkprog"></div>
+      <div id="pktier"></div>
       <div class="pk-foot"><button id="dkfade">◀ FADE</button><button class="sm" id="dkskip" title="no opinion">SKIP</button><button class="sm" id="dkundo">UNDO</button><button class="sm" id="dkmenu" title="back to the start screen">MENU</button><button id="dkboost">BOOST ▶</button></div>
     </div>
     </div>
@@ -507,7 +511,7 @@ const RULE = "u1";
 // Quick picks (2026-09-25): a SWIPE on a whole player is stored as a pick with stat index -1 (fan_rules.SWIPE_STAT)
 // and value +1 (boost) / -1 (fade); it moves every stat in his line SWIPE_PCT. The recorder expands it into
 // one row per stat under rule "s1". A player carries either a swipe or stat arrows, never both.
-const SW = -1, SWIPE_PCT = 0.10;
+const SW = -1, SWIPE_PCT = 0.10, SWIPE_MAX = 3;   // a swipe is 1-3 steps of 10%: how far the card was pulled (fan_rules.SWIPE_MAX)
 const swipeOf = i => picks[i + ":" + SW] || 0;
 const STEP_U = {pass_yds:25, pass_tds:0.5, pass_int:0.5, rush_yds:10, rush_tds:0.5, rec:1, rec_yds:10, rec_tds:0.5};
 const MAX_N = 100;
@@ -597,7 +601,7 @@ function remap(src, obj, pct) {
     if (!p) continue;
     const j = same ? i : (p.id && byId.has(p.id)) ? byId.get(p.id) : byName.get(p.name + "|" + p.pos);
     if (j == null) continue;
-    if (si === SW) { if (n0) out[j + ":" + SW] = n0 > 0 ? 1 : -1; continue; }      // a swipe follows the player
+    if (si === SW) { if (n0) out[j + ":" + SW] = Math.max(-SWIPE_MAX, Math.min(SWIPE_MAX, Math.round(n0))); continue; }      // a swipe follows the player, 1-3 steps
     const k = src.stat_keys[si];
     if (!k || !(k in STEP_U)) continue;
     const v = D.players[j].stats[k]; if (v == null) continue;
@@ -794,7 +798,7 @@ function render() {
 function card(p) {
   const touched = Object.keys(picks).some(k => k.split(":")[0] == p.i), sw = swipeOf(p.i);
   const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
-  const tag = sw ? `<div class="swipedtag ${sw > 0 ? "up" : "dn"}">You <b>${sw > 0 ? "boosted" : "faded"}</b> his whole line 10% with a swipe in Quick picks. Tap a stat to fine-tune instead, or <button data-unswipe="${p.i}">undo the swipe</button>.</div>` : "";
+  const tag = sw ? `<div class="swipedtag ${sw > 0 ? "up" : "dn"}">You <b>${sw > 0 ? "boosted" : "faded"}</b> his whole line ${Math.abs(sw) * 10}% with a swipe in Quick picks. Tap a stat to fine-tune instead, or <button data-unswipe="${p.i}">undo the swipe</button>.</div>` : "";
   return `<div class="p${touched ? " touched" : ""}" data-i="${p.i}"><div class="hd"><div><span class="nm">${p.name}</span>${chip}<div class="meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}</div></div><div class="pts">${ptsHtml(p)}</div></div>` +
     `<div class="stats">` + Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => stat(p.i, k, v)).join("") + `</div>${tag}</div>`;
 }
@@ -873,7 +877,13 @@ async function autoLock(leaving) {
   else if (again) autoSoon();
 }
 addEventListener("online", () => autoSoon());
-const flushAuto = () => { if (AUTO_T) { clearTimeout(AUTO_T); AUTO_T = null; autoLock(true); } };
+// leaving: a tap still counting is decided now, and whatever this visit changed goes out at once -- also a
+// swipe whose card is still flying off, which has not reached count() yet
+const flushAuto = () => {
+  if (PEND) { const m = PEND; PEND = null; clearTimeout(m.t); if (DI === m.di && PLAYING) decide(m.dir * m.n); }
+  clearTimeout(AUTO_T); AUTO_T = null;
+  if (EDITED && autoOK() && hasSomething() && ls.get(WKEY() + "_autosig") !== picksSig()) autoLock(true);
+};
 addEventListener("pagehide", flushAuto);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushAuto(); });
 const nudge = on => $("submit").classList.toggle("nudge", !!on && Object.keys(picks).length > 0 && !(autoOK() && AUTO_T));
@@ -926,7 +936,7 @@ function setMode(m) {
   MODE = m; ls.set("fanpicks_mode", m); PLAYING = false; screens(); readyText();
   $("modetitle").textContent = m === "swipe" ? "Quick picks" : "Full control";
   $("modehow").innerHTML = m === "swipe"
-    ? `Fade or boost one player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a swipe moves his whole line 10%. No numbers to fiddle with.`
+    ? `Fade or boost one player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a short swipe moves his whole line 10%, a longer one 20%, all the way across 30% (or tap the button once, twice or three times). No numbers to fiddle with.`
     : `Every stat of every player, ▲ and ▼ a set amount each: half a touchdown, one catch, ten yards. For when you know a receiver is an 80-yard guy, not a 90.`;
   $("modebtn").textContent = m === "swipe" ? "Want more control? Judge every stat →" : "← Quick picks: one swipe per player";
   if (D) render();
@@ -946,7 +956,7 @@ function needId() {
   return true;
 }
 $("rstart").onclick = () => { if (needId()) return; PLAYING = true; screens(); DECK = []; deckRender(); };
-$("dkmenu").onclick = () => { PLAYING = false; screens(); readyText(); };
+$("dkmenu").onclick = () => { dropPend(); PLAYING = false; screens(); readyText(); };
 // the ready screen's fields are the identity card's fields, in pixels
 function readyText() {
   $("rwhos").classList.remove("warn");
@@ -985,7 +995,7 @@ function dkCard(p, under) {
   const base = dk0(p), now = dkPoints(lineOf(p, true));
   const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
   const line = Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => `${fmt(k, v)} ${LABEL[k]}`).join(" · ");
-  const had = sw ? `<div class="dk-had ${sw > 0 ? "up" : "dn"}">you ${sw > 0 ? "boosted" : "faded"} him → ${now.toFixed(1)} pts · swipe again to change</div>`
+  const had = sw ? `<div class="dk-had ${sw > 0 ? "up" : "dn"}">you ${sw > 0 ? "boosted" : "faded"} him ${Math.abs(sw) * 10}% → ${now.toFixed(1)} pts · swipe again to change</div>`
             : arrows ? `<div class="dk-had">${arrows} stat arrow${arrows === 1 ? "" : "s"} on him from Full control → ${now.toFixed(1)} pts</div>` : "";
   // the season so far: his DraftKings points in each earlier week (the bake's lw; null = no box score that week)
   const lw = Array.isArray(p.lw) ? p.lw.map((v, k) => [k + 1, v]).slice(-2) : [];
@@ -996,6 +1006,7 @@ function dkCard(p, under) {
     `<div class="dk-line"><span class="tk">ORACLE: ${esc(line)}</span></div>${last}</div></div>`;
 }
 function deckRender() {
+  if ($("pktier")) $("pktier").style.opacity = 0;
   if (!D || MODE !== "swipe" || !PLAYING) return;
   if (!DECK.length) deckBuild();
   const st = $("pkstage"), nb = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v > 0).length, nf = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v < 0).length;
@@ -1021,41 +1032,83 @@ function tickers(root) {
     el.style.setProperty("--d", Math.max(6, (tk.scrollWidth / 2) / 40).toFixed(1) + "s");
   }
 }
+// How far the card is pulled sets the size of the move (owner, 2026-09-27): under 40% of the card's width
+// 10%, under 62% 20%, further 30%. The stamp shows the size live and grows with it, and a phone ticks as it
+// crosses a zone, so the fan knows what he will get before he lets go. A quick short flick is 10%.
+const tierOf = (dx, w) => { const a = Math.abs(dx); return a < w * 0.40 ? 1 : a < w * 0.62 ? 2 : SWIPE_MAX; };
+function stampTier(el, sgn, n, op) {
+  const t = $("pktier");
+  if (t) { t.style.opacity = sgn && n ? op : 0; if (sgn && n) { t.className = sgn > 0 ? "up" : "dn"; t.textContent = (sgn > 0 ? "BOOST +" : "FADE \u2212") + n * 10 + "%"; t.style.transform = `translate(-50%, -50%) scale(${1 + 0.18 * (n - 1)})`; } }
+  for (const [s, d] of [[el.querySelector(".dk-stamp.up"), 1], [el.querySelector(".dk-stamp.dn"), -1]]) {
+    if (!s) continue;
+    const on = sgn === d && n > 0;
+    s.style.opacity = on ? op : 0;
+    if (on) { s.textContent = (d > 0 ? "Boost +" : "Fade \u2212") + n * 10 + "%"; s.style.transform = `rotate(${d > 0 ? -12 : 12}deg) scale(${1 + 0.15 * (n - 1)})`; s.style.borderWidth = (2 + n) + "px"; }
+  }
+}
 function bindSwipe(el) {
-  let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false, t0 = 0;
-  const up = el.querySelector(".dk-stamp.up"), dn = el.querySelector(".dk-stamp.dn");
-  const draw = () => { el.style.transform = `translate(${dx}px, ${dy * 0.15}px) rotate(${dx / 18}deg)`; up.style.opacity = Math.min(1, Math.max(0, dx / 80)); dn.style.opacity = Math.min(1, Math.max(0, -dx / 80)); };
-  el.addEventListener("pointerdown", e => { if (e.button) return; on = true; x0 = e.clientX; y0 = e.clientY; t0 = Date.now(); dx = dy = 0; el.classList.remove("back", "fly"); try { el.setPointerCapture(e.pointerId); } catch (x) {} });
+  let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false, t0 = 0, tier = 0;
+  const w = () => el.offsetWidth || 320;
+  const draw = () => {
+    el.style.transform = `translate(${dx}px, ${dy * 0.15}px) rotate(${dx / 18}deg)`;
+    const t = tierOf(dx, w());
+    if (Math.abs(dx) > 40 && t !== tier) { if (tier && MOBILE && navigator.vibrate) navigator.vibrate(8); tier = t; }
+    stampTier(el, Math.sign(dx), t, Math.min(1, Math.abs(dx) / 80));
+  };
+  el.addEventListener("pointerdown", e => { if (e.button) return; on = true; x0 = e.clientX; y0 = e.clientY; t0 = Date.now(); dx = dy = 0; tier = 0; el.classList.remove("back", "fly"); try { el.setPointerCapture(e.pointerId); } catch (x) {} });
   el.addEventListener("pointermove", e => { if (!on) return; dx = e.clientX - x0; dy = e.clientY - y0; draw(); });
   const end = () => {
     if (!on) return; on = false;
     const v = Math.abs(dx) / Math.max(1, Date.now() - t0);                 // px per ms: a quick flick counts
-    if (Math.abs(dx) > 90 || (Math.abs(dx) > 40 && v > 0.6)) decide(dx > 0 ? 1 : -1);
-    else { el.classList.add("back"); el.style.transform = ""; up.style.opacity = 0; dn.style.opacity = 0; }
+    if (Math.abs(dx) > 90 || (Math.abs(dx) > 40 && v > 0.6)) decide(Math.sign(dx) * tierOf(dx, w()));
+    else { el.classList.add("back"); el.style.transform = ""; stampTier(el, 0, 0, 0); }
   };
   el.addEventListener("pointerup", end); el.addEventListener("pointercancel", end);
 }
+// The FADE / BOOST buttons and the arrow keys cannot pull, so they count taps: each quick tap in the same
+// direction adds a step (the stamp shows it), and the card goes once the taps stop, or at once on the third.
+const TAP_MS = 550;
+let PEND = null;
+function tapDecide(dir) {
+  if (FLYING) { QUEUED = dir; return; }            // a tap while the last card is still leaving is for the next one
+  const el = $("pkstage").lastElementChild, p = DECK[DI];
+  if (!p || !el || el.dataset.i == null) return;
+  if (needId()) return;
+  if (started(p)) return decide(dir);
+  if (PEND && PEND.dir === dir && PEND.di === DI) PEND.n++;
+  else { if (PEND) clearTimeout(PEND.t); PEND = {dir, n: 1, di: DI}; }
+  clearTimeout(PEND.t);
+  stampTier(el, dir, Math.min(PEND.n, SWIPE_MAX), 1);
+  if (MOBILE && navigator.vibrate) navigator.vibrate(8);
+  if (PEND.n >= SWIPE_MAX) { const v = dir * SWIPE_MAX; PEND = null; return decide(v); }
+  const mine = PEND;
+  PEND.t = setTimeout(() => { if (PEND !== mine) return; PEND = null; if (DI === mine.di && PLAYING) decide(mine.dir * mine.n); }, TAP_MS);
+}
+const dropPend = () => { QUEUED = 0; if (PEND) { clearTimeout(PEND.t); PEND = null; } };
+let FLYING = false, QUEUED = 0;
 function flyOff(dir, then) {
   const el = $("pkstage").lastElementChild; if (!el) return then();
+  FLYING = true;
   el.classList.add("fly"); el.style.transform = dir ? `translate(${dir * (Math.max(innerWidth, 500) + 200)}px, -30px) rotate(${dir * 24}deg)` : "translateY(60px) scale(.9)"; el.style.opacity = "0";
-  setTimeout(then, 280);
+  setTimeout(() => { FLYING = false; then(); const q = QUEUED; QUEUED = 0; if (q) tapDecide(q); }, 280);
 }
-function decide(dir) {
+function decide(dir) {                     // dir: +-1..3, the signed size of the move
+  dropPend();
   const p = DECK[DI]; if (!p) return;
   if (needId()) return;
   if (started(p)) { $("pkprog").textContent = "KICKED OFF · LOCKED"; DI++; deckRender(); return; }
   for (const k of Object.keys(picks)) if (k.split(":")[0] == p.i) delete picks[k];      // one opinion per player
   picks[p.i + ":" + SW] = dir; ls.set(KEY, JSON.stringify(picks)); HIST.push(DI); edited();
   if (MOBILE && navigator.vibrate) navigator.vibrate(dir > 0 ? [10, 30, 10] : 14);
-  flyOff(dir, () => { DI++; deckRender(); count(); });
+  flyOff(Math.sign(dir), () => { DI++; deckRender(); count(); });
 }
-$("dkboost").onclick = () => decide(1); $("dkfade").onclick = () => decide(-1);
-$("dkskip").onclick = () => { if (DI < DECK.length) { HIST.push(DI); flyOff(0, () => { DI++; deckRender(); }); } };
-$("dkundo").onclick = () => { if (!HIST.length) return; edited(); DI = HIST.pop(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
+$("dkboost").onclick = () => tapDecide(1); $("dkfade").onclick = () => tapDecide(-1);
+$("dkskip").onclick = () => { dropPend(); if (DI < DECK.length) { HIST.push(DI); flyOff(0, () => { DI++; deckRender(); }); } };
+$("dkundo").onclick = () => { dropPend(); if (!HIST.length) return; edited(); DI = HIST.pop(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
 addEventListener("keydown", e => {
   if (MODE !== "swipe" || !D || e.target.matches("input,textarea,select") || $("paperwrap").classList.contains("on") || !stage.classList.contains("on")) return;
   if (!PLAYING) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("rstart").click(); } return; }
-  if (e.key === "ArrowRight") decide(1); else if (e.key === "ArrowLeft") decide(-1); else if (e.key === "ArrowDown") { e.preventDefault(); $("dkskip").click(); } else if (e.key === "Escape") $("dkmenu").click();
+  if (e.key === "ArrowRight") tapDecide(1); else if (e.key === "ArrowLeft") tapDecide(-1); else if (e.key === "ArrowDown") { e.preventDefault(); $("dkskip").click(); } else if (e.key === "Escape") $("dkmenu").click();
 });
 
 function b64url(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, ""); }
