@@ -935,5 +935,107 @@
    },
    "warnings": []
   }
+ },
+ "2026-09-27T20:25_2g": {
+  "sent_at": "2026-09-27T19:27:02Z",
+  "rows": 58,
+  "file": "Burke_Model_Burke_2026_sun04pm_0927_1925.csv",
+  "slate": "Sun 09/27 04:25 PM ET slate (2 games)",
+  "credits_left": 1851,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 2 games in this send (kickoffs Sun 20:25Z .. Sun 20:25Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 429 statuses pulled {'espn': 166, 'sleeper': 98, '+sleeper': 80, 'espn+sleeper': 69, 'nfl-report': 14, 'nfl-report+sleeper': 2}; 2 Q, 2 OUT with a projection {'espn+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 53,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-09-27T19:26Z",
+    "credits_left": "351"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 46,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 11,
+     "rec_yds": 24,
+     "rec": 24,
+     "exp_td": 46
+    },
+    "no_line": [],
+    "eligible": 19,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 7
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 4,
+    "by_team": {
+     "BAL": [
+      "Tyler Loop"
+     ],
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "LV": [
+      "Matt Gay"
+     ],
+     "NO": [
+      "Daniel Carlson"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 429,
+    "by_src": {
+     "espn": 166,
+     "sleeper": 98,
+     "+sleeper": 80,
+     "espn+sleeper": 69,
+     "nfl-report": 14,
+     "nfl-report+sleeper": 2
+    },
+    "q": 2,
+    "out": 2,
+    "out_by_src": {
+     "espn+sleeper": 2
+    }
+   },
+   "warnings": []
+  }
  }
 }
