@@ -139,6 +139,25 @@ def grade(rows, act):
         out.append(d)
     return pd.DataFrame(out)
 
+def full_lines(g, act):
+    """(week, player) -> {stat: (sent, actual)} over EVERY stat of the sent line, for each scored player. The
+    strategy lab replays whole-line 10% swipes, and a full-control pick only touches some stats, so the graded
+    rows alone would replay a partial line. Same lookups as grade(); empty when grading against the bake."""
+    act = act.copy(); act["nname"] = act.player_display_name.map(norm)
+    by_id = {(r.player_id, int(r.week)): r for r in act.itertuples()}
+    by_nm = {(r.nname, r.position, int(r.week)): r for r in act.itertuples()}
+    out = {}
+    for r in g[~g.pending & ~g.no_send].drop_duplicates(["week", "player"]).itertuples():
+        wk = int(r.week); sl = SENT.get((wk, norm(r.player), r.pos))
+        if not sl: continue
+        pid = getattr(r, "player_id", None)
+        a = by_id.get((pid, wk)) if isinstance(pid, str) and pid else None
+        if a is None: a = by_nm.get((norm(r.player), r.pos, wk))
+        val = lambda k: float(np.nan_to_num(getattr(a, COL[k]) or 0.0)) if a is not None else 0.0
+        out[(wk, r.player)] = {k: (v, val(k)) for k, v in sl.items() if pd.notna(v)}
+    return out
+
+
 def summarise(g):
     def block(d):
         gd = d[~d.pending & ~d.no_send]
@@ -251,6 +270,9 @@ if len(rows):
     display.update({k: v for k, v in pinned.items() if k in display})
     RENAMED = {n: display[k] for n, k in zip(rows.fan.astype(str), rows.fan_id) if n in merged_names and n != display.get(k)}
     rows["fan"] = rows.fan_id.map(display)
+    # the same merge by public id (never the fan_id itself): a browser still signed in under the merged-away
+    # tag/PIN computes the old public id, and this tells the page that the kept row is its own
+    MERGED_PIDS = {fan_rules.public_id(k): fan_rules.public_id(v) for k, v in alias.items() if k and v}
 # Fans come back during the week and lock in again, and the long table is append-only, so every set
 # they sent sits in it. fan_rules.live_arrows decides which arrows are live: per game, the last set
 # locked in BEFORE that game kicked off. An arrow placed after its game kicked off never counts --
@@ -294,9 +316,10 @@ if not A.vs_bake:
     print(f"  sent lines for {len(SENT)} player-weeks from {', '.join(A.sends)}")
 g = grade(rows, act); s = summarise(g); s["season"] = A.season
 s["renamed"] = RENAMED if "RENAMED" in globals() else {}
+s["merged_pids"] = MERGED_PIDS if "MERGED_PIDS" in globals() else {}
 try:                                   # the strategy lab: fixed rules for combining the fans, scored every week
     import fan_strategies
-    s["strategies"] = fan_strategies.lab(g)
+    s["strategies"] = fan_strategies.lab(g, full_lines(g, act))
 except Exception as e:
     print("  strategy lab skipped:", str(e)[:120])
 s["basis"] = "bake" if A.vs_bake else "send"
