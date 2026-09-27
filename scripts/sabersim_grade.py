@@ -210,6 +210,23 @@ for wk, d in g.groupby("week"):
     o = block(d); o.update({"week": int(wk), "sends": int(d.send_file.nunique()), "games": int(d.Game.nunique()),
                             "late_sends_ignored": int(late.get(wk, 0)), "by_pos": {p: block(x) for p, x in d.groupby("Pos")}})
     weeks.append(o)
+# COMPLETE = every game on the schedule has a graded box score, or (when a game we never sent for keeps
+# the count short) the week's last kickoff is 4 hours gone with no game still awaiting box scores. The fan
+# page ranks complete weeks only, so a Thursday game alone never prints a week's standings.
+_sp = os.path.join(ROOT, "data", f"schedule_{A.season}.csv")
+_sched = pd.read_csv(_sp, dtype={"gametime": str}) if os.path.exists(_sp) else None
+if _sched is not None:
+    _sched = _sched[_sched.game_type.eq("REG")] if "game_type" in _sched else _sched
+    _sched["kick"] = pd.to_datetime(_sched.gameday + " " + _sched.gametime.fillna("13:00"), errors="coerce").dt.tz_localize(ET)
+_awaiting = {int(k) for k, v in skipped.items() if len(v)}
+_now = pd.Timestamp.now(tz=ET)
+for o in weeks:
+    if _sched is None:
+        continue
+    sw = _sched[_sched.week == o["week"]]
+    o["scheduled"] = int(len(sw))
+    over = len(sw) and sw.kick.notna().all() and _now > sw.kick.max() + pd.Timedelta(hours=4)
+    o["complete"] = bool(len(sw) and (o["games"] >= len(sw) or (over and o["week"] not in _awaiting)))
 overall = block(g); overall["by_pos"] = {p: block(x) for p, x in g.groupby("Pos")}
 misses = g.reindex(g.err.abs().sort_values(ascending=False).index).head(12)
 # ---------- 4b. Subvertadown check: did their positional matchup bonus / QB projection point the right way? ----------

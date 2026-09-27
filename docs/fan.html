@@ -1115,9 +1115,15 @@ function standings() {
                    : ORACLE_BASIS === "live" && w.mae_vs_sites_live && w.n_vs_sites_live ? {week: w.week, mae: w.mae_vs_sites_live, n: w.n_vs_sites_live}
                    : (ORACLE_BASIS === "all" || ORACLE_BASIS === "median" || ORACLE_BASIS === "live") && w.mae_vs_sites_all && w.n_vs_sites_all ? {week: w.week, mae: w.mae_vs_sites_all, n: w.n_vs_sites_all}
                    : w.mae_vs_sites && w.n_vs_sites ? {week: w.week, mae: w.mae_vs_sites, n: w.n_vs_sites} : null;
-  const mw = ((ACC && ACC.weeks) || []).map(w => pick(w) ? pick(w)
+  // a week ranks only once it is complete (owner, 2026-09-27): the grader flags each week against the NFL
+  // schedule; a file from before that flag falls back to the bake's clock -- the current week waits until
+  // its last kickoff is 4 hours gone. Sites' numbers for an unfinished week wait with it.
+  const lastKick = Math.max(0, ...((D && D.games) || []).map(g => Date.parse(g.kick_utc) || 0));
+  const done = w => w.complete != null ? w.complete : !(D && w.week >= D.week && Date.now() < lastKick + 4 * 3600e3);
+  const open = new Set(((ACC && ACC.weeks) || []).filter(w => !done(w)).map(w => w.week));
+  const mw = ((ACC && ACC.weeks) || []).filter(done).map(w => pick(w) ? pick(w)
                                                   : w.mae_played && w.n_played ? {week: w.week, mae: w.mae_played, n: w.n_played} : null).filter(Boolean);
-  const sw = (SITES && SITES.weeks) || {};
+  const sw = Object.fromEntries(Object.entries((SITES && SITES.weeks) || {}).filter(([k]) => !open.has(+k)));
   const weeks = [...new Set([...mw.map(w => w.week), ...Object.keys(sw).map(Number)])].sort((a, b) => a - b);
   if (!weeks.length) return null;
   const avg = weekly => { const v = weeks.map(w => weekly[w]).filter(x => x != null); return v.length ? v.reduce((p, c) => p + c, 0) / v.length : Infinity; };
@@ -1130,6 +1136,7 @@ function standings() {
   const byFan = {};
   for (const r of (G && G.by_fan_week) || []) if (r.graded) (byFan[r.fan] = byFan[r.fan] || {id: r.pid || r.fan_id, weeks: {}}).weeks[r.week] = r;
   for (const [fan, f] of Object.entries(byFan)) {
+    if (!mw.some(wk => f.weeks[wk.week])) continue;   // arrows only in a week still being played: not on the board yet
     let removed = 0, w = 0, l = 0, t = 0, arrows = 0; const weekly = {};
     for (const wk of mw) {
       const r = f.weeks[wk.week]; const rem = r && r.removed_pts != null ? r.removed_pts : 0;
@@ -1183,7 +1190,7 @@ function renderLead() {
   const wk = st.mw.length ? st.mw[st.mw.length - 1] : null;
   if (wk) {
     const wrows = st.rows.filter(r => r.weekly[wk.week] != null && (!r.fan || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded))).sort((a, b) => c2(a.weekly[wk.week]) - c2(b.weekly[wk.week]) || (a.base ? -1 : b.base ? 1 : 0) || a.weekly[wk.week] - b.weekly[wk.week]);
-    $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest with box scores</small>" : ""}`;
+    $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest complete week</small>" : ""}`;
     $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
       wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "<b>THE ORACLE</b>" : esc(r.name)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
   } else { $("npweekh").textContent = "This week"; $("npweek").innerHTML = `<div class="np-empty">no week graded yet</div>`; }

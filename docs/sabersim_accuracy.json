@@ -283,7 +283,9 @@
      "sat_kept": 3,
      "sat_dropped": 28
     }
-   }
+   },
+   "scheduled": 16,
+   "complete": true
   },
   {
    "n": 464,
@@ -479,7 +481,9 @@
      "sat_kept": 13,
      "sat_dropped": 13
     }
-   }
+   },
+   "scheduled": 16,
+   "complete": true
   },
   {
    "n": 24,
@@ -657,7 +661,9 @@
      "sat_kept": 1,
      "sat_dropped": 0
     }
-   }
+   },
+   "scheduled": 16,
+   "complete": false
   }
  ],
  "overall": {
