@@ -119,7 +119,11 @@ def grade(rows, act):
         adj = fan_rules.adjusted(rule, stat, base, n) if pd.notna(base) else np.nan
         d = dict(r._asdict()); d.pop("Index", None)
         d.update({"basis": basis, "base": None if pd.isna(base) else round(base, 3),
-                  "adj": None if pd.isna(adj) else round(adj, 3), "no_send": basis == "no_send"})
+                  "adj": None if pd.isna(adj) else round(adj, 3),
+                  # no_send only once the game has a box score: before that the game is simply pending --
+                  # its send may not have gone out yet (2026-09-27: 332 arrows on the Sunday and Monday night
+                  # games read as "not scorable" for hours before their T-60 sends)
+                  "no_send": basis == "no_send" and ingested})
         # every column exists on every row, graded or not: with all rows pending (a submission
         # in before its games kick off) these were absent entirely and summarise() died on
         # gd.direction, so a fan who submitted early broke the whole grade until his games ran
@@ -221,10 +225,16 @@ if not len(rows):                                   # a table with a header and 
 # early fans keep their history when they pick a PIN. aliases.json merges identities by hand
 # ("forgot my PIN"): {old_fan_id: new_fan_id}. The display name is the one used most recently
 # under that identity; two identities that display the same name get the id's tail appended.
+# "_display": {fan_id: name} pins the name a (merged) identity is shown under, e.g. keeping a fan's
+# original tag after he merged a second one into it. RENAMED (name -> shown name, for the merged-away
+# identities only) goes out in grade.json so the page's live lists fold them the same way.
 ALIASES = os.path.join(ROOT, "data", "fan_adjustments", "aliases.json")
 if len(rows):
     alias = json.load(open(ALIASES, encoding="utf-8")) if os.path.exists(ALIASES) else {}
+    pinned = alias.pop("_display", {}) if isinstance(alias.get("_display"), dict) else {}
+    alias = {k: v for k, v in alias.items() if not k.startswith("_")}
     fid = rows.fan_id.fillna("").astype(str).str.strip()
+    merged_names = set(rows.fan[fid.isin(alias.keys())].astype(str))
     fid = fid.map(lambda x: alias.get(x, x))
     named = rows.assign(fidkey=fid)[fid != ""].sort_values("submitted_at")
     first_id_for_name = {}
@@ -238,6 +248,8 @@ if len(rows):
     for k, nm in latest_name.items():
         shown.setdefault(nm, []).append(k)
     display = {k: (nm if len(ks) == 1 else f"{nm} ({k[-4:]})") for nm, ks in shown.items() for k in ks}
+    display.update({k: v for k, v in pinned.items() if k in display})
+    RENAMED = {n: display[k] for n, k in zip(rows.fan.astype(str), rows.fan_id) if n in merged_names and n != display.get(k)}
     rows["fan"] = rows.fan_id.map(display)
 # Fans come back during the week and lock in again, and the long table is append-only, so every set
 # they sent sits in it. fan_rules.live_arrows decides which arrows are live: per game, the last set
@@ -281,6 +293,7 @@ SENT = {} if A.vs_bake else sent_line(A.sends, A.min_lead)
 if not A.vs_bake:
     print(f"  sent lines for {len(SENT)} player-weeks from {', '.join(A.sends)}")
 g = grade(rows, act); s = summarise(g); s["season"] = A.season
+s["renamed"] = RENAMED if "RENAMED" in globals() else {}
 s["basis"] = "bake" if A.vs_bake else "send"
 if int(g.no_send.sum()):
     for (fan, wk), d in g[g.no_send].groupby(["fan", "week"]):
