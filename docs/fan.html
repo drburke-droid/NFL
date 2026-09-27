@@ -106,6 +106,8 @@
   /* the size of the move, fixed mid-glass: on a long pull the card (and its stamp) is mostly off screen */
   #pktier { position:absolute; left:50%; top:34%; transform:translate(-50%, -50%); z-index:5; pointer-events:none; opacity:0; font-family:'Press Start 2P',monospace; font-size:15px; padding:9px 14px; border:3px solid; border-radius:8px; background:rgba(7,11,16,.82); white-space:nowrap; transition:opacity .08s; }
   #pktier.up { color:var(--up); border-color:var(--up); } #pktier.dn { color:var(--down); border-color:var(--down); }
+  /* the card's corner: the signed size in its colour, no box -- the boxed BOOST / FADE readout is the centre one */
+  .dk-stamp { border:0 !important; background:none; padding:2px 4px; font-size:18px; text-shadow:0 0 3px #000, 0 0 8px rgba(0,0,0,.95), 0 2px 0 rgba(0,0,0,.8); }
   .dk-stamp.up { left:14px; color:var(--up); border-color:var(--up); transform:rotate(-12deg); } .dk-stamp.dn { right:14px; color:var(--down); border-color:var(--down); transform:rotate(12deg); }
   .dk-had { position:absolute; top:30px; left:50%; transform:translateX(-50%); font-size:10px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.7); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; z-index:3; }
   .dk-had.up { color:var(--up); } .dk-had.dn { color:var(--down); }
@@ -1018,7 +1020,7 @@ function dkCard(p, under) {
   // the season so far: his DraftKings points in each earlier week (the bake's lw; null = no box score that week)
   const lw = Array.isArray(p.lw) ? p.lw.map((v, k) => [k + 1, v]).slice(-2) : [];
   const last = lw.length ? `<div class="dk-last">${lw.map(([w, v]) => `<span>wk ${w} <b>${v == null ? "—" : v.toFixed(1)}</b></span>`).join("")}<span>proj <b>${base.toFixed(1)}</b></span></div>` : "";
-  return `<div class="dk-card${under ? " under" : ""}" data-i="${p.i}">${dkImg(p)}<div class="dk-stamp up">Boost</div><div class="dk-stamp dn">Fade</div>${had}` +
+  return `<div class="dk-card${under ? " under" : ""}" data-i="${p.i}">${dkImg(p)}<div class="dk-stamp up">+10%</div><div class="dk-stamp dn">\u221210%</div>${had}` +
     `<div class="dk-body"><div class="dk-nm">${esc(p.name)}${chip}</div><div class="dk-meta">${p.pos} · ${p.team}${p.opp ? " vs " + p.opp : ""}${game ? " · " + esc(game.kickoff.replace(" ET", "")) : ""}</div>` +
     `<div class="dk-pts"><b>${base.toFixed(1)}</b><span>projected fantasy<br>points this week</span></div>` +
     `<div class="dk-line"><span class="tk">ORACLE: ${esc(line)}</span></div>${last}</div></div>`;
@@ -1054,6 +1056,7 @@ function tickers(root) {
 // 10%, under 62% 20%, further 30%. The stamp shows the size live and grows with it, and a phone ticks as it
 // crosses a zone, so the fan knows what he will get before he lets go. A quick short flick is 10%.
 const tierOf = (dx, w) => { const a = Math.abs(dx); return a < w * 0.40 ? 1 : a < w * 0.62 ? 2 : SWIPE_MAX; };
+// the centre readout says BOOST / FADE and the size; the card's corner stamp just the signed size, in its colour
 function stampTier(el, sgn, n, op) {
   const t = $("pktier");
   if (t) { t.style.opacity = sgn && n ? op : 0; if (sgn && n) { t.className = sgn > 0 ? "up" : "dn"; t.textContent = (sgn > 0 ? "BOOST +" : "FADE \u2212") + n * 10 + "%"; t.style.transform = `translate(-50%, -50%) scale(${1 + 0.18 * (n - 1)})`; } }
@@ -1061,7 +1064,7 @@ function stampTier(el, sgn, n, op) {
     if (!s) continue;
     const on = sgn === d && n > 0;
     s.style.opacity = on ? op : 0;
-    if (on) { s.textContent = (d > 0 ? "Boost +" : "Fade \u2212") + n * 10 + "%"; s.style.transform = `rotate(${d > 0 ? -12 : 12}deg) scale(${1 + 0.15 * (n - 1)})`; s.style.borderWidth = (2 + n) + "px"; }
+    if (on) { s.textContent = (d > 0 ? "+" : "\u2212") + n * 10 + "%"; s.style.transform = `rotate(${d > 0 ? -12 : 12}deg) scale(${1 + 0.15 * (n - 1)})`; }
   }
 }
 function bindSwipe(el) {
