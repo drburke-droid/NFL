@@ -98,7 +98,7 @@ function who_(p) {
       var key = String(x.j.u || x.j.n || r.user), t = String(x.j.t || "");
       // ">=" for the same reason as mine_: the later row wins a tie. A later EMPTY set still counts as
       // the fan's latest word, so it replaces what came before and is filtered out at the end.
-      if (!seen[key] || t >= seen[key].t) seen[key] = {fan: String(x.j.n || r.user || "anonymous").slice(0, 24), arrows: x.j.a.length, t: t};
+      if (!seen[key] || t >= seen[key].t) seen[key] = {fan: String(x.j.n || r.user || "anonymous").slice(0, 24), team: String(x.j.f || "").slice(0, 4), arrows: x.j.a.length, t: t};
     } catch (err) { /* skip it */ }
   });
   return {ok: true, entries: Object.keys(seen).map(function (k) { return seen[k]; }).filter(function (e) { return e.arrows > 0; })};

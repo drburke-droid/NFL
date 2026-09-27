@@ -27,14 +27,14 @@ except Exception: pass
 
 
 def decode_head(code):
-    """(season, week, name, submitted_at, fan_id, n_arrows) from a code, without the bake."""
+    """(season, week, name, submitted_at, fan_id, n_arrows, team) from a code, without the bake."""
     m = re.match(r"^\s*FAN1\.(\d{4})\.(\d{1,2})\.([A-Za-z0-9_\-=]+)\s*$", code)
     if not m:
         return None
     b = m.group(3); b += "=" * (-len(b) % 4)
     j = json.loads(base64.urlsafe_b64decode(b).decode("utf-8"))
     return int(m.group(1)), int(m.group(2)), (j.get("n") or "anonymous").strip()[:60], j.get("t") or "", \
-        (j.get("u") or "")[:40], len(j.get("a") or [])
+        (j.get("u") or "")[:40], len(j.get("a") or []), str(j.get("f") or "")[:4]
 
 
 def main():
@@ -71,13 +71,13 @@ def main():
         h = decode_head(code)
         if not h:
             continue
-        S, W, name, sub, fid, n = h
+        S, W, name, sub, fid, n, team = h
         # n == 0 is a fan taking back every arrow: it is recorded (so his old arrows stop counting) but he
         # drops off the who's-in list below
         if cu is not None and len(r) > cu and r[cu].strip():
             name = r[cu].strip()[:60]
         codes.append(code)
-        subs.append({"season": S, "week": W, "fan": name, "submitted_at": sub, "arrows": n,
+        subs.append({"season": S, "week": W, "fan": name, "team": team, "submitted_at": sub, "arrows": n,
                      "received": r[ct].strip() if ct is not None and len(r) > ct else ""})
     os.makedirs(os.path.dirname(INBOX), exist_ok=True)
     with open(INBOX, "w", encoding="utf-8") as fh:

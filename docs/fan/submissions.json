@@ -8,7 +8,8 @@
    "fan": "ERS",
    "submitted_at": "2026-09-25T19:26:53Z",
    "arrows": 25,
-   "received": "9/25/2026 13:27:01"
+   "received": "9/25/2026 13:27:01",
+   "team": "SEA"
   },
   {
    "season": 2026,
@@ -16,7 +17,8 @@
    "fan": "OWD",
    "submitted_at": "2026-09-27T03:23:15Z",
    "arrows": 1,
-   "received": "9/26/2026 21:23:16"
+   "received": "9/26/2026 21:23:16",
+   "team": ""
   },
   {
    "season": 2026,
@@ -24,7 +26,8 @@
    "fan": "RJS",
    "submitted_at": "2026-09-27T03:23:46Z",
    "arrows": 206,
-   "received": "9/26/2026 21:23:47"
+   "received": "9/26/2026 21:23:47",
+   "team": ""
   },
   {
    "season": 2026,
@@ -32,7 +35,8 @@
    "fan": "SAK",
    "submitted_at": "2026-09-27T04:29:08Z",
    "arrows": 91,
-   "received": "9/26/2026 22:29:09"
+   "received": "9/26/2026 22:29:09",
+   "team": "DET"
   },
   {
    "season": 2026,
@@ -40,7 +44,8 @@
    "fan": "Nana Owusu",
    "submitted_at": "2026-09-27T05:06:25Z",
    "arrows": 37,
-   "received": "9/26/2026 23:06:26"
+   "received": "9/26/2026 23:06:26",
+   "team": "LV"
   },
   {
    "season": 2026,
@@ -48,7 +53,8 @@
    "fan": "REB",
    "submitted_at": "2026-09-27T13:33:10Z",
    "arrows": 73,
-   "received": "9/27/2026 7:33:11"
+   "received": "9/27/2026 7:33:11",
+   "team": "CHI"
   }
  ]
 }
