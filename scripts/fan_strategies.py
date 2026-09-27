@@ -4,7 +4,7 @@ Week 3 of 2026 (Thursday plus the 1pm games) suggested a few ideas: blend the cr
 trust fades more than boosts, fade the mid-tier players the crowd boosts, and follow a few fans on the
 positions they read well. One week is enough to suggest a rule and nowhere near enough to trust one --
 the specialist rule in particular was picked after seeing the results. So the rules are REGISTERED here, on
-2026-09-27, before any later week is played, and every week from REGISTERED_FROM on is an honest test.
+2026-09-27, before any later week is played, and every week after REGISTERED_WEEK is an honest test.
 Week 3 is shown, flagged in-sample, and kept out of the out-of-sample totals.
 
 Every rule is replayed as whole-line swipes on the line we actually SENT (the same basis fan_grade scores
@@ -16,7 +16,8 @@ import numpy as np
 import pandas as pd
 
 REGISTERED = "2026-09-27"
-IN_SAMPLE_WEEKS = {3}            # the week the ideas came from
+REGISTERED_WEEK = 3              # the ideas came from this week; only weeks AFTER it test them (earlier weeks were
+                                 # already known when the rules were written, so they count as in-sample too)
 PTS = {"pass_yds": 0.04, "pass_tds": 4.0, "pass_int": 1.0, "rush_yds": 0.1, "rush_tds": 6.0, "rec": 1.0, "rec_yds": 0.1, "rec_tds": 6.0}
 SPECIALISTS = [("REB", {"WR", "TE"}), ("Nana Owusu", {"RB"}), ("RJS", {"RB"})]   # by the name the grade shows
 
@@ -46,16 +47,35 @@ def decisions(g):
     return out[out.dirn != 0]
 
 
-def _replay(g, calls):
-    """Error removed (DK pts) by moving each (week, player)'s SENT line 10% in the given direction."""
+def size_calls(g):
+    """Every call as the fan made it, with its size: a swipe is one call (all the stats it moved, k = its size);
+    each full-control stat arrow is its own call at k=1 -- opposing arrows on one player stay two calls."""
+    d = g[~g.pending & ~g.no_send]
+    sw, st = d[d.rule == "s1"], d[d.rule != "s1"]
+    a = sw.groupby(["fan", "week", "player"], as_index=False).agg(
+        k=("arrows", lambda s: int(abs(s).max()) if (s.abs() <= 3).all() else 1), pts=("removed_pts", "sum"))
+    b = st[["week", "removed_pts"]].rename(columns={"removed_pts": "pts"}).assign(k=1)
+    return pd.concat([a[["week", "k", "pts"]], b[["week", "k", "pts"]]], ignore_index=True)
+
+
+def _replay(g, calls, lines=None):
+    """Error removed (DK pts) by moving each (week, player)'s SENT line 10% in the given direction.
+    `lines` = {(week, player): {stat: (sent, actual)}} is the whole sent line (fan_grade.full_lines); a player
+    missing from it falls back to the stats fans touched."""
     d = g[~g.pending & ~g.no_send]
     if d.empty or not calls:
         return 0.0, 0, 0
     ps = d.groupby(["week", "player", "stat"], as_index=False).agg(base=("base", "first"), actual=("actual", "first"))
     tot, n, helped = 0.0, 0, 0
     for (wk, pl), dirn in calls.items():
-        x = ps[(ps.week == wk) & (ps.player == pl)]
-        if x.empty or not dirn:
+        if not dirn:
+            continue
+        full = (lines or {}).get((wk, pl))
+        if full:
+            x = pd.DataFrame([(k, b, a) for k, (b, a) in full.items()], columns=["stat", "base", "actual"])
+        else:
+            x = ps[(ps.week == wk) & (ps.player == pl)]
+        if x.empty:
             continue
         adj = (x.base * (1 + 0.1 * dirn)).clip(lower=0)
         v = float((((x.actual - x.base).abs() - (x.actual - adj).abs()) * x.stat.map(PTS)).sum())
@@ -82,28 +102,30 @@ def rule_calls(dec, key):
     raise KeyError(key)
 
 
-def lab(g):
+def lab(g, lines=None):
     """The strategy table for grade.json: each rule's calls, share that helped and points, per week, over the
     out-of-sample weeks, and over everything."""
-    dec = decisions(g)
-    weeks = sorted(int(w) for w in dec.week.unique()) if len(dec) else []
+    dec, sz = decisions(g), size_calls(g)
+    weeks = sorted({int(w) for w in dec.week.unique()} | {int(w) for w in sz.week.unique()})
     rows = []
     for key, label, how in RULES:
         per = {}
         for w in weeks:
             dw = dec[dec.week == w]
             if key.startswith("size_"):
-                sel = dw[dw.k == 1] if key == "size_1" else dw[dw.k >= 2]
+                sw = sz[sz.week == w]
+                sel = sw[sw.k == 1] if key == "size_1" else sw[sw.k >= 2]
                 tot, n, helped = float(sel.pts.sum()), int(len(sel)), int((sel.pts > 0).sum())
             else:
-                tot, n, helped = _replay(g, rule_calls(dw, key))
+                tot, n, helped = _replay(g, rule_calls(dw, key), lines)
             per[w] = {"calls": n, "helped": helped, "pts": round(tot, 2)}
         def total(ws):
             c = sum(per[w]["calls"] for w in ws); h = sum(per[w]["helped"] for w in ws); p = sum(per[w]["pts"] for w in ws)
             return {"calls": c, "helped": h, "pts": round(p, 2), "weeks": list(ws)}
-        oos = [w for w in weeks if w not in IN_SAMPLE_WEEKS]
+        oos = [w for w in weeks if w > REGISTERED_WEEK]
         rows.append({"key": key, "label": label, "how": how, "weeks": {str(w): v for w, v in per.items()},
                      "out_of_sample": total(oos), "all": total(weeks)})
-    return {"registered": REGISTERED, "in_sample_weeks": sorted(IN_SAMPLE_WEEKS),
+    return {"registered": REGISTERED, "registered_week": REGISTERED_WEEK,
+            "in_sample_weeks": [w for w in weeks if w <= REGISTERED_WEEK] or [REGISTERED_WEEK],
             "note": "Rules fixed on " + REGISTERED + " from week 3; only later weeks test them. Replays are 10% swipes on the sent line.",
             "rules": rows}
