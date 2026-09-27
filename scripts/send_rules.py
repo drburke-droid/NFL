@@ -28,3 +28,23 @@ def eligible(kick, lead_min, override=None):
     """Boolean(s): generated early enough. `override` (a --min-lead given on the command line) applies one
     threshold to every game instead of the dated rule."""
     return lead_min >= (override if override is not None else min_lead(kick))
+
+
+# The send clock around each kickoff, in minutes before it: when the automatic send starts, when its email
+# should be in the inbox (the page tells the owner to run the slate by hand if it is not), and the last
+# generation time that still counts. T-80/T-77/T-75 before the cutover (SaberSim's T-75 cutoff), T-60/T-57/T-55 after.
+CLOCK_BEFORE = {"send_at": 80, "email_by": 77, "deadline": LEAD_BEFORE}
+CLOCK_AFTER = {"send_at": 60, "email_by": 57, "deadline": LEAD_AFTER}
+
+
+def clock(kick):
+    """{send_at, email_by, deadline} minutes before this kickoff."""
+    return CLOCK_AFTER if pd.Timestamp(kick).tz_convert("UTC") >= CUTOVER else CLOCK_BEFORE
+
+
+def rule_text(override=None):
+    """How the graded send is chosen, in words, for the accuracy JSON and report."""
+    if override is not None:
+        return f"latest send generated >= {override:g} min before kickoff"
+    return (f"latest send generated >= {LEAD_AFTER:g} min before kickoff (>= {LEAD_BEFORE:g} for kickoffs before "
+            f"{CUTOVER.strftime('%Y-%m-%d %H:%MZ')}, when the send moved from T-80 to T-60)")
