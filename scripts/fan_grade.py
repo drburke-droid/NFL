@@ -254,12 +254,14 @@ if len(rows):
                 kick[(int(r.week), r.away_team)] = k
     rows["_kick"] = [kick.get((int(w), t)) for w, t in zip(rows.week, rows.team)]
     live, late, superseded = fan_rules.live_arrows(rows)
+    marker = rows.stat.astype(str).eq(fan_rules.WITHDRAW)      # an empty lock-in: it supersedes, it is not graded
+    late, superseded = late & ~marker, superseded & ~marker
     for (fan, wk), d in rows[late].groupby(["fan", "week"]):
         games = ", ".join(sorted({f"{r.team} v {r.opp}" for r in d.itertuples()}))
         print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) dropped — submitted after kickoff ({games})")
     for (fan, wk), d in rows[superseded].groupby(["fan", "week"]):
         print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) superseded by a later set locked in before their game")
-    rows = rows[live].drop(columns=["_kick"]).copy()
+    rows = rows[live & ~marker].drop(columns=["_kick"]).copy()
 url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{A.season}.parquet"
 act = pd.read_parquet(url); act = act[act.season_type == "REG"]
 for c in COL.values():

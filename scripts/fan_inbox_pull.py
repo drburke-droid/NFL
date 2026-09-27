@@ -72,8 +72,8 @@ def main():
         if not h:
             continue
         S, W, name, sub, fid, n = h
-        if n == 0:
-            continue                      # a setup test or an empty submission: nothing to grade, nobody to list
+        # n == 0 is a fan taking back every arrow: it is recorded (so his old arrows stop counting) but he
+        # drops off the who's-in list below
         if cu is not None and len(r) > cu and r[cu].strip():
             name = r[cu].strip()[:60]
         codes.append(code)
@@ -88,7 +88,7 @@ def main():
         k = (s["season"], s["week"], s["fan"])
         if k not in latest or s["submitted_at"] > latest[k]["submitted_at"]:
             latest[k] = s
-    entries = sorted(latest.values(), key=lambda s: (-s["week"], s["submitted_at"]))
+    entries = sorted((s for s in latest.values() if s["arrows"] > 0), key=lambda s: (-s["week"], s["submitted_at"]))
     json.dump({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "n_codes": len(codes),
                "entries": entries}, open(SUBS, "w", encoding="utf-8"), indent=1)
     print(f"pulled {len(codes)} codes from the drop box; {len(entries)} fan-weeks -> {os.path.relpath(SUBS, ROOT)}")
