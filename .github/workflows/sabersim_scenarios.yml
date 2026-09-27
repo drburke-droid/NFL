@@ -51,7 +51,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/sabersim_scenarios.json
+          git add docs/sabersim_scenarios.json docs/sabersim_slates.json   # the slates file feeds the page's Upcoming sends (send clock per slate)
           git diff --cached --quiet && { echo "no change"; exit 0; }
           git commit -m "SaberSim scoring scenarios (automated)"
           # This workflow is the only writer of that file, so on a race the freshly built copy
@@ -60,10 +60,10 @@ jobs:
           n=0
           until git push origin HEAD:main; do
             n=$((n+1)); [ "$n" -gt 3 ] && { echo "push failed after $n attempts"; exit 1; }
-            cp docs/sabersim_scenarios.json "$RUNNER_TEMP/s.json"
+            cp docs/sabersim_scenarios.json "$RUNNER_TEMP/s.json"; cp docs/sabersim_slates.json "$RUNNER_TEMP/sl.json"
             git fetch origin main && git reset --hard origin/main
-            cp "$RUNNER_TEMP/s.json" docs/sabersim_scenarios.json
-            git add docs/sabersim_scenarios.json
+            cp "$RUNNER_TEMP/s.json" docs/sabersim_scenarios.json; cp "$RUNNER_TEMP/sl.json" docs/sabersim_slates.json
+            git add docs/sabersim_scenarios.json docs/sabersim_slates.json   # the slates file feeds the page's Upcoming sends (send clock per slate)
             git diff --cached --quiet && { echo "no change after refetch"; exit 0; }
             git commit -m "SaberSim scoring scenarios (automated)"
             sleep 3
