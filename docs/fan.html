@@ -68,7 +68,7 @@
   body.mobile #stage.on #ready, body.mobile #stage.on #play { bottom:0; }                        /* on phones the bar is below the glass */
   body.swipe.ready #ready { display:flex; } body.swipe.playing #play { display:block; }
   #ready { flex-direction:column; align-items:center; justify-content:center; gap:12px; padding:12px 14px; text-align:center; font-family:'Press Start 2P',monospace; color:#ffd23f; background:radial-gradient(ellipse at 50% 40%, #16202a, #0b0f14 70%); text-shadow:0 0 6px rgba(255,210,63,.4); }
-  #ready .rt { font-size:17px; color:#ffcc33; line-height:1.5; } #ready .rs { font-size:9px; color:#7fe3ff; line-height:1.9; }
+  #ready .rt { font-size:17px; color:#ffcc33; line-height:1.5; } #ready .rs { font-size:9px; color:#7fe3ff; line-height:1.9; } #ready .rs.warn { color:#ff7070; animation:blink .45s steps(1) 4; }
   #ready .rh { font-size:8px; color:#9fe870; line-height:2; max-width:460px; } #ready .rh b { color:#fff; font-weight:normal; }
   #ready .rrow { display:flex; gap:6px; justify-content:center; width:100%; max-width:460px; }
   #ready input, #ready select { font-family:'Press Start 2P',monospace; font-size:8px; background:#0f1115; color:#ffd23f; border:2px solid #2b3a4d; border-radius:0; padding:8px 6px; flex:1 1 0; width:auto; min-width:0; text-shadow:none; }
@@ -336,7 +336,7 @@
   </div>
 
   <div class="card how" id="howcard">
-    <b>How to play.</b> Below are THE ORACLE's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat a set amount: <b>half a touchdown</b> (or interception), <b>one catch</b>, <b>10 rushing or receiving yards</b>, <b>25 passing yards</b>. ▼ stops at zero. The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Press <b>Submit</b> and you're in — the leaderboard updates once the box scores land. Come back any time: your picks stay on this device, your link opens them on any other, and a game's arrows lock when it kicks off.
+    <b>How to play.</b> Below are THE ORACLE's projected stat lines for every skill player this week. Think a number is too low? Tap <b>▲</b>. Too high? Tap <b>▼</b>. Every press moves that stat a set amount: <b>half a touchdown</b> (or interception), <b>one catch</b>, <b>10 rushing or receiving yards</b>, <b>25 passing yards</b>. ▼ stops at zero. The player's projected points update as you tap, so you can see what your call is worth. Only the stats you touch count, so pick your spots. Your picks lock in by themselves a few seconds after your last tap (Submit locks them in right away) — the leaderboard updates once the box scores land. Come back any time: your picks stay on this device, your link opens them on any other, and a game's arrows lock when it kicks off.
     <div class="legend"><span><b style="color:var(--up)">▲</b> <b style="color:var(--down)">▼</b> ½ TD · 1 catch · 10 yds · 25 pass yds</span><span>full-PPR scoring</span><span>arrows lock at kickoff</span></div>
   </div>
 
@@ -360,7 +360,7 @@
       <div class="rt">QUICK PICKS</div>
       <div class="rs" id="rwhos">WHO'S PLAYING?</div>
       <div class="rrow"><input id="rwho" type="text" placeholder="AAA" maxlength="3" autocomplete="off" style="text-transform:uppercase;letter-spacing:.15em"><input id="rpin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="PIN" maxlength="8" autocomplete="off"><select id="rfav"><option value="">YOUR TEAM</option></select></div>
-      <div class="rh">FADE OR BOOST ONE PLAYER AT A TIME<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>A SWIPE MOVES HIS WHOLE LINE 10%<br>SUBMIT WHEN YOU'RE DONE. PICKS LOCK AT KICKOFF</div>
+      <div class="rh">FADE OR BOOST ONE PLAYER AT A TIME<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>A SWIPE MOVES HIS WHOLE LINE 10%<br>EVERY SWIPE LOCKS IN BY ITSELF. PICKS LOCK AT KICKOFF</div>
       <button class="go" id="rstart">▶ PRESS START</button>
       <button class="alt" id="rpaper">&#128240; READ THE PAPER: WHAT THIS IS AND WHY</button>
       <button class="alt" id="rmore">WANT MORE CONTROL? JUDGE EVERY STAT</button>
@@ -814,6 +814,7 @@ $("list").addEventListener("click", e => {
   if (b.dataset.team) { const m = document.querySelector(`[data-more="${b.dataset.team}"]`); m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace("hide", "show") : b.textContent.replace("show", "hide"); return; }
   if (b.dataset.unswipe) { const i = +b.dataset.unswipe; delete picks[i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); const c = b.closest(".p"); if (c) c.outerHTML = card(D.players[i]); count(); return; }
   const st = b.closest(".st"); if (!st) return;
+  if (needId()) return;
   const key = st.dataset.i + ":" + st.dataset.s, d = +b.dataset.d;
   const p0 = D.players[+st.dataset.i], k0 = D.stat_keys[+st.dataset.s];
   if (started(p0)) { $("draft").textContent = "· that game has kicked off — its arrows are locked"; return; }
@@ -827,8 +828,38 @@ $("list").addEventListener("click", e => {
   const card_ = document.querySelector(`.p[data-i="${p.i}"]`); if (card_) { card_.classList.toggle("touched", Object.keys(picks).some(x => x.split(":")[0] == p.i)); const pt = card_.querySelector(".pts"); if (pt) pt.innerHTML = ptsHtml(p); }
   count();
 });
-function count() { const n = Object.keys(picks).length; $("cnt").textContent = n; $("draft").textContent = n ? "· saved on this device" : ""; sentNote(); }
-const nudge = on => $("submit").classList.toggle("nudge", !!on && Object.keys(picks).length > 0);
+function count() { const n = Object.keys(picks).length; $("cnt").textContent = n; $("draft").textContent = n ? "· saved on this device" : ""; sentNote(); autoSoon(); }
+// Picks lock in by themselves (owner, 2026-09-27): 4 s after the last change, so a run of swipes is one
+// row in the drop box, not one per swipe; and straight away when the page is hidden or closed, so the last
+// swipes are never lost. Each game still counts the last set locked in before it kicks off. Submit stays,
+// to lock in at once or add the one-line comment.
+const AUTO_MS = 4000;
+let AUTO_T = null, AUTO_BUSY = false;
+const picksSig = () => JSON.stringify(Object.entries(picks).sort());
+const autoOK = () => !!(D && dropbox() && ready());
+function autoSoon() {
+  clearTimeout(AUTO_T); AUTO_T = null;
+  if (!autoOK() || !Object.keys(picks).length || ls.get(WKEY() + "_autosig") === picksSig()) return;
+  AUTO_T = setTimeout(() => { AUTO_T = null; autoLock(false); }, AUTO_MS);
+  $("submit").classList.remove("nudge");             // it's on its way: no need to flash Submit
+}
+async function autoLock(leaving) {
+  if (AUTO_BUSY || !autoOK() || !Object.keys(picks).length) return;
+  const s = picksSig(); if (ls.get(WKEY() + "_autosig") === s) return;
+  AUTO_BUSY = true;
+  try {
+    await identity();
+    if (!leaving) $("draft").textContent = "· locking in…";
+    await postCode(buildCode(), leaving);
+    ls.set(WKEY() + "_autosig", s);
+  } catch (e) { if (!leaving) $("draft").textContent = "· couldn't lock in just now; will try again on your next pick"; }
+  finally { AUTO_BUSY = false; }
+  if (!leaving) { count(); }
+}
+const flushAuto = () => { if (AUTO_T) { clearTimeout(AUTO_T); AUTO_T = null; autoLock(true); } };
+addEventListener("pagehide", flushAuto);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushAuto(); });
+const nudge = on => $("submit").classList.toggle("nudge", !!on && Object.keys(picks).length > 0 && !(autoOK() && AUTO_T));
 async function sentNote() {
   const lc = D && ls.get(WKEY() + "_locked");
   if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}`; nudge(!s); return; }
@@ -882,11 +913,24 @@ function setMode(m) {
   if (D) render();
 }
 $("modebtn").onclick = () => setMode(MODE === "swipe" ? "full" : "swipe");
-$("rmore").onclick = () => { setMode("full"); try { $("modecard").scrollIntoView({block: "start"}); } catch (e) {} };
-$("rstart").onclick = () => { PLAYING = true; screens(); DECK = []; deckRender(); };
+$("rmore").onclick = () => { if (needId()) return; setMode("full"); try { $("modecard").scrollIntoView({block: "start"}); } catch (e) {} };
+// no way in without a tag and a PIN (owner, 2026-09-27): picks lock in by themselves, and a lock-in needs to know whose they are
+const ready = () => !!me() && pin().length >= 4;
+function needId() {
+  if (ready()) return false;
+  const miss = !me() ? "rwho" : "rpin";
+  $("rwhos").textContent = !me() ? "ENTER YOUR 3 LETTERS FIRST" : "AND A PIN: 4+ DIGITS";
+  $("rwhos").classList.remove("warn"); void $("rwhos").offsetWidth; $("rwhos").classList.add("warn");
+  if (MODE === "swipe") { PLAYING = false; screens(); try { $(miss).focus(); } catch (e) {} }
+  else { idMini(true); const f = !me() ? "who" : "pin"; $("draft").textContent = !me() ? "· enter your 3 letters first" : "· add a PIN (4+ digits) first";
+         try { $("idcard").scrollIntoView({block: "center"}); $(f).focus(); } catch (e) {} }
+  return true;
+}
+$("rstart").onclick = () => { if (needId()) return; PLAYING = true; screens(); DECK = []; deckRender(); };
 $("dkmenu").onclick = () => { PLAYING = false; screens(); readyText(); };
 // the ready screen's fields are the identity card's fields, in pixels
 function readyText() {
+  $("rwhos").classList.remove("warn");
   const n = me(), t = FAV && TEAMS[FAV] ? TEAMS[FAV].split(" ").pop().toUpperCase() : "";
   $("rwhos").textContent = n ? `PLAYER 1: ${n.toUpperCase()}${t ? " · " + t + " FAN" : ""}` : "WHO'S PLAYING? ENTER 3 LETTERS AND A PIN";
   if ($("rwho").value !== $("who").value) $("rwho").value = $("who").value;
@@ -939,7 +983,7 @@ function deckRender() {
   $("pkprog").textContent = `${Math.min(DI + 1, DECK.length)}/${DECK.length} · ${nb}▲ ${nf}▼`;
   $("dkundo").disabled = !HIST.length;
   if (DI >= DECK.length) {
-    st.innerHTML = `<div class="dk-card"><div class="dk-done"><b>${DECK.length ? "That's every player on the board." : "Nothing left to judge: every game has kicked off."}</b><span>${nb} boosted, ${nf} faded. Press <b>Submit</b> to lock them in; come back any time, each game counts your last lock-in before it kicks off.</span><button class="sec" id="dktop">Go through them again</button></div></div>`;
+    st.innerHTML = `<div class="dk-card"><div class="dk-done"><b>${DECK.length ? "That's every player on the board." : "Nothing left to judge: every game has kicked off."}</b><span>${nb} boosted, ${nf} faded. They lock in by themselves; come back any time, each game counts your last lock-in before it kicks off.</span><button class="sec" id="dktop">Go through them again</button></div></div>`;
     const t = $("dktop"); if (t) t.onclick = () => { DI = 0; HIST = []; deckRender(); };
     return;
   }
@@ -979,6 +1023,7 @@ function flyOff(dir, then) {
 }
 function decide(dir) {
   const p = DECK[DI]; if (!p) return;
+  if (needId()) return;
   if (started(p)) { $("pkprog").textContent = "KICKED OFF · LOCKED"; DI++; deckRender(); return; }
   for (const k of Object.keys(picks)) if (k.split(":")[0] == p.i) delete picks[k];      // one opinion per player
   picks[p.i + ":" + SW] = dir; ls.set(KEY, JSON.stringify(picks)); HIST.push(DI);
@@ -1023,16 +1068,22 @@ $("submit").onclick = async () => {
 };
 const mailto = () => "mailto:" + FAN_TO + "?subject=" + encodeURIComponent(`Fan Picks wk${D.week} — ${me()}`) + "&body=" + encodeURIComponent($("code").textContent);
 $("cmt").addEventListener("input", () => { $("code").textContent = buildCode(); if (!dropbox() && FAN_TO) $("mail").href = mailto(); });
+async function postCode(code, leaving) {
+  const body = new URLSearchParams(); body.append(CFG.entry_user, me()); body.append(CFG.entry_code, code);
+  await fetch(CFG.form_action, {method: "POST", mode: "no-cors", body, keepalive: !!leaving});   // opaque response by design: the form answers with a redirect; keepalive lets it finish as the page closes
+  const at = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
+  ls.set(KEY + "_sent", at); ls.set(WKEY() + "_locked", code); $("mlink").style.display = ""; ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
+  if (!leaving) { sentNote(); addMeToIn(); sendContact(); }
+  return at;
+}
 $("send").onclick = async () => {
   const code = buildCode(); $("code").textContent = code;
   $("send").disabled = true; $("send").textContent = "Sending…";
   try {
-    const body = new URLSearchParams(); body.append(CFG.entry_user, me()); body.append(CFG.entry_code, code);
-    await fetch(CFG.form_action, {method: "POST", mode: "no-cors", body});   // opaque response by design: the form answers with a redirect
-    const at = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
-    ls.set(KEY + "_sent", at); ls.set(WKEY() + "_locked", code); $("mlink").style.display = ""; ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
+    const at = await postCode(code);
+    ls.set(WKEY() + "_autosig", picksSig());
     $("mstat").className = "status ok"; $("mstat").textContent = `You're in. ${Object.keys(picks).length} picks locked for week ${D.week} at ${at}. Come back to change them before each game, or after the games to see where you land.`;
-    $("send").textContent = "Locked in ✓"; sentNote(); addMeToIn(); sendContact();
+    $("send").textContent = "Locked in ✓";
   } catch (e) {
     $("send").disabled = false; $("send").textContent = "Lock them in";
     $("mstat").textContent = "That didn't go through (" + e.message + "). Copy the code below and text it instead."; $("copy").className = "big";
