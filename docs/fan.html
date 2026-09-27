@@ -652,21 +652,23 @@ async function loadCode(c, from) {
   if (!src) return rsay(`Couldn't read the projections that ${from} was made on.`);
   const got = remap(src, codePicks(x.j), x.j.r !== RULE), n = Object.keys(got).length;
   if (!n) return rsay(`None of the arrows in that ${from} are on this week's board any more.`);
-  const have = Object.keys(picks).length, linkN = tag(x.j.n || ""), same = !!(linkN && me() && linkN.toLowerCase() === me().toLowerCase());
-  if (same) {                                           // your own link: it replaces your own board, if you say so
-    if (have && sig(picks) !== sig(got) && !confirm(`Replace the ${have} arrow${have === 1 ? "" : "s"} on this device with the ${n} from your ${from}?`)) return rsay("Kept the picks already on this device.");
-  } else {                                              // someone else's (or an unnamed) link: put this board away under its owner first
-    let own = ownerOf();
-    if (!own || !own.id) { const lc = ls.get(WKEY() + "_locked"), y = lc && decodeCode(lc); own = y && y.week === D.week && y.j.u ? {id: y.j.u} : (IDH ? {id: IDH} : null); }
-    if (have && own && own.id) ls.set(WKEY() + "_stash_" + own.id, JSON.stringify({b: D.bake_id, p: picks}));
-    ls.set(WKEY() + "_owner", JSON.stringify({id: "", pending: true, n: linkN}));
-    if (linkN) { $("who").value = linkN; ls.set("fanpicks_who", linkN); $("pin").value = ""; ls.set("fanpicks_pin", ""); readyText(); identity().then(() => { renderLead(); soonServer(); }); }
-    EDITED = false;
-  }
+  // A link carries a name but no PIN, so it proves nobody's identity -- the page supports name-alikes with
+  // different PINs, and a name is not a login. Every link is handled the same way: the board on this device is
+  // put away under its owner (or, when no owner can be told, replaced only if you say so), the link's name is
+  // filled in as it was typed (long legacy names included: the fingerprint hashes the whole name), and the PIN
+  // is asked for. The picks are that player's once his PIN is in (claimBoard), and lock in only then.
+  const have = Object.keys(picks).length, linkN = String(x.j.n || "").trim().slice(0, 24);
+  let own = ownerOf();
+  if (!own || !own.id) { const lc = ls.get(WKEY() + "_locked"), y = lc && decodeCode(lc); own = y && y.week === D.week && y.j.u ? {id: y.j.u} : (IDH ? {id: IDH} : null); }
+  if (have && own && own.id) ls.set(WKEY() + "_stash_" + own.id, JSON.stringify({b: D.bake_id, p: picks}));
+  else if (have && sig(picks) !== sig(got) && !confirm(`Replace the ${have} arrow${have === 1 ? "" : "s"} on this device with the ${n} from your ${from}?`)) return rsay("Kept the picks already on this device.");
+  ls.set(WKEY() + "_owner", JSON.stringify({id: "", pending: true, n: linkN}));
+  if (linkN) { $("who").value = linkN; ls.set("fanpicks_who", linkN); }
+  $("pin").value = ""; ls.set("fanpicks_pin", ""); readyText(); identity().then(() => { renderLead(); soonServer(); });
+  EDITED = false;
   picks = got; ls.set(KEY, JSON.stringify(picks));
-  if (x.j.n && !$("who").value) { $("who").value = x.j.n; ls.set("fanpicks_who", x.j.n); identity().then(() => { renderLead(); soonServer(); }); }
   render(); count();
-  rsay(`Loaded ${n} arrow${n === 1 ? "" : "s"} from your ${from}${x.j.n ? " (" + x.j.n + ")" : ""}. Use the same username and PIN as before — a different PIN makes a new player — then Submit to lock them in from here.`);
+  rsay(`Loaded ${n} arrow${n === 1 ? "" : "s"} from your ${from}${linkN ? " (" + linkN + ")" : ""}. Enter ${linkN ? "that player's" : "your"} PIN to carry on — a different PIN makes a new player — and they lock in from here.`);
 }
 // A draft left under an earlier bake of this week (the page was re-baked since): bring it forward.
 async function carryDraft() {
@@ -771,13 +773,15 @@ const ownerOf = () => { try { return JSON.parse(ls.get(WKEY() + "_owner") || "nu
 async function claimBoard_() {
   if (!D || !IDH || !KEY) return;
   const ok = WKEY() + "_owner", id = IDH, nm = me();                // the player this switch is for, fixed now
-  const mine_ = soft => ls.set(ok, JSON.stringify(soft ? {id, n: nm, soft: true} : {id, n: nm}));
+  const mine_ = soft => ls.set(ok, JSON.stringify(soft ? {id, n: nm, soft: true, t: Date.now()} : {id, n: nm}));
   let own = ownerOf();
   if (!own || (!own.id && !own.pending)) { const lc = ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc);
     own = x && x.week === D.week && x.j.u ? {id: x.j.u, n: x.j.n || ""} : {id, n: nm}; ls.set(ok, JSON.stringify(own)); }
-  // a board loaded from a link (pending) or not yet locked in since (soft) goes to whoever the link names as he
-  // types his PIN -- following him through the 4-digit prefix of a longer PIN -- and is his once it locks in
-  if ((own.pending || own.soft) && (!own.n || own.n.toLowerCase() === nm.toLowerCase())) return mine_(true);
+  // a board loaded from a link (pending) goes to whoever the link names once his PIN is in. It follows him
+  // through the 4-digit prefix of a longer PIN -- within the same burst of typing, 2 s -- and no further: a PIN
+  // entered later is a different player with the same name, and gets his own board.
+  const sameName = !own.n || own.n.toLowerCase() === nm.toLowerCase();
+  if (sameName && (own.pending || (own.soft && Date.now() - (own.t || 0) < 2000))) return mine_(true);
   if (own.id === id) return;
   // the same tag with a new PIN, on picks made this visit: a PIN typo being fixed -- the board follows. A board
   // restored from storage does not follow a new PIN: that is someone without the PIN, and the PIN is what guards it.
@@ -832,7 +836,7 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
     ls.set(KEY, JSON.stringify(picks)); if (ls.get(K0 + "_sent")) ls.set(KEY + "_sent", ls.get(K0 + "_sent")); ls.del(K0);
   }
   $("who").value = ls.get("fanpicks_who") || ""; $("pin").value = ls.get("fanpicks_pin") || ""; $("email").value = ls.get("fanpicks_email") || "";
-  if (!$("who").value) { const lc = ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc); if (x && x.j.n) { $("who").value = tag(x.j.n); ls.set("fanpicks_who", $("who").value); } }   // the tag went missing: the last lock-in here knows it
+  if (!$("who").value) { const lc = ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc); if (x && x.j.n) { $("who").value = String(x.j.n).trim().slice(0, 24); ls.set("fanpicks_who", $("who").value); } }   // the whole name: the fingerprint hashes all of it   // the tag went missing: the last lock-in here knows it
   identity().then(async () => { await claimBoard(); renderLead(); soonServer(); });
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
