@@ -684,14 +684,25 @@ async function checkServer() {
   if (!r.code) return;
   const x = decodeCode(r.code); if (!x) return;
   const lc = ls.get(WKEY() + "_locked"), lx = lc && decodeCode(lc);
-  if (!lx || String(x.j.t || "") >= String(lx.j.t || "")) ls.set(WKEY() + "_locked", r.code);   // the newest lock-in, from any device; the server's copy wins a tie
+  const newer = !lx || String(x.j.t || "") >= String(lx.j.t || "");
+  if (newer) ls.set(WKEY() + "_locked", r.code);   // the newest lock-in, from any device; the server's copy wins a tie
   const src = await bakeOf(x.j.b);
   if (id !== IDH) return soonServer();                                    // ...or while the old bake loaded
   const theirs = remap(src, codePicks(x.j), x.j.r !== RULE), n = Object.keys(theirs).length;
   const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
-  const take = () => { picks = theirs; ls.set(KEY, JSON.stringify(picks)); render(); count(); };
-  if (!n) return count();
+  const take = () => { picks = theirs; ls.set(KEY, JSON.stringify(picks)); if (Object.keys(picks).length) ls.set(WKEY() + "_autosig", picksSig()); render(); count(); };
+  // Nothing unsent here: no edit this visit, and the picks are exactly this device's own last lock-in (or
+  // there are none). Then a newer lock-in from another device simply replaces them -- an empty one too,
+  // which is a withdrawal made elsewhere; left in place, stale picks would be resent by the next edit.
+  let clean = !EDITED && !Object.keys(picks).length;
+  if (!EDITED && !clean && lx && lx.j.u === x.j.u) { const mine = remap(await bakeOf(lx.j.b), codePicks(lx.j), lx.j.r !== RULE); clean = sig(mine) === sig(picks); }
+  if (id !== IDH) return soonServer();
+  if (!n) {
+    if (newer && clean && Object.keys(picks).length) { take(); return rsay(`Your picks were cleared on another device (${at}).`); }
+    return count();
+  }
   if (!Object.keys(picks).length) { take(); return rsay(`Welcome back — loaded the ${n} arrow${n === 1 ? "" : "s"} you locked in ${at}.`); }
+  if (newer && clean && sig(picks) !== sig(theirs)) { take(); return rsay(`Loaded your newer lock-in from another device (${at}, ${n} arrow${n === 1 ? "" : "s"}).`); }
   count();
   if (sig(picks) !== sig(theirs)) {
     $("rmsg").innerHTML = `Your last lock-in (${esc(at)}, ${n} arrow${n === 1 ? "" : "s"}) is different from the picks on this device. <button class="sec" id="rsrv" style="padding:2px 10px">Load it</button>`;
@@ -851,7 +862,11 @@ const idKey = () => { let h = 2166136261; for (const c of me().toLowerCase() + "
 const picksSig = () => idKey() + "|" + JSON.stringify(Object.entries(picks).sort());
 // an empty set still has to go out when it withdraws arrows already locked in this week; otherwise the
 // old arrows would stay live with nothing on screen
-const hadLock = () => { const lc = D && ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc); return !!(x && x.week === D.week && (x.j.a || []).length); };
+const hadLock = () => {
+  const lc = D && ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc);
+  if (!lc) return !!(D && EDITED && ls.get(KEY + "_sent"));      // a lock-in from before _locked existed: only its time is known
+  return !!(x && x.week === D.week && (x.j.a || []).length);
+};
 const autoOK = () => !!(D && dropbox() && ready());
 const hasSomething = () => Object.keys(picks).length > 0 || hadLock();
 function autoSoon() {
@@ -886,13 +901,16 @@ const flushAuto = () => {
 };
 addEventListener("pagehide", flushAuto);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushAuto(); });
-const nudge = on => $("submit").classList.toggle("nudge", !!on && Object.keys(picks).length > 0 && !(autoOK() && AUTO_T));
+const nudge = on => $("submit").classList.toggle("nudge", !!on && (Object.keys(picks).length > 0 || hadLock()) && !(autoOK() && AUTO_T));
 async function sentNote() {
   const lc = D && ls.get(WKEY() + "_locked");
   // a lock-in from before the page kept a copy of it (_locked) left only a time: nothing to compare the
   // picks with, so once they are edited on this visit they count as not locked in
   if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}` + (EDITED ? " — changes since not locked in yet" : ""); nudge(!s || EDITED); return; }
   const x = decodeCode(lc); if (!x || x.week !== D.week) { nudge(true); return; }
+  if (IDH && x.j.u && x.j.u !== IDH && Object.keys(picks).length) {   // the last lock-in on this device was someone else's tag/PIN
+    $("draft").textContent = "· not locked in under this tag and PIN yet — press Submit or make a pick"; nudge(true); return;
+  }
   const locked = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE);
   let changed = 0; for (const k of new Set([...Object.keys(locked), ...Object.keys(picks)])) if ((locked[k] || 0) !== (picks[k] || 0)) changed++;
   const at = x.j.t ? new Date(x.j.t).toLocaleString([], {weekday: "short", hour: "numeric", minute: "2-digit"}) : "";
@@ -902,8 +920,8 @@ async function sentNote() {
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
-$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(() => { renderLead(); soonServer(); }); autoSoon(); });
-$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(() => { renderLead(); soonServer(); }); autoSoon(); });
+$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(() => { renderLead(); soonServer(); if (D) sentNote(); }); autoSoon(); });
+$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(() => { renderLead(); soonServer(); if (D) sentNote(); }); autoSoon(); });
 $("email").addEventListener("input", () => ls.set("fanpicks_email", $("email").value.trim()));
 $("fav").addEventListener("change", () => { FAV = $("fav").value; ls.set("fanpicks_team", FAV); if (D) render(); });
 $("pin").addEventListener("change", () => idMini()); $("who").addEventListener("change", () => idMini());
