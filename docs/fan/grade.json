@@ -18,6 +18,7 @@
   {
    "fan": "ERS",
    "pid": "e941fcfc1e22336a",
+   "team": "SEA",
    "weeks": [
     3
    ],
@@ -38,6 +39,7 @@
   {
    "fan": "Nana Owusu",
    "pid": "87abe4771deffff1",
+   "team": "LV",
    "weeks": [
     3
    ],
@@ -58,6 +60,7 @@
   {
    "fan": "OWD",
    "pid": "dfd6108fc56b9c7a",
+   "team": "",
    "weeks": [
     3
    ],
@@ -78,6 +81,7 @@
   {
    "fan": "REB",
    "pid": "07d4562b12d59b0c",
+   "team": "CHI",
    "weeks": [
     3
    ],
@@ -98,6 +102,7 @@
   {
    "fan": "RJS",
    "pid": "afa072112eb2d7b8",
+   "team": "",
    "weeks": [
     3
    ],
@@ -118,6 +123,7 @@
   {
    "fan": "SAK",
    "pid": "3983e62267fd6d9b",
+   "team": "DET",
    "weeks": [
     3
    ],
@@ -140,6 +146,7 @@
   {
    "fan": "ERS",
    "pid": "e941fcfc1e22336a",
+   "team": "SEA",
    "week": 3,
    "n": 115,
    "graded": 0,
@@ -157,6 +164,7 @@
   {
    "fan": "Nana Owusu",
    "pid": "87abe4771deffff1",
+   "team": "LV",
    "week": 3,
    "n": 147,
    "graded": 0,
@@ -174,6 +182,7 @@
   {
    "fan": "OWD",
    "pid": "dfd6108fc56b9c7a",
+   "team": "",
    "week": 3,
    "n": 5,
    "graded": 0,
@@ -191,6 +200,7 @@
   {
    "fan": "REB",
    "pid": "07d4562b12d59b0c",
+   "team": "CHI",
    "week": 3,
    "n": 315,
    "graded": 0,
@@ -208,6 +218,7 @@
   {
    "fan": "RJS",
    "pid": "afa072112eb2d7b8",
+   "team": "",
    "week": 3,
    "n": 784,
    "graded": 0,
@@ -225,6 +236,7 @@
   {
    "fan": "SAK",
    "pid": "3983e62267fd6d9b",
+   "team": "DET",
    "week": 3,
    "n": 382,
    "graded": 0,
