@@ -143,6 +143,27 @@ jobs:
           git commit -m "send $(date -u +%Y-%m-%dT%H:%MZ)" || { echo "nothing new"; exit 0; }
           git push || echo "publish failed (token is read-only?) — the email still went out"
 
+      # The fan page's projections, rebuilt right after each send, so every game still to play shows the
+      # statuses that send just used (Friday's report, then each slate's inactives). Until 2026-09-27 they were
+      # rebuilt only on a new FFA file, a Subvertadown paste or the Wednesday fallback, so Sunday's OUTs never
+      # reached the page. After the email on purpose: it cannot delay a send, and continue-on-error means it
+      # cannot fail the job. Each bake is frozen by id, so codes locked in earlier keep their meaning.
+      - name: Rebuild the fan page's projections (after the send)
+        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
+        continue-on-error: true
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          MODEL_BURKE_PKG: ${{ github.workspace }}/pkg
+        run: |
+          SW=$(python -c "import glob,re; ws=sorted((int(m[1]),int(m[2])) for f in glob.glob('data/ffanalytics/FFAn_weekly/raw_stats_*_wk*.csv') for m in [re.search(r'raw_stats_(\d{4})_wk(\d+)\.csv$',f)] if m); print(*ws[-1]) if ws else print('')")
+          [ -n "$SW" ] || { echo "no FFA weekly file: fan projections not rebuilt"; exit 0; }
+          S=${SW% *}; W=${SW#* }; OUT="outputs/fan/proj_${S}_wk${W}.csv"
+          mkdir -p outputs/fan
+          echo "rebuilding the fan page's projections for ${S} week ${W}"
+          python scripts/sabersim_weekly.py "$MODEL_BURKE_PKG" --all-games --no-market --out "$OUT" \
+            && python scripts/fan_proj_bake.py "$OUT" "$S" "$W" \
+            || echo "fan projections rebuild failed (the send is unaffected)"
+
       - name: Daily grade of finished games
         if: steps.win.outputs.grade_due == 'true'
         run: |
@@ -163,6 +184,8 @@ jobs:
             docs/sabersim_accuracy.json \
             docs/fan/grade.json \
             docs/fan/submissions.json \
+            docs/fan/proj_latest.json \
+            docs/fan/proj_*_wk*.json \
             data/fan_adjustments/fan_adjustments_long.csv \
             data/fan_adjustments/inbox/dropbox.txt \
             outputs/reports/sabersim_accuracy.md
