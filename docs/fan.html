@@ -652,8 +652,17 @@ async function loadCode(c, from) {
   if (!src) return rsay(`Couldn't read the projections that ${from} was made on.`);
   const got = remap(src, codePicks(x.j), x.j.r !== RULE), n = Object.keys(got).length;
   if (!n) return rsay(`None of the arrows in that ${from} are on this week's board any more.`);
-  const have = Object.keys(picks).length;
-  if (have && sig(picks) !== sig(got) && !confirm(`Replace the ${have} arrow${have === 1 ? "" : "s"} on this device with the ${n} from your ${from}?`)) return rsay("Kept the picks already on this device.");
+  const have = Object.keys(picks).length, linkN = tag(x.j.n || ""), same = !!(linkN && me() && linkN.toLowerCase() === me().toLowerCase());
+  if (same) {                                           // your own link: it replaces your own board, if you say so
+    if (have && sig(picks) !== sig(got) && !confirm(`Replace the ${have} arrow${have === 1 ? "" : "s"} on this device with the ${n} from your ${from}?`)) return rsay("Kept the picks already on this device.");
+  } else {                                              // someone else's (or an unnamed) link: put this board away under its owner first
+    let own = ownerOf();
+    if (!own || !own.id) { const lc = ls.get(WKEY() + "_locked"), y = lc && decodeCode(lc); own = y && y.week === D.week && y.j.u ? {id: y.j.u} : (IDH ? {id: IDH} : null); }
+    if (have && own && own.id) ls.set(WKEY() + "_stash_" + own.id, JSON.stringify({b: D.bake_id, p: picks}));
+    ls.set(WKEY() + "_owner", JSON.stringify({id: "", pending: true, n: linkN}));
+    if (linkN) { $("who").value = linkN; ls.set("fanpicks_who", linkN); $("pin").value = ""; ls.set("fanpicks_pin", ""); readyText(); identity().then(() => { renderLead(); soonServer(); }); }
+    EDITED = false;
+  }
   picks = got; ls.set(KEY, JSON.stringify(picks));
   if (x.j.n && !$("who").value) { $("who").value = x.j.n; ls.set("fanpicks_who", x.j.n); identity().then(() => { renderLead(); soonServer(); }); }
   render(); count();
@@ -756,23 +765,31 @@ const pin = () => ($("pin").value || "").replace(/\D/g, "");
 // last lock-in, else whoever signs in first. When a different tag + PIN signs in, the board is put away under
 // its owner and that player's own comes out (empty for a newcomer; the server fills it if he locked in
 // elsewhere). Signing back in brings the old board back. Nothing is sent by the switch itself.
-async function claimBoard() {
+let CLAIM = Promise.resolve();
+const claimBoard = () => (CLAIM = CLAIM.then(claimBoard_, claimBoard_));   // one switch at a time
+const ownerOf = () => { try { return JSON.parse(ls.get(WKEY() + "_owner") || "null"); } catch (e) { return null; } };
+async function claimBoard_() {
   if (!D || !IDH || !KEY) return;
-  const ok = WKEY() + "_owner", mine_ = () => ls.set(ok, JSON.stringify({id: IDH, n: me()}));
-  let own = null; try { own = JSON.parse(ls.get(ok) || "null"); } catch (e) {}
-  if (!own || !own.id) { const lc = ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc);
-    own = x && x.week === D.week && x.j.u ? {id: x.j.u, n: x.j.n || ""} : {id: IDH, n: me()}; ls.set(ok, JSON.stringify(own)); }
-  if (own.id === IDH) return;
+  const ok = WKEY() + "_owner", id = IDH, nm = me();                // the player this switch is for, fixed now
+  const mine_ = soft => ls.set(ok, JSON.stringify(soft ? {id, n: nm, soft: true} : {id, n: nm}));
+  let own = ownerOf();
+  if (!own || (!own.id && !own.pending)) { const lc = ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc);
+    own = x && x.week === D.week && x.j.u ? {id: x.j.u, n: x.j.n || ""} : {id, n: nm}; ls.set(ok, JSON.stringify(own)); }
+  // a board loaded from a link (pending) or not yet locked in since (soft) goes to whoever the link names as he
+  // types his PIN -- following him through the 4-digit prefix of a longer PIN -- and is his once it locks in
+  if ((own.pending || own.soft) && (!own.n || own.n.toLowerCase() === nm.toLowerCase())) return mine_(true);
+  if (own.id === id) return;
   // the same tag with a new PIN, on picks made this visit: a PIN typo being fixed -- the board follows. A board
   // restored from storage does not follow a new PIN: that is someone without the PIN, and the PIN is what guards it.
-  if (EDITED && (own.n || "").toLowerCase() === me().toLowerCase()) return mine_();
+  if (EDITED && (own.n || "").toLowerCase() === nm.toLowerCase()) return mine_(false);
   const owner = own.id;
   const n0 = Object.keys(picks).length;
-  if (n0) ls.set(WKEY() + "_stash_" + owner, JSON.stringify({b: D.bake_id, p: picks}));
+  if (n0 && owner) ls.set(WKEY() + "_stash_" + owner, JSON.stringify({b: D.bake_id, p: picks}));
   let mine = {};
-  try { const st = JSON.parse(ls.get(WKEY() + "_stash_" + IDH) || "null"); if (st && st.p) mine = st.b === D.bake_id ? st.p : remap(await bakeOf(st.b), st.p, false); } catch (e) {}
-  ls.del(WKEY() + "_stash_" + IDH);
-  picks = mine; ls.set(KEY, JSON.stringify(picks)); mine_();
+  try { const st = JSON.parse(ls.get(WKEY() + "_stash_" + id) || "null"); if (st && st.p) mine = st.b === D.bake_id ? st.p : remap(await bakeOf(st.b), st.p, false); } catch (e) {}
+  if (IDH !== id) return;                               // the tag/PIN moved on while that loaded: the next switch (queued) handles it
+  ls.del(WKEY() + "_stash_" + id);
+  picks = mine; ls.set(KEY, JSON.stringify(picks)); mine_(false);
   EDITED = false; clearTimeout(AUTO_T); AUTO_T = null; dropPend();
   srvDone = ""; soonServer();
   render(); count(); if (typeof PLAYING !== "undefined" && PLAYING) { DECK = []; DI = 0; HIST = []; deckRender(); }
@@ -1217,7 +1234,8 @@ async function postCode(code, leaving) {
   const body = new URLSearchParams(); body.append(CFG.entry_user, me()); body.append(CFG.entry_code, code);
   await fetch(CFG.form_action, {method: "POST", mode: "no-cors", body, keepalive: !!leaving});   // opaque response by design: the form answers with a redirect; keepalive lets it finish as the page closes
   const at = new Date().toLocaleTimeString([], {hour: "numeric", minute: "2-digit"});
-  ls.set(KEY + "_sent", at); ls.set(WKEY() + "_locked", code); $("mlink").style.display = ""; ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
+  ls.set(KEY + "_sent", at); ls.set(WKEY() + "_locked", code);
+  { const o = ownerOf(); if (o && (o.soft || o.pending) && IDH) ls.set(WKEY() + "_owner", JSON.stringify({id: IDH, n: me()})); } $("mlink").style.display = ""; ls.set("fanpicks_last", JSON.stringify({week: D.week, fan: me(), at, n: Object.keys(picks).length}));
   if (!leaving) { sentNote(); addMeToIn(); sendContact(); }
   return at;
 }
@@ -1291,7 +1309,7 @@ async function liveIn() {
     LIVE = Object.values(seen).filter(x => x.arrows > 0); LIVE_WEEKS = null; renderLead();
   } catch (e) { LIVE = null; }
 }
-function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D.week && x.fan === me())); LIVE.push({fan: me(), season: D.season, week: D.week, submitted_at: new Date().toISOString(), arrows: Object.keys(picks).length}); renderLead(); }
+function addMeToIn() { LIVE = LIVE || []; LIVE = LIVE.filter(x => !(x.week === D.week && x.fan === me())); LIVE.push({fan: me(), team: FAV || "", season: D.season, week: D.week, submitted_at: new Date().toISOString(), arrows: Object.keys(picks).length}); renderLead(); }
 const pct = v => v == null ? "—" : Math.round(v * 100) + "%";
 const pts = v => v == null ? "—" : `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
 const isMe = f => IDH ? (f.pid === PIDH || f.fan_id === IDH) : f.fan === me();
@@ -1330,7 +1348,8 @@ function standings() {
   }
   rows.push({name: "THE ORACLE", base: true, weekly: Object.fromEntries(mw.map(w => [w.week, w.mae])), removed: 0, w: 0, l: 0, t: 0, arrows: 0});
   const byFan = {};
-  for (const r of (G && G.by_fan_week) || []) if (r.graded) { const f = (byFan[r.fan] = byFan[r.fan] || {id: r.pid || r.fan_id, weeks: {}, team: ""}); f.weeks[r.week] = r; if (!f.team && r.team) f.team = r.team; }   // by_fan_week runs newest week first
+  const fanTeam = Object.fromEntries(((G && G.by_fan) || []).map(f => [f.fan, f.team || ""]));   // as of the fan's latest lock-in, graded or not
+  for (const r of (G && G.by_fan_week) || []) if (r.graded) { const f = (byFan[r.fan] = byFan[r.fan] || {id: r.pid || r.fan_id, weeks: {}, team: fanTeam[r.fan] || ""}); f.weeks[r.week] = r; if (!f.team && r.team) f.team = r.team; }   // by_fan_week runs newest week first
   for (const [fan, f] of Object.entries(byFan)) {
     if (!mw.some(wk => f.weeks[wk.week])) continue;   // arrows only in a week still being played: not on the board yet
     let removed = 0, w = 0, l = 0, t = 0, arrows = 0; const weekly = {};
@@ -1366,9 +1385,11 @@ function renderLead() {
   $("nppage").textContent = `Week ${D.week} · ${D.season}`;
   const src = LIVE || (SUBS && SUBS.entries) || [];
   const thisSeason = x => x.season == null || +x.season === D.season;
-  const TEAM = {}; for (const f of (G && G.by_fan) || []) if (f.team) TEAM[f.fan] = f.team;
-  for (const x of (SUBS && SUBS.entries) || []) if (x.team && thisSeason(x)) TEAM[x.fan] = x.team;
-  for (const x of src) if (x.team && thisSeason(x)) TEAM[x.fan] = x.team;
+  // the newest team we know for each name: a later week (then a later lock-in) wins, whatever order the lists come in;
+  // the graded file's team (as of the fan's latest recorded lock-in) is the floor
+  const TEAM = {}, TK = {}, keep = (fan, t, k) => { if (t && (TK[fan] == null || k >= TK[fan])) { TEAM[fan] = t; TK[fan] = k; } };
+  for (const f of (G && G.by_fan) || []) keep(f.fan, f.team, "");
+  for (const x of [...((SUBS && SUBS.entries) || []), ...src]) if (thisSeason(x)) keep(x.fan, x.team, String(x.week).padStart(2, "0") + "|" + (x.submitted_at || ""));
   const tm = t => t ? `<i class="tm">${esc(t)}</i>` : "";
   const ins = src.filter(x => thisSeason(x) && x.week === D.week && x.arrows > 0).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
   $("npinsub").textContent = ins.length ? `${ins.length} for week ${D.week}` : `week ${D.week}`;
