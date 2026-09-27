@@ -866,7 +866,7 @@ async function autoLock(leaving) {
     if (!leaving) $("draft").textContent = "· locking in…";
     await postCode(buildCode(), leaving);
     ls.set(WKEY() + "_autosig", s); ok = true;
-  } catch (e) { $("draft").textContent = "· couldn't lock in just now; will try again when you're back online or make a pick"; }
+  } catch (e) { $("draft").textContent = "· couldn't lock in just now; will try again when you're back online or make a pick"; nudge(true); }
   finally { AUTO_BUSY = false; }
   const again = AUTO_AGAIN; AUTO_AGAIN = false;
   if (ok) count();                                    // count -> autoSoon: a change made while this was in flight goes next
@@ -879,7 +879,9 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 const nudge = on => $("submit").classList.toggle("nudge", !!on && Object.keys(picks).length > 0 && !(autoOK() && AUTO_T));
 async function sentNote() {
   const lc = D && ls.get(WKEY() + "_locked");
-  if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}`; nudge(!s); return; }
+  // a lock-in from before the page kept a copy of it (_locked) left only a time: nothing to compare the
+  // picks with, so once they are edited on this visit they count as not locked in
+  if (!lc) { const s = ls.get(KEY + "_sent"); if (s) $("draft").textContent = `· locked in at ${s}` + (EDITED ? " — changes since not locked in yet" : ""); nudge(!s || EDITED); return; }
   const x = decodeCode(lc); if (!x || x.week !== D.week) { nudge(true); return; }
   const locked = remap(await bakeOf(x.j.b), codePicks(x.j), x.j.r !== RULE);
   let changed = 0; for (const k of new Set([...Object.keys(locked), ...Object.keys(picks)])) if ((locked[k] || 0) !== (picks[k] || 0)) changed++;
