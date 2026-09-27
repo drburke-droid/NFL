@@ -68,3 +68,20 @@ jobs:
             git commit -m "SaberSim scoring scenarios (automated)"
             sleep 3
           done
+
+      # The build carries on when the schedule can't be fetched (the scoring file is still worth
+      # publishing), leaving docs/sabersim_slates.json as the stale checkout copy; staging that copy is
+      # a no-op. Both files carry the same generated_at when written together, so fail the run here,
+      # after publishing, whenever they differ: a green run means Upcoming sends is fresh.
+      - name: Check the slate schedule was regenerated
+        run: |
+          python - <<'PY'
+          import json, sys
+          a = json.load(open("docs/sabersim_scenarios.json")).get("generated_at")
+          b = json.load(open("docs/sabersim_slates.json")).get("generated_at")
+          if a != b:
+              print(f"::error::docs/sabersim_slates.json was not regenerated (scenarios {a}, slates {b}): "
+                    "the schedule fetch failed, so the SaberSim page's Upcoming sends is stale. Rerun Refresh scoring.")
+              sys.exit(1)
+          print("slate schedule regenerated", b)
+          PY
