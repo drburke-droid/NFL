@@ -1406,7 +1406,12 @@ function renderLead() {
   const mine = me();
   $("npdate").textContent = new Date().toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric", year: "numeric"});
   $("nppage").textContent = `Week ${D.week} · ${D.season}`;
-  const src = LIVE || (SUBS && SUBS.entries) || [];
+  // identities merged by hand (data/fan_adjustments/aliases.json) are folded under the name they are shown as: the
+  // grade says which names were merged away (renamed), and the latest set per player and week is the one that counts
+  const RN = (G && G.renamed) || {};
+  const fold = xs => { const o = {}; for (const x of xs) { const f = RN[x.fan] || x.fan, k = (x.season || "") + "|" + x.week + "|" + f;
+    if (!o[k] || (x.submitted_at || "") >= (o[k].submitted_at || "")) o[k] = {...x, fan: f, team: x.team || (o[k] && o[k].team) || ""}; } return Object.values(o); };
+  const src = fold(LIVE || (SUBS && SUBS.entries) || []);
   const thisSeason = x => x.season == null || +x.season === D.season;
   // the newest team we know for each name: a later week (then a later lock-in) wins, whatever order the lists come in;
   // the graded file's team (as of the fan's latest recorded lock-in) is the floor
@@ -1429,7 +1434,7 @@ function renderLead() {
   // matched. Weeks the live source does not cover (the API answers for this week only) come from submissions.json.
   const tally = {}, add = x => { if (x.arrows > 0 && thisSeason(x)) tally[x.fan] = (tally[x.fan] || 0) + x.arrows; };
   src.forEach(add);
-  if (LIVE && LIVE_WEEKS && SUBS && SUBS.entries) SUBS.entries.filter(x => !LIVE_WEEKS.has(x.week)).forEach(add);
+  if (LIVE && LIVE_WEEKS && SUBS && SUBS.entries) fold(SUBS.entries.filter(x => !LIVE_WEEKS.has(x.week))).forEach(add);
   const busy = Object.entries(tally).map(([fan, n]) => ({fan, n})).sort((a, b) => b.n - a.n || a.fan.localeCompare(b.fan)).slice(0, 3);
   $("npsharp").innerHTML = (sharp.length || busy.length) ? (sharp.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>direction right most often (5+ graded)</span></div>` + sharp.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(f.team)}</span><b>${pct(f.hit_rate)} of ${f.graded}</b></div>`).join("") : "") + (busy.length ? `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>most arrows this season</span></div>` + busy.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(TEAM[f.fan])}</span><b>${f.n}</b></div>`).join("") : "") : `<div class="np-empty">nothing graded yet</div>`;
   const st = standings();
