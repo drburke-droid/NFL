@@ -262,6 +262,10 @@ if len(rows):
     for (fan, wk), d in rows[superseded].groupby(["fan", "week"]):
         print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) superseded by a later set locked in before their game")
     rows = rows[live & ~marker].drop(columns=["_kick"]).copy()
+    if not len(rows):                               # every arrow withdrawn or placed after kickoff: an empty grade, not a crash
+        os.makedirs(os.path.dirname(OUT), exist_ok=True)
+        json.dump({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": {"n": 0, "graded": 0, "pending": 0}, "by_fan": [], "by_fan_week": [], "rows": [], "season": A.season, "note": "no live arrows: every set was withdrawn or placed after kickoff"}, open(OUT, "w"), indent=1)
+        print("no live arrows left -> wrote an empty docs/fan/grade.json"); sys.exit(0)
 url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{A.season}.parquet"
 act = pd.read_parquet(url); act = act[act.season_type == "REG"]
 for c in COL.values():
