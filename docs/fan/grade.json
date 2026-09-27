@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-27T22:33Z",
+ "generated": "2026-09-27T23:15Z",
  "overall": {
   "n": 1820,
   "graded": 1045,
@@ -6917,6 +6917,171 @@
  "season": 2026,
  "renamed": {
   "BOB": "REB"
+ },
+ "strategies": {
+  "registered": "2026-09-27",
+  "in_sample_weeks": [
+   3
+  ],
+  "note": "Rules fixed on 2026-09-27 from week 3; only later weeks test them. Replays are 10% swipes on the sent line.",
+  "rules": [
+   {
+    "key": "crowd",
+    "label": "Crowd majority, one vote per player",
+    "how": "every player anyone called, moved 10% the way most callers went",
+    "weeks": {
+     "3": {
+      "calls": 111,
+      "helped": 59,
+      "pts": 7.88
+     }
+    },
+    "out_of_sample": {
+     "calls": 0,
+     "helped": 0,
+     "pts": 0,
+     "weeks": []
+    },
+    "all": {
+     "calls": 111,
+     "helped": 59,
+     "pts": 7.88,
+     "weeks": [
+      3
+     ]
+    }
+   },
+   {
+    "key": "fades",
+    "label": "Fades only",
+    "how": "every player any fan faded, faded 10%; boosts ignored",
+    "weeks": {
+     "3": {
+      "calls": 96,
+      "helped": 50,
+      "pts": 3.21
+     }
+    },
+    "out_of_sample": {
+     "calls": 0,
+     "helped": 0,
+     "pts": 0,
+     "weeks": []
+    },
+    "all": {
+     "calls": 96,
+     "helped": 50,
+     "pts": 3.21,
+     "weeks": [
+      3
+     ]
+    }
+   },
+   {
+    "key": "fade_mid_boosts",
+    "label": "Fade mid-tier players fans boosted",
+    "how": "every player any fan boosted who projects 14-20 pts, faded 10%",
+    "weeks": {
+     "3": {
+      "calls": 20,
+      "helped": 12,
+      "pts": 2.45
+     }
+    },
+    "out_of_sample": {
+     "calls": 0,
+     "helped": 0,
+     "pts": 0,
+     "weeks": []
+    },
+    "all": {
+     "calls": 20,
+     "helped": 12,
+     "pts": 2.45,
+     "weeks": [
+      3
+     ]
+    }
+   },
+   {
+    "key": "specialists",
+    "label": "Specialists",
+    "how": "REB on WR/TE, Nana Owusu on RBs, RJS on RBs, their direction at 10%",
+    "weeks": {
+     "3": {
+      "calls": 45,
+      "helped": 30,
+      "pts": 7.5
+     }
+    },
+    "out_of_sample": {
+     "calls": 0,
+     "helped": 0,
+     "pts": 0,
+     "weeks": []
+    },
+    "all": {
+     "calls": 45,
+     "helped": 30,
+     "pts": 7.5,
+     "weeks": [
+      3
+     ]
+    }
+   },
+   {
+    "key": "size_1",
+    "label": "Calls at 10%, as made",
+    "how": "every call made with a 10% swipe (or a stat arrow), as the fan made it",
+    "weeks": {
+     "3": {
+      "calls": 196,
+      "helped": 102,
+      "pts": 2.42
+     }
+    },
+    "out_of_sample": {
+     "calls": 0,
+     "helped": 0,
+     "pts": 0,
+     "weeks": []
+    },
+    "all": {
+     "calls": 196,
+     "helped": 102,
+     "pts": 2.42,
+     "weeks": [
+      3
+     ]
+    }
+   },
+   {
+    "key": "size_2",
+    "label": "Calls at 20-30%, as made",
+    "how": "every call made with a 20% or 30% swipe, as the fan made it",
+    "weeks": {
+     "3": {
+      "calls": 62,
+      "helped": 24,
+      "pts": -21.37
+     }
+    },
+    "out_of_sample": {
+     "calls": 0,
+     "helped": 0,
+     "pts": 0,
+     "weeks": []
+    },
+    "all": {
+     "calls": 62,
+     "helped": 24,
+     "pts": -21.37,
+     "weeks": [
+      3
+     ]
+    }
+   }
+  ]
  },
  "basis": "send"
 }
