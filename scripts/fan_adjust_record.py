@@ -99,6 +99,11 @@ def rows_for(S, W, j):
         if stat not in p["stats"]: continue
         r = row(p, pi, stat, v, rule)
         if r: out.append(r)
+    if not out and j.get("a") == []:
+        # every arrow taken back: one marker row, so the grader knows this is his latest set
+        out.append({**{k: "" for k in FIELDS}, "received_at": now, "season": S, "week": W, "fan": fan, "submitted_at": sub,
+                    "bake_id": bake.get("bake_id", ""), "comment": com, "fan_id": fid, "device_id": did, "fan_team": fav,
+                    "stat": fan_rules.WITHDRAW, "arrows": 0, "rule": rule})
     return fan, sub, out
 
 codes = []

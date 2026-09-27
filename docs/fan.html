@@ -812,7 +812,7 @@ $("list").addEventListener("click", e => {
   const b = e.target.closest("button");
   if (!b) return;
   if (b.dataset.team) { const m = document.querySelector(`[data-more="${b.dataset.team}"]`); m.hidden = !m.hidden; b.textContent = m.hidden ? b.textContent.replace("hide", "show") : b.textContent.replace("show", "hide"); return; }
-  if (b.dataset.unswipe) { const i = +b.dataset.unswipe; delete picks[i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); const c = b.closest(".p"); if (c) c.outerHTML = card(D.players[i]); count(); return; }
+  if (b.dataset.unswipe) { const i = +b.dataset.unswipe; edited(); delete picks[i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); const c = b.closest(".p"); if (c) c.outerHTML = card(D.players[i]); count(); return; }
   const st = b.closest(".st"); if (!st) return;
   if (needId()) return;
   const key = st.dataset.i + ":" + st.dataset.s, d = +b.dataset.d;
@@ -820,6 +820,7 @@ $("list").addEventListener("click", e => {
   if (started(p0)) { $("draft").textContent = "· that game has kicked off — its arrows are locked"; return; }
   let a = Math.min(MAX_N, Math.max(minN(k0, p0.stats[k0]), (picks[key] || 0) + d));
   if (a === 0) delete picks[key]; else picks[key] = a;
+  edited();
   const hadSwipe = swipeOf(p0.i); delete picks[p0.i + ":" + SW];        // exact arrows replace a swipe on the same player
   ls.set(KEY, JSON.stringify(picks));
   const p = D.players[+st.dataset.i], k = D.stat_keys[+st.dataset.s];
@@ -834,28 +835,44 @@ function count() { const n = Object.keys(picks).length; $("cnt").textContent = n
 // swipes are never lost. Each game still counts the last set locked in before it kicks off. Submit stays,
 // to lock in at once or add the one-line comment.
 const AUTO_MS = 4000;
-let AUTO_T = null, AUTO_BUSY = false;
-const picksSig = () => JSON.stringify(Object.entries(picks).sort());
+let AUTO_T = null, AUTO_BUSY = false, AUTO_AGAIN = false;
+// Only what the fan does on THIS visit locks in by itself: picks restored from storage or loaded from
+// another device are not re-sent on their own, so an old phone opened on Sunday cannot quietly lock its
+// stale set over the one made on the laptop on Saturday. Submit still sends whatever is on screen.
+let EDITED = false;
+const edited = () => { EDITED = true; };
+// the signature covers WHO as well as what: a corrected tag or PIN, or a second fan on this browser,
+// is a new lock-in even with the same arrows (a small FNV hash, so the PIN itself is not copied again)
+const idKey = () => { let h = 2166136261; for (const c of me().toLowerCase() + "|" + pin()) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619) >>> 0; } return h.toString(16); };
+const picksSig = () => idKey() + "|" + JSON.stringify(Object.entries(picks).sort());
+// an empty set still has to go out when it withdraws arrows already locked in this week; otherwise the
+// old arrows would stay live with nothing on screen
+const hadLock = () => { const lc = D && ls.get(WKEY() + "_locked"), x = lc && decodeCode(lc); return !!(x && x.week === D.week && (x.j.a || []).length); };
 const autoOK = () => !!(D && dropbox() && ready());
+const hasSomething = () => Object.keys(picks).length > 0 || hadLock();
 function autoSoon() {
   clearTimeout(AUTO_T); AUTO_T = null;
-  if (!autoOK() || !Object.keys(picks).length || ls.get(WKEY() + "_autosig") === picksSig()) return;
+  if (!EDITED || !autoOK() || !hasSomething() || ls.get(WKEY() + "_autosig") === picksSig()) return;
   AUTO_T = setTimeout(() => { AUTO_T = null; autoLock(false); }, AUTO_MS);
   $("submit").classList.remove("nudge");             // it's on its way: no need to flash Submit
 }
 async function autoLock(leaving) {
-  if (AUTO_BUSY || !autoOK() || !Object.keys(picks).length) return;
+  if (!autoOK() || !hasSomething()) return;
+  if (AUTO_BUSY) { AUTO_AGAIN = true; return; }      // one in flight: go again when it lands
   const s = picksSig(); if (ls.get(WKEY() + "_autosig") === s) return;
-  AUTO_BUSY = true;
+  AUTO_BUSY = true; let ok = false;
   try {
     await identity();
     if (!leaving) $("draft").textContent = "· locking in…";
     await postCode(buildCode(), leaving);
-    ls.set(WKEY() + "_autosig", s);
-  } catch (e) { if (!leaving) $("draft").textContent = "· couldn't lock in just now; will try again on your next pick"; }
+    ls.set(WKEY() + "_autosig", s); ok = true;
+  } catch (e) { $("draft").textContent = "· couldn't lock in just now; will try again when you're back online or make a pick"; }
   finally { AUTO_BUSY = false; }
-  if (!leaving) { count(); }
+  const again = AUTO_AGAIN; AUTO_AGAIN = false;
+  if (ok) count();                                    // count -> autoSoon: a change made while this was in flight goes next
+  else if (again) autoSoon();
 }
+addEventListener("online", () => autoSoon());
 const flushAuto = () => { if (AUTO_T) { clearTimeout(AUTO_T); AUTO_T = null; autoLock(true); } };
 addEventListener("pagehide", flushAuto);
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushAuto(); });
@@ -873,8 +890,8 @@ async function sentNote() {
 }
 for (const id of ["game", "pos"]) $(id).addEventListener("change", render);
 $("q").addEventListener("input", render);
-$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(() => { renderLead(); soonServer(); }); });
-$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(() => { renderLead(); soonServer(); }); });
+$("who").addEventListener("input", () => { ls.set("fanpicks_who", $("who").value); identity().then(() => { renderLead(); soonServer(); }); autoSoon(); });
+$("pin").addEventListener("input", () => { ls.set("fanpicks_pin", pin()); identity().then(() => { renderLead(); soonServer(); }); autoSoon(); });
 $("email").addEventListener("input", () => ls.set("fanpicks_email", $("email").value.trim()));
 $("fav").addEventListener("change", () => { FAV = $("fav").value; ls.set("fanpicks_team", FAV); if (D) render(); });
 $("pin").addEventListener("change", () => idMini()); $("who").addEventListener("change", () => idMini());
@@ -888,7 +905,7 @@ async function sendContact() {
   body.append(CFG.entry_contact_user, me()); body.append(CFG.entry_contact_id, IDH); body.append(CFG.entry_contact_email, em);
   try { await fetch(CFG.contact_form_action, {method: "POST", mode: "no-cors", body}); ls.set("fanpicks_contact_sent", stamp); } catch (e) {}
 }
-$("reset").onclick = () => { if (!Object.keys(picks).length) return; picks = {}; ls.del(KEY); render(); count(); };
+$("reset").onclick = () => { if (!Object.keys(picks).length) return; edited(); picks = {}; ls.del(KEY); render(); count(); };
 // the identity card folds to one line once username + PIN are in, so the deck sits near the top
 function idMini(force) {
   const ok = me() && pin().length >= 4 && !force;
@@ -1026,13 +1043,13 @@ function decide(dir) {
   if (needId()) return;
   if (started(p)) { $("pkprog").textContent = "KICKED OFF · LOCKED"; DI++; deckRender(); return; }
   for (const k of Object.keys(picks)) if (k.split(":")[0] == p.i) delete picks[k];      // one opinion per player
-  picks[p.i + ":" + SW] = dir; ls.set(KEY, JSON.stringify(picks)); HIST.push(DI);
+  picks[p.i + ":" + SW] = dir; ls.set(KEY, JSON.stringify(picks)); HIST.push(DI); edited();
   if (MOBILE && navigator.vibrate) navigator.vibrate(dir > 0 ? [10, 30, 10] : 14);
   flyOff(dir, () => { DI++; deckRender(); count(); });
 }
 $("dkboost").onclick = () => decide(1); $("dkfade").onclick = () => decide(-1);
 $("dkskip").onclick = () => { if (DI < DECK.length) { HIST.push(DI); flyOff(0, () => { DI++; deckRender(); }); } };
-$("dkundo").onclick = () => { if (!HIST.length) return; DI = HIST.pop(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
+$("dkundo").onclick = () => { if (!HIST.length) return; edited(); DI = HIST.pop(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
 addEventListener("keydown", e => {
   if (MODE !== "swipe" || !D || e.target.matches("input,textarea,select") || $("paperwrap").classList.contains("on") || !stage.classList.contains("on")) return;
   if (!PLAYING) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("rstart").click(); } return; }
@@ -1048,7 +1065,7 @@ function buildCode() {
 const dropbox = () => !!(CFG.form_action && CFG.entry_user && CFG.entry_code);
 $("submit").onclick = async () => {
   if (!D) return;
-  if (!Object.keys(picks).length) { $("draft").textContent = MODE === "swipe" ? "· swipe at least one player first" : "· tap ▲ or ▼ on at least one stat first"; return; }
+  if (!Object.keys(picks).length && !hadLock()) { $("draft").textContent = MODE === "swipe" ? "· swipe at least one player first" : "· tap ▲ or ▼ on at least one stat first"; return; }
   if (!me()) { $("who").focus(); $("who").placeholder = "3 letters first"; if (MODE === "swipe") { PLAYING = false; screens(); $("rwho").focus(); } return; }
   if (pin().length < 4) { $("pin").focus(); $("pin").placeholder = "4+ digits, please"; $("draft").textContent = "· add a PIN so your weeks stay yours"; return; }
   await identity();
@@ -1220,7 +1237,7 @@ function renderLead() {
   $("npdate").textContent = new Date().toLocaleDateString("en-US", {weekday: "long", month: "long", day: "numeric", year: "numeric"});
   $("nppage").textContent = `Week ${D.week} · ${D.season}`;
   const src = LIVE || (SUBS && SUBS.entries) || [];
-  const ins = src.filter(x => x.week === D.week).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
+  const ins = src.filter(x => x.week === D.week && x.arrows > 0).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
   $("npinsub").textContent = ins.length ? `${ins.length} for week ${D.week}` : `week ${D.week}`;
   $("npin").innerHTML = ins.length ? ins.map(x => `<div class="np-line"><span${x.fan === mine ? ' style="font-weight:700"' : ""}>${esc(x.fan)}</span><b>${x.arrows} arrow${x.arrows === 1 ? "" : "s"}</b></div>`).join("") : `<div class="np-empty">nobody is in yet — be first</div>`;
   const best = ((G && G.rows) || []).filter(r => r.removed_pts != null).sort((a, b) => b.removed_pts - a.removed_pts).slice(0, 6);
