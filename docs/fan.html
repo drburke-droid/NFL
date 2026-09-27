@@ -443,6 +443,8 @@
       <div><div class="colh">Best &amp; worst calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
       <div><div class="colh">Sharpest &amp; busiest</div><div id="npsharp" class="np-empty">nothing graded yet</div></div>
     </div>
+    <div class="colh" style="margin-top:12px">Strategy lab <small>ways to combine the fans, fixed in advance and scored every week &middot; + = closer than THE ORACLE</small></div>
+    <div id="nplab" class="np-empty">nothing graded yet</div>
     <div class="copy">&copy; 2026 Rob Burke &middot; The Gridiron Oracle and THE ORACLE projection model &middot; all rights reserved</div>
   </section>
 </div></div>
@@ -1437,6 +1439,18 @@ function renderLead() {
   if (LIVE && LIVE_WEEKS && SUBS && SUBS.entries) fold(SUBS.entries.filter(x => !LIVE_WEEKS.has(x.week))).forEach(add);
   const busy = Object.entries(tally).map(([fan, n]) => ({fan, n})).sort((a, b) => b.n - a.n || a.fan.localeCompare(b.fan)).slice(0, 3);
   $("npsharp").innerHTML = (sharp.length || busy.length) ? (sharp.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>direction right most often (5+ graded)</span></div>` + sharp.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(f.team)}</span><b>${pct(f.hit_rate)} of ${f.graded}</b></div>`).join("") : "") + (busy.length ? `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>most arrows this season</span></div>` + busy.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(TEAM[f.fan])}</span><b>${f.n}</b></div>`).join("") : "") : `<div class="np-empty">nothing graded yet</div>`;
+  // the strategy lab (scripts/fan_strategies.py): each fixed rule's week-3 reading, where the idea came from, beside
+  // its honest record from the following weeks
+  const LB = G && G.strategies;
+  if (LB && LB.rules && LB.rules.length) {
+    const inS = new Set((LB.in_sample_weeks || []).map(String)), sgn = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
+    const idea = r => { const ws = Object.entries(r.weeks || {}).filter(([w]) => inS.has(w)); if (!ws.length) return "—"; const p = ws.reduce((a, [, v]) => a + v.pts, 0), c = ws.reduce((a, [, v]) => a + v.calls, 0); return c ? `${sgn(p)} <small>/${c}</small>` : "—"; };
+    const oos = r => { const o = r.out_of_sample || {}; return o.calls ? [sgn(o.pts), `${Math.round(100 * o.helped / o.calls)}%`, o.calls] : ["—", "—", 0]; };
+    $("nplab").className = "";
+    $("nplab").innerHTML = `<table class="np"><tr><th class="l">strategy</th><th>wk ${[...inS].join(", ")} <small>(the idea)</small></th><th>since</th><th>helped</th><th>calls</th></tr>` +
+      LB.rules.map(r => { const [p, h, c] = oos(r); return `<tr><td class="l nm">${esc(r.label)}<br><small style="color:#666">${esc(r.how)}</small></td><td>${idea(r)}</td><td><b>${p}</b></td><td>${h}</td><td>${c || "—"}</td></tr>`; }).join("") +
+      `</table><div class="how" style="margin-top:4px;font-size:10.5px">${esc(LB.note || "")} "Since" counts only weeks after the rules were fixed on ${esc(LB.registered || "")}; the week they came from can't prove them.</div>`;
+  }
   const st = standings();
   if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; $("crawl").innerHTML = ""; $("foldlines").innerHTML = `<div class="fl"><span>no week graded yet</span></div>`; return; }
   const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? (r.fan_id === PIDH || r.fan_id === IDH) : r.name === mine) ? " me" : "");

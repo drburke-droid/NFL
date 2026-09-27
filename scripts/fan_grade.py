@@ -294,6 +294,11 @@ if not A.vs_bake:
     print(f"  sent lines for {len(SENT)} player-weeks from {', '.join(A.sends)}")
 g = grade(rows, act); s = summarise(g); s["season"] = A.season
 s["renamed"] = RENAMED if "RENAMED" in globals() else {}
+try:                                   # the strategy lab: fixed rules for combining the fans, scored every week
+    import fan_strategies
+    s["strategies"] = fan_strategies.lab(g)
+except Exception as e:
+    print("  strategy lab skipped:", str(e)[:120])
 s["basis"] = "bake" if A.vs_bake else "send"
 if int(g.no_send.sum()):
     for (fan, wk), d in g[g.no_send].groupby(["fan", "week"]):
