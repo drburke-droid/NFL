@@ -44,6 +44,8 @@
   .st button:active { background:#2f3644; }
   .st.up { border-color:#2a7a40; } .st.dn { border-color:#8a2a2a; }
   .st.lock button { opacity:.3; cursor:not-allowed; } .game .ko { color:var(--warn); }
+  .kofold { margin-top:14px; border-top:1px dashed var(--line); padding-top:6px; } .kofold > summary { cursor:pointer; color:var(--mut); font-size:13px; padding:8px 2px; list-style-position:inside; }
+  .kofold[open] > summary { margin-bottom:4px; }
   @media (max-width:520px) { .stats { grid-template-columns:1fr; } }
   .more { background:none; border:1px dashed var(--line); color:var(--mut); border-radius:8px; padding:6px; width:100%; font-size:12px; cursor:pointer; margin:2px 0 6px; }
   .bar { position:fixed; left:0; right:0; bottom:0; background:#12151c; border-top:1px solid var(--line); padding:10px 14px calc(10px + env(safe-area-inset-bottom, 0px)); }
@@ -852,29 +854,46 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
 }).catch(e => { $("list").innerHTML = '<div class="empty">could not load this week\'s projections (' + e.message + ')</div>'; });
 
 const norm = s => (s || "").toLowerCase();
+// Games still to play come first; the ones that have kicked off (arrows locked) fold into one section at the
+// bottom (owner, 2026-09-27), so on a Sunday evening the list opens on Sunday and Monday night instead of 13
+// finished games. armKickTimer re-renders at each kickoff, which moves that game into the fold.
+let KO_OPEN = false;
 function render() {
   const g = $("game").value, pos = $("pos").value, q = norm($("q").value).trim();
   let h = "";
   // the fan's team leads: its game first, its players before the opponent's; every other game in kickoff order
   const favGame = FAV ? D.games.find(x => x.teams.map(canon).includes(FAV)) : null;
   const games = favGame ? [favGame, ...D.games.filter(x => x !== favGame)] : D.games;
-  if (FAV && !g && !q) h += `<div class="how" style="margin:6px 0 2px">${favGame ? `${TEAMS[FAV]} are up first this week (${favGame.kickoff.replace(" ET", "")}); everyone else follows in kickoff order.` : `${TEAMS[FAV]} are on a bye this week — games in kickoff order.`}</div>`;
-  for (const game of games) {
-    if (g && game.game !== g) continue;
+  const isOn = game => Date.now() >= kickMs(game);
+  if (FAV && !g && !q) h += `<div class="how" style="margin:6px 0 2px">${!favGame ? `${TEAMS[FAV]} are on a bye this week — games in kickoff order.`
+    : isOn(favGame) ? `${TEAMS[FAV]}' game has kicked off; the games still to play follow in kickoff order.`
+    : `${TEAMS[FAV]} are up first this week (${favGame.kickoff.replace(" ET", "")}); everyone else follows in kickoff order.`}</div>`;
+  const gameHtml = game => {
     const ps = D.players.filter(p => p.game === game.game && (!pos || p.pos === pos) && (!q || norm(p.name).includes(q) || norm(p.team) === q));
-    if (!ps.length) continue;
-    h += `<div class="game"><b>${game.away} @ ${game.home}</b><span>${Date.now() >= kickMs(game) ? '<span class="ko">kicked off · arrows locked</span>' : game.kickoff}</span></div>`;
+    if (!ps.length) return "";
+    let x = `<div class="game"><b>${game.away} @ ${game.home}</b><span>${isOn(game) ? '<span class="ko">kicked off · arrows locked</span>' : game.kickoff}</span></div>`;
     const order = game === favGame && canon(game.home) === FAV ? [game.home, game.away] : [game.away, game.home];
     for (const team of order) {
       const tp = ps.filter(p => p.team === team).sort((a, b) => dk0(b) - dk0(a));
       if (!tp.length) continue;
-      h += `<div class="team">${team}</div>`;
+      x += `<div class="team">${team}</div>`;
       const main = q ? tp : tp.filter(p => dk0(p) >= 3), rest = q ? [] : tp.filter(p => dk0(p) < 3);
-      h += main.map(card).join("");
-      if (rest.length) h += `<button class="more" data-team="${team}-${game.game}">show ${rest.length} more ${team} player${rest.length > 1 ? "s" : ""} (under 3 pts)</button><div hidden data-more="${team}-${game.game}">${rest.map(card).join("")}</div>`;
+      x += main.map(card).join("");
+      if (rest.length) x += `<button class="more" data-team="${team}-${game.game}">show ${rest.length} more ${team} player${rest.length > 1 ? "s" : ""} (under 3 pts)</button><div hidden data-more="${team}-${game.game}">${rest.map(card).join("")}</div>`;
     }
+    return x;
+  };
+  const shown = games.filter(game => !g || game.game === g);
+  let open = "", done = "", nDone = 0;
+  for (const game of shown) {
+    const x = gameHtml(game); if (!x) continue;
+    if (isOn(game) && !g) { done += x; nDone++; } else open += x;     // a game picked in the filter shows in place
   }
+  h += open;
+  if (!open && nDone && !g) h += `<div class="empty">Every game this week has kicked off — nothing left to pick. Your locked picks are below.</div>`;
+  if (nDone) h += `<details class="kofold" id="kofold"${KO_OPEN || q || !open ? " open" : ""}><summary>${nDone} game${nDone > 1 ? "s" : ""} already kicked off · arrows locked</summary>${done}</details>`;
   $("list").innerHTML = h || '<div class="empty">nothing matches</div>';
+  const kf = $("kofold"); if (kf) kf.addEventListener("toggle", () => { KO_OPEN = kf.open; });
   DECK = []; deckRender();
 }
 function card(p) {
