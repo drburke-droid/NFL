@@ -1497,13 +1497,16 @@ function renderLead() {
   // the strategy lab (private: pkg/fan_lab/fan_strategies.py): each fixed rule's week-3 reading, where the idea came from, beside
   // its honest record from the following weeks
   const LB = G && G.strategies;
-  if (LB && LB.sealed) {        // sealed until the reveal: knowing what works would change how people play (fan_grade.py)
-    const n = LB.ahead | 0, N = LB.n_rules | 0, word = ["None", "One", "Two", "Three", "Four", "Five", "Six"][n] || String(n);
+  // sealed unless the grade says outright it is not: an older file (no flag) is treated as sealed too, so a stale
+  // payload can never print the table (fan_grade.py publishes sealed:false only once week 9 is in the books)
+  if (LB && LB.sealed !== false) {   // sealed until the reveal: knowing what works would change how people play
+    const known = typeof LB.ahead === "number", n = known ? LB.ahead : 0, N = LB.n_rules || (LB.rules || []).length || "Several";
+    const word = ["None", "One", "Two", "Three", "Four", "Five", "Six"][n] || String(n);
     $("nplab").className = "";
-    $("nplab").innerHTML = `<div class="np-line" style="display:block;line-height:1.5"><b>&#128274; Sealed until Week ${LB.unseal_after_week} is in the books.</b> ` +
+    $("nplab").innerHTML = `<div class="np-line" style="display:block;line-height:1.5"><b>&#128274; Sealed until Week ${LB.unseal_after_week || 9} is in the books.</b> ` +
       `${N} ways of blending your picks with THE ORACLE were locked on ${esc(LB.registered || "")} and are scored every week. ` +
-      `${n ? `<b>${word} of them ${n === 1 ? "is" : "are"} ahead of the machine so far.</b> Which? Keep playing.` : "None is ahead of the machine yet."}</div>` +
-      `<div class="how" style="margin-top:4px;font-size:10px;word-break:break-all">Fingerprint of the rules (sha256), so nobody can change them before the reveal: ${esc(LB.fingerprint || "")}</div>`;
+      `${!known ? "Which ones beat the machine? Keep playing." : n ? `<b>${word} of them ${n === 1 ? "is" : "are"} ahead of the machine so far.</b> Which? Keep playing.` : "None is ahead of the machine yet."}</div>` +
+      (LB.fingerprint ? `<div class="how" style="margin-top:4px;font-size:10px;word-break:break-all">Fingerprint of the rules (sha256), so nobody can change them before the reveal: ${esc(LB.fingerprint)}</div>` : "");
   } else if (LB && LB.rules && LB.rules.length) {
     const inS = new Set((LB.in_sample_weeks || []).map(String)), sgn = v => `<span class="${v > 0 ? "pos" : v < 0 ? "neg" : ""}">${v > 0 ? "+" : ""}${v.toFixed(1)}</span>`;
     const idea = r => { const ws = Object.entries(r.weeks || {}).filter(([w]) => inS.has(w)); if (!ws.length) return "—"; const p = ws.reduce((a, [, v]) => a + v.pts, 0), c = ws.reduce((a, [, v]) => a + v.calls, 0); return c ? `${sgn(p)} <small>/${c}</small>` : "—"; };
@@ -1543,7 +1546,7 @@ function renderGrade() {
   if (!G || !o.n) { el.textContent = "no picks submitted yet — yours could be the first"; return; }
   let h = `<div><b>${o.n}</b> arrows from <b>${(G.by_fan || []).length}</b> fan${(G.by_fan || []).length === 1 ? "" : "s"} · <b>${o.graded}</b> graded · ${o.pending} waiting for box scores` +
     (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than THE ORACLE on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
-  if (G.by_size && o.graded) {
+  if (G.by_size && o.graded && G.strategies && G.strategies.sealed === false) {   // sealed with the lab until the reveal
     const sz = Object.entries(G.by_size).filter(([k, v]) => v.graded).map(([k, v]) => `${k}×: ${pct(v.hit_rate)} on ${v.graded}`).join(" · ");
     const dr = Object.entries(G.by_direction || {}).filter(([k, v]) => v.graded).map(([k, v]) => `${k}s ${pct(v.hit_rate)} (${v.graded})`).join(" · ");
     h += `<div class="how" style="margin-top:6px">by arrow count — ${sz}${dr ? " · " + dr : ""}</div>`;

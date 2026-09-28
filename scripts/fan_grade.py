@@ -331,13 +331,18 @@ def lab_module():
             spec_ = importlib.util.spec_from_file_location("fan_strategies", f); m = importlib.util.module_from_spec(spec_)
             spec_.loader.exec_module(m); return m
     return None
-def lab_unsealed(g):
-    graded = set(int(w) for w in g.loc[~g.pending, "week"].unique())
-    return any(w > UNSEAL_AFTER_WEEK for w in graded) or (
-        UNSEAL_AFTER_WEEK in graded and not g[(g.week == UNSEAL_AFTER_WEEK) & g.pending].shape[0])
+def lab_unsealed():
+    """True once EVERY scheduled game of UNSEAL_AFTER_WEEK has a box score -- from the schedule, not from the
+    picks (a week whose only picks were on Thursday's game must not unseal on Friday). No schedule: sealed."""
+    if not os.path.exists(_sch): return False
+    sch = pd.read_csv(_sch)
+    games = sch[(sch.season == A.season) & (sch.week == UNSEAL_AFTER_WEEK) & (sch.game_type == "REG")]
+    if games.empty: return False
+    have = set(act.loc[act.week == UNSEAL_AFTER_WEEK, "team"])
+    return all(t in have for t in pd.concat([games.away_team, games.home_team]))
 # the same goes for the breakdowns that answer the lab's questions directly (hit rate by swipe size, boost vs
 # fade, by stat): out of the public file until the reveal. Scores, standings and single calls stay public.
-if not lab_unsealed(g):
+if not lab_unsealed():
     for k_ in ("by_size", "by_direction", "by_stat"): s.pop(k_, None)
 try:
     fs = lab_module()
@@ -347,7 +352,7 @@ try:
         import hashlib
         full = fs.lab(g, full_lines(g, act)); sp = fs.spec()
         fp = hashlib.sha256(json.dumps(sp, sort_keys=True).encode()).hexdigest()
-        if lab_unsealed(g):
+        if lab_unsealed():
             s["strategies"] = {**full, "sealed": False, "spec": sp, "fingerprint": fp}
         else:
             s["strategies"] = {"sealed": True, "unseal_after_week": UNSEAL_AFTER_WEEK, "registered": full["registered"],
