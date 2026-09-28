@@ -342,7 +342,8 @@ def lab_unsealed():
     return all(t in have for t in pd.concat([games.away_team, games.home_team]))
 # the same goes for the breakdowns that answer the lab's questions directly (hit rate by swipe size, boost vs
 # fade, by stat): out of the public file until the reveal. Scores, standings and single calls stay public.
-if not lab_unsealed():
+s["revealed"] = lab_unsealed()          # written every run, lab module or not: the page keys the breakdowns on it
+if not s["revealed"]:
     for k_ in ("by_size", "by_direction", "by_stat"): s.pop(k_, None)
 try:
     fs = lab_module()
