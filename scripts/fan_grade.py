@@ -317,9 +317,43 @@ if not A.vs_bake:
 g = grade(rows, act); s = summarise(g); s["season"] = A.season
 s["renamed"] = RENAMED if "RENAMED" in globals() else {}
 s["merged_pids"] = MERGED_PIDS if "MERGED_PIDS" in globals() else {}
-try:                                   # the strategy lab: fixed rules for combining the fans, scored every week
-    import fan_strategies
-    s["strategies"] = fan_strategies.lab(g, full_lines(g, act))
+# The strategy lab: fixed rules for combining the fans, scored every week. The rules live in the PRIVATE repo
+# (pkg/fan_lab/fan_strategies.py) and stay sealed until week UNSEAL_AFTER_WEEK is fully graded: telling players
+# which ways of playing beat THE ORACLE would change how they play and spoil the test (crowd independence, swipe
+# size as confidence). Sealed, the public grade carries only how many rules are ahead and a sha256 of the rules'
+# spec; at the reveal it carries the full table and the spec, so anyone can check the fingerprint.
+UNSEAL_AFTER_WEEK = 9
+def lab_module():
+    import importlib.util
+    for d in (os.environ.get("MODEL_BURKE_PKG"), os.path.join(ROOT, "pkg"), os.path.join(os.path.dirname(ROOT), "model-burke-private")):
+        f = os.path.join(d, "fan_lab", "fan_strategies.py") if d else None
+        if f and os.path.exists(f):
+            spec_ = importlib.util.spec_from_file_location("fan_strategies", f); m = importlib.util.module_from_spec(spec_)
+            spec_.loader.exec_module(m); return m
+    return None
+def lab_unsealed(g):
+    graded = set(int(w) for w in g.loc[~g.pending, "week"].unique())
+    return any(w > UNSEAL_AFTER_WEEK for w in graded) or (
+        UNSEAL_AFTER_WEEK in graded and not g[(g.week == UNSEAL_AFTER_WEEK) & g.pending].shape[0])
+# the same goes for the breakdowns that answer the lab's questions directly (hit rate by swipe size, boost vs
+# fade, by stat): out of the public file until the reveal. Scores, standings and single calls stay public.
+if not lab_unsealed(g):
+    for k_ in ("by_size", "by_direction", "by_stat"): s.pop(k_, None)
+try:
+    fs = lab_module()
+    if fs is None:
+        print("  strategy lab skipped: pkg/fan_lab not found")
+    else:
+        import hashlib
+        full = fs.lab(g, full_lines(g, act)); sp = fs.spec()
+        fp = hashlib.sha256(json.dumps(sp, sort_keys=True).encode()).hexdigest()
+        if lab_unsealed(g):
+            s["strategies"] = {**full, "sealed": False, "spec": sp, "fingerprint": fp}
+        else:
+            s["strategies"] = {"sealed": True, "unseal_after_week": UNSEAL_AFTER_WEEK, "registered": full["registered"],
+                               "n_rules": len(full["rules"]), "ahead": sum(1 for r in full["rules"] if r["all"]["pts"] > 0),
+                               "weeks_scored": sorted({int(w) for r in full["rules"] for w in r["weeks"]}), "fingerprint": fp}
+        print(f"  strategy lab: {'UNSEALED' if not s['strategies'].get('sealed') else 'sealed'}; fingerprint {fp[:16]}")
 except Exception as e:
     print("  strategy lab skipped:", str(e)[:120])
 s["basis"] = "bake" if A.vs_bake else "send"
