@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-28T03:25Z",
+ "generated_at": "2026-09-28T04:08Z",
  "season": 2026,
  "min_lead_min": {
   "before_2026-09-27T20:10Z": 75.0,
@@ -992,7 +992,7 @@
     "mae_full_bonus": 3.626,
     "mae_half_bonus": 3.631,
     "corr_bonus_err": 0.031,
-    "gap": 0.31
+    "gap": 0.38
    },
    "by_pos": {
     "RB": {
@@ -1005,7 +1005,7 @@
      "mae_full_bonus": 3.427,
      "mae_half_bonus": 3.44,
      "corr_bonus_err": 0.036,
-     "gap": 0.56
+     "gap": 0.62
     },
     "TE": {
      "n": 284,
@@ -1017,7 +1017,7 @@
      "mae_full_bonus": 3.431,
      "mae_half_bonus": 3.439,
      "corr_bonus_err": 0.095,
-     "gap": 0.94
+     "gap": 0.96
     },
     "WR": {
      "n": 448,
@@ -1029,7 +1029,7 @@
      "mae_full_bonus": 3.886,
      "mae_half_bonus": 3.884,
      "corr_bonus_err": 0.01,
-     "gap": -0.14
+     "gap": 0.01
     }
    },
    "by_week": [
@@ -1078,7 +1078,7 @@
    "On 710 RB/WR/TE player-games where Subvertadown flagged a matchup of at least \u00b10.5 team points, the direction of our error matched the flag 51% of the time (50% = coin flip).",
    "Adding the full team bonus, shared by projection, would have moved MAE from 3.64 to 3.63; half of it: 3.63.",
    "Correlation between the bonus and our error: +0.03.",
-   "Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones; 0 = no signal): RB +0.56, WR -0.14, TE +0.94; all +0.31.",
+   "Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones, within each week, then averaged over weeks; 0 = no signal): RB +0.62, WR +0.01, TE +0.96; all +0.38.",
    "Directional only \u2014 a signal needs several hundred player-games before \u00b10.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.",
    "QB direction: where the two projections differed by 1+ point (both had him starting), the result landed on Subvertadown's side 19 of 42 times (45%; 50% = no better than ours).",
    "QB: on 96 graded starters Subvertadown's projection MAE was 7.20 vs ours 6.32; a 50/50 blend 6.75."

@@ -1,4 +1,4 @@
-# SaberSim send accuracy — 2026 (graded 2026-09-28T03:25Z)
+# SaberSim send accuracy — 2026 (graded 2026-09-28T04:08Z)
 
 latest send generated >= 55 min before kickoff (>= 75 for kickoffs before 2026-09-27 20:10Z, when the send moved from T-80 to T-60), per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded
 
@@ -39,7 +39,7 @@ Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fai
 - On 710 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 51% of the time (50% = coin flip).
 - Adding the full team bonus, shared by projection, would have moved MAE from 3.64 to 3.63; half of it: 3.63.
 - Correlation between the bonus and our error: +0.03.
-- Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones; 0 = no signal): RB +0.56, WR -0.14, TE +0.94; all +0.31.
+- Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones, within each week, then averaged over weeks; 0 = no signal): RB +0.62, WR +0.01, TE +0.96; all +0.38.
 - Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.
 - QB direction: where the two projections differed by 1+ point (both had him starting), the result landed on Subvertadown's side 19 of 42 times (45%; 50% = no better than ours).
 - QB: on 96 graded starters Subvertadown's projection MAE was 7.20 vs ours 6.32; a 50/50 blend 6.75.
