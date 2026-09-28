@@ -434,14 +434,21 @@ async function accuracy() {
     if (sv.commentary) {
       h += `<h3>Subvertadown check</h3>` + EX.sv;
       if (sv.bonus) {
-        h += `<div class="tbl"><table class="acc"><tr><th>pos</th><th>n</th><th>flagged ±0.5</th><th>direction hit</th><th>err when fav</th><th>err when unfav</th><th>MAE model</th><th>+½ bonus</th><th>+full bonus</th><th>corr</th></tr>`;
+        h += `<div class="tbl"><table class="acc"><tr><th>pos</th><th>n</th><th>flagged ±0.5</th><th>direction hit</th><th>err when fav</th><th>err when unfav</th><th>good − bad</th><th>MAE model</th><th>+½ bonus</th><th>+full bonus</th><th>corr</th></tr>`;
+        // good − bad: how much more the flagged-good matchups beat our projection than the flagged-bad ones (0 = no signal)
+        const gapc = v => v == null ? "—" : `<span style="color:${v >= 0.5 ? COL.top : v <= -0.5 ? COL.poor : "var(--ink)"}">${sgn(v)}</span>`;
         const rowsv = { ...sv.bonus.by_pos, all: sv.bonus.all };
         for (const [p, x] of Object.entries(rowsv)) {
           const d = x.dir_hit == null ? "—" : `<span style="color:${x.dir_hit >= 0.6 ? COL.top : x.dir_hit <= 0.4 ? COL.poor : "var(--ink)"}">${Math.round(x.dir_hit * 100)}%</span>`;
           const imp = v => v == null ? "—" : `<span style="color:${v < x.mae_model - 0.005 ? COL.top : v > x.mae_model + 0.005 ? COL.poor : "var(--ink)"}">${f1(v)}</span>`;
-          h += `<tr><td>${esc(p)}</td><td>${x.n}</td><td>${x.n_strong}</td><td>${d}</td><td>${sgn(x.mean_err_fav)}</td><td>${sgn(x.mean_err_unfav)}</td><td>${f1(x.mae_model)}</td><td>${imp(x.mae_half_bonus)}</td><td>${imp(x.mae_full_bonus)}</td><td>${sgn(x.corr_bonus_err)}</td></tr>`;
+          h += `<tr><td>${esc(p)}</td><td>${x.n}</td><td>${x.n_strong}</td><td>${d}</td><td>${sgn(x.mean_err_fav)}</td><td>${sgn(x.mean_err_unfav)}</td><td>${gapc(x.gap)}</td><td>${f1(x.mae_model)}</td><td>${imp(x.mae_half_bonus)}</td><td>${imp(x.mae_full_bonus)}</td><td>${sgn(x.corr_bonus_err)}</td></tr>`;
         }
         h += `</table></div>`;
+        const bw = sv.bonus.by_week || [];
+        if (bw.length) {
+          h += `<div class="tbl"><table class="acc"><tr><th>week</th><th>flagged</th><th>RB good − bad</th><th>WR</th><th>TE</th><th>all</th><th>QB on their side</th></tr>` +
+            bw.map(r => `<tr><td>${r.week}</td><td>${r.n_flagged}</td><td>${gapc(r.RB)}</td><td>${gapc(r.WR)}</td><td>${gapc(r.TE)}</td><td>${gapc(r.all)}</td><td>${r.qb && r.qb.n ? `${r.qb.their_side} of ${r.qb.n}` : "—"}</td></tr>`).join("") + `</table></div>`;
+        }
       }
       if (sv.qb) h += `<div class="chips"><span class="chip">QB (n${sv.qb.n}): model MAE <b>${f1(sv.qb.mae_model)}</b></span><span class="chip">Subvertadown <b>${f1(sv.qb.mae_subvertadown)}</b></span><span class="chip">50/50 <b>${f1(sv.qb.mae_blend50)}</b></span></div>`;
       h += `<ul class="misses">` + sv.commentary.map(c => `<li>${esc(c)}</li>`).join("") + `</ul>`;

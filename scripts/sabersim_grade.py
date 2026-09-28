@@ -269,7 +269,18 @@ if os.path.exists(svp):
                 "mae_model": round(float(sk.err.abs().mean()), 3), "mae_full_bonus": round(float((sk.actual - (sk.Proj + sk.adj)).abs().mean()), 3),
                 "mae_half_bonus": round(float((sk.actual - (sk.Proj + 0.5 * sk.adj)).abs().mean()), 3),
                 "corr_bonus_err": round(float(np.corrcoef(sk.bonus, sk.err)[0, 1]), 3) if len(sk) >= 8 and sk.bonus.std() > 0 else None}
-        sv["bonus"] = {"all": allb, "by_pos": rows_pos}
+        # the fair directional test: did good-matchup players beat OUR projection by more than bad-matchup players?
+        # (our misses skew one way in any week, so "good ones beat it / bad ones fell short" alone mostly measures that)
+        def gap(d):
+            fav, unf = d[d.bonus >= 0.5].err, d[d.bonus <= -0.5].err
+            return round(float(fav.mean() - unf.mean()), 2) if len(fav) and len(unf) else None
+        for pos_, d in sk.groupby("Pos"): rows_pos[pos_]["gap"] = gap(d)
+        allb["gap"] = gap(sk)
+        by_week = []
+        for wk_, d in sk.groupby("week"):
+            by_week.append({"week": int(wk_), "n_flagged": int((d.bonus.abs() >= 0.5).sum()), "all": gap(d),
+                            **{pos_: gap(d[d.Pos == pos_]) for pos_ in ("RB", "WR", "TE")}})
+        sv["bonus"] = {"all": allb, "by_pos": rows_pos, "by_week": by_week}
         # commentary
         c = []
         if allb["dir_hit"] is not None:
@@ -278,6 +289,10 @@ if os.path.exists(svp):
         c.append(f"Adding the full team bonus, shared by projection, would have moved MAE from {allb['mae_model']:.2f} to {allb['mae_full_bonus']:.2f}; "
                  f"half of it: {allb['mae_half_bonus']:.2f}.")
         if allb["corr_bonus_err"] is not None: c.append(f"Correlation between the bonus and our error: {allb['corr_bonus_err']:+.2f}.")
+        if allb["gap"] is not None:
+            c.append("Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones; 0 = no signal): "
+                     + ", ".join(f"{p_} {rows_pos[p_]['gap']:+.2f}" for p_ in ("RB", "WR", "TE") if rows_pos.get(p_, {}).get("gap") is not None)
+                     + f"; all {allb['gap']:+.2f}.")
         c.append("Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found "
                  "opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.")
         sv["commentary"] = c
@@ -289,6 +304,17 @@ if os.path.exists(svp):
         sv["qb"] = {"n": int(len(q)), "mae_model": round(float(q.err.abs().mean()), 3), "mae_subvertadown": round(float((q.actual - q.sv).abs().mean()), 3),
                     "mae_blend50": round(float((q.actual - 0.5 * (q.Proj + q.sv)).abs().mean()), 3),
                     "rows": [{"player": r.Player, "team": r.Team, "week": int(r.week), "model": round(float(r.Proj), 1), "subvertadown": round(float(r.sv), 1), "actual": round(float(r.actual), 1)} for r in q.itertuples()]}
+        # direction: where both had him starting and the two projections differ by a point or more, whose side did the
+        # result land on (a QB one of us had ruled out is an injury call, not a projection call)
+        def side(d):
+            d = d[(d.Proj >= 5) & (d.sv >= 5) & ((d.sv - d.Proj).abs() >= 1.0)]
+            return {"n": int(len(d)), "their_side": int(((d.actual - d.Proj) * (d.sv - d.Proj) > 0).sum())}
+        sv["qb"]["side"] = side(q)
+        sv["qb"]["by_week"] = [{"week": int(w_), **side(d)} for w_, d in q.groupby("week")]
+        for r_ in sv.get("bonus", {}).get("by_week", []):
+            r_["qb"] = next((x for x in sv["qb"]["by_week"] if x["week"] == r_["week"]), None)
+        sd = sv["qb"]["side"]
+        if sd["n"]: sv.setdefault("commentary", []).append(f"QB direction: where the two projections differed by 1+ point (both had him starting), the result landed on Subvertadown's side {sd['their_side']} of {sd['n']} times ({sd['their_side'] / sd['n']:.0%}; 50% = no better than ours).")
         sv.setdefault("commentary", []).append(f"QB: on {len(q)} graded starters Subvertadown's projection MAE was {sv['qb']['mae_subvertadown']:.2f} vs ours {sv['qb']['mae_model']:.2f}; a 50/50 blend {sv['qb']['mae_blend50']:.2f}.")
 
 # ---------- 5. scale: what the numbers mean (measured on the 2025 season, ~300 FFA-projected QB/RB/WR/TE per week) ----------
