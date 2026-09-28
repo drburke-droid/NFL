@@ -274,8 +274,19 @@ if os.path.exists(svp):
         def gap(d):
             fav, unf = d[d.bonus >= 0.5].err, d[d.bonus <= -0.5].err
             return round(float(fav.mean() - unf.mean()), 2) if len(fav) and len(unf) else None
-        for pos_, d in sk.groupby("Pos"): rows_pos[pos_]["gap"] = gap(d)
-        allb["gap"] = gap(sk)
+        # the season figure is built from the WEEKLY contrasts, never from pooled rows: our bias moves week to week, and
+        # with good flags bunched in a week we ran low, a pooled gap would read positive though no week shows a signal.
+        # Each week weighs by the harmonic mean of its good and bad counts (how much a difference of two means is worth).
+        def season_gap(d):
+            num = den = 0.0
+            for _, dw in d.groupby("week"):
+                nf, nu = int((dw.bonus >= 0.5).sum()), int((dw.bonus <= -0.5).sum())
+                gw = gap(dw)
+                if gw is None: continue
+                h = 2.0 / (1.0 / nf + 1.0 / nu); num += h * gw; den += h
+            return round(num / den, 2) if den else None
+        for pos_, d in sk.groupby("Pos"): rows_pos[pos_]["gap"] = season_gap(d)
+        allb["gap"] = season_gap(sk)
         by_week = []
         for wk_, d in sk.groupby("week"):
             by_week.append({"week": int(wk_), "n_flagged": int((d.bonus.abs() >= 0.5).sum()), "all": gap(d),
@@ -290,7 +301,7 @@ if os.path.exists(svp):
                  f"half of it: {allb['mae_half_bonus']:.2f}.")
         if allb["corr_bonus_err"] is not None: c.append(f"Correlation between the bonus and our error: {allb['corr_bonus_err']:+.2f}.")
         if allb["gap"] is not None:
-            c.append("Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones; 0 = no signal): "
+            c.append("Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones, within each week, then averaged over weeks; 0 = no signal): "
                      + ", ".join(f"{p_} {rows_pos[p_]['gap']:+.2f}" for p_ in ("RB", "WR", "TE") if rows_pos.get(p_, {}).get("gap") is not None)
                      + f"; all {allb['gap']:+.2f}.")
         c.append("Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found "
