@@ -86,8 +86,16 @@
   #ready .alt { font-size:7px; color:#9fe870; background:none; border:2px solid #2b3a4d; padding:8px 10px; cursor:pointer; font-family:inherit; line-height:1.7; text-shadow:none; }
   #play { background:#0b0f14; }
   #pkstage { position:absolute; left:0; right:0; top:0; bottom:56px; }
-  .pk-hint { position:absolute; top:8px; left:0; right:0; text-align:center; font-family:'Press Start 2P',monospace; font-size:9px; color:#ffd23f; text-shadow:0 0 6px rgba(0,0,0,1), 0 0 10px rgba(255,210,63,.55); z-index:4; pointer-events:none; animation:blink 1.6s steps(1) infinite; }
-  #pkprog { position:absolute; right:10px; top:9px; text-align:right; font-family:'Press Start 2P',monospace; font-size:7px; color:#9fe870; text-shadow:0 0 4px rgba(0,0,0,1); pointer-events:none; z-index:4; }
+  #pkgauge { position:absolute; top:2px; left:50%; transform:translateX(-50%); width:176px; height:63px; z-index:4; pointer-events:none; overflow:visible; filter:drop-shadow(0 0 2px #000) drop-shadow(0 0 5px rgba(0,0,0,.9)); }
+  #pkgauge .gb { fill:none; stroke-width:5; opacity:.35; } #pkgauge .gb.up { stroke:var(--up); } #pkgauge .gb.dn { stroke:var(--down); } #pkgauge .gb.on { opacity:1; }
+  #pkgauge #gb1, #pkgauge #gb-1 { opacity:.14; }   /* before the first tick nothing counts yet */
+  #pkgauge .gt line { stroke:#cfd8e3; stroke-width:1.4; }
+  #pkgauge text { font-family:'Press Start 2P',monospace; font-size:6px; fill:#cfd8e3; text-anchor:middle; } #pkgauge text.on { font-size:8.5px; fill:#fff; } #pkgauge text.up { fill:var(--up); } #pkgauge text.dn { fill:var(--down); }
+  #gneedle { transform-box:view-box; transform-origin:80px 47px; transition:transform .1s linear; } #gneedle line { stroke:#fff; stroke-width:2.2; stroke-linecap:round; }
+  #gneedle.up line { stroke:var(--up); } #gneedle.dn line { stroke:var(--down); } #pkgauge .hub { fill:#ffd23f; }
+  /* swipe up to skip, printed up the right edge of the glass */
+  .pk-side { position:absolute; right:9px; top:38%; transform:translate(50%, -50%) rotate(-90deg); font-family:'Press Start 2P',monospace; font-size:8px; letter-spacing:.08em; color:#ffd23f; white-space:nowrap; text-shadow:0 0 3px #000, 0 0 6px rgba(0,0,0,1), 0 0 10px rgba(255,210,63,.5); z-index:4; pointer-events:none; }
+  #pkprog { position:absolute; right:10px; top:9px; text-align:right; line-height:1.6; font-family:'Press Start 2P',monospace; font-size:7px; color:#9fe870; text-shadow:0 0 4px rgba(0,0,0,1); pointer-events:none; z-index:4; }
   .pk-foot { position:absolute; left:0; right:0; bottom:0; height:56px; display:flex; align-items:center; justify-content:space-between; gap:5px; padding:0 8px; background:#0b0f14; border-top:1px solid #1c2636; font-family:'Press Start 2P',monospace; }
   .pk-foot button { font-family:inherit; font-size:9px; padding:10px 8px; border:2px solid; background:#0f1115; cursor:pointer; line-height:1; white-space:nowrap; }
   .pk-foot .sm { font-size:7px; padding:9px 6px; color:#8fa0b8; border-color:#2b3a4d; }
@@ -109,14 +117,14 @@
   .dk-line.marq .tk { animation:ticker var(--d, 10s) linear infinite; will-change:transform; }
   @keyframes ticker { to { transform:translateX(-50%); } }
   .dk-last { display:flex; gap:5px; margin-top:5px; flex-wrap:nowrap; overflow:hidden; } .dk-last span { font-size:10px; color:var(--mut); background:rgba(255,255,255,.06); border:1px solid var(--line); border-radius:8px; padding:2px 7px; white-space:nowrap; } .dk-last b { color:var(--ink); font-size:11px; }
-  .dk-stamp { position:absolute; top:34px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:24px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.4); z-index:3; font-family:'Press Start 2P',monospace; font-size:14px; }
+  .dk-stamp { position:absolute; top:62px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:24px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.4); z-index:3; font-family:'Press Start 2P',monospace; font-size:14px; }
   /* the size of the move, fixed mid-glass: on a long pull the card (and its stamp) is mostly off screen */
   #pktier { position:absolute; left:50%; top:34%; transform:translate(-50%, -50%); z-index:5; pointer-events:none; opacity:0; font-family:'Press Start 2P',monospace; font-size:15px; padding:9px 14px; border:3px solid; border-radius:8px; background:rgba(7,11,16,.82); white-space:nowrap; transition:opacity .08s; }
   #pktier.up { color:var(--up); border-color:var(--up); } #pktier.dn { color:var(--down); border-color:var(--down); } #pktier.sk { color:#dfe7f0; border-color:#dfe7f0; }
   /* the card's corner: the signed size in its colour, no box -- the boxed BOOST / FADE readout is the centre one */
   .dk-stamp { border:0 !important; background:none; padding:2px 4px; font-size:18px; text-shadow:0 0 3px #000, 0 0 8px rgba(0,0,0,.95), 0 2px 0 rgba(0,0,0,.8); }
   .dk-stamp.up { left:14px; color:var(--up); border-color:var(--up); transform:rotate(-12deg); } .dk-stamp.dn { right:14px; color:var(--down); border-color:var(--down); transform:rotate(12deg); }
-  .dk-had { position:absolute; top:30px; left:50%; transform:translateX(-50%); font-size:10px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.7); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; z-index:3; }
+  .dk-had { position:absolute; top:60px; left:50%; transform:translateX(-50%); font-size:10px; padding:3px 10px; border-radius:10px; background:rgba(0,0,0,.7); color:var(--ink); white-space:nowrap; max-width:92%; overflow:hidden; text-overflow:ellipsis; z-index:3; }
   .dk-had.up { color:var(--up); } .dk-had.dn { color:var(--down); }
   .dk-done { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:20px 18px; color:var(--mut); font-size:13px; line-height:1.5; gap:10px; } .dk-done b { color:var(--ink); }
   .swipedtag { font-size:11px; color:var(--mut); margin-top:6px; } .swipedtag.up b { color:var(--up); } .swipedtag.dn b { color:var(--down); }
@@ -382,7 +390,10 @@
       <div class="rc">&copy; 2026 ROB BURKE</div>
     </div>
     <div id="play">
-      <div class="pk-hint">◀ SWIPE ▶</div>
+      <!-- the swipe gauge (owner, 2026-09-28): straight up at rest; the needle follows the pull, and passing a tick is
+           the step a release gives (the ticks sit on commitAt / tierOf's lines) -->
+      <svg id="pkgauge" viewBox="0 0 160 58" aria-hidden="true"><path id="gb-3" class="gb dn" d="M47.7 36.5A34 34 0 0 1 54.7 24.2"/><path id="gb-2" class="gb dn" d="M54.7 24.2A34 34 0 0 1 66.2 15.9"/><path id="gb-1" class="gb dn" d="M66.2 15.9A34 34 0 0 1 80.0 13.0"/><path id="gb1" class="gb up" d="M80.0 13.0A34 34 0 0 1 93.8 15.9"/><path id="gb2" class="gb up" d="M93.8 15.9A34 34 0 0 1 105.3 24.2"/><path id="gb3" class="gb up" d="M105.3 24.2A34 34 0 0 1 112.3 36.5"/><g class="gt"><line x1="52.4" y1="38.0" x2="43.9" y2="35.3"/><line x1="58.4" y1="27.6" x2="51.8" y2="21.6"/><line x1="68.2" y1="20.5" x2="64.5" y2="12.3"/><line x1="80.0" y1="18.0" x2="80.0" y2="9.0"/><line x1="91.8" y1="20.5" x2="95.5" y2="12.3"/><line x1="101.6" y1="27.6" x2="108.2" y2="21.6"/><line x1="107.6" y1="38.0" x2="116.1" y2="35.3"/></g><g class="gl"><text x="37.2" y="35.6" id="gl-3" class="dn">−30</text><text x="46.6" y="19.4" id="gl-2" class="dn">−20</text><text x="61.7" y="8.4" id="gl-1" class="dn">−10</text><text x="80.0" y="4.5" id="gl0" class="">0</text><text x="98.3" y="8.4" id="gl1" class="up">+10</text><text x="113.4" y="19.4" id="gl2" class="up">+20</text><text x="122.8" y="35.6" id="gl3" class="up">+30</text></g><text x="44" y="55" class="dn">◀FADE</text><text x="116" y="55" class="up">BOOST▶</text><g id="gneedle"><line x1="80" y1="47" x2="80" y2="16"/></g><circle cx="80" cy="47" r="3.2" class="hub"/></svg>
+      <div class="pk-side">SWIPE UP TO SKIP ▶</div>
       <div id="pkstage"></div>
       <div id="pkprog"></div>
       <div id="pktier"></div>
@@ -1118,10 +1129,11 @@ function dkCard(p, under) {
 }
 function deckRender() {
   if ($("pktier")) $("pktier").style.opacity = 0;
+  gauge(0, 0);
   if (!D || MODE !== "swipe" || !PLAYING) return;
   if (!DECK.length) deckBuild();
   const st = $("pkstage"), nb = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v > 0).length, nf = Object.entries(picks).filter(([k, v]) => k.endsWith(":" + SW) && v < 0).length;
-  $("pkprog").textContent = `${Math.min(DI + 1, DECK.length)}/${DECK.length} · ${nb}▲ ${nf}▼`;
+  $("pkprog").innerHTML = `${Math.min(DI + 1, DECK.length)}/${DECK.length}<br>${nb}▲ ${nf}▼`;
   $("dkundo").disabled = !HIST.length;
   if (DI >= DECK.length) {
     st.innerHTML = `<div class="dk-card"><div class="dk-done"><b>${DECK.length ? "That's every player on the board." : "Nothing left to judge: every game has kicked off."}</b><span>${nb} boosted, ${nf} faded. They lock in by themselves; come back any time, each game counts your last lock-in before it kicks off.</span><button class="sec" id="dktop">Go through them again</button></div></div>`;
@@ -1154,9 +1166,26 @@ const commitAt = w => Math.max(60, w * 0.18);
 // SKIP button). Counts past 20% of the card's height (at least 70 px) or on a quick upward flick.
 const upAt = el => Math.max(70, (el.offsetHeight || 400) * 0.2);
 const tierOf = (dx, w) => { const a = Math.abs(dx); return a < w * 0.45 ? 1 : a < w * 0.68 ? 2 : SWIPE_MAX; };
+// the gauge's reading for a pull: 0 at rest, 10 at commitAt, 20 and 30 where tierOf steps up, so the needle passes
+// a tick exactly where a release starts to give that step; a little overshoot past 30, then it stops
+function pullValue(dx, w) {
+  const a = Math.abs(dx), c = commitAt(w), b1 = w * 0.45, b2 = w * 0.68;
+  const v = a < c ? 10 * a / c : a < b1 ? 10 + 10 * (a - c) / (b1 - c) : a < b2 ? 20 + 10 * (a - b1) / (b2 - b1) : Math.min(33, 30 + 3 * (a - b2) / (w * 0.2));
+  return Math.sign(dx) * v;
+}
+// v: -33..33 (signed %); n: the step a release would give now (0 = none yet), lit on its band
+function gauge(v, n) {
+  const g = $("gneedle"); if (!g) return;
+  g.style.transform = `rotate(${Math.max(-33, Math.min(33, v)) / 30 * 72}deg)`;
+  g.setAttribute("class", n ? (v > 0 ? "up" : "dn") : "");
+  const band = n ? Math.sign(v) * Math.min(3, Math.floor(Math.abs(v) / 10) + 1) : 0;    // the band the needle is in
+  for (const b of document.querySelectorAll("#pkgauge .gb")) b.classList.toggle("on", !!band && +b.id.slice(2) === band);
+  for (const t of document.querySelectorAll("#pkgauge [id^=gl]")) t.classList.toggle("on", !!n && +t.id.slice(2) === Math.sign(v) * n);   // the step you get
+}
 // the centre readout says BOOST / FADE and the size; the card's corner stamp just the signed size, in its colour
 function stampTier(el, sgn, n, op) {
   const t = $("pktier");
+  gauge(sgn && n ? sgn * n * 10 : 0, sgn && n && op === 1 ? n : 0);      // a tap or a reset; a live pull sets it after
   if (t) { t.style.opacity = sgn && n ? op : 0; if (sgn && n) { t.className = sgn > 0 ? "up" : "dn"; t.textContent = (sgn > 0 ? "BOOST +" : "FADE \u2212") + n * 10 + "%"; t.style.transform = `translate(-50%, -50%) scale(${1 + 0.18 * (n - 1)})`; } }
   for (const [s, d] of [[el.querySelector(".dk-stamp.up"), 1], [el.querySelector(".dk-stamp.dn"), -1]]) {
     if (!s) continue;
@@ -1182,6 +1211,7 @@ function bindSwipe(el) {
     const a = Math.abs(dx), c = commitAt(w()), t = a >= c ? tierOf(dx, w()) : 0;
     if (t !== tier) { if (t && MOBILE && navigator.vibrate) navigator.vibrate(8); tier = t; }
     stampTier(el, Math.sign(dx), t || 1, t ? 1 : Math.min(0.35, a / c * 0.35));   // faint until a release would count
+    gauge(pullValue(dx, w()), t);
   };
   el.addEventListener("pointerdown", e => { if (e.button) return; on = true; x0 = e.clientX; y0 = e.clientY; t0 = Date.now(); dx = dy = 0; tier = 0; el.classList.remove("back", "fly"); try { el.setPointerCapture(e.pointerId); } catch (x) {} });
   el.addEventListener("pointermove", e => { if (!on) return; dx = e.clientX - x0; dy = e.clientY - y0; draw(); });
