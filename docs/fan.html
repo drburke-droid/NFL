@@ -1546,7 +1546,7 @@ function renderGrade() {
   if (!G || !o.n) { el.textContent = "no picks submitted yet — yours could be the first"; return; }
   let h = `<div><b>${o.n}</b> arrows from <b>${(G.by_fan || []).length}</b> fan${(G.by_fan || []).length === 1 ? "" : "s"} · <b>${o.graded}</b> graded · ${o.pending} waiting for box scores` +
     (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than THE ORACLE on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
-  if (G.by_size && o.graded && G.strategies && G.strategies.sealed === false) {   // sealed with the lab until the reveal
+  if (G.by_size && o.graded && G.revealed === true) {   // sealed with the lab until the reveal (no flag = sealed)
     const sz = Object.entries(G.by_size).filter(([k, v]) => v.graded).map(([k, v]) => `${k}×: ${pct(v.hit_rate)} on ${v.graded}`).join(" · ");
     const dr = Object.entries(G.by_direction || {}).filter(([k, v]) => v.graded).map(([k, v]) => `${k}s ${pct(v.hit_rate)} (${v.graded})`).join(" · ");
     h += `<div class="how" style="margin-top:6px">by arrow count — ${sz}${dr ? " · " + dr : ""}</div>`;
