@@ -112,7 +112,7 @@
   .dk-stamp { position:absolute; top:34px; padding:5px 12px; border:3px solid; border-radius:8px; font-weight:900; font-size:24px; letter-spacing:.06em; text-transform:uppercase; opacity:0; pointer-events:none; background:rgba(0,0,0,.4); z-index:3; font-family:'Press Start 2P',monospace; font-size:14px; }
   /* the size of the move, fixed mid-glass: on a long pull the card (and its stamp) is mostly off screen */
   #pktier { position:absolute; left:50%; top:34%; transform:translate(-50%, -50%); z-index:5; pointer-events:none; opacity:0; font-family:'Press Start 2P',monospace; font-size:15px; padding:9px 14px; border:3px solid; border-radius:8px; background:rgba(7,11,16,.82); white-space:nowrap; transition:opacity .08s; }
-  #pktier.up { color:var(--up); border-color:var(--up); } #pktier.dn { color:var(--down); border-color:var(--down); }
+  #pktier.up { color:var(--up); border-color:var(--up); } #pktier.dn { color:var(--down); border-color:var(--down); } #pktier.sk { color:#dfe7f0; border-color:#dfe7f0; }
   /* the card's corner: the signed size in its colour, no box -- the boxed BOOST / FADE readout is the centre one */
   .dk-stamp { border:0 !important; background:none; padding:2px 4px; font-size:18px; text-shadow:0 0 3px #000, 0 0 8px rgba(0,0,0,.95), 0 2px 0 rgba(0,0,0,.8); }
   .dk-stamp.up { left:14px; color:var(--up); border-color:var(--up); transform:rotate(-12deg); } .dk-stamp.dn { right:14px; color:var(--down); border-color:var(--down); transform:rotate(12deg); }
@@ -375,7 +375,7 @@
       <div class="rt">QUICK PICKS</div>
       <div class="rs" id="rwhos">WHO'S PLAYING?</div>
       <div class="rrow"><input id="rwho" type="text" placeholder="AAA" maxlength="3" autocomplete="off" style="text-transform:uppercase;letter-spacing:.15em"><input id="rpin" type="password" inputmode="numeric" pattern="[0-9]*" placeholder="PIN" maxlength="8" autocomplete="off"><select id="rfav"><option value="">YOUR TEAM</option></select></div>
-      <div class="rh">FADE OR BOOST ONE PLAYER AT A TIME<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br>PULL FURTHER FOR A BIGGER MOVE: 10%, 20% OR 30%<br>EVERY SWIPE LOCKS IN BY ITSELF. PICKS LOCK AT KICKOFF</div>
+      <div class="rh">FADE OR BOOST ONE PLAYER AT A TIME<br><b>SWIPE RIGHT</b> = BOOST &nbsp; <b>SWIPE LEFT</b> = FADE<br><b>SWIPE UP</b> = SKIP (KEEPS ANY PICK YOU MADE)<br>PULL FURTHER FOR A BIGGER MOVE: 10%, 20% OR 30%<br>EVERY SWIPE LOCKS IN BY ITSELF. PICKS LOCK AT KICKOFF</div>
       <button class="go" id="rstart">▶ PRESS START</button>
       <button class="alt" id="rpaper">&#128240; READ THE PAPER: WHAT THIS IS AND WHY</button>
       <button class="alt" id="rmore">WANT MORE CONTROL? JUDGE EVERY STAT</button>
@@ -1047,7 +1047,7 @@ function setMode(m) {
   MODE = m; ls.set("fanpicks_mode", m); PLAYING = false; screens(); readyText();
   $("modetitle").textContent = m === "swipe" ? "Quick picks" : "Full control";
   $("modehow").innerHTML = m === "swipe"
-    ? `Fade or boost one player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a short swipe moves his whole line 10%, a longer one 20%, all the way across 30% (or tap the button once, twice or three times). No numbers to fiddle with.`
+    ? `Fade or boost one player at a time, with his projected points. Swipe <b style="color:var(--up)">right to boost</b> him, <b style="color:var(--down)">left to fade</b> him; a short swipe moves his whole line 10%, a longer one 20%, all the way across 30% (or tap the button once, twice or three times). <b>Swipe up</b> to skip a player, and to keep a pick you already made. No numbers to fiddle with.`
     : `Every stat of every player, ▲ and ▼ a set amount each: half a touchdown, one catch, ten yards. For when you know a receiver is an 80-yard guy, not a 90.`;
   $("modebtn").textContent = m === "swipe" ? "Want more control? Judge every stat →" : "← Quick picks: one swipe per player";
   if (D) render();
@@ -1106,7 +1106,7 @@ function dkCard(p, under) {
   const base = dk0(p), now = dkPoints(lineOf(p, true));
   const chip = p.status === "Q" || p.inj === "Q" ? '<span class="chip">Q</span>' : p.inj === "D" ? '<span class="chip out">D</span>' : "";
   const line = Object.entries(p.stats).filter(([k, v]) => v != null).map(([k, v]) => `${fmt(k, v)} ${LABEL[k]}`).join(" · ");
-  const had = sw ? `<div class="dk-had ${sw > 0 ? "up" : "dn"}">you ${sw > 0 ? "boosted" : "faded"} him ${Math.abs(sw) * 10}% → ${now.toFixed(1)} pts · swipe again to change</div>`
+  const had = sw ? `<div class="dk-had ${sw > 0 ? "up" : "dn"}">you ${sw > 0 ? "boosted" : "faded"} him ${Math.abs(sw) * 10}% → ${now.toFixed(1)} pts · swipe again to change, up to keep</div>`
             : arrows ? `<div class="dk-had">${arrows} stat arrow${arrows === 1 ? "" : "s"} on him from Full control → ${now.toFixed(1)} pts</div>` : "";
   // the season so far: his DraftKings points in each earlier week (the bake's lw; null = no box score that week)
   const lw = Array.isArray(p.lw) ? p.lw.map((v, k) => [k + 1, v]).slice(-2) : [];
@@ -1149,6 +1149,10 @@ function tickers(root) {
 // will, so what the fan sees is what he gets (the 10% stamp used to show well before a release counted, and
 // 10% swipes snapped back). A phone ticks on reaching commitAt and on each new zone. A quick flick is 10%.
 const commitAt = w => Math.max(60, w * 0.18);
+// Swipe up = skip (owner, 2026-09-28): on to the next player without touching this one, so a player you already
+// judged keeps his pick (going back through the deck used to mean re-swiping each one the same way, or the small
+// SKIP button). Counts past 20% of the card's height (at least 70 px) or on a quick upward flick.
+const upAt = el => Math.max(70, (el.offsetHeight || 400) * 0.2);
 const tierOf = (dx, w) => { const a = Math.abs(dx); return a < w * 0.45 ? 1 : a < w * 0.68 ? 2 : SWIPE_MAX; };
 // the centre readout says BOOST / FADE and the size; the card's corner stamp just the signed size, in its colour
 function stampTier(el, sgn, n, op) {
@@ -1164,7 +1168,16 @@ function stampTier(el, sgn, n, op) {
 function bindSwipe(el) {
   let x0 = 0, y0 = 0, dx = 0, dy = 0, on = false, t0 = 0, tier = 0;
   const w = () => el.offsetWidth || 320;
+  const upward = () => dy < -12 && -dy > Math.abs(dx) * 1.2;          // mostly up: a skip, not a fade or boost
   const draw = () => {
+    if (upward()) {                     // a skip: the card rises with the finger, SKIP (or KEEP) faint until a release counts
+      el.style.transform = `translate(${dx * 0.2}px, ${dy}px)`; stampTier(el, 0, 0, 0);
+      const a = -dy, c = upAt(el), sw = swipeOf(el.dataset.i), t = $("pktier"), ok = a >= c;
+      if (ok !== (tier === "up")) { if (ok && MOBILE && navigator.vibrate) navigator.vibrate(8); tier = ok ? "up" : 0; }
+      if (t) { t.className = "sk"; t.textContent = sw ? `KEEP ${sw > 0 ? "+" : "\u2212"}${Math.abs(sw) * 10}% \u25B2` : "SKIP \u25B2"; t.style.transform = "translate(-50%, -50%)"; t.style.opacity = ok ? 1 : Math.min(0.35, a / c * 0.35); }
+      return;
+    }
+    if (tier === "up") tier = 0;
     el.style.transform = `translate(${dx}px, ${dy * 0.15}px) rotate(${dx / 18}deg)`;
     const a = Math.abs(dx), c = commitAt(w()), t = a >= c ? tierOf(dx, w()) : 0;
     if (t !== tier) { if (t && MOBILE && navigator.vibrate) navigator.vibrate(8); tier = t; }
@@ -1175,6 +1188,10 @@ function bindSwipe(el) {
   const end = () => {
     if (!on) return; on = false;
     const v = Math.abs(dx) / Math.max(1, Date.now() - t0);                 // px per ms: a quick flick counts
+    if (upward()) {
+      if (-dy >= upAt(el) || (-dy > 40 && -dy / Math.max(1, Date.now() - t0) > 0.6)) return skipCard(true);
+      el.classList.add("back"); el.style.transform = ""; stampTier(el, 0, 0, 0); return;
+    }
     if (Math.abs(dx) >= commitAt(w()) || (Math.abs(dx) > 40 && v > 0.6)) decide(Math.sign(dx) * tierOf(dx, w()));
     else { el.classList.add("back"); el.style.transform = ""; stampTier(el, 0, 0, 0); }
   };
@@ -1204,7 +1221,7 @@ let FLYING = false, QUEUED = 0;
 function flyOff(dir, then) {
   const el = $("pkstage").lastElementChild; if (!el) return then();
   FLYING = true;
-  el.classList.add("fly"); el.style.transform = dir ? `translate(${dir * (Math.max(innerWidth, 500) + 200)}px, -30px) rotate(${dir * 24}deg)` : "translateY(60px) scale(.9)"; el.style.opacity = "0";
+  el.classList.add("fly"); el.style.transform = dir === "up" ? `translateY(${-(Math.max(innerHeight, 600) + 200)}px)` : dir ? `translate(${dir * (Math.max(innerWidth, 500) + 200)}px, -30px) rotate(${dir * 24}deg)` : "translateY(60px) scale(.9)"; el.style.opacity = "0";
   setTimeout(() => { FLYING = false; then(); const q = QUEUED; QUEUED = 0; if (q) tapDecide(q); }, 280);
 }
 function decide(dir) {                     // dir: +-1..3, the signed size of the move
@@ -1218,8 +1235,10 @@ function decide(dir) {                     // dir: +-1..3, the signed size of th
   flyOff(Math.sign(dir), () => { DI++; deckRender(); count(); });
 }
 $("dkboost").onclick = () => tapDecide(1); $("dkfade").onclick = () => tapDecide(-1);
-$("dkskip").onclick = () => { dropPend(); if (DI < DECK.length) { HIST.push(DI); flyOff(0, () => { DI++; deckRender(); }); } };
-$("dkundo").onclick = () => { dropPend(); if (!HIST.length) return; edited(); DI = HIST.pop(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
+// a skip leaves the player's pick as it is; its history entry says so, so UNDO brings the card back without clearing it
+function skipCard(up) { dropPend(); if (FLYING || DI >= DECK.length) return; HIST.push({di: DI, keep: true}); flyOff(up ? "up" : 0, () => { DI++; deckRender(); }); }
+$("dkskip").onclick = () => skipCard(false);
+$("dkundo").onclick = () => { dropPend(); if (!HIST.length) return; const h = HIST.pop(); DI = typeof h === "object" ? h.di : h; if (h && h.keep) { deckRender(); return; } edited(); const p = DECK[DI]; if (p && swipeOf(p.i)) { delete picks[p.i + ":" + SW]; ls.set(KEY, JSON.stringify(picks)); } deckRender(); count(); };
 addEventListener("keydown", e => {
   if (MODE !== "swipe" || !D || e.target.matches("input,textarea,select") || $("paperwrap").classList.contains("on") || !stage.classList.contains("on")) return;
   if (!PLAYING) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); $("rstart").click(); } return; }
