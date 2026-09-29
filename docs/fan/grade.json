@@ -1,12 +1,12 @@
 {
- "generated": "2026-09-29T17:16Z",
+ "generated": "2026-09-29T17:28Z",
  "overall": {
   "picks": 468,
   "picks_graded": 468,
   "picks_pending": 0,
-  "pick_hits": 243,
-  "pick_misses": 216,
-  "pick_hit_rate": 0.529,
+  "pick_hits": 245,
+  "pick_misses": 214,
+  "pick_hit_rate": 0.534,
   "picks_closer": 215,
   "picks_farther": 241,
   "n": 1884,
@@ -33,9 +33,9 @@
    "picks": 25,
    "picks_graded": 25,
    "picks_pending": 0,
-   "pick_hits": 14,
-   "pick_misses": 11,
-   "pick_hit_rate": 0.56,
+   "pick_hits": 15,
+   "pick_misses": 10,
+   "pick_hit_rate": 0.6,
    "picks_closer": 14,
    "picks_farther": 11,
    "n": 115,
@@ -177,9 +177,9 @@
    "picks": 206,
    "picks_graded": 206,
    "picks_pending": 0,
-   "pick_hits": 105,
-   "pick_misses": 97,
-   "pick_hit_rate": 0.52,
+   "pick_hits": 106,
+   "pick_misses": 96,
+   "pick_hit_rate": 0.525,
    "picks_closer": 100,
    "picks_farther": 101,
    "n": 784,
@@ -213,9 +213,9 @@
    "picks": 93,
    "picks_graded": 93,
    "picks_pending": 0,
-   "pick_hits": 48,
-   "pick_misses": 43,
-   "pick_hit_rate": 0.527,
+   "pick_hits": 47,
+   "pick_misses": 44,
+   "pick_hit_rate": 0.516,
    "picks_closer": 36,
    "picks_farther": 54,
    "n": 392,
@@ -249,9 +249,9 @@
    "picks": 91,
    "picks_graded": 91,
    "picks_pending": 0,
-   "pick_hits": 48,
-   "pick_misses": 40,
-   "pick_hit_rate": 0.545,
+   "pick_hits": 49,
+   "pick_misses": 39,
+   "pick_hit_rate": 0.557,
    "picks_closer": 39,
    "picks_farther": 48,
    "n": 382,
@@ -285,9 +285,9 @@
    "picks": 25,
    "picks_graded": 25,
    "picks_pending": 0,
-   "pick_hits": 14,
-   "pick_misses": 11,
-   "pick_hit_rate": 0.56,
+   "pick_hits": 15,
+   "pick_misses": 10,
+   "pick_hit_rate": 0.6,
    "picks_closer": 14,
    "picks_farther": 11,
    "n": 115,
@@ -301,7 +301,8 @@
    "farther": 57,
    "removed_pts": 2.29,
    "mae_base_pts": 2.025,
-   "mae_adj_pts": 2.005
+   "mae_adj_pts": 2.005,
+   "last_submitted": "2026-09-25T19:26:53Z"
   },
   {
    "fan": "Nana Owusu",
@@ -327,7 +328,8 @@
    "farther": 80,
    "removed_pts": 1.51,
    "mae_base_pts": 2.033,
-   "mae_adj_pts": 2.023
+   "mae_adj_pts": 2.023,
+   "last_submitted": "2026-09-27T05:06:25Z"
   },
   {
    "fan": "OWD",
@@ -353,7 +355,8 @@
    "farther": 2,
    "removed_pts": 1.41,
    "mae_base_pts": 3.547,
-   "mae_adj_pts": 3.265
+   "mae_adj_pts": 3.265,
+   "last_submitted": "2026-09-27T03:23:15Z"
   },
   {
    "fan": "SAM",
@@ -379,7 +382,8 @@
    "farther": 28,
    "removed_pts": -2.03,
    "mae_base_pts": 1.794,
-   "mae_adj_pts": 1.828
+   "mae_adj_pts": 1.828,
+   "last_submitted": "2026-09-28T04:13:25Z"
   },
   {
    "fan": "RJS",
@@ -389,9 +393,9 @@
    "picks": 206,
    "picks_graded": 206,
    "picks_pending": 0,
-   "pick_hits": 105,
-   "pick_misses": 97,
-   "pick_hit_rate": 0.52,
+   "pick_hits": 106,
+   "pick_misses": 96,
+   "pick_hit_rate": 0.525,
    "picks_closer": 100,
    "picks_farther": 101,
    "n": 784,
@@ -405,7 +409,8 @@
    "farther": 382,
    "removed_pts": -4.25,
    "mae_base_pts": 1.788,
-   "mae_adj_pts": 1.793
+   "mae_adj_pts": 1.793,
+   "last_submitted": "2026-09-27T03:23:46Z"
   },
   {
    "fan": "REB",
@@ -415,9 +420,9 @@
    "picks": 93,
    "picks_graded": 93,
    "picks_pending": 0,
-   "pick_hits": 48,
-   "pick_misses": 43,
-   "pick_hit_rate": 0.527,
+   "pick_hits": 47,
+   "pick_misses": 44,
+   "pick_hit_rate": 0.516,
    "picks_closer": 36,
    "picks_farther": 54,
    "n": 392,
@@ -431,7 +436,8 @@
    "farther": 189,
    "removed_pts": -12.65,
    "mae_base_pts": 1.988,
-   "mae_adj_pts": 2.02
+   "mae_adj_pts": 2.02,
+   "last_submitted": "2026-09-28T02:53:34Z"
   },
   {
    "fan": "SAK",
@@ -441,9 +447,9 @@
    "picks": 91,
    "picks_graded": 91,
    "picks_pending": 0,
-   "pick_hits": 48,
-   "pick_misses": 40,
-   "pick_hit_rate": 0.545,
+   "pick_hits": 49,
+   "pick_misses": 39,
+   "pick_hit_rate": 0.557,
    "picks_closer": 39,
    "picks_farther": 48,
    "n": 382,
@@ -457,7 +463,8 @@
    "farther": 200,
    "removed_pts": -24.62,
    "mae_base_pts": 1.993,
-   "mae_adj_pts": 2.058
+   "mae_adj_pts": 2.058,
+   "last_submitted": "2026-09-27T04:29:08Z"
   }
  ],
  "by_week": {
@@ -465,9 +472,9 @@
    "picks": 468,
    "picks_graded": 468,
    "picks_pending": 0,
-   "pick_hits": 243,
-   "pick_misses": 216,
-   "pick_hit_rate": 0.529,
+   "pick_hits": 245,
+   "pick_misses": 214,
+   "pick_hit_rate": 0.534,
    "picks_closer": 215,
    "picks_farther": 241,
    "n": 1884,
