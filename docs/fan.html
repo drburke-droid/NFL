@@ -1433,7 +1433,7 @@ function standings() {
     for (const wk of mw) {
       const r = f.weeks[wk.week]; const rem = r && r.removed_pts != null ? r.removed_pts : 0;
       removed += rem; weekly[wk.week] = (wk.mae * wk.n - rem) / wk.n;
-      if (r) { arrows += r.graded; if (rem > 0.005) w++; else if (rem < -0.005) l++; else t++; }
+      if (r) { arrows += r.picks_graded != null ? r.picks_graded : r.graded; if (rem > 0.005) w++; else if (rem < -0.005) l++; else t++; }
     }
     rows.push({name: fan, fan: true, fan_id: f.id, team: f.team, weekly, removed, w, l, t, arrows});
   }
@@ -1468,7 +1468,13 @@ function renderLead() {
   // your name as the lists show it: a merged-away identity is listed under the name it was folded into (with a
   // tag/PIN, only when this identity is the merged one -- someone else may use the old name)
   const mineN = mine && RN[mine] && (!IDH || (G && G.merged_pids && G.merged_pids[PIDH])) ? RN[mine] : mine;
-  const src = fold(LIVE || (SUBS && SUBS.entries) || []);
+  // a player's picks that COUNT this week can outnumber his latest lock-in: each game keeps the set locked in before its
+  // kickoff, so Thursday's picks stay live after a smaller Sunday lock-in. The grade counts them all (picks per fan and
+  // week); the live list only has the latest lock-in. Show the larger, so Who's In, Busiest and the grade agree.
+  const GP = {};
+  for (const r of (G && G.by_fan_week) || []) if (r.picks != null) GP[r.fan + "|" + r.week] = r.picks;
+  const withGrade = xs => xs.map(x => (x.season == null || !G || +x.season === +G.season) && GP[x.fan + "|" + x.week] > (x.arrows || 0) ? {...x, arrows: GP[x.fan + "|" + x.week]} : x);
+  const src = withGrade(fold(LIVE || (SUBS && SUBS.entries) || []));
   const thisSeason = x => x.season == null || +x.season === D.season;
   // the newest team we know for each name: a later week (then a later lock-in) wins, whatever order the lists come in;
   // the graded file's team (as of the fan's latest recorded lock-in) is the floor
@@ -1479,21 +1485,24 @@ function renderLead() {
   const ins = src.filter(x => thisSeason(x) && x.week === D.week && x.arrows > 0).sort((a, b) => (b.submitted_at || "").localeCompare(a.submitted_at || ""));
   $("npinsub").textContent = ins.length ? `${ins.length} for week ${D.week}` : `week ${D.week}`;
   $("npin").innerHTML = ins.length ? ins.map(x => `<div class="np-line"><span${x.fan === mineN ? ' style="font-weight:700"' : ""}>${esc(x.fan)}${tm(x.team || TEAM[x.fan])}</span><b>${x.arrows} arrow${x.arrows === 1 ? "" : "s"}</b></div>`).join("") : `<div class="np-empty">nobody is in yet — be first</div>`;
-  const best = ((G && G.rows) || []).filter(r => r.removed_pts != null).sort((a, b) => b.removed_pts - a.removed_pts).slice(0, 6);
+  // best / worst PICKS: a swipe once, with the points its whole line moved (older grade files: per stat line)
   const graded = ((G && G.rows) || []).filter(r => r.removed_pts != null);
-  const worst = [...graded].sort((a, b) => a.removed_pts - b.removed_pts).slice(0, 3);
-  const callLine = r => `<div class="np-line"><span>${esc(r.fan)}: ${r.player} ${LABEL[r.stat] || r.stat} ${r.arrows > 0 ? "▲" : "▼"}${Math.abs(r.arrows)} <span style="color:#777">wk${r.week}</span></span><b>${r.removed_pts > 0 ? "+" : ""}${r.removed_pts.toFixed(1)}</b></div>`;
+  const best = (G && G.picks_best) || [...graded].sort((a, b) => b.removed_pts - a.removed_pts).slice(0, 6);
+  const worst = (G && G.picks_worst) || [...graded].sort((a, b) => a.removed_pts - b.removed_pts).slice(0, 3);
+  const callLine = r => `<div class="np-line"><span>${esc(r.fan)}: ${esc(r.player)} ${r.swipe ? (r.arrows > 0 ? "boost" : "fade") : `${LABEL[r.stat] || r.stat} ${r.arrows > 0 ? "▲" : "▼"}${Math.abs(r.arrows)}`} <span style="color:#777">wk${r.week}</span></span><b>${r.removed_pts > 0 ? "+" : ""}${r.removed_pts.toFixed(1)}</b></div>`;
   $("npbest").innerHTML = best.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>best</span></div>` + best.slice(0, 3).map(callLine).join("") + `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>worst</span></div>` + worst.map(callLine).join("") : `<div class="np-empty">nothing graded yet</div>`;
-  const fans = ((G && G.by_fan) || []).filter(f => f.graded >= 5);
-  const sharp = [...fans].filter(f => f.hit_rate != null).sort((a, b) => b.hit_rate - a.hit_rate).slice(0, 3);
+  // picks, not stat lines: a swipe moves every stat in a line, and the grade used to count each one (1 swipe = "5 graded")
+  const pg = f => f.picks_graded != null ? f.picks_graded : f.graded, hr = f => f.pick_hit_rate !== undefined ? f.pick_hit_rate : f.hit_rate;
+  const fans = ((G && G.by_fan) || []).filter(f => pg(f) >= 5);
+  const sharp = [...fans].filter(f => hr(f) != null).sort((a, b) => hr(b) - hr(a) || pg(b) - pg(a)).slice(0, 3);
   // busiest = the who's-in list over the season: the same live source, the same names, the same count (a swipe
   // is one arrow). The graded file is a day behind and counts every stat a swipe moves, so its list never
   // matched. Weeks the live source does not cover (the API answers for this week only) come from submissions.json.
   const tally = {}, add = x => { if (x.arrows > 0 && thisSeason(x)) tally[x.fan] = (tally[x.fan] || 0) + x.arrows; };
   src.forEach(add);
-  if (LIVE && LIVE_WEEKS && SUBS && SUBS.entries) fold(SUBS.entries.filter(x => !LIVE_WEEKS.has(x.week))).forEach(add);
+  if (LIVE && LIVE_WEEKS && SUBS && SUBS.entries) withGrade(fold(SUBS.entries.filter(x => !LIVE_WEEKS.has(x.week)))).forEach(add);
   const busy = Object.entries(tally).map(([fan, n]) => ({fan, n})).sort((a, b) => b.n - a.n || a.fan.localeCompare(b.fan)).slice(0, 3);
-  $("npsharp").innerHTML = (sharp.length || busy.length) ? (sharp.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>direction right most often (5+ graded)</span></div>` + sharp.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(f.team)}</span><b>${pct(f.hit_rate)} of ${f.graded}</b></div>`).join("") : "") + (busy.length ? `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>most arrows this season</span></div>` + busy.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(TEAM[f.fan])}</span><b>${f.n}</b></div>`).join("") : "") : `<div class="np-empty">nothing graded yet</div>`;
+  $("npsharp").innerHTML = (sharp.length || busy.length) ? (sharp.length ? `<div class="np-line" style="color:#555;font-style:italic"><span>direction right most often (5+ graded picks)</span></div>` + sharp.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(f.team)}</span><b>${pct(hr(f))} of ${pg(f)}</b></div>`).join("") : "") + (busy.length ? `<div class="np-line" style="color:#555;font-style:italic;margin-top:4px"><span>most arrows this season</span></div>` + busy.map(f => `<div class="np-line"><span>${esc(f.fan)}${tm(TEAM[f.fan])}</span><b>${f.n}</b></div>`).join("") : "") : `<div class="np-empty">nothing graded yet</div>`;
   // the strategy lab (private: pkg/fan_lab/fan_strategies.py): each fixed rule's week-3 reading, where the idea came from, beside
   // its honest record from the following weeks
   const LB = G && G.strategies;
@@ -1544,15 +1553,17 @@ function renderLead() {
 function renderGrade() {
   const el = $("grade"), o = (G && G.overall) || {};
   if (!G || !o.n) { el.textContent = "no picks submitted yet — yours could be the first"; return; }
-  let h = `<div><b>${o.n}</b> arrows from <b>${(G.by_fan || []).length}</b> fan${(G.by_fan || []).length === 1 ? "" : "s"} · <b>${o.graded}</b> graded · ${o.pending} waiting for box scores` +
-    (o.graded ? ` · direction right <b>${pct(o.hit_rate)}</b> (${o.hits}–${o.misses}) · closer than THE ORACLE on <b>${o.closer}</b>, farther on <b>${o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
-  if (G.by_size && o.graded && G.revealed === true) {   // sealed with the lab until the reveal (no flag = sealed)
-    const sz = Object.entries(G.by_size).filter(([k, v]) => v.graded).map(([k, v]) => `${k}×: ${pct(v.hit_rate)} on ${v.graded}`).join(" · ");
-    const dr = Object.entries(G.by_direction || {}).filter(([k, v]) => v.graded).map(([k, v]) => `${k}s ${pct(v.hit_rate)} (${v.graded})`).join(" · ");
-    h += `<div class="how" style="margin-top:6px">by arrow count — ${sz}${dr ? " · " + dr : ""}</div>`;
+  const P = o.picks != null;   // counted per pick (a swipe = 1), like Who's In; older grade files only had per-stat counts
+  const on = P ? o.picks : o.n, og = P ? o.picks_graded : o.graded, op = P ? o.picks_pending : o.pending;
+  let h = `<div><b>${on}</b> picks from <b>${(G.by_fan || []).length}</b> fan${(G.by_fan || []).length === 1 ? "" : "s"} · <b>${og}</b> graded · ${op} waiting for box scores` +
+    (og ? ` · direction right <b>${pct(P ? o.pick_hit_rate : o.hit_rate)}</b> (${P ? o.pick_hits : o.hits}–${P ? o.pick_misses : o.misses}) · closer than THE ORACLE on <b>${P ? o.picks_closer : o.closer}</b>, farther on <b>${P ? o.picks_farther : o.farther}</b> · net error removed ${pts(o.removed_pts)} pts` : "") + `</div>`;
+  if (G.by_size && og && G.revealed === true) {   // sealed with the lab until the reveal (no flag = sealed)
+    const sz = Object.entries(G.by_size).filter(([k, v]) => v.graded).map(([k, v]) => `${k}×: ${pct(v.pick_hit_rate !== undefined ? v.pick_hit_rate : v.hit_rate)} on ${v.picks_graded != null ? v.picks_graded : v.graded}`).join(" · ");
+    const dr = Object.entries(G.by_direction || {}).filter(([k, v]) => v.graded).map(([k, v]) => `${k}s ${pct(v.pick_hit_rate !== undefined ? v.pick_hit_rate : v.hit_rate)} (${v.picks_graded != null ? v.picks_graded : v.graded})`).join(" · ");
+    h += `<div class="how" style="margin-top:6px">by swipe size — ${sz}${dr ? " · " + dr : ""}</div>`;
   }
   if ((G.rows || []).length) {
-    h += `<details style="margin-top:8px"><summary class="how" style="cursor:pointer">every graded pick (${G.rows.length})</summary><div class="gwrap"><table class="g" style="font-size:12px"><tr><th>wk</th><th class="l">fan</th><th class="l">player</th><th>stat</th><th>arrows</th><th>ours</th><th>fan</th><th>actual</th><th>dir</th><th>pts</th></tr>` +
+    h += `<details style="margin-top:8px"><summary class="how" style="cursor:pointer">every graded stat line (${G.rows.length}; a swipe moves each stat in the player's line)</summary><div class="gwrap"><table class="g" style="font-size:12px"><tr><th>wk</th><th class="l">fan</th><th class="l">player</th><th>stat</th><th>arrows</th><th>ours</th><th>fan</th><th>actual</th><th>dir</th><th>pts</th></tr>` +
       G.rows.map(r => `<tr><td>${r.week}</td><td class="l">${esc(r.fan)}</td><td class="l">${r.player} <span style="color:var(--mut)">${r.team} ${r.pos}</span></td><td>${(LABEL[r.stat] || r.stat)}</td><td>${r.arrows > 0 ? "+" : ""}${r.arrows}</td><td>${r.base == null ? r.baseline : r.base}</td><td>${r.adj == null ? r.adjusted : r.adj}</td><td>${r.actual}</td><td class="${r.direction === "hit" ? "pos" : r.direction === "miss" ? "neg" : ""}">${r.direction}</td><td>${pts(r.removed_pts)}</td></tr>`).join("") + `</table></div></details>`;
   }
   if ((G.pending_games || []).length) h += `<div class="how" style="margin-top:6px">waiting on: ${G.pending_games.join(", ")}</div>`;
