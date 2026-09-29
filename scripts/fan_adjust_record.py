@@ -87,8 +87,9 @@ def rows_for(S, W, j):
         if not (0 <= pi < len(players)) or v == 0 or v > 100: continue
         p = players[pi]
         if si == fan_rules.SWIPE_STAT:
-            # Quick picks: a swipe on the whole player = one s1 row per stat in his line, +1 or -1
-            v = 1 if v > 0 else -1
+            # Quick picks: a swipe on the whole player = one s1 row per stat in his line, 1-3 steps of 10%
+            # either way (how far the fan pulled; codes before 2026-09-27 carry only +-1)
+            v = max(-fan_rules.SWIPE_MAX, min(fan_rules.SWIPE_MAX, v))
             for stat in keys:
                 if p["stats"].get(stat) is None: continue
                 r = row(p, pi, stat, v, "s1")
@@ -99,6 +100,11 @@ def rows_for(S, W, j):
         if stat not in p["stats"]: continue
         r = row(p, pi, stat, v, rule)
         if r: out.append(r)
+    if not out and j.get("a") == []:
+        # every arrow taken back: one marker row, so the grader knows this is his latest set
+        out.append({**{k: "" for k in FIELDS}, "received_at": now, "season": S, "week": W, "fan": fan, "submitted_at": sub,
+                    "bake_id": bake.get("bake_id", ""), "comment": com, "fan_id": fid, "device_id": did, "fan_team": fav,
+                    "stat": fan_rules.WITHDRAW, "arrows": 0, "rule": rule})
     return fan, sub, out
 
 codes = []

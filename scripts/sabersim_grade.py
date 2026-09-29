@@ -23,13 +23,14 @@ from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import dk_scoring   # the scoring the big sites publish their accuracy in; see mae_vs_sites below
+import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ET = ZoneInfo("America/New_York")
 ap = argparse.ArgumentParser()
 ap.add_argument("--sends", nargs="+", default=[os.path.join(ROOT, "outputs", "sabersim")])
 ap.add_argument("--season", type=int, default=2026)
 ap.add_argument("--week1-tuesday", default="2026-09-08", help="Tuesday that starts week 1 (weeks roll on Tuesdays)")
-ap.add_argument("--min-lead", type=float, default=75.0, help="minutes before kickoff a send must be generated to count")
+ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after)")
 ap.add_argument("--rows-out", default=None, help="also write every graded row (send, actual, ffa, dk) to this CSV, for audits")
 A = ap.parse_args()
 W1 = date.fromisoformat(A.week1_tuesday)
@@ -58,7 +59,7 @@ s["kick"] = s.apply(kick, axis=1)
 s = s.dropna(subset=["gen", "kick"])
 s["lead_min"] = (s.kick - s.gen).dt.total_seconds() / 60
 s["week"] = ((s.kick.dt.tz_convert(ET).dt.date - W1).map(lambda t: t.days) // 7 + 1).astype(int)
-s["eligible"] = s.lead_min >= A.min_lead
+s["eligible"] = send_rules.eligible(s.kick, s.lead_min, A.min_lead)
 elig = s[s.eligible].sort_values("gen").drop_duplicates(["Game", "ID", "Player", "Pos"], keep="last").copy()
 late = s[~s.eligible].groupby("week").send_file.nunique().to_dict()
 elig = elig[elig.kick < pd.Timestamp.now(tz=ET)]                     # games that have kicked off
@@ -210,6 +211,23 @@ for wk, d in g.groupby("week"):
     o = block(d); o.update({"week": int(wk), "sends": int(d.send_file.nunique()), "games": int(d.Game.nunique()),
                             "late_sends_ignored": int(late.get(wk, 0)), "by_pos": {p: block(x) for p, x in d.groupby("Pos")}})
     weeks.append(o)
+# COMPLETE = every game on the schedule has a graded box score, or (when a game we never sent for keeps
+# the count short) the week's last kickoff is 4 hours gone with no game still awaiting box scores. The fan
+# page ranks complete weeks only, so a Thursday game alone never prints a week's standings.
+_sp = os.path.join(ROOT, "data", f"schedule_{A.season}.csv")
+_sched = pd.read_csv(_sp, dtype={"gametime": str}) if os.path.exists(_sp) else None
+if _sched is not None:
+    _sched = _sched[_sched.game_type.eq("REG")] if "game_type" in _sched else _sched
+    _sched["kick"] = pd.to_datetime(_sched.gameday + " " + _sched.gametime.fillna("13:00"), errors="coerce").dt.tz_localize(ET)
+_awaiting = {int(k) for k, v in skipped.items() if len(v)}
+_now = pd.Timestamp.now(tz=ET)
+for o in weeks:
+    if _sched is None:
+        continue
+    sw = _sched[_sched.week == o["week"]]
+    o["scheduled"] = int(len(sw))
+    over = len(sw) and sw.kick.notna().all() and _now > sw.kick.max() + pd.Timedelta(hours=4)
+    o["complete"] = bool(len(sw) and (o["games"] >= len(sw) or (over and o["week"] not in _awaiting)))
 overall = block(g); overall["by_pos"] = {p: block(x) for p, x in g.groupby("Pos")}
 misses = g.reindex(g.err.abs().sort_values(ascending=False).index).head(12)
 # ---------- 4b. Subvertadown check: did their positional matchup bonus / QB projection point the right way? ----------
@@ -251,7 +269,29 @@ if os.path.exists(svp):
                 "mae_model": round(float(sk.err.abs().mean()), 3), "mae_full_bonus": round(float((sk.actual - (sk.Proj + sk.adj)).abs().mean()), 3),
                 "mae_half_bonus": round(float((sk.actual - (sk.Proj + 0.5 * sk.adj)).abs().mean()), 3),
                 "corr_bonus_err": round(float(np.corrcoef(sk.bonus, sk.err)[0, 1]), 3) if len(sk) >= 8 and sk.bonus.std() > 0 else None}
-        sv["bonus"] = {"all": allb, "by_pos": rows_pos}
+        # the fair directional test: did good-matchup players beat OUR projection by more than bad-matchup players?
+        # (our misses skew one way in any week, so "good ones beat it / bad ones fell short" alone mostly measures that)
+        def gap(d):
+            fav, unf = d[d.bonus >= 0.5].err, d[d.bonus <= -0.5].err
+            return round(float(fav.mean() - unf.mean()), 2) if len(fav) and len(unf) else None
+        # the season figure is built from the WEEKLY contrasts, never from pooled rows: our bias moves week to week, and
+        # with good flags bunched in a week we ran low, a pooled gap would read positive though no week shows a signal.
+        # Each week weighs by the harmonic mean of its good and bad counts (how much a difference of two means is worth).
+        def season_gap(d):
+            num = den = 0.0
+            for _, dw in d.groupby("week"):
+                nf, nu = int((dw.bonus >= 0.5).sum()), int((dw.bonus <= -0.5).sum())
+                gw = gap(dw)
+                if gw is None: continue
+                h = 2.0 / (1.0 / nf + 1.0 / nu); num += h * gw; den += h
+            return round(num / den, 2) if den else None
+        for pos_, d in sk.groupby("Pos"): rows_pos[pos_]["gap"] = season_gap(d)
+        allb["gap"] = season_gap(sk)
+        by_week = []
+        for wk_, d in sk.groupby("week"):
+            by_week.append({"week": int(wk_), "n_flagged": int((d.bonus.abs() >= 0.5).sum()), "all": gap(d),
+                            **{pos_: gap(d[d.Pos == pos_]) for pos_ in ("RB", "WR", "TE")}})
+        sv["bonus"] = {"all": allb, "by_pos": rows_pos, "by_week": by_week}
         # commentary
         c = []
         if allb["dir_hit"] is not None:
@@ -260,6 +300,10 @@ if os.path.exists(svp):
         c.append(f"Adding the full team bonus, shared by projection, would have moved MAE from {allb['mae_model']:.2f} to {allb['mae_full_bonus']:.2f}; "
                  f"half of it: {allb['mae_half_bonus']:.2f}.")
         if allb["corr_bonus_err"] is not None: c.append(f"Correlation between the bonus and our error: {allb['corr_bonus_err']:+.2f}.")
+        if allb["gap"] is not None:
+            c.append("Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones, within each week, then averaged over weeks; 0 = no signal): "
+                     + ", ".join(f"{p_} {rows_pos[p_]['gap']:+.2f}" for p_ in ("RB", "WR", "TE") if rows_pos.get(p_, {}).get("gap") is not None)
+                     + f"; all {allb['gap']:+.2f}.")
         c.append("Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found "
                  "opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.")
         sv["commentary"] = c
@@ -271,6 +315,17 @@ if os.path.exists(svp):
         sv["qb"] = {"n": int(len(q)), "mae_model": round(float(q.err.abs().mean()), 3), "mae_subvertadown": round(float((q.actual - q.sv).abs().mean()), 3),
                     "mae_blend50": round(float((q.actual - 0.5 * (q.Proj + q.sv)).abs().mean()), 3),
                     "rows": [{"player": r.Player, "team": r.Team, "week": int(r.week), "model": round(float(r.Proj), 1), "subvertadown": round(float(r.sv), 1), "actual": round(float(r.actual), 1)} for r in q.itertuples()]}
+        # direction: where both had him starting and the two projections differ by a point or more, whose side did the
+        # result land on (a QB one of us had ruled out is an injury call, not a projection call)
+        def side(d):
+            d = d[(d.Proj >= 5) & (d.sv >= 5) & ((d.sv - d.Proj).abs() >= 1.0)]
+            return {"n": int(len(d)), "their_side": int(((d.actual - d.Proj) * (d.sv - d.Proj) > 0).sum())}
+        sv["qb"]["side"] = side(q)
+        sv["qb"]["by_week"] = [{"week": int(w_), **side(d)} for w_, d in q.groupby("week")]
+        for r_ in sv.get("bonus", {}).get("by_week", []):
+            r_["qb"] = next((x for x in sv["qb"]["by_week"] if x["week"] == r_["week"]), None)
+        sd = sv["qb"]["side"]
+        if sd["n"]: sv.setdefault("commentary", []).append(f"QB direction: where the two projections differed by 1+ point (both had him starting), the result landed on Subvertadown's side {sd['their_side']} of {sd['n']} times ({sd['their_side'] / sd['n']:.0%}; 50% = no better than ours).")
         sv.setdefault("commentary", []).append(f"QB: on {len(q)} graded starters Subvertadown's projection MAE was {sv['qb']['mae_subvertadown']:.2f} vs ours {sv['qb']['mae_model']:.2f}; a 50/50 blend {sv['qb']['mae_blend50']:.2f}.")
 
 # ---------- 5. scale: what the numbers mean (measured on the 2025 season, ~300 FFA-projected QB/RB/WR/TE per week) ----------
@@ -295,8 +350,8 @@ SCALE = {
   "labels": {"elite": "elite (at the noise floor)", "top": "top tier (beats the consensus)", "consensus": "consensus-grade (FFA / market blend)",
              "fair": "fair (trailing averages)", "poor": "poor"}
 }
-out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead, "scale": SCALE,
-       "rule": "latest send generated >= 75 min before kickoff, per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
+out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead if A.min_lead is not None else {"before_" + send_rules.CUTOVER.strftime("%Y-%m-%dT%H:%MZ"): send_rules.LEAD_BEFORE, "after": send_rules.LEAD_AFTER}, "scale": SCALE,
+       "rule": send_rules.rule_text(A.min_lead) + ", per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
        "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0; med_vs_sites / med_vs_sites_all: the MEDIAN absolute error on each basis (the sites publish means, so a median is not like for like); mae_vs_sites_live: the all-players pool without season-long absentees (a player who sat stays only if he has played earlier this season)",
        "weeks": weeks, "overall": overall,
        "misses": [{"week": int(r.week), "player": r.Player, "pos": r.Pos, "team": r.Team, "proj": round(float(r.Proj), 1), "actual": round(float(r.actual), 1)} for r in misses.itertuples()]}

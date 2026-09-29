@@ -28,6 +28,8 @@ from datetime import datetime, timezone, date
 from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fan_rules
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ET = ZoneInfo("America/New_York")
@@ -36,7 +38,7 @@ ap.add_argument("--season", type=int, default=2026)
 ap.add_argument("--sends", nargs="+", default=[os.path.join(ROOT, "outputs", "sabersim")],
                 help="folders holding Burke_Model_Burke_*.csv — the numbers we actually sent")
 ap.add_argument("--week1-tuesday", default="2026-09-08", help="Tuesday that starts week 1 (weeks roll on Tuesdays)")
-ap.add_argument("--min-lead", type=float, default=75.0, help="minutes before kickoff a send must be generated to count")
+ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after)")
 ap.add_argument("--vs-bake", action="store_true",
                 help="score against the frozen bake instead of the send (the old basis; see the note in sent_line)")
 ap.add_argument("--selftest", action="store_true", help="grade a synthetic submission against synthetic actuals and print the checks")
@@ -80,7 +82,7 @@ def sent_line(sends, min_lead):
         return pd.Timestamp(yr, mo, dd, hh + (12 if ap_ == "PM" else 0), mi, tz=ET)
     s["kick"] = s.apply(kick, axis=1)
     s = s.dropna(subset=["gen", "kick"])
-    s = s[(s.kick - s.gen).dt.total_seconds() / 60 >= min_lead]
+    s = s[send_rules.eligible(s.kick, (s.kick - s.gen).dt.total_seconds() / 60, min_lead)]
     if s.empty: return {}
     s["week"] = ((s.kick.dt.tz_convert(ET).dt.date - W1).map(lambda t: t.days) // 7 + 1).astype(int)
     s = s.sort_values("gen").drop_duplicates(["week", "Player", "Pos"], keep="last")
@@ -117,7 +119,11 @@ def grade(rows, act):
         adj = fan_rules.adjusted(rule, stat, base, n) if pd.notna(base) else np.nan
         d = dict(r._asdict()); d.pop("Index", None)
         d.update({"basis": basis, "base": None if pd.isna(base) else round(base, 3),
-                  "adj": None if pd.isna(adj) else round(adj, 3), "no_send": basis == "no_send"})
+                  "adj": None if pd.isna(adj) else round(adj, 3),
+                  # no_send only once the game has a box score: before that the game is simply pending --
+                  # its send may not have gone out yet (2026-09-27: 332 arrows on the Sunday and Monday night
+                  # games read as "not scorable" for hours before their T-60 sends)
+                  "no_send": basis == "no_send" and ingested})
         # every column exists on every row, graded or not: with all rows pending (a submission
         # in before its games kick off) these were absent entirely and summarise() died on
         # gd.direction, so a fan who submitted early broke the whole grade until his games ran
@@ -133,11 +139,55 @@ def grade(rows, act):
         out.append(d)
     return pd.DataFrame(out)
 
+def full_lines(g, act):
+    """(week, player) -> {stat: (sent, actual)} over EVERY stat of the sent line, for each scored player. The
+    strategy lab replays whole-line 10% swipes, and a full-control pick only touches some stats, so the graded
+    rows alone would replay a partial line. Same lookups as grade(); empty when grading against the bake."""
+    act = act.copy(); act["nname"] = act.player_display_name.map(norm)
+    by_id = {(r.player_id, int(r.week)): r for r in act.itertuples()}
+    by_nm = {(r.nname, r.position, int(r.week)): r for r in act.itertuples()}
+    out = {}
+    for r in g[~g.pending & ~g.no_send].drop_duplicates(["week", "player"]).itertuples():
+        wk = int(r.week); sl = SENT.get((wk, norm(r.player), r.pos))
+        if not sl: continue
+        pid = getattr(r, "player_id", None)
+        a = by_id.get((pid, wk)) if isinstance(pid, str) and pid else None
+        if a is None: a = by_nm.get((norm(r.player), r.pos, wk))
+        val = lambda k: float(np.nan_to_num(getattr(a, COL[k]) or 0.0)) if a is not None else 0.0
+        out[(wk, r.player)] = {k: (v, val(k)) for k, v in sl.items() if pd.notna(v)}
+    return out
+
+
+def picks_of(d):
+    """One row per PICK, the way the page counts arrows: a swipe (rule s1) is one pick however many stats it moved;
+    each full-control stat arrow is its own pick. A swipe's direction is judged on the player's whole line in DK
+    points (did he finish above or below the line we sent, the way the swipe pointed); a stat arrow on its stat."""
+    if not len(d): return pd.DataFrame(columns=["graded", "pending", "dirn", "removed_pts"])
+    # SIGNED DK weights for direction: an interception costs a point (PTS carries +1 because it weights the size of an
+    # error, where the sign does not matter; for "did his line finish above the one we sent" it does)
+    d = d.assign(_w=d.stat.map({**PTS, "pass_int": -1.0}), _sw=(d.get("rule", pd.Series("", index=d.index)).astype(str) == "s1"))
+    d = d.assign(_key=np.where(d._sw, d.fan.astype(str) + "|" + d.week.astype(str) + "|" + d.player.astype(str),
+                               d.fan.astype(str) + "|" + d.week.astype(str) + "|" + d.player.astype(str) + "|" + d.stat.astype(str)),
+                 _bp=d.base * d._w, _ap=pd.to_numeric(d.actual, errors="coerce") * d._w)
+    out = d.groupby("_key").agg(pending=("pending", "any"), no_send=("no_send", "any"), sgn=("arrows", lambda x: int(np.sign(x.iloc[0]))),
+                                bp=("_bp", "sum"), ap=("_ap", "sum"), removed_pts=("removed_pts", "sum"))
+    out["graded"] = ~out.pending & ~out.no_send
+    move = np.sign((out.ap - out.bp).round(6))
+    out["dirn"] = np.where(~out.graded, "", np.where(move == 0, "neutral", np.where(move == out.sgn, "hit", "miss")))
+    return out
+
+
 def summarise(g):
     def block(d):
         gd = d[~d.pending & ~d.no_send]
         dec = gd[gd.direction != "neutral"]
-        return {"n": int(len(d)), "graded": int(len(gd)), "pending": int((d.pending & ~d.no_send).sum()),
+        pk = picks_of(d); pg = pk[pk.graded]; pdec = pg[pg.dirn != "neutral"]
+        return {"picks": int(len(pk)), "picks_graded": int(len(pg)), "picks_pending": int((pk.pending & ~pk.no_send).sum()),
+                "pick_hits": int((pdec.dirn == "hit").sum()), "pick_misses": int((pdec.dirn == "miss").sum()),
+                "pick_hit_rate": round(float((pdec.dirn == "hit").mean()), 3) if len(pdec) else None,
+                "picks_closer": int((pg.removed_pts > 0).sum()), "picks_farther": int((pg.removed_pts < 0).sum()),
+                # the per-STAT counts below (a swipe counts once per stat it moved) stay for the detail list and history
+                "n": int(len(d)), "graded": int(len(gd)), "pending": int((d.pending & ~d.no_send).sum()),
                 "no_send": int(d.no_send.sum()),
                 "hit_rate": round(float((dec.direction == "hit").mean()), 3) if len(dec) else None, "hits": int((dec.direction == "hit").sum()), "misses": int((dec.direction == "miss").sum()),
                 "closer": int((gd.removed > 0).sum()) if len(gd) else 0, "farther": int((gd.removed < 0).sum()) if len(gd) else 0,
@@ -145,7 +195,12 @@ def summarise(g):
                 "mae_base_pts": round(float((gd.err_base * gd.stat.map(PTS)).mean()), 3) if len(gd) else None,
                 "mae_adj_pts": round(float((gd.err_adj * gd.stat.map(PTS)).mean()), 3) if len(gd) else None}
     s = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": block(g)}
-    s["by_fan"] = sorted([dict(fan=f, pid=fan_rules.public_id(d.fan_id.iloc[0] if "fan_id" in d.columns else ""),
+    def team_of(d):   # the team the fan says he knows best, as of his latest lock-in (the leaderboard shows it)
+        if "fan_team" not in d.columns: return ""
+        t = d.sort_values("submitted_at").fan_team.fillna("").astype(str).str.strip()
+        t = t[(t != "") & (t.str.lower() != "nan")]
+        return t.iloc[-1] if len(t) else ""
+    s["by_fan"] = sorted([dict(fan=f, pid=fan_rules.public_id(d.fan_id.iloc[0] if "fan_id" in d.columns else ""), team=team_of(d),
                                weeks=sorted(int(w) for w in d.week.unique()), **block(d)) for f, d in g.groupby("fan")],
                          key=lambda x: (-(x["removed_pts"] or 0), -x["graded"], x["fan"]))
     for rank, f in enumerate(s["by_fan"], 1):          # the leaderboard: position and best call
@@ -156,7 +211,7 @@ def summarise(g):
             f["best_call"] = {"week": int(b.week), "player": b.player, "stat": b.stat, "arrows": int(b.arrows),
                               "removed_pts": round(float(b.removed_pts), 2)}
     # weekly standings, so a fan who joins in week 6 has a race to win that week
-    s["by_fan_week"] = sorted([dict(fan=f, pid=fan_rules.public_id(d.fan_id.iloc[0] if "fan_id" in d.columns else ""), week=int(w), **block(d))
+    s["by_fan_week"] = sorted([dict(fan=f, pid=fan_rules.public_id(d.fan_id.iloc[0] if "fan_id" in d.columns else ""), team=team_of(d), week=int(w), **block(d))
                                for (f, w), d in g.groupby(["fan", "week"])],
                               key=lambda x: (-x["week"], -(x["removed_pts"] or 0), -x["graded"], x["fan"]))
     s["by_stat"] = {st: block(d) for st, d in g.groupby("stat")}
@@ -167,6 +222,17 @@ def summarise(g):
     gd = g[~g.pending & ~g.no_send].sort_values(["week", "fan", "removed_pts"], ascending=[False, True, False])
     s["rows"] = [{k: (None if (isinstance(v, float) and np.isnan(v)) else v) for k, v in r.items() if k in ("week", "fan", "player", "team", "pos", "stat", "arrows", "baseline", "base", "adj", "basis", "actual", "direction", "removed_pts")}
                  for r in gd.head(400).to_dict("records")]
+    # best and worst PICKS (a swipe counted once, with the points its whole line moved), for the paper's call list
+    if len(gd):
+        sw = gd.get("rule", pd.Series("", index=gd.index)).astype(str) == "s1"
+        k = np.where(sw, gd.fan.astype(str) + "|" + gd.week.astype(str) + "|" + gd.player.astype(str), gd.index.astype(str))
+        pk = gd.assign(_k=k, _sw=sw).groupby("_k").agg(week=("week", "first"), fan=("fan", "first"), player=("player", "first"),
+                                                         stat=("stat", "first"), swipe=("_sw", "first"), arrows=("arrows", "first"),
+                                                         removed_pts=("removed_pts", "sum")).reset_index(drop=True)
+        pk["stat"] = np.where(pk.swipe, "", pk.stat); pk["removed_pts"] = pk.removed_pts.round(2)
+        cols = ["week", "fan", "player", "stat", "swipe", "arrows", "removed_pts"]
+        s["picks_best"] = [dict(r, week=int(r["week"]), arrows=int(r["arrows"]), swipe=bool(r["swipe"])) for r in pk.nlargest(6, "removed_pts")[cols].to_dict("records")]
+        s["picks_worst"] = [dict(r, week=int(r["week"]), arrows=int(r["arrows"]), swipe=bool(r["swipe"])) for r in pk.nsmallest(3, "removed_pts")[cols].to_dict("records")]
     pend = g[g.pending & ~g.no_send]
     s["pending_games"] = sorted({f"wk{int(r.week)} {r.team} v {r.opp}" for r in pend.itertuples()})
     return s
@@ -214,10 +280,16 @@ if not len(rows):                                   # a table with a header and 
 # early fans keep their history when they pick a PIN. aliases.json merges identities by hand
 # ("forgot my PIN"): {old_fan_id: new_fan_id}. The display name is the one used most recently
 # under that identity; two identities that display the same name get the id's tail appended.
+# "_display": {fan_id: name} pins the name a (merged) identity is shown under, e.g. keeping a fan's
+# original tag after he merged a second one into it. RENAMED (name -> shown name, for the merged-away
+# identities only) goes out in grade.json so the page's live lists fold them the same way.
 ALIASES = os.path.join(ROOT, "data", "fan_adjustments", "aliases.json")
 if len(rows):
     alias = json.load(open(ALIASES, encoding="utf-8")) if os.path.exists(ALIASES) else {}
+    pinned = alias.pop("_display", {}) if isinstance(alias.get("_display"), dict) else {}
+    alias = {k: v for k, v in alias.items() if not k.startswith("_")}
     fid = rows.fan_id.fillna("").astype(str).str.strip()
+    merged_names = set(rows.fan[fid.isin(alias.keys())].astype(str))
     fid = fid.map(lambda x: alias.get(x, x))
     named = rows.assign(fidkey=fid)[fid != ""].sort_values("submitted_at")
     first_id_for_name = {}
@@ -231,7 +303,12 @@ if len(rows):
     for k, nm in latest_name.items():
         shown.setdefault(nm, []).append(k)
     display = {k: (nm if len(ks) == 1 else f"{nm} ({k[-4:]})") for nm, ks in shown.items() for k in ks}
+    display.update({k: v for k, v in pinned.items() if k in display})
+    RENAMED = {n: display[k] for n, k in zip(rows.fan.astype(str), rows.fan_id) if n in merged_names and n != display.get(k)}
     rows["fan"] = rows.fan_id.map(display)
+    # the same merge by public id (never the fan_id itself): a browser still signed in under the merged-away
+    # tag/PIN computes the old public id, and this tells the page that the kept row is its own
+    MERGED_PIDS = {fan_rules.public_id(k): fan_rules.public_id(v) for k, v in alias.items() if k and v}
 # Fans come back during the week and lock in again, and the long table is append-only, so every set
 # they sent sits in it. fan_rules.live_arrows decides which arrows are live: per game, the last set
 # locked in BEFORE that game kicked off. An arrow placed after its game kicked off never counts --
@@ -253,13 +330,22 @@ if len(rows):
                 kick[(int(r.week), r.home_team)] = k
                 kick[(int(r.week), r.away_team)] = k
     rows["_kick"] = [kick.get((int(w), t)) for w, t in zip(rows.week, rows.team)]
+    # the newest lock-in RECORDED per fan and week (withdrawals and late sets included): the page compares it with the
+    # live list's lock-in time to know whether the graded pick count already reflects the fan's latest set
+    REC_LAST = {(str(f), int(w)): str(t) for (f, w), t in rows.groupby(["fan", "week"]).submitted_at.max().items()}
     live, late, superseded = fan_rules.live_arrows(rows)
+    marker = rows.stat.astype(str).eq(fan_rules.WITHDRAW)      # an empty lock-in: it supersedes, it is not graded
+    late, superseded = late & ~marker, superseded & ~marker
     for (fan, wk), d in rows[late].groupby(["fan", "week"]):
         games = ", ".join(sorted({f"{r.team} v {r.opp}" for r in d.itertuples()}))
         print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) dropped — submitted after kickoff ({games})")
     for (fan, wk), d in rows[superseded].groupby(["fan", "week"]):
         print(f"  {fan} wk{int(wk)}: {len(d)} arrow(s) superseded by a later set locked in before their game")
-    rows = rows[live].drop(columns=["_kick"]).copy()
+    rows = rows[live & ~marker].drop(columns=["_kick"]).copy()
+    if not len(rows):                               # every arrow withdrawn or placed after kickoff: an empty grade, not a crash
+        os.makedirs(os.path.dirname(OUT), exist_ok=True)
+        json.dump({"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%MZ"), "overall": {"n": 0, "graded": 0, "pending": 0}, "by_fan": [], "by_fan_week": [], "rows": [], "season": A.season, "note": "no live arrows: every set was withdrawn or placed after kickoff"}, open(OUT, "w"), indent=1)
+        print("no live arrows left -> wrote an empty docs/fan/grade.json"); sys.exit(0)
 url = f"https://github.com/nflverse/nflverse-data/releases/download/stats_player/stats_player_week_{A.season}.parquet"
 act = pd.read_parquet(url); act = act[act.season_type == "REG"]
 for c in COL.values():
@@ -268,6 +354,55 @@ SENT = {} if A.vs_bake else sent_line(A.sends, A.min_lead)
 if not A.vs_bake:
     print(f"  sent lines for {len(SENT)} player-weeks from {', '.join(A.sends)}")
 g = grade(rows, act); s = summarise(g); s["season"] = A.season
+s["renamed"] = RENAMED if "RENAMED" in globals() else {}
+s["merged_pids"] = MERGED_PIDS if "MERGED_PIDS" in globals() else {}
+for r_ in s.get("by_fan_week", []):
+    r_["last_submitted"] = (REC_LAST if "REC_LAST" in globals() else {}).get((str(r_["fan"]), int(r_["week"])))
+# The strategy lab: fixed rules for combining the fans, scored every week. The rules live in the PRIVATE repo
+# (pkg/fan_lab/fan_strategies.py) and stay sealed until week UNSEAL_AFTER_WEEK is fully graded: telling players
+# which ways of playing beat THE ORACLE would change how they play and spoil the test (crowd independence, swipe
+# size as confidence). Sealed, the public grade carries only how many rules are ahead and a sha256 of the rules'
+# spec; at the reveal it carries the full table and the spec, so anyone can check the fingerprint.
+UNSEAL_AFTER_WEEK = 9
+def lab_module():
+    import importlib.util
+    for d in (os.environ.get("MODEL_BURKE_PKG"), os.path.join(ROOT, "pkg"), os.path.join(os.path.dirname(ROOT), "model-burke-private")):
+        f = os.path.join(d, "fan_lab", "fan_strategies.py") if d else None
+        if f and os.path.exists(f):
+            spec_ = importlib.util.spec_from_file_location("fan_strategies", f); m = importlib.util.module_from_spec(spec_)
+            spec_.loader.exec_module(m); return m
+    return None
+def lab_unsealed():
+    """True once EVERY scheduled game of UNSEAL_AFTER_WEEK has a box score -- from the schedule, not from the
+    picks (a week whose only picks were on Thursday's game must not unseal on Friday). No schedule: sealed."""
+    if not os.path.exists(_sch): return False
+    sch = pd.read_csv(_sch)
+    games = sch[(sch.season == A.season) & (sch.week == UNSEAL_AFTER_WEEK) & (sch.game_type == "REG")]
+    if games.empty: return False
+    have = set(act.loc[act.week == UNSEAL_AFTER_WEEK, "team"])
+    return all(t in have for t in pd.concat([games.away_team, games.home_team]))
+# the same goes for the breakdowns that answer the lab's questions directly (hit rate by swipe size, boost vs
+# fade, by stat): out of the public file until the reveal. Scores, standings and single calls stay public.
+s["revealed"] = lab_unsealed()          # written every run, lab module or not: the page keys the breakdowns on it
+if not s["revealed"]:
+    for k_ in ("by_size", "by_direction", "by_stat"): s.pop(k_, None)
+try:
+    fs = lab_module()
+    if fs is None:
+        print("  strategy lab skipped: pkg/fan_lab not found")
+    else:
+        import hashlib
+        full = fs.lab(g, full_lines(g, act)); sp = fs.spec()
+        fp = hashlib.sha256(json.dumps(sp, sort_keys=True).encode()).hexdigest()
+        if lab_unsealed():
+            s["strategies"] = {**full, "sealed": False, "spec": sp, "fingerprint": fp}
+        else:
+            s["strategies"] = {"sealed": True, "unseal_after_week": UNSEAL_AFTER_WEEK, "registered": full["registered"],
+                               "n_rules": len(full["rules"]), "ahead": sum(1 for r in full["rules"] if r["all"]["pts"] > 0),
+                               "weeks_scored": sorted({int(w) for r in full["rules"] for w in r["weeks"]}), "fingerprint": fp}
+        print(f"  strategy lab: {'UNSEALED' if not s['strategies'].get('sealed') else 'sealed'}; fingerprint {fp[:16]}")
+except Exception as e:
+    print("  strategy lab skipped:", str(e)[:120])
 s["basis"] = "bake" if A.vs_bake else "send"
 if int(g.no_send.sum()):
     for (fan, wk), d in g[g.no_send].groupby(["fan", "week"]):

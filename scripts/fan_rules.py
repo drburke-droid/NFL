@@ -25,6 +25,11 @@ STEP_U = {"pass_yds": 25.0, "pass_tds": 0.5, "pass_int": 0.5, "rush_yds": 10.0, 
 RULES = ("pct10", "u1", "s1")
 LEGACY = "pct10"
 SWIPE_STAT = -1          # the stat index a code uses for "the whole player"
+SWIPE_MAX = 3           # a swipe is 1, 2 or 3 steps of SWIPE_PCT: a short pull 10%, a longer one 20%, all the way 30%
+# An empty lock-in -- the fan took back every arrow -- is recorded as one row with this stat and no
+# player, so live_arrows sees it as his latest set (his earlier arrows on games not yet kicked off stop
+# counting). The grader drops the row itself after live_arrows; it is never graded.
+WITHDRAW = "none"
 SWIPE_PCT = 0.10         # one swipe moves every stat in the line this much
 
 
@@ -48,7 +53,7 @@ def min_presses(rule, stat, base):
         import math
         return -math.ceil(float(base or 0) / STEP_U[stat] - 1e-9)
     if rule == "s1":
-        return -1                                  # a swipe is one step either way
+        return -SWIPE_MAX                          # a swipe is up to SWIPE_MAX steps either way
     return -10
 
 
@@ -64,7 +69,8 @@ def live_arrows(rows):
 
     rows needs season, week, fan, submitted_at (ISO) and _kick (the arrow's game's UTC kickoff, NaT
     when unknown -- such an arrow just follows the fan's latest set). A set that leaves a game out
-    still counts as the fan's word on it: arrows he removed stay removed.
+    still counts as the fan's word on it: arrows he removed stay removed. A set with no arrows at
+    all is one WITHDRAW row (no kickoff), which does the same for every game still to be played.
     late        placed after its game kicked off (a result the fan could already have seen)
     superseded  replaced by a later set locked in before that game
     """

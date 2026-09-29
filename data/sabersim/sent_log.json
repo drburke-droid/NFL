@@ -667,5 +667,679 @@
    },
    "warnings": []
   }
+ },
+ "2026-09-27T17:00_9g": {
+  "sent_at": "2026-09-27T15:42:07Z",
+  "rows": 252,
+  "file": "Burke_Model_Burke_2026_sun01pm_0927_1540.csv",
+  "slate": "Sun 09/27 01:00 PM ET slate (9 games)",
+  "credits_left": 1891,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 9 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 351 statuses pulled {'espn': 114, 'sleeper': 97, '+sleeper': 86, 'espn+sleeper': 35, 'nfl-report': 16, 'nfl-report+sleeper': 3}; 9 Q, 17 OUT with a projection {'espn+sleeper': 12, '+sleeper': 3, 'nfl-report+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 241,
+    "slate_k": 19,
+    "slate_dst": 18
+   },
+   "dk_lines": {
+    "slate_games": 9,
+    "with_lines": 9,
+    "fetched_at": "2026-09-27T15:41Z",
+    "credits_left": "389"
+   },
+   "dk_props": {
+    "slate_events": 9,
+    "events_with_props": 9,
+    "with_props": 199,
+    "by_stat": {
+     "pass_yds": 18,
+     "pass_tds": 18,
+     "rush_yds": 51,
+     "rec_yds": 103,
+     "rec": 103,
+     "exp_td": 199
+    },
+    "no_line": [
+     "Adonai Mitchell",
+     "Jayden Daniels",
+     "Nico Collins",
+     "Rico Dowdle",
+     "Tyjae Spears"
+    ],
+    "eligible": 82,
+    "name_aliases": [
+     "joshua palmer -> josh palmer"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 42
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 19,
+     "of": 19
+    },
+    "DST": {
+     "hit": 18,
+     "of": 18
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 18,
+    "by_team": {
+     "BUF": [
+      "Tyler Bass"
+     ],
+     "CAR": [
+      "Ryan Fitzgerald"
+     ],
+     "CIN": [
+      "Evan McPherson"
+     ],
+     "CLE": [
+      "Andre Szmyt"
+     ],
+     "DET": [
+      "Jake Bates"
+     ],
+     "HOU": [
+      "Kaimi Fairbairn"
+     ],
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "JAX": [
+      "Cam Little"
+     ],
+     "KC": [
+      "Harrison Butker"
+     ],
+     "LAC": [
+      "Cameron Dicker"
+     ],
+     "MIA": [
+      "Riley Patterson"
+     ],
+     "NE": [
+      "Andres Borregales"
+     ],
+     "NYG": [
+      "Dominic Zvada"
+     ],
+     "NYJ": [
+      "Jason Sanders"
+     ],
+     "PIT": [
+      "Chris Boswell"
+     ],
+     "SEA": [
+      "Jason Myers"
+     ],
+     "TEN": [
+      "Joey Slye"
+     ],
+     "WAS": [
+      "Drew Stevens"
+     ]
+    },
+    "not_the_one_we_send": {
+     "HOU": {
+      "sending": "Ka'imi Fairbairn",
+      "dk_prices": [
+       "Kaimi Fairbairn"
+      ]
+     }
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 351,
+    "by_src": {
+     "espn": 114,
+     "sleeper": 97,
+     "+sleeper": 86,
+     "espn+sleeper": 35,
+     "nfl-report": 16,
+     "nfl-report+sleeper": 3
+    },
+    "q": 9,
+    "out": 17,
+    "out_by_src": {
+     "espn+sleeper": 12,
+     "+sleeper": 3,
+     "nfl-report+sleeper": 2
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Jayden Daniels, Rico Dowdle, Tyjae Spears, Nico Collins, Adonai Mitchell"
+   ]
+  }
+ },
+ "2026-09-27T20:05_2g": {
+  "sent_at": "2026-09-27T18:46:23Z",
+  "rows": 52,
+  "file": "Burke_Model_Burke_2026_sun04pm_0927_1844.csv",
+  "slate": "Sun 09/27 04:05 PM ET slate (2 games)",
+  "credits_left": 1871,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 2 games in this send (kickoffs Sun 20:05Z .. Sun 20:05Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 400 statuses pulled {'espn': 147, 'sleeper': 98, '+sleeper': 80, 'espn+sleeper': 59, 'nfl-report': 15, 'nfl-report+sleeper': 1}; 1 Q, 2 OUT with a projection {'espn': 1, 'espn+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 50,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-09-27T18:45Z",
+    "credits_left": "371"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 44,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 11,
+     "rec_yds": 24,
+     "rec": 23,
+     "exp_td": 44
+    },
+    "no_line": [],
+    "eligible": 19,
+    "name_aliases": [
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 4,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ],
+     "MIN": [
+      "Will Reichard"
+     ],
+     "SF": [
+      "Eddy Pineiro"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 400,
+    "by_src": {
+     "espn": 147,
+     "sleeper": 98,
+     "+sleeper": 80,
+     "espn+sleeper": 59,
+     "nfl-report": 15,
+     "nfl-report+sleeper": 1
+    },
+    "q": 1,
+    "out": 2,
+    "out_by_src": {
+     "espn": 1,
+     "espn+sleeper": 1
+    }
+   },
+   "warnings": []
+  }
+ },
+ "2026-09-27T20:25_2g": {
+  "sent_at": "2026-09-27T19:27:02Z",
+  "rows": 58,
+  "file": "Burke_Model_Burke_2026_sun04pm_0927_1925.csv",
+  "slate": "Sun 09/27 04:25 PM ET slate (2 games)",
+  "credits_left": 1851,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 2 games in this send (kickoffs Sun 20:25Z .. Sun 20:25Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 429 statuses pulled {'espn': 166, 'sleeper': 98, '+sleeper': 80, 'espn+sleeper': 69, 'nfl-report': 14, 'nfl-report+sleeper': 2}; 2 Q, 2 OUT with a projection {'espn+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 53,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-09-27T19:26Z",
+    "credits_left": "351"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 46,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 11,
+     "rec_yds": 24,
+     "rec": 24,
+     "exp_td": 46
+    },
+    "no_line": [],
+    "eligible": 19,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 7
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 4,
+    "by_team": {
+     "BAL": [
+      "Tyler Loop"
+     ],
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "LV": [
+      "Matt Gay"
+     ],
+     "NO": [
+      "Daniel Carlson"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 429,
+    "by_src": {
+     "espn": 166,
+     "sleeper": 98,
+     "+sleeper": 80,
+     "espn+sleeper": 69,
+     "nfl-report": 14,
+     "nfl-report+sleeper": 2
+    },
+    "q": 2,
+    "out": 2,
+    "out_by_src": {
+     "espn+sleeper": 2
+    }
+   },
+   "warnings": []
+  }
+ },
+ "2026-09-28T00:20_1g": {
+  "sent_at": "2026-09-27T23:23:19Z",
+  "rows": 33,
+  "file": "Burke_Model_Burke_2026_sun08pm_0927_2320.csv",
+  "slate": "Sun 09/27 08:20 PM ET slate (1 games)",
+  "credits_left": 1840,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 1 games in this send (kickoffs Mon 00:20Z .. Mon 00:20Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 456 statuses pulled {'espn': 180, 'sleeper': 102, 'espn+sleeper': 82, '+sleeper': 78, 'nfl-report': 12, 'nfl-report+sleeper': 2}; 1 Q, 7 OUT with a projection {'espn+sleeper': 7}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 31,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-09-27T23:22Z",
+    "credits_left": "340"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 23,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 10,
+     "rec": 11,
+     "exp_td": 23
+    },
+    "no_line": [
+     "Puka Nacua"
+    ],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 8
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "DEN": [
+      "Wil Lutz"
+     ],
+     "LA": [
+      "Harrison Mevis"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 456,
+    "by_src": {
+     "espn": 180,
+     "sleeper": 102,
+     "espn+sleeper": 82,
+     "+sleeper": 78,
+     "nfl-report": 12,
+     "nfl-report+sleeper": 2
+    },
+    "q": 1,
+    "out": 7,
+    "out_by_src": {
+     "espn+sleeper": 7
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Puka Nacua"
+   ]
+  }
+ },
+ "2026-09-29T00:15_1g": {
+  "sent_at": "2026-09-28T23:17:21Z",
+  "rows": 32,
+  "file": "Burke_Model_Burke_2026_mon08pm_0928_2315.csv",
+  "slate": "Mon 09/28 08:15 PM ET slate (1 games)",
+  "credits_left": 1829,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 1 games in this send (kickoffs Tue 00:15Z .. Tue 00:15Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 400 statuses pulled {'+sleeper': 123, 'espn': 120, 'sleeper': 101, 'espn+sleeper': 41, 'nfl-report': 12, 'nfl-report+sleeper': 3}; 1 Q, 4 OUT with a projection {'espn+sleeper': 3, 'nfl-report+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 30,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-09-28T23:16Z",
+    "credits_left": "329"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 24,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 15,
+     "rec": 14,
+     "exp_td": 24
+    },
+    "no_line": [
+     "Dallas Goedert",
+     "Tyson Bagent"
+    ],
+    "eligible": 10,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "CHI": [
+      "Cairo Santos"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 400,
+    "by_src": {
+     "+sleeper": 123,
+     "espn": 120,
+     "sleeper": 101,
+     "espn+sleeper": 41,
+     "nfl-report": 12,
+     "nfl-report+sleeper": 3
+    },
+    "q": 1,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 3,
+     "nfl-report+sleeper": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Tyson Bagent, Dallas Goedert"
+   ]
+  }
+ },
+ "2026-09-29T00:18_1g": {
+  "sent_at": "2026-09-29T00:05:15Z",
+  "rows": 32,
+  "file": "Burke_Model_Burke_2026_mon08pm_0929_0003.csv",
+  "slate": "Mon 09/28 08:18 PM ET slate (1 games)",
+  "credits_left": 1818,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 1 games in this send (kickoffs Tue 00:18Z .. Tue 00:18Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 400 statuses pulled {'+sleeper': 123, 'espn': 120, 'sleeper': 101, 'espn+sleeper': 41, 'nfl-report': 12, 'nfl-report+sleeper': 3}; 1 Q, 4 OUT with a projection {'espn+sleeper': 3, 'nfl-report+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 30,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-09-29T00:04Z",
+    "credits_left": "318"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 24,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 15,
+     "rec": 14,
+     "exp_td": 24
+    },
+    "no_line": [
+     "Dallas Goedert",
+     "Tyson Bagent"
+    ],
+    "eligible": 10,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "CHI": [
+      "Cairo Santos"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 400,
+    "by_src": {
+     "+sleeper": 123,
+     "espn": 120,
+     "sleeper": 101,
+     "espn+sleeper": 41,
+     "nfl-report": 12,
+     "nfl-report+sleeper": 3
+    },
+    "q": 1,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 3,
+     "nfl-report+sleeper": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Tyson Bagent, Dallas Goedert"
+   ]
+  }
  }
 }

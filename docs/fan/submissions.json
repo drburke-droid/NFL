@@ -1,14 +1,78 @@
 {
- "generated": "2026-09-25T15:15Z",
- "n_codes": 1,
+ "generated": "2026-09-29T14:05Z",
+ "n_codes": 115,
  "entries": [
   {
    "season": 2026,
    "week": 3,
+   "fan": "ERS",
+   "team": "SEA",
+   "submitted_at": "2026-09-25T19:26:53Z",
+   "arrows": 25,
+   "received": "9/25/2026 13:27:01"
+  },
+  {
+   "season": 2026,
+   "week": 3,
+   "fan": "OWD",
+   "team": "",
+   "submitted_at": "2026-09-27T03:23:15Z",
+   "arrows": 1,
+   "received": "9/26/2026 21:23:16"
+  },
+  {
+   "season": 2026,
+   "week": 3,
+   "fan": "RJS",
+   "team": "",
+   "submitted_at": "2026-09-27T03:23:46Z",
+   "arrows": 206,
+   "received": "9/26/2026 21:23:47"
+  },
+  {
+   "season": 2026,
+   "week": 3,
+   "fan": "SAK",
+   "team": "DET",
+   "submitted_at": "2026-09-27T04:29:08Z",
+   "arrows": 91,
+   "received": "9/26/2026 22:29:09"
+  },
+  {
+   "season": 2026,
+   "week": 3,
+   "fan": "Nana Owusu",
+   "team": "LV",
+   "submitted_at": "2026-09-27T05:06:25Z",
+   "arrows": 37,
+   "received": "9/26/2026 23:06:26"
+  },
+  {
+   "season": 2026,
+   "week": 3,
+   "fan": "BOB",
+   "team": "CHI",
+   "submitted_at": "2026-09-27T16:33:43Z",
+   "arrows": 92,
+   "received": "9/27/2026 10:33:43"
+  },
+  {
+   "season": 2026,
+   "week": 3,
    "fan": "REB",
-   "submitted_at": "2026-09-24T21:09:40Z",
-   "arrows": 11,
-   "received": "9/24/2026 15:09:41"
+   "team": "CHI",
+   "submitted_at": "2026-09-28T02:53:34Z",
+   "arrows": 36,
+   "received": "9/27/2026 20:53:34"
+  },
+  {
+   "season": 2026,
+   "week": 3,
+   "fan": "SAM",
+   "team": "SF",
+   "submitted_at": "2026-09-28T04:13:25Z",
+   "arrows": 15,
+   "received": "9/27/2026 22:13:26"
   }
  ]
 }

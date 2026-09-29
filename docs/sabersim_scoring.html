@@ -67,7 +67,7 @@
 <body>
 <main>
   <h1>SaberSim scoring</h1>
-  <p class="sub">SaberSim counts the last send that arrived at least 75 minutes before kickoff. When several
+  <p class="sub">The grade counts the last send generated at least 55 minutes before kickoff (75 for games before the 4:25 PM ET slate of Sep 27, when sends moved from T-80 to T-60). When several
     sends exist for a slate, which one counts changes the grade. Pick one per slate and see the scorecard.
     &nbsp;<a href="sabersim.html">&larr; sends &amp; accuracy</a></p>
 
@@ -144,7 +144,7 @@ async function gh(path, opt = {}) {
 }
 const EX = {
   intro: `<details class="ex"><summary>How to read this card</summary>
-<p>Every projection we sent is compared with what the player actually scored, once nflverse publishes the box score. Only sends generated at least 75 minutes before kickoff count, and if several sends covered the same game, only the last eligible one is graded, so nothing is counted twice.</p>
+<p>Every projection we sent is compared with what the player actually scored, once nflverse publishes the box score. Only sends generated at least 55 minutes before kickoff (75 for games before the 4:25 PM ET slate of Sep 27, when sends moved from T-80 to T-60) count, and if several sends covered the same game, only the last eligible one is graded, so nothing is counted twice.</p>
 <p>Two habits keep this honest. <b>Look at the sample size first.</b> One game is a few dozen player-outcomes and football is noisy: the same model can look brilliant one week and poor the next without anything changing. Numbers start to mean something after a few hundred player-games, roughly five weeks. <b>Compare like with like.</b> A projection's error depends on who is being projected (stars are harder than backups), so the fairest test is against FFA and DraftKings on the identical players, which the "same rows" chips do.</p></details>`,
   tiles: `<details class="ex"><summary>What the five numbers mean</summary>
 <ul>
