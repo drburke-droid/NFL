@@ -158,11 +158,34 @@ def full_lines(g, act):
     return out
 
 
+def picks_of(d):
+    """One row per PICK, the way the page counts arrows: a swipe (rule s1) is one pick however many stats it moved;
+    each full-control stat arrow is its own pick. A swipe's direction is judged on the player's whole line in DK
+    points (did he finish above or below the line we sent, the way the swipe pointed); a stat arrow on its stat."""
+    if not len(d): return pd.DataFrame(columns=["graded", "pending", "dirn", "removed_pts"])
+    d = d.assign(_w=d.stat.map(PTS), _sw=(d.get("rule", pd.Series("", index=d.index)).astype(str) == "s1"))
+    d = d.assign(_key=np.where(d._sw, d.fan.astype(str) + "|" + d.week.astype(str) + "|" + d.player.astype(str),
+                               d.fan.astype(str) + "|" + d.week.astype(str) + "|" + d.player.astype(str) + "|" + d.stat.astype(str)),
+                 _bp=d.base * d._w, _ap=pd.to_numeric(d.actual, errors="coerce") * d._w)
+    out = d.groupby("_key").agg(pending=("pending", "any"), no_send=("no_send", "any"), sgn=("arrows", lambda x: int(np.sign(x.iloc[0]))),
+                                bp=("_bp", "sum"), ap=("_ap", "sum"), removed_pts=("removed_pts", "sum"))
+    out["graded"] = ~out.pending & ~out.no_send
+    move = np.sign((out.ap - out.bp).round(6))
+    out["dirn"] = np.where(~out.graded, "", np.where(move == 0, "neutral", np.where(move == out.sgn, "hit", "miss")))
+    return out
+
+
 def summarise(g):
     def block(d):
         gd = d[~d.pending & ~d.no_send]
         dec = gd[gd.direction != "neutral"]
-        return {"n": int(len(d)), "graded": int(len(gd)), "pending": int((d.pending & ~d.no_send).sum()),
+        pk = picks_of(d); pg = pk[pk.graded]; pdec = pg[pg.dirn != "neutral"]
+        return {"picks": int(len(pk)), "picks_graded": int(len(pg)), "picks_pending": int((pk.pending & ~pk.no_send).sum()),
+                "pick_hits": int((pdec.dirn == "hit").sum()), "pick_misses": int((pdec.dirn == "miss").sum()),
+                "pick_hit_rate": round(float((pdec.dirn == "hit").mean()), 3) if len(pdec) else None,
+                "picks_closer": int((pg.removed_pts > 0).sum()), "picks_farther": int((pg.removed_pts < 0).sum()),
+                # the per-STAT counts below (a swipe counts once per stat it moved) stay for the detail list and history
+                "n": int(len(d)), "graded": int(len(gd)), "pending": int((d.pending & ~d.no_send).sum()),
                 "no_send": int(d.no_send.sum()),
                 "hit_rate": round(float((dec.direction == "hit").mean()), 3) if len(dec) else None, "hits": int((dec.direction == "hit").sum()), "misses": int((dec.direction == "miss").sum()),
                 "closer": int((gd.removed > 0).sum()) if len(gd) else 0, "farther": int((gd.removed < 0).sum()) if len(gd) else 0,
@@ -197,6 +220,17 @@ def summarise(g):
     gd = g[~g.pending & ~g.no_send].sort_values(["week", "fan", "removed_pts"], ascending=[False, True, False])
     s["rows"] = [{k: (None if (isinstance(v, float) and np.isnan(v)) else v) for k, v in r.items() if k in ("week", "fan", "player", "team", "pos", "stat", "arrows", "baseline", "base", "adj", "basis", "actual", "direction", "removed_pts")}
                  for r in gd.head(400).to_dict("records")]
+    # best and worst PICKS (a swipe counted once, with the points its whole line moved), for the paper's call list
+    if len(gd):
+        sw = gd.get("rule", pd.Series("", index=gd.index)).astype(str) == "s1"
+        k = np.where(sw, gd.fan.astype(str) + "|" + gd.week.astype(str) + "|" + gd.player.astype(str), gd.index.astype(str))
+        pk = gd.assign(_k=k, _sw=sw).groupby("_k").agg(week=("week", "first"), fan=("fan", "first"), player=("player", "first"),
+                                                         stat=("stat", "first"), swipe=("_sw", "first"), arrows=("arrows", "first"),
+                                                         removed_pts=("removed_pts", "sum")).reset_index(drop=True)
+        pk["stat"] = np.where(pk.swipe, "", pk.stat); pk["removed_pts"] = pk.removed_pts.round(2)
+        cols = ["week", "fan", "player", "stat", "swipe", "arrows", "removed_pts"]
+        s["picks_best"] = [dict(r, week=int(r["week"]), arrows=int(r["arrows"]), swipe=bool(r["swipe"])) for r in pk.nlargest(6, "removed_pts")[cols].to_dict("records")]
+        s["picks_worst"] = [dict(r, week=int(r["week"]), arrows=int(r["arrows"]), swipe=bool(r["swipe"])) for r in pk.nsmallest(3, "removed_pts")[cols].to_dict("records")]
     pend = g[g.pending & ~g.no_send]
     s["pending_games"] = sorted({f"wk{int(r.week)} {r.team} v {r.opp}" for r in pend.itertuples()})
     return s
