@@ -1478,7 +1478,9 @@ function renderLead() {
   const withGrade = xs => xs.map(x => {
     const r = GP[x.fan + "|" + x.week];
     if (!r || (x.season != null && G && +x.season !== +G.season)) return x;
-    const seen = !x.submitted_at || (r.last_submitted && r.last_submitted >= x.submitted_at);
+    // an older grade file carries no last_submitted: fall back to the larger count rather than dropping the graded one
+    if (!r.last_submitted) return r.picks > (x.arrows || 0) ? {...x, arrows: r.picks} : x;
+    const seen = !x.submitted_at || r.last_submitted >= x.submitted_at;
     return seen ? {...x, arrows: r.picks} : x;
   });
   const src = withGrade(fold(LIVE || (SUBS && SUBS.entries) || []));
