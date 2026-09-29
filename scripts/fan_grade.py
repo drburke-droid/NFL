@@ -163,7 +163,9 @@ def picks_of(d):
     each full-control stat arrow is its own pick. A swipe's direction is judged on the player's whole line in DK
     points (did he finish above or below the line we sent, the way the swipe pointed); a stat arrow on its stat."""
     if not len(d): return pd.DataFrame(columns=["graded", "pending", "dirn", "removed_pts"])
-    d = d.assign(_w=d.stat.map(PTS), _sw=(d.get("rule", pd.Series("", index=d.index)).astype(str) == "s1"))
+    # SIGNED DK weights for direction: an interception costs a point (PTS carries +1 because it weights the size of an
+    # error, where the sign does not matter; for "did his line finish above the one we sent" it does)
+    d = d.assign(_w=d.stat.map({**PTS, "pass_int": -1.0}), _sw=(d.get("rule", pd.Series("", index=d.index)).astype(str) == "s1"))
     d = d.assign(_key=np.where(d._sw, d.fan.astype(str) + "|" + d.week.astype(str) + "|" + d.player.astype(str),
                                d.fan.astype(str) + "|" + d.week.astype(str) + "|" + d.player.astype(str) + "|" + d.stat.astype(str)),
                  _bp=d.base * d._w, _ap=pd.to_numeric(d.actual, errors="coerce") * d._w)
@@ -328,6 +330,9 @@ if len(rows):
                 kick[(int(r.week), r.home_team)] = k
                 kick[(int(r.week), r.away_team)] = k
     rows["_kick"] = [kick.get((int(w), t)) for w, t in zip(rows.week, rows.team)]
+    # the newest lock-in RECORDED per fan and week (withdrawals and late sets included): the page compares it with the
+    # live list's lock-in time to know whether the graded pick count already reflects the fan's latest set
+    REC_LAST = {(str(f), int(w)): str(t) for (f, w), t in rows.groupby(["fan", "week"]).submitted_at.max().items()}
     live, late, superseded = fan_rules.live_arrows(rows)
     marker = rows.stat.astype(str).eq(fan_rules.WITHDRAW)      # an empty lock-in: it supersedes, it is not graded
     late, superseded = late & ~marker, superseded & ~marker
@@ -351,6 +356,8 @@ if not A.vs_bake:
 g = grade(rows, act); s = summarise(g); s["season"] = A.season
 s["renamed"] = RENAMED if "RENAMED" in globals() else {}
 s["merged_pids"] = MERGED_PIDS if "MERGED_PIDS" in globals() else {}
+for r_ in s.get("by_fan_week", []):
+    r_["last_submitted"] = (REC_LAST if "REC_LAST" in globals() else {}).get((str(r_["fan"]), int(r_["week"])))
 # The strategy lab: fixed rules for combining the fans, scored every week. The rules live in the PRIVATE repo
 # (pkg/fan_lab/fan_strategies.py) and stay sealed until week UNSEAL_AFTER_WEEK is fully graded: telling players
 # which ways of playing beat THE ORACLE would change how they play and spoil the test (crowd independence, swipe
