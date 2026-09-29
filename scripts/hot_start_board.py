@@ -31,7 +31,14 @@ if not A.start_week:      # match the model to the weeks that are actually in th
     _d = pd.read_parquet(_fp)
     A.start_week = int(_d[_d.season_type == "REG"].week.max()) + 1
 EARLY = A.start_week - 1
-norm = lambda s: re.sub(r"[^a-z]", "", unicodedata.normalize("NFKD", str(s)).encode("ascii", "ignore").decode().lower())
+# ESPN writes "Travis Etienne Jr." and "James Cook III" where nflverse writes the bare name, so a
+# plain letters-only key silently makes owned players look free. Suffixes come off, and where both
+# sides carry an id we join on that instead (nflverse's roster file maps gsis_id to espn_id).
+_SUF = re.compile(r"\b(jr|sr|ii|iii|iv|v)\b\.?\s*$", re.I)
+def norm(s):
+    t = unicodedata.normalize("NFKD", str(s)).encode("ascii", "ignore").decode()
+    t = _SUF.sub("", t.replace(".", " ").strip())
+    return re.sub(r"[^a-z]", "", t.lower())
 
 import importlib.util
 spec = importlib.util.spec_from_file_location("hss", os.path.join(ROOT, "scripts", "hot_start_study.py"))
@@ -144,28 +151,52 @@ def main():
     # the live league: outputs/espn_league.json is this season's pull (My Team tab / gm build use it).
     # league-history's rosters.json only runs to the last completed season, so it is the fallback.
     live = os.path.join(ROOT, "outputs", "espn_league.json")
+    inj = pd.Series("", index=C.index)
     if os.path.exists(live):
         L = json.load(open(live, encoding="utf-8"))
         me_id = int(L.get("myTeamId", A.team_id))
-        who = {}
+        # gsis_id <-> espn_id, so ownership joins on an id rather than a spelling
+        e2g = {}
+        rp = os.path.join(CACHE, f"roster_{A.season}.csv")
+        if os.path.exists(rp):
+            rr = pd.read_csv(rp, dtype=str)
+            e2g = {str(x.espn_id).split(".")[0]: x.gsis_id for x in rr.itertuples()
+                   if isinstance(getattr(x, "espn_id", None), str) and isinstance(getattr(x, "gsis_id", None), str)}
+        by_id, by_name = {}, {}
         for t in L.get("teams", []):
+            lab = "MY TEAM" if int(t.get("id", -1)) == me_id else "another team"
+            team = "me" if lab == "MY TEAM" else t.get("name", "")
             for p in t.get("roster", []):
-                who[norm(p.get("name"))] = ("MY TEAM" if int(t.get("id", -1)) == me_id else "another team",
-                                            t.get("name", "") if int(t.get("id", -1)) != me_id else "me")
-        tag = C.n.map(lambda x: who.get(x, ("free agent", ""))[0])
-        owner = C.n.map(lambda x: who.get(x, ("free agent", ""))[1])
-        mine_n = sum(1 for v in who.values() if v[0] == "MY TEAM")
-        print(f"live league ({L.get('name','?')}, season {L.get('season')}): {len(who)} rostered, {mine_n} on my team")
+                v = (lab, team, p.get("inj") or "")
+                gid = e2g.get(str(p.get("espn_id", "")).split(".")[0])
+                if gid: by_id[gid] = v
+                by_name[norm(p.get("name"))] = v
+        look = lambda pid, nm: by_id.get(pid) or by_name.get(nm) or ("free agent", "", "")
+        got = [look(pid, nm) for pid, nm in zip(C.player_id, C.n)]
+        tag = pd.Series([x[0] for x in got], index=C.index)
+        owner = pd.Series([x[1] for x in got], index=C.index)
+        inj = pd.Series([x[2] for x in got], index=C.index)
+        matched_by_id = sum(1 for pid in C.player_id if pid in by_id)
+        print(f"live league ({L.get('name','?')}, season {L.get('season')}): {len(by_name)} rostered, "
+              f"{sum(1 for v in by_name.values() if v[0]=='MY TEAM')} on my team; "
+              f"{matched_by_id} of {len(C)} ranked players joined by id")
     else:
         print("no outputs/espn_league.json; everyone shows as free agent")
     C["own"] = tag        # not "where": that shadows DataFrame.where and breaks attribute access
     C["owner"] = owner
+    C["inj"] = inj
+    C["out"] = C.inj.isin(["INJURY_RESERVE", "OUT"])
 
     # ---- the board
-    real = C[C.early_ppg >= 4].copy()                       # ignore the bottom of the pool
+    # a player on IR or ruled out is not a buy at any price, however good his usage looked
+    real = C[(C.early_ppg >= 4) & (~C.out)].copy()
+    if int(C.out.sum()):
+        gone = C[C.out].sort_values("pred_gap", ascending=False).head(8)
+        say = ", ".join(f"{r.player} ({str(r.inj).title().replace('_', ' ')})" for r in gone.itertuples())
+        print("\nexcluded (IR / out): " + say)
     sells = real.sort_values("pred_gap").head(25)
     buys = real.sort_values("pred_gap", ascending=False).head(25)
-    cols = ["player", "pos", "team", "own", "owner", "g", "early_ppg", "touch_g", "tgt_share", "td_g", "luck", "pred_ros", "pred_gap"]
+    cols = ["player", "pos", "team", "own", "owner", "inj", "g", "early_ppg", "touch_g", "tgt_share", "td_g", "luck", "pred_ros", "pred_gap"]
     fmt = lambda d: d[cols].round(2).to_string(index=False)
     lines = [f"{A.season} weeks 1-{EARLY} -> rest of season, league scoring. "
              f"'luck' = points per game above what this player's volume alone earns. "
