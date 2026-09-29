@@ -237,3 +237,47 @@ def test_proposals_rank_by_the_chosen_objective(league):
                       board=_board(), keeper_discount=1.0)
     s = [p["score_me"] for p in r["proposals"]]
     assert s == sorted(s, reverse=True)
+
+
+# ---------- perceived-value mode: good for me, looks good to them ----------
+
+def test_accept_mode_keeps_only_what_the_other_side_would_like_the_look_of(league):
+    c, est = league
+    seen = []
+
+    def accept(other, receive, send):
+        v = 1.0 if len(receive) >= len(send) else -1.0
+        seen.append(v)
+        return v
+
+    r = T.find_trades(c, est, c.raw["my_team_id"], shortlist=6, top_n=5, n_sims=1500, seed=1,
+                      accept=accept, their_floor=-100.0, min_perceived=0.0)
+    assert seen, "the acceptance model was never consulted"
+    for p in r["proposals"]:
+        assert p["my_p_title"] > 0
+        assert p["perceived_them"] >= 0.0
+
+
+def test_accept_mode_does_not_require_the_other_side_to_gain(league):
+    """Default mode never proposes a trade that hurts them; accept mode may."""
+    c, est = league
+    r = T.find_trades(c, est, c.raw["my_team_id"], shortlist=8, top_n=8, n_sims=1500, seed=1,
+                      accept=lambda o, rcv, snd: 1.0, their_floor=-100.0)
+    assert all(p["my_p_title"] > 0 for p in r["proposals"])
+    assert all(p["perceived_them"] == 1.0 for p in r["proposals"])
+
+
+def test_default_mode_reports_no_perceived_value(league):
+    c, est = league
+    r = T.find_trades(c, est, c.raw["my_team_id"], shortlist=4, top_n=3, n_sims=1500, seed=1)
+    assert all(p.get("perceived_them") is None for p in r["proposals"])
+
+
+def test_perceived_value_is_names_received_minus_names_sent():
+    from gm import brand as B
+    sal = {"a": 40.0, "b": 10.0, "c": 5.0}
+    rcv = [{"name": "a"}]
+    snd = [{"name": "b"}, {"name": "c"}]
+    base = B.perceived(7, rcv, snd, sal, {})
+    assert base == pytest.approx(40.0 - 15.0)
+    assert B.perceived(7, snd, rcv, sal, {}) == pytest.approx(-base)
