@@ -1239,5 +1239,107 @@
     "no DK props posted (news?): Tyson Bagent, Dallas Goedert"
    ]
   }
+ },
+ "2026-09-29T00:18_1g": {
+  "sent_at": "2026-09-29T00:05:15Z",
+  "rows": 32,
+  "file": "Burke_Model_Burke_2026_mon08pm_0929_0003.csv",
+  "slate": "Mon 09/28 08:18 PM ET slate (1 games)",
+  "credits_left": 1818,
+  "lineups": [
+   "schedule: 18 weeks; week 3 runs Fri 09/25 .. Tue 09/29",
+   "week 3: 1 games in this send (kickoffs Tue 00:18Z .. Tue 00:18Z)",
+   "injury report (nfl.com): 89 skill/K players listed; practice {'FP': 45, 'DNP': 27, 'LP': 17}; designations {'Out': 18, 'Questionable': 18, 'Doubtful': 3}",
+   "lineups: 400 statuses pulled {'+sleeper': 123, 'espn': 120, 'sleeper': 101, 'espn+sleeper': 41, 'nfl-report': 12, 'nfl-report+sleeper': 3}; 1 Q, 4 OUT with a projection {'espn+sleeper': 3, 'nfl-report+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk3.csv",
+    "rows": 919,
+    "age_hours": 0.0,
+    "slate_skill": 30,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-09-29T00:04Z",
+    "credits_left": "318"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 24,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 15,
+     "rec": 14,
+     "exp_td": 24
+    },
+    "no_line": [
+     "Dallas Goedert",
+     "Tyson Bagent"
+    ],
+    "eligible": 10,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk3.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "CHI": [
+      "Cairo Santos"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 89,
+    "designations": {
+     "Out": 18,
+     "Questionable": 18,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 400,
+    "by_src": {
+     "+sleeper": 123,
+     "espn": 120,
+     "sleeper": 101,
+     "espn+sleeper": 41,
+     "nfl-report": 12,
+     "nfl-report+sleeper": 3
+    },
+    "q": 1,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 3,
+     "nfl-report+sleeper": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Tyson Bagent, Dallas Goedert"
+   ]
+  }
  }
 }
