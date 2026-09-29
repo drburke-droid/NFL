@@ -1471,9 +1471,16 @@ function renderLead() {
   // a player's picks that COUNT this week can outnumber his latest lock-in: each game keeps the set locked in before its
   // kickoff, so Thursday's picks stay live after a smaller Sunday lock-in. The grade counts them all (picks per fan and
   // week); the live list only has the latest lock-in. Show the larger, so Who's In, Busiest and the grade agree.
+  // The grade's count is used only when it already includes the fan's latest lock-in (it records the newest lock-in it
+  // saw): a newer, smaller live set -- or yours, just submitted -- must not be overridden by a stale larger count.
   const GP = {};
-  for (const r of (G && G.by_fan_week) || []) if (r.picks != null) GP[r.fan + "|" + r.week] = r.picks;
-  const withGrade = xs => xs.map(x => (x.season == null || !G || +x.season === +G.season) && GP[x.fan + "|" + x.week] > (x.arrows || 0) ? {...x, arrows: GP[x.fan + "|" + x.week]} : x);
+  for (const r of (G && G.by_fan_week) || []) if (r.picks != null) GP[r.fan + "|" + r.week] = r;
+  const withGrade = xs => xs.map(x => {
+    const r = GP[x.fan + "|" + x.week];
+    if (!r || (x.season != null && G && +x.season !== +G.season)) return x;
+    const seen = !x.submitted_at || (r.last_submitted && r.last_submitted >= x.submitted_at);
+    return seen ? {...x, arrows: r.picks} : x;
+  });
   const src = withGrade(fold(LIVE || (SUBS && SUBS.entries) || []));
   const thisSeason = x => x.season == null || +x.season === D.season;
   // the newest team we know for each name: a later week (then a later lock-in) wins, whatever order the lists come in;
