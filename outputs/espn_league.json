@@ -404,7 +404,7 @@
      "keeper": true,
      "keeper_price": 5,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 83.0,
      "last_pts": 5.5
     },
@@ -581,7 +581,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "OUT",
+     "inj": "INJURY_RESERVE",
      "season_pts": 48.5,
      "last_pts": 0.0
     },
@@ -754,11 +754,11 @@
      "pos": "WR",
      "team": "DEN",
      "espn_id": 4372016,
-     "slot": "FLEX",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 19,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 194.1,
      "last_pts": 6.4
     },
@@ -845,7 +845,7 @@
      "pos": "WR",
      "team": "PHI",
      "espn_id": 4428850,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": false,
      "keeper_price": 0,
      "acq": "ADD",
@@ -1013,7 +1013,7 @@
      "keeper": true,
      "keeper_price": 5,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 176.8,
      "last_pts": 19.4
     },
@@ -1190,7 +1190,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 139.5,
      "last_pts": 7.8
     },
@@ -1380,7 +1380,7 @@
      "keeper": true,
      "keeper_price": 13,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 246.3,
      "last_pts": 15.4
     },
@@ -1864,7 +1864,7 @@
      "keeper": true,
      "keeper_price": 20,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 173.2,
      "last_pts": 12.7
     },
@@ -2028,7 +2028,7 @@
      "keeper": true,
      "keeper_price": 32,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 266.9,
      "last_pts": 24.4
     },
@@ -2460,7 +2460,7 @@
      "keeper": true,
      "keeper_price": 27,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 427.6,
      "last_pts": 20.5
     },

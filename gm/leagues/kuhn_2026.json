@@ -327,7 +327,7 @@
      "keeper_cost": {
       "price": 5
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -512,7 +512,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "OUT",
+     "injury": "INJURY_RESERVE",
      "times_kept": 0
     },
     {
@@ -692,12 +692,12 @@
      "name": "Jaylen Waddle",
      "pos": "WR",
      "nfl_team": "DEN",
-     "slot": "FLEX",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 19
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     },
     {
@@ -783,7 +783,7 @@
      "name": "Dontayvion Wicks",
      "pos": "WR",
      "nfl_team": "PHI",
-     "slot": "BENCH",
+     "slot": "FLEX",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 0
@@ -960,7 +960,7 @@
      "keeper_cost": {
       "price": 5
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1145,7 +1145,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -1343,7 +1343,7 @@
      "keeper_cost": {
       "price": 13
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -1843,7 +1843,7 @@
      "keeper_cost": {
       "price": 20
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 2
     },
     {
@@ -2015,7 +2015,7 @@
      "keeper_cost": {
       "price": 32
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2463,7 +2463,7 @@
      "keeper_cost": {
       "price": 27
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     },
     {

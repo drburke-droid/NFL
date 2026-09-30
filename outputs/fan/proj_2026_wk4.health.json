@@ -47,14 +47,14 @@
   "designations": {}
  },
  "lineups": {
-  "statuses": 341,
+  "statuses": 381,
   "by_src": {
-   "espn": 143,
-   "sleeper": 91,
+   "espn": 181,
+   "sleeper": 92,
    "+sleeper": 79,
-   "espn+sleeper": 28
+   "espn+sleeper": 29
   },
-  "q": 23,
+  "q": 35,
   "out": 15,
   "out_by_src": {
    "espn+sleeper": 15
@@ -84,7 +84,7 @@
  "proj_kind": "playing_median",
  "csv": "proj_2026_wk4.csv",
  "rows": 447,
- "generated": "2026-09-30 15:35 ET",
+ "generated": "2026-09-30 17:47 ET",
  "kickoffs": [
   "Mon 10/05 08:15 PM ET",
   "Sun 10/04 01:00 PM ET",
