@@ -45,3 +45,12 @@ league/baselines/run.log
 
 # nflverse download cache (game_shape_study.py) — regenerable, no need to version
 data/nflverse/
+
+# Large regenerable run artefacts. Left out deliberately: the .git dir is already 1.3 GB and the
+# LFS quota is exhausted (see scripts/sync_data.py), so these are rebuilt rather than versioned.
+#   wiki_*.jsonl      140 MB of Wikipedia pageviews per month, re-pulled by the news collector
+#   *_frame.parquet   intermediate study frames (ros_player_study.py --rebuild remakes them)
+#   run_*.parquet     one dump per generator run; the CSV that was actually sent IS tracked
+data/news/wiki_*.jsonl
+outputs/models/ros_player_frame.parquet
+outputs/sabersim/run_*.parquet
