@@ -361,8 +361,10 @@ if ffa_wk is not None:
     cur = cur.merge(ffa_wk, on="nname", how="left")
 keepcols = [c for c in cur.columns if c in hist.columns
             or c.startswith("ffa_wk_")]
-allwatch = pd.concat([old_watch[keepcols] if len(old_watch) else pd.DataFrame(columns=keepcols),
-                      cur[keepcols]], ignore_index=True).drop_duplicates(
+# reindex rather than select: rows saved by an earlier run predate the ffa_wk_* columns, and
+# selecting a column the saved frame has never had raises instead of filling it (wk4 2026)
+allwatch = pd.concat([old_watch.reindex(columns=keepcols) if len(old_watch) else pd.DataFrame(columns=keepcols),
+                      cur.reindex(columns=keepcols)], ignore_index=True).drop_duplicates(
     ["player_id", "season", "week"], keep="last")
 allwatch.to_parquet(WATCHROWS)
 
