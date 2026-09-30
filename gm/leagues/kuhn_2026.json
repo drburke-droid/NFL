@@ -171,7 +171,7 @@
      "keeper_cost": {
       "price": 6
      },
-     "injury": "QUESTIONABLE",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -512,7 +512,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "DOUBTFUL",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -551,7 +551,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -762,7 +762,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1210,7 +1210,7 @@
      "keeper_cost": {
       "price": 10
      },
-     "injury": "QUESTIONABLE",
+     "injury": "DOUBTFUL",
      "times_kept": 0
     },
     {
@@ -1976,7 +1976,7 @@
      "keeper_cost": {
       "price": 22
      },
-     "injury": "QUESTIONABLE",
+     "injury": "DOUBTFUL",
      "times_kept": 1
     },
     {
@@ -2528,7 +2528,7 @@
      "keeper_cost": {
       "price": 15
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {

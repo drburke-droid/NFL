@@ -248,7 +248,7 @@
      "keeper": true,
      "keeper_price": 6,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "OUT",
      "season_pts": 217.3,
      "last_pts": 0.0
     },
@@ -581,7 +581,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "DOUBTFUL",
+     "inj": "OUT",
      "season_pts": 48.5,
      "last_pts": 0.0
     },
@@ -620,7 +620,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 111.7,
      "last_pts": 0.5
     },
@@ -823,7 +823,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 38.6,
      "last_pts": 23.5
     },
@@ -1255,7 +1255,7 @@
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "DOUBTFUL",
      "season_pts": 88.9,
      "last_pts": 0.0
     },
@@ -1989,7 +1989,7 @@
      "keeper": true,
      "keeper_price": 22,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "DOUBTFUL",
      "season_pts": 211.7,
      "last_pts": 8.5
     },
@@ -2525,7 +2525,7 @@
      "keeper": true,
      "keeper_price": 15,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 188.8,
      "last_pts": 13.6
     },
