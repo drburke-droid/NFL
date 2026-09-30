@@ -14,6 +14,7 @@ Steps (each one is optional and failure-isolated; the summary says which ran):
     board     waiver_board.py --week W                   -> docs/waiver.json
     myteam    my_team_tab.py                             -> docs/myteam_2026.js
     gm        build_gm_league.py                         -> gm/leagues/kuhn_2026.json
+    trade     hot_start_board.py (local only) + trade_tab_bake.py -> docs/trade_2026.js
     fan       sabersim_weekly.py --all-games --no-market + fan_proj_bake.py -> docs/fan/proj_latest.json
     props     props_watch.py                             -> docs/props_watch_2026.js (needs the key file)
 Writes docs/refresh_status.json so a page can show when each tab was last baked, and for which week.
@@ -72,7 +73,7 @@ def main():
     ap.add_argument("--week", type=int, default=None, help="default: the newest FFA file's week")
     ap.add_argument("--pkg", default=os.environ.get("MODEL_BURKE_PKG", ""),
                     help="Model_Burke package dir (folder containing model_burke/); fan + props need it")
-    ap.add_argument("--skip", default="", help="comma list of steps to skip: espn,pastes,board,myteam,gm,fan,props")
+    ap.add_argument("--skip", default="", help="comma list of steps to skip: espn,pastes,board,myteam,gm,trade,fan,props")
     a = ap.parse_args()
     skip = {s.strip() for s in a.skip.split(",") if s.strip()}
     py = sys.executable
@@ -124,6 +125,13 @@ def main():
     step("board", lambda: run("waiver board", [py, "scripts/waiver_board.py", "--season", str(S), "--week", str(W)]))
     step("myteam", lambda: run("my team tab", [py, "scripts/my_team_tab.py", "--season", str(S)]))
     step("gm", lambda: run("gm league config", [py, "scripts/build_gm_league.py"]))
+
+    def trade():
+        # the sell-high/buy-low tags need the nflverse weekly cache, which only a local run has
+        if os.path.exists(os.path.join(ROOT, "data", "nflverse_cache", f"stats_player_week_{S}.parquet")):
+            run("hot-start board", [py, "scripts/hot_start_board.py", "--season", str(S)])
+        return run("trade analyzer bake", [py, "scripts/trade_tab_bake.py", "--season", str(S)])
+    step("trade", trade)
 
     def fan():
         out = os.path.join(ROOT, "outputs", "fan", f"proj_{S}_wk{W}.csv")

@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trade Analyzer</title>
+<meta name="description" content="Fantasy football trade analyzer: load your Sleeper or ESPN league (or paste rosters), set your scoring, and see what a trade does to both starting lineups and expected wins for the rest of the season.">
+<meta property="og:title" content="Fantasy Trade Analyzer — lineups, not trade charts">
+<meta property="og:description" content="Load your league, set your scoring, and see what a trade does to both teams' starting lineups and expected wins, week by week. Or let it find trades that help both sides.">
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; --line:#262a33; --field:#0f1115; --chip:#232833; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:1040px; margin:0 auto; padding:18px 16px 80px; }
+  h1 { font-size:22px; margin:0 0 2px; } h2 { font-size:16px; margin:0 0 8px; } h3 { font-size:14px; margin:12px 0 6px; }
+  .sub { color:var(--mut); margin:0 0 14px; font-size:13px; } a { color:var(--acc); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+  .how { font-size:13px; color:var(--mut); } .how b { color:var(--ink); }
+  label { display:block; color:var(--mut); font-size:12px; margin-bottom:3px; }
+  input[type=text], input[type=number], select, textarea { width:100%; background:var(--field); color:var(--ink); border:1px solid #333845; border-radius:8px; padding:8px 10px; font-size:14px; font-family:inherit; }
+  textarea { min-height:140px; font-family:ui-monospace,Consolas,monospace; font-size:12px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end; } .row > * { flex:1 1 140px; }
+  .row > .shrink { flex:0 0 auto; }
+  button { font-family:inherit; }
+  .big { background:var(--acc); color:#fff; border:0; border-radius:8px; padding:9px 16px; font-size:14px; font-weight:600; cursor:pointer; }
+  .sec { background:#2a2f3a; color:var(--ink); border:0; border-radius:8px; padding:9px 12px; font-size:13px; cursor:pointer; }
+  .big[disabled], .sec[disabled] { opacity:.5; cursor:default; }
+  .tabs { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+  .tabs button { background:var(--chip); color:var(--mut); border:1px solid var(--line); border-radius:8px; padding:6px 12px; cursor:pointer; font-size:13px; }
+  .tabs button.on { background:#243a66; color:#fff; border-color:#3b5da0; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(118px,1fr)); gap:8px; }
+  .msg { font-size:13px; margin-top:8px; } .msg.err { color:var(--bad); } .msg.ok { color:var(--ok); } .msg.warn { color:var(--warn); }
+  .two { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:720px) { .two { grid-template-columns:1fr; } }
+  .roster { max-height:460px; overflow:auto; border:1px solid var(--line); border-radius:8px; }
+  .pl { display:grid; grid-template-columns:22px 34px minmax(0,1fr) auto; gap:6px; align-items:center; padding:5px 8px; border-bottom:1px solid var(--line); cursor:pointer; font-size:13px; }
+  .pl:last-child { border-bottom:0; } .pl:hover { background:#1e222b; } .pl.sel { background:#1d2a44; }
+  .pl .nm { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .pl .nm small { color:var(--mut); }
+  .pl .v { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; } .pl .v small { color:var(--mut); }
+  .pos { display:inline-block; font-size:10px; font-weight:700; border-radius:5px; padding:1px 0; text-align:center; width:30px; color:#0f1115; }
+  .pos.QB { background:#e8a0a0; } .pos.RB { background:#8fd19e; } .pos.WR { background:#8fb8f0; } .pos.TE { background:#e8c47f; }
+  .chip { display:inline-block; font-size:10px; padding:0 5px; border-radius:6px; margin-left:4px; vertical-align:1px; background:#3a3f4b; color:#fff; }
+  .chip.inj { background:#7a1f1f; } .chip.sell { background:#6b4e00; } .chip.buy { background:#1f5a33; } .chip.st { background:#2d3d5c; }
+  table { border-collapse:collapse; width:100%; font-size:13px; font-variant-numeric:tabular-nums; }
+  th, td { padding:4px 6px; border-bottom:1px solid var(--line); text-align:right; } th { color:var(--mut); font-weight:600; font-size:12px; }
+  th:first-child, td:first-child { text-align:left; } td.l, th.l { text-align:left; }
+  .up { color:var(--ok); } .dn { color:var(--bad); } .mut { color:var(--mut); }
+  .verdict { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0; }
+  @media (max-width:560px) { .verdict { grid-template-columns:1fr; } }
+  .vbox { background:var(--field); border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+  .vbox .big-n { font-size:24px; font-weight:700; } .vbox .lab { color:var(--mut); font-size:12px; }
+  .tablewrap { overflow-x:auto; }
+  details > summary { cursor:pointer; color:var(--mut); font-size:13px; padding:4px 0; }
+  .note { font-size:12px; color:var(--mut); }
+  .bar-cell { position:relative; min-width:60px; }
+  .hide { display:none; }
+</style>
+</head>
+<body>
+<main>
+  <h1>🔁 Trade Analyzer</h1>
+  <p class="sub" id="sub">Loading player data…</p>
+
+  <div class="card">
+    <h2>1 · Your league</h2>
+    <div class="tabs" id="srcTabs">
+      <button data-src="sleeper" class="on">Sleeper</button>
+      <button data-src="espn">ESPN</button>
+      <button data-src="paste">Paste rosters</button>
+      <button data-src="demo">Demo league</button>
+    </div>
+    <div data-pane="sleeper">
+      <div class="row">
+        <div><label>League ID <span class="mut">(from the league URL)</span></label><input type="text" id="slId" placeholder="e.g. 1048234567890123456"></div>
+        <div class="shrink"><button class="big" id="slLoad">Load</button></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div><label>…or find it by Sleeper username</label><input type="text" id="slUser" placeholder="username"></div>
+        <div class="shrink"><button class="sec" id="slFind">Find leagues</button></div>
+      </div>
+      <div id="slLeagues"></div>
+    </div>
+    <div data-pane="espn" class="hide">
+      <div class="row">
+        <div><label>League ID <span class="mut">(leagueId= in the URL)</span></label><input type="text" id="esId" placeholder="e.g. 1211359110"></div>
+        <div class="shrink"><button class="big" id="esLoad">Load</button></div>
+      </div>
+      <div id="esPrivate" class="hide" style="margin-top:10px">
+        <p class="how"><b>Private league?</b> This page never asks for your ESPN password or <code>espn_s2</code>/<code>SWID</code> cookies. Instead: while logged in to ESPN, open
+          <a id="esLink" target="_blank" rel="noopener">this link</a> in a new tab, select all (Ctrl/⌘-A), copy, and paste it below. It is your league's own data, read by your own browser.</p>
+        <textarea id="esJson" placeholder='{"gameId":1,"id":...'></textarea>
+        <div style="margin-top:6px"><button class="big" id="esParse">Use pasted data</button></div>
+      </div>
+    </div>
+    <div data-pane="paste" class="hide">
+      <p class="how">Any league site. One block per team: the team name on its own line, then one player per line (extra text such as positions or NFL teams is fine), blank line between teams.
+        Or one line per team: <code>Team name: Player, Player, Player</code>.</p>
+      <textarea id="pasteBox" placeholder="Glass Joe&#10;Joe Burrow&#10;Bijan Robinson&#10;Ja'Marr Chase&#10;&#10;The Other Guys&#10;Josh Allen&#10;..."></textarea>
+      <div class="row" style="margin-top:6px"><div class="shrink"><button class="big" id="pasteLoad">Read rosters</button></div>
+        <div style="max-width:220px"><label>Teams in the whole league <span class="mut">(if you pasted only some)</span></label><input type="number" id="pasteSize" min="2" max="32" placeholder="all pasted"></div></div>
+    </div>
+    <div data-pane="demo" class="hide">
+      <p class="how">No league handy? Build a random 10-team league by a noisy snake draft and try the tools on it.</p>
+      <button class="big" id="demoLoad">Build a demo league</button>
+    </div>
+    <div class="msg" id="lgMsg"></div>
+    <div id="lgSummary"></div>
+  </div>
+
+  <div class="card">
+    <h2>2 · Scoring & lineup</h2>
+    <p class="how">Filled in from Sleeper/ESPN when a league loads. Edit anything; everything below re-scores instantly.</p>
+    <div class="tabs" id="presets">
+      <button data-p="ppr">PPR</button><button data-p="half">Half PPR</button><button data-p="std">Standard</button><button data-p="six">PPR + 6-pt pass TD</button>
+    </div>
+    <div class="grid" id="scoreGrid"></div>
+    <h3>Starting lineup</h3>
+    <div class="grid" id="slotGrid"></div>
+    <h3>Season</h3>
+    <div class="grid">
+      <div><label>Regular season ends (week)</label><input type="number" id="regEnd" min="1" max="18"></div>
+      <div><label>Fantasy playoffs end (week)</label><input type="number" id="seasonEnd" min="1" max="18"></div>
+    </div>
+    <div class="note" id="ignored" style="margin-top:6px"></div>
+  </div>
+
+  <div class="card" id="buildCard">
+    <h2>3 · Build a trade</h2>
+    <div class="row">
+      <div><label>My team</label><select id="teamA"></select></div>
+      <div><label>Trading with</label><select id="teamB"></select></div>
+    </div>
+    <p class="note">Click players to include them. <span class="chip st">S</span> = starts in a normal week. Numbers are rest-of-season points per game in your scoring.</p>
+    <div class="two">
+      <div><h3 id="hA">I give</h3><div class="roster" id="rosA"></div></div>
+      <div><h3 id="hB">I get</h3><div class="roster" id="rosB"></div></div>
+    </div>
+    <div style="margin-top:10px" class="row"><div class="shrink"><button class="big" id="evalBtn" disabled>Analyze trade</button></div><div class="shrink"><button class="sec" id="clearBtn">Clear</button></div><div></div></div>
+    <div id="result"></div>
+  </div>
+
+  <div class="card">
+    <h2>4 · Trade finder</h2>
+    <p class="how">Searches every swap between my team and each other roster, keeps the ones that raise <b>both</b> teams' expected lineups, then re-scores the best with the full simulation. A trade both sides should accept is the one that actually gets made.</p>
+    <div class="row">
+      <div><label>Shapes</label><select id="fShape"><option value="1">1-for-1</option><option value="2" selected>1-for-1 and 2-for-1 (both ways)</option><option value="3">…and 2-for-2 (slow)</option></select></div>
+      <div><label>With</label><select id="fTeam"><option value="">every team</option></select></div>
+      <div class="shrink"><button class="big" id="findBtn" disabled>Find trades</button></div>
+    </div>
+    <div class="msg" id="findMsg"></div>
+    <div id="findOut"></div>
+  </div>
+
+  <div class="card">
+    <h2>Player values</h2>
+    <div class="row"><div><label>Position</label><select id="vPos"><option value="">all</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select></div>
+      <div><label>Show</label><select id="vOwn"><option value="">everyone</option><option value="fa">free agents only</option><option value="own">rostered only</option></select></div>
+      <div><label>Search</label><input type="text" id="vQ" placeholder="name"></div></div>
+    <div class="tablewrap" style="margin-top:8px"><table id="vTab"></table></div>
+  </div>
+
+  <div class="card how">
+    <h2 style="color:var(--ink)">How it works</h2>
+    <p><b>Player level.</b> Each player's rest-of-season points per game come from a per-position ridge regression fitted on every NFL season since 2012: this season (average, last four, best game, games played), the two prior seasons, the career, and the FantasyFootballAnalytics consensus projection for the coming week. Walk-forward it misses by 3.1 points per game against 3.3 for "this year blended with last", and it does not believe two-week hot starts the way that blend does.</p>
+    <p><b>Your scoring.</b> The model is fitted in one league's scoring, so each player is carried as a per-game stat line (the projection's mix of yards, catches and touchdowns, scaled to the fitted level) and re-scored in yours: a quarterback in a 4-point-TD league, a tight end with a reception premium.</p>
+    <p><b>Lineups, not trade charts.</b> A trade is worth what it does to the best lineup each team can field each remaining week: bye weeks out, injured players out as often as their status says (Questionable players miss about a third of the rest of the season, Out about half), the free agent wire filling any empty slot, and the worst player cut when a team takes back more bodies than it sends. 200 simulated seasons per trade.</p>
+    <p><b>Wins.</b> Weekly points become win probability against a league-average opponent, including each lineup's week-to-week spread (which grows with the player: a 22-point player swings by about 9, a 4-point one by 4). That is why a strong team gains less from the same points than a middling one.</p>
+    <p><b>Sell high / buy low tags.</b> Early-season points split into what a player's volume (targets, carries, attempts) earns and the rest. Over 2016-25 the rest mostly disappears: the luckiest fifth fell 4.8 points per game after week 3, the unluckiest rose 2.9. Shown as a tag; the level already regresses.</p>
+    <p><b>Limits.</b> This season only (no keeper or dynasty value); kickers and defenses are treated as interchangeable; scoring rules beyond yards, touchdowns, catches, turnovers, reception premiums and 100/300-yard bonuses are ignored and listed above.</p>
+    <p class="note" id="foot"></p>
+  </div>
+</main>
+
+<script src="trade_2026.js"></script>
+<script>
+"use strict";
+const D = window.TRADE_DATA || {players:[]};
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fx = (x, d=1) => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(d);
+const store = { get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+                set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} } };
+
+// ----------------------------------------------------------------- players and matching
+const P = {};                    // gsis id -> player
+const byEspn = {}, bySleeper = {}, byName = {};
+const norm = s => String(s||"").normalize("NFKD").replace(/[̀-ͯ]/g,"").toLowerCase()
+  .replace(/\b(jr|sr|ii|iii|iv|v)\b\.?/g,"").replace(/[^a-z ]/g,"").replace(/\s+/g," ").trim();
+const NICK = {"kenneth":"kenny","joshua":"josh","gabriel":"gabe","mitchell":"mitch","nathaniel":"tank","cameron":"cam","christopher":"chris","matthew":"matt","william":"will","daniel":"danny","michael":"mike"};
+for (const p of D.players) {
+  P[p.g] = p;
+  if (p.e) byEspn[p.e] = p; if (p.s) bySleeper[p.s] = p;
+  const k = norm(p.n);
+  for (const key of new Set([k, k.replace(/^(\w+)/, m => NICK[m] || m)])) {
+    if (!byName[key] || byName[key].ppg < p.ppg) byName[key] = p;
+  }
+}
+function matchName(txt) {
+  const k = norm(txt);
+  if (byName[k]) return byName[k];
+  const t = k.split(" ");
+  for (let len = Math.min(4, t.length); len >= 2; len--)
+    for (let i = 0; i + len <= t.length; i++) { const m = byName[t.slice(i, i+len).join(" ")]; if (m) return m; }
+  return null;
+}
+
+// ----------------------------------------------------------------- scoring and lineup settings
+const SCORE_FIELDS = [
+  ["pass_yds","Pass yard",0.04],["pass_tds","Pass TD",4],["pass_int","Interception",-2],
+  ["rush_yds","Rush yard",0.1],["rush_tds","Rush TD",6],["rec","Reception",1],["rec_yds","Rec yard",0.1],
+  ["rec_tds","Rec TD",6],["fumbles_lost","Fumble lost",-2],["te_prem","TE catch bonus",0],["rb_prem","RB catch bonus",0],
+  ["wr_prem","WR catch bonus",0],["b300","300-yd pass bonus",0],["b100r","100-yd rush bonus",0],["b100c","100-yd rec bonus",0]];
+const PRESETS = {
+  ppr:  {pass_yds:.04,pass_tds:4,pass_int:-2,rush_yds:.1,rush_tds:6,rec:1,rec_yds:.1,rec_tds:6,fumbles_lost:-2},
+  half: {pass_yds:.04,pass_tds:4,pass_int:-2,rush_yds:.1,rush_tds:6,rec:.5,rec_yds:.1,rec_tds:6,fumbles_lost:-2},
+  std:  {pass_yds:.04,pass_tds:4,pass_int:-2,rush_yds:.1,rush_tds:6,rec:0,rec_yds:.1,rec_tds:6,fumbles_lost:-2},
+  six:  {pass_yds:.04,pass_tds:6,pass_int:-1,rush_yds:.1,rush_tds:6,rec:1,rec_yds:.1,rec_tds:6,fumbles_lost:-1}};
+const SLOT_FIELDS = [["QB","QB"],["RB","RB"],["WR","WR"],["TE","TE"],["FLEX","Flex (RB/WR/TE)"],["SFLEX","Superflex (QB/RB/WR/TE)"],["WRTE","WR/TE flex"],["RBWR","RB/WR flex"]];
+const FLEX_ELIG = {FLEX:["RB","WR","TE"], SFLEX:["QB","RB","WR","TE"], WRTE:["WR","TE"], RBWR:["RB","WR"]};
+const DEF_SLOTS = {QB:1,RB:2,WR:2,TE:1,FLEX:1,SFLEX:0,WRTE:0,RBWR:0};
+
+let SC = Object.assign(Object.fromEntries(SCORE_FIELDS.map(f => [f[0], f[2]])), store.get("tradeScoring") || {});
+let SL = Object.assign({}, DEF_SLOTS, store.get("tradeSlots") || {});
+let SEASON = Object.assign({regEnd:14, seasonEnd:17}, store.get("tradeSeason") || {});
+let IGNORED = [];
+
+function buildSettings() {
+  $("scoreGrid").innerHTML = SCORE_FIELDS.map(([k,l]) =>
+    `<div><label>${l}</label><input type="number" step="any" data-sc="${k}" value="${SC[k]}"></div>`).join("");
+  $("slotGrid").innerHTML = SLOT_FIELDS.map(([k,l]) =>
+    `<div><label>${l}</label><input type="number" min="0" max="5" data-sl="${k}" value="${SL[k]}"></div>`).join("");
+  $("regEnd").value = SEASON.regEnd; $("seasonEnd").value = SEASON.seasonEnd;
+  $("ignored").textContent = IGNORED.length ? "Scoring rules in your league this page cannot model (ignored): " + IGNORED.join(", ") : "";
+}
+document.addEventListener("input", e => {
+  const t = e.target;
+  if (t.dataset.sc) { SC[t.dataset.sc] = parseFloat(t.value) || 0; }
+  else if (t.dataset.sl) { SL[t.dataset.sl] = Math.max(0, parseInt(t.value) || 0); }
+  else if (t.id === "regEnd" || t.id === "seasonEnd") { SEASON[t.id] = parseInt(t.value) || SEASON[t.id]; }
+  else return;
+  settingsChanged();
+});
+function settingsChanged() {
+  store.set("tradeScoring", SC); store.set("tradeSlots", SL); store.set("tradeSeason", SEASON);
+  recompute();
+}
+$("presets").onclick = e => { const p = e.target.dataset.p; if (!p) return;
+  Object.assign(SC, {te_prem:0,rb_prem:0,wr_prem:0,b300:0,b100r:0,b100c:0}, PRESETS[p]); buildSettings(); settingsChanged(); };
+
+// ----------------------------------------------------------------- per-player numbers
+const STATUS_CAP = {OUT:.485, DOUBTFUL:.543, QUESTIONABLE:.644, INJURY_RESERVE:.10, IR:.10, SUSPENSION:.10};
+const pPlayOf = ppgFit => Math.min(.97, .75 + .03 * Math.max(ppgFit, 0));
+const sdOf = m => .383 * Math.max(m, 0) + 2.23;
+function ppgC(p) {
+  const l = p.l, prem = {TE:SC.te_prem, RB:SC.rb_prem, WR:SC.wr_prem}[p.p] || 0;
+  return (l.pass_yds||0)*SC.pass_yds + (l.pass_tds||0)*SC.pass_tds + (l.pass_int||0)*SC.pass_int
+    + (l.rush_yds||0)*SC.rush_yds + (l.rush_tds||0)*SC.rush_tds + (l.rec||0)*(SC.rec + prem)
+    + (l.rec_yds||0)*SC.rec_yds + (l.rec_tds||0)*SC.rec_tds + (l.fumbles_lost||0)*SC.fumbles_lost
+    + (l.pass_300_yds||0)*SC.b300 + (l.rush_100_yds||0)*SC.b100r + (l.rec_100_yds||0)*SC.b100c;
+}
+function refreshPlayers() {
+  for (const p of D.players) {
+    p.m = Math.max(ppgC(p), 0);
+    const st = (LG && LG.inj && LG.inj[p.g]) || p.i || "";
+    p.st = st;
+    p.pp = Math.min(pPlayOf(p.ppg), STATUS_CAP[st] ?? 1);
+    p.sd = sdOf(p.m);
+    p.h = hash(p.g);
+  }
+}
+function hash(s) { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return (h >>> 0) / 4294967296; }
+// common random numbers: the same player, sample and week always draw the same number, so a
+// before/after comparison differs only by the trade
+const rnd = (h, s, w) => { const x = Math.sin(h * 9301 + s * 49.297 + w * 233.17) * 43758.5453; return x - Math.floor(x); };
+const tag = p => {
+  let t = "";
+  if (p.st) t += `<span class="chip inj" title="${esc(p.st)}">${esc({QUESTIONABLE:"Q",DOUBTFUL:"D",OUT:"OUT",INJURY_RESERVE:"IR",IR:"IR"}[p.st] || p.st)}</span>`;
+  if (p.gap != null && p.gap <= -2 && p.luck >= 2) t += `<span class="chip sell" title="Scoring ${p.luck.toFixed(1)} pts/g above what his volume earns; expected to fall ${(-p.gap).toFixed(1)}">sell high</span>`;
+  else if (p.gap != null && p.gap >= 2) t += `<span class="chip buy" title="Volume says he should be scoring more; expected to rise ${p.gap.toFixed(1)} pts/g">buy low</span>`;
+  return t;
+};
+
+// ----------------------------------------------------------------- league state
+let LG = store.get("tradeLeague");      // {name, source, teams:[{id,name,ids:[gsis],miss:[names]}], inj:{}}
+let WAIVER = {}, BASE = null;
+const weeksLeft = () => { const a = []; for (let w = D.next_week; w <= Math.min(SEASON.seasonEnd, 18); w++) a.push(w); return a; };
+const byeOf = p => D.byes[p.t];
+
+function setLeague(lg, msg) {
+  LG = lg; store.set("tradeLeague", lg);
+  $("lgMsg").className = "msg ok"; $("lgMsg").textContent = msg || "";
+  recompute(true);
+}
+
+// ----------------------------------------------------------------- lineup solver
+const SLOT_ORDER = ["QB","RB","WR","TE","WRTE","RBWR","FLEX","SFLEX"];
+function solve(byPos) {
+  // byPos: {QB:[{m,sd}] ...} each sorted desc by m. Returns [mean, variance] of the best lineup.
+  const used = {QB:0,RB:0,WR:0,TE:0};
+  let mu = 0, v = 0;
+  for (const s of SLOT_ORDER) {
+    const n = SL[s] || 0; if (!n) continue;
+    const elig = FLEX_ELIG[s] || [s];
+    for (let k = 0; k < n; k++) {
+      let best = null, bp = null;
+      for (const pos of elig) { const c = byPos[pos][used[pos]]; if (c && (!best || c.m > best.m)) { best = c; bp = pos; } }
+      let wv = null; for (const pos of elig) { const w = WAIVER[pos]; if (w && (!wv || w.m > wv.m)) wv = w; }
+      if (best && (!wv || best.m >= wv.m)) { used[bp]++; mu += best.m; v += best.sd * best.sd; }
+      else if (wv) { mu += wv.m; v += wv.sd * wv.sd; }
+    }
+  }
+  return [mu, v];
+}
+function groupAvail(players, w, s) {
+  // players available in week w, sample s (s < 0 = expected value: every player at mean x p_play)
+  const g = {QB:[],RB:[],WR:[],TE:[]};
+  for (const p of players) {
+    if (byeOf(p) === w) continue;
+    if (s < 0) g[p.p].push({m: p.m * p.pp, sd: p.sd});
+    else if (rnd(p.h, s, w) < p.pp) g[p.p].push({m: p.m, sd: p.sd});
+  }
+  for (const k in g) g[k].sort((a, b) => b.m - a.m);
+  return g;
+}
+function cut(players, cap) {
+  // a team that takes back more bodies than it sends drops its least valuable players
+  if (players.length <= cap) return [players, []];
+  const s = [...players].sort((a, b) => (b.m * b.pp) - (a.m * a.pp));
+  return [s.slice(0, cap), s.slice(cap)];
+}
+const Phi = x => { const t = 1 / (1 + .2316419 * Math.abs(x)); const d = .3989423 * Math.exp(-x * x / 2);
+  const p = d * t * (.3193815 + t * (-.3565638 + t * (1.781478 + t * (-1.821256 + t * 1.330274)))); return x > 0 ? 1 - p : p; };
+const NS = 200;
+function simTeam(players, weeks, ns = NS) {
+  // per week: mean lineup points and mean P(win vs a league-average opponent)
+  return weeks.map(w => {
+    let mu = 0, wp = 0;
+    for (let s = 0; s < ns; s++) {
+      const [m, v] = solve(groupAvail(players, w, s)); mu += m;
+      if (BASE) wp += Phi((m - BASE.mu[w]) / Math.sqrt(v + BASE.v[w]));
+    }
+    return {w, mu: mu / ns, wp: wp / ns};
+  });
+}
+function expTeam(players, wkeys) {
+  // cheap stage: expected lineup summed over the distinct week types (byes), weighted by count
+  let t = 0; for (const [w, n] of wkeys) t += n * solve(groupAvail(players, w, -1))[0]; return t;
+}
+function weekKeys() {
+  const m = new Map();
+  for (const w of weeksLeft()) { const key = Object.entries(D.byes).filter(([, b]) => b === w).map(([t]) => t).sort().join(",") || "none";
+    if (!m.has(key)) m.set(key, [w, 0]); m.get(key)[1]++; }
+  return [...m.values()];
+}
+const teamPlayers = t => t.ids.map(id => P[id]).filter(Boolean);
+
+function recompute(newLeague) {
+  refreshPlayers();
+  if (!LG) { renderValues(); return; }
+  const owned = new Set(LG.teams.flatMap(t => t.ids));
+  WAIVER = {};
+  // teams that were not pasted still own players: skip the best unrostered ones they would hold
+  const missing = Math.max(0, (LG.size || 0) - LG.teams.length);
+  for (const pos of ["QB","RB","WR","TE"]) {
+    const perTeam = LG.teams.reduce((a, t) => a + t.ids.filter(g => P[g] && P[g].p === pos).length, 0) / LG.teams.length;
+    const skip = Math.round(missing * perTeam);
+    const fa = D.players.filter(p => p.p === pos && !owned.has(p.g) && p.pp >= .5).map(p => p.m).sort((a, b) => b - a).slice(skip, skip + 5);
+    const m = fa.length ? fa.reduce((a, b) => a + b, 0) / fa.length : 0;
+    WAIVER[pos] = {m: m * pPlayOf(m), sd: sdOf(m), ppg: m};
+  }
+  // the league-average opponent, week by week
+  const weeks = weeksLeft(); BASE = {mu:{}, v:{}};
+  const sims = LG.teams.map(t => simTeam(teamPlayers(t), weeks, 60));
+  for (const [i, w] of weeks.entries()) {
+    BASE.mu[w] = sims.reduce((a, s) => a + s[i].mu, 0) / sims.length;
+    const avgP = sims.reduce((a, s) => a + s[i].mu, 0) / sims.length;
+    BASE.v[w] = Math.pow(sdOf(avgP / Math.max(1, starterCount())) , 2) * starterCount();
+  }
+  LG.power = LG.teams.map((t, i) => ({t, pts: sims[i].reduce((a, s) => a + s.mu, 0) / Math.max(1, weeks.length)}));
+  renderLeague(newLeague); renderRosters(); renderValues();
+  $("result").innerHTML = ""; $("findOut").innerHTML = "";
+}
+const starterCount = () => SLOT_ORDER.reduce((a, s) => a + (SL[s] || 0), 0);
+
+// ----------------------------------------------------------------- rendering: league
+function renderLeague(fresh) {
+  const opts = LG.teams.map((t, i) => `<option value="${i}">${esc(t.name)}</option>`).join("");
+  const a = fresh ? (LG.me ?? 0) : +$("teamA").value || 0;
+  $("teamA").innerHTML = opts; $("teamA").value = Math.min(a, LG.teams.length - 1);
+  const b = fresh ? (a === 0 ? 1 : 0) : +$("teamB").value;
+  $("teamB").innerHTML = opts; $("teamB").value = (b === +$("teamA").value) ? (b + 1) % LG.teams.length : b;
+  $("fTeam").innerHTML = `<option value="">every team</option>` + opts;
+  const pw = [...LG.power].sort((x, y) => y.pts - x.pts);
+  const miss = LG.teams.reduce((a, t) => a + t.miss.length, 0);
+  $("lgSummary").innerHTML = `<details ${fresh ? "open" : ""}><summary>${esc(LG.name)} — ${LG.teams.length} teams, ${LG.teams.reduce((a, t) => a + t.ids.length, 0)} players matched${miss ? `, ${miss} not matched (kickers, defenses, practice squad, or spelling)` : ""}</summary>
+    <div class="tablewrap"><table><tr><th class="l">Power ranking (expected starting lineup, pts/wk, weeks ${D.next_week}-${SEASON.seasonEnd})</th><th>Pts/wk</th><th class="l">Not matched</th></tr>
+    ${pw.map(x => `<tr><td>${esc(x.t.name)}</td><td>${x.pts.toFixed(1)}</td><td class="l mut" style="font-size:11px">${esc(x.t.miss.slice(0, 8).join(", "))}${x.t.miss.length > 8 ? "…" : ""}</td></tr>`).join("")}</table></div>
+    <p class="note">Free agent wire (best five, pts/g): ${["QB","RB","WR","TE"].map(p => `${p} ${WAIVER[p].ppg.toFixed(1)}`).join(" · ")}</p></details>`;
+  $("evalBtn").disabled = false; $("findBtn").disabled = false;
+}
+let SELA = new Set(), SELB = new Set();
+function starters(players) {
+  // who starts in a typical (no-bye) week, by expected value
+  const on = new Set(), used = {QB:0,RB:0,WR:0,TE:0};
+  const byM = new Map(); for (const p of players) byM.set(p, p.m * p.pp);
+  const sorted = {QB:[],RB:[],WR:[],TE:[]}; for (const p of players) sorted[p.p].push(p);
+  for (const k in sorted) sorted[k].sort((a, b) => byM.get(b) - byM.get(a));
+  for (const s of SLOT_ORDER) for (let k = 0; k < (SL[s] || 0); k++) {
+    let best = null; for (const pos of FLEX_ELIG[s] || [s]) { const c = sorted[pos][used[pos]]; if (c && (!best || byM.get(c) > byM.get(best))) best = c; }
+    if (best && byM.get(best) >= Math.max(...(FLEX_ELIG[s] || [s]).map(p => WAIVER[p].m))) { on.add(best.g); used[best.p]++; }
+  }
+  return on;
+}
+function rosterHTML(t, sel) {
+  const ps = teamPlayers(t).sort((a, b) => "QBRBWRTE".indexOf(a.p) - "QBRBWRTE".indexOf(b.p) || b.m - a.m);
+  const st = starters(ps);
+  return ps.map(p => `<div class="pl ${sel.has(p.g) ? "sel" : ""}" data-g="${p.g}"><input type="checkbox" ${sel.has(p.g) ? "checked" : ""} tabindex="-1">
+    <span class="pos ${p.p}">${p.p}</span><span class="nm">${esc(p.n)} <small>${esc(p.t)}${D.byes[p.t] ? " · bye " + D.byes[p.t] : ""}</small>${st.has(p.g) ? '<span class="chip st">S</span>' : ""}${tag(p)}</span>
+    <span class="v">${p.m.toFixed(1)}${p.ytd != null ? ` <small>(${p.ytd.toFixed(1)} so far)</small>` : ""}</span></div>`).join("")
+    || `<div class="pl"><span></span><span></span><span class="mut">No matched players</span></div>`;
+}
+function renderRosters() {
+  if (!LG) return;
+  const A = LG.teams[+$("teamA").value], B = LG.teams[+$("teamB").value];
+  $("hA").textContent = `I give (${A.name})`; $("hB").textContent = `I get (${B.name})`;
+  $("rosA").innerHTML = rosterHTML(A, SELA); $("rosB").innerHTML = rosterHTML(B, SELB);
+}
+for (const [id, sel] of [["rosA", () => SELA], ["rosB", () => SELB]])
+  $(id).onclick = e => { const r = e.target.closest(".pl"); if (!r || !r.dataset.g) return; const s = sel(); s.has(r.dataset.g) ? s.delete(r.dataset.g) : s.add(r.dataset.g); renderRosters(); };
+$("teamA").onchange = () => { SELA.clear(); if ($("teamB").value === $("teamA").value) $("teamB").value = (+$("teamA").value + 1) % LG.teams.length; LG.me = +$("teamA").value; store.set("tradeLeague", LG); renderRosters(); };
+$("teamB").onchange = () => { SELB.clear(); if ($("teamB").value === $("teamA").value) $("teamA").value = (+$("teamB").value + 1) % LG.teams.length; renderRosters(); };
+$("clearBtn").onclick = () => { SELA.clear(); SELB.clear(); $("result").innerHTML = ""; renderRosters(); };
+
+// ----------------------------------------------------------------- evaluating a trade
+function evaluate(ai, bi, giveA, giveB, ns = NS) {
+  const A = LG.teams[ai], B = LG.teams[bi], weeks = weeksLeft();
+  const pa = teamPlayers(A), pb = teamPlayers(B);
+  const ga = new Set(giveA), gb = new Set(giveB);
+  const [aft_a, cutA] = cut([...pa.filter(p => !ga.has(p.g)), ...giveB.map(g => P[g])], pa.length);
+  const [aft_b, cutB] = cut([...pb.filter(p => !gb.has(p.g)), ...giveA.map(g => P[g])], pb.length);
+  const side = (before, after) => {
+    const x = simTeam(before, weeks, ns), y = simTeam(after, weeks, ns);
+    const reg = (s) => s.filter(r => r.w <= SEASON.regEnd), po = (s) => s.filter(r => r.w > SEASON.regEnd);
+    const sum = (a, f) => a.reduce((t, r) => t + f(r), 0);
+    return {weeks: x.map((r, i) => ({w: r.w, before: r.mu, after: y[i].mu, d: y[i].mu - r.mu})),
+      ppw: (sum(y, r => r.mu) - sum(x, r => r.mu)) / Math.max(1, x.length),
+      total: sum(y, r => r.mu) - sum(x, r => r.mu),
+      wins: sum(reg(y), r => r.wp) - sum(reg(x), r => r.wp),
+      po: po(x).length ? (sum(po(y), r => r.mu) - sum(po(x), r => r.mu)) / po(x).length : null,
+      base: sum(x, r => r.mu) / Math.max(1, x.length), baseWins: sum(reg(x), r => r.wp)};
+  };
+  return {A, B, a: side(pa, aft_a), b: side(pb, aft_b), cutA, cutB, giveA, giveB};
+}
+const clsOf = x => x > 0.05 ? "up" : x < -0.05 ? "dn" : "mut";
+function verdictBox(name, s, cuts) {
+  const good = s.wins > 0.03 || (s.wins > -0.03 && s.ppw > 0.2);
+  return `<div class="vbox"><div class="lab">${esc(name)}</div>
+    <div class="big-n ${clsOf(s.ppw)}">${fx(s.ppw)} <span style="font-size:13px;font-weight:400" class="mut">pts/week</span></div>
+    <div>${fx(s.total, 0)} lineup points rest of season · <b class="${clsOf(s.wins)}">${fx(s.wins, 2)} expected wins</b> (from ${s.baseWins.toFixed(1)})</div>
+    ${s.po != null ? `<div class="mut" style="font-size:12px">Fantasy playoff weeks: ${fx(s.po)} pts/week</div>` : ""}
+    ${cuts.length ? `<div class="mut" style="font-size:12px">Roster full: drops ${cuts.map(p => esc(p.n)).join(", ")}</div>` : ""}
+    <div style="margin-top:4px;font-size:13px">${good ? "✅ Helps this team" : s.wins < -0.03 ? "❌ Hurts this team" : "➖ About even"}</div></div>`;
+}
+function naive(ids) { return ids.reduce((a, g) => a + Math.max(0, P[g].m - WAIVER[P[g].p].ppg), 0); }
+function renderResult(r) {
+  const vA = naive(r.giveB) - naive(r.giveA);
+  const weeks = r.a.weeks;
+  const mx = Math.max(0.5, ...weeks.map(x => Math.abs(x.d)), ...r.b.weeks.map(x => Math.abs(x.d)));
+  const bar = d => `<span style="display:inline-block;height:8px;width:${Math.round(40 * Math.abs(d) / mx)}px;background:${d >= 0 ? "var(--ok)" : "var(--bad)"};border-radius:2px;vertical-align:middle"></span>`;
+  const names = ids => ids.map(g => `${esc(P[g].n)} <span class="mut">(${P[g].p}, ${P[g].m.toFixed(1)})</span>`).join(" + ") || "nothing";
+  const both = r.a.wins > 0 && r.b.wins > 0;
+  $("result").innerHTML = `<h3>${esc(r.A.name)} gets ${names(r.giveB)} · ${esc(r.B.name)} gets ${names(r.giveA)}</h3>
+    <div class="verdict">${verdictBox(r.A.name, r.a, r.cutA)}${verdictBox(r.B.name, r.b, r.cutB)}</div>
+    <p class="note">${both ? "Both teams' expected wins rise: a trade like this should be accepted by a manager who does the math." :
+      r.a.wins > 0 ? "Good for you, bad for them — expect pushback; the trade finder looks for versions both sides gain from." : ""}
+    A trade chart would say you ${vA >= 0 ? "win" : "lose"} this by ${Math.abs(vA).toFixed(1)} pts/g above replacement; the lineup view above is what actually changes on the scoreboard.</p>
+    <details><summary>Week by week (expected starting-lineup points)</summary><div class="tablewrap"><table>
+      <tr><th class="l">Week</th><th>${esc(r.A.name)} before</th><th>after</th><th></th><th>${esc(r.B.name)} before</th><th>after</th><th></th></tr>
+      ${weeks.map((x, i) => { const y = r.b.weeks[i]; return `<tr${x.w > SEASON.regEnd ? ' style="background:#1a1d27"' : ""}><td>${x.w}${x.w > SEASON.regEnd ? " <span class='mut'>(playoffs)</span>" : ""}</td>
+        <td>${x.before.toFixed(1)}</td><td>${x.after.toFixed(1)}</td><td class="l ${clsOf(x.d)}">${fx(x.d)} ${bar(x.d)}</td>
+        <td>${y.before.toFixed(1)}</td><td>${y.after.toFixed(1)}</td><td class="l ${clsOf(y.d)}">${fx(y.d)} ${bar(y.d)}</td></tr>`; }).join("")}
+    </table></div></details>`;
+}
+$("evalBtn").onclick = () => {
+  if (!SELA.size && !SELB.size) { $("result").innerHTML = `<p class="msg warn">Pick at least one player.</p>`; return; }
+  $("result").innerHTML = `<p class="msg">Simulating ${NS} seasons…</p>`;
+  setTimeout(() => renderResult(evaluate(+$("teamA").value, +$("teamB").value, [...SELA], [...SELB])), 20);
+};
+
+// ----------------------------------------------------------------- trade finder
+function combos(arr, k) { const out = []; const f = (s, c) => { if (c.length === k) { out.push([...c]); return; } for (let i = s; i < arr.length; i++) { c.push(arr[i]); f(i + 1, c); c.pop(); } }; f(0, []); return out; }
+let FOUND = [];
+$("findBtn").onclick = async () => {
+  const ai = +$("teamA").value, shape = +$("fShape").value, only = $("fTeam").value;
+  const A = LG.teams[ai], pa = teamPlayers(A), wk = weekKeys();
+  const baseA = expTeam(pa, wk), cands = [];
+  const shapes = [[1, 1]]; if (shape >= 2) shapes.push([2, 1], [1, 2]); if (shape >= 3) shapes.push([2, 2]);
+  $("findBtn").disabled = true; FOUND = [];
+  const others = LG.teams.map((t, i) => i).filter(i => i !== ai && (only === "" || +only === i));
+  for (const [n, bi] of others.entries()) {
+    $("findMsg").className = "msg"; $("findMsg").textContent = `Screening ${LG.teams[bi].name} (${n + 1}/${others.length})…`;
+    await new Promise(r => setTimeout(r, 0));
+    const pb = teamPlayers(LG.teams[bi]), baseB = expTeam(pb, wk);
+    for (const [ka, kb] of shapes) for (const ga of combos(pa, ka)) for (const gb of combos(pb, kb)) {
+      const sa = new Set(ga), sb = new Set(gb);
+      const [na] = cut([...pa.filter(p => !sa.has(p)), ...gb], pa.length);
+      const dA = expTeam(na, wk) - baseA; if (dA <= 1) continue;
+      const [nb] = cut([...pb.filter(p => !sb.has(p)), ...ga], pb.length);
+      const dB = expTeam(nb, wk) - baseB; if (dB <= 1) continue;
+      cands.push({bi, ga: ga.map(p => p.g), gb: gb.map(p => p.g), score: Math.min(dA, dB) + 0.25 * (dA + dB)});
+    }
+  }
+  cands.sort((x, y) => y.score - x.score);
+  const top = cands.slice(0, 25);
+  for (const [i, c] of top.entries()) {
+    $("findMsg").textContent = `Simulating the best ${top.length} of ${cands.length} mutual gains (${i + 1}/${top.length})…`;
+    await new Promise(r => setTimeout(r, 0));
+    const r = evaluate(ai, c.bi, c.ga, c.gb, 120);
+    if (r.a.wins > 0 && r.b.wins > 0) FOUND.push(r);
+  }
+  FOUND.sort((x, y) => y.a.wins - x.a.wins);
+  $("findBtn").disabled = false;
+  $("findMsg").className = "msg " + (FOUND.length ? "ok" : "warn");
+  $("findMsg").textContent = FOUND.length ? `${FOUND.length} trades raise both teams' expected wins (screened ${cands.length} candidates).`
+    : `No trade found that raises both teams' expected wins${cands.length ? ` (${cands.length} looked promising on averages, none survived the simulation)` : ""}. Rosters that fit together this well are common in shallow leagues.`;
+  const nm = ids => ids.map(g => `${esc(P[g].n)} <span class="mut">${P[g].p}</span>`).join(" + ");
+  $("findOut").innerHTML = FOUND.length ? `<div class="tablewrap"><table><tr><th class="l">Give</th><th class="l">Get</th><th class="l">From</th><th>My wins</th><th>My pts/wk</th><th>Their wins</th><th></th></tr>
+    ${FOUND.map((r, i) => `<tr><td class="l">${nm(r.giveA)}</td><td class="l">${nm(r.giveB)}</td><td class="l">${esc(r.B.name)}</td>
+      <td class="up">${fx(r.a.wins, 2)}</td><td>${fx(r.a.ppw)}</td><td class="up">${fx(r.b.wins, 2)}</td><td><button class="sec" data-load="${i}">Open</button></td></tr>`).join("")}</table></div>` : "";
+};
+$("findOut").onclick = e => { const i = e.target.dataset.load; if (i == null) return; const r = FOUND[+i];
+  $("teamB").value = LG.teams.indexOf(r.B); SELA = new Set(r.giveA); SELB = new Set(r.giveB); renderRosters(); renderResult(r);
+  $("buildCard").scrollIntoView({behavior: "smooth"}); };
+
+// ----------------------------------------------------------------- player value table
+function renderValues() {
+  const owner = {}; if (LG) for (const t of LG.teams) for (const g of t.ids) owner[g] = t.name;
+  const pos = $("vPos").value, own = $("vOwn").value, q = norm($("vQ").value);
+  const rows = D.players.filter(p => (!pos || p.p === pos) && (!own || (own === "fa") === !owner[p.g]) && (!q || norm(p.n).includes(q)))
+    .sort((a, b) => b.m - a.m).slice(0, 150);
+  const rk = {}; const cnt = {}; for (const p of [...D.players].sort((a, b) => b.m - a.m)) { cnt[p.p] = (cnt[p.p] || 0) + 1; rk[p.g] = cnt[p.p]; }
+  $("vTab").innerHTML = `<tr><th class="l">Player</th><th>Pos rk</th><th>ROS pts/g</th><th>So far</th><th>Plays</th>${LG ? '<th class="l">Owner</th>' : ""}</tr>` +
+    rows.map(p => `<tr><td><span class="pos ${p.p}">${p.p}</span> ${esc(p.n)} <span class="mut">${esc(p.t)}</span>${tag(p)}</td><td>${p.p}${rk[p.g]}</td><td><b>${p.m.toFixed(1)}</b></td>
+      <td class="mut">${p.ytd != null ? p.ytd.toFixed(1) + ` <small>(${p.gp}g)</small>` : "—"}</td><td class="mut">${Math.round(p.pp * 100)}%</td>
+      ${LG ? `<td class="l ${owner[p.g] ? "" : "up"}">${owner[p.g] ? esc(owner[p.g]) : "free agent"}</td>` : ""}</tr>`).join("");
+}
+for (const id of ["vPos", "vOwn", "vQ"]) $(id).addEventListener("input", renderValues);
+
+// ----------------------------------------------------------------- sources: Sleeper
+async function getJSON(url, opts) { const r = await fetch(url, opts); if (!r.ok) { const e = new Error("HTTP " + r.status); e.status = r.status; throw e; } return r.json(); }
+const SLEEPER_SCORE = {pass_yd:"pass_yds", pass_td:"pass_tds", pass_int:"pass_int", rush_yd:"rush_yds", rush_td:"rush_tds", rec:"rec",
+  rec_yd:"rec_yds", rec_td:"rec_tds", fum_lost:"fumbles_lost", bonus_rec_te:"te_prem", bonus_rec_rb:"rb_prem", bonus_rec_wr:"wr_prem",
+  bonus_pass_yd_300:"b300", bonus_rush_yd_100:"b100r", bonus_rec_yd_100:"b100c"};
+const SLEEPER_SKIP = /^(def_|pts_|yds_allow|blk_kick|fg|xp|sack|int$|ff$|fum_rec|safe|st_|idp_|kr_|pr_|tkl|qb_hit|def|bonus_def|bonus_fd|pass_2pt|rush_2pt|rec_2pt|fum$)/;
+const SLEEPER_SLOT = {QB:"QB", RB:"RB", WR:"WR", TE:"TE", FLEX:"FLEX", SUPER_FLEX:"SFLEX", REC_FLEX:"WRTE", WRRB_FLEX:"RBWR"};
+async function loadSleeper(id) {
+  $("lgMsg").className = "msg"; $("lgMsg").textContent = "Loading Sleeper league…";
+  try {
+    const base = `https://api.sleeper.app/v1/league/${encodeURIComponent(id)}`;
+    const [lg, rosters, users] = await Promise.all([getJSON(base), getJSON(base + "/rosters"), getJSON(base + "/users")]);
+    if (!lg) throw new Error("no such league");
+    const sc = lg.scoring_settings || {}; const nsc = Object.fromEntries(SCORE_FIELDS.map(f => [f[0], 0])); IGNORED = [];
+    for (const [k, v] of Object.entries(sc)) {
+      if (SLEEPER_SCORE[k]) nsc[SLEEPER_SCORE[k]] = v;
+      else if (v && !SLEEPER_SKIP.test(k)) IGNORED.push(`${k} ${v}`);
+    }
+    SC = nsc;
+    const sl = Object.fromEntries(SLOT_FIELDS.map(f => [f[0], 0]));
+    for (const r of lg.roster_positions || []) if (SLEEPER_SLOT[r]) sl[SLEEPER_SLOT[r]]++;
+    SL = sl;
+    const pws = +(lg.settings && lg.settings.playoff_week_start) || 15;
+    SEASON = {regEnd: pws - 1, seasonEnd: Math.min(18, pws - 1 + Math.max(2, Math.ceil(Math.log2(+(lg.settings && lg.settings.playoff_teams) || 6))))};
+    const uname = Object.fromEntries((users || []).map(u => [u.user_id, (u.metadata && u.metadata.team_name) || u.display_name]));
+    const teams = rosters.map(r => {
+      const all = [...new Set([...(r.players || []), ...(r.reserve || []), ...(r.taxi || [])])];
+      const ids = [], miss = [];
+      for (const s of all) { const p = bySleeper[s]; if (p) ids.push(p.g); else if (!/^[A-Z]{2,3}$/.test(s)) miss.push("Sleeper id " + s); }
+      return {id: r.roster_id, name: uname[r.owner_id] || `Team ${r.roster_id}`, ids, miss};
+    });
+    buildSettings(); store.set("tradeScoring", SC); store.set("tradeSlots", SL); store.set("tradeSeason", SEASON);
+    setLeague({name: lg.name, source: "sleeper", sourceId: id, teams, inj: {}}, `Loaded ${lg.name} from Sleeper.`);
+  } catch (e) { $("lgMsg").className = "msg err"; $("lgMsg").textContent = "Could not load that Sleeper league (" + e.message + "). Check the ID."; }
+}
+$("slLoad").onclick = () => { const v = $("slId").value.trim().match(/\d{6,}/); if (v) loadSleeper(v[0]); };
+$("slFind").onclick = async () => {
+  const u = $("slUser").value.trim(); if (!u) return;
+  try {
+    const user = await getJSON(`https://api.sleeper.app/v1/user/${encodeURIComponent(u)}`);
+    const lgs = await getJSON(`https://api.sleeper.app/v1/user/${user.user_id}/leagues/nfl/${D.season}`);
+    $("slLeagues").innerHTML = lgs.length ? `<div class="tabs" style="margin-top:8px">${lgs.map(l => `<button data-lg="${esc(l.league_id)}">${esc(l.name)}</button>`).join("")}</div>`
+      : `<p class="msg warn">No ${D.season} leagues for ${esc(u)}.</p>`;
+  } catch (e) { $("slLeagues").innerHTML = `<p class="msg err">No Sleeper user "${esc(u)}".</p>`; }
+};
+$("slLeagues").onclick = e => { const id = e.target.dataset.lg; if (id) { $("slId").value = id; loadSleeper(id); } };
+
+// ----------------------------------------------------------------- sources: ESPN
+const ESPN_STAT = {3:"pass_yds", 4:"pass_tds", 20:"pass_int", 24:"rush_yds", 25:"rush_tds", 42:"rec_yds", 43:"rec_tds", 53:"rec", 72:"fumbles_lost"};
+const ESPN_SLOT = {0:"QB", 2:"RB", 4:"WR", 6:"TE", 23:"FLEX", 7:"SFLEX", 5:"WRTE", 3:"RBWR"};
+const espnUrl = id => `https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/${D.season}/segments/0/leagues/${id}?view=mSettings&view=mRoster&view=mTeam`;
+function parseEspn(d) {
+  const st = d.settings || {};
+  const nsc = Object.fromEntries(SCORE_FIELDS.map(f => [f[0], 0])); IGNORED = [];
+  for (const it of (st.scoringSettings && st.scoringSettings.scoringItems) || []) {
+    const k = ESPN_STAT[it.statId]; if (!k) continue;
+    nsc[k] = it.points;
+    if (it.statId === 53 && it.pointsOverrides) {        // reception premiums live in per-slot overrides
+      if (it.pointsOverrides["6"] != null) nsc.te_prem = it.pointsOverrides["6"] - it.points;
+      if (it.pointsOverrides["2"] != null) nsc.rb_prem = it.pointsOverrides["2"] - it.points;
+      if (it.pointsOverrides["4"] != null) nsc.wr_prem = it.pointsOverrides["4"] - it.points;
+    }
+  }
+  SC = nsc;
+  const sl = Object.fromEntries(SLOT_FIELDS.map(f => [f[0], 0]));
+  for (const [k, v] of Object.entries((st.rosterSettings && st.rosterSettings.lineupSlotCounts) || {})) if (ESPN_SLOT[k]) sl[ESPN_SLOT[k]] = v;
+  SL = sl;
+  const reg = +(st.scheduleSettings && st.scheduleSettings.matchupPeriodCount) || 14;
+  SEASON = {regEnd: reg, seasonEnd: Math.min(18, reg + 3)};
+  const inj = {};
+  const teams = (d.teams || []).map(t => {
+    const ids = [], miss = [];
+    for (const e of (t.roster && t.roster.entries) || []) {
+      const pl = e.playerPoolEntry && e.playerPoolEntry.player; if (!pl) continue;
+      const p = byEspn[String(pl.id)] || (pl.defaultPositionId <= 4 ? matchName(pl.fullName) : null);
+      if (p) { ids.push(p.g); if (pl.injuryStatus && pl.injuryStatus !== "ACTIVE" && pl.injuryStatus !== "NORMAL") inj[p.g] = pl.injuryStatus; }
+      else if (pl.defaultPositionId <= 4) miss.push(pl.fullName);
+    }
+    return {id: t.id, name: t.name || [t.location, t.nickname].filter(Boolean).join(" ") || t.abbrev || `Team ${t.id}`, ids, miss};
+  });
+  if (!teams.length || !teams.some(t => t.ids.length)) throw new Error("no rosters in that data");
+  buildSettings(); store.set("tradeScoring", SC); store.set("tradeSlots", SL); store.set("tradeSeason", SEASON);
+  setLeague({name: st.name || "ESPN league", source: "espn", sourceId: d.id, teams, inj}, `Loaded ${st.name || "league"} from ESPN.`);
+}
+$("esLoad").onclick = async () => {
+  const id = ($("esId").value.match(/\d{4,}/) || [])[0]; if (!id) return;
+  $("esLink").href = espnUrl(id); $("esLink").textContent = espnUrl(id).replace("https://", "").slice(0, 60) + "…";
+  $("lgMsg").className = "msg"; $("lgMsg").textContent = "Loading ESPN league…";
+  try { parseEspn(await getJSON(espnUrl(id), {credentials: "include"})); $("esPrivate").classList.add("hide"); }
+  catch (e) {
+    $("esPrivate").classList.remove("hide");
+    $("lgMsg").className = "msg warn";
+    $("lgMsg").textContent = e.status === 401 || e.status === 403 || e.message === "Failed to fetch"
+      ? "That league is private (or your browser blocks ESPN's login cookie here). Use the link below." : "Could not load: " + e.message;
+  }
+};
+$("esParse").onclick = () => {
+  try { parseEspn(JSON.parse($("esJson").value)); }
+  catch (e) { $("lgMsg").className = "msg err"; $("lgMsg").textContent = "That doesn't look like the league data (" + e.message + "). Copy the whole page."; }
+};
+
+// ----------------------------------------------------------------- sources: paste
+$("pasteLoad").onclick = () => {
+  const txt = $("pasteBox").value.replace(/\r/g, "");
+  const teams = [];
+  const oneLine = txt.split("\n").filter(l => l.trim()).every(l => /^[^,:]{1,60}:\s*\S/.test(l) && l.includes(","));
+  if (oneLine) {
+    for (const l of txt.split("\n").filter(l => l.trim())) { const [nm, rest] = [l.slice(0, l.indexOf(":")), l.slice(l.indexOf(":") + 1)];
+      teams.push({name: nm.trim(), lines: rest.split(/[,;]/)}); }
+  } else {
+    for (const block of txt.split(/\n\s*\n/)) {
+      const lines = block.split("\n").map(l => l.trim()).filter(Boolean); if (!lines.length) continue;
+      const first = lines[0].replace(/:$/, "");
+      if (lines[0].endsWith(":") || !matchName(lines[0])) teams.push({name: first, lines: lines.slice(1)});
+      else teams.push({name: `Team ${teams.length + 1}`, lines});
+    }
+  }
+  const out = teams.map((t, i) => { const ids = [], miss = [];
+    for (const l of t.lines) { if (!l.trim()) continue; const p = matchName(l); if (p && !ids.includes(p.g)) ids.push(p.g); else if (!p && /[a-z]{2,}\s+[a-z]{2,}/i.test(l)) miss.push(l.trim().slice(0, 40)); }
+    return {id: i, name: t.name, ids, miss}; }).filter(t => t.ids.length);
+  if (out.length < 2) { $("lgMsg").className = "msg err"; $("lgMsg").textContent = "Need at least two teams with recognisable players."; return; }
+  IGNORED = []; buildSettings();
+  setLeague({name: "Pasted league", source: "paste", teams: out, inj: {}, size: parseInt($("pasteSize").value) || 0}, `Read ${out.length} teams. Set your scoring below.`);
+};
+
+// ----------------------------------------------------------------- source: demo
+$("demoLoad").onclick = () => {
+  refreshPlayers();
+  let seed = Date.now() % 100000; const r = () => { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
+  const pool = D.players.filter(p => p.pp > .3).map(p => ({p, v: p.m * (0.75 + 0.5 * r()) - (p.p === "QB" ? 5 : p.p === "TE" ? 3 : 0)})).sort((a, b) => b.v - a.v);
+  const N = 10, teams = Array.from({length: N}, (_, i) => ({id: i, name: ["Glass Joe","Von Kaiser","Piston Honda","Don Flamenco","King Hippo","Great Tiger","Bald Bull","Soda Popinski","Mr. Sandman","Super Macho Man"][i], ids: [], miss: [], n: {QB:0,RB:0,WR:0,TE:0}}));
+  const cap = {QB:2, RB:6, WR:6, TE:2};
+  for (let rd = 0; rd < 15; rd++) for (let k = 0; k < N; k++) {
+    const t = teams[rd % 2 ? N - 1 - k : k];
+    const i = pool.findIndex(x => t.n[x.p.p] < cap[x.p.p]); if (i < 0) continue;
+    const x = pool.splice(i, 1)[0]; t.ids.push(x.p.g); t.n[x.p.p]++;
+  }
+  teams.forEach(t => delete t.n);
+  setLeague({name: "Demo league", source: "demo", teams, inj: {}}, "Built a 10-team demo league. Pick two teams and try a trade, or run the trade finder.");
+};
+
+// ----------------------------------------------------------------- tabs and start-up
+$("srcTabs").onclick = e => { const s = e.target.dataset.src; if (!s) return;
+  for (const b of $("srcTabs").children) b.classList.toggle("on", b.dataset.src === s);
+  for (const p of document.querySelectorAll("[data-pane]")) p.classList.toggle("hide", p.dataset.pane !== s); };
+if (!D.players.length) { $("sub").textContent = "Player data failed to load."; }
+else {
+  $("sub").innerHTML = `${D.season} season, through week ${D.week}. Rest-of-season values for ${D.players.length} players, refreshed ${esc(D.generated.slice(0, 10))}${D.ffa_stale ? " (projection file is a week old)" : ""}. Load your league, set your scoring, build a trade.`;
+  $("foot").textContent = `Player file: ${D.generated} UTC · projections for week ${D.ffa_week} · ${D.hot_start ? "sell-high/buy-low tags from this season's volume split" : "no sell-high/buy-low tags this week"}.`;
+  buildSettings();
+  recompute(true);
+  if (LG) { $("lgMsg").className = "msg ok"; $("lgMsg").textContent = `Restored ${LG.name} from your last visit.`
+    + (LG.source === "sleeper" ? " Reload it for today's rosters." : ""); if (LG.source === "sleeper") $("slId").value = LG.sourceId; }
+}
+</script>
+</body>
+</html>
