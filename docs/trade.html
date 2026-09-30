@@ -154,6 +154,16 @@
     </div>
     <div class="msg" id="findMsg"></div>
     <div id="findOut"></div>
+    <h3>Trade chains</h3>
+    <p class="how">A sequence of trades: I trade X for Y, then flip Y to another team for Z, and so on. Every step must be one the other manager should accept <b>at that moment</b>. My own steps may cost a little along the way, if the later ones more than pay it back. Only chains that end up ahead of the best single trade are shown.</p>
+    <div class="row">
+      <div><label>Length</label><select id="cDepth"><option value="2">up to 2 trades</option><option value="3" selected>up to 3 trades</option><option value="4">up to 4 trades (slow)</option></select></div>
+      <div><label>Each trade</label><select id="cShape"><option value="1" selected>1-for-1</option><option value="2">1-for-1 and 2-for-1 (slow)</option></select></div>
+      <div><label>A step may cost me up to</label><select id="cFloor"><option value="0">nothing (every step gains)</option><option value="0.3" selected>0.3 pts/week</option><option value="1">1 pt/week</option></select></div>
+      <div class="shrink"><button class="big" id="chainBtn" disabled>Find chains</button></div>
+    </div>
+    <div class="msg" id="chainMsg"></div>
+    <div id="chainOut"></div>
   </div>
 
   <div class="card">
@@ -405,7 +415,7 @@ function renderLeague(fresh) {
     <div class="tablewrap"><table><tr><th class="l">Power ranking (expected starting lineup, pts/wk, weeks ${D.next_week}-${SEASON.seasonEnd})</th><th>Pts/wk</th><th class="l">Not matched</th></tr>
     ${pw.map(x => `<tr><td>${esc(x.t.name)}</td><td>${x.pts.toFixed(1)}</td><td class="l mut" style="font-size:11px">${esc(x.t.miss.slice(0, 8).join(", "))}${x.t.miss.length > 8 ? "…" : ""}</td></tr>`).join("")}</table></div>
     <p class="note">Free agent wire — fills any slot left empty by a bye, an injury or a thin position (average of the best five available, pts/g): ${["QB","RB","WR","TE"].map(p => `${p} ${WAIVER[p].ppg.toFixed(1)}`).join(" · ")}</p></details>`;
-  $("evalBtn").disabled = false; $("findBtn").disabled = false;
+  $("evalBtn").disabled = false; $("findBtn").disabled = false; $("chainBtn").disabled = false;
 }
 let SELA = new Set(), SELB = new Set();
 function starters(players) {
@@ -542,6 +552,99 @@ $("findBtn").onclick = async () => {
 $("findOut").onclick = e => { const i = e.target.dataset.load; if (i == null) return; const r = FOUND[+i];
   $("teamB").value = LG.teams.indexOf(r.B); SELA = new Set(r.giveA); SELB = new Set(r.giveB); renderRosters(); renderResult(r);
   $("buildCard").scrollIntoView({behavior: "smooth"}); };
+
+// ----------------------------------------------------------------- trade chains
+const sig = ros => ros.map(p => p.g).sort().join("|");
+async function chainSearch(ai, depth, beam, floor, shapes, progress) {
+  // Beam search over sequences of trades. Each state is every roster after the trades so far; a
+  // child is one more trade in which the partner's expected lineup rises on HIS roster at that point
+  // and mine does not fall by more than `floor` pts/week. The beam keeps the best cumulative gains.
+  const wk = weekKeys(), nW = Math.max(1, weeksLeft().length);
+  const r0 = LG.teams.map(t => teamPlayers(t));
+  const v0 = r0.map(r => expTeam(r, wk));
+  let frontier = [{ros: r0, val: v0, gain: 0, steps: []}];
+  const seen = new Set([sig(r0[ai])]), all = [];
+  for (let d = 0; d < depth; d++) {
+    const kids = [];
+    for (const [ni, st] of frontier.entries()) {
+      progress(`Trade ${d + 1} of ${depth}: extending chain ${ni + 1}/${frontier.length}…`);
+      await new Promise(r => setTimeout(r, 0));
+      const mine = st.ros[ai], sold = new Set(st.steps.flatMap(x => x.give));
+      for (let bi = 0; bi < LG.teams.length; bi++) {
+        if (bi === ai) continue;
+        const theirs = st.ros[bi];
+        for (const [ka, kb] of shapes) for (const ga of combos(mine, ka)) for (const gb of combos(theirs, kb)) {
+          if (gb.some(p => sold.has(p.g))) continue;                 // never buy back what I sold
+          const sa = new Set(ga), sb = new Set(gb);
+          const [na] = cut([...mine.filter(p => !sa.has(p)), ...gb], mine.length);
+          const dA = expTeam(na, wk) - st.val[ai];
+          if (dA < -floor * nW) continue;
+          const [nb] = cut([...theirs.filter(p => !sb.has(p)), ...ga], theirs.length);
+          const dB = expTeam(nb, wk) - st.val[bi];
+          if (dB <= 1) continue;                                     // the partner must gain
+          kids.push({st, bi, ga, gb, na, nb, dA, dB});
+        }
+      }
+    }
+    kids.sort((x, y) => (y.st.gain + y.dA) - (x.st.gain + x.dA));
+    const next = [];
+    for (const k of kids) {
+      const s = sig(k.na); if (seen.has(s)) continue; seen.add(s);
+      const ros = k.st.ros.slice(); ros[ai] = k.na; ros[k.bi] = k.nb;
+      const val = k.st.val.slice(); val[ai] += k.dA; val[k.bi] += k.dB;
+      const node = {ros, val, gain: k.st.gain + k.dA, steps: [...k.st.steps,
+        {bi: k.bi, give: k.ga.map(p => p.g), get: k.gb.map(p => p.g), dA: k.dA / nW, dB: k.dB / nW,
+         bBefore: k.st.ros[k.bi], bAfter: k.nb}]};
+      next.push(node); all.push(node);
+      if (next.length >= beam) break;
+    }
+    if (!next.length) break;
+    frontier = next;
+  }
+  return all;
+}
+let CHAINS = [];
+$("chainBtn").onclick = async () => {
+  const ai = +$("teamA").value, depth = +$("cDepth").value, floor = +$("cFloor").value;
+  const shapes = +$("cShape").value === 2 ? [[1, 1], [2, 1], [1, 2]] : [[1, 1]];
+  $("chainBtn").disabled = true; $("chainOut").innerHTML = ""; $("chainMsg").className = "msg";
+  const say = t => { $("chainMsg").textContent = t; };
+  const all = await chainSearch(ai, depth, shapes.length > 1 ? 8 : 16, floor, shapes, say);
+  const nW = Math.max(1, weeksLeft().length), weeks = weeksLeft();
+  const winsOf = sims => sims.filter(r => r.w <= SEASON.regEnd).reduce((a, r) => a + r.wp, 0);
+  const ptsOf = sims => sims.reduce((a, r) => a + r.mu, 0) / nW;
+  const base = simTeam(teamPlayers(LG.teams[ai]), weeks, 120), w0 = winsOf(base), mu0 = ptsOf(base);
+  const singles = all.filter(n => n.steps.length === 1).sort((a, b) => b.gain - a.gain);
+  let sw = null;
+  if (singles.length) { const sim = simTeam(singles[0].ros[ai], weeks, 120); sw = {wins: winsOf(sim) - w0, ppw: ptsOf(sim) - mu0}; }
+  const single = singles.length ? singles[0].gain / nW : 0;
+  // chains of 2+ trades that end ahead of the best single trade, best first
+  // The screen scores a player at mean x P(plays), which undervalues an injury-tagged star (the
+  // simulation lets him play when healthy and the bench cover when not). So each partner is
+  // re-checked with the simulation too: a chain survives only if every step still helps its partner.
+  const cands = all.filter(n => n.steps.length > 1).sort((a, b) => b.gain - a.gain).slice(0, 30);
+  CHAINS = []; let rejected = 0;
+  const sims = new Map(), simOf = ros => { if (!sims.has(ros)) sims.set(ros, simTeam(ros, weeks, 120)); return sims.get(ros); };
+  for (const [i, n] of cands.entries()) {
+    say(`Simulating chain ${i + 1}/${cands.length}…`); await new Promise(r => setTimeout(r, 0));
+    const sim = simOf(n.ros[ai]);
+    const theirs = n.steps.map(s => ({wins: winsOf(simOf(s.bAfter)) - winsOf(simOf(s.bBefore)), ppw: ptsOf(simOf(s.bAfter)) - ptsOf(simOf(s.bBefore))}));
+    if (theirs.some(t => t.wins <= 0)) { rejected++; continue; }
+    CHAINS.push({n, theirs, wins: winsOf(sim) - w0, ppw: ptsOf(sim) - mu0});
+  }
+  CHAINS = CHAINS.filter(c => !sw || c.wins > sw.wins + 0.02).sort((a, b) => b.wins - a.wins).slice(0, 10);
+  $("chainBtn").disabled = false;
+  $("chainMsg").className = "msg " + (CHAINS.length ? "ok" : "warn");
+  const ref = sw ? ` (${fx(sw.ppw)} pts/week, ${fx(sw.wins, 2)} wins)` : "";
+  const rej = rejected ? ` ${rejected} more looked good on averages but a partner loses in the simulation.` : "";
+  say((CHAINS.length ? `${CHAINS.length} chains beat the best single trade${ref}.`
+    : `No chain beats the best single trade${ref}: nothing on these rosters gains value as it moves from team to team.`) + rej);
+  const nm = ids => ids.map(g => `${esc(P[g].n)} <span class="mut">${P[g].p}</span>`).join(" + ");
+  $("chainOut").innerHTML = CHAINS.map(c => `<div class="vbox" style="margin:8px 0">
+    <div><b class="${clsOf(c.wins)}">${fx(c.wins, 2)} expected wins</b> · ${fx(c.ppw)} pts/week after all ${c.n.steps.length} trades</div>
+    <ol style="margin:6px 0 0;padding-left:20px;font-size:13px">${c.n.steps.map((s, j) => `<li>Give ${nm(s.give)} to <b>${esc(LG.teams[s.bi].name)}</b> for ${nm(s.get)}
+      <span class="mut">— they gain ${fx(c.theirs[j].ppw)} pts/week, ${fx(c.theirs[j].wins, 2)} wins</span></li>`).join("")}</ol></div>`).join("");
+};
 
 // ----------------------------------------------------------------- player value table
 function renderValues() {
