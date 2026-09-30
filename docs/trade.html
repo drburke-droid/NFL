@@ -168,7 +168,7 @@
     <h2 style="color:var(--ink)">How it works</h2>
     <p><b>Player level.</b> Each player's rest-of-season points per game come from a per-position ridge regression fitted on every NFL season since 2012: this season (average, last four, best game, games played), the two prior seasons, the career, and the FantasyFootballAnalytics consensus projection for the coming week. Walk-forward it misses by 3.1 points per game against 3.3 for "this year blended with last", and it does not believe two-week hot starts the way that blend does.</p>
     <p><b>Your scoring.</b> The model is fitted in one league's scoring, so each player is carried as a per-game stat line (the projection's mix of yards, catches and touchdowns, scaled to the fitted level) and re-scored in yours: a quarterback in a 4-point-TD league, a tight end with a reception premium.</p>
-    <p><b>Lineups, not trade charts.</b> A trade is worth what it does to the best lineup each team can field each remaining week: bye weeks out, injured players out as often as their status says (Questionable players miss about a third of the rest of the season, Out about half), the free agent wire filling any empty slot, and the worst player cut when a team takes back more bodies than it sends. 200 simulated seasons per trade.</p>
+    <p><b>Lineups, not trade charts.</b> A trade is worth what it does to the best lineup each team can field each remaining week: bye weeks out, injured players out as often as their status says (Questionable players miss about a third of the rest of the season, Out about half), and any slot the bench cannot cover filled by a generally available free agent (the average of the best five unrostered at the position, at his full rate, since you pick up someone who is playing that week), and the worst player cut when a team takes back more bodies than it sends. 200 simulated seasons per trade.</p>
     <p><b>Wins.</b> Weekly points become win probability against a league-average opponent, including each lineup's week-to-week spread (which grows with the player: a 22-point player swings by about 9, a 4-point one by 4). That is why a strong team gains less from the same points than a middling one.</p>
     <p><b>Sell high / buy low tags.</b> Early-season points split into what a player's volume (targets, carries, attempts) earns and the rest. Over 2016-25 the rest mostly disappears: the luckiest fifth fell 4.8 points per game after week 3, the unluckiest rose 2.9. Shown as a tag; the level already regresses.</p>
     <p><b>Limits.</b> This season only (no keeper or dynasty value); kickers and defenses are treated as interchangeable; scoring rules beyond yards, touchdowns, catches, turnovers, reception premiums and 100/300-yard bonuses are ignored and listed above.</p>
@@ -299,8 +299,11 @@ function setLeague(lg, msg) {
 
 // ----------------------------------------------------------------- lineup solver
 const SLOT_ORDER = ["QB","RB","WR","TE","WRTE","RBWR","FLEX","SFLEX"];
-function solve(byPos) {
+function solve(byPos, full) {
   // byPos: {QB:[{m,sd}] ...} each sorted desc by m. Returns [mean, variance] of the best lineup.
+  // Any slot the roster cannot fill -- a bye, an injury, a thin position -- goes to a generally
+  // available free agent. In a simulated week (full) that pickup is someone active that week, so
+  // he scores his full rate; in the expected-value pass (not full) he is discounted like everyone.
   const used = {QB:0,RB:0,WR:0,TE:0};
   let mu = 0, v = 0;
   for (const s of SLOT_ORDER) {
@@ -309,9 +312,10 @@ function solve(byPos) {
     for (let k = 0; k < n; k++) {
       let best = null, bp = null;
       for (const pos of elig) { const c = byPos[pos][used[pos]]; if (c && (!best || c.m > best.m)) { best = c; bp = pos; } }
-      let wv = null; for (const pos of elig) { const w = WAIVER[pos]; if (w && (!wv || w.m > wv.m)) wv = w; }
-      if (best && (!wv || best.m >= wv.m)) { used[bp]++; mu += best.m; v += best.sd * best.sd; }
-      else if (wv) { mu += wv.m; v += wv.sd * wv.sd; }
+      let wv = null; for (const pos of elig) { const w = WAIVER[pos]; if (w && (!wv || w.ppg > wv.ppg)) wv = w; }
+      const wm = wv ? (full ? wv.ppg : wv.m) : -1;
+      if (best && best.m >= wm) { used[bp]++; mu += best.m; v += best.sd * best.sd; }
+      else if (wv) { mu += wm; v += wv.sd * wv.sd; }
     }
   }
   return [mu, v];
@@ -341,7 +345,7 @@ function simTeam(players, weeks, ns = NS) {
   return weeks.map(w => {
     let mu = 0, wp = 0;
     for (let s = 0; s < ns; s++) {
-      const [m, v] = solve(groupAvail(players, w, s)); mu += m;
+      const [m, v] = solve(groupAvail(players, w, s), true); mu += m;
       if (BASE) wp += Phi((m - BASE.mu[w]) / Math.sqrt(v + BASE.v[w]));
     }
     return {w, mu: mu / ns, wp: wp / ns};
@@ -400,7 +404,7 @@ function renderLeague(fresh) {
   $("lgSummary").innerHTML = `<details ${fresh ? "open" : ""}><summary>${esc(LG.name)} — ${LG.teams.length} teams, ${LG.teams.reduce((a, t) => a + t.ids.length, 0)} players matched${miss ? `, ${miss} not matched (kickers, defenses, practice squad, or spelling)` : ""}</summary>
     <div class="tablewrap"><table><tr><th class="l">Power ranking (expected starting lineup, pts/wk, weeks ${D.next_week}-${SEASON.seasonEnd})</th><th>Pts/wk</th><th class="l">Not matched</th></tr>
     ${pw.map(x => `<tr><td>${esc(x.t.name)}</td><td>${x.pts.toFixed(1)}</td><td class="l mut" style="font-size:11px">${esc(x.t.miss.slice(0, 8).join(", "))}${x.t.miss.length > 8 ? "…" : ""}</td></tr>`).join("")}</table></div>
-    <p class="note">Free agent wire (best five, pts/g): ${["QB","RB","WR","TE"].map(p => `${p} ${WAIVER[p].ppg.toFixed(1)}`).join(" · ")}</p></details>`;
+    <p class="note">Free agent wire — fills any slot left empty by a bye, an injury or a thin position (average of the best five available, pts/g): ${["QB","RB","WR","TE"].map(p => `${p} ${WAIVER[p].ppg.toFixed(1)}`).join(" · ")}</p></details>`;
   $("evalBtn").disabled = false; $("findBtn").disabled = false;
 }
 let SELA = new Set(), SELB = new Set();
@@ -474,6 +478,8 @@ function renderResult(r) {
   const bar = d => `<span style="display:inline-block;height:8px;width:${Math.round(40 * Math.abs(d) / mx)}px;background:${d >= 0 ? "var(--ok)" : "var(--bad)"};border-radius:2px;vertical-align:middle"></span>`;
   const names = ids => ids.map(g => `${esc(P[g].n)} <span class="mut">(${P[g].p}, ${P[g].m.toFixed(1)})</span>`).join(" + ") || "nothing";
   const both = r.a.wins > 0 && r.b.wins > 0;
+  const moved = [...r.giveA, ...r.giveB].map(g => P[g]);
+  const byeNote = w => { const b = moved.filter(p => byeOf(p) === w); return b.length ? ` <span class="mut" style="font-size:11px">bye: ${b.map(p => esc(p.n.split(" ").slice(-1)[0])).join(", ")}</span>` : ""; };
   $("result").innerHTML = `<h3>${esc(r.A.name)} gets ${names(r.giveB)} · ${esc(r.B.name)} gets ${names(r.giveA)}</h3>
     <div class="verdict">${verdictBox(r.A.name, r.a, r.cutA)}${verdictBox(r.B.name, r.b, r.cutB)}</div>
     <p class="note">${both ? "Both teams' expected wins rise: a trade like this should be accepted by a manager who does the math." :
@@ -481,10 +487,10 @@ function renderResult(r) {
     A trade chart would say you ${vA >= 0 ? "win" : "lose"} this by ${Math.abs(vA).toFixed(1)} pts/g above replacement; the lineup view above is what actually changes on the scoreboard.</p>
     <details><summary>Week by week (expected starting-lineup points)</summary><div class="tablewrap"><table>
       <tr><th class="l">Week</th><th>${esc(r.A.name)} before</th><th>after</th><th></th><th>${esc(r.B.name)} before</th><th>after</th><th></th></tr>
-      ${weeks.map((x, i) => { const y = r.b.weeks[i]; return `<tr${x.w > SEASON.regEnd ? ' style="background:#1a1d27"' : ""}><td>${x.w}${x.w > SEASON.regEnd ? " <span class='mut'>(playoffs)</span>" : ""}</td>
+      ${weeks.map((x, i) => { const y = r.b.weeks[i]; return `<tr${x.w > SEASON.regEnd ? ' style="background:#1a1d27"' : ""}><td>${x.w}${x.w > SEASON.regEnd ? " <span class='mut'>(playoffs)</span>" : ""}${byeNote(x.w)}</td>
         <td>${x.before.toFixed(1)}</td><td>${x.after.toFixed(1)}</td><td class="l ${clsOf(x.d)}">${fx(x.d)} ${bar(x.d)}</td>
         <td>${y.before.toFixed(1)}</td><td>${y.after.toFixed(1)}</td><td class="l ${clsOf(y.d)}">${fx(y.d)} ${bar(y.d)}</td></tr>`; }).join("")}
-    </table></div></details>`;
+    </table></div><p class="note">Bye weeks and missed games are covered by the bench first, then by a free agent at the wire level (${["QB","RB","WR","TE"].map(p => `${p} ${WAIVER[p].ppg.toFixed(1)}`).join(" · ")} pts/g), so a bye costs only the gap between the player and his replacement.</p></details>`;
 }
 $("evalBtn").onclick = () => {
   if (!SELA.size && !SELB.size) { $("result").innerHTML = `<p class="msg warn">Pick at least one player.</p>`; return; }
