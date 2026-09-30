@@ -64,10 +64,15 @@
   <div class="card">
     <h2>1 · Your league</h2>
     <div class="tabs" id="srcTabs">
+      <button data-src="home" id="homeTab" class="hide"></button>
       <button data-src="sleeper" class="on">Sleeper</button>
       <button data-src="espn">ESPN</button>
       <button data-src="paste">Paste rosters</button>
       <button data-src="demo">Demo league</button>
+    </div>
+    <div data-pane="home" class="hide">
+      <p class="how" id="homeHow"></p>
+      <button class="big" id="homeLoad">Reload with default settings</button>
     </div>
     <div data-pane="sleeper">
       <div class="row">
@@ -687,6 +692,20 @@ $("demoLoad").onclick = () => {
   setLeague({name: "Demo league", source: "demo", teams, inj: {}}, "Built a 10-team demo league. Pick two teams and try a trade, or run the trade finder.");
 };
 
+// ----------------------------------------------------------------- source: the league the page ships with
+function loadHome(resetSettings) {
+  const h = D.home; if (!h) return;
+  if (resetSettings) {
+    SC = Object.assign(Object.fromEntries(SCORE_FIELDS.map(f => [f[0], 0])), h.scoring);
+    SL = Object.assign(Object.fromEntries(SLOT_FIELDS.map(f => [f[0], 0])), h.slots);
+    SEASON = Object.assign({}, h.season); IGNORED = [];
+    store.set("tradeScoring", SC); store.set("tradeSlots", SL); store.set("tradeSeason", SEASON);
+    buildSettings();
+  }
+  setLeague(JSON.parse(JSON.stringify(h)), `${h.name}: rosters as of ${D.generated.slice(0, 10)}.`);
+}
+$("homeLoad").onclick = () => loadHome(true);
+
 // ----------------------------------------------------------------- tabs and start-up
 $("srcTabs").onclick = e => { const s = e.target.dataset.src; if (!s) return;
   for (const b of $("srcTabs").children) b.classList.toggle("on", b.dataset.src === s);
@@ -695,9 +714,23 @@ if (!D.players.length) { $("sub").textContent = "Player data failed to load."; }
 else {
   $("sub").innerHTML = `${D.season} season, through week ${D.week}. Rest-of-season values for ${D.players.length} players, refreshed ${esc(D.generated.slice(0, 10))}${D.ffa_stale ? " (projection file is a week old)" : ""}. Load your league, set your scoring, build a trade.`;
   $("foot").textContent = `Player file: ${D.generated} UTC · projections for week ${D.ffa_week} · ${D.hot_start ? "sell-high/buy-low tags from this season's volume split" : "no sell-high/buy-low tags this week"}.`;
+  if (D.home) {
+    $("homeTab").textContent = D.home.name; $("homeTab").classList.remove("hide");
+    $("homeHow").textContent = `${D.home.name} (${D.home.teams.length} teams) with its own scoring and lineup, rebuilt with the player file each week.`;
+    for (const b of $("srcTabs").children) b.classList.toggle("on", b.dataset.src === "home");
+    for (const p of document.querySelectorAll("[data-pane]")) p.classList.toggle("hide", p.dataset.pane !== "home");
+  }
+  // the page opens on its own league unless this browser loaded a different one
+  if (D.home && (!LG || LG.source === "home" || LG.source === "demo")) {
+    const keep = LG && LG.source === "home";      // keep scoring edits made on this league
+    const me = keep ? LG.me : null;
+    buildSettings(); loadHome(!keep);
+    if (me != null) { LG.me = me; store.set("tradeLeague", LG); recompute(true); }
+  } else {
   buildSettings();
   recompute(true);
-  if (LG) { $("lgMsg").className = "msg ok"; $("lgMsg").textContent = `Restored ${LG.name} from your last visit.`
+  }
+  if (LG && LG.source !== "home") { $("lgMsg").className = "msg ok"; $("lgMsg").textContent = `Restored ${LG.name} from your last visit.`
     + (LG.source === "sleeper" ? " Reload it for today's rosters." : ""); if (LG.source === "sleeper") $("slId").value = LG.sourceId; }
 }
 </script>

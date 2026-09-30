@@ -65,10 +65,47 @@ def clean_id(x):
     return "" if s in ("", "nan", "None") else s
 
 
+def home_league(path, players, per_stat, cfg):
+    """The league the page opens on: our own ESPN pull, rosters as the page's gsis ids.
+
+    Until the page has a login of its own this is simply Kuhn and Friends, so the owner's view needs
+    no import step. ESPN ids first, then the name, as the page itself matches.
+    """
+    L = json.load(open(path, encoding="utf-8"))
+    by_e = {r["e"]: r["g"] for r in players if r["e"]}
+    by_n = {}
+    for r in players:
+        by_n.setdefault(gp.norm(r["n"]), r["g"])
+    teams, inj, me = [], {}, 0
+    for i, t in enumerate(L.get("teams", [])):
+        ids, miss = [], []
+        for e in t.get("roster", []):
+            if e.get("pos") not in gp.SKILL:
+                continue
+            g = by_e.get(str(e.get("espn_id"))) or by_n.get(gp.norm(e.get("name")))
+            if g:
+                ids.append(g)
+                if e.get("inj") and e["inj"] not in ("ACTIVE", "NORMAL"):
+                    inj[g] = e["inj"]
+            else:
+                miss.append(e.get("name"))
+        if int(t.get("id", -1)) == int(L.get("myTeamId", -1)):
+            me = i
+        teams.append({"id": t.get("id"), "name": t.get("name") or f"Team {t.get('id')}", "ids": ids, "miss": miss})
+    slots = L.get("roster_slots", {})
+    fx = cfg.raw["roster"].get("flex_eligibility", {})
+    return {"name": L.get("name", "My league"), "source": "home", "me": me, "teams": teams, "inj": inj,
+            "scoring": {k: float(per_stat.get(k, 0)) for k in STATS},
+            "slots": {k: int(slots.get(k, 0)) for k in ("QB", "RB", "WR", "TE", "FLEX")},
+            "season": {"regEnd": 14, "seasonEnd": 17}}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--season", type=int, default=2026)
     ap.add_argument("--config", default=os.path.join(ROOT, "gm", "leagues", "kuhn_2026.json"))
+    ap.add_argument("--home", default=os.path.join(ROOT, "outputs", "espn_league.json"),
+                    help="the league the page opens on (our ESPN pull); '' for none")
     a = ap.parse_args()
     S = a.season
     cfg = config.load(a.config)
@@ -170,6 +207,8 @@ def main():
            "fit_scoring": {k: per_stat.get(k, 0) for k in STATS},
            "generated": datetime.now(timezone.utc).isoformat(timespec="minutes"),
            "players": out}
+    if a.home and os.path.exists(a.home):
+        doc["home"] = home_league(a.home, out, per_stat, cfg)
     path = OUT.format(season=S)
     with open(path, "w", encoding="utf-8") as fh:
         fh.write("// baked by scripts/trade_tab_bake.py -- do not edit\nwindow.TRADE_DATA=")
