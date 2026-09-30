@@ -1,5 +1,5 @@
 {
- "generated": "2026-09-29T18:47Z",
+ "generated": "2026-09-30T14:06Z",
  "overall": {
   "picks": 468,
   "picks_graded": 468,
@@ -383,7 +383,7 @@
    "removed_pts": -2.03,
    "mae_base_pts": 1.794,
    "mae_adj_pts": 1.828,
-   "last_submitted": "2026-09-28T04:13:25Z"
+   "last_submitted": "2026-09-30T03:36:06Z"
   },
   {
    "fan": "RJS",
