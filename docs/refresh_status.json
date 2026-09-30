@@ -1,20 +1,47 @@
 {
  "season": 2026,
- "week": 3,
- "schedule_week": 3,
- "generated": "2026-09-28T12:00+00:00",
+ "week": 4,
+ "schedule_week": 4,
+ "generated": "2026-09-30T14:35+00:00",
  "steps": {
-  "espn": "skipped",
-  "pastes": "skipped",
-  "board": "skipped",
-  "myteam": "skipped",
-  "gm": "skipped",
-  "fan": "skipped",
+  "espn": "ok",
+  "pastes": "ok",
+  "board": "ok",
+  "myteam": "ok",
+  "gm": "ok",
+  "fan": "ok",
   "fanpicks": "ok",
-  "props": "skipped"
+  "props": "failed"
  },
  "python": "3.12.14",
  "platform": "linux",
- "errors": {},
+ "errors": {
+  "props watch": [
+   "\u2014 weekly stats \u2014",
+   "  2022-2025 from nflverse (no local DB): 24,616 rows",
+   "  2026: 1,078 rows (nflverse)",
+   "  current 2026 week to predict: 4",
+   "\u2014 DraftKings lines \u2014",
+   "  key #1 burned (0 credits left) \u2014 next call uses key #2",
+   "  16 games in the next 8 days",
+   "  key #2 rejected (401) \u2014 rotating to key #3",
+   "  recorded 1180 line rows to data/props_frames/snapshots/",
+   "  API credits remaining: 294 (key #3 of 6)",
+   "  85 standard lines, 84 players with alt ladders",
+   "  weekly FFA raw stats loaded: 911 players (wk4)",
+   "Traceback (most recent call last):",
+   "  File \"/home/runner/work/NFL/NFL/scripts/props_watch.py\", line 364, in <module>",
+   "    allwatch = pd.concat([old_watch[keepcols] if len(old_watch) else pd.DataFrame(columns=keepcols),",
+   "                          ~~~~~~~~~^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/pandas/core/frame.py\", line 4384, in __getitem__",
+   "    indexer = self.columns._get_indexer_strict(key, \"columns\")[1]",
+   "              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 6302, in _get_indexer_strict",
+   "    self._raise_if_missing(keyarr, indexer, axis_name)",
+   "  File \"/opt/hostedtoolcache/Python/3.12.14/x64/lib/python3.12/site-packages/pandas/core/indexes/base.py\", line 6355, in _raise_if_missing",
+   "    raise KeyError(f\"{not_found} not in index\")",
+   "KeyError: \"['ffa_wk_yds', 'ffa_wk_yds_sd', 'ffa_wk_inj'] not in index\""
+  ]
+ },
  "odds_keys": 6
 }

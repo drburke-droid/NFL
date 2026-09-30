@@ -1,0 +1,87 @@
+{
+ "season": 2026,
+ "week": 4,
+ "slate_games": 16,
+ "games": [
+  "Arizona Cardinals @ New York Giants",
+  "Atlanta Falcons @ New Orleans Saints",
+  "Dallas Cowboys @ Houston Texans",
+  "Denver Broncos @ San Francisco 49ers",
+  "Detroit Lions @ Carolina Panthers",
+  "Green Bay Packers @ Tampa Bay Buccaneers",
+  "Indianapolis Colts @ Washington Commanders",
+  "Jacksonville Jaguars @ Cincinnati Bengals",
+  "Kansas City Chiefs @ Las Vegas Raiders",
+  "Los Angeles Chargers @ Seattle Seahawks",
+  "Los Angeles Rams @ Philadelphia Eagles",
+  "Miami Dolphins @ Minnesota Vikings",
+  "New England Patriots @ Buffalo Bills",
+  "New York Jets @ Chicago Bears",
+  "Pittsburgh Steelers @ Cleveland Browns",
+  "Tennessee Titans @ Baltimore Ravens"
+ ],
+ "market": "skipped (--no-market)",
+ "ffa": {
+  "file": "raw_stats_2026_wk4.csv",
+  "rows": 914,
+  "age_hours": 0.0,
+  "slate_skill": 440,
+  "slate_k": 33,
+  "slate_dst": 32
+ },
+ "kdst": null,
+ "dk_kickers": null,
+ "injury_report": {
+  "src": "nfl.com",
+  "listed": 2,
+  "designations": {}
+ },
+ "lineups": {
+  "statuses": 337,
+  "by_src": {
+   "espn": 144,
+   "sleeper": 91,
+   "+sleeper": 78,
+   "espn+sleeper": 24
+  },
+  "q": 25,
+  "out": 10,
+  "out_by_src": {
+   "espn+sleeper": 10
+  }
+ },
+ "bias_cal": {
+  "applied": 0.0149,
+  "rows": 961,
+  "weeks": [
+   {
+    "week": 1,
+    "n": 322
+   },
+   {
+    "week": 2,
+    "n": 337
+   },
+   {
+    "week": 3,
+    "n": 302
+   }
+  ],
+  "reason": "",
+  "basis": "med_err_played",
+  "raw": 0.0149
+ },
+ "proj_kind": "playing_median",
+ "csv": "proj_2026_wk4.csv",
+ "rows": 448,
+ "generated": "2026-09-30 10:32 ET",
+ "kickoffs": [
+  "Mon 10/05 08:15 PM ET",
+  "Sun 10/04 01:00 PM ET",
+  "Sun 10/04 04:05 PM ET",
+  "Sun 10/04 04:25 PM ET",
+  "Sun 10/04 08:20 PM ET",
+  "Sun 10/04 09:30 AM ET",
+  "Thu 10/01 08:15 PM ET"
+ ]
+}
