@@ -29,6 +29,12 @@ MARKETS = {"player_reception_yds": "rec_yds", "player_receptions": "rec", "playe
 BOX = {"rec_yds": "receiving_yards", "rec": "receptions", "rush_yds": "rushing_yards",
        "pass_yds": "passing_yards", "pass_tds": "passing_tds"}
 TEAM_FIX = {"LA": "LAR", "LAR": "LA"}
+# The Oracle's stat projections are MEANS; DK's line is a MEDIAN. For yardage the mean sits above the
+# median, so "mean above the line" over-states an over and "mean below the line" under-states an under
+# (weeks 2-3 2026 at >=10% edge: overs 48.6% hit, unders 61.0%). median = a x mean + b, fitted per
+# stat on player-seasons 2023-25 with 6+ games (nflverse), i.e. outside every week graded here.
+MEDIAN_FIT = {"rec_yds": (0.976, -3.59), "rec": (1.000, -0.20), "rush_yds": (0.983, -2.92),
+              "pass_yds": (0.898, 26.11), "pass_tds": (1.070, -0.22)}
 
 
 def norm(s):
@@ -163,7 +169,18 @@ def main():
         for me in (0.0, 0.10, 0.20):
             b = bets(D, col, me)
             out.append(f"| {col} | {me:.0%} | {b['n']} | {b['overs']} | {b['won']} | {b['hit']:.1%} | {b['roi']:+.1%} |")
-    out += ["", "Break-even at -110 is 52.4%.", "", "### By market (Oracle, every bet)", "",
+    D["oracle_med"] = [max(0.0, MEDIAN_FIT[m][0] * o + MEDIAN_FIT[m][1]) for m, o in zip(D.market, D.oracle)]
+    vig = np.mean([implied(p) for p in pd.concat([D.over_price, D.under_price])])
+    out += ["", f"Break-even at -110 is 52.4%; DK's average price on these props implies {vig:.1%}, which is the real bar.", "",
+            "### Conviction: bet only when the projection is far enough from the line", "",
+            "Edge = (projection − line) / line. *Median* converts the Oracle's mean to a median first (fit on 2023-25) "
+            "so it is comparable with DK's line.", "",
+            "| Min edge | Mean: bets | % overs | Hit % | ROI | Median: bets | % overs | Hit % | ROI |", "|---|---|---|---|---|---|---|---|---|"]
+    for me in (0.0, 0.05, 0.10, 0.15, 0.20, 0.30):
+        bm, bd = bets(D, "oracle", me), bets(D, "oracle_med", me)
+        out.append(f"| {me:.0%} | {bm['n']} | {bm['overs'] / max(1, bm['n']):.0%} | {bm['hit']:.1%} | {bm['roi']:+.1%} | "
+                   f"{bd['n']} | {bd['overs'] / max(1, bd['n']):.0%} | {bd['hit']:.1%} | {bd['roi']:+.1%} |")
+    out += ["", "### By market (Oracle, every bet)", "",
             "| Market | Bets | Overs | Hit % | ROI | Crowd hit % | Crowd ROI |", "|---|---|---|---|---|---|---|"]
     for mk, f in D.groupby("market"):
         b, c = bets(f, "oracle"), bets(f, "crowd")

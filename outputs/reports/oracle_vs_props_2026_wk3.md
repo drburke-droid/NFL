@@ -24,7 +24,20 @@
 | crowd | 10% | 302 | 166 | 177 | 58.6% | +6.5% |
 | crowd | 20% | 181 | 111 | 111 | 61.3% | +10.8% |
 
-Break-even at -110 is 52.4%.
+Break-even at -110 is 52.4%; DK's average price on these props implies 52.9%, which is the real bar.
+
+### Conviction: bet only when the projection is far enough from the line
+
+Edge = (projection − line) / line. *Median* converts the Oracle's mean to a median first (fit on 2023-25) so it is comparable with DK's line.
+
+| Min edge | Mean: bets | % overs | Hit % | ROI | Median: bets | % overs | Hit % | ROI |
+|---|---|---|---|---|---|---|---|---|
+| 0% | 513 | 55% | 54.6% | +0.6% | 514 | 31% | 54.3% | -0.0% |
+| 5% | 388 | 59% | 55.4% | +1.5% | 401 | 26% | 55.1% | +0.7% |
+| 10% | 283 | 61% | 58.3% | +6.2% | 306 | 24% | 55.2% | -0.1% |
+| 15% | 206 | 64% | 60.7% | +10.0% | 228 | 25% | 57.5% | +2.9% |
+| 20% | 159 | 66% | 57.2% | +2.5% | 175 | 26% | 61.1% | +9.4% |
+| 30% | 99 | 73% | 57.6% | +2.4% | 113 | 27% | 59.3% | +6.1% |
 
 ### By market (Oracle, every bet)
 
