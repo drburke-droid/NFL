@@ -54,6 +54,21 @@ The adjustment flipped the side of the bet on 101 props: crowd side won 48/100 (
 | SAK | 228 | 51% | -433.2 | 97 | 49/95 | 226 | 53.1% | -1.2% |
 | SAM | 32 | 50% | +7.3 | 8 | 3/8 | 32 | 46.9% | -16.0% |
 
+### Each fan's own calls: bet the direction of every arrow
+
+Up arrow = over, down arrow = under, on every DK prop the fan touched, at DK's pre-kick price; TD boosts = anytime-TD Yes. 1 unit per bet.
+
+| Fan | O/U bets | Overs | Won | Hit % | Units | ROI | TD Yes bets | TD won | TD units | All units | All ROI |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| BOB | 232 | 82 | 130 | 56.0% | +16.5 | +7.1% | 32 | 5 | -11.8 | +4.7 | +1.8% |
+| OWD | 3 | 0 | 3 | 100.0% | +3.1 | +102.2% | 0 | 0 | +0.0 | +3.1 | +102.2% |
+| REB | 192 | 74 | 106 | 55.2% | +11.1 | +5.8% | 29 | 5 | -9.7 | +1.4 | +0.6% |
+| ERS | 70 | 45 | 39 | 55.7% | +2.8 | +4.0% | 14 | 7 | -3.0 | -0.2 | -0.2% |
+| Nana Owusu | 90 | 84 | 50 | 55.6% | +4.7 | +5.2% | 32 | 11 | -7.2 | -2.5 | -2.0% |
+| SAM | 32 | 10 | 13 | 40.6% | -7.9 | -24.6% | 4 | 1 | +1.2 | -6.6 | -18.4% |
+| RJS | 443 | 186 | 231 | 52.1% | -3.9 | -0.9% | 75 | 17 | -13.5 | -17.4 | -3.4% |
+| SAK | 228 | 138 | 118 | 51.8% | -3.7 | -1.6% | 52 | 16 | -15.8 | -19.5 | -7.0% |
+
 ## Anytime TD (one-sided Yes prices; DK's implied probability includes the vig)
 
 298 players; 65 scored. Mean P: DK implied 22.9%, Oracle 16.4%, crowd 16.4%; actual rate 21.8%.

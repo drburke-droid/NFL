@@ -200,6 +200,42 @@ def main():
             b = bets(F, "mine")
             out.append(f"| {fn} | {len(F)} | {tr:.0%} | {er:+.1f} | {len(fl)} | {fw['won']}/{fw['n']} | {b['n']} | {b['hit']:.1%} | {b['roi']:+.1%} |")
 
+        # The fan's own opinion, without the Oracle: an up arrow is an over bet, a down arrow an under,
+        # whatever the line. A boost on a TD stat is a Yes on DK's anytime-TD price (DK offers no No).
+        tdp = snap[snap.market == "player_anytime_td"].drop_duplicates(["pid"], keep="last").set_index("pid").price
+        out += ["", "### Each fan's own calls: bet the direction of every arrow", "",
+                "Up arrow = over, down arrow = under, on every DK prop the fan touched, at DK's pre-kick price; "
+                "TD boosts = anytime-TD Yes. 1 unit per bet.", "",
+                "| Fan | O/U bets | Overs | Won | Hit % | Units | ROI | TD Yes bets | TD won | TD units | All units | All ROI |",
+                "|---|---|---|---|---|---|---|---|---|---|---|---|"]
+        rows_fan = []
+        for fn in sorted(fan.fan.unique()):
+            res = []
+            for x in D.itertuples():
+                v = per_fan.get((fn, x.pid, x.market))
+                if v is None or pd.isna(v) or v == 1:
+                    continue
+                over = v > 1
+                won = x.actual > x.line if over else x.actual < x.line
+                res.append((over, won, payout(x.over_price if over else x.under_price) if won else -1.0))
+            tds = []
+            for pid in {g for (f_, g, s_) in per_fan.index if f_ == fn and s_ in ("rush_tds", "rec_tds")}:
+                if pid not in tdp.index or pid not in box.index:
+                    continue
+                ups = [per_fan.get((fn, pid, s)) for s in ("rush_tds", "rec_tds")]
+                ups = [u for u in ups if u is not None and not pd.isna(u)]
+                if not ups or max(ups) <= 1:
+                    continue
+                scored = float((box.loc[pid, "rushing_tds"] or 0) + (box.loc[pid, "receiving_tds"] or 0)) > 0
+                tds.append(payout(tdp[pid]) if scored else -1.0)
+            if not res and not tds:
+                continue
+            u = sum(r[2] for r in res); tu = sum(tds); n = len(res)
+            rows_fan.append((fn, n, sum(r[0] for r in res), sum(r[1] for r in res), u, len(tds), sum(t > 0 for t in tds), tu))
+        for fn, n, ov, w, u, nt, wt, tu in sorted(rows_fan, key=lambda r: -(r[4] + r[7])):
+            out.append(f"| {fn} | {n} | {ov} | {w} | {w / n if n else float('nan'):.1%} | {u:+.1f} | {u / n if n else float('nan'):+.1%} | "
+                       f"{nt} | {wt} | {tu:+.1f} | {u + tu:+.1f} | {(u + tu) / max(1, n + nt):+.1%} |")
+
     # anytime TD
     td = snap[snap.market == "player_anytime_td"].drop_duplicates(["pid"], keep="last")
     trows = []
