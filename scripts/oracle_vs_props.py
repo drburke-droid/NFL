@@ -183,32 +183,40 @@ def main():
                 f"The adjustment flipped the side of the bet on {len(flip)} props: "
                 + (f"crowd side won {fb['won']}/{fb['n']} (ROI {fb['roi']:+.1%}) where the Oracle's side won "
                    f"{ob['won']}/{ob['n']} ({ob['roi']:+.1%})." if len(flip) else "none.")]
-        out += ["", "### Each fan + Oracle (props that fan touched)", "",
-                "| Fan | Props | Toward result | Error removed | Flipped bets | Flipped won | Bets (fan+Oracle) | Hit % | ROI |",
-                "|---|---|---|---|---|---|---|---|---|"]
+        # Each fan's projection = the Oracle's number with that fan's arrows applied (Oracle 90 rec yds,
+        # a 10% fade -> 81), bet against DK's line exactly as the Oracle's own number is. Touchdowns are
+        # left out: an arrow moves a 0.4 TD expectation by a few hundredths, too little to price a bet.
+        out += ["", "### Each fan + Oracle: the fan's adjusted projection bet against the DK line", "",
+                "The fan's number = the Oracle's projection with that fan's arrows applied; bet over if it is above "
+                "DK's line, under if below, at DK's pre-kick price, 1 unit per bet. Over/under props only (no TDs).",
+                "*Touched* = only props the fan adjusted. *Full sheet* = every prop, the fan's number where they "
+                "adjusted it and the Oracle's elsewhere. *Flipped* = props where the fan's arrows moved the number "
+                "across the line, i.e. the fan changed the bet.", "",
+                "| Fan | Touched bets | Hit % | Units | ROI | ≥10% edge bets | Hit % | ROI | Flipped won | Full sheet ROI |",
+                "|---|---|---|---|---|---|---|---|---|---|"]
+        oracle_all = bets(D, "oracle")
+        rows_f = []
         for fn in sorted(fan.fan.unique()):
-            r = [(i, per_fan.get((fn, x.pid, x.market))) for i, x in D.iterrows()]
-            idx = [i for i, v in r if v is not None and not pd.isna(v)]
-            if not idx:
+            ratio = [per_fan.get((fn, x.pid, x.market)) for x in D.itertuples()]
+            ratio = [1.0 if v is None or pd.isna(v) else float(v) for v in ratio]
+            full = D.assign(mine=D.oracle * ratio, touched=[r != 1.0 for r in ratio])
+            F = full[full.touched]
+            if F.empty:
                 continue
-            F = D.loc[idx].copy()
-            F["mine"] = F.oracle * [float(per_fan[(fn, x.pid, x.market)]) for x in F.itertuples()]
-            tr = (np.sign(F.mine - F.oracle) == np.sign(F.actual - F.oracle)).mean()
-            er = ((F.oracle - F.actual).abs() - (F.mine - F.actual).abs()).sum()
+            b, b10, fs = bets(F, "mine"), bets(F, "mine", 0.10), bets(full, "mine")
             fl = F[np.sign(F.oracle - F.line) != np.sign(F.mine - F.line)]
             fw = bets(fl, "mine")
-            b = bets(F, "mine")
-            out.append(f"| {fn} | {len(F)} | {tr:.0%} | {er:+.1f} | {len(fl)} | {fw['won']}/{fw['n']} | {b['n']} | {b['hit']:.1%} | {b['roi']:+.1%} |")
+            units = b["roi"] * b["n"]
+            rows_f.append((units, f"| {fn} | {b['n']} | {b['hit']:.1%} | {units:+.1f} | {b['roi']:+.1%} | {b10['n']} | "
+                                  f"{b10['hit']:.1%} | {b10['roi']:+.1%} | {fw['won']}/{fw['n']} | {fs['roi']:+.1%} |"))
+        out += [r for _, r in sorted(rows_f, key=lambda t: -t[0])]
+        out += [f"| *Oracle alone* | {oracle_all['n']} | {oracle_all['hit']:.1%} | {oracle_all['roi'] * oracle_all['n']:+.1f} | "
+                f"{oracle_all['roi']:+.1%} | | | | | {oracle_all['roi']:+.1%} |"]
 
-        # The fan's own opinion, without the Oracle: an up arrow is an over bet, a down arrow an under,
-        # whatever the line. A boost on a TD stat is a Yes on DK's anytime-TD price (DK offers no No).
-        tdp = snap[snap.market == "player_anytime_td"].drop_duplicates(["pid"], keep="last").set_index("pid").price
-        out += ["", "### Each fan's own calls: bet the direction of every arrow", "",
-                "Up arrow = over, down arrow = under, on every DK prop the fan touched, at DK's pre-kick price; "
-                "TD boosts = anytime-TD Yes. 1 unit per bet.", "",
-                "| Fan | O/U bets | Overs | Won | Hit % | Units | ROI | TD Yes bets | TD won | TD units | All units | All ROI |",
-                "|---|---|---|---|---|---|---|---|---|---|---|---|"]
-        rows_fan = []
+        # secondary: the fan's arrows alone, with no Oracle and no line logic
+        out += ["", "### Each fan's arrows alone (up = over, down = under, whatever the line; no TDs)", "",
+                "| Fan | Bets | Hit % | ROI |", "|---|---|---|---|"]
+        rows_a = []
         for fn in sorted(fan.fan.unique()):
             res = []
             for x in D.itertuples():
@@ -217,24 +225,10 @@ def main():
                     continue
                 over = v > 1
                 won = x.actual > x.line if over else x.actual < x.line
-                res.append((over, won, payout(x.over_price if over else x.under_price) if won else -1.0))
-            tds = []
-            for pid in {g for (f_, g, s_) in per_fan.index if f_ == fn and s_ in ("rush_tds", "rec_tds")}:
-                if pid not in tdp.index or pid not in box.index:
-                    continue
-                ups = [per_fan.get((fn, pid, s)) for s in ("rush_tds", "rec_tds")]
-                ups = [u for u in ups if u is not None and not pd.isna(u)]
-                if not ups or max(ups) <= 1:
-                    continue
-                scored = float((box.loc[pid, "rushing_tds"] or 0) + (box.loc[pid, "receiving_tds"] or 0)) > 0
-                tds.append(payout(tdp[pid]) if scored else -1.0)
-            if not res and not tds:
-                continue
-            u = sum(r[2] for r in res); tu = sum(tds); n = len(res)
-            rows_fan.append((fn, n, sum(r[0] for r in res), sum(r[1] for r in res), u, len(tds), sum(t > 0 for t in tds), tu))
-        for fn, n, ov, w, u, nt, wt, tu in sorted(rows_fan, key=lambda r: -(r[4] + r[7])):
-            out.append(f"| {fn} | {n} | {ov} | {w} | {w / n if n else float('nan'):.1%} | {u:+.1f} | {u / n if n else float('nan'):+.1%} | "
-                       f"{nt} | {wt} | {tu:+.1f} | {u + tu:+.1f} | {(u + tu) / max(1, n + nt):+.1%} |")
+                res.append((won, payout(x.over_price if over else x.under_price) if won else -1.0))
+            if res:
+                n = len(res); rows_a.append((sum(r[1] for r in res) / n, f"| {fn} | {n} | {sum(r[0] for r in res) / n:.1%} | {sum(r[1] for r in res) / n:+.1%} |"))
+        out += [r for _, r in sorted(rows_a, key=lambda t: -t[0])]
 
     # anytime TD
     td = snap[snap.market == "player_anytime_td"].drop_duplicates(["pid"], keep="last")

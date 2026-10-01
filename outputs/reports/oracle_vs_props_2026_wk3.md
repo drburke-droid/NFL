@@ -41,33 +41,35 @@ Break-even at -110 is 52.4%.
 444 props had at least one fan adjustment. The fans moved the number toward the result 53% of the time; error removed -70.1 units in total (-0.16 per prop).
 The adjustment flipped the side of the bet on 101 props: crowd side won 48/100 (ROI -8.5%) where the Oracle's side won 50/98 (-3.3%).
 
-### Each fan + Oracle (props that fan touched)
+### Each fan + Oracle: the fan's adjusted projection bet against the DK line
 
-| Fan | Props | Toward result | Error removed | Flipped bets | Flipped won | Bets (fan+Oracle) | Hit % | ROI |
-|---|---|---|---|---|---|---|---|---|
-| BOB | 232 | 56% | -290.8 | 80 | 44/79 | 231 | 56.3% | +4.6% |
-| ERS | 70 | 54% | +52.4 | 21 | 13/21 | 70 | 60.0% | +10.6% |
-| Nana Owusu | 90 | 48% | -23.3 | 20 | 11/19 | 89 | 58.4% | +7.9% |
-| OWD | 3 | 100% | +28.8 | 2 | 2/2 | 3 | 66.7% | +27.6% |
-| REB | 192 | 53% | -386.9 | 62 | 34/61 | 191 | 53.4% | -1.0% |
-| RJS | 443 | 52% | -91.4 | 116 | 52/115 | 442 | 53.4% | -0.8% |
-| SAK | 228 | 51% | -433.2 | 97 | 49/95 | 226 | 53.1% | -1.2% |
-| SAM | 32 | 50% | +7.3 | 8 | 3/8 | 32 | 46.9% | -16.0% |
+The fan's number = the Oracle's projection with that fan's arrows applied; bet over if it is above DK's line, under if below, at DK's pre-kick price, 1 unit per bet. Over/under props only (no TDs).
+*Touched* = only props the fan adjusted. *Full sheet* = every prop, the fan's number where they adjusted it and the Oracle's elsewhere. *Flipped* = props where the fan's arrows moved the number across the line, i.e. the fan changed the bet.
 
-### Each fan's own calls: bet the direction of every arrow
+| Fan | Touched bets | Hit % | Units | ROI | ≥10% edge bets | Hit % | ROI | Flipped won | Full sheet ROI |
+|---|---|---|---|---|---|---|---|---|---|
+| BOB | 231 | 56.3% | +10.7 | +4.6% | 152 | 57.9% | +6.1% | 44/79 | +4.6% |
+| ERS | 70 | 60.0% | +7.4 | +10.6% | 42 | 59.5% | +8.8% | 13/21 | +2.5% |
+| Nana Owusu | 89 | 58.4% | +7.1 | +7.9% | 57 | 59.6% | +9.7% | 11/19 | +2.0% |
+| OWD | 3 | 66.7% | +0.8 | +27.6% | 1 | 0.0% | -100.0% | 2/2 | +1.4% |
+| REB | 191 | 53.4% | -2.0 | -1.0% | 125 | 56.0% | +2.3% | 34/61 | +3.7% |
+| SAK | 226 | 53.1% | -2.7 | -1.2% | 181 | 52.5% | -2.6% | 49/95 | +2.3% |
+| RJS | 442 | 53.4% | -3.6 | -0.8% | 266 | 57.5% | +5.4% | 52/115 | -2.6% |
+| SAM | 32 | 46.9% | -5.1 | -16.0% | 20 | 40.0% | -27.3% | 3/8 | -0.2% |
+| *Oracle alone* | 513 | 54.6% | +3.3 | +0.6% | | | | | +0.6% |
 
-Up arrow = over, down arrow = under, on every DK prop the fan touched, at DK's pre-kick price; TD boosts = anytime-TD Yes. 1 unit per bet.
+### Each fan's arrows alone (up = over, down = under, whatever the line; no TDs)
 
-| Fan | O/U bets | Overs | Won | Hit % | Units | ROI | TD Yes bets | TD won | TD units | All units | All ROI |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| BOB | 232 | 82 | 130 | 56.0% | +16.5 | +7.1% | 32 | 5 | -11.8 | +4.7 | +1.8% |
-| OWD | 3 | 0 | 3 | 100.0% | +3.1 | +102.2% | 0 | 0 | +0.0 | +3.1 | +102.2% |
-| REB | 192 | 74 | 106 | 55.2% | +11.1 | +5.8% | 29 | 5 | -9.7 | +1.4 | +0.6% |
-| ERS | 70 | 45 | 39 | 55.7% | +2.8 | +4.0% | 14 | 7 | -3.0 | -0.2 | -0.2% |
-| Nana Owusu | 90 | 84 | 50 | 55.6% | +4.7 | +5.2% | 32 | 11 | -7.2 | -2.5 | -2.0% |
-| SAM | 32 | 10 | 13 | 40.6% | -7.9 | -24.6% | 4 | 1 | +1.2 | -6.6 | -18.4% |
-| RJS | 443 | 186 | 231 | 52.1% | -3.9 | -0.9% | 75 | 17 | -13.5 | -17.4 | -3.4% |
-| SAK | 228 | 138 | 118 | 51.8% | -3.7 | -1.6% | 52 | 16 | -15.8 | -19.5 | -7.0% |
+| Fan | Bets | Hit % | ROI |
+|---|---|---|---|
+| OWD | 3 | 100.0% | +102.2% |
+| BOB | 232 | 56.0% | +7.1% |
+| REB | 192 | 55.2% | +5.8% |
+| Nana Owusu | 90 | 55.6% | +5.2% |
+| ERS | 70 | 55.7% | +4.0% |
+| RJS | 443 | 52.1% | -0.9% |
+| SAK | 228 | 51.8% | -1.6% |
+| SAM | 32 | 40.6% | -24.6% |
 
 ## Anytime TD (one-sided Yes prices; DK's implied probability includes the vig)
 
