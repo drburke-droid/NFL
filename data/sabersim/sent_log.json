@@ -1341,5 +1341,97 @@
     "no DK props posted (news?): Tyson Bagent, Dallas Goedert"
    ]
   }
+ },
+ "2026-10-02T00:15_1g": {
+  "sent_at": "2026-10-01T23:18:50Z",
+  "rows": 31,
+  "file": "Burke_Model_Burke_2026_thu08pm_1001_2316.csv",
+  "slate": "Thu 10/01 08:15 PM ET slate (1 games)",
+  "credits_left": 2989,
+  "lineups": [
+   "schedule: 18 weeks; week 4 runs Fri 10/02 .. Tue 10/06",
+   "week 4: 1 games in this send (kickoffs Fri 00:15Z .. Fri 00:15Z)",
+   "injury report (nfl.com): 86 skill/K players listed; practice {'DNP': 29, 'LP': 29, 'FP': 28}; designations {'Out': 2}",
+   "lineups: 408 statuses pulled {'espn': 206, 'sleeper': 93, '+sleeper': 78, 'espn+sleeper': 31}; 0 Q, 2 OUT with a projection {'espn+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk4.csv",
+    "rows": 914,
+    "age_hours": 0.0,
+    "slate_skill": 28,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-01T23:17Z",
+    "credits_left": "489"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 24,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 14,
+     "rec": 14,
+     "exp_td": 24
+    },
+    "no_line": [],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 4
+   },
+   "kdst": {
+    "file": "kdst_2026_wk4.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "CLE": [
+      "Andre Szmyt"
+     ],
+     "PIT": [
+      "Chris Boswell"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 86,
+    "designations": {
+     "Out": 2
+    }
+   },
+   "lineups": {
+    "statuses": 408,
+    "by_src": {
+     "espn": 206,
+     "sleeper": 93,
+     "+sleeper": 78,
+     "espn+sleeper": 31
+    },
+    "q": 0,
+    "out": 2,
+    "out_by_src": {
+     "espn+sleeper": 2
+    }
+   },
+   "warnings": []
+  }
  }
 }
