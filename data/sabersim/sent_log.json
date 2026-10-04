@@ -1536,5 +1536,161 @@
     "no DK props posted (news?): Jayden Daniels, Terry McLaurin, Keenan Allen"
    ]
   }
+ },
+ "2026-10-04T17:00_8g": {
+  "sent_at": "2026-10-04T16:01:53Z",
+  "rows": 233,
+  "file": "Burke_Model_Burke_2026_sun01pm_1004_1600.csv",
+  "slate": "Sun 10/04 01:00 PM ET slate (8 games)",
+  "credits_left": 2904,
+  "lineups": [
+   "schedule: 18 weeks; week 4 runs Fri 10/02 .. Tue 10/06",
+   "week 4: 8 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)",
+   "injury report (nfl.com): 91 skill/K players listed; practice {'FP': 41, 'DNP': 26, 'LP': 24}; designations {'Out': 22, 'Questionable': 16}",
+   "lineups: 404 statuses pulled {'espn': 157, 'sleeper': 90, '+sleeper': 78, 'espn+sleeper': 66, 'nfl-report': 12, 'nfl-report+sleeper': 1}; 5 Q, 21 OUT with a projection {'espn+sleeper': 19, 'nfl-report+sleeper': 1, 'ffa-tag': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk4.csv",
+    "rows": 914,
+    "age_hours": 0.0,
+    "slate_skill": 224,
+    "slate_k": 17,
+    "slate_dst": 16
+   },
+   "dk_lines": {
+    "slate_games": 8,
+    "with_lines": 8,
+    "fetched_at": "2026-10-04T16:01Z",
+    "credits_left": "404"
+   },
+   "dk_props": {
+    "slate_events": 8,
+    "events_with_props": 8,
+    "with_props": 186,
+    "by_stat": {
+     "pass_yds": 16,
+     "pass_tds": 16,
+     "rush_yds": 47,
+     "rec_yds": 101,
+     "rec": 101,
+     "exp_td": 186
+    },
+    "no_line": [
+     "Caleb Williams",
+     "Case Keenum",
+     "Dallas Goedert",
+     "DeVonta Smith"
+    ],
+    "eligible": 76,
+    "name_aliases": [
+     "joshua palmer -> josh palmer",
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 38
+   },
+   "kdst": {
+    "file": "kdst_2026_wk4.csv",
+    "K": {
+     "hit": 17,
+     "of": 17
+    },
+    "DST": {
+     "hit": 16,
+     "of": 16
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 16,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ],
+     "BAL": [
+      "Tyler Loop"
+     ],
+     "BUF": [
+      "Tyler Bass"
+     ],
+     "CHI": [
+      "Cairo Santos"
+     ],
+     "CIN": [
+      "Evan McPherson"
+     ],
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "GB": [
+      "Trey Smack"
+     ],
+     "HOU": [
+      "Kaimi Fairbairn"
+     ],
+     "JAX": [
+      "Cam Little"
+     ],
+     "LA": [
+      "Harrison Mevis"
+     ],
+     "NE": [
+      "Andres Borregales"
+     ],
+     "NYG": [
+      "Dominic Zvada"
+     ],
+     "NYJ": [
+      "Jason Sanders"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ],
+     "TEN": [
+      "Joey Slye"
+     ]
+    },
+    "not_the_one_we_send": {
+     "HOU": {
+      "sending": "Ka'imi Fairbairn",
+      "dk_prices": [
+       "Kaimi Fairbairn"
+      ]
+     }
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 91,
+    "designations": {
+     "Out": 22,
+     "Questionable": 16
+    }
+   },
+   "lineups": {
+    "statuses": 404,
+    "by_src": {
+     "espn": 157,
+     "sleeper": 90,
+     "+sleeper": 78,
+     "espn+sleeper": 66,
+     "nfl-report": 12,
+     "nfl-report+sleeper": 1
+    },
+    "q": 5,
+    "out": 21,
+    "out_by_src": {
+     "espn+sleeper": 19,
+     "nfl-report+sleeper": 1,
+     "ffa-tag": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Caleb Williams, Case Keenum, DeVonta Smith, Dallas Goedert"
+   ]
+  }
  }
 }
