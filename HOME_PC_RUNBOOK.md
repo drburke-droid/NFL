@@ -99,6 +99,16 @@ the CSV attached, one line of body: which games, generated time (ET), and any ca
 used, a QB ruled out after generation). No model mechanics in the CSV or the body.
 The CSV must land before T-75. If you miss T-75 for a slate, send the next slate instead.
 
+## DraftKings salary history (home-PC only)
+
+The cloud sessions cannot reach rotoguru1.com, so the salary history is pulled here:
+
+    python scripts/fetch_dk_salaries.py                        # 2014 .. this season, ~4 minutes, skips seasons already saved
+    python scripts/fetch_dk_salaries.py --season 2026 --refresh   # top up the current season (weekly)
+
+One file per season in `data/dk_salaries/` (player, pos, team, opponent, week, DK salary, DK points,
+RotoGuru id). Commit the folder so the cloud sessions can use it.
+
 ## What the automated path did that you are replacing
 
 cron-job.org hits the workflow every 5 min; inside T-82..T-72 the wrapper generates, emails
