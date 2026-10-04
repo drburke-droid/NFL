@@ -1433,5 +1433,108 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-04T13:30_1g": {
+  "sent_at": "2026-10-04T12:32:22Z",
+  "rows": 31,
+  "file": "Burke_Model_Burke_2026_sun09am_1004_1230.csv",
+  "slate": "Sun 10/04 09:30 AM ET slate (1 games)",
+  "credits_left": 2978,
+  "lineups": [
+   "schedule: 18 weeks; week 4 runs Fri 10/02 .. Tue 10/06",
+   "week 4: 1 games in this send (kickoffs Sun 13:30Z .. Sun 13:30Z)",
+   "injury report (nfl.com): 91 skill/K players listed; practice {'FP': 41, 'DNP': 26, 'LP': 24}; designations {'Out': 22, 'Questionable': 16}",
+   "lineups: 365 statuses pulled {'espn': 136, 'sleeper': 90, '+sleeper': 78, 'espn+sleeper': 46, 'nfl-report': 14, 'nfl-report+sleeper': 1}; 1 Q, 7 OUT with a projection {'espn+sleeper': 7}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk4.csv",
+    "rows": 914,
+    "age_hours": 0.0,
+    "slate_skill": 29,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-04T12:31Z",
+    "credits_left": "478"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 20,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 10,
+     "rec": 10,
+     "exp_td": 20
+    },
+    "no_line": [
+     "Jayden Daniels",
+     "Keenan Allen",
+     "Terry McLaurin"
+    ],
+    "eligible": 10,
+    "name_aliases": [
+     "chig okonkwo -> chigoziem okonkwo"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 9
+   },
+   "kdst": {
+    "file": "kdst_2026_wk4.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "WAS": [
+      "Drew Stevens"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 91,
+    "designations": {
+     "Out": 22,
+     "Questionable": 16
+    }
+   },
+   "lineups": {
+    "statuses": 365,
+    "by_src": {
+     "espn": 136,
+     "sleeper": 90,
+     "+sleeper": 78,
+     "espn+sleeper": 46,
+     "nfl-report": 14,
+     "nfl-report+sleeper": 1
+    },
+    "q": 1,
+    "out": 7,
+    "out_by_src": {
+     "espn+sleeper": 7
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Jayden Daniels, Terry McLaurin, Keenan Allen"
+   ]
+  }
  }
 }
