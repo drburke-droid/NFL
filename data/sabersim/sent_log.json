@@ -1692,5 +1692,101 @@
     "no DK props posted (news?): Caleb Williams, Case Keenum, DeVonta Smith, Dallas Goedert"
    ]
   }
+ },
+ "2026-10-04T20:05_1g": {
+  "sent_at": "2026-10-04T19:07:54Z",
+  "rows": 25,
+  "file": "Burke_Model_Burke_2026_sun04pm_1004_1905.csv",
+  "slate": "Sun 10/04 04:05 PM ET slate (1 games)",
+  "credits_left": 2893,
+  "lineups": [
+   "schedule: 18 weeks; week 4 runs Fri 10/02 .. Tue 10/06",
+   "week 4: 1 games in this send (kickoffs Sun 20:05Z .. Sun 20:05Z)",
+   "injury report (nfl.com): 91 skill/K players listed; practice {'FP': 41, 'DNP': 26, 'LP': 24}; designations {'Out': 22, 'Questionable': 16}",
+   "lineups: 435 statuses pulled {'espn': 176, 'sleeper': 91, '+sleeper': 83, 'espn+sleeper': 72, 'nfl-report': 12, 'nfl-report+sleeper': 1}; 0 Q, 2 OUT with a projection {'espn+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk4.csv",
+    "rows": 914,
+    "age_hours": 0.0,
+    "slate_skill": 24,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-04T19:07Z",
+    "credits_left": "393"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 20,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 12,
+     "rec": 12,
+     "exp_td": 20
+    },
+    "no_line": [
+     "Justin Jefferson"
+    ],
+    "eligible": 7,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 4
+   },
+   "kdst": {
+    "file": "kdst_2026_wk4.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 1,
+    "by_team": {
+     "MIN": [
+      "Will Reichard"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 91,
+    "designations": {
+     "Out": 22,
+     "Questionable": 16
+    }
+   },
+   "lineups": {
+    "statuses": 435,
+    "by_src": {
+     "espn": 176,
+     "sleeper": 91,
+     "+sleeper": 83,
+     "espn+sleeper": 72,
+     "nfl-report": 12,
+     "nfl-report+sleeper": 1
+    },
+    "q": 0,
+    "out": 2,
+    "out_by_src": {
+     "espn+sleeper": 2
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Justin Jefferson"
+   ]
+  }
  }
 }

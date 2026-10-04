@@ -22642,3 +22642,131 @@ snapshot_utc,source,season,week,event,commence,bookmaker,market,player,side,poin
 2026-10-04T16:01:20Z,sabersim_send,2026,4,1b4f2e60ce83fa1d63a5dff83769d27c,2026-10-04T17:00:00Z,draftkings,player_pats,Harrison Mevis,Under,2.5,-148
 2026-10-04T16:01:20Z,sabersim_send,2026,4,1b4f2e60ce83fa1d63a5dff83769d27c,2026-10-04T17:00:00Z,draftkings,player_pats,Jake Elliott,Over,1.5,-139
 2026-10-04T16:01:20Z,sabersim_send,2026,4,1b4f2e60ce83fa1d63a5dff83769d27c,2026-10-04T17:00:00Z,draftkings,player_pats,Jake Elliott,Under,1.5,109
+2026-10-04T19:07:01Z,sabersim_send,2026,4,164e6eb68f31bac190381903c3cccd31,,draftkings,totals,,,35.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,164e6eb68f31bac190381903c3cccd31,,draftkings,spreads,,,-11.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,f01589b0e7e6dd4f4ac1220a1db81f53,,draftkings,totals,,,47.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,f01589b0e7e6dd4f4ac1220a1db81f53,,draftkings,spreads,,,-16.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,573cc0ef39631a4f6673ec843a8bedd4,,draftkings,totals,,,55.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,573cc0ef39631a4f6673ec843a8bedd4,,draftkings,spreads,,,1.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,99a9bae4dc0dc2590496bd3102b211f2,,draftkings,totals,,,37.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,99a9bae4dc0dc2590496bd3102b211f2,,draftkings,spreads,,,6.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,664e6bda5721dc63be16bcf7d962a436,,draftkings,totals,,,58.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,664e6bda5721dc63be16bcf7d962a436,,draftkings,spreads,,,4.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,2ea94ddf20f66432b9024fe2e2eaba5f,,draftkings,totals,,,42.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,2ea94ddf20f66432b9024fe2e2eaba5f,,draftkings,spreads,,,3.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,1b4f2e60ce83fa1d63a5dff83769d27c,,draftkings,totals,,,49.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,1b4f2e60ce83fa1d63a5dff83769d27c,,draftkings,spreads,,,-3.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,daf55e2df5341c007fee5a0fc5bbc2d4,,draftkings,totals,,,61.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,daf55e2df5341c007fee5a0fc5bbc2d4,,draftkings,spreads,,,-3.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,,draftkings,totals,,,38.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,,draftkings,spreads,,,-10.0,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,a7e7efb75a9792ac63480ae6328dca18,,draftkings,totals,,,48.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,a7e7efb75a9792ac63480ae6328dca18,,draftkings,spreads,,,-3.0,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,e0cbd266dcf997089203a1b33ba0333d,,draftkings,totals,,,47.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,e0cbd266dcf997089203a1b33ba0333d,,draftkings,spreads,,,4.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,96d2373cda647873b971f268482bced0,,draftkings,totals,,,42.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,96d2373cda647873b971f268482bced0,,draftkings,spreads,,,-7.0,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,a73a76599a4f3422803e57bd8f61b626,,draftkings,totals,,,51.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,a73a76599a4f3422803e57bd8f61b626,,draftkings,spreads,,,3.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,8bd90781e17e6d97df3941063cedae1e,,draftkings,totals,,,47.5,
+2026-10-04T19:07:01Z,sabersim_send,2026,4,8bd90781e17e6d97df3941063cedae1e,,draftkings,spreads,,,-1.5,
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Aaron Jones,Yes,,-145
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Jordan Addison,Yes,,135
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,T.J. Hockenson,Yes,,170
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Ollie Gordon II,Yes,,350
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Malik Washington,Yes,,370
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Kyler Murray,Yes,,390
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Jaylen Wright,Yes,,390
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Jauan Jennings,Yes,,425
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Minnesota Vikings D/ST,Yes,,500
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Malik Willis,Yes,,500
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Tai Felton,Yes,,550
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Chris Bell,Yes,,550
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Greg Dulcich,Yes,,550
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Miami Dolphins D/ST,Yes,,650
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,DeeJay Dallas,Yes,,800
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Demond Claiborne,Yes,,900
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Kevin Coleman Jr.,Yes,,950
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Myles Price,Yes,,1100
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Gavin Bartholomew,Yes,,1200
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Will Kacmarek,Yes,,1500
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Max Bredeson,Yes,,1600
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Ryan Miller,Yes,,1600
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Jalen Tolbert,Yes,,2200
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,DJ Herman,Yes,,3000
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Jeshaun Jones,Yes,,3000
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_anytime_td,Seydou Traore,Yes,,3500
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_tds,Kyler Murray,Over,1.5,112
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_tds,Kyler Murray,Under,1.5,-143
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_tds,Malik Willis,Over,0.5,-128
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_tds,Malik Willis,Under,0.5,101
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_yds,Kyler Murray,Over,204.5,-111
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_yds,Kyler Murray,Under,204.5,-113
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_yds,Malik Willis,Over,169.5,-113
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pass_yds,Malik Willis,Under,169.5,-111
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Jordan Addison,Over,62.5,-113
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Jordan Addison,Under,62.5,-111
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Malik Washington,Over,40.5,-110
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Malik Washington,Under,40.5,-114
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,T.J. Hockenson,Over,38.5,-113
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,T.J. Hockenson,Under,38.5,-111
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Chris Bell,Over,34.5,-111
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Chris Bell,Under,34.5,-113
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Greg Dulcich,Over,31.5,-109
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Greg Dulcich,Under,31.5,-115
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Jauan Jennings,Over,27.5,-110
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Jauan Jennings,Under,27.5,-114
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Aaron Jones,Over,19.5,-107
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Aaron Jones,Under,19.5,-117
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Kevin Coleman Jr.,Over,15.5,-117
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Kevin Coleman Jr.,Under,15.5,-108
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Tai Felton,Over,15.5,-116
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Tai Felton,Under,15.5,-108
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Ollie Gordon II,Over,7.5,-114
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Ollie Gordon II,Under,7.5,-110
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Jaylen Wright,Over,5.5,-119
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Jaylen Wright,Under,5.5,-106
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Ryan Miller,Over,4.5,-114
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_reception_yds,Ryan Miller,Under,4.5,-110
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Malik Washington,Over,4.5,-102
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Malik Washington,Under,4.5,-125
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Jordan Addison,Over,4.5,104
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Jordan Addison,Under,4.5,-133
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,T.J. Hockenson,Over,4.5,106
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,T.J. Hockenson,Under,4.5,-136
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Aaron Jones,Over,3.5,131
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Aaron Jones,Under,3.5,-168
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Greg Dulcich,Over,3.5,132
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Greg Dulcich,Under,3.5,-168
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Chris Bell,Over,2.5,-120
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Chris Bell,Under,2.5,-106
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Jauan Jennings,Over,2.5,104
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Jauan Jennings,Under,2.5,-133
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Kevin Coleman Jr.,Over,1.5,-127
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Kevin Coleman Jr.,Under,1.5,100
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Tai Felton,Over,1.5,-125
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Tai Felton,Under,1.5,-102
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Ollie Gordon II,Over,1.5,149
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Ollie Gordon II,Under,1.5,-192
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Jaylen Wright,Over,1.5,179
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Jaylen Wright,Under,1.5,-232
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Ryan Miller,Over,0.5,-141
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_receptions,Ryan Miller,Under,0.5,110
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Aaron Jones,Over,66.5,-114
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Aaron Jones,Under,66.5,-110
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Malik Willis,Over,31.5,-108
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Malik Willis,Under,31.5,-116
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Jaylen Wright,Over,29.5,-108
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Jaylen Wright,Under,29.5,-116
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Ollie Gordon II,Over,26.5,-108
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Ollie Gordon II,Under,26.5,-116
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Kyler Murray,Over,22.5,-108
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Kyler Murray,Under,22.5,-116
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Malik Washington,Over,4.5,-117
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_rush_yds,Malik Washington,Under,4.5,-107
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_field_goals,Will Reichard,Over,2.5,154
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_field_goals,Will Reichard,Under,2.5,-198
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_kicking_points,Will Reichard,Over,8.5,-110
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_kicking_points,Will Reichard,Under,8.5,-116
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pats,Will Reichard,Over,2.5,138
+2026-10-04T19:07:02Z,sabersim_send,2026,4,c327223d76a3b7b0db8c6c104442f44b,2026-10-04T20:05:00Z,draftkings,player_pats,Will Reichard,Under,2.5,-176
