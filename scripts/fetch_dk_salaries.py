@@ -4,8 +4,8 @@ Historical DraftKings NFL salaries (and DK points) from RotoGuru, one CSV per se
 RotoGuru's archive stops after 2021, so seasons 2022 on come from DailyFantasyFuel instead: its
 /nfl/projections/draftkings/<date> page still serves past Sundays, and its default view there is the
 DK Sunday main slate (no TNF/SNF/MNF players). Each row carries data-week/-salary/-team/-opp, so we
-read those attributes. DFF has no actual DK points, so dk_points is blank for those seasons (join
-them from nflverse). --source picks one explicitly; the default is rotoguru <= 2021, dff after.
+read those attributes. DFF has no actual DK points, so dk_points is left blank for those seasons;
+scripts/fill_dk_points.py fills them from nflverse box scores. --source picks one explicitly; the default is rotoguru <= 2021, dff after.
 
 The cloud sessions cannot reach rotoguru1.com (network policy), so run this where the internet is
 open. RotoGuru's "fyday" page lists every player's DK salary and DK points for one week; with
@@ -22,7 +22,7 @@ Writes data/dk_salaries/dk_salaries_<season>.csv with columns:
 but not across sources; D/ST rows have pos "Def" on RotoGuru, "DST" on DFF).
 The header is read from the page itself, so a renamed or reordered column does not shift the data.
 """
-import argparse, csv, datetime, io, os, re, sys, time, urllib.request
+import argparse, csv, datetime, html, io, os, re, sys, time, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "data", "dk_salaries")
@@ -69,7 +69,7 @@ def parse_dff(page, y, w):
     for tag in re.findall(r"<tr[^>]*data-salary=[^>]*>", page):
         a = dict(re.findall(r'data-([a-z_]+)=\s*"([^"]*)"', tag))
         if not a.get("name") or not a.get("salary") or a.get("week", str(w)) != str(w): continue
-        out.append({"season": str(y), "week": str(w), "player": a["name"].strip(), "pos": a.get("pos", ""),
+        out.append({"season": str(y), "week": str(w), "player": html.unescape(a["name"]).strip(), "pos": a.get("pos", ""),
                     "team": a.get("team", ""), "home_away": "a" if a.get("loc") == "@" else "h",
                     "opp": a.get("opp", ""), "dk_points": "", "dk_salary": a["salary"],
                     "gid": a.get("player_id", ""), "source": "dff"})

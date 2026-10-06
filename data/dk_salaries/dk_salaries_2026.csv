@@ -1,802 +1,802 @@
 season,week,player,pos,team,home_away,opp,dk_points,dk_salary,gid,source
-2026,1,Jahmyr Gibbs,RB,DET,h,NO,,8000,1286CA,dff
-2026,1,Bijan Robinson,RB,ATL,a,PIT,,7700,12BDD4,dff
-2026,1,Joe Burrow,QB,CIN,h,TB,,6900,D68C1,dff
-2026,1,Ja&#x27;Marr Chase,WR,CIN,h,TB,,7800,10EFDB,dff
-2026,1,Jalen Hurts,QB,PHI,h,WAS,,6600,DEF77,dff
-2026,1,Lamar Jackson,QB,BAL,a,IND,,6800,D64B1,dff
-2026,1,Justin Herbert,QB,LAC,h,ARI,,6100,DE4E2,dff
-2026,1,Josh Allen,QB,BUF,a,HOU,,7000,D3F67,dff
-2026,1,Amon-Ra St. Brown,WR,DET,h,NO,,7500,1132C2,dff
-2026,1,Baker Mayfield,QB,TB,a,CIN,,5900,B6A26,dff
-2026,1,Caleb Williams,QB,CHI,a,CAR,,6300,13A12D,dff
-2026,1,Trevor Lawrence,QB,JAX,h,CLE,,5800,10F2B7,dff
-2026,1,Kyler Murray,QB,MIN,h,GB,,5500,D6CB7,dff
-2026,1,Jared Goff,QB,DET,h,NO,,6000,B1B1D,dff
-2026,1,Jonathan Taylor,RB,IND,h,BAL,,7300,1041BE,dff
-2026,1,Tyler Shough,QB,NO,a,DET,,5600,10F122,dff
-2026,1,De&#x27;Von Achane,RB,MIA,a,LV,,7000,12CBCC,dff
-2026,1,Saquon Barkley,RB,PHI,h,WAS,,6900,D7A66,dff
-2026,1,Chris Olave,WR,NO,a,DET,,6700,112120,dff
-2026,1,Chase Brown,RB,CIN,h,TB,,7100,112433,dff
-2026,1,Justin Jefferson,WR,MIN,h,GB,,7300,1051DF,dff
-2026,1,James Cook III,RB,BUF,a,HOU,,7200,114204,dff
-2026,1,Derrick Henry,RB,BAL,a,IND,,6700,B2BF1,dff
-2026,1,Ashton Jeanty,RB,LV,h,MIA,,6600,150D3E,dff
-2026,1,Jayden Daniels,QB,WAS,a,PHI,,6500,11B80C,dff
-2026,1,Jordan Love,QB,GB,a,MIN,,5700,DEB09,dff
-2026,1,Malik Willis,QB,MIA,a,LV,,5300,EE5C3,dff
-2026,1,Bryce Young,QB,CAR,h,CHI,,5200,128349,dff
-2026,1,Omarion Hampton,RB,LAC,h,ARI,,6800,15572C,dff
-2026,1,Daniel Jones,QB,IND,h,BAL,,5400,D6D6D,dff
-2026,1,Nico Collins,WR,HOU,h,BUF,,7000,10660A,dff
-2026,1,C.J. Stroud,QB,HOU,h,BUF,,5200,128684,dff
-2026,1,Zay Flowers,WR,BAL,a,IND,,6400,11F5DD,dff
-2026,1,Jacoby Brissett,QB,ARI,a,LAC,,5100,94347,dff
-2026,1,DeVonta Smith,WR,PHI,h,WAS,,6600,102DA6,dff
-2026,1,Breece Hall,RB,NYJ,a,TEN,,6200,11BD29,dff
-2026,1,Aaron Rodgers,QB,PIT,h,ATL,,5300,343C5,dff
-2026,1,Tetairoa McMillan,WR,CAR,h,CHI,,6100,1510E0,dff
-2026,1,Travis Etienne Jr.,RB,NO,a,DET,,5900,EEE91,dff
-2026,1,Trey McBride,TE,ARI,a,LAC,,6800,10E8C1,dff
-2026,1,Garrett Wilson,WR,NYJ,a,TEN,,5800,11C659,dff
-2026,1,Cam Ward,QB,TEN,h,NYJ,,5100,12BF93,dff
-2026,1,Kirk Cousins,QB,LV,h,MIA,,5000,6276C,dff
-2026,1,Tee Higgins,WR,CIN,h,TB,,6300,EEE93,dff
-2026,1,Geno Smith,QB,NYJ,a,TEN,,4600,7D740,dff
-2026,1,Bucky Irving,RB,TB,a,CIN,,5700,13A6F3,dff
-2026,1,D&#x27;Andre Swift,RB,CHI,a,CAR,,6100,1052F0,dff
-2026,1,Jameson Williams,WR,DET,h,NO,,6000,11EE90,dff
-2026,1,Luther Burden III,WR,CHI,a,CAR,,5500,1505C4,dff
-2026,1,Ladd McConkey,WR,LAC,h,ARI,,5900,129853,dff
-2026,1,Drake London,WR,ATL,a,PIT,,6500,11FC75,dff
-2026,1,Colston Loveland,TE,CHI,a,CAR,,5300,150A05,dff
-2026,1,Jaylen Warren,RB,PIT,h,ATL,,5400,11F37B,dff
-2026,1,Parker Washington,WR,JAX,h,CLE,,5600,12C112,dff
-2026,1,Christian Watson,WR,GB,a,MIN,,5900,104B8E,dff
-2026,1,Deshaun Watson,QB,CLE,a,JAX,,4700,CA547,dff
-2026,1,David Montgomery,RB,HOU,h,BUF,,6000,E7233,dff
-2026,1,Emeka Egbuka,WR,TB,a,CIN,,6200,13A691,dff
-2026,1,Quinshon Judkins,RB,CLE,a,JAX,,5500,151D7F,dff
-2026,1,Rico Dowdle,RB,PIT,h,ATL,,5200,E3E68,dff
-2026,1,Tyler Warren,TE,IND,h,BAL,,4900,12C11B,dff
-2026,1,DK Metcalf,WR,PIT,h,ATL,,5400,E6DE1,dff
-2026,1,Terry McLaurin,WR,WAS,a,PHI,,5700,CC214,dff
-2026,1,Bhayshul Tuten,RB,JAX,h,CLE,,5800,144041,dff
-2026,1,Jeremiyah Love,RB,ARI,a,LAC,,6400,1625ED,dff
-2026,1,Tony Pollard,RB,TEN,h,NYJ,,5600,D6F0E,dff
-2026,1,Cooper Rush,QB,ATL,a,PIT,,4000,A9765,dff
-2026,1,Marvin Harrison Jr.,WR,ARI,a,LAC,,5000,13A694,dff
-2026,1,Chuba Hubbard,RB,CAR,h,CHI,,5500,10349F,dff
-2026,1,Chris Godwin Jr.,WR,TB,a,CIN,,5200,CBE37,dff
-2026,1,DJ Moore,WR,BUF,a,HOU,,5600,D64DE,dff
-2026,1,Wan&#x27;Dale Robinson,WR,TEN,h,NYJ,,4800,11C64B,dff
-2026,1,Tre Tucker,WR,LV,h,MIA,,4000,11C6B3,dff
-2026,1,Tucker Kraft,TE,GB,a,MIN,,4500,1208B2,dff
-2026,1,Michael Pittman Jr.,WR,PIT,h,ATL,,4900,DE7F4,dff
-2026,1,Sam LaPorta,TE,DET,h,NO,,4400,11D61E,dff
-2026,1,Quentin Johnston,WR,LAC,h,ARI,,4700,1285A9,dff
-2026,1,Rome Odunze,WR,CHI,a,CAR,,5400,12851F,dff
-2026,1,Josh Downs,WR,IND,h,BAL,,5200,128A65,dff
-2026,1,Kenny Gainwell,RB,TB,a,CIN,,5200,1140D1,dff
-2026,1,Jayden Reed,WR,GB,a,MIN,,4900,112446,dff
-2026,1,MarShawn Lloyd,RB,GB,a,MIN,,4800,1283E6,dff
-2026,1,Carnell Tate,WR,TEN,h,NYJ,,5300,16002F,dff
-2026,1,Juwan Johnson,TE,NO,a,DET,,3700,D7F81,dff
-2026,1,Michael Mayer,TE,LV,h,MIA,,2900,12CED0,dff
-2026,1,Jordan Addison,WR,MIN,h,GB,,5800,12872A,dff
-2026,1,Jalen Coker,WR,CAR,h,CHI,,4600,1298C1,dff
-2026,1,Jakobi Meyers,WR,JAX,h,CLE,,5000,D6E17,dff
-2026,1,Stefon Diggs,WR,WAS,a,PHI,,5200,A9719,dff
-2026,1,Michael Wilson,WR,ARI,a,LAC,,5300,1124C9,dff
-2026,1,Jordan Mason,RB,MIN,h,GB,,5400,110761,dff
-2026,1,Brian Thomas Jr.,WR,JAX,h,CLE,,5500,139FB0,dff
-2026,1,Harold Fannin Jr.,TE,CLE,a,JAX,,4200,154840,dff
-2026,1,Khalil Shakir,WR,BUF,a,HOU,,4800,11406B,dff
-2026,1,Kyle Pitts Sr.,TE,ATL,a,PIT,,4700,1122D2,dff
-2026,1,Dallas Goedert,TE,PHI,h,WAS,,4100,C1345,dff
-2026,1,Mark Andrews,TE,BAL,a,IND,,3900,C85DB,dff
-2026,1,Aaron Jones Sr.,RB,MIN,h,GB,,5300,B4FC2,dff
-2026,1,Alec Pierce,WR,IND,h,BAL,,5700,10E453,dff
-2026,1,Brenton Strange,TE,JAX,h,CLE,,3600,11C68C,dff
-2026,1,Jacory Croskey-Merritt,RB,WAS,a,PHI,,5300,122D12,dff
-2026,1,Matthew Golden,WR,GB,a,MIN,,4700,150BC3,dff
-2026,1,Rachaad White,RB,WAS,a,PHI,,5200,12C21F,dff
-2026,1,Jonathon Brooks,RB,CAR,h,CHI,,5000,143E09,dff
-2026,1,Dalton Schultz,TE,HOU,h,BUF,,3400,CAC3B,dff
-2026,1,Dalton Kincaid,TE,BUF,a,HOU,,4600,115399,dff
-2026,1,Jalen Nailor,WR,LV,h,MIA,,4300,1131A1,dff
-2026,1,Devaughn Vele,WR,NO,a,DET,,3500,11C5F4,dff
-2026,1,Tyjae Spears,RB,TEN,h,NYJ,,5100,11D816,dff
-2026,1,T.J. Hockenson,TE,MIN,h,GB,,3300,E190B,dff
-2026,1,Keenan Allen,WR,IND,h,BAL,,4700,8809A,dff
-2026,1,Jaguars,DST,JAX,h,CLE,,3400,16D,dff
-2026,1,KC Concepcion,WR,CLE,a,JAX,,4600,15FF28,dff
-2026,1,Cade Otton,TE,TB,a,CIN,,3700,1002AF,dff
-2026,1,Chargers,DST,LAC,h,ARI,,3500,165,dff
-2026,1,Titans,DST,TEN,h,NYJ,,3100,150,dff
-2026,1,Woody Marks,RB,HOU,h,BUF,,5000,12CB24,dff
-2026,1,Steelers,DST,PIT,h,ATL,,3300,164,dff
-2026,1,Jerry Jeudy,WR,CLE,a,JAX,,4100,EDC6F,dff
-2026,1,Adonai Mitchell,WR,NYJ,a,TEN,,4000,139F14,dff
-2026,1,Malik Washington,WR,MIA,a,LV,,4200,11E707,dff
-2026,1,Dontayvion Wicks,WR,PHI,h,WAS,,4100,11E3CC,dff
-2026,1,Pat Freiermuth,TE,PIT,h,ATL,,3400,1109F6,dff
-2026,1,Kyle Monangai,RB,CHI,a,CAR,,5100,131646,dff
-2026,1,Rashod Bateman,WR,BAL,a,IND,,3900,10E8F0,dff
-2026,1,Tre&#x27; Harris,WR,LAC,h,ARI,,3800,1288A9,dff
-2026,1,Eagles,DST,PHI,h,WAS,,3200,162,dff
-2026,1,Chris Rodriguez Jr.,RB,JAX,h,CLE,,5100,10FD3B,dff
-2026,1,Tyler Allgeier,RB,ARI,a,LAC,,4900,1142BE,dff
-2026,1,Jauan Jennings,WR,MIN,h,GB,,4300,D3AC1,dff
-2026,1,Jets,DST,NYJ,a,TEN,,2500,160,dff
-2026,1,Makai Lemon,WR,PHI,h,WAS,,5100,15FD60,dff
-2026,1,Lions,DST,DET,h,NO,,3200,14E,dff
-2026,1,Denzel Boston,WR,CLE,a,JAX,,4400,150E40,dff
-2026,1,Greg Dulcich,TE,MIA,a,LV,,3500,113695,dff
-2026,1,Caleb Douglas,WR,MIA,a,LV,,3000,15486E,dff
-2026,1,Chig Okonkwo,TE,WAS,a,PHI,,4000,10E1C6,dff
-2026,1,Mike Washington Jr.,RB,LV,h,MIA,,4600,13ACD4,dff
-2026,1,Kayshon Boutte,WR,HOU,h,BUF,,4500,1283B2,dff
-2026,1,Vikings,DST,MIN,h,GB,,2800,15B,dff
-2026,1,Gunnar Helm,TE,TEN,h,NYJ,,3200,13A126,dff
-2026,1,Mike Gesicki,TE,CIN,h,TB,,3100,CC238,dff
-2026,1,Dolphins,DST,MIA,a,LV,,2700,159,dff
-2026,1,Packers,DST,GB,a,MIN,,3000,14F,dff
-2026,1,Samaje Perine,RB,CIN,h,TB,,4600,C85FE,dff
-2026,1,Ravens,DST,BAL,a,IND,,3000,16E,dff
-2026,1,Raiders,DST,LV,h,MIA,,2900,155,dff
-2026,1,Darren Waller,TE,CAR,h,CHI,,3200,9287F,dff
-2026,1,Ted Hurst III,WR,TB,a,CIN,,3300,173685,dff
-2026,1,Bills,DST,BUF,a,HOU,,3100,144,dff
-2026,1,Justice Hill,RB,BAL,a,IND,,4200,E15E5,dff
-2026,1,Bears,DST,CHI,a,CAR,,2800,146,dff
-2026,1,Buccaneers,DST,TB,a,CIN,,2600,16A,dff
-2026,1,Chris Brooks,RB,GB,a,MIN,,4500,113299,dff
-2026,1,Texans,DST,HOU,h,BUF,,2900,145,dff
-2026,1,Xavier Hutchinson,WR,HOU,h,BUF,,3200,1284C4,dff
-2026,1,Keaton Mitchell,RB,LAC,h,ARI,,4800,12A885,dff
-2026,1,Jack Bech,WR,LV,h,MIA,,3600,139F9E,dff
-2026,1,Mason Taylor,TE,NYJ,a,TEN,,2800,15138F,dff
-2026,1,Bengals,DST,CIN,h,TB,,2700,147,dff
-2026,1,Ja&#x27;Kobi Lane,WR,BAL,a,IND,,3100,1642C8,dff
-2026,1,Falcons,DST,ATL,a,PIT,,2600,143,dff
-2026,1,Isaac TeSlaa,WR,DET,h,NO,,3900,15FE52,dff
-2026,1,Colts,DST,IND,h,BAL,,2400,152,dff
-2026,1,Darnell Washington,TE,PIT,h,ATL,,3000,129862,dff
-2026,1,Panthers,DST,CAR,h,CHI,,2500,16C,dff
-2026,1,Browns,DST,CLE,a,JAX,,2100,149,dff
-2026,1,Kendrick Bourne,WR,ARI,a,LAC,,3600,B82EC,dff
-2026,1,David Njoku,TE,LAC,h,ARI,,3000,CB262,dff
-2026,1,Chris Bell,WR,MIA,a,LV,,3200,153484,dff
-2026,1,Oronde Gadsden II,TE,LAC,h,ARI,,3500,143A38,dff
-2026,1,Braelon Allen,RB,NYJ,a,TEN,,4700,1438AF,dff
-2026,1,Xavier Legette,WR,CAR,h,CHI,,3700,1202A1,dff
-2026,1,Commanders,DST,WAS,a,PHI,,2300,16B,dff
-2026,1,Omar Cooper Jr.,WR,NYJ,a,TEN,,4100,154889,dff
-2026,1,Kenyon Sadiq,TE,NYJ,a,TEN,,3800,160AC3,dff
-2026,1,Andrei Iosivas,WR,CIN,h,TB,,3300,1129F3,dff
-2026,1,Jaylin Noel,WR,HOU,h,BUF,,3600,13A0E2,dff
-2026,1,Cardinals,DST,ARI,a,LAC,,2000,163,dff
-2026,1,Keon Coleman,WR,BUF,a,HOU,,4000,142DBF,dff
-2026,1,Jahan Dotson,WR,ATL,a,PIT,,3700,111E56,dff
-2026,1,Cole Kmet,TE,CHI,a,CAR,,3300,10470D,dff
-2026,1,Kalif Raymond,WR,CHI,a,CAR,,3300,A91B4,dff
-2026,1,Saints,DST,NO,a,DET,,2200,15E,dff
-2026,1,Tank Bigsby,RB,PHI,h,WAS,,4900,128A3B,dff
-2026,1,Brian Robinson Jr.,RB,ATL,a,PIT,,4700,EDC8E,dff
-2026,1,Tez Johnson,WR,TB,a,CIN,,3100,128975,dff
-2026,1,Noah Fant,TE,NO,a,DET,,3200,E1907,dff
-2026,1,Dawson Knox,TE,BUF,a,HOU,,3100,D7D73,dff
-2026,1,Jaylen Wright,RB,MIA,a,LV,,4500,13A171,dff
-2026,1,Bryce Lance,WR,NO,a,DET,,3100,1437D8,dff
-2026,1,Travis Hunter,WR,JAX,h,CLE,,3400,1559EB,dff
-2026,1,Roman Wilson,WR,PIT,h,ATL,,3100,12C365,dff
-2026,1,Tommy Tremble,TE,CAR,h,CHI,,2900,11403B,dff
-2026,1,Antonio Williams,WR,WAS,a,PHI,,4200,1507F2,dff
-2026,1,Kendre Miller,RB,NO,a,DET,,4000,1285AB,dff
-2026,1,Barion Brown,WR,NO,a,DET,,3000,154C83,dff
-2026,1,Olamide Zaccheaus,WR,ATL,a,PIT,,3500,D7D08,dff
-2026,1,Daniel Bellinger,TE,TEN,h,NYJ,,2700,111EF3,dff
-2026,1,Sione Vaki,RB,DET,h,NO,,4000,15132C,dff
-2026,1,Joshua Palmer,WR,BUF,a,HOU,,3500,102B1C,dff
-2026,1,Elic Ayomanor,WR,TEN,h,NYJ,,3600,154A77,dff
-2026,1,Josh Oliver,TE,MIN,h,GB,,2800,D7473,dff
-2026,1,Drew Sample,TE,CIN,h,TB,,2600,CC8C0,dff
-2026,1,Ashton Dulin,WR,IND,h,BAL,,3200,11CAD4,dff
-2026,1,Kevin Coleman Jr.,WR,MIA,a,LV,,3000,1559E8,dff
-2026,1,Isaiah Williams,WR,NYJ,a,TEN,,3000,11F370,dff
-2026,1,Malik Benson,WR,LV,h,MIA,,3100,15FDA7,dff
-2026,1,Ray Davis,RB,BUF,a,HOU,,4600,11C7AD,dff
-2026,1,Chimere Dike,WR,TEN,h,NYJ,,3400,128A7E,dff
-2026,1,Jonnu Smith,TE,GB,a,MIN,,3000,B5945,dff
-2026,1,Jimmy Horn Jr.,WR,CAR,h,CHI,,3000,142D99,dff
-2026,1,Brock Wright,TE,DET,h,NO,,2900,EECC8,dff
-2026,1,Foster Moreau,TE,HOU,h,BUF,,2600,D3525,dff
-2026,1,Seth McGowan,RB,IND,h,BAL,,4300,128562,dff
-2026,1,Will Kacmarek,TE,MIA,a,LV,,2500,142D7F,dff
-2026,1,John Bates,TE,WAS,a,PHI,,2500,E67A6,dff
-2026,1,Chris Moore,WR,BAL,a,IND,,3000,94157,dff
-2026,1,Mitchell Evans,TE,CAR,h,CHI,,2600,13ACFF,dff
-2026,1,Cade Stover,TE,HOU,h,BUF,,2500,11EE8E,dff
-2026,1,Jahdae Walker,WR,CHI,a,CAR,,3100,165B7D,dff
-2026,1,Marlin Klein,TE,HOU,h,BUF,,2700,1573A1,dff
-2026,1,AJ Dillon,RB,CAR,h,CHI,,4000,102EC1,dff
-2026,1,Durham Smythe,TE,BAL,a,IND,,2500,B7190,dff
-2026,1,Nate Boerkircher,TE,JAX,h,CLE,,2600,128633,dff
-2026,1,Will Shipley,RB,PHI,h,WAS,,4100,13A5D4,dff
-2026,1,Jeremy Ruckert,TE,NYJ,a,TEN,,2500,112124,dff
-2026,1,Bo Melton,WR,GB,a,MIN,,3000,104F03,dff
-2026,1,Kaytron Allen,RB,WAS,a,PHI,,4600,150BBB,dff
-2026,1,Dohnte Meyers,WR,CIN,h,TB,,3000,114B08,dff
-2026,1,Blake Whiteheart,TE,CLE,a,JAX,,2500,10EEE3,dff
-2026,1,Raheim Sanders,RB,CLE,a,JAX,,4000,139F07,dff
-2026,1,Dyami Brown,WR,WAS,a,PHI,,3200,10E7A6,dff
-2026,1,Jared Wayne,WR,HOU,h,BUF,,3000,11F49D,dff
-2026,1,Laquon Treadwell,WR,IND,h,BAL,,3000,B6C0A,dff
-2026,1,Drew Ogletree,TE,IND,h,BAL,,2500,1367BC,dff
-2026,1,Ameer Abdullah,RB,JAX,h,CLE,,4000,903CC,dff
-2026,1,Connor Heyward,RB,LV,h,MIA,,4000,1022B1,dff
-2026,1,Jaylin Lane,WR,WAS,a,PHI,,3100,1288E1,dff
-2026,1,Quintin Morris,TE,JAX,h,CLE,,2500,102B60,dff
-2026,1,Josh Cameron,WR,JAX,h,CLE,,3000,1439A3,dff
-2026,1,LaJohntay Wester,WR,BAL,a,IND,,3000,12C8B9,dff
-2026,1,Derius Davis,WR,LAC,h,ARI,,3000,10FD85,dff
-2026,1,DeeJay Dallas,RB,MIN,h,GB,,4000,EE5B5,dff
-2026,1,Skyy Moore,WR,GB,a,MIN,,3000,11F49A,dff
-2026,1,Arian Smith,WR,NYJ,a,TEN,,3000,12985D,dff
-2026,2,Bijan Robinson,RB,ATL,h,CAR,,8200,12BDD4,dff
-2026,2,Lamar Jackson,QB,BAL,h,NO,,7300,D64B1,dff
-2026,2,Brock Purdy,QB,SF,h,MIA,,6200,111DE1,dff
-2026,2,Dak Prescott,QB,DAL,h,WAS,,6400,907C8,dff
-2026,2,Jayden Daniels,QB,WAS,a,DAL,,6300,11B80C,dff
-2026,2,Christian McCaffrey,RB,SF,h,MIA,,8000,CAC35,dff
-2026,2,Jalen Hurts,QB,PHI,a,TEN,,6700,DEF77,dff
-2026,2,Justin Herbert,QB,LAC,h,LV,,6000,DE4E2,dff
-2026,2,Caleb Williams,QB,CHI,h,MIN,,6800,13A12D,dff
-2026,2,Drake Maye,QB,NE,h,PIT,,6100,13A293,dff
-2026,2,Derrick Henry,RB,BAL,h,NO,,7200,B2BF1,dff
-2026,2,Jordan Love,QB,GB,a,NYJ,,5900,DEB09,dff
-2026,2,Jaxon Smith-Njigba,WR,SEA,a,ARI,,8100,128687,dff
-2026,2,Ashton Jeanty,RB,LV,a,LAC,,6800,150D3E,dff
-2026,2,Baker Mayfield,QB,TB,h,CLE,,5600,B6A26,dff
-2026,2,Justin Jefferson,WR,MIN,a,CHI,,7800,1051DF,dff
-2026,2,Bo Nix,QB,DEN,h,JAX,,5700,11BAAB,dff
-2026,2,Joe Burrow,QB,CIN,a,HOU,,6600,D68C1,dff
-2026,2,Ja&#x27;Marr Chase,WR,CIN,a,HOU,,7600,10EFDB,dff
-2026,2,CeeDee Lamb,WR,DAL,h,WAS,,7300,103484,dff
-2026,2,Javonte Williams,RB,DAL,h,WAS,,6400,10E7A9,dff
-2026,2,Trevor Lawrence,QB,JAX,a,DEN,,5800,10F2B7,dff
-2026,2,Tyler Shough,QB,NO,a,BAL,,5300,10F122,dff
-2026,2,C.J. Stroud,QB,HOU,h,CIN,,5500,128684,dff
-2026,2,De&#x27;Von Achane,RB,MIA,a,SF,,6700,12CBCC,dff
-2026,2,Malik Willis,QB,MIA,a,SF,,5200,EE5C3,dff
-2026,2,Bryce Young,QB,CAR,a,ATL,,5400,128349,dff
-2026,2,Saquon Barkley,RB,PHI,a,TEN,,7000,D7A66,dff
-2026,2,Chris Olave,WR,NO,a,BAL,,7200,112120,dff
-2026,2,Chase Brown,RB,CIN,a,HOU,,6900,112433,dff
-2026,2,David Montgomery,RB,HOU,h,CIN,,6500,E7233,dff
-2026,2,Carson Wentz,QB,MIN,a,CHI,,4600,95DEA,dff
-2026,2,Trey McBride,TE,ARI,h,SEA,,6900,10E8C1,dff
-2026,2,Breece Hall,RB,NYJ,h,GB,,6200,11BD29,dff
-2026,2,Bucky Irving,RB,TB,h,CLE,,6100,13A6F3,dff
-2026,2,Garrett Wilson,WR,NYJ,h,GB,,6000,11C659,dff
-2026,2,George Pickens,WR,DAL,h,WAS,,6300,11E255,dff
-2026,2,Drew Lock,QB,SEA,a,ARI,,4900,D76A9,dff
-2026,2,Omarion Hampton,RB,LAC,h,LV,,6600,15572C,dff
-2026,2,DeVonta Smith,WR,PHI,a,TEN,,6800,102DA6,dff
-2026,2,Aaron Jones Sr.,RB,MIN,a,CHI,,5100,B4FC2,dff
-2026,2,Geno Smith,QB,NYJ,h,GB,,4800,7D740,dff
-2026,2,Jacoby Brissett,QB,ARI,h,SEA,,5000,94347,dff
-2026,2,Chuba Hubbard,RB,CAR,a,ATL,,5800,10349F,dff
-2026,2,Deshaun Watson,QB,CLE,a,TB,,4500,CA547,dff
-2026,2,Rhamondre Stevenson,RB,NE,h,PIT,,5700,11EC9A,dff
-2026,2,Christian Watson,WR,GB,a,NYJ,,6200,104B8E,dff
-2026,2,Tetairoa McMillan,WR,CAR,a,ATL,,6100,1510E0,dff
-2026,2,D&#x27;Andre Swift,RB,CHI,h,MIN,,6300,1052F0,dff
-2026,2,Aaron Rodgers,QB,PIT,a,NE,,5100,343C5,dff
-2026,2,Tee Higgins,WR,CIN,a,HOU,,6100,EEE93,dff
-2026,2,Drake London,WR,ATL,h,CAR,,6000,11FC75,dff
-2026,2,Mike Evans,WR,SF,h,MIA,,6600,90EB3,dff
-2026,2,Parker Washington,WR,JAX,a,DEN,,5900,12C112,dff
-2026,2,Cam Ward,QB,TEN,h,PHI,,4900,12BF93,dff
-2026,2,Terry McLaurin,WR,WAS,a,DAL,,5200,CC214,dff
-2026,2,Ladd McConkey,WR,LAC,h,LV,,6200,129853,dff
-2026,2,DK Metcalf,WR,PIT,a,NE,,5200,E6DE1,dff
-2026,2,Kirk Cousins,QB,LV,a,LAC,,5000,6276C,dff
-2026,2,Jaylen Waddle,WR,DEN,h,JAX,,6500,112D75,dff
-2026,2,Jadarian Price,RB,SEA,a,ARI,,5500,151D6F,dff
-2026,2,Emeka Egbuka,WR,TB,h,CLE,,6400,13A691,dff
-2026,2,Quinshon Judkins,RB,CLE,a,TB,,5400,151D7F,dff
-2026,2,Luther Burden III,WR,CHI,h,MIN,,5700,1505C4,dff
-2026,2,Jalen Coker,WR,CAR,a,ATL,,5100,1298C1,dff
-2026,2,Stefon Diggs,WR,WAS,a,DAL,,5300,A9719,dff
-2026,2,Jacory Croskey-Merritt,RB,WAS,a,DAL,,5500,122D12,dff
-2026,2,Cooper Rush,QB,ATL,h,CAR,,4200,A9765,dff
-2026,2,Mark Andrews,TE,BAL,h,NO,,4400,C85DB,dff
-2026,2,J.K. Dobbins,RB,DEN,h,JAX,,5000,EE681,dff
-2026,2,MarShawn Lloyd,RB,GB,a,NYJ,,5300,1283E6,dff
-2026,2,Colston Loveland,TE,CHI,h,MIN,,5000,150A05,dff
-2026,2,Matthew Golden,WR,GB,a,NYJ,,4700,150BC3,dff
-2026,2,Jaylen Warren,RB,PIT,a,NE,,5400,11F37B,dff
-2026,2,Tucker Kraft,TE,GB,a,NYJ,,4900,1208B2,dff
-2026,2,Jeremiyah Love,RB,ARI,h,SEA,,5900,1625ED,dff
-2026,2,Chris Godwin Jr.,WR,TB,h,CLE,,5600,CBE37,dff
-2026,2,Quentin Johnston,WR,LAC,h,LV,,5000,1285A9,dff
-2026,2,George Kittle,TE,SF,h,MIA,,4600,B31E8,dff
-2026,2,Bhayshul Tuten,RB,JAX,a,DEN,,5600,144041,dff
-2026,2,Dalton Schultz,TE,HOU,h,CIN,,3200,CAC3B,dff
-2026,2,Travis Etienne Jr.,RB,NO,a,BAL,,6000,EEE91,dff
-2026,2,Deebo Samuel Sr.,WR,SF,h,MIA,,5300,CC0A5,dff
-2026,2,Jayden Reed,WR,GB,a,NYJ,,4500,112446,dff
-2026,2,Dallas Goedert,TE,PHI,a,TEN,,4800,C1345,dff
-2026,2,Courtland Sutton,WR,DEN,h,JAX,,5800,CCCDE,dff
-2026,2,Devaughn Vele,WR,NO,a,BAL,,4200,11C5F4,dff
-2026,2,Michael Mayer,TE,LV,a,LAC,,3600,12CED0,dff
-2026,2,Michael Wilson,WR,ARI,h,SEA,,5400,1124C9,dff
-2026,2,Rico Dowdle,RB,PIT,a,NE,,4900,E3E68,dff
-2026,2,Romeo Doubs,WR,NE,h,PIT,,5000,11215D,dff
-2026,2,Harold Fannin Jr.,TE,CLE,a,TB,,4100,154840,dff
-2026,2,Jakobi Meyers,WR,JAX,a,DEN,,4900,D6E17,dff
-2026,2,Juwan Johnson,TE,NO,a,BAL,,3900,D7F81,dff
-2026,2,Jordan Addison,WR,MIN,a,CHI,,5100,12872A,dff
-2026,2,KC Concepcion Jr.,WR,CLE,a,TB,,4100,15FF28,dff
-2026,2,Hunter Henry,TE,NE,h,PIT,,4000,B5BE9,dff
-2026,2,Tony Pollard,RB,TEN,h,PHI,,5300,D6F0E,dff
-2026,2,Wan&#x27;Dale Robinson,WR,TEN,h,PHI,,4600,11C64B,dff
-2026,2,Carnell Tate,WR,TEN,h,PHI,,5100,16002F,dff
-2026,2,Mack Hollins,WR,NE,h,PIT,,4300,AB958,dff
-2026,2,Rome Odunze,WR,CHI,h,MIN,,5500,12851F,dff
-2026,2,DeMario Douglas,WR,NE,h,PIT,,3800,11F08D,dff
-2026,2,T.J. Hockenson,TE,MIN,a,CHI,,3500,E190B,dff
-2026,2,Tre Tucker,WR,LV,a,LAC,,4500,11C6B3,dff
-2026,2,Jake Ferguson,TE,DAL,h,WAS,,3800,104191,dff
-2026,2,Kayshon Boutte,WR,HOU,h,CIN,,4000,1283B2,dff
-2026,2,Kyle Pitts Sr.,TE,ATL,h,CAR,,4500,1122D2,dff
-2026,2,Rashod Bateman,WR,BAL,h,NO,,4400,10E8F0,dff
-2026,2,Brian Thomas Jr.,WR,JAX,a,DEN,,4800,139FB0,dff
-2026,2,Malik Washington,WR,MIA,a,SF,,4000,11E707,dff
-2026,2,Kyle Monangai,RB,CHI,h,MIN,,5300,131646,dff
-2026,2,Denzel Boston,WR,CLE,a,TB,,4200,150E40,dff
-2026,2,Marvin Harrison Jr.,WR,ARI,h,SEA,,4900,13A694,dff
-2026,2,Caleb Douglas,WR,MIA,a,SF,,3700,15486E,dff
-2026,2,Buccaneers,DST,TB,h,CLE,,3600,16A,dff
-2026,2,Brenton Strange,TE,JAX,a,DEN,,3900,11C68C,dff
-2026,2,Xavier Hutchinson,WR,HOU,h,CIN,,3500,1284C4,dff
-2026,2,TreVeyon Henderson,RB,NE,h,PIT,,5200,13A69D,dff
-2026,2,Rachaad White,RB,WAS,a,DAL,,5000,12C21F,dff
-2026,2,Pat Bryant,WR,DEN,h,JAX,,4200,13ED0A,dff
-2026,2,Eagles,DST,PHI,a,TEN,,3700,162,dff
-2026,2,Dontayvion Wicks,WR,PHI,a,TEN,,4300,11E3CC,dff
-2026,2,Pat Freiermuth,TE,PIT,a,NE,,3700,1109F6,dff
-2026,2,George Holani,RB,SEA,a,ARI,,4500,1203D1,dff
-2026,2,Tre&#x27; Harris,WR,LAC,h,LV,,4000,1288A9,dff
-2026,2,Kenny Gainwell,RB,TB,h,CLE,,5100,1140D1,dff
-2026,2,Tyjae Spears,RB,TEN,h,PHI,,4800,11D816,dff
-2026,2,Seahawks,DST,SEA,a,ARI,,3500,169,dff
-2026,2,Tyler Allgeier,RB,ARI,h,SEA,,4900,1142BE,dff
-2026,2,Ravens,DST,BAL,h,NO,,3300,16E,dff
-2026,2,Jaylin Noel,WR,HOU,h,CIN,,3700,13A0E2,dff
-2026,2,Jalen Nailor,WR,LV,a,LAC,,3900,1131A1,dff
-2026,2,Adonai Mitchell,WR,NYJ,h,GB,,4000,139F14,dff
-2026,2,Jerry Jeudy,WR,CLE,a,TB,,3900,EDC6F,dff
-2026,2,Cade Otton,TE,TB,h,CLE,,3400,1002AF,dff
-2026,2,Woody Marks,RB,HOU,h,CIN,,4500,12CB24,dff
-2026,2,Kaelon Black,RB,SF,h,MIA,,4500,128D1C,dff
-2026,2,Ryan Flournoy,WR,DAL,h,WAS,,3800,1544A8,dff
-2026,2,Chargers,DST,LAC,h,LV,,3200,165,dff
-2026,2,Roman Wilson,WR,PIT,a,NE,,3200,12C365,dff
-2026,2,Packers,DST,GB,a,NYJ,,3400,14F,dff
-2026,2,Cooper Kupp,WR,SEA,a,ARI,,4100,AA773,dff
-2026,2,Chris Brooks,RB,GB,a,NYJ,,4800,113299,dff
-2026,2,Patriots,DST,NE,h,PIT,,3100,15C,dff
-2026,2,Rashid Shaheed,WR,SEA,a,ARI,,4300,E1714,dff
-2026,2,49ers,DST,SF,h,MIA,,3800,167,dff
-2026,2,Makai Lemon,WR,PHI,a,TEN,,4600,15FD60,dff
-2026,2,Jonathon Brooks,RB,CAR,a,ATL,,4800,143E09,dff
-2026,2,Gunnar Helm,TE,TEN,h,PHI,,3100,13A126,dff
-2026,2,Antonio Williams,WR,WAS,a,DAL,,4400,1507F2,dff
-2026,2,Demarcus Robinson,WR,SF,h,MIA,,3900,B18EF,dff
-2026,2,Kalif Raymond,WR,CHI,h,MIN,,3600,A91B4,dff
-2026,2,Texans,DST,HOU,h,CIN,,3000,145,dff
-2026,2,Keaton Mitchell,RB,LAC,h,LV,,4600,12A885,dff
-2026,2,Steelers,DST,PIT,a,NE,,2800,164,dff
-2026,2,AJ Barner,TE,SEA,a,ARI,,3300,12C2BF,dff
-2026,2,Panthers,DST,CAR,a,ATL,,2700,16C,dff
-2026,2,Bears,DST,CHI,h,MIN,,3000,146,dff
-2026,2,Braelon Allen,RB,NYJ,h,GB,,4200,1438AF,dff
-2026,2,Greg Dulcich,TE,MIA,a,SF,,3200,113695,dff
-2026,2,Falcons,DST,ATL,h,CAR,,2900,143,dff
-2026,2,Justice Hill,RB,BAL,h,NO,,4200,E15E5,dff
-2026,2,Kendrick Bourne,WR,ARI,h,SEA,,3900,B82EC,dff
-2026,2,Cowboys,DST,DAL,h,WAS,,2900,14B,dff
-2026,2,Broncos,DST,DEN,h,JAX,,2800,14C,dff
-2026,2,David Njoku,TE,LAC,h,LV,,3000,CB262,dff
-2026,2,Kenyon Sadiq,TE,NYJ,h,GB,,3800,160AC3,dff
-2026,2,Chris Rodriguez Jr.,RB,JAX,a,DEN,,5100,10FD3B,dff
-2026,2,Bengals,DST,CIN,a,HOU,,2700,147,dff
-2026,2,Darren Waller,TE,CAR,a,ATL,,3100,9287F,dff
-2026,2,LaJohntay Wester,WR,BAL,h,NO,,3100,12C8B9,dff
-2026,2,Jaguars,DST,JAX,a,DEN,,2400,16D,dff
-2026,2,Jonah Coleman,RB,DEN,h,JAX,,4200,1510F2,dff
-2026,2,Raiders,DST,LV,a,LAC,,2600,155,dff
-2026,2,Chris Bell,WR,MIA,a,SF,,3500,153484,dff
-2026,2,Alvin Kamara,RB,NO,a,BAL,,4600,B74FE,dff
-2026,2,Vikings,DST,MIN,a,CHI,,2600,15B,dff
-2026,2,Samaje Perine,RB,CIN,a,HOU,,4400,C85FE,dff
-2026,2,Evan Engram,TE,DEN,h,JAX,,3300,B6E81,dff
-2026,2,Browns,DST,CLE,a,TB,,2200,149,dff
-2026,2,Cardinals,DST,ARI,h,SEA,,2500,163,dff
-2026,2,Brian Robinson Jr.,RB,ATL,h,CAR,,4700,EDC8E,dff
-2026,2,Calvin Ridley,WR,TEN,h,PHI,,4100,D7D2D,dff
-2026,2,Jets,DST,NYJ,h,GB,,2400,160,dff
-2026,2,Jahan Dotson,WR,ATL,h,CAR,,3400,111E56,dff
-2026,2,Jack Bech,WR,LV,a,LAC,,3600,139F9E,dff
-2026,2,Ted Hurst III,WR,TB,h,CLE,,3200,173685,dff
-2026,2,Saints,DST,NO,a,BAL,,2300,15E,dff
-2026,2,Isaiah Williams,WR,NYJ,h,GB,,3300,11F370,dff
-2026,2,Xavier Legette,WR,CAR,a,ATL,,3400,1202A1,dff
-2026,2,Bryce Lance,WR,NO,a,BAL,,3200,1437D8,dff
-2026,2,Andrei Iosivas,WR,CIN,a,HOU,,3100,1129F3,dff
-2026,2,Chris Moore,WR,BAL,h,NO,,3300,94157,dff
-2026,2,Commanders,DST,WAS,a,DAL,,2500,16B,dff
-2026,2,DeeJay Dallas,RB,MIN,a,CHI,,4000,EE5B5,dff
-2026,2,Darnell Washington,TE,PIT,a,NE,,2900,129862,dff
-2026,2,Devontez Walker,WR,BAL,h,NO,,3400,137FDA,dff
-2026,2,Cole Kmet,TE,CHI,h,MIN,,3000,10470D,dff
-2026,2,Titans,DST,TEN,h,PHI,,2100,150,dff
-2026,2,Tommy Tremble,TE,CAR,a,ATL,,2600,11403B,dff
-2026,2,Charlie Kolar,TE,LAC,h,LV,,2700,102758,dff
-2026,2,Oronde Gadsden II,TE,LAC,h,LV,,3500,143A38,dff
-2026,2,Josh Oliver,TE,MIN,a,CHI,,2500,D7473,dff
-2026,2,Raheim Sanders,RB,CLE,a,TB,,4000,139F07,dff
-2026,2,Mike Washington Jr.,RB,LV,a,LAC,,4300,13ACD4,dff
-2026,2,Germie Bernard,WR,PIT,a,NE,,3400,151105,dff
-2026,2,Jared Wayne,WR,HOU,h,CIN,,3000,11F49D,dff
-2026,2,Ben Sinnott,TE,WAS,a,DAL,,2900,12C078,dff
-2026,2,Olamide Zaccheaus,WR,ATL,h,CAR,,3200,D7D08,dff
-2026,2,Demond Claiborne,RB,MIN,a,CHI,,4000,15393E,dff
-2026,2,Dyami Brown,WR,WAS,a,DAL,,3000,10E7A6,dff
-2026,2,Emari Demercado,RB,DAL,h,WAS,,4500,110A91,dff
-2026,2,Tank Bigsby,RB,PHI,a,TEN,,4700,128A3B,dff
-2026,2,Eli Raridon,TE,NE,h,PIT,,3000,156C41,dff
-2026,2,Dolphins,DST,MIA,a,SF,,2000,159,dff
-2026,2,Elic Ayomanor,WR,TEN,h,PHI,,3500,154A77,dff
-2026,2,Kyle Williams,WR,NE,h,PIT,,3600,12B995,dff
-2026,2,Zachariah Branch,WR,ATL,h,CAR,,3500,15FD56,dff
-2026,2,Foster Moreau,TE,HOU,h,CIN,,2700,D3525,dff
-2026,2,Elijah Arroyo,TE,SEA,a,ARI,,2500,13A2B8,dff
-2026,2,Durham Smythe,TE,BAL,h,NO,,2500,B7190,dff
-2026,2,Emanuel Wilson,RB,SEA,a,ARI,,4000,16174F,dff
-2026,2,Troy Franklin,WR,DEN,h,JAX,,3800,13A020,dff
-2026,2,Erick All Jr.,TE,CIN,a,HOU,,2500,11C4F5,dff
-2026,2,KaVontae Turpin,WR,DAL,h,WAS,,3100,D36A6,dff
-2026,2,Hunter Luepke,RB,DAL,h,WAS,,4000,1141E0,dff
-2026,2,Mitchell Evans,TE,CAR,a,ATL,,2500,13ACFF,dff
-2026,2,Kyle Juszczyk,RB,SF,h,MIA,,4000,7A59E,dff
-2026,2,Jaylen Wright,RB,MIA,a,SF,,4200,13A171,dff
-2026,2,Will Shipley,RB,PHI,a,TEN,,4200,13A5D4,dff
-2026,2,Austin Hooper,TE,ATL,h,CAR,,2500,B4860,dff
-2026,2,Brenen Thompson,WR,LAC,h,LV,,3500,15595C,dff
-2026,2,Ollie Gordon II,RB,MIA,a,SF,,4000,1505E6,dff
-2026,2,AJ Dillon,RB,CAR,a,ATL,,4000,102EC1,dff
-2026,2,Efton Chism III,WR,NE,h,PIT,,3100,128F20,dff
-2026,2,Isaiah Bond,WR,CLE,a,TB,,3000,1556E7,dff
-2026,2,Daniel Bellinger,TE,TEN,h,PHI,,2600,111EF3,dff
-2026,2,Malik Benson,WR,LV,a,LAC,,3000,15FDA7,dff
-2026,2,Jeremy Ruckert,TE,NYJ,h,GB,,2500,112124,dff
-2026,2,Will Kacmarek,TE,MIA,a,SF,,2500,142D7F,dff
-2026,2,Hollywood Brown,WR,PHI,a,TEN,,3600,EE55C,dff
-2026,2,Kaytron Allen,RB,WAS,a,DAL,,4500,150BBB,dff
-2026,2,Dohnte Meyers,WR,CIN,a,HOU,,3000,114B08,dff
-2026,2,Bo Melton,WR,GB,a,NYJ,,3000,104F03,dff
-2026,2,Blake Whiteheart,TE,CLE,a,TB,,2500,10EEE3,dff
-2026,2,Tyler Badie,RB,DEN,h,JAX,,4000,1127F2,dff
-2026,2,Tez Johnson,WR,TB,h,CLE,,3000,128975,dff
-2026,2,Sam Roush,TE,CHI,h,MIN,,2500,15076C,dff
-2026,2,Connor Heyward,RB,LV,a,LAC,,4000,1022B1,dff
-2026,2,Derius Davis,WR,LAC,h,LV,,3000,10FD85,dff
-2026,2,Kaleb Johnson,RB,GB,a,NYJ,,4300,15160E,dff
-2026,2,Charlie Woerner,TE,ATL,h,CAR,,2500,E11B8,dff
-2026,2,Jaleel McLaughlin,RB,CLE,a,TB,,4000,1367BA,dff
-2026,2,Ameer Abdullah,RB,JAX,a,DEN,,4100,903CC,dff
-2026,2,Lil&#x27;Jordan Humphrey,WR,DEN,h,JAX,,3300,E0CB6,dff
-2026,2,Nate Adkins,TE,DEN,h,JAX,,2500,1147E5,dff
-2026,2,Ian Thomas,TE,LV,a,LAC,,2500,E63F5,dff
-2026,2,Ben Skowronek,WR,PIT,a,NE,,3000,E0D70,dff
-2026,2,Johnny Mundt,TE,PHI,a,TEN,,2500,B4D60,dff
-2026,2,Skyy Moore,WR,GB,a,NYJ,,3000,11F49A,dff
-2026,2,Eric Saubert,TE,SEA,a,ARI,,2500,A9A93,dff
-2026,2,Quintin Morris,TE,JAX,a,DEN,,2500,102B60,dff
-2026,2,Colbie Young,WR,CIN,a,HOU,,3000,15779E,dff
-2026,2,Kevin Austin Jr.,WR,NO,a,BAL,,3000,11401E,dff
-2026,2,Myles Price,WR,MIN,a,CHI,,3000,12BFB8,dff
-2026,2,Corey Kiner,RB,NE,h,PIT,,4200,139FA2,dff
-2026,2,Darius Cooper,WR,PHI,a,TEN,,3000,12AA96,dff
-2026,2,LeQuint Allen Jr.,RB,JAX,a,DEN,,4000,150A18,dff
-2026,2,Dareke Young,WR,LV,a,LAC,,3000,1521A5,dff
-2026,2,Chris Blair,WR,ATL,h,CAR,,3000,11185B,dff
-2026,2,Cody White,WR,LV,a,LAC,,3000,1022CC,dff
-2026,2,Colson Yankoff,TE,WAS,a,DAL,,2500,10E520,dff
-2026,2,KhaDarel Hodge,WR,SF,h,MIA,,3000,B8F11,dff
-2026,2,Ryan Miller,WR,MIA,a,SF,,3000,1111CC,dff
-2026,2,DJ Herman,RB,MIA,a,SF,,4000,144303,dff
-2026,2,Jordan James,RB,SF,h,MIA,,4000,155F51,dff
-2026,2,Adam Prentice,RB,DEN,h,JAX,,4000,D8324,dff
-2026,3,Jahmyr Gibbs,RB,DET,h,NYJ,,8800,1286CA,dff
-2026,3,Josh Allen,QB,BUF,h,LAC,,8000,D3F67,dff
-2026,3,Lamar Jackson,QB,BAL,a,DAL,,7500,D64B1,dff
-2026,3,Jaxon Smith-Njigba,WR,SEA,a,WAS,,8600,128687,dff
-2026,3,Christian McCaffrey,RB,SF,h,ARI,,8300,CAC35,dff
-2026,3,Kenneth Walker III,RB,KC,a,MIA,,7400,11C472,dff
-2026,3,Brock Purdy,QB,SF,h,ARI,,6500,111DE1,dff
-2026,3,Patrick Mahomes,QB,KC,a,MIA,,6200,CCD77,dff
-2026,3,Amon-Ra St. Brown,WR,DET,h,NYJ,,7900,1132C2,dff
-2026,3,Jonathan Taylor,RB,IND,h,HOU,,7600,1041BE,dff
-2026,3,Tyler Shough,QB,NO,h,LV,,5400,10F122,dff
-2026,3,Derrick Henry,RB,BAL,a,DAL,,7700,B2BF1,dff
-2026,3,Dak Prescott,QB,DAL,h,BAL,,6700,907C8,dff
-2026,3,Jared Goff,QB,DET,h,NYJ,,6300,B1B1D,dff
-2026,3,CeeDee Lamb,WR,DAL,h,BAL,,7800,103484,dff
-2026,3,Trevor Lawrence,QB,JAX,h,NE,,5700,10F2B7,dff
-2026,3,Joe Burrow,QB,CIN,a,PIT,,6600,D68C1,dff
-2026,3,James Cook III,RB,BUF,h,LAC,,6900,114204,dff
-2026,3,Ja&#x27;Marr Chase,WR,CIN,a,PIT,,8100,10EFDB,dff
-2026,3,Drake Maye,QB,NE,a,JAX,,6100,13A293,dff
-2026,3,Chris Olave,WR,NO,h,LV,,7200,112120,dff
-2026,3,Kyler Murray,QB,MIN,a,TB,,5100,D6CB7,dff
-2026,3,Ashton Jeanty,RB,LV,a,NO,,7100,150D3E,dff
-2026,3,Justin Herbert,QB,LAC,a,BUF,,5800,DE4E2,dff
-2026,3,Justin Jefferson,WR,MIN,a,TB,,7500,1051DF,dff
-2026,3,Bryce Young,QB,CAR,a,CLE,,5600,128349,dff
-2026,3,Chase Brown,RB,CIN,a,PIT,,6600,112433,dff
-2026,3,Trey McBride,TE,ARI,a,SF,,6700,10E8C1,dff
-2026,3,De&#x27;Von Achane,RB,MIA,h,KC,,6500,12CBCC,dff
-2026,3,Garrett Wilson,WR,NYJ,a,DET,,6300,11C659,dff
-2026,3,C.J. Stroud,QB,HOU,a,IND,,5500,128684,dff
-2026,3,Baker Mayfield,QB,TB,h,MIN,,5300,B6A26,dff
-2026,3,Malik Willis,QB,MIA,h,KC,,4900,EE5C3,dff
-2026,3,Sam Darnold,QB,SEA,a,WAS,,5400,D6D9A,dff
-2026,3,Chuba Hubbard,RB,CAR,a,CLE,,6100,10349F,dff
-2026,3,Jaylen Warren,RB,PIT,h,CIN,,5700,11F37B,dff
-2026,3,Deshaun Watson,QB,CLE,h,CAR,,4700,CA547,dff
-2026,3,Javonte Williams,RB,DAL,h,BAL,,6700,10E7A9,dff
-2026,3,Geno Smith,QB,NYJ,a,DET,,4900,7D740,dff
-2026,3,Breece Hall,RB,NYJ,a,DET,,6400,11BD29,dff
-2026,3,Parker Washington,WR,JAX,h,NE,,6000,12C112,dff
-2026,3,Jacoby Brissett,QB,ARI,a,SF,,4800,94347,dff
-2026,3,Daniel Jones,QB,IND,h,HOU,,5000,D6D6D,dff
-2026,3,George Pickens,WR,DAL,h,BAL,,6600,11E255,dff
-2026,3,Bucky Irving,RB,TB,h,MIN,,6300,13A6F3,dff
-2026,3,Tetairoa McMillan,WR,CAR,a,CLE,,6000,1510E0,dff
-2026,3,Kirk Cousins,QB,LV,a,NO,,4800,6276C,dff
-2026,3,Aaron Rodgers,QB,PIT,h,CIN,,5000,343C5,dff
-2026,3,Cam Ward,QB,TEN,a,NYG,,5100,12BF93,dff
-2026,3,Omarion Hampton,RB,LAC,a,BUF,,6800,15572C,dff
-2026,3,Ladd McConkey,WR,LAC,a,BUF,,5900,129853,dff
-2026,3,Jameis Winston,QB,NYG,h,TEN,,4000,A8D50,dff
-2026,3,Jalen Coker,WR,CAR,a,CLE,,5500,1298C1,dff
-2026,3,Quinshon Judkins,RB,CLE,h,CAR,,5500,151D7F,dff
-2026,3,Cam Skattebo,RB,NYG,h,TEN,,6200,13893C,dff
-2026,3,Tee Higgins,WR,CIN,a,PIT,,6100,EEE93,dff
-2026,3,Aaron Jones Sr.,RB,MIN,a,TB,,5900,B4FC2,dff
-2026,3,Marcus Mariota,QB,WAS,h,SEA,,4500,94663,dff
-2026,3,Malik Nabers,WR,NYG,h,TEN,,6500,139FAB,dff
-2026,3,Mike Evans,WR,SF,h,ARI,,6800,90EB3,dff
-2026,3,Brock Bowers,TE,LV,a,NO,,6600,139F1D,dff
-2026,3,Dalton Kincaid,TE,BUF,h,LAC,,5500,115399,dff
-2026,3,David Montgomery,RB,HOU,a,IND,,6000,E7233,dff
-2026,3,Rashee Rice,WR,KC,a,MIA,,6400,11E822,dff
-2026,3,Jameson Williams,WR,DET,h,NYJ,,5400,11EE90,dff
-2026,3,DJ Moore,WR,BUF,h,LAC,,5800,D64DE,dff
-2026,3,Dalton Schultz,TE,HOU,a,IND,,4200,CAC3B,dff
-2026,3,Josh Downs,WR,IND,h,HOU,,5700,128A65,dff
-2026,3,DK Metcalf,WR,PIT,h,CIN,,5400,E6DE1,dff
-2026,3,Travis Kelce,TE,KC,a,MIA,,4500,6D6F0,dff
-2026,3,Jadarian Price,RB,SEA,a,WAS,,5300,151D6F,dff
-2026,3,Tony Pollard,RB,TEN,a,NYG,,5400,D6F0E,dff
-2026,3,Deebo Samuel Sr.,WR,SF,h,ARI,,5300,CC0A5,dff
-2026,3,Zay Flowers,WR,BAL,a,DAL,,6900,11F5DD,dff
-2026,3,Mark Andrews,TE,BAL,a,DAL,,4400,C85DB,dff
-2026,3,Sam LaPorta,TE,DET,h,NYJ,,4300,11D61E,dff
-2026,3,Jeremiyah Love,RB,ARI,a,SF,,5500,1625ED,dff
-2026,3,George Kittle,TE,SF,h,ARI,,4800,B31E8,dff
-2026,3,Denzel Boston,WR,CLE,h,CAR,,4500,150E40,dff
-2026,3,Bhayshul Tuten,RB,JAX,h,NE,,5600,144041,dff
-2026,3,Emeka Egbuka,WR,TB,h,MIN,,6200,13A691,dff
-2026,3,Tyler Warren,TE,IND,h,HOU,,5300,12C11B,dff
-2026,3,Devaughn Vele,WR,NO,h,LV,,4400,11C5F4,dff
-2026,3,Michael Wilson,WR,ARI,a,SF,,5200,1124C9,dff
-2026,3,Travis Etienne Jr.,RB,NO,h,LV,,5800,EEE91,dff
-2026,3,Rhamondre Stevenson,RB,NE,a,JAX,,5400,11EC9A,dff
-2026,3,Isaiah Likely,TE,NYG,h,TEN,,4700,112AF7,dff
-2026,3,Khalil Shakir,WR,BUF,h,LAC,,4800,11406B,dff
-2026,3,Xavier Worthy,WR,KC,a,MIA,,4400,143E2E,dff
-2026,3,Rashod Bateman,WR,BAL,a,DAL,,4700,10E8F0,dff
-2026,3,Harold Fannin Jr.,TE,CLE,h,CAR,,4000,154840,dff
-2026,3,Hunter Henry,TE,NE,a,JAX,,3900,B5BE9,dff
-2026,3,Terry McLaurin,WR,WAS,h,SEA,,5100,CC214,dff
-2026,3,Carnell Tate,WR,TEN,a,NYG,,5000,16002F,dff
-2026,3,TreVeyon Henderson,RB,NE,a,JAX,,5200,13A69D,dff
-2026,3,Brian Thomas Jr.,WR,JAX,h,NE,,4600,139FB0,dff
-2026,3,KC Concepcion Jr.,WR,CLE,h,CAR,,4300,15FF28,dff
-2026,3,Malik Washington,WR,MIA,h,KC,,4200,11E707,dff
-2026,3,Romeo Doubs,WR,NE,a,JAX,,5100,11215D,dff
-2026,3,Juwan Johnson,TE,NO,h,LV,,3700,D7F81,dff
-2026,3,Jordan Addison,WR,MIN,a,TB,,4900,12872A,dff
-2026,3,Oronde Gadsden II,TE,LAC,a,BUF,,3500,143A38,dff
-2026,3,Jakobi Meyers,WR,JAX,h,NE,,4800,D6E17,dff
-2026,3,Wan&#x27;Dale Robinson,WR,TEN,a,NYG,,4500,11C64B,dff
-2026,3,Chris Godwin Jr.,WR,TB,h,MIN,,5300,CBE37,dff
-2026,3,Xavier Hutchinson,WR,HOU,a,IND,,4000,1284C4,dff
-2026,3,Mack Hollins,WR,NE,a,JAX,,4200,AB958,dff
-2026,3,Pat Freiermuth,TE,PIT,h,CIN,,3800,1109F6,dff
-2026,3,Quentin Johnston,WR,LAC,a,BUF,,4900,1285A9,dff
-2026,3,Keenan Allen,WR,IND,h,HOU,,4600,8809A,dff
-2026,3,Tre Tucker,WR,LV,a,NO,,5000,11C6B3,dff
-2026,3,Jake Ferguson,TE,DAL,h,BAL,,4100,104191,dff
-2026,3,Woody Marks,RB,HOU,a,IND,,5000,12CB24,dff
-2026,3,Alvin Kamara,RB,NO,h,LV,,4800,B74FE,dff
-2026,3,Tyjae Spears,RB,TEN,a,NYG,,4900,11D816,dff
-2026,3,T.J. Hockenson,TE,MIN,a,TB,,3200,E190B,dff
-2026,3,Stefon Diggs,WR,WAS,h,SEA,,5500,A9719,dff
-2026,3,Jacory Croskey-Merritt,RB,WAS,h,SEA,,5300,122D12,dff
-2026,3,Kayshon Boutte,WR,HOU,a,IND,,4500,1283B2,dff
-2026,3,Brenton Strange,TE,JAX,h,NE,,3400,11C68C,dff
-2026,3,Kenyon Sadiq,TE,NYJ,a,DET,,3500,160AC3,dff
-2026,3,Seahawks,DST,SEA,a,WAS,,3800,169,dff
-2026,3,Rashid Shaheed,WR,SEA,a,WAS,,4200,E1714,dff
-2026,3,Giants,DST,NYG,h,TEN,,3400,15F,dff
-2026,3,Tre&#x27; Harris,WR,LAC,a,BUF,,3900,1288A9,dff
-2026,3,Ryan Flournoy,WR,DAL,h,BAL,,3800,1544A8,dff
-2026,3,Tyler Allgeier,RB,ARI,a,SF,,5000,1142BE,dff
-2026,3,Cade Otton,TE,TB,h,MIN,,3100,1002AF,dff
-2026,3,Marvin Harrison Jr.,WR,ARI,a,SF,,4700,13A694,dff
-2026,3,Michael Pittman Jr.,WR,PIT,h,CIN,,4700,DE7F4,dff
-2026,3,Isaiah Williams,WR,NYJ,a,DET,,3300,11F370,dff
-2026,3,Rachaad White,RB,WAS,h,SEA,,5100,12C21F,dff
-2026,3,DeMario Douglas,WR,NE,a,JAX,,3700,11F08D,dff
-2026,3,49ers,DST,SF,h,ARI,,3600,167,dff
-2026,3,Vikings,DST,MIN,a,TB,,3100,15B,dff
-2026,3,Panthers,DST,CAR,a,CLE,,3000,16C,dff
-2026,3,Lions,DST,DET,h,NYJ,,3500,14E,dff
-2026,3,Gunnar Helm,TE,TEN,a,NYG,,2900,13A126,dff
-2026,3,Chiefs,DST,KC,a,MIA,,3700,153,dff
-2026,3,Justice Hill,RB,BAL,a,DAL,,4200,E15E5,dff
-2026,3,Texans,DST,HOU,a,IND,,3200,145,dff
-2026,3,Greg Dulcich,TE,MIA,h,KC,,3000,113695,dff
-2026,3,Kenny Gainwell,RB,TB,h,MIN,,4800,1140D1,dff
-2026,3,AJ Barner,TE,SEA,a,WAS,,3100,12C2BF,dff
-2026,3,Cooper Kupp,WR,SEA,a,WAS,,4000,AA773,dff
-2026,3,Darren Waller,TE,CAR,a,CLE,,3400,9287F,dff
-2026,3,Saints,DST,NO,h,LV,,3300,15E,dff
-2026,3,Keon Coleman,WR,BUF,h,LAC,,4300,142DBF,dff
-2026,3,Jaylin Noel,WR,HOU,a,IND,,3600,13A0E2,dff
-2026,3,Titans,DST,TEN,a,NYG,,2400,150,dff
-2026,3,Malachi Fields,WR,NYG,h,TEN,,4400,1422A5,dff
-2026,3,Mike Gesicki,TE,CIN,a,PIT,,3300,CC238,dff
-2026,3,Bills,DST,BUF,h,LAC,,2800,144,dff
-2026,3,Raiders,DST,LV,a,NO,,2600,155,dff
-2026,3,Bengals,DST,CIN,a,PIT,,2900,147,dff
-2026,3,Jalen Nailor,WR,LV,a,NO,,3700,1131A1,dff
-2026,3,Kaelon Black,RB,SF,h,ARI,,4800,128D1C,dff
-2026,3,Jaguars,DST,JAX,h,NE,,2900,16D,dff
-2026,3,Emmett Johnson,RB,KC,a,MIA,,4400,150BB3,dff
-2026,3,Kendrick Bourne,WR,ARI,a,SF,,3700,B82EC,dff
-2026,3,Roman Wilson,WR,PIT,h,CIN,,3400,12C365,dff
-2026,3,Buccaneers,DST,TB,h,MIN,,2600,16A,dff
-2026,3,Browns,DST,CLE,h,CAR,,2500,149,dff
-2026,3,Ravens,DST,BAL,a,DAL,,2800,16E,dff
-2026,3,Braelon Allen,RB,NYJ,a,DET,,4400,1438AF,dff
-2026,3,Colts,DST,IND,h,HOU,,2500,152,dff
-2026,3,Tyquan Thornton,WR,KC,a,MIA,,3300,10F11D,dff
-2026,3,Steelers,DST,PIT,h,CIN,,2700,164,dff
-2026,3,Emanuel Wilson,RB,SEA,a,WAS,,4900,16174F,dff
-2026,3,Chris Bell,WR,MIA,h,KC,,3400,153484,dff
-2026,3,Ted Hurst III,WR,TB,h,MIN,,3000,173685,dff
-2026,3,Patriots,DST,NE,a,JAX,,2700,15C,dff
-2026,3,Michael Mayer,TE,LV,a,NO,,3300,12CED0,dff
-2026,3,Antonio Williams,WR,WAS,h,SEA,,4100,1507F2,dff
-2026,3,Samaje Perine,RB,CIN,a,PIT,,4100,C85FE,dff
-2026,3,Keaton Mitchell,RB,LAC,a,BUF,,4300,12A885,dff
-2026,3,Jauan Jennings,WR,MIN,a,TB,,3600,D3AC1,dff
-2026,3,Commanders,DST,WAS,h,SEA,,2300,16B,dff
-2026,3,Chris Rodriguez Jr.,RB,JAX,h,NE,,4600,10FD3B,dff
-2026,3,Elic Ayomanor,WR,TEN,a,NYG,,3300,154A77,dff
-2026,3,Bryce Lance,WR,NO,h,LV,,3000,1437D8,dff
-2026,3,Raheim Sanders,RB,CLE,h,CAR,,4500,139F07,dff
-2026,3,Isaac TeSlaa,WR,DET,h,NYJ,,3400,15FE52,dff
-2026,3,Darnell Mooney,WR,NYG,h,TEN,,4100,DEA9B,dff
-2026,3,George Holani,RB,SEA,a,WAS,,4500,1203D1,dff
-2026,3,Jared Wayne,WR,HOU,a,IND,,3100,11F49D,dff
-2026,3,Laquon Treadwell,WR,IND,h,HOU,,3100,B6C0A,dff
-2026,3,Calvin Ridley,WR,TEN,a,NYG,,4000,D7D2D,dff
-2026,3,Jets,DST,NYJ,a,DET,,2100,160,dff
-2026,3,Kevin Coleman Jr.,WR,MIA,h,KC,,3000,1559E8,dff
-2026,3,Chargers,DST,LAC,a,BUF,,2200,165,dff
-2026,3,Cowboys,DST,DAL,h,BAL,,2400,14B,dff
-2026,3,Dolphins,DST,MIA,h,KC,,2000,159,dff
-2026,3,Germie Bernard,WR,PIT,h,CIN,,3900,151105,dff
-2026,3,Dawson Knox,TE,BUF,h,LAC,,2800,D7D73,dff
-2026,3,Najee Harris,RB,NYG,h,TEN,,4700,EDC8C,dff
-2026,3,Jalen McMillan,WR,TB,h,MIN,,4100,12851E,dff
-2026,3,Jeremy Ruckert,TE,NYJ,a,DET,,2500,112124,dff
-2026,3,Noah Gray,TE,KC,a,MIA,,3000,1020D5,dff
-2026,3,AJ Dillon,RB,CAR,a,CLE,,4000,102EC1,dff
-2026,3,Devontez Walker,WR,BAL,a,DAL,,3500,137FDA,dff
-2026,3,Cardinals,DST,ARI,a,SF,,2300,163,dff
-2026,3,Tommy Tremble,TE,CAR,a,CLE,,2500,11403B,dff
-2026,3,Noah Fant,TE,NO,h,LV,,3200,E1907,dff
-2026,3,Chris Moore,WR,BAL,a,DAL,,3100,94157,dff
-2026,3,Dyami Brown,WR,WAS,h,SEA,,3200,10E7A6,dff
-2026,3,Mike Washington Jr.,RB,LV,a,NO,,4100,13ACD4,dff
-2026,3,Darnell Washington,TE,PIT,h,CIN,,2800,129862,dff
-2026,3,Ty Johnson,RB,BUF,h,LAC,,4000,D64D8,dff
-2026,3,Foster Moreau,TE,HOU,a,IND,,2500,D3525,dff
-2026,3,Kyle Williams,WR,NE,a,JAX,,3400,12B995,dff
-2026,3,DeeJay Dallas,RB,MIN,a,TB,,4200,EE5B5,dff
-2026,3,Sione Vaki,RB,DET,h,NYJ,,4300,15132C,dff
-2026,3,Drew Sample,TE,CIN,a,PIT,,2600,CC8C0,dff
-2026,3,Jacob Cowing,WR,SF,h,ARI,,3300,1208A5,dff
-2026,3,Sterling Shepard,WR,NYJ,a,DET,,3000,A8C4E,dff
-2026,3,Travis Homer,RB,PIT,h,CIN,,4000,E1374,dff
-2026,3,Ollie Gordon II,RB,MIA,h,KC,,4000,1505E6,dff
-2026,3,Kyle Juszczyk,RB,SF,h,ARI,,4000,7A59E,dff
-2026,3,Josh Cameron,WR,JAX,h,NE,,3000,1439A3,dff
-2026,3,Dohnte Meyers,WR,CIN,a,PIT,,3000,114B08,dff
-2026,3,Colbie Young,WR,CIN,a,PIT,,3000,15779E,dff
-2026,3,Ben Sinnott,TE,WAS,h,SEA,,2600,12C078,dff
-2026,3,Daniel Bellinger,TE,TEN,a,NYG,,2500,111EF3,dff
-2026,3,Tory Horton,WR,SEA,a,WAS,,3000,12AAE1,dff
-2026,3,Luke Farrell,TE,SF,h,ARI,,2500,E716D,dff
-2026,3,Demond Claiborne,RB,MIN,a,TB,,4400,15393E,dff
-2026,3,Mitchell Evans,TE,CAR,a,CLE,,2500,13ACFF,dff
-2026,3,CJ Donaldson,RB,NO,h,LV,,4000,154BE1,dff
-2026,3,Colson Yankoff,TE,WAS,h,SEA,,2500,10E520,dff
-2026,3,KaVontae Turpin,WR,DAL,h,BAL,,3000,D36A6,dff
-2026,3,Brock Wright,TE,DET,h,NYJ,,2500,EECC8,dff
-2026,3,Seth McGowan,RB,IND,h,HOU,,4100,128562,dff
-2026,3,Odell Beckham Jr.,WR,NYG,h,TEN,,3300,900A0,dff
-2026,3,Brevyn Spann-Ford,TE,DAL,h,BAL,,2500,10E8EA,dff
-2026,3,Ameer Abdullah,RB,JAX,h,NE,,4000,903CC,dff
-2026,3,Luke Schoonmaker,TE,DAL,h,BAL,,2500,113F02,dff
-2026,3,Nate Boerkircher,TE,JAX,h,NE,,2500,128633,dff
-2026,3,Chimere Dike,WR,TEN,a,NYG,,3000,128A7E,dff
-2026,3,Elijah Higgins,TE,ARI,a,SF,,2500,11BA7D,dff
-2026,3,John Bates,TE,WAS,h,SEA,,2500,E67A6,dff
-2026,3,Jelani Woods,TE,NYJ,a,DET,,2500,EE28F,dff
-2026,3,Lewis Bond,WR,HOU,a,IND,,3000,13A1FC,dff
-2026,3,LeQuint Allen Jr.,RB,JAX,h,NE,,4000,150A18,dff
-2026,3,Tez Johnson,WR,TB,h,MIN,,3000,128975,dff
-2026,3,Ryan Miller,WR,MIA,h,KC,,3200,1111CC,dff
-2026,3,Jalen Royals,WR,KC,a,MIA,,3000,156A63,dff
-2026,3,Marquez Valdes-Scantling,WR,LAC,a,BUF,,3000,B53EE,dff
-2026,3,Jackson Hawes,TE,BUF,h,LAC,,2500,120BB9,dff
-2026,3,Efton Chism III,WR,NE,a,JAX,,3000,128F20,dff
-2026,3,Jordan Watkins,WR,SF,h,ARI,,3100,12A8B3,dff
-2026,3,Brycen Tremayne,WR,CAR,a,CLE,,3000,1124C5,dff
-2026,3,John Metchie III,WR,CAR,a,CLE,,3000,11B49C,dff
-2026,3,Cody White,WR,LV,a,NO,,3200,1022CC,dff
-2026,3,Malik Benson,WR,LV,a,NO,,3000,15FDA7,dff
-2026,3,Josh Cuevas,TE,BAL,a,DAL,,2500,14240C,dff
-2026,3,Mo Alie-Cox,TE,IND,h,HOU,,2500,ADF3A,dff
-2026,3,Dylan Laube,RB,LV,a,NO,,4000,111F86,dff
-2026,3,Hunter Long,TE,ARI,a,SF,,2500,102EC6,dff
-2026,3,Jaylin Lane,WR,WAS,h,SEA,,3000,1288E1,dff
-2026,3,Kimani Vidal,RB,LAC,a,BUF,,4000,128968,dff
-2026,3,Alec Ingold,RB,LAC,a,BUF,,4000,D6EC2,dff
-2026,3,Jake Briningstool,TE,KC,a,MIA,,2500,13A5D7,dff
-2026,3,Brashard Smith,RB,KC,a,MIA,,4000,140B84,dff
-2026,3,Eric Saubert,TE,SEA,a,WAS,,2500,A9A93,dff
-2026,3,Treylon Burks,WR,WAS,h,SEA,,3000,11E238,dff
-2026,3,Tyrone Tracy Jr.,RB,NYG,h,TEN,,4100,10EECC,dff
-2026,3,Tyler Goodson,RB,DAL,h,BAL,,4000,11D616,dff
-2026,3,Corey Kiner,RB,NE,a,JAX,,4000,139FA2,dff
-2026,3,Tai Felton,WR,MIN,a,TB,,3000,13A5A3,dff
-2026,3,Ben Skowronek,WR,PIT,h,CIN,,3000,E0D70,dff
-2026,3,Payne Durham,TE,TB,h,MIN,,2500,113F14,dff
-2026,3,Brady Russell,RB,SEA,a,WAS,,4000,103FFB,dff
-2026,3,Michael Burton,RB,CLE,h,CAR,,4000,87DC3,dff
+2026,1,Jahmyr Gibbs,RB,DET,h,NO,37.6,8000,1286CA,dff
+2026,1,Bijan Robinson,RB,ATL,a,PIT,31.3,7700,12BDD4,dff
+2026,1,Joe Burrow,QB,CIN,h,TB,15.16,6900,D68C1,dff
+2026,1,Ja'Marr Chase,WR,CIN,h,TB,3.2,7800,10EFDB,dff
+2026,1,Jalen Hurts,QB,PHI,h,WAS,24.72,6600,DEF77,dff
+2026,1,Lamar Jackson,QB,BAL,a,IND,28.96,6800,D64B1,dff
+2026,1,Justin Herbert,QB,LAC,h,ARI,14.26,6100,DE4E2,dff
+2026,1,Josh Allen,QB,BUF,a,HOU,38.66,7000,D3F67,dff
+2026,1,Amon-Ra St. Brown,WR,DET,h,NO,28.7,7500,1132C2,dff
+2026,1,Baker Mayfield,QB,TB,a,CIN,14.64,5900,B6A26,dff
+2026,1,Caleb Williams,QB,CHI,a,CAR,37.26,6300,13A12D,dff
+2026,1,Trevor Lawrence,QB,JAX,h,CLE,26.1,5800,10F2B7,dff
+2026,1,Kyler Murray,QB,MIN,h,GB,0.62,5500,D6CB7,dff
+2026,1,Jared Goff,QB,DET,h,NO,16.44,6000,B1B1D,dff
+2026,1,Jonathan Taylor,RB,IND,h,BAL,26.1,7300,1041BE,dff
+2026,1,Tyler Shough,QB,NO,a,DET,29.2,5600,10F122,dff
+2026,1,De'Von Achane,RB,MIA,a,LV,10.6,7000,12CBCC,dff
+2026,1,Saquon Barkley,RB,PHI,h,WAS,9.0,6900,D7A66,dff
+2026,1,Chris Olave,WR,NO,a,DET,31.2,6700,112120,dff
+2026,1,Chase Brown,RB,CIN,h,TB,18.8,7100,112433,dff
+2026,1,Justin Jefferson,WR,MIN,h,GB,31.2,7300,1051DF,dff
+2026,1,James Cook III,RB,BUF,a,HOU,9.9,7200,114204,dff
+2026,1,Derrick Henry,RB,BAL,a,IND,38.3,6700,B2BF1,dff
+2026,1,Ashton Jeanty,RB,LV,h,MIA,35.7,6600,150D3E,dff
+2026,1,Jayden Daniels,QB,WAS,a,PHI,17.66,6500,11B80C,dff
+2026,1,Jordan Love,QB,GB,a,MIN,24.48,5700,DEB09,dff
+2026,1,Malik Willis,QB,MIA,a,LV,17.7,5300,EE5C3,dff
+2026,1,Bryce Young,QB,CAR,h,CHI,35.44,5200,128349,dff
+2026,1,Omarion Hampton,RB,LAC,h,ARI,9.3,6800,15572C,dff
+2026,1,Daniel Jones,QB,IND,h,BAL,10.04,5400,D6D6D,dff
+2026,1,Nico Collins,WR,HOU,h,BUF,21.2,7000,10660A,dff
+2026,1,C.J. Stroud,QB,HOU,h,BUF,18.46,5200,128684,dff
+2026,1,Zay Flowers,WR,BAL,a,IND,29.0,6400,11F5DD,dff
+2026,1,Jacoby Brissett,QB,ARI,a,LAC,16.48,5100,94347,dff
+2026,1,DeVonta Smith,WR,PHI,h,WAS,8.3,6600,102DA6,dff
+2026,1,Breece Hall,RB,NYJ,a,TEN,22.8,6200,11BD29,dff
+2026,1,Aaron Rodgers,QB,PIT,h,ATL,12.54,5300,343C5,dff
+2026,1,Tetairoa McMillan,WR,CAR,h,CHI,11.5,6100,1510E0,dff
+2026,1,Travis Etienne Jr.,RB,NO,a,DET,14.8,5900,EEE91,dff
+2026,1,Trey McBride,TE,ARI,a,LAC,24.5,6800,10E8C1,dff
+2026,1,Garrett Wilson,WR,NYJ,a,TEN,13.9,5800,11C659,dff
+2026,1,Cam Ward,QB,TEN,h,NYJ,11.7,5100,12BF93,dff
+2026,1,Kirk Cousins,QB,LV,h,MIA,15.8,5000,6276C,dff
+2026,1,Tee Higgins,WR,CIN,h,TB,8.9,6300,EEE93,dff
+2026,1,Geno Smith,QB,NYJ,a,TEN,9.3,4600,7D740,dff
+2026,1,Bucky Irving,RB,TB,a,CIN,21.3,5700,13A6F3,dff
+2026,1,D'Andre Swift,RB,CHI,a,CAR,35.4,6100,1052F0,dff
+2026,1,Jameson Williams,WR,DET,h,NO,8.5,6000,11EE90,dff
+2026,1,Luther Burden III,WR,CHI,a,CAR,10.5,5500,1505C4,dff
+2026,1,Ladd McConkey,WR,LAC,h,ARI,19.2,5900,129853,dff
+2026,1,Drake London,WR,ATL,a,PIT,5.5,6500,11FC75,dff
+2026,1,Colston Loveland,TE,CHI,a,CAR,0.0,5300,150A05,dff
+2026,1,Jaylen Warren,RB,PIT,h,ATL,11.3,5400,11F37B,dff
+2026,1,Parker Washington,WR,JAX,h,CLE,19.3,5600,12C112,dff
+2026,1,Christian Watson,WR,GB,a,MIN,35.7,5900,104B8E,dff
+2026,1,Deshaun Watson,QB,CLE,a,JAX,15.0,4700,CA547,dff
+2026,1,David Montgomery,RB,HOU,h,BUF,28.9,6000,E7233,dff
+2026,1,Emeka Egbuka,WR,TB,a,CIN,11.3,6200,13A691,dff
+2026,1,Quinshon Judkins,RB,CLE,a,JAX,7.0,5500,151D7F,dff
+2026,1,Rico Dowdle,RB,PIT,h,ATL,4.1,5200,E3E68,dff
+2026,1,Tyler Warren,TE,IND,h,BAL,10.3,4900,12C11B,dff
+2026,1,DK Metcalf,WR,PIT,h,ATL,8.0,5400,E6DE1,dff
+2026,1,Terry McLaurin,WR,WAS,a,PHI,3.4,5700,CC214,dff
+2026,1,Bhayshul Tuten,RB,JAX,h,CLE,9.8,5800,144041,dff
+2026,1,Jeremiyah Love,RB,ARI,a,LAC,13.0,6400,1625ED,dff
+2026,1,Tony Pollard,RB,TEN,h,NYJ,4.4,5600,D6F0E,dff
+2026,1,Cooper Rush,QB,ATL,a,PIT,7.72,4000,A9765,dff
+2026,1,Marvin Harrison Jr.,WR,ARI,a,LAC,4.3,5000,13A694,dff
+2026,1,Chuba Hubbard,RB,CAR,h,CHI,23.7,5500,10349F,dff
+2026,1,Chris Godwin Jr.,WR,TB,a,CIN,8.3,5200,CBE37,dff
+2026,1,DJ Moore,WR,BUF,a,HOU,24.0,5600,D64DE,dff
+2026,1,Wan'Dale Robinson,WR,TEN,h,NYJ,8.8,4800,11C64B,dff
+2026,1,Tre Tucker,WR,LV,h,MIA,4.7,4000,11C6B3,dff
+2026,1,Tucker Kraft,TE,GB,a,MIN,9.5,4500,1208B2,dff
+2026,1,Michael Pittman Jr.,WR,PIT,h,ATL,8.8,4900,DE7F4,dff
+2026,1,Sam LaPorta,TE,DET,h,NO,9.8,4400,11D61E,dff
+2026,1,Quentin Johnston,WR,LAC,h,ARI,3.7,4700,1285A9,dff
+2026,1,Rome Odunze,WR,CHI,a,CAR,7.2,5400,12851F,dff
+2026,1,Josh Downs,WR,IND,h,BAL,5.7,5200,128A65,dff
+2026,1,Kenny Gainwell,RB,TB,a,CIN,2.8,5200,1140D1,dff
+2026,1,Jayden Reed,WR,GB,a,MIN,5.0,4900,112446,dff
+2026,1,MarShawn Lloyd,RB,GB,a,MIN,3.7,4800,1283E6,dff
+2026,1,Carnell Tate,WR,TEN,h,NYJ,7.8,5300,16002F,dff
+2026,1,Juwan Johnson,TE,NO,a,DET,14.4,3700,D7F81,dff
+2026,1,Michael Mayer,TE,LV,h,MIA,9.2,2900,12CED0,dff
+2026,1,Jordan Addison,WR,MIN,h,GB,0.0,5800,12872A,dff
+2026,1,Jalen Coker,WR,CAR,h,CHI,36.8,4600,1298C1,dff
+2026,1,Jakobi Meyers,WR,JAX,h,CLE,12.2,5000,D6E17,dff
+2026,1,Stefon Diggs,WR,WAS,a,PHI,15.5,5200,A9719,dff
+2026,1,Michael Wilson,WR,ARI,a,LAC,10.6,5300,1124C9,dff
+2026,1,Jordan Mason,RB,MIN,h,GB,11.9,5400,110761,dff
+2026,1,Brian Thomas Jr.,WR,JAX,h,CLE,7.0,5500,139FB0,dff
+2026,1,Harold Fannin Jr.,TE,CLE,a,JAX,4.1,4200,154840,dff
+2026,1,Khalil Shakir,WR,BUF,a,HOU,9.0,4800,11406B,dff
+2026,1,Kyle Pitts Sr.,TE,ATL,a,PIT,0.0,4700,1122D2,dff
+2026,1,Dallas Goedert,TE,PHI,h,WAS,23.7,4100,C1345,dff
+2026,1,Mark Andrews,TE,BAL,a,IND,8.9,3900,C85DB,dff
+2026,1,Aaron Jones Sr.,RB,MIN,h,GB,10.0,5300,B4FC2,dff
+2026,1,Alec Pierce,WR,IND,h,BAL,10.1,5700,10E453,dff
+2026,1,Brenton Strange,TE,JAX,h,CLE,10.3,3600,11C68C,dff
+2026,1,Jacory Croskey-Merritt,RB,WAS,a,PHI,12.6,5300,122D12,dff
+2026,1,Matthew Golden,WR,GB,a,MIN,15.5,4700,150BC3,dff
+2026,1,Rachaad White,RB,WAS,a,PHI,4.7,5200,12C21F,dff
+2026,1,Jonathon Brooks,RB,CAR,h,CHI,7.2,5000,143E09,dff
+2026,1,Dalton Schultz,TE,HOU,h,BUF,7.5,3400,CAC3B,dff
+2026,1,Dalton Kincaid,TE,BUF,a,HOU,21.0,4600,115399,dff
+2026,1,Jalen Nailor,WR,LV,h,MIA,5.7,4300,1131A1,dff
+2026,1,Devaughn Vele,WR,NO,a,DET,19.9,3500,11C5F4,dff
+2026,1,Tyjae Spears,RB,TEN,h,NYJ,4.4,5100,11D816,dff
+2026,1,T.J. Hockenson,TE,MIN,h,GB,13.6,3300,E190B,dff
+2026,1,Keenan Allen,WR,IND,h,BAL,9.2,4700,8809A,dff
+2026,1,Jaguars,DST,JAX,h,CLE,13.0,3400,16D,dff
+2026,1,KC Concepcion,WR,CLE,a,JAX,8.8,4600,15FF28,dff
+2026,1,Cade Otton,TE,TB,a,CIN,5.6,3700,1002AF,dff
+2026,1,Chargers,DST,LAC,h,ARI,1.0,3500,165,dff
+2026,1,Titans,DST,TEN,h,NYJ,0.0,3100,150,dff
+2026,1,Woody Marks,RB,HOU,h,BUF,5.0,5000,12CB24,dff
+2026,1,Steelers,DST,PIT,h,ATL,18.0,3300,164,dff
+2026,1,Jerry Jeudy,WR,CLE,a,JAX,4.6,4100,EDC6F,dff
+2026,1,Adonai Mitchell,WR,NYJ,a,TEN,9.0,4000,139F14,dff
+2026,1,Malik Washington,WR,MIA,a,LV,7.3,4200,11E707,dff
+2026,1,Dontayvion Wicks,WR,PHI,h,WAS,15.3,4100,11E3CC,dff
+2026,1,Pat Freiermuth,TE,PIT,h,ATL,15.6,3400,1109F6,dff
+2026,1,Kyle Monangai,RB,CHI,a,CAR,23.4,5100,131646,dff
+2026,1,Rashod Bateman,WR,BAL,a,IND,0.0,3900,10E8F0,dff
+2026,1,Tre' Harris,WR,LAC,h,ARI,5.0,3800,1288A9,dff
+2026,1,Eagles,DST,PHI,h,WAS,3.0,3200,162,dff
+2026,1,Chris Rodriguez Jr.,RB,JAX,h,CLE,2.3,5100,10FD3B,dff
+2026,1,Tyler Allgeier,RB,ARI,a,LAC,9.0,4900,1142BE,dff
+2026,1,Jauan Jennings,WR,MIN,h,GB,0.0,4300,D3AC1,dff
+2026,1,Jets,DST,NYJ,a,TEN,9.0,2500,160,dff
+2026,1,Makai Lemon,WR,PHI,h,WAS,2.5,5100,15FD60,dff
+2026,1,Lions,DST,DET,h,NO,10.0,3200,14E,dff
+2026,1,Denzel Boston,WR,CLE,a,JAX,13.9,4400,150E40,dff
+2026,1,Greg Dulcich,TE,MIA,a,LV,3.8,3500,113695,dff
+2026,1,Caleb Douglas,WR,MIA,a,LV,14.4,3000,15486E,dff
+2026,1,Chig Okonkwo,TE,WAS,a,PHI,3.6,4000,10E1C6,dff
+2026,1,Mike Washington Jr.,RB,LV,h,MIA,4.1,4600,13ACD4,dff
+2026,1,Kayshon Boutte,WR,HOU,h,BUF,3.1,4500,1283B2,dff
+2026,1,Vikings,DST,MIN,h,GB,8.0,2800,15B,dff
+2026,1,Gunnar Helm,TE,TEN,h,NYJ,6.8,3200,13A126,dff
+2026,1,Mike Gesicki,TE,CIN,h,TB,18.8,3100,CC238,dff
+2026,1,Dolphins,DST,MIA,a,LV,4.0,2700,159,dff
+2026,1,Packers,DST,GB,a,MIN,1.0,3000,14F,dff
+2026,1,Samaje Perine,RB,CIN,h,TB,8.0,4600,C85FE,dff
+2026,1,Ravens,DST,BAL,a,IND,6.0,3000,16E,dff
+2026,1,Raiders,DST,LV,h,MIA,13.0,2900,155,dff
+2026,1,Darren Waller,TE,CAR,h,CHI,4.8,3200,9287F,dff
+2026,1,Ted Hurst III,WR,TB,a,CIN,6.6,3300,173685,dff
+2026,1,Bills,DST,BUF,a,HOU,6.0,3100,144,dff
+2026,1,Justice Hill,RB,BAL,a,IND,3.8,4200,E15E5,dff
+2026,1,Bears,DST,CHI,a,CAR,6.0,2800,146,dff
+2026,1,Buccaneers,DST,TB,a,CIN,9.0,2600,16A,dff
+2026,1,Chris Brooks,RB,GB,a,MIN,2.9,4500,113299,dff
+2026,1,Texans,DST,HOU,h,BUF,-2.0,2900,145,dff
+2026,1,Xavier Hutchinson,WR,HOU,h,BUF,6.2,3200,1284C4,dff
+2026,1,Keaton Mitchell,RB,LAC,h,ARI,0.9,4800,12A885,dff
+2026,1,Jack Bech,WR,LV,h,MIA,11.3,3600,139F9E,dff
+2026,1,Mason Taylor,TE,NYJ,a,TEN,1.8,2800,15138F,dff
+2026,1,Bengals,DST,CIN,h,TB,18.0,2700,147,dff
+2026,1,Ja'Kobi Lane,WR,BAL,a,IND,2.1,3100,1642C8,dff
+2026,1,Falcons,DST,ATL,a,PIT,5.0,2600,143,dff
+2026,1,Isaac TeSlaa,WR,DET,h,NO,0.0,3900,15FE52,dff
+2026,1,Colts,DST,IND,h,BAL,0.0,2400,152,dff
+2026,1,Darnell Washington,TE,PIT,h,ATL,3.8,3000,129862,dff
+2026,1,Panthers,DST,CAR,h,CHI,0.0,2500,16C,dff
+2026,1,Browns,DST,CLE,a,JAX,0.0,2100,149,dff
+2026,1,Kendrick Bourne,WR,ARI,a,LAC,15.5,3600,B82EC,dff
+2026,1,David Njoku,TE,LAC,h,ARI,10.8,3000,CB262,dff
+2026,1,Chris Bell,WR,MIA,a,LV,3.5,3200,153484,dff
+2026,1,Oronde Gadsden II,TE,LAC,h,ARI,5.2,3500,143A38,dff
+2026,1,Braelon Allen,RB,NYJ,a,TEN,4.0,4700,1438AF,dff
+2026,1,Xavier Legette,WR,CAR,h,CHI,0.0,3700,1202A1,dff
+2026,1,Commanders,DST,WAS,a,PHI,3.0,2300,16B,dff
+2026,1,Omar Cooper Jr.,WR,NYJ,a,TEN,4.0,4100,154889,dff
+2026,1,Kenyon Sadiq,TE,NYJ,a,TEN,11.4,3800,160AC3,dff
+2026,1,Andrei Iosivas,WR,CIN,h,TB,3.2,3300,1129F3,dff
+2026,1,Jaylin Noel,WR,HOU,h,BUF,7.3,3600,13A0E2,dff
+2026,1,Cardinals,DST,ARI,a,LAC,10.0,2000,163,dff
+2026,1,Keon Coleman,WR,BUF,a,HOU,1.1,4000,142DBF,dff
+2026,1,Jahan Dotson,WR,ATL,a,PIT,2.9,3700,111E56,dff
+2026,1,Cole Kmet,TE,CHI,a,CAR,11.5,3300,10470D,dff
+2026,1,Kalif Raymond,WR,CHI,a,CAR,16.4,3300,A91B4,dff
+2026,1,Saints,DST,NO,a,DET,2.0,2200,15E,dff
+2026,1,Tank Bigsby,RB,PHI,h,WAS,0.3,4900,128A3B,dff
+2026,1,Brian Robinson Jr.,RB,ATL,a,PIT,3.1,4700,EDC8E,dff
+2026,1,Tez Johnson,WR,TB,a,CIN,-0.4,3100,128975,dff
+2026,1,Noah Fant,TE,NO,a,DET,13.3,3200,E1907,dff
+2026,1,Dawson Knox,TE,BUF,a,HOU,1.7,3100,D7D73,dff
+2026,1,Jaylen Wright,RB,MIA,a,LV,-0.1,4500,13A171,dff
+2026,1,Bryce Lance,WR,NO,a,DET,7.2,3100,1437D8,dff
+2026,1,Travis Hunter,WR,JAX,h,CLE,0.0,3400,1559EB,dff
+2026,1,Roman Wilson,WR,PIT,h,ATL,5.6,3100,12C365,dff
+2026,1,Tommy Tremble,TE,CAR,h,CHI,5.5,2900,11403B,dff
+2026,1,Antonio Williams,WR,WAS,a,PHI,16.4,4200,1507F2,dff
+2026,1,Kendre Miller,RB,NO,a,DET,9.0,4000,1285AB,dff
+2026,1,Barion Brown,WR,NO,a,DET,0.3,3000,154C83,dff
+2026,1,Olamide Zaccheaus,WR,ATL,a,PIT,1.5,3500,D7D08,dff
+2026,1,Daniel Bellinger,TE,TEN,h,NYJ,1.7,2700,111EF3,dff
+2026,1,Sione Vaki,RB,DET,h,NO,2.8,4000,15132C,dff
+2026,1,Joshua Palmer,WR,BUF,a,HOU,10.4,3500,102B1C,dff
+2026,1,Elic Ayomanor,WR,TEN,h,NYJ,8.1,3600,154A77,dff
+2026,1,Josh Oliver,TE,MIN,h,GB,4.2,2800,D7473,dff
+2026,1,Drew Sample,TE,CIN,h,TB,4.9,2600,CC8C0,dff
+2026,1,Ashton Dulin,WR,IND,h,BAL,0.0,3200,11CAD4,dff
+2026,1,Kevin Coleman Jr.,WR,MIA,a,LV,0.0,3000,1559E8,dff
+2026,1,Isaiah Williams,WR,NYJ,a,TEN,1.7,3000,11F370,dff
+2026,1,Malik Benson,WR,LV,h,MIA,0.8,3100,15FDA7,dff
+2026,1,Ray Davis,RB,BUF,a,HOU,0.3,4600,11C7AD,dff
+2026,1,Chimere Dike,WR,TEN,h,NYJ,0.7,3400,128A7E,dff
+2026,1,Jonnu Smith,TE,GB,a,MIN,7.0,3000,B5945,dff
+2026,1,Jimmy Horn Jr.,WR,CAR,h,CHI,-1.0,3000,142D99,dff
+2026,1,Brock Wright,TE,DET,h,NO,1.5,2900,EECC8,dff
+2026,1,Foster Moreau,TE,HOU,h,BUF,3.5,2600,D3525,dff
+2026,1,Seth McGowan,RB,IND,h,BAL,1.0,4300,128562,dff
+2026,1,Will Kacmarek,TE,MIA,a,LV,0.0,2500,142D7F,dff
+2026,1,John Bates,TE,WAS,a,PHI,3.3,2500,E67A6,dff
+2026,1,Chris Moore,WR,BAL,a,IND,6.3,3000,94157,dff
+2026,1,Mitchell Evans,TE,CAR,h,CHI,1.9,2600,13ACFF,dff
+2026,1,Cade Stover,TE,HOU,h,BUF,0.8,2500,11EE8E,dff
+2026,1,Jahdae Walker,WR,CHI,a,CAR,7.1,3100,165B7D,dff
+2026,1,Marlin Klein,TE,HOU,h,BUF,2.6,2700,1573A1,dff
+2026,1,AJ Dillon,RB,CAR,h,CHI,2.8,4000,102EC1,dff
+2026,1,Durham Smythe,TE,BAL,a,IND,1.4,2500,B7190,dff
+2026,1,Nate Boerkircher,TE,JAX,h,CLE,1.9,2600,128633,dff
+2026,1,Will Shipley,RB,PHI,h,WAS,2.2,4100,13A5D4,dff
+2026,1,Jeremy Ruckert,TE,NYJ,a,TEN,1.4,2500,112124,dff
+2026,1,Bo Melton,WR,GB,a,MIN,2.0,3000,104F03,dff
+2026,1,Kaytron Allen,RB,WAS,a,PHI,1.6,4600,150BBB,dff
+2026,1,Dohnte Meyers,WR,CIN,h,TB,3.8,3000,114B08,dff
+2026,1,Blake Whiteheart,TE,CLE,a,JAX,2.4,2500,10EEE3,dff
+2026,1,Raheim Sanders,RB,CLE,a,JAX,5.6,4000,139F07,dff
+2026,1,Dyami Brown,WR,WAS,a,PHI,0.0,3200,10E7A6,dff
+2026,1,Jared Wayne,WR,HOU,h,BUF,2.2,3000,11F49D,dff
+2026,1,Laquon Treadwell,WR,IND,h,BAL,0.0,3000,B6C0A,dff
+2026,1,Drew Ogletree,TE,IND,h,BAL,0.0,2500,1367BC,dff
+2026,1,Ameer Abdullah,RB,JAX,h,CLE,4.2,4000,903CC,dff
+2026,1,Connor Heyward,RB,LV,h,MIA,0.1,4000,1022B1,dff
+2026,1,Jaylin Lane,WR,WAS,a,PHI,1.4,3100,1288E1,dff
+2026,1,Quintin Morris,TE,JAX,h,CLE,0.0,2500,102B60,dff
+2026,1,Josh Cameron,WR,JAX,h,CLE,10.0,3000,1439A3,dff
+2026,1,LaJohntay Wester,WR,BAL,a,IND,3.5,3000,12C8B9,dff
+2026,1,Derius Davis,WR,LAC,h,ARI,0.0,3000,10FD85,dff
+2026,1,DeeJay Dallas,RB,MIN,h,GB,1.1,4000,EE5B5,dff
+2026,1,Skyy Moore,WR,GB,a,MIN,0.0,3000,11F49A,dff
+2026,1,Arian Smith,WR,NYJ,a,TEN,0.0,3000,12985D,dff
+2026,2,Bijan Robinson,RB,ATL,h,CAR,11.1,8200,12BDD4,dff
+2026,2,Lamar Jackson,QB,BAL,h,NO,15.8,7300,D64B1,dff
+2026,2,Brock Purdy,QB,SF,h,MIA,28.48,6200,111DE1,dff
+2026,2,Dak Prescott,QB,DAL,h,WAS,29.76,6400,907C8,dff
+2026,2,Jayden Daniels,QB,WAS,a,DAL,14.74,6300,11B80C,dff
+2026,2,Christian McCaffrey,RB,SF,h,MIA,22.6,8000,CAC35,dff
+2026,2,Jalen Hurts,QB,PHI,a,TEN,18.16,6700,DEF77,dff
+2026,2,Justin Herbert,QB,LAC,h,LV,9.88,6000,DE4E2,dff
+2026,2,Caleb Williams,QB,CHI,h,MIN,8.72,6800,13A12D,dff
+2026,2,Drake Maye,QB,NE,h,PIT,9.02,6100,13A293,dff
+2026,2,Derrick Henry,RB,BAL,h,NO,17.7,7200,B2BF1,dff
+2026,2,Jordan Love,QB,GB,a,NYJ,13.8,5900,DEB09,dff
+2026,2,Jaxon Smith-Njigba,WR,SEA,a,ARI,45.5,8100,128687,dff
+2026,2,Ashton Jeanty,RB,LV,a,LAC,10.3,6800,150D3E,dff
+2026,2,Baker Mayfield,QB,TB,h,CLE,13.18,5600,B6A26,dff
+2026,2,Justin Jefferson,WR,MIN,a,CHI,8.5,7800,1051DF,dff
+2026,2,Bo Nix,QB,DEN,h,JAX,15.12,5700,11BAAB,dff
+2026,2,Joe Burrow,QB,CIN,a,HOU,16.18,6600,D68C1,dff
+2026,2,Ja'Marr Chase,WR,CIN,a,HOU,26.5,7600,10EFDB,dff
+2026,2,CeeDee Lamb,WR,DAL,h,WAS,38.3,7300,103484,dff
+2026,2,Javonte Williams,RB,DAL,h,WAS,8.0,6400,10E7A9,dff
+2026,2,Trevor Lawrence,QB,JAX,a,DEN,7.16,5800,10F2B7,dff
+2026,2,Tyler Shough,QB,NO,a,BAL,22.38,5300,10F122,dff
+2026,2,C.J. Stroud,QB,HOU,h,CIN,20.02,5500,128684,dff
+2026,2,De'Von Achane,RB,MIA,a,SF,12.3,6700,12CBCC,dff
+2026,2,Malik Willis,QB,MIA,a,SF,12.48,5200,EE5C3,dff
+2026,2,Bryce Young,QB,CAR,a,ATL,24.08,5400,128349,dff
+2026,2,Saquon Barkley,RB,PHI,a,TEN,3.0,7000,D7A66,dff
+2026,2,Chris Olave,WR,NO,a,BAL,22.6,7200,112120,dff
+2026,2,Chase Brown,RB,CIN,a,HOU,11.2,6900,112433,dff
+2026,2,David Montgomery,RB,HOU,h,CIN,4.4,6500,E7233,dff
+2026,2,Carson Wentz,QB,MIN,a,CHI,6.32,4600,95DEA,dff
+2026,2,Trey McBride,TE,ARI,h,SEA,18.1,6900,10E8C1,dff
+2026,2,Breece Hall,RB,NYJ,h,GB,14.2,6200,11BD29,dff
+2026,2,Bucky Irving,RB,TB,h,CLE,13.0,6100,13A6F3,dff
+2026,2,Garrett Wilson,WR,NYJ,h,GB,16.7,6000,11C659,dff
+2026,2,George Pickens,WR,DAL,h,WAS,10.0,6300,11E255,dff
+2026,2,Drew Lock,QB,SEA,a,ARI,21.4,4900,D76A9,dff
+2026,2,Omarion Hampton,RB,LAC,h,LV,18.5,6600,15572C,dff
+2026,2,DeVonta Smith,WR,PHI,a,TEN,30.7,6800,102DA6,dff
+2026,2,Aaron Jones Sr.,RB,MIN,a,CHI,13.5,5100,B4FC2,dff
+2026,2,Geno Smith,QB,NYJ,h,GB,15.58,4800,7D740,dff
+2026,2,Jacoby Brissett,QB,ARI,h,SEA,7.5,5000,94347,dff
+2026,2,Chuba Hubbard,RB,CAR,a,ATL,14.4,5800,10349F,dff
+2026,2,Deshaun Watson,QB,CLE,a,TB,19.72,4500,CA547,dff
+2026,2,Rhamondre Stevenson,RB,NE,h,PIT,4.6,5700,11EC9A,dff
+2026,2,Christian Watson,WR,GB,a,NYJ,14.1,6200,104B8E,dff
+2026,2,Tetairoa McMillan,WR,CAR,a,ATL,18.1,6100,1510E0,dff
+2026,2,D'Andre Swift,RB,CHI,h,MIN,13.9,6300,1052F0,dff
+2026,2,Aaron Rodgers,QB,PIT,a,NE,5.98,5100,343C5,dff
+2026,2,Tee Higgins,WR,CIN,a,HOU,14.5,6100,EEE93,dff
+2026,2,Drake London,WR,ATL,h,CAR,8.9,6000,11FC75,dff
+2026,2,Mike Evans,WR,SF,h,MIA,8.4,6600,90EB3,dff
+2026,2,Parker Washington,WR,JAX,a,DEN,16.8,5900,12C112,dff
+2026,2,Cam Ward,QB,TEN,h,PHI,20.02,4900,12BF93,dff
+2026,2,Terry McLaurin,WR,WAS,a,DAL,7.0,5200,CC214,dff
+2026,2,Ladd McConkey,WR,LAC,h,LV,6.5,6200,129853,dff
+2026,2,DK Metcalf,WR,PIT,a,NE,6.7,5200,E6DE1,dff
+2026,2,Kirk Cousins,QB,LV,a,LAC,21.22,5000,6276C,dff
+2026,2,Jaylen Waddle,WR,DEN,h,JAX,24.8,6500,112D75,dff
+2026,2,Jadarian Price,RB,SEA,a,ARI,6.0,5500,151D6F,dff
+2026,2,Emeka Egbuka,WR,TB,h,CLE,10.3,6400,13A691,dff
+2026,2,Quinshon Judkins,RB,CLE,a,TB,9.8,5400,151D7F,dff
+2026,2,Luther Burden III,WR,CHI,h,MIN,6.2,5700,1505C4,dff
+2026,2,Jalen Coker,WR,CAR,a,ATL,14.6,5100,1298C1,dff
+2026,2,Stefon Diggs,WR,WAS,a,DAL,21.7,5300,A9719,dff
+2026,2,Jacory Croskey-Merritt,RB,WAS,a,DAL,5.8,5500,122D12,dff
+2026,2,Cooper Rush,QB,ATL,h,CAR,2.44,4200,A9765,dff
+2026,2,Mark Andrews,TE,BAL,h,NO,10.9,4400,C85DB,dff
+2026,2,J.K. Dobbins,RB,DEN,h,JAX,3.6,5000,EE681,dff
+2026,2,MarShawn Lloyd,RB,GB,a,NYJ,9.6,5300,1283E6,dff
+2026,2,Colston Loveland,TE,CHI,h,MIN,1.3,5000,150A05,dff
+2026,2,Matthew Golden,WR,GB,a,NYJ,9.8,4700,150BC3,dff
+2026,2,Jaylen Warren,RB,PIT,a,NE,9.7,5400,11F37B,dff
+2026,2,Tucker Kraft,TE,GB,a,NYJ,3.5,4900,1208B2,dff
+2026,2,Jeremiyah Love,RB,ARI,h,SEA,7.5,5900,1625ED,dff
+2026,2,Chris Godwin Jr.,WR,TB,h,CLE,8.8,5600,CBE37,dff
+2026,2,Quentin Johnston,WR,LAC,h,LV,2.4,5000,1285A9,dff
+2026,2,George Kittle,TE,SF,h,MIA,18.0,4600,B31E8,dff
+2026,2,Bhayshul Tuten,RB,JAX,a,DEN,14.2,5600,144041,dff
+2026,2,Dalton Schultz,TE,HOU,h,CIN,29.0,3200,CAC3B,dff
+2026,2,Travis Etienne Jr.,RB,NO,a,BAL,7.1,6000,EEE91,dff
+2026,2,Deebo Samuel Sr.,WR,SF,h,MIA,6.5,5300,CC0A5,dff
+2026,2,Jayden Reed,WR,GB,a,NYJ,1.4,4500,112446,dff
+2026,2,Dallas Goedert,TE,PHI,a,TEN,1.4,4800,C1345,dff
+2026,2,Courtland Sutton,WR,DEN,h,JAX,5.5,5800,CCCDE,dff
+2026,2,Devaughn Vele,WR,NO,a,BAL,11.4,4200,11C5F4,dff
+2026,2,Michael Mayer,TE,LV,a,LAC,5.3,3600,12CED0,dff
+2026,2,Michael Wilson,WR,ARI,h,SEA,3.8,5400,1124C9,dff
+2026,2,Rico Dowdle,RB,PIT,a,NE,6.4,4900,E3E68,dff
+2026,2,Romeo Doubs,WR,NE,h,PIT,12.6,5000,11215D,dff
+2026,2,Harold Fannin Jr.,TE,CLE,a,TB,10.4,4100,154840,dff
+2026,2,Jakobi Meyers,WR,JAX,a,DEN,3.8,4900,D6E17,dff
+2026,2,Juwan Johnson,TE,NO,a,BAL,10.6,3900,D7F81,dff
+2026,2,Jordan Addison,WR,MIN,a,CHI,4.1,5100,12872A,dff
+2026,2,KC Concepcion Jr.,WR,CLE,a,TB,8.2,4100,15FF28,dff
+2026,2,Hunter Henry,TE,NE,h,PIT,7.0,4000,B5BE9,dff
+2026,2,Tony Pollard,RB,TEN,h,PHI,7.5,5300,D6F0E,dff
+2026,2,Wan'Dale Robinson,WR,TEN,h,PHI,1.9,4600,11C64B,dff
+2026,2,Carnell Tate,WR,TEN,h,PHI,5.7,5100,16002F,dff
+2026,2,Mack Hollins,WR,NE,h,PIT,3.8,4300,AB958,dff
+2026,2,Rome Odunze,WR,CHI,h,MIN,7.3,5500,12851F,dff
+2026,2,DeMario Douglas,WR,NE,h,PIT,1.9,3800,11F08D,dff
+2026,2,T.J. Hockenson,TE,MIN,a,CHI,5.9,3500,E190B,dff
+2026,2,Tre Tucker,WR,LV,a,LAC,25.9,4500,11C6B3,dff
+2026,2,Jake Ferguson,TE,DAL,h,WAS,20.3,3800,104191,dff
+2026,2,Kayshon Boutte,WR,HOU,h,CIN,6.7,4000,1283B2,dff
+2026,2,Kyle Pitts Sr.,TE,ATL,h,CAR,2.5,4500,1122D2,dff
+2026,2,Rashod Bateman,WR,BAL,h,NO,21.8,4400,10E8F0,dff
+2026,2,Brian Thomas Jr.,WR,JAX,a,DEN,7.0,4800,139FB0,dff
+2026,2,Malik Washington,WR,MIA,a,SF,8.7,4000,11E707,dff
+2026,2,Kyle Monangai,RB,CHI,h,MIN,7.8,5300,131646,dff
+2026,2,Denzel Boston,WR,CLE,a,TB,20.5,4200,150E40,dff
+2026,2,Marvin Harrison Jr.,WR,ARI,h,SEA,0.0,4900,13A694,dff
+2026,2,Caleb Douglas,WR,MIA,a,SF,3.9,3700,15486E,dff
+2026,2,Buccaneers,DST,TB,h,CLE,2.0,3600,16A,dff
+2026,2,Brenton Strange,TE,JAX,a,DEN,3.7,3900,11C68C,dff
+2026,2,Xavier Hutchinson,WR,HOU,h,CIN,6.7,3500,1284C4,dff
+2026,2,TreVeyon Henderson,RB,NE,h,PIT,13.6,5200,13A69D,dff
+2026,2,Rachaad White,RB,WAS,a,DAL,14.3,5000,12C21F,dff
+2026,2,Pat Bryant,WR,DEN,h,JAX,1.6,4200,13ED0A,dff
+2026,2,Eagles,DST,PHI,a,TEN,3.0,3700,162,dff
+2026,2,Dontayvion Wicks,WR,PHI,a,TEN,12.4,4300,11E3CC,dff
+2026,2,Pat Freiermuth,TE,PIT,a,NE,7.4,3700,1109F6,dff
+2026,2,George Holani,RB,SEA,a,ARI,2.5,4500,1203D1,dff
+2026,2,Tre' Harris,WR,LAC,h,LV,6.3,4000,1288A9,dff
+2026,2,Kenny Gainwell,RB,TB,h,CLE,4.5,5100,1140D1,dff
+2026,2,Tyjae Spears,RB,TEN,h,PHI,9.0,4800,11D816,dff
+2026,2,Seahawks,DST,SEA,a,ARI,8.0,3500,169,dff
+2026,2,Tyler Allgeier,RB,ARI,h,SEA,3.9,4900,1142BE,dff
+2026,2,Ravens,DST,BAL,h,NO,3.0,3300,16E,dff
+2026,2,Jaylin Noel,WR,HOU,h,CIN,5.4,3700,13A0E2,dff
+2026,2,Jalen Nailor,WR,LV,a,LAC,1.9,3900,1131A1,dff
+2026,2,Adonai Mitchell,WR,NYJ,h,GB,12.3,4000,139F14,dff
+2026,2,Jerry Jeudy,WR,CLE,a,TB,0.0,3900,EDC6F,dff
+2026,2,Cade Otton,TE,TB,h,CLE,8.8,3400,1002AF,dff
+2026,2,Woody Marks,RB,HOU,h,CIN,8.5,4500,12CB24,dff
+2026,2,Kaelon Black,RB,SF,h,MIA,2.5,4500,128D1C,dff
+2026,2,Ryan Flournoy,WR,DAL,h,WAS,7.3,3800,1544A8,dff
+2026,2,Chargers,DST,LAC,h,LV,4.0,3200,165,dff
+2026,2,Roman Wilson,WR,PIT,a,NE,7.8,3200,12C365,dff
+2026,2,Packers,DST,GB,a,NYJ,5.0,3400,14F,dff
+2026,2,Cooper Kupp,WR,SEA,a,ARI,4.0,4100,AA773,dff
+2026,2,Chris Brooks,RB,GB,a,NYJ,3.6,4800,113299,dff
+2026,2,Patriots,DST,NE,h,PIT,21.0,3100,15C,dff
+2026,2,Rashid Shaheed,WR,SEA,a,ARI,6.9,4300,E1714,dff
+2026,2,49ers,DST,SF,h,MIA,8.0,3800,167,dff
+2026,2,Makai Lemon,WR,PHI,a,TEN,1.9,4600,15FD60,dff
+2026,2,Jonathon Brooks,RB,CAR,a,ATL,2.1,4800,143E09,dff
+2026,2,Gunnar Helm,TE,TEN,h,PHI,3.3,3100,13A126,dff
+2026,2,Antonio Williams,WR,WAS,a,DAL,5.4,4400,1507F2,dff
+2026,2,Demarcus Robinson,WR,SF,h,MIA,6.4,3900,B18EF,dff
+2026,2,Kalif Raymond,WR,CHI,h,MIN,9.0,3600,A91B4,dff
+2026,2,Texans,DST,HOU,h,CIN,6.0,3000,145,dff
+2026,2,Keaton Mitchell,RB,LAC,h,LV,4.9,4600,12A885,dff
+2026,2,Steelers,DST,PIT,a,NE,8.0,2800,164,dff
+2026,2,AJ Barner,TE,SEA,a,ARI,7.9,3300,12C2BF,dff
+2026,2,Panthers,DST,CAR,a,ATL,25.0,2700,16C,dff
+2026,2,Bears,DST,CHI,h,MIN,7.0,3000,146,dff
+2026,2,Braelon Allen,RB,NYJ,h,GB,8.5,4200,1438AF,dff
+2026,2,Greg Dulcich,TE,MIA,a,SF,3.7,3200,113695,dff
+2026,2,Falcons,DST,ATL,h,CAR,1.0,2900,143,dff
+2026,2,Justice Hill,RB,BAL,h,NO,3.8,4200,E15E5,dff
+2026,2,Kendrick Bourne,WR,ARI,h,SEA,3.1,3900,B82EC,dff
+2026,2,Cowboys,DST,DAL,h,WAS,3.0,2900,14B,dff
+2026,2,Broncos,DST,DEN,h,JAX,8.0,2800,14C,dff
+2026,2,David Njoku,TE,LAC,h,LV,1.9,3000,CB262,dff
+2026,2,Kenyon Sadiq,TE,NYJ,h,GB,3.7,3800,160AC3,dff
+2026,2,Chris Rodriguez Jr.,RB,JAX,a,DEN,1.3,5100,10FD3B,dff
+2026,2,Bengals,DST,CIN,a,HOU,11.0,2700,147,dff
+2026,2,Darren Waller,TE,CAR,a,ATL,18.3,3100,9287F,dff
+2026,2,LaJohntay Wester,WR,BAL,h,NO,2.4,3100,12C8B9,dff
+2026,2,Jaguars,DST,JAX,a,DEN,3.0,2400,16D,dff
+2026,2,Jonah Coleman,RB,DEN,h,JAX,14.8,4200,1510F2,dff
+2026,2,Raiders,DST,LV,a,LAC,10.0,2600,155,dff
+2026,2,Chris Bell,WR,MIA,a,SF,0.0,3500,153484,dff
+2026,2,Alvin Kamara,RB,NO,a,BAL,7.2,4600,B74FE,dff
+2026,2,Vikings,DST,MIN,a,CHI,17.0,2600,15B,dff
+2026,2,Samaje Perine,RB,CIN,a,HOU,3.2,4400,C85FE,dff
+2026,2,Evan Engram,TE,DEN,h,JAX,2.7,3300,B6E81,dff
+2026,2,Browns,DST,CLE,a,TB,6.0,2200,149,dff
+2026,2,Cardinals,DST,ARI,h,SEA,2.0,2500,163,dff
+2026,2,Brian Robinson Jr.,RB,ATL,h,CAR,8.7,4700,EDC8E,dff
+2026,2,Calvin Ridley,WR,TEN,h,PHI,5.5,4100,D7D2D,dff
+2026,2,Jets,DST,NYJ,h,GB,6.0,2400,160,dff
+2026,2,Jahan Dotson,WR,ATL,h,CAR,3.1,3400,111E56,dff
+2026,2,Jack Bech,WR,LV,a,LAC,4.5,3600,139F9E,dff
+2026,2,Ted Hurst III,WR,TB,h,CLE,4.7,3200,173685,dff
+2026,2,Saints,DST,NO,a,BAL,8.0,2300,15E,dff
+2026,2,Isaiah Williams,WR,NYJ,h,GB,10.8,3300,11F370,dff
+2026,2,Xavier Legette,WR,CAR,a,ATL,8.4,3400,1202A1,dff
+2026,2,Bryce Lance,WR,NO,a,BAL,1.8,3200,1437D8,dff
+2026,2,Andrei Iosivas,WR,CIN,a,HOU,1.7,3100,1129F3,dff
+2026,2,Chris Moore,WR,BAL,h,NO,1.6,3300,94157,dff
+2026,2,Commanders,DST,WAS,a,DAL,-2.0,2500,16B,dff
+2026,2,DeeJay Dallas,RB,MIN,a,CHI,3.0,4000,EE5B5,dff
+2026,2,Darnell Washington,TE,PIT,a,NE,1.7,2900,129862,dff
+2026,2,Devontez Walker,WR,BAL,h,NO,5.7,3400,137FDA,dff
+2026,2,Cole Kmet,TE,CHI,h,MIN,0.0,3000,10470D,dff
+2026,2,Titans,DST,TEN,h,PHI,7.0,2100,150,dff
+2026,2,Tommy Tremble,TE,CAR,a,ATL,1.4,2600,11403B,dff
+2026,2,Charlie Kolar,TE,LAC,h,LV,5.1,2700,102758,dff
+2026,2,Oronde Gadsden II,TE,LAC,h,LV,9.8,3500,143A38,dff
+2026,2,Josh Oliver,TE,MIN,a,CHI,3.4,2500,D7473,dff
+2026,2,Raheim Sanders,RB,CLE,a,TB,2.1,4000,139F07,dff
+2026,2,Mike Washington Jr.,RB,LV,a,LAC,0.7,4300,13ACD4,dff
+2026,2,Germie Bernard,WR,PIT,a,NE,7.5,3400,151105,dff
+2026,2,Jared Wayne,WR,HOU,h,CIN,5.3,3000,11F49D,dff
+2026,2,Ben Sinnott,TE,WAS,a,DAL,1.6,2900,12C078,dff
+2026,2,Olamide Zaccheaus,WR,ATL,h,CAR,1.3,3200,D7D08,dff
+2026,2,Demond Claiborne,RB,MIN,a,CHI,1.2,4000,15393E,dff
+2026,2,Dyami Brown,WR,WAS,a,DAL,5.1,3000,10E7A6,dff
+2026,2,Emari Demercado,RB,DAL,h,WAS,0.8,4500,110A91,dff
+2026,2,Tank Bigsby,RB,PHI,a,TEN,11.8,4700,128A3B,dff
+2026,2,Eli Raridon,TE,NE,h,PIT,4.0,3000,156C41,dff
+2026,2,Dolphins,DST,MIA,a,SF,-4.0,2000,159,dff
+2026,2,Elic Ayomanor,WR,TEN,h,PHI,8.9,3500,154A77,dff
+2026,2,Kyle Williams,WR,NE,h,PIT,2.0,3600,12B995,dff
+2026,2,Zachariah Branch,WR,ATL,h,CAR,3.4,3500,15FD56,dff
+2026,2,Foster Moreau,TE,HOU,h,CIN,5.4,2700,D3525,dff
+2026,2,Elijah Arroyo,TE,SEA,a,ARI,2.7,2500,13A2B8,dff
+2026,2,Durham Smythe,TE,BAL,h,NO,0.0,2500,B7190,dff
+2026,2,Emanuel Wilson,RB,SEA,a,ARI,9.2,4000,16174F,dff
+2026,2,Troy Franklin,WR,DEN,h,JAX,3.7,3800,13A020,dff
+2026,2,Erick All Jr.,TE,CIN,a,HOU,2.5,2500,11C4F5,dff
+2026,2,KaVontae Turpin,WR,DAL,h,WAS,0.1,3100,D36A6,dff
+2026,2,Hunter Luepke,RB,DAL,h,WAS,0.1,4000,1141E0,dff
+2026,2,Mitchell Evans,TE,CAR,a,ATL,2.3,2500,13ACFF,dff
+2026,2,Kyle Juszczyk,RB,SF,h,MIA,10.7,4000,7A59E,dff
+2026,2,Jaylen Wright,RB,MIA,a,SF,1.1,4200,13A171,dff
+2026,2,Will Shipley,RB,PHI,a,TEN,4.9,4200,13A5D4,dff
+2026,2,Austin Hooper,TE,ATL,h,CAR,4.0,2500,B4860,dff
+2026,2,Brenen Thompson,WR,LAC,h,LV,2.3,3500,15595C,dff
+2026,2,Ollie Gordon II,RB,MIA,a,SF,0.7,4000,1505E6,dff
+2026,2,AJ Dillon,RB,CAR,a,ATL,-0.3,4000,102EC1,dff
+2026,2,Efton Chism III,WR,NE,h,PIT,0.8,3100,128F20,dff
+2026,2,Isaiah Bond,WR,CLE,a,TB,2.0,3000,1556E7,dff
+2026,2,Daniel Bellinger,TE,TEN,h,PHI,0.0,2600,111EF3,dff
+2026,2,Malik Benson,WR,LV,a,LAC,0.0,3000,15FDA7,dff
+2026,2,Jeremy Ruckert,TE,NYJ,h,GB,2.5,2500,112124,dff
+2026,2,Will Kacmarek,TE,MIA,a,SF,1.4,2500,142D7F,dff
+2026,2,Hollywood Brown,WR,PHI,a,TEN,0.0,3600,EE55C,dff
+2026,2,Kaytron Allen,RB,WAS,a,DAL,2.4,4500,150BBB,dff
+2026,2,Dohnte Meyers,WR,CIN,a,HOU,0.0,3000,114B08,dff
+2026,2,Bo Melton,WR,GB,a,NYJ,0.0,3000,104F03,dff
+2026,2,Blake Whiteheart,TE,CLE,a,TB,8.7,2500,10EEE3,dff
+2026,2,Tyler Badie,RB,DEN,h,JAX,4.9,4000,1127F2,dff
+2026,2,Tez Johnson,WR,TB,h,CLE,5.9,3000,128975,dff
+2026,2,Sam Roush,TE,CHI,h,MIN,1.9,2500,15076C,dff
+2026,2,Connor Heyward,RB,LV,a,LAC,0.1,4000,1022B1,dff
+2026,2,Derius Davis,WR,LAC,h,LV,0.0,3000,10FD85,dff
+2026,2,Kaleb Johnson,RB,GB,a,NYJ,3.2,4300,15160E,dff
+2026,2,Charlie Woerner,TE,ATL,h,CAR,0.0,2500,E11B8,dff
+2026,2,Jaleel McLaughlin,RB,CLE,a,TB,0.3,4000,1367BA,dff
+2026,2,Ameer Abdullah,RB,JAX,a,DEN,2.3,4100,903CC,dff
+2026,2,Lil'Jordan Humphrey,WR,DEN,h,JAX,0.0,3300,E0CB6,dff
+2026,2,Nate Adkins,TE,DEN,h,JAX,12.8,2500,1147E5,dff
+2026,2,Ian Thomas,TE,LV,a,LAC,2.1,2500,E63F5,dff
+2026,2,Ben Skowronek,WR,PIT,a,NE,1.2,3000,E0D70,dff
+2026,2,Johnny Mundt,TE,PHI,a,TEN,2.8,2500,B4D60,dff
+2026,2,Skyy Moore,WR,GB,a,NYJ,2.6,3000,11F49A,dff
+2026,2,Eric Saubert,TE,SEA,a,ARI,0.0,2500,A9A93,dff
+2026,2,Quintin Morris,TE,JAX,a,DEN,1.7,2500,102B60,dff
+2026,2,Colbie Young,WR,CIN,a,HOU,1.7,3000,15779E,dff
+2026,2,Kevin Austin Jr.,WR,NO,a,BAL,1.7,3000,11401E,dff
+2026,2,Myles Price,WR,MIN,a,CHI,0.0,3000,12BFB8,dff
+2026,2,Corey Kiner,RB,NE,h,PIT,0.0,4200,139FA2,dff
+2026,2,Darius Cooper,WR,PHI,a,TEN,10.6,3000,12AA96,dff
+2026,2,LeQuint Allen Jr.,RB,JAX,a,DEN,0.0,4000,150A18,dff
+2026,2,Dareke Young,WR,LV,a,LAC,3.7,3000,1521A5,dff
+2026,2,Chris Blair,WR,ATL,h,CAR,1.6,3000,11185B,dff
+2026,2,Cody White,WR,LV,a,LAC,16.4,3000,1022CC,dff
+2026,2,Colson Yankoff,TE,WAS,a,DAL,2.4,2500,10E520,dff
+2026,2,KhaDarel Hodge,WR,SF,h,MIA,2.8,3000,B8F11,dff
+2026,2,Ryan Miller,WR,MIA,a,SF,14.7,3000,1111CC,dff
+2026,2,DJ Herman,RB,MIA,a,SF,2.8,4000,144303,dff
+2026,2,Jordan James,RB,SF,h,MIA,1.5,4000,155F51,dff
+2026,2,Adam Prentice,RB,DEN,h,JAX,1.2,4000,D8324,dff
+2026,3,Jahmyr Gibbs,RB,DET,h,NYJ,41.4,8800,1286CA,dff
+2026,3,Josh Allen,QB,BUF,h,LAC,20.46,8000,D3F67,dff
+2026,3,Lamar Jackson,QB,BAL,a,DAL,20.44,7500,D64B1,dff
+2026,3,Jaxon Smith-Njigba,WR,SEA,a,WAS,38.36,8600,128687,dff
+2026,3,Christian McCaffrey,RB,SF,h,ARI,21.6,8300,CAC35,dff
+2026,3,Kenneth Walker III,RB,KC,a,MIA,21.3,7400,11C472,dff
+2026,3,Brock Purdy,QB,SF,h,ARI,31.28,6500,111DE1,dff
+2026,3,Patrick Mahomes,QB,KC,a,MIA,16.94,6200,CCD77,dff
+2026,3,Amon-Ra St. Brown,WR,DET,h,NYJ,11.9,7900,1132C2,dff
+2026,3,Jonathan Taylor,RB,IND,h,HOU,9.2,7600,1041BE,dff
+2026,3,Tyler Shough,QB,NO,h,LV,26.8,5400,10F122,dff
+2026,3,Derrick Henry,RB,BAL,a,DAL,21.9,7700,B2BF1,dff
+2026,3,Dak Prescott,QB,DAL,h,BAL,18.94,6700,907C8,dff
+2026,3,Jared Goff,QB,DET,h,NYJ,19.36,6300,B1B1D,dff
+2026,3,CeeDee Lamb,WR,DAL,h,BAL,23.2,7800,103484,dff
+2026,3,Trevor Lawrence,QB,JAX,h,NE,20.78,5700,10F2B7,dff
+2026,3,Joe Burrow,QB,CIN,a,PIT,23.58,6600,D68C1,dff
+2026,3,James Cook III,RB,BUF,h,LAC,23.4,6900,114204,dff
+2026,3,Ja'Marr Chase,WR,CIN,a,PIT,24.8,8100,10EFDB,dff
+2026,3,Drake Maye,QB,NE,a,JAX,6.76,6100,13A293,dff
+2026,3,Chris Olave,WR,NO,h,LV,22.7,7200,112120,dff
+2026,3,Kyler Murray,QB,MIN,a,TB,11.42,5100,D6CB7,dff
+2026,3,Ashton Jeanty,RB,LV,a,NO,12.3,7100,150D3E,dff
+2026,3,Justin Herbert,QB,LAC,a,BUF,13.74,5800,DE4E2,dff
+2026,3,Justin Jefferson,WR,MIN,a,TB,5.2,7500,1051DF,dff
+2026,3,Bryce Young,QB,CAR,a,CLE,14.64,5600,128349,dff
+2026,3,Chase Brown,RB,CIN,a,PIT,8.9,6600,112433,dff
+2026,3,Trey McBride,TE,ARI,a,SF,16.5,6700,10E8C1,dff
+2026,3,De'Von Achane,RB,MIA,h,KC,1.7,6500,12CBCC,dff
+2026,3,Garrett Wilson,WR,NYJ,a,DET,29.7,6300,11C659,dff
+2026,3,C.J. Stroud,QB,HOU,a,IND,11.68,5500,128684,dff
+2026,3,Baker Mayfield,QB,TB,h,MIN,12.28,5300,B6A26,dff
+2026,3,Malik Willis,QB,MIA,h,KC,12.0,4900,EE5C3,dff
+2026,3,Sam Darnold,QB,SEA,a,WAS,32.66,5400,D6D9A,dff
+2026,3,Chuba Hubbard,RB,CAR,a,CLE,15.0,6100,10349F,dff
+2026,3,Jaylen Warren,RB,PIT,h,CIN,23.6,5700,11F37B,dff
+2026,3,Deshaun Watson,QB,CLE,h,CAR,20.26,4700,CA547,dff
+2026,3,Javonte Williams,RB,DAL,h,BAL,18.3,6700,10E7A9,dff
+2026,3,Geno Smith,QB,NYJ,a,DET,30.04,4900,7D740,dff
+2026,3,Breece Hall,RB,NYJ,a,DET,8.5,6400,11BD29,dff
+2026,3,Parker Washington,WR,JAX,h,NE,13.0,6000,12C112,dff
+2026,3,Jacoby Brissett,QB,ARI,a,SF,25.6,4800,94347,dff
+2026,3,Daniel Jones,QB,IND,h,HOU,10.9,5000,D6D6D,dff
+2026,3,George Pickens,WR,DAL,h,BAL,15.2,6600,11E255,dff
+2026,3,Bucky Irving,RB,TB,h,MIN,7.8,6300,13A6F3,dff
+2026,3,Tetairoa McMillan,WR,CAR,a,CLE,3.7,6000,1510E0,dff
+2026,3,Kirk Cousins,QB,LV,a,NO,22.22,4800,6276C,dff
+2026,3,Aaron Rodgers,QB,PIT,h,CIN,23.68,5000,343C5,dff
+2026,3,Cam Ward,QB,TEN,a,NYG,10.44,5100,12BF93,dff
+2026,3,Omarion Hampton,RB,LAC,a,BUF,5.6,6800,15572C,dff
+2026,3,Ladd McConkey,WR,LAC,a,BUF,10.6,5900,129853,dff
+2026,3,Jameis Winston,QB,NYG,h,TEN,6.12,4000,A8D50,dff
+2026,3,Jalen Coker,WR,CAR,a,CLE,3.8,5500,1298C1,dff
+2026,3,Quinshon Judkins,RB,CLE,h,CAR,9.9,5500,151D7F,dff
+2026,3,Cam Skattebo,RB,NYG,h,TEN,13.0,6200,13893C,dff
+2026,3,Tee Higgins,WR,CIN,a,PIT,21.0,6100,EEE93,dff
+2026,3,Aaron Jones Sr.,RB,MIN,a,TB,14.2,5900,B4FC2,dff
+2026,3,Marcus Mariota,QB,WAS,h,SEA,20.42,4500,94663,dff
+2026,3,Malik Nabers,WR,NYG,h,TEN,7.6,6500,139FAB,dff
+2026,3,Mike Evans,WR,SF,h,ARI,12.4,6800,90EB3,dff
+2026,3,Brock Bowers,TE,LV,a,NO,30.6,6600,139F1D,dff
+2026,3,Dalton Kincaid,TE,BUF,h,LAC,4.8,5500,115399,dff
+2026,3,David Montgomery,RB,HOU,a,IND,6.8,6000,E7233,dff
+2026,3,Rashee Rice,WR,KC,a,MIA,15.8,6400,11E822,dff
+2026,3,Jameson Williams,WR,DET,h,NYJ,8.9,5400,11EE90,dff
+2026,3,DJ Moore,WR,BUF,h,LAC,12.7,5800,D64DE,dff
+2026,3,Dalton Schultz,TE,HOU,a,IND,6.0,4200,CAC3B,dff
+2026,3,Josh Downs,WR,IND,h,HOU,12.7,5700,128A65,dff
+2026,3,DK Metcalf,WR,PIT,h,CIN,12.1,5400,E6DE1,dff
+2026,3,Travis Kelce,TE,KC,a,MIA,13.9,4500,6D6F0,dff
+2026,3,Jadarian Price,RB,SEA,a,WAS,2.2,5300,151D6F,dff
+2026,3,Tony Pollard,RB,TEN,a,NYG,13.6,5400,D6F0E,dff
+2026,3,Deebo Samuel Sr.,WR,SF,h,ARI,15.4,5300,CC0A5,dff
+2026,3,Zay Flowers,WR,BAL,a,DAL,15.4,6900,11F5DD,dff
+2026,3,Mark Andrews,TE,BAL,a,DAL,5.4,4400,C85DB,dff
+2026,3,Sam LaPorta,TE,DET,h,NYJ,7.4,4300,11D61E,dff
+2026,3,Jeremiyah Love,RB,ARI,a,SF,21.9,5500,1625ED,dff
+2026,3,George Kittle,TE,SF,h,ARI,26.2,4800,B31E8,dff
+2026,3,Denzel Boston,WR,CLE,h,CAR,8.1,4500,150E40,dff
+2026,3,Bhayshul Tuten,RB,JAX,h,NE,17.0,5600,144041,dff
+2026,3,Emeka Egbuka,WR,TB,h,MIN,11.2,6200,13A691,dff
+2026,3,Tyler Warren,TE,IND,h,HOU,14.7,5300,12C11B,dff
+2026,3,Devaughn Vele,WR,NO,h,LV,6.9,4400,11C5F4,dff
+2026,3,Michael Wilson,WR,ARI,a,SF,25.9,5200,1124C9,dff
+2026,3,Travis Etienne Jr.,RB,NO,h,LV,9.0,5800,EEE91,dff
+2026,3,Rhamondre Stevenson,RB,NE,a,JAX,6.8,5400,11EC9A,dff
+2026,3,Isaiah Likely,TE,NYG,h,TEN,3.3,4700,112AF7,dff
+2026,3,Khalil Shakir,WR,BUF,h,LAC,1.6,4800,11406B,dff
+2026,3,Xavier Worthy,WR,KC,a,MIA,4.0,4400,143E2E,dff
+2026,3,Rashod Bateman,WR,BAL,a,DAL,5.7,4700,10E8F0,dff
+2026,3,Harold Fannin Jr.,TE,CLE,h,CAR,24.1,4000,154840,dff
+2026,3,Hunter Henry,TE,NE,a,JAX,1.5,3900,B5BE9,dff
+2026,3,Terry McLaurin,WR,WAS,h,SEA,19.7,5100,CC214,dff
+2026,3,Carnell Tate,WR,TEN,a,NYG,11.8,5000,16002F,dff
+2026,3,TreVeyon Henderson,RB,NE,a,JAX,3.9,5200,13A69D,dff
+2026,3,Brian Thomas Jr.,WR,JAX,h,NE,1.8,4600,139FB0,dff
+2026,3,KC Concepcion Jr.,WR,CLE,h,CAR,2.9,4300,15FF28,dff
+2026,3,Malik Washington,WR,MIA,h,KC,11.1,4200,11E707,dff
+2026,3,Romeo Doubs,WR,NE,a,JAX,7.9,5100,11215D,dff
+2026,3,Juwan Johnson,TE,NO,h,LV,24.3,3700,D7F81,dff
+2026,3,Jordan Addison,WR,MIN,a,TB,20.0,4900,12872A,dff
+2026,3,Oronde Gadsden II,TE,LAC,a,BUF,0.0,3500,143A38,dff
+2026,3,Jakobi Meyers,WR,JAX,h,NE,19.4,4800,D6E17,dff
+2026,3,Wan'Dale Robinson,WR,TEN,a,NYG,18.7,4500,11C64B,dff
+2026,3,Chris Godwin Jr.,WR,TB,h,MIN,5.5,5300,CBE37,dff
+2026,3,Xavier Hutchinson,WR,HOU,a,IND,8.5,4000,1284C4,dff
+2026,3,Mack Hollins,WR,NE,a,JAX,14.7,4200,AB958,dff
+2026,3,Pat Freiermuth,TE,PIT,h,CIN,5.1,3800,1109F6,dff
+2026,3,Quentin Johnston,WR,LAC,a,BUF,7.0,4900,1285A9,dff
+2026,3,Keenan Allen,WR,IND,h,HOU,18.3,4600,8809A,dff
+2026,3,Tre Tucker,WR,LV,a,NO,8.3,5000,11C6B3,dff
+2026,3,Jake Ferguson,TE,DAL,h,BAL,10.3,4100,104191,dff
+2026,3,Woody Marks,RB,HOU,a,IND,9.1,5000,12CB24,dff
+2026,3,Alvin Kamara,RB,NO,h,LV,5.1,4800,B74FE,dff
+2026,3,Tyjae Spears,RB,TEN,a,NYG,0.5,4900,11D816,dff
+2026,3,T.J. Hockenson,TE,MIN,a,TB,3.1,3200,E190B,dff
+2026,3,Stefon Diggs,WR,WAS,h,SEA,7.3,5500,A9719,dff
+2026,3,Jacory Croskey-Merritt,RB,WAS,h,SEA,5.3,5300,122D12,dff
+2026,3,Kayshon Boutte,WR,HOU,a,IND,4.1,4500,1283B2,dff
+2026,3,Brenton Strange,TE,JAX,h,NE,6.2,3400,11C68C,dff
+2026,3,Kenyon Sadiq,TE,NYJ,a,DET,26.5,3500,160AC3,dff
+2026,3,Seahawks,DST,SEA,a,WAS,2.0,3800,169,dff
+2026,3,Rashid Shaheed,WR,SEA,a,WAS,3.4,4200,E1714,dff
+2026,3,Giants,DST,NYG,h,TEN,8.0,3400,15F,dff
+2026,3,Tre' Harris,WR,LAC,a,BUF,13.6,3900,1288A9,dff
+2026,3,Ryan Flournoy,WR,DAL,h,BAL,4.2,3800,1544A8,dff
+2026,3,Tyler Allgeier,RB,ARI,a,SF,4.9,5000,1142BE,dff
+2026,3,Cade Otton,TE,TB,h,MIN,8.6,3100,1002AF,dff
+2026,3,Marvin Harrison Jr.,WR,ARI,a,SF,7.0,4700,13A694,dff
+2026,3,Michael Pittman Jr.,WR,PIT,h,CIN,3.6,4700,DE7F4,dff
+2026,3,Isaiah Williams,WR,NYJ,a,DET,3.1,3300,11F370,dff
+2026,3,Rachaad White,RB,WAS,h,SEA,11.1,5100,12C21F,dff
+2026,3,DeMario Douglas,WR,NE,a,JAX,4.8,3700,11F08D,dff
+2026,3,49ers,DST,SF,h,ARI,1.0,3600,167,dff
+2026,3,Vikings,DST,MIN,a,TB,17.0,3100,15B,dff
+2026,3,Panthers,DST,CAR,a,CLE,4.0,3000,16C,dff
+2026,3,Lions,DST,DET,h,NYJ,7.0,3500,14E,dff
+2026,3,Gunnar Helm,TE,TEN,a,NYG,3.4,2900,13A126,dff
+2026,3,Chiefs,DST,KC,a,MIA,8.0,3700,153,dff
+2026,3,Justice Hill,RB,BAL,a,DAL,3.3,4200,E15E5,dff
+2026,3,Texans,DST,HOU,a,IND,11.0,3200,145,dff
+2026,3,Greg Dulcich,TE,MIA,h,KC,10.5,3000,113695,dff
+2026,3,Kenny Gainwell,RB,TB,h,MIN,3.0,4800,1140D1,dff
+2026,3,AJ Barner,TE,SEA,a,WAS,11.9,3100,12C2BF,dff
+2026,3,Cooper Kupp,WR,SEA,a,WAS,14.6,4000,AA773,dff
+2026,3,Darren Waller,TE,CAR,a,CLE,10.1,3400,9287F,dff
+2026,3,Saints,DST,NO,h,LV,1.0,3300,15E,dff
+2026,3,Keon Coleman,WR,BUF,h,LAC,4.7,4300,142DBF,dff
+2026,3,Jaylin Noel,WR,HOU,a,IND,4.5,3600,13A0E2,dff
+2026,3,Titans,DST,TEN,a,NYG,7.0,2400,150,dff
+2026,3,Malachi Fields,WR,NYG,h,TEN,3.9,4400,1422A5,dff
+2026,3,Mike Gesicki,TE,CIN,a,PIT,12.7,3300,CC238,dff
+2026,3,Bills,DST,BUF,h,LAC,5.0,2800,144,dff
+2026,3,Raiders,DST,LV,a,NO,12.0,2600,155,dff
+2026,3,Bengals,DST,CIN,a,PIT,3.0,2900,147,dff
+2026,3,Jalen Nailor,WR,LV,a,NO,2.6,3700,1131A1,dff
+2026,3,Kaelon Black,RB,SF,h,ARI,1.7,4800,128D1C,dff
+2026,3,Jaguars,DST,JAX,h,NE,15.0,2900,16D,dff
+2026,3,Emmett Johnson,RB,KC,a,MIA,1.7,4400,150BB3,dff
+2026,3,Kendrick Bourne,WR,ARI,a,SF,4.2,3700,B82EC,dff
+2026,3,Roman Wilson,WR,PIT,h,CIN,15.0,3400,12C365,dff
+2026,3,Buccaneers,DST,TB,h,MIN,5.0,2600,16A,dff
+2026,3,Browns,DST,CLE,h,CAR,6.0,2500,149,dff
+2026,3,Ravens,DST,BAL,a,DAL,4.0,2800,16E,dff
+2026,3,Braelon Allen,RB,NYJ,a,DET,4.7,4400,1438AF,dff
+2026,3,Colts,DST,IND,h,HOU,4.0,2500,152,dff
+2026,3,Tyquan Thornton,WR,KC,a,MIA,4.2,3300,10F11D,dff
+2026,3,Steelers,DST,PIT,h,CIN,5.0,2700,164,dff
+2026,3,Emanuel Wilson,RB,SEA,a,WAS,1.4,4900,16174F,dff
+2026,3,Chris Bell,WR,MIA,h,KC,10.7,3400,153484,dff
+2026,3,Ted Hurst III,WR,TB,h,MIN,11.0,3000,173685,dff
+2026,3,Patriots,DST,NE,a,JAX,-1.0,2700,15C,dff
+2026,3,Michael Mayer,TE,LV,a,NO,12.2,3300,12CED0,dff
+2026,3,Antonio Williams,WR,WAS,h,SEA,3.5,4100,1507F2,dff
+2026,3,Samaje Perine,RB,CIN,a,PIT,2.4,4100,C85FE,dff
+2026,3,Keaton Mitchell,RB,LAC,a,BUF,13.7,4300,12A885,dff
+2026,3,Jauan Jennings,WR,MIN,a,TB,1.1,3600,D3AC1,dff
+2026,3,Commanders,DST,WAS,h,SEA,11.0,2300,16B,dff
+2026,3,Chris Rodriguez Jr.,RB,JAX,h,NE,9.7,4600,10FD3B,dff
+2026,3,Elic Ayomanor,WR,TEN,a,NYG,2.1,3300,154A77,dff
+2026,3,Bryce Lance,WR,NO,h,LV,0.0,3000,1437D8,dff
+2026,3,Raheim Sanders,RB,CLE,h,CAR,9.1,4500,139F07,dff
+2026,3,Isaac TeSlaa,WR,DET,h,NYJ,9.6,3400,15FE52,dff
+2026,3,Darnell Mooney,WR,NYG,h,TEN,4.9,4100,DEA9B,dff
+2026,3,George Holani,RB,SEA,a,WAS,10.8,4500,1203D1,dff
+2026,3,Jared Wayne,WR,HOU,a,IND,3.0,3100,11F49D,dff
+2026,3,Laquon Treadwell,WR,IND,h,HOU,3.0,3100,B6C0A,dff
+2026,3,Calvin Ridley,WR,TEN,a,NYG,0.0,4000,D7D2D,dff
+2026,3,Jets,DST,NYJ,a,DET,1.0,2100,160,dff
+2026,3,Kevin Coleman Jr.,WR,MIA,h,KC,1.3,3000,1559E8,dff
+2026,3,Chargers,DST,LAC,a,BUF,14.0,2200,165,dff
+2026,3,Cowboys,DST,DAL,h,BAL,-1.0,2400,14B,dff
+2026,3,Dolphins,DST,MIA,h,KC,2.0,2000,159,dff
+2026,3,Germie Bernard,WR,PIT,h,CIN,2.4,3900,151105,dff
+2026,3,Dawson Knox,TE,BUF,h,LAC,1.5,2800,D7D73,dff
+2026,3,Najee Harris,RB,NYG,h,TEN,5.2,4700,EDC8C,dff
+2026,3,Jalen McMillan,WR,TB,h,MIN,0.0,4100,12851E,dff
+2026,3,Jeremy Ruckert,TE,NYJ,a,DET,14.9,2500,112124,dff
+2026,3,Noah Gray,TE,KC,a,MIA,6.9,3000,1020D5,dff
+2026,3,AJ Dillon,RB,CAR,a,CLE,2.4,4000,102EC1,dff
+2026,3,Devontez Walker,WR,BAL,a,DAL,0.0,3500,137FDA,dff
+2026,3,Cardinals,DST,ARI,a,SF,-2.0,2300,163,dff
+2026,3,Tommy Tremble,TE,CAR,a,CLE,7.1,2500,11403B,dff
+2026,3,Noah Fant,TE,NO,h,LV,19.3,3200,E1907,dff
+2026,3,Chris Moore,WR,BAL,a,DAL,7.4,3100,94157,dff
+2026,3,Dyami Brown,WR,WAS,h,SEA,0.0,3200,10E7A6,dff
+2026,3,Mike Washington Jr.,RB,LV,a,NO,11.4,4100,13ACD4,dff
+2026,3,Darnell Washington,TE,PIT,h,CIN,9.7,2800,129862,dff
+2026,3,Ty Johnson,RB,BUF,h,LAC,9.0,4000,D64D8,dff
+2026,3,Foster Moreau,TE,HOU,a,IND,8.7,2500,D3525,dff
+2026,3,Kyle Williams,WR,NE,a,JAX,4.4,3400,12B995,dff
+2026,3,DeeJay Dallas,RB,MIN,a,TB,0.2,4200,EE5B5,dff
+2026,3,Sione Vaki,RB,DET,h,NYJ,4.7,4300,15132C,dff
+2026,3,Drew Sample,TE,CIN,a,PIT,1.0,2600,CC8C0,dff
+2026,3,Jacob Cowing,WR,SF,h,ARI,0.0,3300,1208A5,dff
+2026,3,Sterling Shepard,WR,NYJ,a,DET,3.3,3000,A8C4E,dff
+2026,3,Travis Homer,RB,PIT,h,CIN,0.0,4000,E1374,dff
+2026,3,Ollie Gordon II,RB,MIA,h,KC,14.5,4000,1505E6,dff
+2026,3,Kyle Juszczyk,RB,SF,h,ARI,0.0,4000,7A59E,dff
+2026,3,Josh Cameron,WR,JAX,h,NE,8.2,3000,1439A3,dff
+2026,3,Dohnte Meyers,WR,CIN,a,PIT,5.9,3000,114B08,dff
+2026,3,Colbie Young,WR,CIN,a,PIT,1.2,3000,15779E,dff
+2026,3,Ben Sinnott,TE,WAS,h,SEA,0.0,2600,12C078,dff
+2026,3,Daniel Bellinger,TE,TEN,a,NYG,3.6,2500,111EF3,dff
+2026,3,Tory Horton,WR,SEA,a,WAS,7.8,3000,12AAE1,dff
+2026,3,Luke Farrell,TE,SF,h,ARI,0.0,2500,E716D,dff
+2026,3,Demond Claiborne,RB,MIN,a,TB,0.1,4400,15393E,dff
+2026,3,Mitchell Evans,TE,CAR,a,CLE,6.6,2500,13ACFF,dff
+2026,3,CJ Donaldson,RB,NO,h,LV,0.5,4000,154BE1,dff
+2026,3,Colson Yankoff,TE,WAS,h,SEA,1.2,2500,10E520,dff
+2026,3,KaVontae Turpin,WR,DAL,h,BAL,8.8,3000,D36A6,dff
+2026,3,Brock Wright,TE,DET,h,NYJ,2.7,2500,EECC8,dff
+2026,3,Seth McGowan,RB,IND,h,HOU,1.4,4100,128562,dff
+2026,3,Odell Beckham Jr.,WR,NYG,h,TEN,0.0,3300,900A0,dff
+2026,3,Brevyn Spann-Ford,TE,DAL,h,BAL,2.9,2500,10E8EA,dff
+2026,3,Ameer Abdullah,RB,JAX,h,NE,0.2,4000,903CC,dff
+2026,3,Luke Schoonmaker,TE,DAL,h,BAL,1.9,2500,113F02,dff
+2026,3,Nate Boerkircher,TE,JAX,h,NE,0.0,2500,128633,dff
+2026,3,Chimere Dike,WR,TEN,a,NYG,0.3,3000,128A7E,dff
+2026,3,Elijah Higgins,TE,ARI,a,SF,5.0,2500,11BA7D,dff
+2026,3,John Bates,TE,WAS,h,SEA,1.9,2500,E67A6,dff
+2026,3,Jelani Woods,TE,NYJ,a,DET,3.0,2500,EE28F,dff
+2026,3,Lewis Bond,WR,HOU,a,IND,0.0,3000,13A1FC,dff
+2026,3,LeQuint Allen Jr.,RB,JAX,h,NE,2.9,4000,150A18,dff
+2026,3,Tez Johnson,WR,TB,h,MIN,1.8,3000,128975,dff
+2026,3,Ryan Miller,WR,MIA,h,KC,3.5,3200,1111CC,dff
+2026,3,Jalen Royals,WR,KC,a,MIA,2.1,3000,156A63,dff
+2026,3,Marquez Valdes-Scantling,WR,LAC,a,BUF,0.0,3000,B53EE,dff
+2026,3,Jackson Hawes,TE,BUF,h,LAC,0.0,2500,120BB9,dff
+2026,3,Efton Chism III,WR,NE,a,JAX,1.74,3000,128F20,dff
+2026,3,Jordan Watkins,WR,SF,h,ARI,8.0,3100,12A8B3,dff
+2026,3,Brycen Tremayne,WR,CAR,a,CLE,12.3,3000,1124C5,dff
+2026,3,John Metchie III,WR,CAR,a,CLE,9.9,3000,11B49C,dff
+2026,3,Cody White,WR,LV,a,NO,7.4,3200,1022CC,dff
+2026,3,Malik Benson,WR,LV,a,NO,0.0,3000,15FDA7,dff
+2026,3,Josh Cuevas,TE,BAL,a,DAL,2.4,2500,14240C,dff
+2026,3,Mo Alie-Cox,TE,IND,h,HOU,2.6,2500,ADF3A,dff
+2026,3,Dylan Laube,RB,LV,a,NO,-1.0,4000,111F86,dff
+2026,3,Hunter Long,TE,ARI,a,SF,1.5,2500,102EC6,dff
+2026,3,Jaylin Lane,WR,WAS,h,SEA,3.1,3000,1288E1,dff
+2026,3,Kimani Vidal,RB,LAC,a,BUF,3.0,4000,128968,dff
+2026,3,Alec Ingold,RB,LAC,a,BUF,6.5,4000,D6EC2,dff
+2026,3,Jake Briningstool,TE,KC,a,MIA,0.0,2500,13A5D7,dff
+2026,3,Brashard Smith,RB,KC,a,MIA,1.4,4000,140B84,dff
+2026,3,Eric Saubert,TE,SEA,a,WAS,8.3,2500,A9A93,dff
+2026,3,Treylon Burks,WR,WAS,h,SEA,9.3,3000,11E238,dff
+2026,3,Tyrone Tracy Jr.,RB,NYG,h,TEN,0.3,4100,10EECC,dff
+2026,3,Tyler Goodson,RB,DAL,h,BAL,2.7,4000,11D616,dff
+2026,3,Corey Kiner,RB,NE,a,JAX,3.7,4000,139FA2,dff
+2026,3,Tai Felton,WR,MIN,a,TB,0.0,3000,13A5A3,dff
+2026,3,Ben Skowronek,WR,PIT,h,CIN,9.3,3000,E0D70,dff
+2026,3,Payne Durham,TE,TB,h,MIN,0.0,2500,113F14,dff
+2026,3,Brady Russell,RB,SEA,a,WAS,3.0,4000,103FFB,dff
+2026,3,Michael Burton,RB,CLE,h,CAR,0.0,4000,87DC3,dff
 2026,4,Josh Allen,QB,BUF,h,NE,,7700,D3F67,dff
 2026,4,Jaxon Smith-Njigba,WR,SEA,h,LAC,,9100,128687,dff
 2026,4,Christian McCaffrey,RB,SF,h,DEN,,7700,CAC35,dff
@@ -804,7 +804,7 @@ season,week,player,pos,team,home_away,opp,dk_points,dk_salary,gid,source
 2026,4,Kenneth Walker III,RB,KC,a,LV,,8200,11C472,dff
 2026,4,Joe Burrow,QB,CIN,h,JAX,,6800,D68C1,dff
 2026,4,Lamar Jackson,QB,BAL,h,TEN,,7300,D64B1,dff
-2026,4,Ja&#x27;Marr Chase,WR,CIN,h,JAX,,8100,10EFDB,dff
+2026,4,Ja'Marr Chase,WR,CIN,h,JAX,,8100,10EFDB,dff
 2026,4,Trevor Lawrence,QB,JAX,a,CIN,,5900,10F2B7,dff
 2026,4,Patrick Mahomes,QB,KC,a,LV,,6500,CCD77,dff
 2026,4,Brock Purdy,QB,SF,h,DEN,,6700,111DE1,dff
@@ -831,7 +831,7 @@ season,week,player,pos,team,home_away,opp,dk_points,dk_salary,gid,source
 2026,4,Jalen Hurts,QB,PHI,h,LAR,,6600,DEF77,dff
 2026,4,Cam Skattebo,RB,NYG,h,ARI,,6100,13893C,dff
 2026,4,Jeremiyah Love,RB,ARI,a,NYG,,5800,1625ED,dff
-2026,4,D&#x27;Andre Swift,RB,CHI,h,NYJ,,6400,1052F0,dff
+2026,4,D'Andre Swift,RB,CHI,h,NYJ,,6400,1052F0,dff
 2026,4,Kirk Cousins,QB,LV,h,KC,,5100,6276C,dff
 2026,4,Zay Flowers,WR,BAL,h,TEN,,6900,11F5DD,dff
 2026,4,Saquon Barkley,RB,PHI,h,LAR,,6800,D7A66,dff
@@ -888,7 +888,7 @@ season,week,player,pos,team,home_away,opp,dk_points,dk_salary,gid,source
 2026,4,Tre Tucker,WR,LV,h,KC,,5100,11C6B3,dff
 2026,4,Emeka Egbuka,WR,TB,h,GB,,5900,13A691,dff
 2026,4,Xavier Worthy,WR,KC,a,LV,,4600,143E2E,dff
-2026,4,Wan&#x27;Dale Robinson,WR,TEN,a,BAL,,4600,11C64B,dff
+2026,4,Wan'Dale Robinson,WR,TEN,a,BAL,,4600,11C64B,dff
 2026,4,Romeo Doubs,WR,NE,a,BUF,,4700,11215D,dff
 2026,4,Brenton Strange,TE,JAX,a,CIN,,3200,11C68C,dff
 2026,4,George Holani,RB,SEA,h,LAC,,4500,1203D1,dff
@@ -901,7 +901,7 @@ season,week,player,pos,team,home_away,opp,dk_points,dk_salary,gid,source
 2026,4,Ravens,DST,BAL,h,TEN,,3800,16E,dff
 2026,4,Kalif Raymond,WR,CHI,h,NYJ,,3600,A91B4,dff
 2026,4,Ryan Flournoy,WR,DAL,a,HOU,,3800,1544A8,dff
-2026,4,Tre&#x27; Harris,WR,LAC,a,SEA,,4100,1288A9,dff
+2026,4,Tre' Harris,WR,LAC,a,SEA,,4100,1288A9,dff
 2026,4,AJ Barner,TE,SEA,h,LAC,,3000,12C2BF,dff
 2026,4,Rashod Bateman,WR,BAL,h,TEN,,4200,10E8F0,dff
 2026,4,Kyle Monangai,RB,CHI,h,NYJ,,4900,131646,dff
@@ -1136,7 +1136,7 @@ season,week,player,pos,team,home_away,opp,dk_points,dk_salary,gid,source
 2026,4,Noah Whittington,RB,HOU,h,DAL,,4000,128B4A,dff
 2026,4,Justin Jefferson,WR,MIN,h,MIA,,7300,1051DF,dff
 2026,4,Jordan Mason,RB,MIN,h,MIA,,4000,110761,dff
-2026,4,De&#x27;Von Achane,RB,MIA,a,MIN,,6500,12CBCC,dff
+2026,4,De'Von Achane,RB,MIA,a,MIN,,6500,12CBCC,dff
 2026,4,Caleb Douglas,WR,MIA,a,MIN,,3900,15486E,dff
 2026,4,Odell Beckham Jr.,WR,NYG,h,ARI,,3100,900A0,dff
 2026,4,James Conner,RB,ARI,a,NYG,,4000,B53F6,dff

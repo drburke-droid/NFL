@@ -112,7 +112,9 @@ source player id, source). Commit the folder so the cloud sessions can use it.
 RotoGuru's archive ends at 2021, so 2022 on comes from DailyFantasyFuel (`source` = dff). Two differences:
 - DFF is the **Sunday main slate only** (~3.8k player-weeks a season vs ~6.9k from RotoGuru, which lists
   every game incl. TNF/SNF/MNF). Join on season/week/team only for main-slate games.
-- DFF has **no actual DK points** (blank); compute them from nflverse.
+- DFF has **no actual DK points**; `python scripts/fill_dk_points.py` fills them from the nflverse box
+  scores (run it weekly after the fetch; weeks nflverse has not posted stay blank). Checked against
+  RotoGuru's own DK points 2014-21: players 99.5%+ exact, D/ST 94-95% exact in 2020-21 (MAE ~0.1).
 - DFF's default slate dropped 1-3 Sunday-afternoon games in six weeks (checked vs the nflverse schedule):
   2022 wk11, wk17; 2024 wk9, wk11, wk17 (5 of 8 games); 2025 wk14.
 
