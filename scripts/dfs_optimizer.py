@@ -8,6 +8,7 @@ Options (all optional, used by the backtest's strategies):
     stack=n      the QB's team supplies >= n WR/TE
     bringback=n  the QB's opponent supplies >= n RB/WR/TE
     no_dst_vs    no offensive player facing the chosen DST
+    te_max=1     no TE in the FLEX
     exclude      list of previous lineups (index arrays); each new lineup must differ by >= `min_diff` players
 """
 import numpy as np
@@ -19,7 +20,7 @@ CAP = 50000
 class Slate:
     """Static constraint rows for one slate; solve() swaps only the objective."""
 
-    def __init__(self, df, stack=0, bringback=0, no_dst_vs=False):
+    def __init__(self, df, stack=0, bringback=0, no_dst_vs=False, te_max=2):
         self.df = df.reset_index(drop=True)
         d = self.df
         n = len(d)
@@ -32,7 +33,7 @@ class Slate:
         is_ = lambda *p: np.isin(pos, p).astype(float)
         add(d.salary.values.astype(float), 0, CAP)
         add(is_("QB"), 1, 1); add(is_("DST"), 1, 1)
-        add(is_("RB"), 2, 3); add(is_("WR"), 3, 4); add(is_("TE"), 1, 2)
+        add(is_("RB"), 2, 3); add(is_("WR"), 3, 4); add(is_("TE"), 1, te_max)
         add(is_("RB", "WR", "TE"), 7, 7)
         teams = d.team.values; opps = d.opp.values
         if stack or bringback:
