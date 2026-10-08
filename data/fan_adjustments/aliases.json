@@ -1,7 +1,12 @@
 {
  "75ccec41ed367e5850ba": "13d5748201d3b10743b4",
+ "8a85dd02f3b460ae03d9": "72aab979540a608c88a7",
  "_display": {
-  "13d5748201d3b10743b4": "REB"
+  "13d5748201d3b10743b4": "REB",
+  "72aab979540a608c88a7": "NYO"
  },
- "_note": "2026-09-27: BOB (75ccec..) was REB typing a new tag after the page lost his saved one; same device d4a148f5. Merged into REB at the owner's request."
+ "_note": [
+  "2026-09-27: BOB (75ccec..) was REB typing a new tag after the page lost his saved one; same device d4a148f5. Merged into REB at the owner's request.",
+  "2026-10-08: Nana Owusu (8a85dd..) and NYO (72aab9..) are one fan, same device 774be948. Merged into NYO at the owner's request."
+ ]
 }
