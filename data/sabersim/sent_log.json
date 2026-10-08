@@ -2097,5 +2097,99 @@
     "no DK props posted (news?): Travis Etienne"
    ]
   }
+ },
+ "2026-10-09T00:15_1g": {
+  "sent_at": "2026-10-08T23:18:08Z",
+  "rows": 29,
+  "file": "Burke_Model_Burke_2026_thu08pm_1008_2315.csv",
+  "slate": "Thu 10/08 08:15 PM ET slate (1 games)",
+  "credits_left": 2743,
+  "lineups": [
+   "schedule: 18 weeks; week 5 runs Fri 10/09 .. Tue 10/13",
+   "week 5: 1 games in this send (kickoffs Fri 00:15Z .. Fri 00:15Z)",
+   "injury report (nfl.com): 93 skill/K players listed; practice {'LP': 40, 'DNP': 31, 'FP': 22}; designations {'Out': 1, 'Questionable': 1}",
+   "lineups: 454 statuses pulled {'espn': 248, 'sleeper': 87, '+sleeper': 85, 'espn+sleeper': 33, 'nfl-report': 1}; 1 Q, 0 OUT with a projection {}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk5.csv",
+    "rows": 853,
+    "age_hours": 0.0,
+    "slate_skill": 29,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-08T23:17Z",
+    "credits_left": "243"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 25,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 7,
+     "rec_yds": 14,
+     "rec": 14,
+     "exp_td": 25
+    },
+    "no_line": [],
+    "eligible": 11,
+    "name_aliases": [
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 4
+   },
+   "kdst": {
+    "file": "kdst_2026_wk5.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 93,
+    "designations": {
+     "Out": 1,
+     "Questionable": 1
+    }
+   },
+   "lineups": {
+    "statuses": 454,
+    "by_src": {
+     "espn": 248,
+     "sleeper": 87,
+     "+sleeper": 85,
+     "espn+sleeper": 33,
+     "nfl-report": 1
+    },
+    "q": 1,
+    "out": 0,
+    "out_by_src": {}
+   },
+   "warnings": []
+  }
  }
 }
