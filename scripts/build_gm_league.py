@@ -18,7 +18,7 @@ times_kept is derived the way scripts/predict_keepers.py derives it -- count the
 player was flagged as a keeper. It is the field no platform reports, and the three-keep rule needs
 it, so it is computed here rather than left for someone to maintain by hand.
 """
-import os, re, json, sys
+import glob, os, re, json, sys
 
 HERE = os.path.dirname(os.path.abspath(__file__)); ROOT = os.path.dirname(HERE)
 OUT = os.path.join(ROOT, "gm", "leagues", "kuhn_2026.json")
@@ -47,9 +47,21 @@ def main():
 
     # ---- the keeper clock, from draft history ----
     kept_years = {}
+    flagged = set()
     for r in drafts:
         if str(r.get("keeper")).lower() in ("true", "1"):
-            k = norm(r["player"]); kept_years[k] = kept_years.get(k, 0) + 1
+            k = norm(r["player"]); kept_years[k] = kept_years.get(k, 0) + 1; flagged.add(int(r["season"]))
+    # The ESPN draft pull stops at the last completed draft, so this season's keeps (locked in the
+    # draft tool's Keepers tab, docs/keepers_final_<season>.js) were never counted and every current
+    # keeper read one keep short (Chase Brown: 2025 + 2026 showed as 1). Count each locked file for a
+    # season the draft history carries no keeper flags for, so a later pull of that draft can't double it.
+    for path in sorted(glob.glob(os.path.join(ROOT, "docs", "keepers_final_*.js"))):
+        season = int(re.search(r"(\d{4})", os.path.basename(path)).group(1))
+        if season in flagged:
+            continue
+        txt = open(path, encoding="utf-8").read()
+        for key in json.loads(txt[txt.index("{"):txt.rindex("}") + 1])["keepers"]:
+            k = norm(key.split("|")[0]); kept_years[k] = kept_years.get(k, 0) + 1
 
     # ---- scoring ----
     per_stat, unmapped = {}, {}

@@ -172,7 +172,7 @@
       "price": 6
      },
      "injury": "QUESTIONABLE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4569587",
@@ -185,7 +185,7 @@
       "price": 6
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4360761",
@@ -198,7 +198,7 @@
       "price": 6
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4569618",
@@ -396,7 +396,7 @@
       "price": 11
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4361370",
@@ -409,7 +409,7 @@
       "price": 25
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4685278",
@@ -422,7 +422,7 @@
       "price": 11
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4430807",
@@ -620,7 +620,7 @@
       "price": 4
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4429160",
@@ -633,7 +633,7 @@
       "price": 14
      },
      "injury": "INJURY_RESERVE",
-     "times_kept": 2
+     "times_kept": 3
     },
     {
      "player_id": "4258173",
@@ -646,7 +646,7 @@
       "price": 36
      },
      "injury": "ACTIVE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "3043078",
@@ -844,7 +844,7 @@
       "price": 45
      },
      "injury": "ACTIVE",
-     "times_kept": 2
+     "times_kept": 3
     },
     {
      "player_id": "4696981",
@@ -857,7 +857,7 @@
       "price": 8
      },
      "injury": "QUESTIONABLE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4431452",
@@ -870,7 +870,7 @@
       "price": 6
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4870808",
@@ -1068,7 +1068,7 @@
       "price": 61
      },
      "injury": "QUESTIONABLE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "4428331",
@@ -1081,7 +1081,7 @@
       "price": 32
      },
      "injury": "QUESTIONABLE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "3915511",
@@ -1094,7 +1094,7 @@
       "price": 6
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4432710",
@@ -1292,7 +1292,7 @@
       "price": 16
      },
      "injury": "ACTIVE",
-     "times_kept": 2
+     "times_kept": 3
     },
     {
      "player_id": "12483",
@@ -1305,7 +1305,7 @@
       "price": 6
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4432665",
@@ -1318,7 +1318,7 @@
       "price": 19
      },
      "injury": "QUESTIONABLE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "3117251",
@@ -1516,7 +1516,7 @@
       "price": 13
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4685382",
@@ -1529,7 +1529,7 @@
       "price": 45
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "-16034",
@@ -1740,7 +1740,7 @@
       "price": 12
      },
      "injury": "ACTIVE",
-     "times_kept": 2
+     "times_kept": 3
     },
     {
      "player_id": "4426388",
@@ -1753,7 +1753,7 @@
       "price": 9
      },
      "injury": "ACTIVE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "4361307",
@@ -1766,7 +1766,7 @@
       "price": 9
      },
      "injury": "ACTIVE",
-     "times_kept": 2
+     "times_kept": 3
     },
     {
      "player_id": "4262921",
@@ -1964,7 +1964,7 @@
       "price": 34
      },
      "injury": "QUESTIONABLE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "4427366",
@@ -1977,7 +1977,7 @@
       "price": 22
      },
      "injury": "DOUBTFUL",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "4241478",
@@ -1990,7 +1990,7 @@
       "price": 20
      },
      "injury": "QUESTIONABLE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "-16014",
@@ -2188,7 +2188,7 @@
       "price": 12
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4567750",
@@ -2201,7 +2201,7 @@
       "price": 25
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4242335",
@@ -2214,7 +2214,7 @@
       "price": 34
      },
      "injury": "ACTIVE",
-     "times_kept": 2
+     "times_kept": 3
     },
     {
      "player_id": "2971573",
@@ -2412,7 +2412,7 @@
       "price": 6
      },
      "injury": "ACTIVE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "4430878",
@@ -2425,7 +2425,7 @@
       "price": 13
      },
      "injury": "ACTIVE",
-     "times_kept": 2
+     "times_kept": 3
     },
     {
      "player_id": "4567048",
@@ -2438,7 +2438,7 @@
       "price": 32
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4241389",
@@ -2636,7 +2636,7 @@
       "price": 36
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4379399",
@@ -2649,7 +2649,7 @@
       "price": 26
      },
      "injury": "ACTIVE",
-     "times_kept": 0
+     "times_kept": 1
     },
     {
      "player_id": "4374302",
@@ -2662,7 +2662,7 @@
       "price": 53
      },
      "injury": "ACTIVE",
-     "times_kept": 1
+     "times_kept": 2
     },
     {
      "player_id": "4239996",
