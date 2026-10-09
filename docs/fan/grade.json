@@ -1,26 +1,26 @@
 {
- "generated": "2026-10-08T14:30Z",
+ "generated": "2026-10-09T14:01Z",
  "overall": {
-  "picks": 530,
-  "picks_graded": 530,
-  "picks_pending": 0,
-  "pick_hits": 277,
-  "pick_misses": 244,
+  "picks": 566,
+  "picks_graded": 532,
+  "picks_pending": 34,
+  "pick_hits": 278,
+  "pick_misses": 245,
   "pick_hit_rate": 0.532,
-  "picks_closer": 240,
+  "picks_closer": 242,
   "picks_farther": 278,
-  "n": 2030,
-  "graded": 2030,
-  "pending": 0,
+  "n": 2180,
+  "graded": 2038,
+  "pending": 142,
   "no_send": 0,
   "hit_rate": 0.519,
-  "hits": 1032,
-  "misses": 958,
-  "closer": 969,
-  "farther": 1013,
-  "removed_pts": -57.03,
-  "mae_base_pts": 1.938,
-  "mae_adj_pts": 1.966
+  "hits": 1037,
+  "misses": 961,
+  "closer": 974,
+  "farther": 1016,
+  "removed_pts": -55.05,
+  "mae_base_pts": 1.943,
+  "mae_adj_pts": 1.97
  },
  "by_fan": [
   {
@@ -60,42 +60,6 @@
    }
   },
   {
-   "fan": "Nana Owusu",
-   "pid": "87abe4771deffff1",
-   "team": "LV",
-   "weeks": [
-    3
-   ],
-   "picks": 37,
-   "picks_graded": 37,
-   "picks_pending": 0,
-   "pick_hits": 18,
-   "pick_misses": 19,
-   "pick_hit_rate": 0.486,
-   "picks_closer": 18,
-   "picks_farther": 19,
-   "n": 147,
-   "graded": 147,
-   "pending": 0,
-   "no_send": 0,
-   "hit_rate": 0.476,
-   "hits": 70,
-   "misses": 77,
-   "closer": 67,
-   "farther": 80,
-   "removed_pts": 1.51,
-   "mae_base_pts": 2.033,
-   "mae_adj_pts": 2.023,
-   "rank": 2,
-   "best_call": {
-    "week": 3,
-    "player": "Joe Burrow",
-    "stat": "pass_yds",
-    "arrows": 1,
-    "removed_pts": 1.02
-   }
-  },
-  {
    "fan": "OWD",
    "pid": "dfd6108fc56b9c7a",
    "team": "",
@@ -122,7 +86,7 @@
    "removed_pts": 1.41,
    "mae_base_pts": 3.547,
    "mae_adj_pts": 3.265,
-   "rank": 3,
+   "rank": 2,
    "best_call": {
     "week": 3,
     "player": "Josh Allen",
@@ -130,6 +94,35 @@
     "arrows": -1,
     "removed_pts": 0.97
    }
+  },
+  {
+   "fan": "ERK",
+   "pid": "d31cc68dd0b75e27",
+   "team": "MIN",
+   "weeks": [
+    5
+   ],
+   "picks": 10,
+   "picks_graded": 0,
+   "picks_pending": 10,
+   "pick_hits": 0,
+   "pick_misses": 0,
+   "pick_hit_rate": null,
+   "picks_closer": 0,
+   "picks_farther": 0,
+   "n": 43,
+   "graded": 0,
+   "pending": 43,
+   "no_send": 0,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null,
+   "rank": 3
   },
   {
    "fan": "SAM",
@@ -208,28 +201,29 @@
    "pid": "1d43b79ca299b191",
    "team": "LV",
    "weeks": [
+    3,
     4
    ],
-   "picks": 36,
-   "picks_graded": 36,
+   "picks": 73,
+   "picks_graded": 73,
    "picks_pending": 0,
-   "pick_hits": 18,
-   "pick_misses": 18,
-   "pick_hit_rate": 0.5,
-   "picks_closer": 14,
-   "picks_farther": 22,
-   "n": 36,
-   "graded": 36,
+   "pick_hits": 36,
+   "pick_misses": 37,
+   "pick_hit_rate": 0.493,
+   "picks_closer": 32,
+   "picks_farther": 41,
+   "n": 183,
+   "graded": 183,
    "pending": 0,
    "no_send": 0,
-   "hit_rate": 0.528,
-   "hits": 19,
-   "misses": 17,
-   "closer": 14,
-   "farther": 22,
-   "removed_pts": -12.76,
-   "mae_base_pts": 2.487,
-   "mae_adj_pts": 2.841,
+   "hit_rate": 0.486,
+   "hits": 89,
+   "misses": 94,
+   "closer": 81,
+   "farther": 102,
+   "removed_pts": -11.25,
+   "mae_base_pts": 2.122,
+   "mae_adj_pts": 2.184,
    "rank": 6,
    "best_call": {
     "week": 4,
@@ -245,28 +239,29 @@
    "team": "CHI",
    "weeks": [
     3,
-    4
+    4,
+    5
    ],
-   "picks": 119,
-   "picks_graded": 119,
-   "picks_pending": 0,
-   "pick_hits": 61,
-   "pick_misses": 56,
+   "picks": 145,
+   "picks_graded": 121,
+   "picks_pending": 24,
+   "pick_hits": 62,
+   "pick_misses": 57,
    "pick_hit_rate": 0.521,
-   "picks_closer": 47,
+   "picks_closer": 49,
    "picks_farther": 69,
-   "n": 502,
-   "graded": 502,
-   "pending": 0,
+   "n": 609,
+   "graded": 510,
+   "pending": 99,
    "no_send": 0,
-   "hit_rate": 0.54,
-   "hits": 266,
-   "misses": 227,
-   "closer": 248,
-   "farther": 242,
-   "removed_pts": -18.59,
-   "mae_base_pts": 2.043,
-   "mae_adj_pts": 2.08,
+   "hit_rate": 0.541,
+   "hits": 271,
+   "misses": 230,
+   "closer": 253,
+   "farther": 245,
+   "removed_pts": -16.61,
+   "mae_base_pts": 2.063,
+   "mae_adj_pts": 2.096,
    "rank": 7,
    "best_call": {
     "week": 3,
@@ -314,6 +309,60 @@
   }
  ],
  "by_fan_week": [
+  {
+   "fan": "REB",
+   "pid": "07d4562b12d59b0c",
+   "team": "CHI",
+   "week": 5,
+   "picks": 26,
+   "picks_graded": 2,
+   "picks_pending": 24,
+   "pick_hits": 1,
+   "pick_misses": 1,
+   "pick_hit_rate": 0.5,
+   "picks_closer": 2,
+   "picks_farther": 0,
+   "n": 107,
+   "graded": 8,
+   "pending": 99,
+   "no_send": 0,
+   "hit_rate": 0.625,
+   "hits": 5,
+   "misses": 3,
+   "closer": 5,
+   "farther": 3,
+   "removed_pts": 1.98,
+   "mae_base_pts": 3.326,
+   "mae_adj_pts": 3.078,
+   "last_submitted": "2026-10-08T14:53:21Z"
+  },
+  {
+   "fan": "ERK",
+   "pid": "d31cc68dd0b75e27",
+   "team": "MIN",
+   "week": 5,
+   "picks": 10,
+   "picks_graded": 0,
+   "picks_pending": 10,
+   "pick_hits": 0,
+   "pick_misses": 0,
+   "pick_hit_rate": null,
+   "picks_closer": 0,
+   "picks_farther": 0,
+   "n": 43,
+   "graded": 0,
+   "pending": 43,
+   "no_send": 0,
+   "hit_rate": null,
+   "hits": 0,
+   "misses": 0,
+   "closer": 0,
+   "farther": 0,
+   "removed_pts": null,
+   "mae_base_pts": null,
+   "mae_adj_pts": null,
+   "last_submitted": "2026-10-09T12:00:42Z"
+  },
   {
    "fan": "REB",
    "pid": "07d4562b12d59b0c",
@@ -396,8 +445,8 @@
    "last_submitted": "2026-09-25T19:26:53Z"
   },
   {
-   "fan": "Nana Owusu",
-   "pid": "87abe4771deffff1",
+   "fan": "NYO",
+   "pid": "1d43b79ca299b191",
    "team": "LV",
    "week": 3,
    "picks": 37,
@@ -602,9 +651,159 @@
    "removed_pts": -18.71,
    "mae_base_pts": 2.299,
    "mae_adj_pts": 2.428
+  },
+  "5": {
+   "picks": 36,
+   "picks_graded": 2,
+   "picks_pending": 34,
+   "pick_hits": 1,
+   "pick_misses": 1,
+   "pick_hit_rate": 0.5,
+   "picks_closer": 2,
+   "picks_farther": 0,
+   "n": 150,
+   "graded": 8,
+   "pending": 142,
+   "no_send": 0,
+   "hit_rate": 0.625,
+   "hits": 5,
+   "misses": 3,
+   "closer": 5,
+   "farther": 3,
+   "removed_pts": 1.98,
+   "mae_base_pts": 3.326,
+   "mae_adj_pts": 3.078
   }
  },
  "rows": [
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "Dak Prescott",
+   "team": "DAL",
+   "pos": "QB",
+   "stat": "pass_yds",
+   "arrows": 1,
+   "baseline": 266.1,
+   "basis": "send",
+   "base": 273.31,
+   "adj": 300.641,
+   "actual": 316.0,
+   "direction": "hit",
+   "removed_pts": 1.093
+  },
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "CeeDee Lamb",
+   "team": "DAL",
+   "pos": "WR",
+   "stat": "rec_yds",
+   "arrows": -1,
+   "baseline": 89.24,
+   "basis": "send",
+   "base": 82.09,
+   "adj": 73.881,
+   "actual": 9.0,
+   "direction": "hit",
+   "removed_pts": 0.821
+  },
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "CeeDee Lamb",
+   "team": "DAL",
+   "pos": "WR",
+   "stat": "rec",
+   "arrows": -1,
+   "baseline": 6.74,
+   "basis": "send",
+   "base": 6.59,
+   "adj": 5.931,
+   "actual": 2.0,
+   "direction": "hit",
+   "removed_pts": 0.659
+  },
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "CeeDee Lamb",
+   "team": "DAL",
+   "pos": "WR",
+   "stat": "rec_tds",
+   "arrows": -1,
+   "baseline": 0.76,
+   "basis": "send",
+   "base": 0.76,
+   "adj": 0.684,
+   "actual": 0.0,
+   "direction": "hit",
+   "removed_pts": 0.456
+  },
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "Dak Prescott",
+   "team": "DAL",
+   "pos": "QB",
+   "stat": "pass_int",
+   "arrows": 1,
+   "baseline": 0.7,
+   "basis": "send",
+   "base": 0.7,
+   "adj": 0.77,
+   "actual": 2.0,
+   "direction": "hit",
+   "removed_pts": 0.07
+  },
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "Dak Prescott",
+   "team": "DAL",
+   "pos": "QB",
+   "stat": "rush_tds",
+   "arrows": 1,
+   "baseline": 0.06,
+   "basis": "send",
+   "base": 0.14,
+   "adj": 0.154,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.084
+  },
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "Dak Prescott",
+   "team": "DAL",
+   "pos": "QB",
+   "stat": "rush_yds",
+   "arrows": 1,
+   "baseline": 11.6,
+   "basis": "send",
+   "base": 9.82,
+   "adj": 10.802,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.098
+  },
+  {
+   "week": 5,
+   "fan": "REB",
+   "player": "Dak Prescott",
+   "team": "DAL",
+   "pos": "QB",
+   "stat": "pass_tds",
+   "arrows": 1,
+   "baseline": 2.12,
+   "basis": "send",
+   "base": 2.33,
+   "adj": 2.563,
+   "actual": 1.0,
+   "direction": "miss",
+   "removed_pts": -0.932
+  },
   {
    "week": 4,
    "fan": "NYO",
@@ -4783,7 +4982,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Joe Burrow",
    "team": "CIN",
    "pos": "QB",
@@ -4799,7 +4998,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Purdy",
    "team": "SF",
    "pos": "QB",
@@ -4815,7 +5014,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Bryce Young",
    "team": "CAR",
    "pos": "QB",
@@ -4831,7 +5030,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jahmyr Gibbs",
    "team": "DET",
    "pos": "RB",
@@ -4847,7 +5046,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kirk Cousins",
    "team": "LV",
    "pos": "QB",
@@ -4863,7 +5062,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "James Cook",
    "team": "BUF",
    "pos": "RB",
@@ -4879,7 +5078,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chris Olave",
    "team": "NO",
    "pos": "WR",
@@ -4895,7 +5094,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Saquon Barkley",
    "team": "PHI",
    "pos": "RB",
@@ -4911,7 +5110,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Patrick Mahomes",
    "team": "KC",
    "pos": "QB",
@@ -4927,7 +5126,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Purdy",
    "team": "SF",
    "pos": "QB",
@@ -4943,7 +5142,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Lamar Jackson",
    "team": "BAL",
    "pos": "QB",
@@ -4959,7 +5158,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Joe Burrow",
    "team": "CIN",
    "pos": "QB",
@@ -4975,7 +5174,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chuba Hubbard",
    "team": "CAR",
    "pos": "RB",
@@ -4991,7 +5190,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tyler Shough",
    "team": "NO",
    "pos": "QB",
@@ -5007,7 +5206,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jahmyr Gibbs",
    "team": "DET",
    "pos": "RB",
@@ -5023,7 +5222,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chris Olave",
    "team": "NO",
    "pos": "WR",
@@ -5039,7 +5238,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kirk Cousins",
    "team": "LV",
    "pos": "QB",
@@ -5055,7 +5254,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tee Higgins",
    "team": "CIN",
    "pos": "WR",
@@ -5071,7 +5270,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Josh Allen",
    "team": "BUF",
    "pos": "QB",
@@ -5087,7 +5286,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Travis Kelce",
    "team": "KC",
    "pos": "TE",
@@ -5103,7 +5302,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "James Cook",
    "team": "BUF",
    "pos": "RB",
@@ -5119,7 +5318,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kenneth Walker III",
    "team": "KC",
    "pos": "RB",
@@ -5135,7 +5334,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Bowers",
    "team": "LV",
    "pos": "TE",
@@ -5151,7 +5350,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Bowers",
    "team": "LV",
    "pos": "TE",
@@ -5167,7 +5366,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "George Kittle",
    "team": "SF",
    "pos": "TE",
@@ -5183,7 +5382,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jahmyr Gibbs",
    "team": "DET",
    "pos": "RB",
@@ -5199,7 +5398,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Lamar Jackson",
    "team": "BAL",
    "pos": "QB",
@@ -5215,7 +5414,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tee Higgins",
    "team": "CIN",
    "pos": "WR",
@@ -5231,7 +5430,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "George Kittle",
    "team": "SF",
    "pos": "TE",
@@ -5247,7 +5446,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Travis Etienne",
    "team": "NO",
    "pos": "RB",
@@ -5263,7 +5462,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tre Tucker",
    "team": "LV",
    "pos": "WR",
@@ -5279,7 +5478,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jahmyr Gibbs",
    "team": "DET",
    "pos": "RB",
@@ -5295,7 +5494,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Mike Evans",
    "team": "SF",
    "pos": "WR",
@@ -5311,7 +5510,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Hurts",
    "team": "PHI",
    "pos": "QB",
@@ -5327,7 +5526,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tre Tucker",
    "team": "LV",
    "pos": "WR",
@@ -5343,7 +5542,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tee Higgins",
    "team": "CIN",
    "pos": "WR",
@@ -5359,7 +5558,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Parker Washington",
    "team": "JAX",
    "pos": "WR",
@@ -5375,7 +5574,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Travis Kelce",
    "team": "KC",
    "pos": "TE",
@@ -5391,7 +5590,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chuba Hubbard",
    "team": "CAR",
    "pos": "RB",
@@ -5407,7 +5606,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "George Kittle",
    "team": "SF",
    "pos": "TE",
@@ -5423,7 +5622,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Rhamondre Stevenson",
    "team": "NE",
    "pos": "RB",
@@ -5439,7 +5638,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Darren Waller",
    "team": "CAR",
    "pos": "TE",
@@ -5455,7 +5654,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Ashton Jeanty",
    "team": "LV",
    "pos": "RB",
@@ -5471,7 +5670,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Alvin Kamara",
    "team": "NO",
    "pos": "RB",
@@ -5487,7 +5686,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Bowers",
    "team": "LV",
    "pos": "TE",
@@ -5503,7 +5702,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Nailor",
    "team": "LV",
    "pos": "WR",
@@ -5519,7 +5718,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Darren Waller",
    "team": "CAR",
    "pos": "TE",
@@ -5535,7 +5734,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Purdy",
    "team": "SF",
    "pos": "QB",
@@ -5551,7 +5750,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Nailor",
    "team": "LV",
    "pos": "WR",
@@ -5567,7 +5766,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Bryce Lance",
    "team": "NO",
    "pos": "WR",
@@ -5583,7 +5782,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tyler Shough",
    "team": "NO",
    "pos": "QB",
@@ -5599,7 +5798,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jahmyr Gibbs",
    "team": "DET",
    "pos": "RB",
@@ -5615,7 +5814,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chuba Hubbard",
    "team": "CAR",
    "pos": "RB",
@@ -5631,7 +5830,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Rhamondre Stevenson",
    "team": "NE",
    "pos": "RB",
@@ -5647,7 +5846,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Bryce Lance",
    "team": "NO",
    "pos": "WR",
@@ -5663,7 +5862,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kenneth Walker III",
    "team": "KC",
    "pos": "RB",
@@ -5679,7 +5878,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Travis Etienne",
    "team": "NO",
    "pos": "RB",
@@ -5695,7 +5894,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Nailor",
    "team": "LV",
    "pos": "WR",
@@ -5711,7 +5910,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tyler Shough",
    "team": "NO",
    "pos": "QB",
@@ -5727,7 +5926,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Bryce Young",
    "team": "CAR",
    "pos": "QB",
@@ -5743,7 +5942,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "DeVonta Smith",
    "team": "PHI",
    "pos": "WR",
@@ -5759,7 +5958,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Josh Allen",
    "team": "BUF",
    "pos": "QB",
@@ -5775,7 +5974,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Bryce Lance",
    "team": "NO",
    "pos": "WR",
@@ -5791,7 +5990,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Patrick Mahomes",
    "team": "KC",
    "pos": "QB",
@@ -5807,7 +6006,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Joe Burrow",
    "team": "CIN",
    "pos": "QB",
@@ -5823,7 +6022,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Hurts",
    "team": "PHI",
    "pos": "QB",
@@ -5839,7 +6038,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kirk Cousins",
    "team": "LV",
    "pos": "QB",
@@ -5855,7 +6054,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kirk Cousins",
    "team": "LV",
    "pos": "QB",
@@ -5871,7 +6070,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Alvin Kamara",
    "team": "NO",
    "pos": "RB",
@@ -5887,7 +6086,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Travis Etienne",
    "team": "NO",
    "pos": "RB",
@@ -5903,7 +6102,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "James Cook",
    "team": "BUF",
    "pos": "RB",
@@ -5919,7 +6118,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jack Bech",
    "team": "LV",
    "pos": "WR",
@@ -5935,7 +6134,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Lamar Jackson",
    "team": "BAL",
    "pos": "QB",
@@ -5951,7 +6150,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Joe Burrow",
    "team": "CIN",
    "pos": "QB",
@@ -5967,7 +6166,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Saquon Barkley",
    "team": "PHI",
    "pos": "RB",
@@ -5983,7 +6182,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Rhamondre Stevenson",
    "team": "NE",
    "pos": "RB",
@@ -5999,7 +6198,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Joe Burrow",
    "team": "CIN",
    "pos": "QB",
@@ -6015,7 +6214,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Purdy",
    "team": "SF",
    "pos": "QB",
@@ -6031,7 +6230,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kirk Cousins",
    "team": "LV",
    "pos": "QB",
@@ -6047,7 +6246,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Travis Etienne",
    "team": "NO",
    "pos": "RB",
@@ -6063,7 +6262,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Michael Mayer",
    "team": "LV",
    "pos": "TE",
@@ -6079,7 +6278,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Zach Ertz",
    "team": "PHI",
    "pos": "TE",
@@ -6095,7 +6294,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Alvin Kamara",
    "team": "NO",
    "pos": "RB",
@@ -6111,7 +6310,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Bryce Young",
    "team": "CAR",
    "pos": "QB",
@@ -6127,7 +6326,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jack Bech",
    "team": "LV",
    "pos": "WR",
@@ -6143,7 +6342,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chuba Hubbard",
    "team": "CAR",
    "pos": "RB",
@@ -6159,7 +6358,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "James Cook",
    "team": "BUF",
    "pos": "RB",
@@ -6175,7 +6374,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Zach Ertz",
    "team": "PHI",
    "pos": "TE",
@@ -6191,7 +6390,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Ashton Jeanty",
    "team": "LV",
    "pos": "RB",
@@ -6207,7 +6406,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tre Tucker",
    "team": "LV",
    "pos": "WR",
@@ -6223,7 +6422,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jack Bech",
    "team": "LV",
    "pos": "WR",
@@ -6239,7 +6438,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Alvin Kamara",
    "team": "NO",
    "pos": "RB",
@@ -6255,7 +6454,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Darren Waller",
    "team": "CAR",
    "pos": "TE",
@@ -6271,7 +6470,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Saquon Barkley",
    "team": "PHI",
    "pos": "RB",
@@ -6287,7 +6486,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Patrick Mahomes",
    "team": "KC",
    "pos": "QB",
@@ -6303,7 +6502,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Devaughn Vele",
    "team": "NO",
    "pos": "WR",
@@ -6319,7 +6518,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Dontayvion Wicks",
    "team": "PHI",
    "pos": "WR",
@@ -6335,7 +6534,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Bryce Young",
    "team": "CAR",
    "pos": "QB",
@@ -6351,7 +6550,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Patrick Mahomes",
    "team": "KC",
    "pos": "QB",
@@ -6367,7 +6566,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Travis Etienne",
    "team": "NO",
    "pos": "RB",
@@ -6383,7 +6582,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Tyler Shough",
    "team": "NO",
    "pos": "QB",
@@ -6399,7 +6598,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "James Cook",
    "team": "BUF",
    "pos": "RB",
@@ -6415,7 +6614,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Michael Mayer",
    "team": "LV",
    "pos": "TE",
@@ -6431,7 +6630,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Brock Purdy",
    "team": "SF",
    "pos": "QB",
@@ -6447,7 +6646,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Rhamondre Stevenson",
    "team": "NE",
    "pos": "RB",
@@ -6463,7 +6662,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Alvin Kamara",
    "team": "NO",
    "pos": "RB",
@@ -6479,7 +6678,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Lamar Jackson",
    "team": "BAL",
    "pos": "QB",
@@ -6495,7 +6694,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Michael Mayer",
    "team": "LV",
    "pos": "TE",
@@ -6511,7 +6710,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Zach Ertz",
    "team": "PHI",
    "pos": "TE",
@@ -6527,7 +6726,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Coker",
    "team": "CAR",
    "pos": "WR",
@@ -6543,7 +6742,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Saquon Barkley",
    "team": "PHI",
    "pos": "RB",
@@ -6559,7 +6758,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kenneth Walker III",
    "team": "KC",
    "pos": "RB",
@@ -6575,7 +6774,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "DeVonta Smith",
    "team": "PHI",
    "pos": "WR",
@@ -6591,7 +6790,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Dalton Kincaid",
    "team": "BUF",
    "pos": "TE",
@@ -6607,7 +6806,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Hurts",
    "team": "PHI",
    "pos": "QB",
@@ -6623,7 +6822,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chuba Hubbard",
    "team": "CAR",
    "pos": "RB",
@@ -6639,7 +6838,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Dontayvion Wicks",
    "team": "PHI",
    "pos": "WR",
@@ -6655,7 +6854,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Kenneth Walker III",
    "team": "KC",
    "pos": "RB",
@@ -6671,7 +6870,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Rhamondre Stevenson",
    "team": "NE",
    "pos": "RB",
@@ -6687,7 +6886,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Ashton Jeanty",
    "team": "LV",
    "pos": "RB",
@@ -6703,7 +6902,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Josh Allen",
    "team": "BUF",
    "pos": "QB",
@@ -6719,7 +6918,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Ashton Jeanty",
    "team": "LV",
    "pos": "RB",
@@ -6735,7 +6934,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Chris Olave",
    "team": "NO",
    "pos": "WR",
@@ -6751,7 +6950,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Saquon Barkley",
    "team": "PHI",
    "pos": "RB",
@@ -6767,7 +6966,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Devaughn Vele",
    "team": "NO",
    "pos": "WR",
@@ -6783,7 +6982,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Dontayvion Wicks",
    "team": "PHI",
    "pos": "WR",
@@ -6799,7 +6998,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Mike Evans",
    "team": "SF",
    "pos": "WR",
@@ -6815,7 +7014,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Patrick Mahomes",
    "team": "KC",
    "pos": "QB",
@@ -6831,7 +7030,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Dalton Kincaid",
    "team": "BUF",
    "pos": "TE",
@@ -6847,7 +7046,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Devaughn Vele",
    "team": "NO",
    "pos": "WR",
@@ -6863,7 +7062,7 @@
   },
   {
    "week": 3,
-   "fan": "Nana Owusu",
+   "fan": "NYO",
    "player": "Jalen Coker",
    "team": "CAR",
    "pos": "WR",
@@ -6876,134 +7075,6 @@
    "actual": 2.0,
    "direction": "miss",
    "removed_pts": -0.456
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Travis Kelce",
-   "team": "KC",
-   "pos": "TE",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 4.91,
-   "basis": "send",
-   "base": 4.69,
-   "adj": 5.159,
-   "actual": 2.0,
-   "direction": "miss",
-   "removed_pts": -0.469
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Parker Washington",
-   "team": "JAX",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 4.98,
-   "basis": "send",
-   "base": 5.07,
-   "adj": 5.577,
-   "actual": 3.0,
-   "direction": "miss",
-   "removed_pts": -0.507
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Mike Evans",
-   "team": "SF",
-   "pos": "WR",
-   "stat": "rec_yds",
-   "arrows": 1,
-   "baseline": 47.95,
-   "basis": "send",
-   "base": 51.25,
-   "adj": 56.375,
-   "actual": 34.0,
-   "direction": "miss",
-   "removed_pts": -0.513
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Jalen Coker",
-   "team": "CAR",
-   "pos": "WR",
-   "stat": "rec_yds",
-   "arrows": 1,
-   "baseline": 48.11,
-   "basis": "send",
-   "base": 54.11,
-   "adj": 59.521,
-   "actual": 18.0,
-   "direction": "miss",
-   "removed_pts": -0.541
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Dalton Kincaid",
-   "team": "BUF",
-   "pos": "TE",
-   "stat": "rec_yds",
-   "arrows": 1,
-   "baseline": 58.64,
-   "basis": "send",
-   "base": 56.25,
-   "adj": 61.875,
-   "actual": 38.0,
-   "direction": "miss",
-   "removed_pts": -0.562
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Jalen Hurts",
-   "team": "PHI",
-   "pos": "QB",
-   "stat": "pass_tds",
-   "arrows": 1,
-   "baseline": 1.58,
-   "basis": "send",
-   "base": 1.5,
-   "adj": 1.65,
-   "actual": 0.0,
-   "direction": "miss",
-   "removed_pts": -0.6
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Ashton Jeanty",
-   "team": "LV",
-   "pos": "RB",
-   "stat": "rush_yds",
-   "arrows": 1,
-   "baseline": 63.32,
-   "basis": "send",
-   "base": 65.27,
-   "adj": 71.797,
-   "actual": 56.0,
-   "direction": "miss",
-   "removed_pts": -0.653
-  },
-  {
-   "week": 3,
-   "fan": "Nana Owusu",
-   "player": "Bryce Young",
-   "team": "CAR",
-   "pos": "QB",
-   "stat": "pass_tds",
-   "arrows": 1,
-   "baseline": 1.84,
-   "basis": "send",
-   "base": 1.64,
-   "adj": 1.804,
-   "actual": 1.0,
-   "direction": "miss",
-   "removed_pts": -0.656
   }
  ],
  "picks_best": [
@@ -7091,13 +7162,27 @@
    "removed_pts": -3.61
   }
  ],
- "pending_games": [],
+ "pending_games": [
+  "wk5 ATL v BAL",
+  "wk5 BUF v LA",
+  "wk5 CHI v GB",
+  "wk5 CIN v MIA",
+  "wk5 DET v ARI",
+  "wk5 GB v CHI",
+  "wk5 LA v BUF",
+  "wk5 MIN v NO",
+  "wk5 NE v LV",
+  "wk5 NO v MIN",
+  "wk5 SEA v SF"
+ ],
  "season": 2026,
  "renamed": {
+  "Nana Owusu": "NYO",
   "BOB": "REB"
  },
  "merged_pids": {
-  "52dec07e6eca0ba3": "07d4562b12d59b0c"
+  "52dec07e6eca0ba3": "07d4562b12d59b0c",
+  "87abe4771deffff1": "1d43b79ca299b191"
  },
  "revealed": false,
  "strategies": {
@@ -7105,10 +7190,11 @@
   "unseal_after_week": 9,
   "registered": "2026-09-27",
   "n_rules": 6,
-  "ahead": 2,
+  "ahead": 3,
   "weeks_scored": [
    3,
-   4
+   4,
+   5
   ],
   "fingerprint": "214d1a83e973496d5eede5f80477e6d53ccc878472b20adfdd38262e06040d9c"
  },
