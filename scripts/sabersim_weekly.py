@@ -355,6 +355,13 @@ PROP_MKTS = "player_pass_yds,player_pass_tds,player_rush_yds,player_reception_yd
 # key is unsupported, and losing a slate's skill props to a kicker experiment is not a trade
 # worth making. Availability varies by book and week, so a failure here is logged and ignored.
 KICK_MKTS = "player_field_goals,player_kicking_points,player_pats"
+# Wind Props (🌬️ tab): QB completions/attempts unders were the strongest wind markets in the 2023-25 DK
+# study (outputs/reports/props_pattern_mine.md). Pulled only where weather can matter -- home teams with an
+# outdoor stadium, the same list as WIND_STAD in docs/index.html -- in their own request, so a rejected key
+# never costs the slate's skill props. ~2 credits per outdoor game.
+WIND_MKTS = "player_pass_completions,player_pass_attempts"
+OUTDOOR = {"BAL", "BUF", "CAR", "CHI", "CIN", "CLE", "DEN", "GB", "JAX", "KC", "MIA", "NE", "NYG", "NYJ", "PHI",
+           "PIT", "SF", "SEA", "TB", "TEN", "WAS"}
 def amer_prob(price):
     price = float(price); return 100 / (price + 100) if price > 0 else -price / (-price + 100)
 def pull_market(sl_games):
@@ -382,6 +389,7 @@ def pull_market(sl_games):
         except Exception as ex: print("  DK game lines failed:", str(ex)[:60])
     n_new = 0
     kick_by = dict(zip(sl_games.id, sl_games.kick))
+    home_by = dict(zip(sl_games.id, sl_games.home)) if "home" in sl_games else {}
     for eid in sl_games.id.unique():
         c = cache.get(eid, {})
         hrs_to_kick = (kick_by[eid] - pd.Timestamp.now(tz="UTC")).total_seconds() / 3600
@@ -405,10 +413,21 @@ def pull_market(sl_games):
                             krows.append({"market": m["key"], "player": o.get("description"), "side": o["name"],
                                           "point": o.get("point"), "price": o["price"]})
             except Exception as ex: print(f"  kicking props unavailable for {eid[:8]}:", str(ex)[:60])
-            cache[eid] = {"_ts": now_ts, "rows": rows, "krows": krows}; n_new += 1; time.sleep(0.2)
+            wrows = []
+            if home_by.get(eid) in OUTDOOR:
+                try:
+                    jw, rem = get(f"{API}/sports/americanfootball_nfl/events/{eid}/odds?regions=us"
+                                  f"&bookmakers=draftkings&markets={WIND_MKTS}&oddsFormat=american")
+                    for bk in jw.get("bookmakers", []):
+                        for m in bk.get("markets", []):
+                            for o in m.get("outcomes", []):
+                                wrows.append({"market": m["key"], "player": o.get("description"), "side": o["name"],
+                                              "point": o.get("point"), "price": o["price"]})
+                except Exception as ex: print(f"  wind props unavailable for {eid[:8]}:", str(ex)[:60])
+            cache[eid] = {"_ts": now_ts, "rows": rows, "krows": krows, "wrows": wrows}; n_new += 1; time.sleep(0.2)
             try:                           # append-only history of every line we ever pulled (odds_snapshots.py)
                 from odds_snapshots import record
-                record([dict(r, event=eid, commence=kick_by[eid].strftime("%Y-%m-%dT%H:%M:%SZ")) for r in rows + krows], "sabersim_send", SEASON, cur_week)
+                record([dict(r, event=eid, commence=kick_by[eid].strftime("%Y-%m-%dT%H:%M:%SZ")) for r in rows + krows + wrows], "sabersim_send", SEASON, cur_week)
             except Exception as ex: print("  snapshot record failed:", str(ex)[:80])
         except Exception as ex: print(f"  props fetch failed for {eid[:8]}:", str(ex)[:60])
     if n_new: print(f"  DK props: {n_new} events pulled (credits left {rem})")

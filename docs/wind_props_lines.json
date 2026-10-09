@@ -1,0 +1,1180 @@
+{
+ "generated_utc": "2026-10-09T15:08:56Z",
+ "season": 2026,
+ "as_of_utc": "2026-10-09T15:08:56Z",
+ "markets": {
+  "player_pass_yds": "pass yds",
+  "player_pass_completions": "completions",
+  "player_pass_attempts": "pass att",
+  "player_receptions": "receptions",
+  "player_reception_yds": "rec yds"
+ },
+ "games": [
+  {
+   "gid": "2026_05_BAL_ATL",
+   "week": 5,
+   "away": "BAL",
+   "home": "ATL",
+   "commence": "2026-10-12T00:20:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Drake London",
+     "team": "ATL",
+     "line": 81.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Zay Flowers",
+     "team": "BAL",
+     "line": 70.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Mark Andrews",
+     "team": "BAL",
+     "line": 29.5,
+     "under": -116,
+     "over": -109,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Bijan Robinson",
+     "team": "ATL",
+     "line": 27.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Kyle Pitts",
+     "team": "ATL",
+     "line": 24.5,
+     "under": -115,
+     "over": -109,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jahan Dotson",
+     "team": "ATL",
+     "line": 20.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Rashod Bateman",
+     "team": "BAL",
+     "line": 17.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_BUF_LA",
+   "week": 5,
+   "away": "BUF",
+   "home": "LA",
+   "commence": "2026-10-13T00:15:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Puka Nacua",
+     "team": "LA",
+     "line": 94.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Davante Adams",
+     "team": "LA",
+     "line": 63.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Dalton Kincaid",
+     "team": "BUF",
+     "line": 49.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Kyren Williams",
+     "team": "LA",
+     "line": 20.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_CHI_GB",
+   "week": 5,
+   "away": "CHI",
+   "home": "GB",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Christian Watson",
+     "team": "GB",
+     "line": 60.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Matthew Golden",
+     "team": "GB",
+     "line": 56.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Tucker Kraft",
+     "team": "GB",
+     "line": 49.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Luther Burden III",
+     "team": "CHI",
+     "line": 48.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Rome Odunze",
+     "team": "CHI",
+     "line": 40.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Colston Loveland",
+     "team": "CHI",
+     "line": 37.5,
+     "under": -115,
+     "over": -109,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Kalif Raymond",
+     "team": "CHI",
+     "line": 28.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "D'Andre Swift",
+     "team": "CHI",
+     "line": 14.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "MarShawn Lloyd",
+     "team": "GB",
+     "line": 13.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Skyy Moore",
+     "team": "GB",
+     "line": 12.5,
+     "under": -116,
+     "over": -108,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_CIN_MIA",
+   "week": 5,
+   "away": "CIN",
+   "home": "MIA",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Malik Washington",
+     "team": "MIA",
+     "line": 41.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Greg Dulcich",
+     "team": "MIA",
+     "line": 27.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Ollie Gordon II",
+     "team": "MIA",
+     "line": 10.5,
+     "under": -109,
+     "over": -115,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_CLE_NYJ",
+   "week": 5,
+   "away": "CLE",
+   "home": "NYJ",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Garrett Wilson",
+     "team": "NYJ",
+     "line": 69.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Denzel Boston",
+     "team": "CLE",
+     "line": 48.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "KC Concepcion",
+     "team": "CLE",
+     "line": 41.5,
+     "under": -115,
+     "over": -109,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Harold Fannin Jr.",
+     "team": "CLE",
+     "line": 36.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_DEN_LAC",
+   "week": 5,
+   "away": "DEN",
+   "home": "LAC",
+   "commence": "2026-10-11T20:05:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jaylen Waddle",
+     "team": "DEN",
+     "line": 53.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Courtland Sutton",
+     "team": "DEN",
+     "line": 37.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "RJ Harvey",
+     "team": "DEN",
+     "line": 26.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Troy Franklin",
+     "team": "DEN",
+     "line": 19.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Evan Engram",
+     "team": "DEN",
+     "line": 17.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Marvin Mims Jr.",
+     "team": "DEN",
+     "line": 11.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_DET_ARI",
+   "week": 5,
+   "away": "DET",
+   "home": "ARI",
+   "commence": "2026-10-11T20:25:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Trey McBride",
+     "team": "ARI",
+     "line": 80.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Amon-Ra St. Brown",
+     "team": "DET",
+     "line": 80.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Michael Wilson",
+     "team": "ARI",
+     "line": 74.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jameson Williams",
+     "team": "DET",
+     "line": 53.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Sam LaPorta",
+     "team": "DET",
+     "line": 51.5,
+     "under": -115,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jahmyr Gibbs",
+     "team": "DET",
+     "line": 37.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Marvin Harrison Jr.",
+     "team": "ARI",
+     "line": 34.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Isaac TeSlaa",
+     "team": "DET",
+     "line": 25.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Kendrick Bourne",
+     "team": "ARI",
+     "line": 23.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Tyler Allgeier",
+     "team": "ARI",
+     "line": 11.5,
+     "under": -107,
+     "over": -117,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jeremiyah Love",
+     "team": "ARI",
+     "line": 11.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_HOU_TEN",
+   "week": 5,
+   "away": "HOU",
+   "home": "TEN",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Nico Collins",
+     "team": "HOU",
+     "line": 80.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Carnell Tate",
+     "team": "TEN",
+     "line": 50.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Dalton Schultz",
+     "team": "HOU",
+     "line": 36.5,
+     "under": -109,
+     "over": -115,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Wan'Dale Robinson",
+     "team": "TEN",
+     "line": 32.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Kayshon Boutte",
+     "team": "HOU",
+     "line": 25.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Gunnar Helm",
+     "team": "TEN",
+     "line": 18.5,
+     "under": -115,
+     "over": -109,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jaylin Noel",
+     "team": "HOU",
+     "line": 17.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Elic Ayomanor",
+     "team": "TEN",
+     "line": 17.5,
+     "under": -116,
+     "over": -108,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Xavier Hutchinson",
+     "team": "HOU",
+     "line": 16.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Tyjae Spears",
+     "team": "TEN",
+     "line": 10.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Calvin Ridley",
+     "team": "TEN",
+     "line": 9.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Tony Pollard",
+     "team": "TEN",
+     "line": 8.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Woody Marks",
+     "team": "HOU",
+     "line": 8.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "David Montgomery",
+     "team": "HOU",
+     "line": 7.5,
+     "under": -119,
+     "over": -106,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_IND_PIT",
+   "week": 5,
+   "away": "IND",
+   "home": "PIT",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Josh Downs",
+     "team": "IND",
+     "line": 57.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "DK Metcalf",
+     "team": "PIT",
+     "line": 49.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Tyler Warren",
+     "team": "IND",
+     "line": 48.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Roman Wilson",
+     "team": "PIT",
+     "line": 32.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Pat Freiermuth",
+     "team": "PIT",
+     "line": 28.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Keenan Allen",
+     "team": "IND",
+     "line": 27.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Darnell Washington",
+     "team": "PIT",
+     "line": 22.5,
+     "under": -116,
+     "over": -108,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jonathan Taylor",
+     "team": "IND",
+     "line": 15.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_LV_NE",
+   "week": 5,
+   "away": "LV",
+   "home": "NE",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Brock Bowers",
+     "team": "LV",
+     "line": 72.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Romeo Doubs",
+     "team": "NE",
+     "line": 53.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Tre Tucker",
+     "team": "LV",
+     "line": 39.5,
+     "under": -109,
+     "over": -115,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Hunter Henry",
+     "team": "NE",
+     "line": 37.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Michael Mayer",
+     "team": "LV",
+     "line": 30.5,
+     "under": -115,
+     "over": -109,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Ashton Jeanty",
+     "team": "LV",
+     "line": 23.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "DeMario Douglas",
+     "team": "NE",
+     "line": 23.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Cody White",
+     "team": "LV",
+     "line": 16.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_MIN_NO",
+   "week": 5,
+   "away": "MIN",
+   "home": "NO",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Chris Olave",
+     "team": "NO",
+     "line": 81.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Juwan Johnson",
+     "team": "NO",
+     "line": 43.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Devaughn Vele",
+     "team": "NO",
+     "line": 36.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Aaron Jones",
+     "team": "MIN",
+     "line": 19.5,
+     "under": -115,
+     "over": -109,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_NYG_WAS",
+   "week": 5,
+   "away": "NYG",
+   "home": "WAS",
+   "commence": "2026-10-11T17:00:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Malik Nabers",
+     "team": "NYG",
+     "line": 54.5,
+     "under": -112,
+     "over": -112,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Isaiah Likely",
+     "team": "NYG",
+     "line": 40.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Malachi Fields",
+     "team": "NYG",
+     "line": 26.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Darnell Mooney",
+     "team": "NYG",
+     "line": 17.5,
+     "under": -109,
+     "over": -115,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Cam Skattebo",
+     "team": "NYG",
+     "line": 12.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_PHI_JAX",
+   "week": 5,
+   "away": "PHI",
+   "home": "JAX",
+   "commence": "2026-10-11T13:30:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Parker Washington",
+     "team": "JAX",
+     "line": 62.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Dontayvion Wicks",
+     "team": "PHI",
+     "line": 47.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jakobi Meyers",
+     "team": "JAX",
+     "line": 41.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Brenton Strange",
+     "team": "JAX",
+     "line": 34.5,
+     "under": -113,
+     "over": -111,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Makai Lemon",
+     "team": "PHI",
+     "line": 32.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Brian Thomas Jr",
+     "team": "JAX",
+     "line": 24.5,
+     "under": -116,
+     "over": -108,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Will Shipley",
+     "team": "PHI",
+     "line": 13.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Josh Cameron",
+     "team": "JAX",
+     "line": 10.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Bhayshul Tuten",
+     "team": "JAX",
+     "line": 9.5,
+     "under": -109,
+     "over": -115,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  },
+  {
+   "gid": "2026_05_SF_SEA",
+   "week": 5,
+   "away": "SF",
+   "home": "SEA",
+   "commence": "2026-10-11T20:25:00Z",
+   "props": [
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Jaxon Smith-Njigba",
+     "team": "SEA",
+     "line": 90.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "George Kittle",
+     "team": "SF",
+     "line": 52.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Mike Evans",
+     "team": "SF",
+     "line": 47.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Christian McCaffrey",
+     "team": "SF",
+     "line": 35.5,
+     "under": -111,
+     "over": -113,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Deebo Samuel",
+     "team": "SF",
+     "line": 31.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Cooper Kupp",
+     "team": "SEA",
+     "line": 24.5,
+     "under": -109,
+     "over": -115,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "AJ Barner",
+     "team": "SEA",
+     "line": 23.5,
+     "under": -114,
+     "over": -110,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Rashid Shaheed",
+     "team": "SEA",
+     "line": 20.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Tory Horton",
+     "team": "SEA",
+     "line": 9.5,
+     "under": -118,
+     "over": -107,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "Emanuel Wilson",
+     "team": "SEA",
+     "line": 8.5,
+     "under": -108,
+     "over": -116,
+     "pulled": "2026-10-08T14:32:04Z"
+    },
+    {
+     "market": "player_reception_yds",
+     "label": "rec yds",
+     "player": "George Holani",
+     "team": "SEA",
+     "line": 8.5,
+     "under": -110,
+     "over": -114,
+     "pulled": "2026-10-08T14:32:04Z"
+    }
+   ]
+  }
+ ]
+}

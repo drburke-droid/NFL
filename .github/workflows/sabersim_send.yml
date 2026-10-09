@@ -174,6 +174,10 @@ jobs:
           python scripts/fan_inbox_pull.py --record || echo "fan drop box pull failed (continuing)"
           python scripts/fan_grade.py --sends pkg/sends outputs/sabersim || echo "fan grade failed (continuing)"
 
+      - name: Wind Props lines for the 🌬️ tab (after the slate pull)
+        if: steps.win.outputs.in_window == 'true' || inputs.force == 'true'
+        run: python scripts/wind_props_bake.py || echo "wind props bake failed (continuing)"
+
       - name: Record the send
         if: steps.win.outputs.in_window == 'true' || inputs.force == 'true' || steps.win.outputs.grade_due == 'true'
         run: |
@@ -182,6 +186,7 @@ jobs:
           python scripts/record_send.py -m "SaberSim send log / grade (automated)" \
             data/sabersim/sent_log.json \
             data/props_frames/snapshots/props_*.csv \
+            docs/wind_props_lines.json \
             data/kdst/kdst_*.csv \
             data/subvertadown/subvertadown_long.csv \
             docs/sabersim_accuracy.json \

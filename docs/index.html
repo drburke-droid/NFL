@@ -3906,8 +3906,30 @@ async function windScan(){
         g.rain=+pr.reduce((a,b)=>a+b,0).toFixed(1);
       });
     }
-    WB.scan={ts:now,rows};saveWB();render();
+    WB.scan={ts:now,rows};saveWB();
+    await wpLoad(true);
+    render();
   }catch(e){if(st)st.textContent="scan failed: "+e.message;}
+}
+// 🌬️ WIND PROPS — passing/receiving UNDERS scale with FORECAST wind (outputs/reports/props_pattern_mine.md,
+// 35k DK closing props 2023-25): 0-4kn -4%, 8-11 0%, 11-13 +1%, 13-15 +12%, >=10kn +5.6% (z 3.0). Watch item
+// (2024 flat). Lines = docs/wind_props_lines.json, baked by scripts/wind_props_bake.py after every automated
+// slate pull (~80 min before each kickoff), so a press of Check forecasts on game day shows live DK unders.
+const WP_MIN=10, WP_P=0.55;
+async function wpLoad(quiet){
+  const st=document.getElementById("wbScanStat");
+  try{
+    const r=await fetch("wind_props_lines.json?t="+Date.now(),{cache:"no-store"});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    WB.wp={ts:Date.now(),data:await r.json()};saveWB();
+  }catch(e){ if(st&&!quiet)st.textContent="wind props lines unavailable: "+e.message; }
+}
+function wpBand(w){return w>=13&&w<15?"🔥 13–15 kn — strongest band (+12%)":w>=15?"15+ kn (+5.6%)":"10–13 kn (+1 to +6%)";}
+function wpAdd(g,p){
+  const bank=wbBank(),dec=amToDec(p.under)||1.909,date=g.ko.slice(0,10);
+  WB.bets.push({id:Date.now()+Math.random().toString(16).slice(2,6),date,game:`${g.away} @ ${g.home}`,kind:"wprop",
+    desc:`${p.player} ${p.label} UNDER ${p.line}`,price:p.under,stake:Math.max(1,Math.round(wbKelly(bank,dec,WP_P))),
+    result:null,fc:`${g.wind}kn g${g.gust}`});
 }
 function wbAddTickets(g){
   const bank=wbBank(),dec=1.909,date=g.ko.slice(0,10),game=`${g.away} @ ${g.home}`;
@@ -4031,6 +4053,31 @@ function renderProps(){
   document.getElementById("count").textContent="";
   document.getElementById("notes").innerHTML="📡 <b>Props Watch.</b> Model_Burke (walk-forward, conformal-calibrated) vs DraftKings closing reception-yds lines. Backtest evidence: bet ONLY high-conviction OVERS — pooled 5%-edge betting loses; the over pocket ran +14% @8% edge. Refresh weekly: <code>python scripts/props_watch.py</code>.";
 }
+function wpCard(){
+  const scan=WB.scan,D=(WB.wp||{}).data;
+  const live=(scan?scan.rows:[]).filter(g=>!g.far&&g.wind>=WP_MIN).sort((a,b)=>a.ko<b.ko?-1:1);
+  const fresh=D?`lines baked ${new Date(D.generated_utc).toLocaleString()}`:"no lines loaded";
+  let body;
+  if(!scan) body='<div class="muted" style="font-size:13px">Press <b>Check forecasts</b> above — it also loads the latest DraftKings lines for these markets.</div>';
+  else if(!live.length) body='<div class="muted" style="font-size:13px">No outdoor game in the window has a forecast of 10+ kn — no wind props this week.</div>';
+  else body=live.map(g=>{
+    const G=D&&D.games.find(x=>x.gid===g.gid), ps=G?G.props:[];
+    const ko=new Date(g.ko);
+    const head=`<div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-top:10px"><b>${g.away} @ ${g.home}</b>
+      <span class="muted">${ko.toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})}</span>
+      <span class="wbq">${g.wind} kn (gust ${g.gust}) · ${wpBand(g.wind)}</span>
+      ${ps.length?`<button class="btn sm wpall" data-gid="${g.gid}" title="every under below; they are correlated">＋ all ${ps.length}</button>`:""}</div>`;
+    if(!ps.length) return head+'<div class="muted" style="font-size:12px">No DraftKings lines for this game yet — the automated pull posts them ~80 min before kickoff. Press Check forecasts again then.</div>';
+    return head+`<table class="wbtbl"><tr><th>player</th><th>market</th><th>line</th><th>under</th><th>over</th><th>pulled</th><th></th></tr>${ps.map((p,i)=>`<tr>
+      <td><b>${p.player}</b> <span class="muted">${p.team||""}</span></td><td>${p.label}</td><td>${p.line}</td>
+      <td><b>${p.under>0?"+":""}${p.under}</b></td><td class="muted">${p.over>0?"+":""}${p.over}</td>
+      <td class="muted" style="font-size:11px">${new Date(p.pulled).toLocaleString([],{weekday:"short",hour:"numeric",minute:"2-digit"})}</td>
+      <td><button class="btn sm up wpadd" data-gid="${g.gid}" data-i="${i}">＋ under</button></td></tr>`).join("")}</table>`;}).join("");
+  return `<div class="wbcard"><h3>🌬️ Wind Props <button class="btn sm" id="wpReload" style="margin-left:8px">↻ lines</button>
+    <span class="muted" style="font-weight:400;font-size:12px;margin-left:8px">${fresh}</span></h3>
+    <div class="muted" style="font-size:12px;margin-bottom:4px">Passing + receiving <b>UNDERS</b> where the kickoff→+3h forecast is <b>10+ kn</b>: QB pass yds / completions / attempts, receptions, receiving yds (interceptions excluded — wind pushes them up). 2023-25 DK closing lines: calm −4%, 13–15 kn +12%, all 10+ kn +5.6% (z 3.0) — a <b>watch item</b>: 2024 was flat, so paper-trade it. Props in one game move together; a few per game, not all.</div>
+    ${body}</div>`;
+}
 function renderWind(){
   const scan=WB.scan,pend=WB.bets.filter(b=>!b.result),done=WB.bets.filter(b=>b.result);
   const bank=wbBank(),staked=done.reduce((s,b)=>s+b.stake,0),pnl=bank-WB.bank0;
@@ -4069,6 +4116,7 @@ function renderWind(){
     <div><div class="wbig">${staked?((pnl/staked)*100).toFixed(1)+"%":"—"}</div><div class="lb">ROI on $${staked.toFixed(0)} staked</div></div>
     <div><div class="wbig">${rec("total")}</div><div class="lb">totals</div></div>
     <div><div class="wbig">${rec("prop")}</div><div class="lb">QB props</div></div>
+    <div><div class="wbig">${rec("wprop")}</div><div class="lb">wind props</div></div>
     <div style="margin-left:auto"><button class="btn sm" id="wbExport">⬇ CSV</button> <button class="btn sm" id="wbReset">reset log</button></div>
   </div></div>
   <div class="wbcard"><h3>1 · This week's forecast scan <button class="btn sm up" id="wbScan" style="margin-left:8px">🔄 Check forecasts</button>
@@ -4076,6 +4124,7 @@ function renderWind(){
     ${scan&&scan.rows.length?`<table class="wbtbl"><tr><th>wk</th><th>game</th><th>kickoff (local)</th><th>wind</th><th>gust</th><th>rain</th><th>status</th><th></th></tr>${scanRows}</table>`
       :`<div class="muted" style="font-size:13px">${scan?"No outdoor games in the next 8 days — season starts in September.":"Press <b>Check forecasts</b> — pulls the NFL schedule + hourly stadium forecasts (free open-meteo API) and flags games whose kickoff→+3h wind sits in the 8–15 kn band."}</div>`}
   </div>
+  ${wpCard()}
   <div class="wbcard"><h3>2 · Pending tickets (${pend.length}) <button class="btn sm" id="wbCustom" style="margin-left:8px">＋ custom</button></h3>
     ${pend.length?`<table class="wbtbl"><tr><th>date</th><th>bet</th><th>game</th><th>kind</th><th>fc</th><th>price</th><th>stake $</th><th>result</th><th></th></tr>${pend.map(b=>betRow(b,false)).join("")}</table>
       <div class="muted" style="font-size:11px;margin-top:6px">Fill the actual closing line into the bet text and the real best <b>regulated-book</b> price (American). Stakes pre-sized at quarter-Kelly of current bankroll (totals p=.583, props p=.55, capped 10%) — resize freely. Mark W/L/P after the game.</div>`
@@ -4094,13 +4143,17 @@ function renderWind(){
       ...WB.bets.map(b=>[b.date,b.game,b.kind,'"'+String(b.desc).replace(/"/g,'""')+'"',b.fc||"",b.price,b.stake,b.result||"pending",b.result?wbPnl(b).toFixed(2):""].join(","))].join("\n");
     const a=document.createElement("a");a.href="data:text/csv;charset=utf-8,"+encodeURIComponent(csv);a.download="wind_paper_bets.csv";a.click();};
   document.querySelectorAll(".wbadd").forEach(x=>x.onclick=()=>{const g=WB.scan.rows.find(r=>r.gid===x.dataset.gid);if(g)wbAddTickets(g);});
+  const wpFind=(gid,i)=>{const g=WB.scan.rows.find(r=>r.gid===gid),G=((WB.wp||{}).data||{games:[]}).games.find(x=>x.gid===gid);return [g,G&&(i==null?G.props:G.props[+i])];};
+  document.querySelectorAll(".wpadd").forEach(x=>x.onclick=()=>{const [g,p]=wpFind(x.dataset.gid,x.dataset.i);if(g&&p){wpAdd(g,p);saveWB();render();}});
+  document.querySelectorAll(".wpall").forEach(x=>x.onclick=()=>{const [g,ps]=wpFind(x.dataset.gid);if(g&&ps){ps.forEach(p=>wpAdd(g,p));saveWB();render();}});
+  const wpr=document.getElementById("wpReload");if(wpr)wpr.onclick=async()=>{await wpLoad(false);render();};
   document.querySelectorAll(".wbf").forEach(x=>x.onchange=()=>{const b=WB.bets.find(r=>r.id===x.dataset.id);if(!b)return;
     b[x.dataset.f]=x.dataset.f==="desc"?x.value:+x.value;saveWB();render();});
   document.querySelectorAll(".wbres").forEach(x=>x.onclick=()=>{const b=WB.bets.find(r=>r.id===x.dataset.id);if(b){b.result=x.dataset.r;saveWB();render();}});
   document.querySelectorAll(".wbre").forEach(x=>x.onclick=()=>{const b=WB.bets.find(r=>r.id===x.dataset.id);if(b){b.result=null;saveWB();render();}});
   document.querySelectorAll(".wbdel").forEach(x=>x.onclick=()=>{WB.bets=WB.bets.filter(r=>r.id!==x.dataset.id);saveWB();render();});
   document.getElementById("notes").innerHTML="🌬️ <b>Wind-unders paper trading.</b> The one weather edge that survived every test (see <i>outputs/reports/sentiment_props.md</i>): when the <b>forecast kickoff→+3h wind is 8–15 kn</b> at an outdoor stadium, the market under-charges ~1–2 points — totals unders ran 55–58% and QB pass-yds unders ~59% (2015–25, incl. out-of-sample 2015–19 at 58.3% and forecast-conditioned 2024–25). <b>15+ kn is priced (no bet)</b> — the market learned headline wind around 2020. Calm: no bet (over side tested dead). 🌧 Rain: watchlist only — real 2015–23, absent 2024–25. "+
-    "<b>Weekly routine (game-day morning):</b> ① Check forecasts ② for ✅ games add the 3 tickets ③ paste each real closing line + best <b>regulated-book</b> price ④ mark W/L/P after the games. Expect ~130 tickets/season at ~58%; note the 3 tickets per game are <b>correlated</b> (one shootout loses all 3) and a 2024-style losing season is within normal variance — judge on the full season, quarter-Kelly only. Log lives in your browser (localStorage); ⬇ CSV to back it up.";
+    "<b>Weekly routine (game-day morning):</b> ① Check forecasts (also loads 🌬️ Wind Props lines; re-press ~80 min before a window's kickoff for the game-day DK lines) ② for ✅ games add the 3 tickets, and any Wind Props unders ③ paste each real closing line + best <b>regulated-book</b> price ④ mark W/L/P after the games. Expect ~130 tickets/season at ~58%; note the 3 tickets per game are <b>correlated</b> (one shootout loses all 3) and a 2024-style losing season is within normal variance — judge on the full season, quarter-Kelly only. Log lives in your browser (localStorage); ⬇ CSV to back it up.";
 }
 // ---------- 🚨 Darts tab: handcuff storms + top-10 per dart-finding lens ----------
 function renderDartLenses(){
