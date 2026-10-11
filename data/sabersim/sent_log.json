@@ -2191,5 +2191,106 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-11T13:30_1g": {
+  "sent_at": "2026-10-11T12:32:48Z",
+  "rows": 31,
+  "file": "Burke_Model_Burke_2026_sun09am_1011_1230.csv",
+  "slate": "Sun 10/11 09:30 AM ET slate (1 games)",
+  "credits_left": 2732,
+  "lineups": [
+   "schedule: 18 weeks; week 5 runs Fri 10/09 .. Tue 10/13",
+   "week 5: 1 games in this send (kickoffs Sun 13:30Z .. Sun 13:30Z)",
+   "injury report (nfl.com): 110 skill/K players listed; practice {'FP': 55, 'DNP': 29, 'LP': 26}; designations {'Out': 28, 'Questionable': 27, 'Doubtful': 1}",
+   "lineups: 407 statuses pulled {'espn': 157, 'sleeper': 87, '+sleeper': 85, 'espn+sleeper': 50, 'nfl-report': 27, 'nfl-report+sleeper': 1}; 0 Q, 3 OUT with a projection {'espn+sleeper': 2, 'nfl-report+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk5.csv",
+    "rows": 853,
+    "age_hours": 0.0,
+    "slate_skill": 31,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-11T12:31Z",
+    "credits_left": "232"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 24,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 5,
+     "rec_yds": 11,
+     "rec": 11,
+     "exp_td": 24
+    },
+    "no_line": [
+     "DeVonta Smith"
+    ],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 7
+   },
+   "kdst": {
+    "file": "kdst_2026_wk5.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "JAX": [
+      "Cam Little"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 110,
+    "designations": {
+     "Out": 28,
+     "Questionable": 27,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 407,
+    "by_src": {
+     "espn": 157,
+     "sleeper": 87,
+     "+sleeper": 85,
+     "espn+sleeper": 50,
+     "nfl-report": 27,
+     "nfl-report+sleeper": 1
+    },
+    "q": 0,
+    "out": 3,
+    "out_by_src": {
+     "espn+sleeper": 2,
+     "nfl-report+sleeper": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): DeVonta Smith"
+   ]
+  }
  }
 }
