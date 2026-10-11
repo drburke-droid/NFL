@@ -2545,5 +2545,112 @@
     "no DK props posted (news?): Quentin Johnston"
    ]
   }
+ },
+ "2026-10-11T20:25_2g": {
+  "sent_at": "2026-10-11T19:27:46Z",
+  "rows": 52,
+  "file": "Burke_Model_Burke_2026_sun04pm_1011_1925.csv",
+  "slate": "Sun 10/11 04:25 PM ET slate (2 games)",
+  "credits_left": 2627,
+  "lineups": [
+   "schedule: 18 weeks; week 5 runs Fri 10/09 .. Tue 10/13",
+   "week 5: 2 games in this send (kickoffs Sun 20:25Z .. Sun 20:25Z)",
+   "injury report (nfl.com): 110 skill/K players listed; practice {'FP': 55, 'DNP': 29, 'LP': 26}; designations {'Out': 28, 'Questionable': 27, 'Doubtful': 1}",
+   "lineups: 475 statuses pulled {'espn': 192, 'sleeper': 88, 'espn+sleeper': 86, '+sleeper': 86, 'nfl-report': 21, 'nfl-report+sleeper': 2}; 1 Q, 3 OUT with a projection {'espn+sleeper': 2, 'espn': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk5.csv",
+    "rows": 853,
+    "age_hours": 0.0,
+    "slate_skill": 50,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-10-11T19:26Z",
+    "credits_left": "127"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 42,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 13,
+     "rec_yds": 22,
+     "rec": 22,
+     "exp_td": 42
+    },
+    "no_line": [
+     "Marvin Harrison Jr."
+    ],
+    "eligible": 18,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 8
+   },
+   "kdst": {
+    "file": "kdst_2026_wk5.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 4,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ],
+     "DET": [
+      "Jake Bates"
+     ],
+     "SEA": [
+      "Jason Myers"
+     ],
+     "SF": [
+      "Eddy Pineiro"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 110,
+    "designations": {
+     "Out": 28,
+     "Questionable": 27,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 475,
+    "by_src": {
+     "espn": 192,
+     "sleeper": 88,
+     "espn+sleeper": 86,
+     "+sleeper": 86,
+     "nfl-report": 21,
+     "nfl-report+sleeper": 2
+    },
+    "q": 1,
+    "out": 3,
+    "out_by_src": {
+     "espn+sleeper": 2,
+     "espn": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Marvin Harrison Jr."
+   ]
+  }
  }
 }
