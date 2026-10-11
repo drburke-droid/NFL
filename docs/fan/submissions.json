@@ -1,6 +1,6 @@
 {
- "generated": "2026-10-10T14:05Z",
- "n_codes": 164,
+ "generated": "2026-10-11T14:00Z",
+ "n_codes": 209,
  "entries": [
   {
    "season": 2026,
@@ -16,9 +16,18 @@
    "week": 5,
    "fan": "ERK",
    "team": "MIN",
-   "submitted_at": "2026-10-09T12:00:42Z",
-   "arrows": 10,
-   "received": "10/9/2026 6:00:43"
+   "submitted_at": "2026-10-11T12:41:15Z",
+   "arrows": 13,
+   "received": "10/11/2026 6:41:15"
+  },
+  {
+   "season": 2026,
+   "week": 5,
+   "fan": "NYO",
+   "team": "LV",
+   "submitted_at": "2026-10-11T14:00:55Z",
+   "arrows": 35,
+   "received": "10/11/2026 8:00:56"
   },
   {
    "season": 2026,
