@@ -1,33 +1,33 @@
 {
- "generated": "2026-10-11T14:05Z",
- "n_codes": 211,
+ "generated": "2026-10-12T14:01Z",
+ "n_codes": 240,
  "entries": [
+  {
+   "season": 2026,
+   "week": 5,
+   "fan": "NYO",
+   "team": "LV",
+   "submitted_at": "2026-10-11T15:18:23Z",
+   "arrows": 49,
+   "received": "10/11/2026 9:18:23"
+  },
   {
    "season": 2026,
    "week": 5,
    "fan": "REB",
    "team": "CHI",
-   "submitted_at": "2026-10-08T14:53:21Z",
-   "arrows": 26,
-   "received": "10/8/2026 8:53:21"
+   "submitted_at": "2026-10-11T15:48:30Z",
+   "arrows": 25,
+   "received": "10/11/2026 9:48:31"
   },
   {
    "season": 2026,
    "week": 5,
    "fan": "ERK",
    "team": "MIN",
-   "submitted_at": "2026-10-11T12:41:15Z",
-   "arrows": 13,
-   "received": "10/11/2026 6:41:15"
-  },
-  {
-   "season": 2026,
-   "week": 5,
-   "fan": "NYO",
-   "team": "LV",
-   "submitted_at": "2026-10-11T14:02:15Z",
-   "arrows": 36,
-   "received": "10/11/2026 8:02:16"
+   "submitted_at": "2026-10-12T00:35:03Z",
+   "arrows": 7,
+   "received": "10/11/2026 18:35:03"
   },
   {
    "season": 2026,
