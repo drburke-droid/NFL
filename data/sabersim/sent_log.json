@@ -2748,5 +2748,106 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-13T00:15_1g": {
+  "sent_at": "2026-10-12T23:17:17Z",
+  "rows": 28,
+  "file": "Burke_Model_Burke_2026_mon08pm_1012_2314.csv",
+  "slate": "Mon 10/12 08:15 PM ET slate (1 games)",
+  "credits_left": 2605,
+  "lineups": [
+   "schedule: 18 weeks; week 5 runs Fri 10/09 .. Tue 10/13",
+   "week 5: 1 games in this send (kickoffs Tue 00:15Z .. Tue 00:15Z)",
+   "injury report (nfl.com): 110 skill/K players listed; practice {'FP': 55, 'DNP': 29, 'LP': 26}; designations {'Out': 28, 'Questionable': 27, 'Doubtful': 1}",
+   "lineups: 456 statuses pulled {'espn': 159, '+sleeper': 118, 'sleeper': 90, 'espn+sleeper': 65, 'nfl-report': 20, 'nfl-report+sleeper': 4}; 0 Q, 4 OUT with a projection {'espn+sleeper': 3, 'nfl-report': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk5.csv",
+    "rows": 853,
+    "age_hours": 0.0,
+    "slate_skill": 29,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-12T23:16Z",
+    "credits_left": "105"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 23,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 8,
+     "rec_yds": 16,
+     "rec": 16,
+     "exp_td": 23
+    },
+    "no_line": [
+     "D.J. Moore"
+    ],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk5.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "BUF": [
+      "Tyler Bass"
+     ],
+     "LA": [
+      "Harrison Mevis"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 110,
+    "designations": {
+     "Out": 28,
+     "Questionable": 27,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 456,
+    "by_src": {
+     "espn": 159,
+     "+sleeper": 118,
+     "sleeper": 90,
+     "espn+sleeper": 65,
+     "nfl-report": 20,
+     "nfl-report+sleeper": 4
+    },
+    "q": 0,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 3,
+     "nfl-report": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): D.J. Moore"
+   ]
+  }
  }
 }
