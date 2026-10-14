@@ -348,7 +348,7 @@
      "pos": "QB",
      "team": "DET",
      "espn_id": 3046779,
-     "slot": "QB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 3,
      "acq": "DRAFT",
@@ -387,7 +387,7 @@
      "pos": "QB",
      "team": "SEA",
      "espn_id": 3912547,
-     "slot": "BENCH",
+     "slot": "QB",
      "keeper": true,
      "keeper_price": 8,
      "acq": "ADD",
@@ -477,7 +477,7 @@
      "keeper": true,
      "keeper_price": 25,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 269.0,
      "last_pts": 8.6
     },
@@ -594,7 +594,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 111.7,
      "last_pts": 10.8
     },
@@ -935,7 +935,7 @@
      "keeper": true,
      "keeper_price": 38,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 51.1,
      "last_pts": 2.2
     },
@@ -1151,7 +1151,7 @@
      "keeper": true,
      "keeper_price": 26,
      "acq": "DRAFT",
-     "inj": "DOUBTFUL",
+     "inj": "QUESTIONABLE",
      "season_pts": 207.2,
      "last_pts": 4.8
     },
@@ -1229,7 +1229,7 @@
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "DOUBTFUL",
      "season_pts": 88.9,
      "last_pts": 0.0
     },
@@ -1687,7 +1687,7 @@
      "keeper": true,
      "keeper_price": 9,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 137.4,
      "last_pts": 7.7
     },
@@ -1989,7 +1989,7 @@
      "keeper": true,
      "keeper_price": 22,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "DOUBTFUL",
      "season_pts": 211.7,
      "last_pts": 0.0
     },
@@ -2322,7 +2322,7 @@
      "keeper": true,
      "keeper_price": 2,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 91.4,
      "last_pts": null
     },

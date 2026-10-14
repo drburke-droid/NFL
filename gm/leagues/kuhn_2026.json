@@ -270,7 +270,7 @@
      "name": "Jared Goff",
      "pos": "QB",
      "nfl_team": "DET",
-     "slot": "QB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 3
@@ -309,7 +309,7 @@
      "name": "Sam Darnold",
      "pos": "QB",
      "nfl_team": "SEA",
-     "slot": "BENCH",
+     "slot": "QB",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 8
@@ -408,7 +408,7 @@
      "keeper_cost": {
       "price": 25
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -525,7 +525,7 @@
      "keeper_cost": {
       "price": 1
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -882,7 +882,7 @@
      "keeper_cost": {
       "price": 38
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1106,7 +1106,7 @@
      "keeper_cost": {
       "price": 26
      },
-     "injury": "DOUBTFUL",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1184,7 +1184,7 @@
      "keeper_cost": {
       "price": 10
      },
-     "injury": "QUESTIONABLE",
+     "injury": "DOUBTFUL",
      "times_kept": 0
     },
     {
@@ -1658,7 +1658,7 @@
      "keeper_cost": {
       "price": 9
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1976,7 +1976,7 @@
      "keeper_cost": {
       "price": 22
      },
-     "injury": "QUESTIONABLE",
+     "injury": "DOUBTFUL",
      "times_kept": 1
     },
     {
@@ -2317,7 +2317,7 @@
      "keeper_cost": {
       "price": 2
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     },
     {
