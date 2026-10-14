@@ -178,7 +178,7 @@
   table.np th { font-size:9.5px; font-weight:700; letter-spacing:.5px; color:#333; border-bottom:1px solid #999; text-align:right; padding:0 3px 1px; white-space:nowrap; }
   table.np td { padding:1px 3px; text-align:right; white-space:nowrap; border-bottom:1px dotted #b8ae98; }
   table.np th:first-child, table.np td:first-child, table.np th.l, table.np td.l { text-align:left; }
-  table.np td.nm { max-width:150px; overflow:hidden; text-overflow:ellipsis; }
+  table.np td.nm { max-width:150px; overflow:hidden; text-overflow:ellipsis; font-weight:400; }   /* fans plain, the projection sources (b) bold */
   table.np tr.base td { font-weight:700; } table.np td.nm b { font-weight:900; letter-spacing:.02em; }
   table.np tr.me td { background:rgba(0,0,0,.07); }
   table.np td.up { color:#1e5f2a; } table.np td.dn { color:#8a1c1c; }
@@ -210,6 +210,7 @@
   #attract .hs .crawl > div.gap { height:2lh; height:calc(2 * 2em); }
   #attract .hs .me { color:#ffd23f; text-shadow:0 0 .8vh rgba(255,210,63,.7); }
   #attract .hs b { font-weight:400; }
+  #attract .hs strong { font-weight:700; }   /* the projection sources */
   #attract .hs[hidden] { display:none; }
   #attract .hs .pos { color:#ff9f43; margin-left:.4em; }
   #attract .hs .crawl > div > b { flex:none; }   /* the points never leave the glass; a long name gives way */
@@ -1569,7 +1570,8 @@ function renderLead() {
   const st = standings();
   if (!st) { $("npseason").innerHTML = `<div class="np-empty">no week graded yet — the first box scores print the table</div>`; $("npweek").innerHTML = `<div class="np-empty">—</div>`; $("you").textContent = ""; $("crawl").innerHTML = ""; $("foldlines").innerHTML = `<div class="fl"><span>no week graded yet</span></div>`; return; }
   const cls = r => (r.base ? "base" : "") + (r.fan && (IDH ? (myPid(r.fan_id) || r.fan_id === IDH) : r.name === mineN) ? " me" : "");
-  const label = r => r.base ? "<b>THE ORACLE</b>" : r.fan ? esc(r.name) + tm(r.team) + " + <b>ORACLE</b>" : esc(r.name);
+  // the projection sources (the sites and THE ORACLE) in bold; a fan is just their name and team
+  const label = r => r.base ? "<b>THE ORACLE</b>" : r.site ? `<b>${esc(r.name)}</b>` : esc(r.name) + tm(r.team);
   $("npseason").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th>${st.weeks.map(w => `<th>wk ${w}</th>`).join("")}<th>avg</th><th>W-L vs THE ORACLE</th></tr>` +
     st.rows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td>${st.weeks.map(w => `<td>${r.weekly[w] != null ? r.weekly[w].toFixed(2) : "—"}</td>`).join("")}<td><b>${r.err < Infinity ? r.err.toFixed(2) : "—"}</b></td><td class="${r.base ? "" : r.w > r.l ? "up" : r.l > r.w ? "dn" : ""}">${r.base ? "—" : `${r.w}-${r.l}${r.t ? "-" + r.t : ""}`}</td></tr>`).join("") + `</table>`;
   const wk = st.mw.length ? st.mw[st.mw.length - 1] : null;
@@ -1577,20 +1579,20 @@ function renderLead() {
     const wrows = st.rows.filter(r => r.weekly[wk.week] != null && (!r.fan || (G.by_fan_week || []).some(x => x.fan === r.name && x.week === wk.week && x.graded))).sort((a, b) => c2(a.weekly[wk.week]) - c2(b.weekly[wk.week]) || (a.base ? -1 : b.base ? 1 : 0) || a.weekly[wk.week] - b.weekly[wk.week]);
     $("npweekh").innerHTML = `Week ${wk.week}${wk.week !== D.week ? " <small>latest complete week</small>" : ""}`;
     $("npweek").innerHTML = `<table class="np"><tr><th>#</th><th class="l">model</th><th>error</th></tr>` +
-      wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${r.base ? "<b>THE ORACLE</b>" : esc(r.name) + tm(r.team)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
+      wrows.map((r, i) => `<tr class="${cls(r)}"><td>${i + 1}</td><td class="l nm">${label(r)}</td><td>${r.weekly[wk.week].toFixed(2)}</td></tr>`).join("") + `</table>`;
   } else { $("npweekh").textContent = "This week"; $("npweek").innerHTML = `<div class="np-empty">no week graded yet</div>`; }
   // the attract screen's HIGH SCORES and the folded paper on the control panel
   // every model crawls past on the attract screen, THE ORACLE lit; the list is doubled so the loop is seamless
-  const line = (r, i) => `<div class="${r.base ? "me" : ""}"><span>${i + 1}. ${esc(r.base ? "THE ORACLE" : r.name.toUpperCase().slice(0, 15))}${r.team ? tm(r.team) : ""}</span><b>${r.err.toFixed(2)}</b></div>`;
+  const line = (r, i) => `<div class="${r.base ? "me" : ""}"><span>${i + 1}. ${r.base || r.site ? `<strong>${esc(r.base ? "THE ORACLE" : r.name.toUpperCase().slice(0, 15))}</strong>` : esc(r.name.toUpperCase().slice(0, 15))}${r.team ? tm(r.team) : ""}</span><b>${r.err.toFixed(2)}</b></div>`;
   // a two-line gap closes each pass, so the loop reads as a list that ends and starts again, not an endless one
   const pass = st.rows.map(line).join("") + `<div class="gap"></div>`;
   const crawl = $("crawl"); crawl.innerHTML = pass + pass;
   crawl.style.setProperty("--crawl", ((st.rows.length + 2) * 1.6) + "s");
   attractSwap();
-  $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "THE ORACLE" : esc(r.name) + tm(r.team) + (r.fan ? " + ORACLE" : "")}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
+  $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "<strong>THE ORACLE</strong>" : r.site ? `<strong>${esc(r.name)}</strong>` : esc(r.name) + tm(r.team)}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
   const meRow = st.rows.findIndex(r => r.fan && (IDH ? (myPid(r.fan_id) || r.fan_id === IDH) : r.name === mineN));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
-  $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} THE ORACLE by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} + THE ORACLE is not on the board yet — lock in picks and get graded`) : "";
+  $("you").innerHTML = mine ? (mr ? `You are <b style="color:#000">#${meRow + 1}</b> of ${st.rows.length} models, ${mr.removed > 0 ? "ahead of" : mr.removed < 0 ? "behind" : "level with"} THE ORACLE by ${Math.abs(mr.removed).toFixed(1)} pts` : `${esc(mine)} is not on the board yet — lock in picks and get graded`) : "";
 }
 function renderGrade() {
   const el = $("grade"), o = (G && G.overall) || {};
