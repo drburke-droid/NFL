@@ -210,6 +210,10 @@
   #attract .hs .crawl > div.gap { height:2lh; height:calc(2 * 2em); }
   #attract .hs .me { color:#ffd23f; text-shadow:0 0 .8vh rgba(255,210,63,.7); }
   #attract .hs b { font-weight:400; }
+  #attract .hs[hidden] { display:none; }
+  #attract .hs .pos { color:#ff9f43; margin-left:.4em; }
+  #attract .hs .crawl > div > b { flex:none; }   /* the points never leave the glass; a long name gives way */
+  #attract .hs .crawl > div > span { min-width:0; overflow:hidden; }
   @keyframes crawl { from { transform:translateY(0); } to { transform:translateY(-50%); } }
   #attract .coin { font-size:.85vh; color:#8a94a6; }
   @keyframes blink { 0%,55% { opacity:1 } 56%,100% { opacity:0 } }
@@ -315,8 +319,9 @@
     <div id="attract">
       <div class="t1">FOOTBALL<br>EXPERT</div>
       <div class="t2">YOU + THE ORACLE</div>
-      <div class="hst">HIGH SCORES &middot; PTS OFF</div>
+      <div class="hst" id="hst">HIGH SCORES &middot; PTS OFF</div>
       <div class="hs" id="hs"><div class="crawl" id="crawl"></div></div>
+      <div class="hs" id="hs2" hidden><div class="crawl" id="crawl2"></div></div>
       <div class="go">▶ PLAY NOW — CLICK TO PLAY</div>
       <div class="coin">NO COINS REQUIRED · MAN + MACHINE</div>
     </div>
@@ -856,7 +861,7 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { for (const id of ["fav", "rfav"]) { const o = document.createElement("option"); o.value = ab; o.textContent = id === "rfav" ? nm.toUpperCase() : nm; $(id).appendChild(o); } }
-  $("fav").value = FAV; readyText();
+  $("fav").value = FAV; readyText(); topCrawl();
   idMini(); render(); count(); leaderboard(); armKickTimer();
   carryDraft().then(moved => { if (moved) { render(); count(); rsay("Brought your picks forward to this week's updated projections."); } });
   if (location.hash.startsWith("#p=")) {                 // opened from a saved link
@@ -865,6 +870,33 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
     loadCode(c, "link");
   }
 }).catch(e => { $("list").innerHTML = '<div class="empty">could not load this week\'s projections (' + e.message + ')</div>'; });
+
+// the attract screen's second list: this week's top 100 projected players, scrolling like a high-score
+// table. The glass takes turns: one pass of the fans' HIGH SCORES, one pass of the TOP 100, and so on.
+function topCrawl() {
+  const top = D.players.filter(p => p.proj > 0).sort((a, b) => b.proj - a.proj).slice(0, 100);
+  if (!top.length) return;
+  const nm = n => { const w = n.replace(/\s+(Jr|Sr|II|III|IV)\.?$/i, "").trim().split(" "); return (w.length > 1 ? w[0][0] + "." + w.slice(1).join(" ") : w[0]).toUpperCase().slice(0, MOBILE ? 11 : 14); };
+  const line = (p, i) => `<div class="${FAV && p.team === FAV ? "me" : ""}"><span>${i + 1}. ${esc(nm(p.name))}<i class="tm">${esc(p.team)}</i><i class="tm pos">${esc(p.pos)}</i></span><b>${p.proj.toFixed(1)}</b></div>`;
+  const pass = top.map(line).join("") + `<div class="gap"></div>`;
+  const c = $("crawl2"); c.innerHTML = pass + pass;
+  c.style.setProperty("--crawl", ((top.length + 2) * 1.1) + "s");
+  attractSwap();
+}
+let ATTRACT = 0, SHOWN = -1;   // 0 = HIGH SCORES on the glass, 1 = TOP 100
+function attractSwap(to) {
+  const scores = $("crawl").children.length > 0, top = $("crawl2").children.length > 0;
+  if (to != null) ATTRACT = to;
+  if (!scores && top) ATTRACT = 1; if (!top) ATTRACT = 0;
+  $("hs").hidden = ATTRACT === 1; $("hs2").hidden = ATTRACT === 0;
+  $("hst").innerHTML = ATTRACT ? `TOP 100 &middot; WK ${D ? D.week : ""} PROJ` : "HIGH SCORES &middot; PTS OFF";
+  if (ATTRACT === SHOWN && to == null) return;           // a re-render of the standings doesn't restart the scroll
+  SHOWN = ATTRACT;
+  const c = ATTRACT ? $("crawl2") : $("crawl");          // the list that comes on starts from the top
+  c.style.animation = "none"; void c.offsetHeight; c.style.animation = "";
+}
+// one pass of a list (half of the doubled crawl) = one animation iteration; then it hands the glass over
+for (const [id, nxt] of [["crawl", 1], ["crawl2", 0]]) $(id).addEventListener("animationiteration", () => attractSwap(nxt));
 
 const norm = s => (s || "").toLowerCase();
 // Games still to play come first; the ones that have kicked off (arrows locked) fold into one section at the
@@ -1554,6 +1586,7 @@ function renderLead() {
   const pass = st.rows.map(line).join("") + `<div class="gap"></div>`;
   const crawl = $("crawl"); crawl.innerHTML = pass + pass;
   crawl.style.setProperty("--crawl", ((st.rows.length + 2) * 1.6) + "s");
+  attractSwap();
   $("foldlines").innerHTML = st.rows.slice(0, 4).map((r, i) => `<div class="fl"><span>${i + 1}. ${r.base ? "THE ORACLE" : esc(r.name) + tm(r.team) + (r.fan ? " + ORACLE" : "")}</span><b>${r.err.toFixed(2)}</b></div>`).join("");
   const meRow = st.rows.findIndex(r => r.fan && (IDH ? (myPid(r.fan_id) || r.fan_id === IDH) : r.name === mineN));
   const mr = meRow >= 0 ? st.rows[meRow] : null;
