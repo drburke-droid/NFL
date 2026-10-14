@@ -190,6 +190,20 @@
   .tm { font-style:normal; font-weight:normal; font-variant:normal; text-transform:uppercase; font-size:.8em; color:#6b6b6b; margin-left:5px; letter-spacing:.05em; }
   #attract .tm, #foldlines .tm { color:#7fe3ff; font-size:.85em; margin-left:.5em; } #foldlines .tm { color:#555; }
   .np-empty { font-size:11px; color:#666; font-style:italic; padding:4px 0; }
+  /* the agate page: every projected player in small type, one block per position, flowing down newspaper columns */
+  .agate h5 { font-family:'Playfair Display',Georgia,serif; font-weight:900; font-size:15px; margin:10px 0 2px; border-bottom:2px solid #000; letter-spacing:.02em; }
+  .agate h5 small { font-family:'Source Serif 4',Georgia,serif; font-weight:400; font-size:10.5px; font-style:italic; color:#555; margin-left:6px; letter-spacing:0; }
+  .agate .ag { column-count:3; column-gap:20px; column-rule:1px solid #b9b09a; font-size:10.5px; line-height:1.4; font-variant-numeric:tabular-nums; }
+  .agate .ag > div { display:grid; grid-template-columns:1.9em minmax(0,1fr) auto 3.2em; gap:0 4px; break-inside:avoid; border-bottom:1px dotted #c4baa3; }
+  .agate .ag > div.ag-hd { font-size:9px; font-weight:700; letter-spacing:.4px; color:#333; border-bottom:1px solid #999; }
+  .agate .ag span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .agate .ag .ag-r, .agate .ag .ag-p { text-align:right; } .agate .ag .ag-p { font-weight:700; }
+  .agate .ag .ag-s { color:#444; text-align:right; }
+  .agate .ag .ag-s b { font-weight:inherit; display:inline-block; min-width:2.1em; padding-left:.45em; } .agate .ag .ag-s b.ag-w { min-width:2.5em; }
+  .agate .ag .ag-v { color:#6b6b6b; font-size:.9em; margin-left:4px; }
+  .agate .ag .ag-q { color:#8a1c1c; font-weight:700; font-size:.9em; margin-left:3px; }
+  @media (max-width:900px) { .agate .ag { column-count:2; } }
+  @media (max-width:560px) { .agate .ag { column-count:1; } }
   @media (max-width:640px) { .cols { flex-direction:column; gap:10px; } .mast { font-size:24px; } }
 
   /* ---- the arcade cabinet: the app lives on the CRT, the standings on a folded paper on the control panel ---- */
@@ -460,6 +474,11 @@
       <div><div class="colh">Best &amp; worst calls</div><div id="npbest" class="np-empty">nothing graded yet</div></div>
       <div><div class="colh">Sharpest &amp; busiest</div><div id="npsharp" class="np-empty">nothing graded yet</div></div>
     </div>
+    <div class="sep"></div>
+    <div class="head" style="margin-top:2px">The Agate Page</div>
+    <div class="deck" id="npprojdeck">THE ORACLE's projection for every player this week, by position.</div>
+    <div id="npproj" class="np-empty">loading&hellip;</div>
+    <div class="sep"></div>
     <div class="colh" style="margin-top:12px">Strategy lab <small>ways to combine the fans' picks with THE ORACLE, fixed in advance and scored every week</small></div>
     <div id="nplab" class="np-empty">nothing graded yet</div>
     <div class="copy">&copy; 2026 Rob Burke &middot; The Gridiron Oracle and THE ORACLE projection model &middot; all rights reserved</div>
@@ -862,7 +881,7 @@ fetch("fan/proj_latest.json?" + Date.now()).then(r => r.json()).then(d => {
   $("sub").innerHTML = `Week <b>${d.week}</b>, ${d.season} · projections generated ${d.generated} · ${d.players.length} players in ${d.games.length} games`;
   for (const g of d.games) { const o = document.createElement("option"); o.value = g.game; o.textContent = `${g.away} @ ${g.home} — ${g.kickoff.replace(" ET","")}`; $("game").appendChild(o); }
   for (const [ab, nm] of Object.entries(TEAMS).sort((x, y) => x[1].localeCompare(y[1]))) { for (const id of ["fav", "rfav"]) { const o = document.createElement("option"); o.value = ab; o.textContent = id === "rfav" ? nm.toUpperCase() : nm; $(id).appendChild(o); } }
-  $("fav").value = FAV; readyText(); topCrawl();
+  $("fav").value = FAV; readyText(); topCrawl(); agate();
   idMini(); render(); count(); leaderboard(); armKickTimer();
   carryDraft().then(moved => { if (moved) { render(); count(); rsay("Brought your picks forward to this week's updated projections."); } });
   if (location.hash.startsWith("#p=")) {                 // opened from a saved link
@@ -884,6 +903,32 @@ function topCrawl() {
   c.style.setProperty("--crawl", ((top.length + 2) * 1.1) + "s");
   attractSwap();
 }
+// the newspaper's agate page: every player THE ORACLE projects this week, QB / RB / WR / TE, best first
+function agate() {
+  const f0 = x => x == null ? "–" : Math.round(x), f1 = x => x == null ? "–" : x.toFixed(1);
+  const td = s => (s.rush_tds || 0) + (s.rec_tds || 0);
+  const COLS = {   // the stat line each position is read by, then points
+    QB: [["YDS", s => f0(s.pass_yds)], ["TD", s => f1(s.pass_tds)], ["INT", s => f1(s.pass_int)], ["RUSH", s => f0(s.rush_yds)]],
+    RB: [["RUSH", s => f0(s.rush_yds)], ["REC", s => f1(s.rec)], ["YDS", s => f0(s.rec_yds)], ["TD", s => f1(td(s))]],
+    WR: [["REC", s => f1(s.rec)], ["YDS", s => f0(s.rec_yds)], ["TD", s => f1(td(s))]],
+    TE: [["REC", s => f1(s.rec)], ["YDS", s => f0(s.rec_yds)], ["TD", s => f1(td(s))]]};
+  const NAME = {QB: "Quarterbacks", RB: "Running backs", WR: "Wide receivers", TE: "Tight ends"};
+  const home = {}; for (const g of D.games) home[g.home] = true;
+  const cell = (h, v) => `<b${h === "YDS" || h === "RUSH" ? ' class="ag-w"' : ""}>${v}</b>`;
+  const statcell = (cols, s) => cols.map(([h, fn]) => cell(h, fn(s))).join("");
+  let h = "";
+  for (const pos of ["QB", "RB", "WR", "TE"]) {
+    const ps = D.players.filter(p => p.pos === pos).sort((a, b) => b.proj - a.proj);
+    if (!ps.length) continue;
+    const cols = COLS[pos];
+    h += `<h5>${NAME[pos]}<small>${ps.length} players</small></h5><div class="ag">` +
+      `<div class="ag-hd"><span class="ag-r">#</span><span>player</span><span class="ag-s">${cols.map(([c]) => cell(c, c)).join("")}</span><span class="ag-p">PTS</span></div>` +
+      ps.map((p, i) => `<div><span class="ag-r">${i + 1}</span><span>${esc(p.name)}<i class="ag-v">${esc(p.team)} ${home[p.team] ? "v" : "@"} ${esc(p.opp)}</i>${p.status ? `<i class="ag-q">${esc(p.status)}</i>` : ""}</span><span class="ag-s">${statcell(cols, p.stats || {})}</span><span class="ag-p">${p.proj.toFixed(1)}</span></div>`).join("") + `</div>`;
+  }
+  $("npproj").className = "agate"; $("npproj").innerHTML = h;
+  $("npprojdeck").textContent = `THE ORACLE's projection for all ${D.players.length} players in week ${D.week}, by position. Points are DraftKings scoring; stats are the projected averages. Generated ${D.generated}.`;
+}
+
 let ATTRACT = 0, SHOWN = -1;   // 0 = HIGH SCORES on the glass, 1 = TOP 100
 function attractSwap(to) {
   const scores = $("crawl").children.length > 0, top = $("crawl2").children.length > 0;
