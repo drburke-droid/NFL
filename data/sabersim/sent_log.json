@@ -2849,5 +2849,97 @@
     "no DK props posted (news?): D.J. Moore"
    ]
   }
+ },
+ "2026-10-16T00:15_1g": {
+  "sent_at": "2026-10-15T23:17:47Z",
+  "rows": 30,
+  "file": "Burke_Model_Burke_2026_thu08pm_1015_2315.csv",
+  "slate": "Thu 10/15 08:15 PM ET slate (1 games)",
+  "credits_left": 2520,
+  "lineups": [
+   "schedule: 18 weeks; week 6 runs Fri 10/16 .. Tue 10/20",
+   "week 6: 1 games in this send (kickoffs Fri 00:15Z .. Fri 00:15Z)",
+   "injury report (nfl.com): 115 skill/K players listed; practice {'LP': 42, 'FP': 42, 'DNP': 31}; designations {'Out': 1}",
+   "lineups: 464 statuses pulled {'espn': 240, 'sleeper': 88, '+sleeper': 83, 'espn+sleeper': 53}; 0 Q, 2 OUT with a projection {'espn+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk6.csv",
+    "rows": 806,
+    "age_hours": 0.0,
+    "slate_skill": 27,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-15T23:16Z",
+    "credits_left": "20"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 23,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 9,
+     "rec_yds": 15,
+     "rec": 14,
+     "exp_td": 23
+    },
+    "no_line": [],
+    "eligible": 8,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 4
+   },
+   "kdst": {
+    "file": "kdst_2026_wk6.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "DEN": [
+      "Wil Lutz"
+     ],
+     "SEA": [
+      "Jason Myers"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 115,
+    "designations": {
+     "Out": 1
+    }
+   },
+   "lineups": {
+    "statuses": 464,
+    "by_src": {
+     "espn": 240,
+     "sleeper": 88,
+     "+sleeper": 83,
+     "espn+sleeper": 53
+    },
+    "q": 0,
+    "out": 2,
+    "out_by_src": {
+     "espn+sleeper": 2
+    }
+   },
+   "warnings": []
+  }
  }
 }
