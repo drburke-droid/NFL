@@ -2941,5 +2941,106 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-18T13:30_1g": {
+  "sent_at": "2026-10-18T12:33:09Z",
+  "rows": 32,
+  "file": "Burke_Model_Burke_2026_sun09am_1018_1230.csv",
+  "slate": "Sun 10/18 09:30 AM ET slate (1 games)",
+  "credits_left": 2509,
+  "lineups": [
+   "schedule: 18 weeks; week 6 runs Fri 10/16 .. Tue 10/20",
+   "week 6: 1 games in this send (kickoffs Sun 13:30Z .. Sun 13:30Z)",
+   "injury report (nfl.com): 122 skill/K players listed; practice {'FP': 63, 'LP': 31, 'DNP': 27, '': 1}; designations {'Out': 31, 'Questionable': 24}",
+   "lineups: 425 statuses pulled {'espn': 170, 'sleeper': 88, '+sleeper': 82, 'espn+sleeper': 61, 'nfl-report': 24}; 0 Q, 2 OUT with a projection {'espn+sleeper': 2}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk6.csv",
+    "rows": 806,
+    "age_hours": 0.0,
+    "slate_skill": 30,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-18T12:32Z",
+    "credits_left": "9"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 26,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 5,
+     "rec_yds": 15,
+     "rec": 15,
+     "exp_td": 26
+    },
+    "no_line": [],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 4
+   },
+   "kdst": {
+    "file": "kdst_2026_wk6.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "HOU": [
+      "Kaimi Fairbairn"
+     ],
+     "JAX": [
+      "Cam Little"
+     ]
+    },
+    "not_the_one_we_send": {
+     "HOU": {
+      "sending": "Ka'imi Fairbairn",
+      "dk_prices": [
+       "Kaimi Fairbairn"
+      ]
+     }
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 122,
+    "designations": {
+     "Out": 31,
+     "Questionable": 24
+    }
+   },
+   "lineups": {
+    "statuses": 425,
+    "by_src": {
+     "espn": 170,
+     "sleeper": 88,
+     "+sleeper": 82,
+     "espn+sleeper": 61,
+     "nfl-report": 24
+    },
+    "q": 0,
+    "out": 2,
+    "out_by_src": {
+     "espn+sleeper": 2
+    }
+   },
+   "warnings": []
+  }
  }
 }
