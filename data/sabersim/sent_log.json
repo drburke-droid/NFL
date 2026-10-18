@@ -3042,5 +3042,148 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-18T17:00_7g": {
+  "sent_at": "2026-10-18T16:03:14Z",
+  "rows": 206,
+  "file": "Burke_Model_Burke_2026_sun01pm_1018_1600.csv",
+  "slate": "Sun 10/18 01:00 PM ET slate (7 games)",
+  "credits_left": 2444,
+  "lineups": [
+   "schedule: 18 weeks; week 6 runs Fri 10/16 .. Tue 10/20",
+   "week 6: 7 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)",
+   "injury report (nfl.com): 122 skill/K players listed; practice {'FP': 63, 'LP': 31, 'DNP': 27, '': 1}; designations {'Out': 31, 'Questionable': 24}",
+   "lineups: 452 statuses pulled {'espn': 178, 'sleeper': 88, '+sleeper': 87, 'espn+sleeper': 77, 'nfl-report': 21, 'nfl-report+sleeper': 1}; 8 Q, 25 OUT with a projection {'espn+sleeper': 23, 'nfl-report': 1, '+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk6.csv",
+    "rows": 806,
+    "age_hours": 0.0,
+    "slate_skill": 194,
+    "slate_k": 15,
+    "slate_dst": 14
+   },
+   "dk_lines": {
+    "slate_games": 7,
+    "with_lines": 7,
+    "fetched_at": "2026-10-18T16:02Z",
+    "credits_left": "443"
+   },
+   "dk_props": {
+    "slate_events": 7,
+    "events_with_props": 7,
+    "with_props": 153,
+    "by_stat": {
+     "pass_yds": 14,
+     "pass_tds": 14,
+     "rush_yds": 41,
+     "rec_yds": 79,
+     "rec": 79,
+     "exp_td": 153
+    },
+    "no_line": [
+     "Baker Mayfield",
+     "Breece Hall",
+     "Jalen Hurts",
+     "Lamar Jackson",
+     "Quinshon Judkins",
+     "Saquon Barkley",
+     "Tyler Warren"
+    ],
+    "eligible": 62,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 41
+   },
+   "kdst": {
+    "file": "kdst_2026_wk6.csv",
+    "K": {
+     "hit": 15,
+     "of": 15
+    },
+    "DST": {
+     "hit": 14,
+     "of": 14
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 14,
+    "by_team": {
+     "ATL": [
+      "Nick Folk"
+     ],
+     "BAL": [
+      "Tyler Loop"
+     ],
+     "CAR": [
+      "Ryan Fitzgerald"
+     ],
+     "CHI": [
+      "Cairo Santos"
+     ],
+     "CLE": [
+      "Andre Szmyt"
+     ],
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "NE": [
+      "Andres Borregales"
+     ],
+     "NO": [
+      "Daniel Carlson"
+     ],
+     "NYG": [
+      "Dominic Zvada"
+     ],
+     "NYJ": [
+      "Jason Sanders"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ],
+     "PIT": [
+      "Chris Boswell"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ],
+     "TEN": [
+      "Joey Slye"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 122,
+    "designations": {
+     "Out": 31,
+     "Questionable": 24
+    }
+   },
+   "lineups": {
+    "statuses": 452,
+    "by_src": {
+     "espn": 178,
+     "sleeper": 88,
+     "+sleeper": 87,
+     "espn+sleeper": 77,
+     "nfl-report": 21,
+     "nfl-report+sleeper": 1
+    },
+    "q": 8,
+    "out": 25,
+    "out_by_src": {
+     "espn+sleeper": 23,
+     "nfl-report": 1,
+     "+sleeper": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Lamar Jackson, Jalen Hurts, Baker Mayfield, Saquon Barkley, Breece Hall, Quinshon Judkins, Tyler Warren"
+   ]
+  }
  }
 }
