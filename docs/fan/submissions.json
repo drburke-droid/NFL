@@ -1,7 +1,16 @@
 {
- "generated": "2026-10-17T14:05Z",
- "n_codes": 240,
+ "generated": "2026-10-18T14:00Z",
+ "n_codes": 272,
  "entries": [
+  {
+   "season": 2026,
+   "week": 6,
+   "fan": "NYO",
+   "team": "LV",
+   "submitted_at": "2026-10-18T06:31:18Z",
+   "arrows": 45,
+   "received": "10/18/2026 0:31:20"
+  },
   {
    "season": 2026,
    "week": 5,
