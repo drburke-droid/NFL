@@ -3185,5 +3185,101 @@
     "no DK props posted (news?): Lamar Jackson, Jalen Hurts, Baker Mayfield, Saquon Barkley, Breece Hall, Quinshon Judkins, Tyler Warren"
    ]
   }
+ },
+ "2026-10-18T20:05_1g": {
+  "sent_at": "2026-10-18T19:08:03Z",
+  "rows": 29,
+  "file": "Burke_Model_Burke_2026_sun04pm_1018_1905.csv",
+  "slate": "Sun 10/18 04:05 PM ET slate (1 games)",
+  "credits_left": 2433,
+  "lineups": [
+   "schedule: 18 weeks; week 6 runs Fri 10/16 .. Tue 10/20",
+   "week 6: 1 games in this send (kickoffs Sun 20:05Z .. Sun 20:05Z)",
+   "injury report (nfl.com): 122 skill/K players listed; practice {'FP': 63, 'LP': 31, 'DNP': 27, '': 1}; designations {'Out': 31, 'Questionable': 24}",
+   "lineups: 472 statuses pulled {'espn': 190, 'sleeper': 90, 'espn+sleeper': 87, '+sleeper': 83, 'nfl-report': 20, 'nfl-report+sleeper': 2}; 0 Q, 4 OUT with a projection {'espn+sleeper': 4}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk6.csv",
+    "rows": 806,
+    "age_hours": 0.0,
+    "slate_skill": 29,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-18T19:07Z",
+    "credits_left": "432"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 23,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 12,
+     "rec": 12,
+     "exp_td": 23
+    },
+    "no_line": [
+     "Jeremiyah Love"
+    ],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk6.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 1,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 122,
+    "designations": {
+     "Out": 31,
+     "Questionable": 24
+    }
+   },
+   "lineups": {
+    "statuses": 472,
+    "by_src": {
+     "espn": 190,
+     "sleeper": 90,
+     "espn+sleeper": 87,
+     "+sleeper": 83,
+     "nfl-report": 20,
+     "nfl-report+sleeper": 2
+    },
+    "q": 0,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 4
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Jeremiyah Love"
+   ]
+  }
  }
 }
