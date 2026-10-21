@@ -1,8 +1,8 @@
 {
  "season": 2026,
  "week": 6,
- "current_week": 6,
- "stale": false,
+ "current_week": 7,
+ "stale": true,
  "league": "Kuhn and Friends",
  "scoring": {
   "pass_yds": 0.04,
@@ -109,6 +109,18 @@
      "match": ""
     },
     {
+     "name": "Bo Nix",
+     "pos": "QB",
+     "team": "DEN",
+     "n": "bo nix",
+     "pts": 17.08,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Geno Smith",
      "pos": "QB",
      "team": "NYJ",
@@ -179,18 +191,6 @@
      "rostered": false,
      "owner": "",
      "match": ""
-    },
-    {
-     "name": "Marcus Mariota",
-     "pos": "QB",
-     "team": "WAS",
-     "n": "marcus mariota",
-     "pts": 1.86,
-     "inj": "D",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
     }
    ],
    "worst_of_mine": 0.0
@@ -248,35 +248,11 @@
    ],
    "free": [
     {
-     "name": "Dameon Pierce",
-     "pos": "RB",
-     "team": "PHI",
-     "n": "dameon pierce",
-     "pts": 8.13,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
      "name": "Kendre Miller",
      "pos": "RB",
      "team": "NO",
      "n": "kendre miller",
      "pts": 6.55,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Tyler Allgeier",
-     "pos": "RB",
-     "team": "ARI",
-     "n": "tyler allgeier",
-     "pts": 6.4,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -390,6 +366,30 @@
      "rostered": false,
      "owner": "",
      "match": ""
+    },
+    {
+     "name": "Corey Kiner",
+     "pos": "RB",
+     "team": "NE",
+     "n": "corey kiner",
+     "pts": 3.8,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Tyrone Tracy",
+     "pos": "RB",
+     "team": "NYG",
+     "n": "tyrone tracy",
+     "pts": 3.44,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
     }
    ],
    "worst_of_mine": 3.22
@@ -431,45 +431,9 @@
      "rostered": true,
      "owner": "Glass Joe",
      "match": "name"
-    },
-    {
-     "name": "Adonai Mitchell",
-     "pos": "WR",
-     "team": "NYJ",
-     "n": "adonai mitchell",
-     "pts": 6.46,
-     "inj": "Q",
-     "out": false,
-     "rostered": true,
-     "owner": "Glass Joe",
-     "match": "name"
     }
    ],
    "free": [
-    {
-     "name": "Keenan Allen",
-     "pos": "WR",
-     "team": "IND",
-     "n": "keenan allen",
-     "pts": 10.23,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Germie Bernard",
-     "pos": "WR",
-     "team": "PIT",
-     "n": "germie bernard",
-     "pts": 9.18,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
     {
      "name": "Chris Godwin",
      "pos": "WR",
@@ -495,11 +459,35 @@
      "match": ""
     },
     {
+     "name": "Keon Coleman",
+     "pos": "WR",
+     "team": "BUF",
+     "n": "keon coleman",
+     "pts": 8.18,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Ryan Flournoy",
      "pos": "WR",
      "team": "DAL",
      "n": "ryan flournoy",
      "pts": 7.63,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Kalif Raymond",
+     "pos": "WR",
+     "team": "CHI",
+     "n": "kalif raymond",
+     "pts": 7.46,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -567,6 +555,18 @@
      "match": ""
     },
     {
+     "name": "Adonai Mitchell",
+     "pos": "WR",
+     "team": "NYJ",
+     "n": "adonai mitchell",
+     "pts": 6.46,
+     "inj": "Q",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Cooper Kupp",
      "pos": "WR",
      "team": "SEA",
@@ -577,21 +577,9 @@
      "rostered": false,
      "owner": "",
      "match": ""
-    },
-    {
-     "name": "Xavier Hutchinson",
-     "pos": "WR",
-     "team": "HOU",
-     "n": "xavier hutchinson",
-     "pts": 6.18,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
     }
    ],
-   "worst_of_mine": 6.46
+   "worst_of_mine": 6.97
   },
   "TE": {
    "mine": [
@@ -610,30 +598,6 @@
    ],
    "free": [
     {
-     "name": "Brenton Strange",
-     "pos": "TE",
-     "team": "JAC",
-     "n": "brenton strange",
-     "pts": 9.91,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Pat Freiermuth",
-     "pos": "TE",
-     "team": "PIT",
-     "n": "pat freiermuth",
-     "pts": 9.83,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
      "name": "Dalton Schultz",
      "pos": "TE",
      "team": "HOU",
@@ -646,35 +610,23 @@
      "match": ""
     },
     {
-     "name": "Tyler Higbee",
-     "pos": "TE",
-     "team": "LAR",
-     "n": "tyler higbee",
-     "pts": 8.41,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Kyle Pitts",
-     "pos": "TE",
-     "team": "ATL",
-     "n": "kyle pitts",
-     "pts": 7.68,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
      "name": "Cade Otton",
      "pos": "TE",
      "team": "TB",
      "n": "cade otton",
      "pts": 7.64,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Jake Ferguson",
+     "pos": "TE",
+     "team": "DAL",
+     "n": "jake ferguson",
+     "pts": 7.57,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -752,6 +704,42 @@
      "rostered": false,
      "owner": "",
      "match": ""
+    },
+    {
+     "name": "Noah Fant",
+     "pos": "TE",
+     "team": "NO",
+     "n": "noah fant",
+     "pts": 5.18,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Oronde Gadsden",
+     "pos": "TE",
+     "team": "LAC",
+     "n": "oronde gadsden",
+     "pts": 4.96,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Colby Parkinson",
+     "pos": "TE",
+     "team": "LAR",
+     "n": "colby parkinson",
+     "pts": 4.86,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
     }
    ],
    "worst_of_mine": 16.59
@@ -785,47 +773,11 @@
      "match": ""
     },
     {
-     "name": "Dominic Zvada",
-     "pos": "K",
-     "team": "NYG",
-     "n": "dominic zvada",
-     "pts": 9.7,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Nick Folk",
-     "pos": "K",
-     "team": "ATL",
-     "n": "nick folk",
-     "pts": 9.18,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
      "name": "Harrison Butker",
      "pos": "K",
      "team": "KC",
      "n": "harrison butker",
      "pts": 8.59,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Tyler Bass",
-     "pos": "K",
-     "team": "BUF",
-     "n": "tyler bass",
-     "pts": 8.52,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -910,6 +862,42 @@
      "team": "ARI",
      "n": "chad ryland",
      "pts": 7.03,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Andre Szmyt",
+     "pos": "K",
+     "team": "CLE",
+     "n": "andre szmyt",
+     "pts": 6.96,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Ryan Fitzgerald",
+     "pos": "K",
+     "team": "CAR",
+     "n": "ryan fitzgerald",
+     "pts": 6.74,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Daniel Carlson",
+     "pos": "K",
+     "team": "NO",
+     "n": "daniel carlson",
+     "pts": 6.15,
      "inj": "NA",
      "out": false,
      "rostered": false,
