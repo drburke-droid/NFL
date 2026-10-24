@@ -25,7 +25,7 @@ from zoneinfo import ZoneInfo
 import urllib.request
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after
+import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after, T-50 from 2026-10-25
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ET = ZoneInfo("America/New_York")
@@ -33,7 +33,7 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--sends", nargs="+", default=[os.path.join(ROOT, "outputs", "sabersim")])
 ap.add_argument("--season", type=int, default=2026)
 ap.add_argument("--week1-tuesday", default="2026-09-08")
-ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after)")
+ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after, 50 from 2026-10-25)")
 ap.add_argument("--out", default=os.path.join(ROOT, "docs", "sabersim_scenarios.json"))
 ap.add_argument("--backup", choices=["sleeper", "none"], default="sleeper",
                 help="second actuals source for games nflverse has not published yet")
@@ -427,7 +427,7 @@ for key, d in s.groupby("slate_key"):
 slates.sort(key=lambda x: x["key"])
 
 out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"),
-       "season": A.season, "min_lead_min": A.min_lead if A.min_lead is not None else send_rules.LEAD_AFTER, "positions": POS, "players": players,
+       "season": A.season, "min_lead_min": A.min_lead if A.min_lead is not None else send_rules.LEAD_FALLBACK, "positions": POS, "players": players,
        "slates": slates, "scale": SCALE, "strict": strict, "strict_official": strict_official,
        "published": published, "strict_matches_published": matches,
        "strict_check": check, "backup": backup}
@@ -453,7 +453,7 @@ try:
     slates_out = []
     for g in groups[:12]:
         k, n = g["kick"], len(g["games"])
-        ck = send_rules.clock(k)                          # T-60/T-57/T-55 from the 2026-09-27 cutover, T-80/T-77/T-75 before
+        ck = send_rules.clock(k)                          # T-60/T-57/T-50 from 2026-10-25, T-60/T-57/T-55 from the 2026-09-27 cutover, T-80/T-77/T-75 before
         slates_out.append({
             "key": k.strftime("%Y-%m-%dT%H:%M") + f"_{n}g",
             "kickoff": k.strftime("%Y-%m-%dT%H:%M:%SZ"),

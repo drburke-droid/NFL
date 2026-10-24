@@ -23,14 +23,14 @@ from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import dk_scoring   # the scoring the big sites publish their accuracy in; see mae_vs_sites below
-import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after
+import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after, T-50 from 2026-10-25
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ET = ZoneInfo("America/New_York")
 ap = argparse.ArgumentParser()
 ap.add_argument("--sends", nargs="+", default=[os.path.join(ROOT, "outputs", "sabersim")])
 ap.add_argument("--season", type=int, default=2026)
 ap.add_argument("--week1-tuesday", default="2026-09-08", help="Tuesday that starts week 1 (weeks roll on Tuesdays)")
-ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after)")
+ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after, 50 from 2026-10-25)")
 ap.add_argument("--rows-out", default=None, help="also write every graded row (send, actual, ffa, dk) to this CSV, for audits")
 A = ap.parse_args()
 W1 = date.fromisoformat(A.week1_tuesday)
@@ -350,7 +350,7 @@ SCALE = {
   "labels": {"elite": "elite (at the noise floor)", "top": "top tier (beats the consensus)", "consensus": "consensus-grade (FFA / market blend)",
              "fair": "fair (trailing averages)", "poor": "poor"}
 }
-out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead if A.min_lead is not None else {"before_" + send_rules.CUTOVER.strftime("%Y-%m-%dT%H:%MZ"): send_rules.LEAD_BEFORE, "after": send_rules.LEAD_AFTER}, "scale": SCALE,
+out = {"generated_at": datetime.now(ZoneInfo("UTC")).strftime("%Y-%m-%dT%H:%MZ"), "season": A.season, "min_lead_min": A.min_lead if A.min_lead is not None else {"before_" + send_rules.CUTOVER.strftime("%Y-%m-%dT%H:%MZ"): send_rules.LEAD_BEFORE, "before_" + send_rules.CUTOVER_FALLBACK.strftime("%Y-%m-%dT%H:%MZ"): send_rules.LEAD_AFTER, "after": send_rules.LEAD_FALLBACK}, "scale": SCALE,
        "rule": send_rules.rule_text(A.min_lead) + ", per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded",
        "vs_sites_rule": "mae_vs_sites: DraftKings scoring (full PPR, 4-pt pass TD, -1 INT, -1 fumble lost, +3 at 300 pass / 100 rush / 100 rec yds, projected bonuses as expectations), QB/RB/WR/TE only, players with a box-score row -- the basis the sites' published weekly accuracy uses, so the two can be ranked together; mae_vs_sites_all: the same over every skill player projected, inactives included at 0; med_vs_sites / med_vs_sites_all: the MEDIAN absolute error on each basis (the sites publish means, so a median is not like for like); mae_vs_sites_live: the all-players pool without season-long absentees (a player who sat stays only if he has played earlier this season)",
        "weeks": weeks, "overall": overall,
