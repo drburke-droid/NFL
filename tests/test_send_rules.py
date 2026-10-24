@@ -1,4 +1,5 @@
-"""When a send counts: T-75 before the 2026-09-27 4:25 PM ET slate, T-55 from it (sends moved to T-60)."""
+"""When a send counts: T-75 before the 2026-09-27 4:25 PM ET slate, T-55 from it (sends moved to T-60), T-50 from
+the 2026-10-25 London game (the T-55 tick became a fallback)."""
 import os, sys
 import pandas as pd
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scripts"))
@@ -32,5 +33,15 @@ def test_the_send_clock_follows_the_cutover():
 
 def test_the_exported_rule_describes_both_sides():
     t = R.rule_text()
-    assert ">= 55" in t and ">= 75" in t and "2026-09-27" in t
+    assert ">= 50" in t and ">= 55" in t and ">= 75" in t and "2026-09-27" in t and "2026-10-25" in t
     assert R.rule_text(60) == "latest send generated >= 60 min before kickoff"
+
+
+def test_the_t55_fallback_counts_from_the_london_game():
+    """The T-55 tick generates at ~T-54. It counts from 2026-10-25; earlier games keep the 55-minute rule, so
+    their grades do not move."""
+    assert R.min_lead(pd.Timestamp("2026-10-23T00:15Z")) == 55.0     # TNF wk7, before the fallback
+    assert R.min_lead(pd.Timestamp("2026-10-25T13:30Z")) == 50.0     # PIT @ NO, London: the first one
+    k = pd.Series(pd.to_datetime(["2026-10-23T00:15Z", "2026-10-25T17:00Z", "2026-10-25T17:00Z"], utc=True))
+    assert R.eligible(k, pd.Series([53.8, 53.8, 49.0])).tolist() == [False, True, False]
+    assert R.clock(pd.Timestamp("2026-10-25T17:00Z")) == {"send_at": 60, "email_by": 57, "deadline": 50.0}

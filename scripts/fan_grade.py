@@ -28,7 +28,7 @@ from datetime import datetime, timezone, date
 from zoneinfo import ZoneInfo
 import numpy as np, pandas as pd
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after
+import send_rules   # when a send counts: T-75 before the 2026-09-27 cutover, T-55 after, T-50 from 2026-10-25
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import fan_rules
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -38,7 +38,7 @@ ap.add_argument("--season", type=int, default=2026)
 ap.add_argument("--sends", nargs="+", default=[os.path.join(ROOT, "outputs", "sabersim")],
                 help="folders holding Burke_Model_Burke_*.csv — the numbers we actually sent")
 ap.add_argument("--week1-tuesday", default="2026-09-08", help="Tuesday that starts week 1 (weeks roll on Tuesdays)")
-ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after)")
+ap.add_argument("--min-lead", type=float, default=None, help="one threshold (minutes before kickoff a send must be generated to count) for every game; default: send_rules (75 before the 2026-09-27 cutover, 55 after, 50 from 2026-10-25)")
 ap.add_argument("--vs-bake", action="store_true",
                 help="score against the frozen bake instead of the send (the old basis; see the note in sent_line)")
 ap.add_argument("--selftest", action="store_true", help="grade a synthetic submission against synthetic actuals and print the checks")
