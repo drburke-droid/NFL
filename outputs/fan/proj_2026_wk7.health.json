@@ -26,7 +26,17 @@
   "slate_k": 26,
   "slate_dst": 26
  },
- "kdst": null,
+ "kdst": {
+  "file": "kdst_2026_wk7.csv",
+  "K": {
+   "hit": 26,
+   "of": 26
+  },
+  "DST": {
+   "hit": 26,
+   "of": 26
+  }
+ },
  "dk_kickers": null,
  "injury_report": {
   "src": "nfl.com",
@@ -80,7 +90,7 @@
  "proj_kind": "playing_median",
  "csv": "proj_2026_wk7.csv",
  "rows": 362,
- "generated": "2026-10-24 13:22 ET",
+ "generated": "2026-10-24 13:26 ET",
  "kickoffs": [
   "Mon 10/26 08:15 PM ET",
   "Sun 10/25 01:00 PM ET",
