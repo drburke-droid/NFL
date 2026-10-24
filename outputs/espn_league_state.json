@@ -35,8 +35,8 @@
    "points_for": 722.56,
    "points_against": 826.76,
    "playoff_seed": 10,
-   "faab_spent": 47,
-   "acquisitions": 11
+   "faab_spent": 52,
+   "acquisitions": 14
   },
   {
    "team_id": 2,
@@ -50,7 +50,7 @@
    "points_against": 571.88,
    "playoff_seed": 3,
    "faab_spent": 0,
-   "acquisitions": 3
+   "acquisitions": 6
   },
   {
    "team_id": 3,
@@ -64,7 +64,7 @@
    "points_against": 644.24,
    "playoff_seed": 9,
    "faab_spent": 57,
-   "acquisitions": 7
+   "acquisitions": 9
   },
   {
    "team_id": 4,
@@ -91,8 +91,8 @@
    "points_for": 680.52,
    "points_against": 830.54,
    "playoff_seed": 8,
-   "faab_spent": 45,
-   "acquisitions": 11
+   "faab_spent": 66,
+   "acquisitions": 14
   },
   {
    "team_id": 7,
@@ -119,8 +119,8 @@
    "points_for": 575.4,
    "points_against": 858.46,
    "playoff_seed": 12,
-   "faab_spent": 51,
-   "acquisitions": 6
+   "faab_spent": 53,
+   "acquisitions": 7
   },
   {
    "team_id": 9,
@@ -148,7 +148,7 @@
    "points_against": 731.36,
    "playoff_seed": 11,
    "faab_spent": 0,
-   "acquisitions": 2
+   "acquisitions": 4
   },
   {
    "team_id": 12,
@@ -161,8 +161,8 @@
    "points_for": 779.7,
    "points_against": 676.94,
    "playoff_seed": 2,
-   "faab_spent": 18,
-   "acquisitions": 8
+   "faab_spent": 25,
+   "acquisitions": 9
   },
   {
    "team_id": 13,
@@ -175,8 +175,8 @@
    "points_for": 920.22,
    "points_against": 707.14,
    "playoff_seed": 4,
-   "faab_spent": 29,
-   "acquisitions": 4
+   "faab_spent": 45,
+   "acquisitions": 5
   },
   {
    "team_id": 14,
@@ -190,7 +190,7 @@
    "points_against": 708.0,
    "playoff_seed": 6,
    "faab_spent": 0,
-   "acquisitions": 2
+   "acquisitions": 3
   }
  ],
  "games": [
