@@ -3485,5 +3485,100 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-25T13:30_1g": {
+  "sent_at": "2026-10-25T12:32:40Z",
+  "rows": 25,
+  "file": "Burke_Model_Burke_2026_sun09am_1025_1230.csv",
+  "slate": "Sun 10/25 09:30 AM ET slate (1 games)",
+  "credits_left": 2311,
+  "lineups": [
+   "schedule: 18 weeks; week 7 runs Fri 10/23 .. Tue 10/27",
+   "week 7: 1 games in this send (kickoffs Sun 13:30Z .. Sun 13:30Z)",
+   "injury report (nfl.com): 104 skill/K players listed; practice {'FP': 69, 'DNP': 21, 'LP': 14}; designations {'Out': 22, 'Questionable': 19, 'Doubtful': 1}",
+   "lineups: 381 statuses pulled {'espn': 141, '+sleeper': 87, 'sleeper': 85, 'espn+sleeper': 50, 'nfl-report': 18}; 1 Q, 1 OUT with a projection {'espn+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk7.csv",
+    "rows": 790,
+    "age_hours": 0.0,
+    "slate_skill": 25,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-25T12:31Z",
+    "credits_left": "310"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 22,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 7,
+     "rec_yds": 13,
+     "rec": 13,
+     "exp_td": 22
+    },
+    "no_line": [],
+    "eligible": 10,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 3
+   },
+   "kdst": {
+    "file": "kdst_2026_wk7.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "NO": [
+      "Daniel Carlson"
+     ],
+     "PIT": [
+      "Chris Boswell"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 104,
+    "designations": {
+     "Out": 22,
+     "Questionable": 19,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 381,
+    "by_src": {
+     "espn": 141,
+     "+sleeper": 87,
+     "sleeper": 85,
+     "espn+sleeper": 50,
+     "nfl-report": 18
+    },
+    "q": 1,
+    "out": 1,
+    "out_by_src": {
+     "espn+sleeper": 1
+    }
+   },
+   "warnings": []
+  }
  }
 }
