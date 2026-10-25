@@ -3921,5 +3921,104 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-26T00:20_1g": {
+  "sent_at": "2026-10-25T23:23:05Z",
+  "rows": 28,
+  "file": "Burke_Model_Burke_2026_sun08pm_1025_2320.csv",
+  "slate": "Sun 10/25 08:20 PM ET slate (1 games)",
+  "credits_left": 2204,
+  "lineups": [
+   "schedule: 18 weeks; week 7 runs Fri 10/23 .. Tue 10/27",
+   "week 7: 1 games in this send (kickoffs Mon 00:20Z .. Mon 00:20Z)",
+   "injury report (nfl.com): 104 skill/K players listed; practice {'FP': 69, 'DNP': 21, 'LP': 14}; designations {'Out': 22, 'Questionable': 19, 'Doubtful': 1}",
+   "lineups: 462 statuses pulled {'espn': 188, 'sleeper': 91, '+sleeper': 88, 'espn+sleeper': 84, 'nfl-report': 11}; 0 Q, 4 OUT with a projection {'espn+sleeper': 4}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk7.csv",
+    "rows": 790,
+    "age_hours": 0.0,
+    "slate_skill": 28,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-25T23:22Z",
+    "credits_left": "203"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 20,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 13,
+     "rec": 13,
+     "exp_td": 20
+    },
+    "no_line": [
+     "Rashee Rice"
+    ],
+    "eligible": 7,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 8
+   },
+   "kdst": {
+    "file": "kdst_2026_wk7.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "KC": [
+      "Harrison Butker"
+     ],
+     "SEA": [
+      "Jason Myers"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 104,
+    "designations": {
+     "Out": 22,
+     "Questionable": 19,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 462,
+    "by_src": {
+     "espn": 188,
+     "sleeper": 91,
+     "+sleeper": 88,
+     "espn+sleeper": 84,
+     "nfl-report": 11
+    },
+    "q": 0,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 4
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Rashee Rice"
+   ]
+  }
  }
 }
