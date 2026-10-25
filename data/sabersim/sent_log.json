@@ -3823,5 +3823,103 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-25T20:25_2g": {
+  "sent_at": "2026-10-25T19:28:09Z",
+  "rows": 55,
+  "file": "Burke_Model_Burke_2026_sun04pm_1025_1925.csv",
+  "slate": "Sun 10/25 04:25 PM ET slate (2 games)",
+  "credits_left": 2215,
+  "lineups": [
+   "schedule: 18 weeks; week 7 runs Fri 10/23 .. Tue 10/27",
+   "week 7: 2 games in this send (kickoffs Sun 20:25Z .. Sun 20:25Z)",
+   "injury report (nfl.com): 104 skill/K players listed; practice {'FP': 69, 'DNP': 21, 'LP': 14}; designations {'Out': 22, 'Questionable': 19, 'Doubtful': 1}",
+   "lineups: 448 statuses pulled {'espn': 178, 'sleeper': 90, '+sleeper': 88, 'espn+sleeper': 80, 'nfl-report': 12}; 3 Q, 3 OUT with a projection {'espn+sleeper': 3}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk7.csv",
+    "rows": 790,
+    "age_hours": 0.0,
+    "slate_skill": 55,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-10-25T19:27Z",
+    "credits_left": "214"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 48,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 12,
+     "rec_yds": 24,
+     "rec": 23,
+     "exp_td": 48
+    },
+    "no_line": [],
+    "eligible": 18,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 7
+   },
+   "kdst": {
+    "file": "kdst_2026_wk7.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 3,
+    "by_team": {
+     "DET": [
+      "Jake Bates"
+     ],
+     "GB": [
+      "Trey Smack"
+     ],
+     "LV": [
+      "Matt Gay"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 104,
+    "designations": {
+     "Out": 22,
+     "Questionable": 19,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 448,
+    "by_src": {
+     "espn": 178,
+     "sleeper": 90,
+     "+sleeper": 88,
+     "espn+sleeper": 80,
+     "nfl-report": 12
+    },
+    "q": 3,
+    "out": 3,
+    "out_by_src": {
+     "espn+sleeper": 3
+    }
+   },
+   "warnings": []
+  }
  }
 }
