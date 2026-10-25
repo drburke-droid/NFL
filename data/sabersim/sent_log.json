@@ -3580,5 +3580,153 @@
    },
    "warnings": []
   }
+ },
+ "2026-10-25T17:00_7g": {
+  "sent_at": "2026-10-25T16:03:17Z",
+  "rows": 205,
+  "file": "Burke_Model_Burke_2026_sun01pm_1025_1600.csv",
+  "slate": "Sun 10/25 01:00 PM ET slate (7 games)",
+  "credits_left": 2246,
+  "lineups": [
+   "schedule: 18 weeks; week 7 runs Fri 10/23 .. Tue 10/27",
+   "week 7: 7 games in this send (kickoffs Sun 17:00Z .. Sun 17:00Z)",
+   "injury report (nfl.com): 104 skill/K players listed; practice {'FP': 69, 'DNP': 21, 'LP': 14}; designations {'Out': 22, 'Questionable': 19, 'Doubtful': 1}",
+   "lineups: 415 statuses pulled {'espn': 157, '+sleeper': 88, 'sleeper': 85, 'espn+sleeper': 72, 'nfl-report': 13}; 1 Q, 22 OUT with a projection {'espn+sleeper': 21, 'espn': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk7.csv",
+    "rows": 790,
+    "age_hours": 0.0,
+    "slate_skill": 194,
+    "slate_k": 14,
+    "slate_dst": 14
+   },
+   "dk_lines": {
+    "slate_games": 7,
+    "with_lines": 7,
+    "fetched_at": "2026-10-25T16:02Z",
+    "credits_left": "245"
+   },
+   "dk_props": {
+    "slate_events": 7,
+    "events_with_props": 7,
+    "with_props": 156,
+    "by_stat": {
+     "pass_yds": 14,
+     "pass_tds": 14,
+     "rush_yds": 35,
+     "rec_yds": 81,
+     "rec": 81,
+     "exp_td": 156
+    },
+    "no_line": [
+     "Breece Hall",
+     "David Montgomery",
+     "Emeka Egbuka",
+     "Lamar Jackson"
+    ],
+    "eligible": 56,
+    "name_aliases": [
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 38
+   },
+   "kdst": {
+    "file": "kdst_2026_wk7.csv",
+    "K": {
+     "hit": 14,
+     "of": 14
+    },
+    "DST": {
+     "hit": 14,
+     "of": 14
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 14,
+    "by_team": {
+     "ATL": [
+      "Nick Folk"
+     ],
+     "BAL": [
+      "Tyler Loop"
+     ],
+     "CAR": [
+      "Ryan Fitzgerald"
+     ],
+     "CIN": [
+      "Evan McPherson"
+     ],
+     "CLE": [
+      "Andre Szmyt"
+     ],
+     "HOU": [
+      "Kaimi Fairbairn"
+     ],
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "MIA": [
+      "Zane Gonzalez"
+     ],
+     "MIN": [
+      "Will Reichard"
+     ],
+     "NYG": [
+      "Dominic Zvada"
+     ],
+     "NYJ": [
+      "Jason Sanders"
+     ],
+     "SF": [
+      "Eddy Pineiro"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ],
+     "TEN": [
+      "Joey Slye"
+     ]
+    },
+    "not_the_one_we_send": {
+     "HOU": {
+      "sending": "Ka'imi Fairbairn",
+      "dk_prices": [
+       "Kaimi Fairbairn"
+      ]
+     }
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 104,
+    "designations": {
+     "Out": 22,
+     "Questionable": 19,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 415,
+    "by_src": {
+     "espn": 157,
+     "+sleeper": 88,
+     "sleeper": 85,
+     "espn+sleeper": 72,
+     "nfl-report": 13
+    },
+    "q": 1,
+    "out": 22,
+    "out_by_src": {
+     "espn+sleeper": 21,
+     "espn": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Lamar Jackson, Breece Hall, David Montgomery, Emeka Egbuka"
+   ]
+  }
  }
 }
