@@ -3728,5 +3728,100 @@
     "no DK props posted (news?): Lamar Jackson, Breece Hall, David Montgomery, Emeka Egbuka"
    ]
   }
+ },
+ "2026-10-25T20:05_1g": {
+  "sent_at": "2026-10-25T19:08:05Z",
+  "rows": 30,
+  "file": "Burke_Model_Burke_2026_sun04pm_1025_1905.csv",
+  "slate": "Sun 10/25 04:05 PM ET slate (1 games)",
+  "credits_left": 2235,
+  "lineups": [
+   "schedule: 18 weeks; week 7 runs Fri 10/23 .. Tue 10/27",
+   "week 7: 1 games in this send (kickoffs Sun 20:05Z .. Sun 20:05Z)",
+   "injury report (nfl.com): 104 skill/K players listed; practice {'FP': 69, 'DNP': 21, 'LP': 14}; designations {'Out': 22, 'Questionable': 19, 'Doubtful': 1}",
+   "lineups: 434 statuses pulled {'espn': 169, '+sleeper': 89, 'sleeper': 88, 'espn+sleeper': 76, 'nfl-report': 12}; 0 Q, 4 OUT with a projection {'espn+sleeper': 4}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk7.csv",
+    "rows": 790,
+    "age_hours": 0.0,
+    "slate_skill": 30,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-25T19:07Z",
+    "credits_left": "234"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 24,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 14,
+     "rec": 14,
+     "exp_td": 24
+    },
+    "no_line": [],
+    "eligible": 10,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 6
+   },
+   "kdst": {
+    "file": "kdst_2026_wk7.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ],
+     "DEN": [
+      "Wil Lutz"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 104,
+    "designations": {
+     "Out": 22,
+     "Questionable": 19,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 434,
+    "by_src": {
+     "espn": 169,
+     "+sleeper": 89,
+     "sleeper": 88,
+     "espn+sleeper": 76,
+     "nfl-report": 12
+    },
+    "q": 0,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 4
+    }
+   },
+   "warnings": []
+  }
  }
 }
