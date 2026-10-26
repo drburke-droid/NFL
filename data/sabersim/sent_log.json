@@ -4020,5 +4020,105 @@
     "no DK props posted (news?): Rashee Rice"
    ]
   }
+ },
+ "2026-10-27T00:15_1g": {
+  "sent_at": "2026-10-26T23:17:27Z",
+  "rows": 31,
+  "file": "Burke_Model_Burke_2026_mon08pm_1026_2315.csv",
+  "slate": "Mon 10/26 08:15 PM ET slate (1 games)",
+  "credits_left": 2193,
+  "lineups": [
+   "schedule: 18 weeks; week 7 runs Fri 10/23 .. Tue 10/27",
+   "week 7: 1 games in this send (kickoffs Tue 00:15Z .. Tue 00:15Z)",
+   "injury report (nfl.com): 104 skill/K players listed; practice {'FP': 69, 'DNP': 21, 'LP': 14}; designations {'Out': 22, 'Questionable': 19, 'Doubtful': 1}",
+   "lineups: 418 statuses pulled {'espn': 140, '+sleeper': 119, 'sleeper': 90, 'espn+sleeper': 55, 'nfl-report': 13, 'nfl-report+sleeper': 1}; 1 Q, 5 OUT with a projection {'espn+sleeper': 5}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk7.csv",
+    "rows": 790,
+    "age_hours": 0.0,
+    "slate_skill": 28,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-26T23:16Z",
+    "credits_left": "192"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 19,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 12,
+     "rec": 11,
+     "exp_td": 19
+    },
+    "no_line": [
+     "DeVonta Smith"
+    ],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 9
+   },
+   "kdst": {
+    "file": "kdst_2026_wk7.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 104,
+    "designations": {
+     "Out": 22,
+     "Questionable": 19,
+     "Doubtful": 1
+    }
+   },
+   "lineups": {
+    "statuses": 418,
+    "by_src": {
+     "espn": 140,
+     "+sleeper": 119,
+     "sleeper": 90,
+     "espn+sleeper": 55,
+     "nfl-report": 13,
+     "nfl-report+sleeper": 1
+    },
+    "q": 1,
+    "out": 5,
+    "out_by_src": {
+     "espn+sleeper": 5
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): DeVonta Smith"
+   ]
+  }
  }
 }
