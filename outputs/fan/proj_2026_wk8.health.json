@@ -45,9 +45,9 @@
   "designations": {}
  },
  "lineups": {
-  "statuses": 360,
+  "statuses": 361,
   "by_src": {
-   "espn": 160,
+   "espn": 161,
    "+sleeper": 91,
    "sleeper": 85,
    "espn+sleeper": 24
@@ -86,7 +86,7 @@
  "proj_kind": "playing_median",
  "csv": "proj_2026_wk8.csv",
  "rows": 385,
- "generated": "2026-10-28 11:21 ET",
+ "generated": "2026-10-28 12:18 ET",
  "kickoffs": [
   "Mon 11/02 08:20 PM ET",
   "Sun 11/01 01:00 PM ET",
