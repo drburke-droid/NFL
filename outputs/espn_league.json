@@ -365,7 +365,7 @@
      "keeper": true,
      "keeper_price": 7,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 126.1,
      "last_pts": null
     },
@@ -875,7 +875,7 @@
      "keeper": false,
      "keeper_price": 0,
      "acq": "ADD",
-     "inj": "QUESTIONABLE",
+     "inj": "INJURY_RESERVE",
      "season_pts": 68.4,
      "last_pts": 1.7
     }
@@ -896,7 +896,7 @@
      "keeper": true,
      "keeper_price": 45,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 367.9,
      "last_pts": 18.3
     },
@@ -974,7 +974,7 @@
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 79.3,
      "last_pts": 10.9
     },
@@ -1000,7 +1000,7 @@
      "keeper": true,
      "keeper_price": 7,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 222.3,
      "last_pts": 8.8
     },
@@ -1013,7 +1013,7 @@
      "keeper": true,
      "keeper_price": 5,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 176.8,
      "last_pts": null
     },
@@ -1112,7 +1112,7 @@
      "keeper": true,
      "keeper_price": 61,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 314.6,
      "last_pts": 17.2
     },
@@ -1229,7 +1229,7 @@
      "keeper": true,
      "keeper_price": 30,
      "acq": "ADD",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 16.3,
      "last_pts": 19.4
     },
@@ -1354,7 +1354,7 @@
      "keeper": true,
      "keeper_price": 19,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 176.2,
      "last_pts": 13.3
     },
@@ -1622,7 +1622,7 @@
      "keeper": true,
      "keeper_price": 48,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 220.3,
      "last_pts": 7.8
     },
@@ -2080,7 +2080,7 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 117.7,
      "last_pts": 6.5
     },
@@ -2361,7 +2361,7 @@
      "keeper": false,
      "keeper_price": 0,
      "acq": "ADD",
-     "inj": "QUESTIONABLE",
+     "inj": "INJURY_RESERVE",
      "season_pts": 3.6,
      "last_pts": 11.8
     },
@@ -2508,7 +2508,7 @@
      "pos": "RB",
      "team": "TEN",
      "espn_id": 3916148,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 15,
      "acq": "DRAFT",
@@ -2586,7 +2586,7 @@
      "pos": "WR",
      "team": "PIT",
      "espn_id": 4685261,
-     "slot": "FLEX",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 13,
      "acq": "ADD",
