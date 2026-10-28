@@ -165,6 +165,36 @@ def dollar_curve(board=None, players=None):
     return {pos: _isotonic(*zip(*v)) for pos, v in pairs.items() if len(v) >= 8}
 
 
+def league_price_curve(cfg, drafts_path=None, min_games=6, min_bids=8):
+    """{pos: (ppg grid, dollars)}: what THIS league has actually paid at auction, by position.
+
+    dollar_curve() is fitted to our own Draft-Room auction values, a model. This one is fitted to
+    the league's own non-keeper bids (outputs/espn_drafts.json, 2023-25) against the player's
+    previous-season ppg in league scoring -- the production the room saw when it bid -- made
+    monotone. The two disagree most at quarterback: this league paid $17 for Joe Burrow after a
+    27.8-ppg season and about $13 for a 24-ppg QB, where the model curve says $41. A position with
+    fewer than `min_bids` usable bids is left out (the caller falls back to dollar_curve for it).
+    """
+    from gm import players as gp            # local: players imports nothing from here, keep it that way
+    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = drafts_path or os.path.join(root, "outputs", "espn_drafts.json")
+    if not os.path.exists(path):
+        return {}
+    bids = [r for r in json.load(open(path, encoding="utf-8"))
+            if str(r.get("keeper")).lower() not in ("true", "1") and r.get("pos") in gp.SKILL and r.get("bid")]
+    if not bids:
+        return {}
+    seasons = sorted({int(r["season"]) for r in bids})
+    w = gp.weekly_in_league_scoring(cfg, range(seasons[0] - 1, seasons[-1]), seasons[-1])
+    ss = w.groupby(["key", "position", "season"]).pts.agg(["mean", "size"])
+    pairs = {}
+    for r in bids:
+        k = (gp.norm(r["player"]), r["pos"], int(r["season"]) - 1)
+        if k in ss.index and ss.loc[k, "size"] >= min_games:
+            pairs.setdefault(r["pos"], []).append((float(ss.loc[k, "mean"]), float(r["bid"])))
+    return {pos: _isotonic(*zip(*v)) for pos, v in pairs.items() if len(v) >= min_bids}
+
+
 def dollars_at(curve, pos, ppg):
     if pos not in curve:
         return 1.0

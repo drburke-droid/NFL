@@ -51,7 +51,7 @@ PARTIAL_REL, PARTIAL_ABS, PARTIAL_MED_MIN = 0.40, 0.35, 0.25   # partial game: <
 DISCOUNT = 0.85            # each later keeper year counts this much less than the one before
 LAST_WEEK = 17             # fantasy season, playoffs included
 FA_PER_POS = 25            # free agents carried per position (by healthy level)
-CHIP_MIN = 15.0            # a 4th+ keeper worth at least this many $ is a trade chip
+CHIP_MIN = 8.0             # a 4th+ keeper worth at least this many $ (league prices) is a trade chip
 RENTAL_MIN_PAR = 2.0       # a rental: outside the owner's top 3 keepers, 2+ points a week over the waiver wire
 MATCH_MIN_GAIN = 1.0       # a match: the buyer's lineup gains 1+ point a week ...
 MATCH_MIN_KEEP = 3.0       # ... and the seller's best-three keeper total gains $3+
@@ -89,7 +89,10 @@ def partial_games(weekly, season, snaps, ids):
 
 
 def level_dist_value(curve, pos, level, ages, cost, years):
-    """[(year k, expected surplus $)] for k = 1..years: E[max(dollars(level_k) - cost_k, 0)]."""
+    """[(year k, expected surplus $, expected price $)] for k = 1..years.
+
+    surplus = E[max(dollars(level_k) - cost_k, 0)]; price = E[dollars(level_k)], what the league
+    would charge for him at that year's auction."""
     z = np.linspace(-2.5, 2.5, 41); w = np.exp(-0.5 * z ** 2); w /= w.sum()
     out, mu, var = [], float(level), 0.0
     for k in range(1, years + 1):
@@ -98,7 +101,7 @@ def level_dist_value(curve, pos, level, ages, cost, years):
         mu += drift; var += sd ** 2
         grid = mu + np.sqrt(var) * z
         dollars = np.array([kp.dollars_at(curve, pos, g) for g in grid])
-        out.append((k, float(np.sum(w * np.maximum(dollars - cost[k - 1], 0.0)))))
+        out.append((k, float(np.sum(w * np.maximum(dollars - cost[k - 1], 0.0))), float(np.sum(w * dollars))))
     return out
 
 
@@ -169,7 +172,10 @@ def main():
     key2gsis = {}
     for pid, r in f_full.iterrows():
         key2gsis.setdefault((r["key"], r["position"]), pid)
-    curve = kp.dollar_curve()
+    # what THIS league pays for production at each position (its own auction bids); the model's curve
+    # only for a position without enough bids
+    league_curve = kp.league_price_curve(cfg)
+    curve = {**kp.dollar_curve(), **league_curve}
 
     # ---------- the player universe: every rostered skill player, plus the best free agents ----------
     teams = {str(t["team_id"]): t for t in cfg.teams}
@@ -216,7 +222,7 @@ def main():
         b1 = bump.get(tid, avg_bump)
         cost = [basis + b1 + base_bump * (k - 1) for k in range(1, max(yrs, 1) + 1)]
         by_year = level_dist_value(curve, pos, lv, ages, cost, yrs) if yrs else []
-        kval = sum(DISCOUNT ** (k - 1) * v for k, v in by_year)
+        kval = sum(DISCOUNT ** (k - 1) * v for k, v, _ in by_year)
         par = max(lv - repl[pos], 0.0)
         pf = f_full.loc[g] if g is not None and g in f_full.index else None
         nxt = float(pf["ffa_next"]) if pf is not None and pd.notna(pf.get("ffa_next")) else None
@@ -233,8 +239,9 @@ def main():
             "partial": sorted(part_wk.get(g, [])), "l3": round(float(last3.get(g)), 2) if g in last3.index else None,
             "next": round(nxt, 2) if nxt is not None else None, "bye": bye,
             "par": round(par, 2), "ros_par": round(par * games_left, 1), "gl": games_left,
-            "kval": round(kval, 1), "kyears": [round(v, 1) for _, v in by_year],
-            "cost1": round(cost[0], 2) if yrs else None})
+            "kval": round(kval, 1), "kyears": [round(v, 1) for _, v, _ in by_year],
+            "cost1": round(cost[0], 2) if yrs else None,
+            "price1": round(by_year[0][2], 1) if by_year else None})
 
     # ---------- teams: keepers locked in, chips, rentals, the lineup, the verdict ----------
     def total(levels):
@@ -312,6 +319,9 @@ def main():
                      "buyer_p": BUYER_P, "seller_p": SELLER_P, "chip_min": CHIP_MIN,
                      "rental_min_par": RENTAL_MIN_PAR, "match_min_gain": MATCH_MIN_GAIN, "match_min_keep": MATCH_MIN_KEEP,
                      "partial": {"rel": PARTIAL_REL, "abs": PARTIAL_ABS}},
+           "price_curve": {p: {"source": "league bids" if p in league_curve else "model",
+                               "at": {str(x): round(kp.dollars_at(curve, p, x), 1) for x in (12, 16, 20, 24)}}
+                           for p in SKILL},
            "teams": tout, "players": players, "matches": matches[:40]}
     path = OUT.format(season=season)
     with open(path, "w", encoding="utf-8") as fh:
