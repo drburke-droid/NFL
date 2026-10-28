@@ -88,11 +88,11 @@ def partial_games(weekly, season, snaps, ids):
     return set(zip(bad.gsis_id, bad.week))
 
 
-def level_dist_value(curve, pos, level, ages, cost, years):
+def level_dist_value(curve, pos, level, ages, cost, years, mult=1.0):
     """[(year k, expected surplus $, expected price $)] for k = 1..years.
 
     surplus = E[max(dollars(level_k) - cost_k, 0)]; price = E[dollars(level_k)], what the league
-    would charge for him at that year's auction."""
+    would charge for him at that year's auction. `mult` is his own price premium (gm/keepers.price_premium)."""
     z = np.linspace(-2.5, 2.5, 41); w = np.exp(-0.5 * z ** 2); w /= w.sum()
     out, mu, var = [], float(level), 0.0
     for k in range(1, years + 1):
@@ -100,7 +100,7 @@ def level_dist_value(curve, pos, level, ages, cost, years):
         drift, sd = kp.YOY.get((pos, bool(a is not None and a <= kp.YOUNG)), (0.0, 4.0))
         mu += drift; var += sd ** 2
         grid = mu + np.sqrt(var) * z
-        dollars = np.array([kp.dollars_at(curve, pos, g) for g in grid])
+        dollars = mult * np.array([kp.dollars_at(curve, pos, g) for g in grid])
         out.append((k, float(np.sum(w * np.maximum(dollars - cost[k - 1], 0.0))), float(np.sum(w * dollars))))
     return out
 
@@ -174,8 +174,9 @@ def main():
         key2gsis.setdefault((r["key"], r["position"]), pid)
     # what THIS league pays for production at each position (its own auction bids); the model's curve
     # only for a position without enough bids
-    league_curve = kp.league_price_curve(cfg)
-    curve = kp.price_curve(cfg)                  # the same curve the trade calculator prices keepers on
+    curve = kp.price_curve(cfg)                  # the same prices the trade calculator values keepers on
+    prem = kp.premiums(cfg)
+    rank_points = kp.league_price_curve.rank_points
 
     # ---------- the player universe: every rostered skill player, plus the best free agents ----------
     teams = {str(t["team_id"]): t for t in cfg.teams}
@@ -221,7 +222,8 @@ def main():
         ages = [(age0 + k) if age0 is not None else None for k in range(1, max(yrs, 1) + 1)]
         b1 = bump.get(tid, avg_bump)
         cost = [basis + b1 + base_bump * (k - 1) for k in range(1, max(yrs, 1) + 1)]
-        by_year = level_dist_value(curve, pos, lv, ages, cost, yrs) if yrs else []
+        mult = prem.get((kp._norm(e["name"]), pos), 1.0)
+        by_year = level_dist_value(curve, pos, lv, ages, cost, yrs, mult) if yrs else []
         kval = sum(DISCOUNT ** (k - 1) * v for k, v, _ in by_year)
         par = max(lv - repl[pos], 0.0)
         pf = f_full.loc[g] if g is not None and g in f_full.index else None
@@ -241,7 +243,7 @@ def main():
             "par": round(par, 2), "ros_par": round(par * games_left, 1), "gl": games_left,
             "kval": round(kval, 1), "kyears": [round(v, 1) for _, v, _ in by_year],
             "cost1": round(cost[0], 2) if yrs else None,
-            "price1": round(by_year[0][2], 1) if by_year else None})
+            "price1": round(by_year[0][2], 1) if by_year else None, "prem": round(mult, 2)})
 
     # ---------- teams: keepers locked in, chips, rentals, the lineup, the verdict ----------
     def total(levels):
@@ -319,8 +321,8 @@ def main():
                      "buyer_p": BUYER_P, "seller_p": SELLER_P, "chip_min": CHIP_MIN,
                      "rental_min_par": RENTAL_MIN_PAR, "match_min_gain": MATCH_MIN_GAIN, "match_min_keep": MATCH_MIN_KEEP,
                      "partial": {"rel": PARTIAL_REL, "abs": PARTIAL_ABS}},
-           "price_curve": {p: {"source": "league bids" if p in league_curve else "model",
-                               "at": {str(x): round(kp.dollars_at(curve, p, x), 1) for x in (12, 16, 20, 24)}}
+           "price_curve": {p: {"source": "league bids" if p in rank_points else "model",
+                               "rank": [[float(r), round(float(v), 1)] for r, v in zip(*rank_points[p])] if p in rank_points else []}
                            for p in SKILL},
            "teams": tout, "players": players, "matches": matches[:40]}
     path = OUT.format(season=season)

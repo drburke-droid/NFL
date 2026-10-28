@@ -165,34 +165,167 @@ def dollar_curve(board=None, players=None):
     return {pos: _isotonic(*zip(*v)) for pos, v in pairs.items() if len(v) >= 8}
 
 
-def league_price_curve(cfg, drafts_path=None, min_games=6, min_bids=8):
-    """{pos: (ppg grid, dollars)}: what THIS league has actually paid at auction, by position.
+# Rank bands for the league's auction prices: a player is priced by where he ranks at his position,
+# the price is the MEDIAN bid in his band, and prices never rise as the rank worsens.
+RANK_BANDS = [(1, 2), (3, 4), (5, 6), (7, 9), (10, 12), (13, 16), (17, 20), (21, 26), (27, 34), (35, 45),
+              (46, 60), (61, 200)]
+# A premium only ever raises a price. A star the room keeps paying up for is a brand; a $1 pick at a
+# rank that usually costs $15 is mostly when he was nominated (budgets run dry late), and next year's
+# room bids on what he has done since. Floored at 1, so Bucky Irving and Quinshon Judkins ($1 in 2026)
+# are priced by their rank alone.
+PREMIUM_SHRINK, PREMIUM_CAP = 0.5, (1.0, 2.0)
+PREMIUM_MIN_BASE = 10.0    # below this rank price a ratio is noise ($10 on a $3 rank is not a brand)
 
-    dollar_curve() is fitted to our own Draft-Room auction values, a model. This one is fitted to
-    the league's own non-keeper bids (outputs/espn_drafts.json, 2023-25) against the player's
-    previous-season ppg in league scoring -- the production the room saw when it bid -- made
-    monotone. The two disagree most at quarterback: this league paid $17 for Joe Burrow after a
-    27.8-ppg season and about $13 for a 24-ppg QB, where the model curve says $41. A position with
-    fewer than `min_bids` usable bids is left out (the caller falls back to dollar_curve for it).
+
+def _keepers_final(root, season):
+    """Normalised names of the players kept INTO `season` (docs/keepers_final_<season>.js)."""
+    p = os.path.join(root, "docs", f"keepers_final_{season}.js")
+    if not os.path.exists(p):
+        return set()
+    s = open(p, encoding="utf-8").read()
+    return {_norm(k.split("|")[0]) for k in json.loads(s[s.index("{"):s.rindex("}") + 1])["keepers"]}
+
+
+def league_bids(cfg, drafts_path=None, min_games=6):
+    """Every non-keeper auction bid this league has made, with the rank the room was bidding on.
+
+    Past auctions (outputs/espn_drafts.json, 2023-25): the player's rank at his position by the
+    previous season's ppg in league scoring (6+ games) -- the production the room had seen. This
+    season's auction: the price on each rostered player acquired by DRAFT who was not a keeper, at
+    his rank by the preseason projection (docs/data.js) -- the room's expectation, the better proxy.
+    Returns [(pos, rank, bid, season, name)].
     """
     from gm import players as gp            # local: players imports nothing from here, keep it that way
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    season = int(cfg.raw["season"])
+    out = []
     path = drafts_path or os.path.join(root, "outputs", "espn_drafts.json")
-    if not os.path.exists(path):
+    bids = []
+    if os.path.exists(path):
+        bids = [r for r in json.load(open(path, encoding="utf-8"))
+                if str(r.get("keeper")).lower() not in ("true", "1") and r.get("pos") in gp.SKILL
+                and r.get("bid") and int(r["season"]) < season]
+    if bids:
+        seasons = sorted({int(r["season"]) for r in bids})
+        w = gp.weekly_in_league_scoring(cfg, range(seasons[0] - 1, seasons[-1]), seasons[-1])
+        ss = w.groupby(["key", "position", "season"]).pts.agg(["mean", "size"]).reset_index()
+        ss = ss[ss["size"] >= min_games]
+        ss["rank"] = ss.groupby(["position", "season"])["mean"].rank(ascending=False, method="first")
+        rank = {(r.key, r.position, int(r.season)): float(r["rank"]) for _, r in ss.iterrows()}
+        for r in bids:
+            k = (gp.norm(r["player"]), r["pos"], int(r["season"]) - 1)
+            if k in rank:
+                out.append((r["pos"], rank[k], float(r["bid"]), int(r["season"]), r["player"]))
+    # this season's auction, at the preseason projection rank
+    players = draft_tool_players(root)
+    prank = {}
+    for pos in gp.SKILL:
+        pool = sorted(((float(p["proj_ppg"]), k) for k, p in players.items()
+                       if k[1] == pos and p.get("proj_ppg") is not None), reverse=True)
+        for i, (_, k) in enumerate(pool):
+            prank[k] = float(i + 1)
+    kept = _keepers_final(root, season)
+    for t in cfg.teams:
+        for e in t["roster"]:
+            k = (_norm(e["name"]), e["pos"])
+            price = float((e.get("keeper_cost") or {}).get("price") or 0)
+            if (e["pos"] in gp.SKILL and str(e.get("acquired") or "").upper() == "DRAFT" and k[0] not in kept
+                    and price > 0 and k in prank):
+                out.append((e["pos"], prank[k], price, season, e["name"]))
+    return out
+
+
+def rank_prices(bids, min_bids=8):
+    """{pos: (band-centre ranks, median bid)}, non-increasing in rank. A position with fewer than
+    `min_bids` bids is left out."""
+    out = {}
+    for pos in {b[0] for b in bids}:
+        v = [(r, b) for p, r, b, _, _ in bids if p == pos]
+        if len(v) < min_bids:
+            continue
+        pts = []
+        for lo, hi in RANK_BANDS:
+            band = [b for r, b in v if lo <= r <= hi]
+            if len(band) >= 2:
+                pts.append(((lo + hi) / 2.0, float(np.median(band))))
+        if len(pts) < 2:
+            continue
+        r_, p_ = np.array([x for x, _ in pts]), np.array([y for _, y in pts])
+        p_ = np.maximum.accumulate(p_[::-1])[::-1]          # a better rank never costs less
+        out[pos] = (r_, p_)
+    return out
+
+
+def price_at_rank(rp, pos, rank):
+    r_, p_ = rp[pos]
+    return float(np.interp(rank, r_, p_, left=p_[0], right=p_[-1]))
+
+
+def current_levels(cfg, min_games=2):
+    """{pos: levels, best first}: the fitted rest-of-season ridge for every player at the position
+    with `min_games`+ games this season -- the population a player's rank is read against."""
+    from gm import players as gp
+    season = int(cfg.raw["season"])
+    weekly = gp._weekly_all(cfg, season)
+    week = int(weekly[weekly.season == season].week.max())
+    ffa, _ = gp.ffa_next_week(cfg, season, week)
+    f = gp.history_features(weekly, season, week, ffa)
+    lv = gp.ridge_predict(gp.load_model(), f)
+    f = f.assign(lv=lv)[(f.ytd_games.fillna(0) >= min_games) & np.isfinite(lv)]
+    return {pos: sorted(f[f.position == pos].lv.tolist(), reverse=True) for pos in gp.SKILL}
+
+
+def league_price_curve(cfg, drafts_path=None, levels=None, min_bids=8):
+    """{pos: (level grid, dollars)}: what THIS league pays at auction for a player at each level.
+
+    Built by rank, not by raw ppg. Fitting price to last season's ppg compared a raw number with
+    the regressed level the valuation plugs in, and averaged in the players the room rightly
+    expected to fade (Keenan Allen at WR3 for $11, an injured Chris Godwin at WR2 for $5): it priced
+    CeeDee Lamb, a $65 receiver both years, at $36. So: each bid is placed at the rank the room was
+    bidding on (league_bids), the price for a rank is the median bid in its band (rank_prices), and
+    a level is turned into a rank against this season's fitted levels at the position
+    (current_levels). Age and injury are left to the valuation's own drift, where they belong.
+    The rank prices this produces, per position, are at league_price_curve.rank_points.
+    """
+    rp = rank_prices(league_bids(cfg, drafts_path), min_bids)
+    league_price_curve.rank_points = rp
+    if not rp:
         return {}
-    bids = [r for r in json.load(open(path, encoding="utf-8"))
-            if str(r.get("keeper")).lower() not in ("true", "1") and r.get("pos") in gp.SKILL and r.get("bid")]
-    if not bids:
-        return {}
-    seasons = sorted({int(r["season"]) for r in bids})
-    w = gp.weekly_in_league_scoring(cfg, range(seasons[0] - 1, seasons[-1]), seasons[-1])
-    ss = w.groupby(["key", "position", "season"]).pts.agg(["mean", "size"])
-    pairs = {}
-    for r in bids:
-        k = (gp.norm(r["player"]), r["pos"], int(r["season"]) - 1)
-        if k in ss.index and ss.loc[k, "size"] >= min_games:
-            pairs.setdefault(r["pos"], []).append((float(ss.loc[k, "mean"]), float(r["bid"])))
-    return {pos: _isotonic(*zip(*v)) for pos, v in pairs.items() if len(v) >= min_bids}
+    levels = levels or current_levels(cfg)
+    out = {}
+    for pos in rp:
+        L = levels.get(pos) or []
+        if len(L) < 2:
+            continue
+        xs = np.array(L[::-1], float)                            # ascending level
+        ranks = np.arange(len(L), 0, -1, dtype=float)            # ... is descending rank
+        ys = np.maximum.accumulate(np.array([price_at_rank(rp, pos, r) for r in ranks]))
+        out[pos] = (xs, ys)
+    return out
+
+
+league_price_curve.rank_points = {}
+
+
+def price_premium(cfg, drafts_path=None):
+    """{(name, pos): factor}: what the room paid for a player this season over what his preseason
+    rank implied, square-rooted (half of it is assumed to persist), between 1x and 2x.
+
+    CeeDee Lamb went for $65 as the 10th-ranked receiver on projection, where that rank's price is
+    about $37: this room pays a premium for him, and it has twice. Only players bought at this
+    season's auction at a rank worth PREMIUM_MIN_BASE or more carry one; everyone else is 1.0.
+    """
+    bids = league_bids(cfg, drafts_path)
+    rp = rank_prices(bids)
+    season = int(cfg.raw["season"])
+    out = {}
+    for pos, rank, bid, s, name in bids:
+        if s != season or pos not in rp:
+            continue
+        base = price_at_rank(rp, pos, rank)
+        if base >= PREMIUM_MIN_BASE:
+            out[(_norm(name), pos)] = float(np.clip((bid / base) ** PREMIUM_SHRINK, *PREMIUM_CAP))
+    return out
 
 
 _PRICE_CACHE = {}
@@ -205,8 +338,14 @@ def price_curve(cfg):
     the same on both. Cached per scoring config: the fit reads three seasons of nflverse."""
     key = json.dumps(cfg.raw.get("scoring"), sort_keys=True)
     if key not in _PRICE_CACHE:
-        _PRICE_CACHE[key] = {**dollar_curve(), **league_price_curve(cfg)}
-    return _PRICE_CACHE[key]
+        _PRICE_CACHE[key] = ({**dollar_curve(), **league_price_curve(cfg)}, price_premium(cfg))
+    return _PRICE_CACHE[key][0]
+
+
+def premiums(cfg):
+    """price_premium for the same config price_curve was built for (cached alongside it)."""
+    price_curve(cfg)
+    return _PRICE_CACHE[json.dumps(cfg.raw.get("scoring"), sort_keys=True)][1]
 
 
 def dollars_at(curve, pos, ppg):
@@ -254,6 +393,7 @@ def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
     case this exists for: their weekly value is near zero, their keeper value is not.
     `bump` is a number for every team or {team_id: bump} (see expected_bump).
     """
+    prem = premiums(cfg) if curve is None else {}   # a player's own premium belongs to the league's prices
     curve = curve or price_curve(cfg)          # what this league pays (league bids), not the model
     players = players or draft_tool_players()
     out = {}
@@ -269,7 +409,7 @@ def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
             p = players.get((_norm(v["name"]), v["pos"]))
             age = (p.get("age") + 1) if p and p.get("age") else None
             healthy = float(v.get("raw_mean", v["mean"]))
-            value = expected_dollars(curve, v["pos"], healthy, age)
+            value = expected_dollars(curve, v["pos"], healthy, age) * prem.get((_norm(v["name"]), v["pos"]), 1.0)
             cost = basis + b
             out[tid]["players"][v["name"]] = {
                 "name": v["name"], "pos": v["pos"], "value": round(value, 1), "basis": basis,
