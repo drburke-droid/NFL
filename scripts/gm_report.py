@@ -131,7 +131,7 @@ def main():
         board = kp.next_season_board(cfg, est, bump=bumps)
         print(f"  next season: keeper cost = this year's price ($1 for a waiver pickup) + the owner's bump, "
               f"$5 if he makes the playoffs and $3 if not, taken in expectation (yours ${bumps[me]:.2f} at "
-              f"{r['teams'][me]['p_playoffs']:.0%}); value = league auction $ at the healthy level after a "
+              f"{r['teams'][me]['p_playoffs']:.0%}); value = what this league pays at auction (its own bids, by position) at the healthy level after a "
               f"measured year of drift" + (f"; weighted {a.keeper_discount:g} in the search"
                                           if a.keeper_discount else "; not in the ranking"))
     except Exception as ex:

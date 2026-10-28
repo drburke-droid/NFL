@@ -23,7 +23,7 @@ Keeper value, every remaining year. A player has max_times_kept - times_kept kee
 (Cooper: 3 - 0 = 3). Year k costs his basis ($1 for any waiver add, per league rule; his auction
 price otherwise) plus the owner's bump: the expected bump from his playoff odds the first year
 (gm/keepers.expected_bump), the league's +$5 each year after. Year k's worth is the league's
-auction dollars (gm/keepers.dollar_curve) at his level after k years of the measured year-over-
+auction dollars (gm/keepers.price_curve: what this league has bid, by position) at his level after k years of the measured year-over-
 year drift for his position and age, with the spread widening by sqrt(k). The owner keeps him only
 in the years he is worth his price, so each year contributes E[max(dollars - cost, 0)], and later
 years count less: x0.85 per year, for everything that can change in a year that the drift table
@@ -175,7 +175,7 @@ def main():
     # what THIS league pays for production at each position (its own auction bids); the model's curve
     # only for a position without enough bids
     league_curve = kp.league_price_curve(cfg)
-    curve = {**kp.dollar_curve(), **league_curve}
+    curve = kp.price_curve(cfg)                  # the same curve the trade calculator prices keepers on
 
     # ---------- the player universe: every rostered skill player, plus the best free agents ----------
     teams = {str(t["team_id"]): t for t in cfg.teams}
