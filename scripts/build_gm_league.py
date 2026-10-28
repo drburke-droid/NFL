@@ -50,6 +50,17 @@ def main():
     for r in drafts:
         if str(r.get("keeper")).lower() in ("true", "1"):
             k = norm(r["player"]); kept_years[k] = kept_years.get(k, 0) + 1
+    # This season's keepers. espn_drafts.json is pulled for past seasons only (2023-25), so until
+    # 2026-10-28 every player kept INTO 2026 was one keep short: Puka Nacua and Jaxon Smith-Njigba,
+    # kept 2024, 2025 and 2026, read as 2 keeps with a year left when the league's 3-keep cap means
+    # none. The keepers locked for this season (docs/keepers_final_<season>.js) count as one more
+    # keep, unless the draft file already carries this season.
+    season = lg["season"]
+    final = os.path.join(ROOT, "docs", f"keepers_final_{season}.js")
+    if os.path.exists(final) and not any(int(r.get("season", 0)) == int(season) for r in drafts):
+        s_ = open(final, encoding="utf-8").read()
+        for key in json.loads(s_[s_.index("{"):s_.rindex("}") + 1])["keepers"]:
+            k = norm(key.split("|")[0]); kept_years[k] = kept_years.get(k, 0) + 1
 
     # ---- scoring ----
     per_stat, unmapped = {}, {}
@@ -123,7 +134,9 @@ def main():
                         "non-playoff owner who drafted the eventual champion in the side draft. "
                         "The side-draft result is not in ESPN's API; see fetch_espn_standings.py.",
             },
-            "clock_note": "Keepers began in 2024, so the 3-year cap does not bind for 2026.",
+            "clock_note": "Keepers began in 2024. times_kept counts the drafts a player was kept in, this "
+                          "season's keepers included, so a player kept 2024-26 is at the cap and cannot "
+                          "be kept again.",
         },
         "acquisitions": {
             "waiver_type": "faab", "faab_budget": budget, "faab_carryover": False, "min_bid": 0,
