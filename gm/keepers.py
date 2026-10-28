@@ -41,6 +41,17 @@ YOY = {("QB", True): (0.69, 5.27), ("QB", False): (-0.46, 5.15),
        ("RB", True): (0.30, 4.45), ("RB", False): (-0.87, 4.01),
        ("WR", True): (0.58, 3.58), ("WR", False): (-0.88, 3.61),
        ("TE", True): (0.46, 3.00), ("TE", False): (-0.45, 2.81)}
+# Everyone ages, so against a price set by RANK a player moves only by how his drift differs from the
+# position's: the mean of the young and the older drift (equal weight -- an assumption; the study above
+# measured the two groups, not their mix). Without it every veteran slid down a field that stood
+# still, and the 2027 board had two players at $60+ where this room pays that three or four times a year.
+POP_DRIFT = {pos: (YOY[(pos, True)][0] + YOY[(pos, False)][0]) / 2.0 for pos in ("QB", "RB", "WR", "TE")}
+
+
+def drift_vs_field(pos, age):
+    """(drift relative to the position's field, sd) for one year at `age` (None: the older group)."""
+    drift, sd = YOY.get((pos, bool(age is not None and age <= YOUNG)), (0.0, 4.0))
+    return drift - POP_DRIFT.get(pos, 0.0), sd
 
 
 def load_board(path=None, root=None):
@@ -165,10 +176,10 @@ def dollar_curve(board=None, players=None):
     return {pos: _isotonic(*zip(*v)) for pos, v in pairs.items() if len(v) >= 8}
 
 
-# Rank bands for the league's auction prices: a player is priced by where he ranks at his position,
-# the price is the MEDIAN bid in his band, and prices never rise as the rank worsens.
-RANK_BANDS = [(1, 2), (3, 4), (5, 6), (7, 9), (10, 12), (13, 16), (17, 20), (21, 26), (27, 34), (35, 45),
-              (46, 60), (61, 200)]
+# The league's auction prices, by order: the room's k-th most expensive player at a position, averaged
+# over its auctions with the recent ones counting more (prices have climbed: the top running back went
+# for $62, $44, $68, $68 in 2023-26), is the price of the k-th best player at that position.
+RECENCY = 1.0              # an auction n seasons back counts 1 / (1 + RECENCY * n)
 # A premium only ever raises a price. A star the room keeps paying up for is a brand; a $1 pick at a
 # rank that usually costs $15 is mostly when he was nominated (budgets run dry late), and next year's
 # room bids on what he has done since. Floored at 1, so Bucky Irving and Quinshon Judkins ($1 in 2026)
@@ -236,23 +247,38 @@ def league_bids(cfg, drafts_path=None, min_games=6):
 
 
 def rank_prices(bids, min_bids=8):
-    """{pos: (band-centre ranks, median bid)}, non-increasing in rank. A position with fewer than
-    `min_bids` bids is left out."""
+    """{pos: (ranks 1..K, price)}: what the room pays for the k-th best player at each position.
+
+    By order, not by any measure of the player: in every auction the k-th most expensive player at
+    the position, averaged over auctions (recent ones count more, RECENCY), non-increasing in k.
+    Order statistics keep the top honest -- this room has paid $60+ three or four times in most
+    auctions (Jefferson $75, Bijan $68 twice, Lamb $65 twice), and a median or a fit against
+    last year's points averages those away into the fifties. A position with fewer than `min_bids`
+    bids is left out. Keepers never reach the auction, so the k-th price belongs to roughly the
+    k-th best player AVAILABLE, a little below the k-th best overall: if anything this runs low
+    at the very top.
+    """
     out = {}
     for pos in {b[0] for b in bids}:
-        v = [(r, b) for p, r, b, _, _ in bids if p == pos]
+        v = [(s_, b) for p, _, b, s_, _ in bids if p == pos]
         if len(v) < min_bids:
             continue
-        pts = []
-        for lo, hi in RANK_BANDS:
-            band = [b for r, b in v if lo <= r <= hi]
-            if len(band) >= 2:
-                pts.append(((lo + hi) / 2.0, float(np.median(band))))
-        if len(pts) < 2:
-            continue
-        r_, p_ = np.array([x for x, _ in pts]), np.array([y for _, y in pts])
-        p_ = np.maximum.accumulate(p_[::-1])[::-1]          # a better rank never costs less
-        out[pos] = (r_, p_)
+        last = max(s_ for s_, _ in v)
+        by = {}
+        for s_, b in v:
+            by.setdefault(s_, []).append(b)
+        K = max(len(x) for x in by.values())
+        prices = []
+        for k in range(K):
+            num = den = 0.0
+            for s_, x in by.items():
+                x = sorted(x, reverse=True)
+                if k < len(x):
+                    w = 1.0 / (1.0 + RECENCY * (last - s_))
+                    num += w * x[k]; den += w
+            prices.append(num / den)
+        p_ = np.minimum.accumulate(np.array(prices))           # a better rank never costs less
+        out[pos] = (np.arange(1, K + 1, dtype=float), p_)
     return out
 
 
@@ -281,10 +307,10 @@ def league_price_curve(cfg, drafts_path=None, levels=None, min_bids=8):
     Built by rank, not by raw ppg. Fitting price to last season's ppg compared a raw number with
     the regressed level the valuation plugs in, and averaged in the players the room rightly
     expected to fade (Keenan Allen at WR3 for $11, an injured Chris Godwin at WR2 for $5): it priced
-    CeeDee Lamb, a $65 receiver both years, at $36. So: each bid is placed at the rank the room was
-    bidding on (league_bids), the price for a rank is the median bid in its band (rank_prices), and
-    a level is turned into a rank against this season's fitted levels at the position
-    (current_levels). Age and injury are left to the valuation's own drift, where they belong.
+    CeeDee Lamb, a $65 receiver both years, at $36. So: the price for the k-th best player is what
+    the room pays for its k-th most expensive one (rank_prices), and a level is turned into a rank
+    against this season's fitted levels at the position (current_levels). Age and injury are left
+    to the valuation's own drift, where they belong.
     The rank prices this produces, per position, are at league_price_curve.rank_points.
     """
     rp = rank_prices(league_bids(cfg, drafts_path), min_bids)
@@ -331,6 +357,16 @@ def price_premium(cfg, drafts_path=None):
 _PRICE_CACHE = {}
 
 
+def price_caps(cfg, drafts_path=None):
+    """{pos: the most this room has ever paid at the position}. A premium times a good outcome can
+    price a player past anything the league has bid (Ashton Jeanty x1.66 at RB1 came to $105, where the
+    record is $68); nothing is priced above the record."""
+    caps = {}
+    for pos, _, bid, _, _ in league_bids(cfg, drafts_path):
+        caps[pos] = max(caps.get(pos, 0.0), bid)
+    return caps
+
+
 def price_curve(cfg):
     """The curve keeper value is priced on: this league's own auction prices (league_price_curve),
     with the model's dollar_curve only for a position that has too few bids. Used by the trade
@@ -338,7 +374,7 @@ def price_curve(cfg):
     the same on both. Cached per scoring config: the fit reads three seasons of nflverse."""
     key = json.dumps(cfg.raw.get("scoring"), sort_keys=True)
     if key not in _PRICE_CACHE:
-        _PRICE_CACHE[key] = ({**dollar_curve(), **league_price_curve(cfg)}, price_premium(cfg))
+        _PRICE_CACHE[key] = ({**dollar_curve(), **league_price_curve(cfg)}, price_premium(cfg), price_caps(cfg))
     return _PRICE_CACHE[key][0]
 
 
@@ -348,6 +384,12 @@ def premiums(cfg):
     return _PRICE_CACHE[json.dumps(cfg.raw.get("scoring"), sort_keys=True)][1]
 
 
+def caps(cfg):
+    """price_caps for the same config (cached alongside price_curve)."""
+    price_curve(cfg)
+    return _PRICE_CACHE[json.dumps(cfg.raw.get("scoring"), sort_keys=True)][2]
+
+
 def dollars_at(curve, pos, ppg):
     if pos not in curve:
         return 1.0
@@ -355,14 +397,17 @@ def dollars_at(curve, pos, ppg):
     return float(np.interp(ppg, xs, ys, left=1.0, right=ys[-1]))
 
 
-def expected_dollars(curve, pos, ppg, age=None):
+def expected_dollars(curve, pos, ppg, age=None, mult=1.0, cap=None):
     """Expected auction value next season for a player at `ppg` now: the dollar curve averaged over
     the measured year-over-year distribution of his level. Convexity is what makes a $1 dart worth
     more than the dollars at his expected level."""
-    drift, sd = YOY.get((pos, bool(age is not None and age <= YOUNG)), (0.0, 4.0))
+    drift, sd = drift_vs_field(pos, age)            # prices are by rank, so the field ages too
     grid = ppg + drift + sd * np.linspace(-2.5, 2.5, 41)
     w = np.exp(-0.5 * np.linspace(-2.5, 2.5, 41) ** 2)
-    return float(np.sum(w * np.array([dollars_at(curve, pos, g) for g in grid])) / w.sum())
+    d = mult * np.array([dollars_at(curve, pos, g) for g in grid])
+    if cap is not None:
+        d = np.minimum(d, cap)                      # never above what the room has ever paid
+    return float(np.sum(w * d) / w.sum())
 
 
 def expected_bump(cfg, p_playoffs):
@@ -394,6 +439,7 @@ def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
     `bump` is a number for every team or {team_id: bump} (see expected_bump).
     """
     prem = premiums(cfg) if curve is None else {}   # a player's own premium belongs to the league's prices
+    cap = caps(cfg) if curve is None else {}
     curve = curve or price_curve(cfg)          # what this league pays (league bids), not the model
     players = players or draft_tool_players()
     out = {}
@@ -409,7 +455,8 @@ def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
             p = players.get((_norm(v["name"]), v["pos"]))
             age = (p.get("age") + 1) if p and p.get("age") else None
             healthy = float(v.get("raw_mean", v["mean"]))
-            value = expected_dollars(curve, v["pos"], healthy, age) * prem.get((_norm(v["name"]), v["pos"]), 1.0)
+            value = expected_dollars(curve, v["pos"], healthy, age, prem.get((_norm(v["name"]), v["pos"]), 1.0),
+                                     cap.get(v["pos"]))
             cost = basis + b
             out[tid]["players"][v["name"]] = {
                 "name": v["name"], "pos": v["pos"], "value": round(value, 1), "basis": basis,

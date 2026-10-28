@@ -52,16 +52,32 @@ def test_age_is_taken_on_the_first_of_september():
     assert V.age_at(None, 2026) is None
 
 
-def test_rank_prices_take_the_band_median_and_never_rise_with_rank():
-    """A cheap outlier at the top (an injured Chris Godwin at WR2 for $5) moves a median, not the band."""
+def test_rank_prices_are_the_rooms_kth_most_expensive_player_recent_auctions_first():
+    """The top stays at the top: the k-th best player costs the k-th highest bid, so a room that pays
+    $60+ for its best players prices the best projected player at $60+."""
     from gm import keepers as kp
-    bids = [("WR", 1, 75.0, 2023, "a"), ("WR", 2, 5.0, 2025, "godwin"), ("WR", 2, 57.0, 2024, "b"),
-            ("WR", 5, 50.0, 2023, "c"), ("WR", 6, 60.0, 2024, "d"),             # band 5-6 dearer than 1-2's median
-            ("WR", 11, 30.0, 2023, "e"), ("WR", 12, 40.0, 2024, "f"), ("WR", 40, 3.0, 2025, "g")]
+    bids = [("WR", 0, b, 2025, "x") for b in (65, 48, 48, 32, 3)] + [("WR", 0, b, 2026, "y") for b in (65, 52, 48, 42)]
     r, p = kp.rank_prices(bids, min_bids=4)["WR"]
+    assert list(r[:3]) == [1.0, 2.0, 3.0] and p[0] == 65.0
+    assert abs(p[1] - (48 * 0.5 + 52 * 1.0) / 1.5) < 1e-9          # 2026 counts twice 2025 (RECENCY = 1)
     assert list(p) == sorted(p, reverse=True), "a better rank never costs less"
-    assert kp.price_at_rank(kp.rank_prices(bids, 4), "WR", 1) >= 55          # median 57, lifted to 55 by band 5-6
     assert kp.rank_prices(bids[:3], min_bids=4) == {}
+
+
+def test_the_field_ages_too():
+    """Prices are by rank, so a player moves only by how his drift differs from his position's."""
+    from gm import keepers as kp
+    young, _ = kp.drift_vs_field("WR", 23)
+    old, _ = kp.drift_vs_field("WR", 29)
+    assert young > 0 > old and abs(young + old) < 1e-9            # equal weights: symmetric about the field
+
+
+def test_no_price_above_the_rooms_record():
+    from gm import keepers as kp
+    curve = {"RB": ([10.0, 25.0], [1.0, 63.0])}
+    assert kp.expected_dollars(curve, "RB", 24.0, age=24, mult=1.66, cap=68.0) <= 68.0
+    out = V.level_dist_value(curve, "RB", 24.0, [24], [70.0], 1, mult=1.66, cap=68.0)
+    assert out[0][1] == 0.0 and out[0][2] <= 68.0                  # never worth keeping at $70 if he can't cost more than $68
 
 
 def test_a_level_becomes_a_price_through_its_rank_against_this_seasons_levels(monkeypatch):
@@ -76,12 +92,12 @@ def test_a_level_becomes_a_price_through_its_rank_against_this_seasons_levels(mo
 
 def test_premiums_only_raise_a_price(monkeypatch):
     from gm import keepers as kp
-    bids = [("WR", r, b, 2024, str(r)) for r, b in ((1, 60), (2, 58), (5, 50), (6, 48), (11, 30), (12, 28), (40, 3), (41, 2))]
-    bids += [("WR", 10.0, 65.0, 2026, "CeeDee Lamb"), ("WR", 11.0, 1.0, 2026, "Bargain Bin")]
+    past = [("WR", 0, b, 2025, "p") for b in (65, 55, 50, 45, 40, 36, 32, 30, 28, 26, 24, 22, 3, 2)]
+    bids = past + [("WR", 10.0, 65.0, 2026, "CeeDee Lamb"), ("WR", 11.0, 1.0, 2026, "Bargain Bin")]
     monkeypatch.setattr(kp, "league_bids", lambda cfg, path=None: bids)
     class C: raw = {"season": 2026}
     pr = kp.price_premium(C())
-    assert pr[("ceedee lamb", "WR")] > 1.2                                   # $65 where the rank costs ~$30
+    assert pr[("ceedee lamb", "WR")] > 1.2                                   # $65 where the 10th WR costs ~$26
     assert pr[("bargain bin", "WR")] == 1.0                                  # a $1 pick carries no discount
 
 
