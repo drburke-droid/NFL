@@ -88,20 +88,27 @@ def partial_games(weekly, season, snaps, ids):
     return set(zip(bad.gsis_id, bad.week))
 
 
-def level_dist_value(curve, pos, level, ages, cost, years, mult=1.0):
+def level_dist_value(curve, pos, level, ages, cost, years, mult=1.0, cap=None):
     """[(year k, expected surplus $, expected price $)] for k = 1..years.
 
-    surplus = E[max(dollars(level_k) - cost_k, 0)]; price = E[dollars(level_k)], what the league
-    would charge for him at that year's auction. `mult` is his own price premium (gm/keepers.price_premium)."""
+    surplus = E[max(dollars(level_k) - cost_k, 0)] over the outcomes; price = dollars at his expected
+    level that year, what the league would charge for him at that year's auction. `mult` is his own price premium (gm/keepers.price_premium)."""
     z = np.linspace(-2.5, 2.5, 41); w = np.exp(-0.5 * z ** 2); w /= w.sum()
     out, mu, var = [], float(level), 0.0
     for k in range(1, years + 1):
         a = ages[k - 1]
-        drift, sd = kp.YOY.get((pos, bool(a is not None and a <= kp.YOUNG)), (0.0, 4.0))
+        drift, sd = kp.drift_vs_field(pos, a)          # the whole field ages; prices are by rank
         mu += drift; var += sd ** 2
         grid = mu + np.sqrt(var) * z
         dollars = mult * np.array([kp.dollars_at(curve, pos, g) for g in grid])
-        out.append((k, float(np.sum(w * np.maximum(dollars - cost[k - 1], 0.0))), float(np.sum(w * dollars))))
+        if cap is not None:
+            dollars = np.minimum(dollars, cap)            # never above what the room has ever paid
+        # the price is the room's: what it pays for his EXPECTED level that year. The surplus is the
+        # keeper's: averaged over the outcomes, because he keeps him only in the years he is worth it.
+        # (Averaging the price too pulled the best players down -- the top of a position can only
+        # fall -- and left one player at $60+ where this room pays that three or four times a year.)
+        price = min(mult * kp.dollars_at(curve, pos, mu), cap if cap is not None else np.inf)
+        out.append((k, float(np.sum(w * np.maximum(dollars - cost[k - 1], 0.0))), float(price)))
     return out
 
 
@@ -176,7 +183,9 @@ def main():
     # only for a position without enough bids
     curve = kp.price_curve(cfg)                  # the same prices the trade calculator values keepers on
     prem = kp.premiums(cfg)
+    cap_of = kp.caps(cfg)
     rank_points = kp.league_price_curve.rank_points
+    bids_all = kp.league_bids(cfg)
 
     # ---------- the player universe: every rostered skill player, plus the best free agents ----------
     teams = {str(t["team_id"]): t for t in cfg.teams}
@@ -223,7 +232,10 @@ def main():
         b1 = bump.get(tid, avg_bump)
         cost = [basis + b1 + base_bump * (k - 1) for k in range(1, max(yrs, 1) + 1)]
         mult = prem.get((kp._norm(e["name"]), pos), 1.0)
-        by_year = level_dist_value(curve, pos, lv, ages, cost, yrs, mult) if yrs else []
+        # next year's auction price is priced for everyone -- a player at the keeper cap (Puka Nacua,
+        # Jaxon Smith-Njigba) goes back into the auction, and that price is what he will cost there
+        nxt_year = level_dist_value(curve, pos, lv, ages, cost, max(yrs, 1), mult, cap_of.get(pos))
+        by_year = nxt_year[:yrs]
         kval = sum(DISCOUNT ** (k - 1) * v for k, v, _ in by_year)
         par = max(lv - repl[pos], 0.0)
         pf = f_full.loc[g] if g is not None and g in f_full.index else None
@@ -243,7 +255,8 @@ def main():
             "par": round(par, 2), "ros_par": round(par * games_left, 1), "gl": games_left,
             "kval": round(kval, 1), "kyears": [round(v, 1) for _, v, _ in by_year],
             "cost1": round(cost[0], 2) if yrs else None,
-            "price1": round(by_year[0][2], 1) if by_year else None, "prem": round(mult, 2)})
+            "price1": round(nxt_year[0][2], 1), "prem": round(mult, 2),
+            "margin1": round(nxt_year[0][2] - cost[0], 1) if yrs else None})
 
     # ---------- teams: keepers locked in, chips, rentals, the lineup, the verdict ----------
     def total(levels):
@@ -321,6 +334,10 @@ def main():
                      "buyer_p": BUYER_P, "seller_p": SELLER_P, "chip_min": CHIP_MIN,
                      "rental_min_par": RENTAL_MIN_PAR, "match_min_gain": MATCH_MIN_GAIN, "match_min_keep": MATCH_MIN_KEEP,
                      "partial": {"rel": PARTIAL_REL, "abs": PARTIAL_ABS}},
+           "calibration": {"bids_60_by_auction": {str(s_): sum(1 for _, _, b, ss, _ in bids_all if ss == s_ and b >= 60)
+                                                  for s_ in sorted({x[3] for x in bids_all})},
+                           "top_bids": sorted([{"n": n, "p": p_, "bid": b, "s": ss} for p_, _, b, ss, n in bids_all if b >= 60],
+                                              key=lambda x: (-x["s"], -x["bid"]))},
            "price_curve": {p: {"source": "league bids" if p in rank_points else "model",
                                "rank": [[float(r), round(float(v), 1)] for r, v in zip(*rank_points[p])] if p in rank_points else []}
                            for p in SKILL},
