@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>League Values</title>
+<meta name="description" content="Kuhn and Friends: the best keeper values (every remaining keeper year, net of cost), the best players rest of season, and who should buy or sell at the trade deadline under the 3-keeper cap.">
+<style>
+  :root { --bg:#0f1115; --card:#181b22; --ink:#e8eaf0; --mut:#9aa3b2; --ok:#3fb950; --warn:#d29922; --bad:#f85149; --acc:#4c8dff; --line:#262a33; --field:#0f1115; --chip:#232833; --me:#1d2a44; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
+  main { max-width:1180px; margin:0 auto; padding:18px 16px 80px; }
+  h1 { font-size:22px; margin:0 0 2px; } h2 { font-size:16px; margin:0 0 8px; } h3 { font-size:14px; margin:10px 0 6px; }
+  .sub { color:var(--mut); margin:0 0 14px; font-size:13px; } a { color:var(--acc); }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin-bottom:12px; }
+  .how { font-size:13px; color:var(--mut); } .how b { color:var(--ink); } .how p { margin:6px 0; }
+  .tabs { display:flex; gap:6px; margin-bottom:10px; flex-wrap:wrap; }
+  .tabs button { background:var(--chip); color:var(--mut); border:1px solid var(--line); border-radius:8px; padding:7px 13px; cursor:pointer; font-size:13px; font-family:inherit; }
+  .tabs button.on { background:#243a66; color:#fff; border-color:#3b5da0; }
+  .filters { display:flex; gap:8px; flex-wrap:wrap; align-items:center; margin-bottom:10px; font-size:13px; }
+  .filters select, .filters input[type=text] { background:var(--field); color:var(--ink); border:1px solid #333845; border-radius:8px; padding:6px 9px; font-size:13px; font-family:inherit; }
+  .filters label { color:var(--mut); display:flex; gap:5px; align-items:center; }
+  .wrap { overflow-x:auto; border:1px solid var(--line); border-radius:8px; }
+  table { border-collapse:collapse; width:100%; font-size:13px; }
+  th, td { padding:6px 8px; border-bottom:1px solid var(--line); text-align:right; white-space:nowrap; font-variant-numeric:tabular-nums; }
+  th { position:sticky; top:0; background:#1b1f27; color:var(--mut); font-weight:600; cursor:pointer; user-select:none; }
+  th.l, td.l { text-align:left; } th.sorted { color:#fff; }
+  tr.me td { background:var(--me); }
+  tr:hover td { background:#1e222b; } tr.me:hover td { background:#22325a; }
+  td small, .mut { color:var(--mut); }
+  .pos { display:inline-block; font-size:10px; font-weight:700; border-radius:5px; padding:1px 0; text-align:center; width:28px; color:#0f1115; margin-right:4px; }
+  .QB { background:#ff8fa3; } .RB { background:#8ce99a; } .WR { background:#74c0fc; } .TE { background:#ffd43b; }
+  .tag { display:inline-block; font-size:11px; border-radius:5px; padding:1px 6px; margin-left:4px; border:1px solid var(--line); color:var(--mut); }
+  .tag.k { color:#8ce99a; border-color:#2f5d3a; } .tag.fa { color:#ffd43b; border-color:#5d5222; } .tag.inj { color:var(--bad); border-color:#5d2a2a; }
+  .bar { display:inline-block; height:8px; border-radius:4px; background:var(--acc); vertical-align:middle; margin-right:6px; }
+  .teams { display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:10px; }
+  .team h3 { margin:0 0 4px; display:flex; justify-content:space-between; gap:8px; align-items:baseline; }
+  .team.me { border-color:#3b5da0; }
+  .role { font-size:11px; font-weight:700; border-radius:6px; padding:2px 8px; text-transform:uppercase; letter-spacing:.04em; }
+  .role.buyer { background:#1f3d27; color:#8ce99a; } .role.seller { background:#4a1f1f; color:#ffa8a8; } .role.bubble { background:#4a3f1a; color:#ffd43b; }
+  .team .line { font-size:12.5px; margin:4px 0; } .team .line b { color:var(--mut); font-weight:600; }
+  .advice { font-size:12.5px; margin-top:6px; padding:6px 8px; border-radius:6px; background:#141821; border:1px solid var(--line); }
+  .odds { display:flex; gap:12px; font-size:12px; color:var(--mut); margin-bottom:4px; flex-wrap:wrap; }
+  .odds span b { color:var(--ink); }
+  @media (max-width:720px) { .teams { grid-template-columns:1fr; } th, td { padding:5px 6px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>League Values</h1>
+  <p class="sub" id="meta">loading…</p>
+
+  <div class="tabs" id="tabs">
+    <button data-v="values" class="on">💎 Best values</button>
+    <button data-v="players">⭐ Best players</button>
+    <button data-v="market">🔁 Buyers &amp; sellers</button>
+    <button data-v="how">ℹ️ How it works</button>
+  </div>
+
+  <div id="tableView">
+    <div class="filters">
+      <select id="fPos"><option value="">All positions</option><option>QB</option><option>RB</option><option>WR</option><option>TE</option></select>
+      <select id="fOwner"><option value="">All owners</option></select>
+      <label><input type="checkbox" id="fFA" checked> free agents</label>
+      <input type="text" id="fName" placeholder="search player">
+      <span class="mut" id="fCount"></span>
+    </div>
+    <div class="wrap"><table id="tbl"></table></div>
+  </div>
+
+  <div id="marketView" style="display:none">
+    <div class="card how" id="marketHow"></div>
+    <div class="teams" id="teams"></div>
+    <div class="card" style="margin-top:12px">
+      <h2>Deadline matches</h2>
+      <p class="how" id="matchHow"></p>
+      <div class="wrap"><table id="matches"></table></div>
+    </div>
+  </div>
+
+  <div id="howView" style="display:none" class="card how"></div>
+</main>
+<script src="values_2026.js"></script>
+<script>
+const D = window.VALUES_DATA;
+const $ = id => document.getElementById(id);
+const TEAMS = Object.fromEntries(D.teams.map(t => [t.id, t]));
+const owner = id => id === "FA" ? "Free agent" : (TEAMS[id] ? TEAMS[id].name : id);
+const f1 = v => v == null ? "—" : (+v).toFixed(1);
+const money = v => v == null ? "—" : "$" + Math.round(v);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const R = D.rules;
+
+$("meta").innerHTML = `${esc(D.league)} · through week ${D.week} · built ${D.generated.replace("T", " ")} UTC · ` +
+  `${D.players.length} players (${D.players.filter(p => p.o === "FA").length} free agents) · playoff odds from ${D.sims.toLocaleString()} simulated seasons` +
+  (D.ffa_stale ? ` · <span style="color:var(--warn)">next week's FFA file not uploaded yet</span>` : "");
+
+for (const t of [...D.teams].sort((a, b) => a.name.localeCompare(b.name))) {
+  const o = document.createElement("option"); o.value = t.id; o.textContent = t.name; $("fOwner").appendChild(o);
+}
+
+function playerCell(p) {
+  const tags = [];
+  if (p.o !== "FA" && p.keep_rank && p.keep_rank <= R.max_keepers && p.kval > 0) tags.push(`<span class="tag k" title="One of ${esc(owner(p.o))}'s top ${R.max_keepers} keepers">keeper #${p.keep_rank}</span>`);
+  if (p.o === "FA") tags.push(`<span class="tag fa" title="Unrostered: whoever adds him gets a $1 keeper">FA</span>`);
+  if (p.inj && p.inj !== "ACTIVE") tags.push(`<span class="tag inj">${esc(p.inj.replace("_", " ").toLowerCase())}</span>`);
+  return `<span class="pos ${p.p}">${p.p}</span>${esc(p.n)} <small>${esc(p.t || "")}${p.age ? " · " + p.age : ""}</small>${tags.join("")}`;
+}
+function ppgCell(p) {
+  if (p.ppg == null) return "—";
+  if (p.partial && p.partial.length && p.ppg_full != null)
+    return `<span title="All ${p.gp} games: ${f1(p.ppg)}. Week${p.partial.length > 1 ? "s" : ""} ${p.partial.join(", ")} left early (partial snap share), dropped.">${f1(p.ppg_full)} <small>(${p.gp_full}g, ${f1(p.ppg)} all)</small></span>`;
+  return `${f1(p.ppg)} <small>(${p.gp}g)</small>`;
+}
+function salCell(p) {
+  if (p.o === "FA") return `<small>add →</small> $1`;
+  const b = p.basis !== p.sal && p.sal > 0 ? ` <small title="Waiver add: keeper basis resets to $1 (league rule)">→ $${p.basis}</small>` : "";
+  return `$${Math.max(p.sal, p.o === "FA" ? 1 : 0)}${b}`;
+}
+function kvalCell(p, max) {
+  const w = max > 0 ? Math.max(2, Math.round(60 * p.kval / max)) : 0;
+  const yrs = (p.kyears || []).map((v, i) => `${D.season + i + 1}: $${v.toFixed(1)}`).join(" · ");
+  return `<span title="${yrs || "no keeper years left"}${p.cost1 != null ? ` · next year's cost ≈ $${p.cost1.toFixed(1)}` : ""}"><span class="bar" style="width:${w}px"></span>${money(p.kval)}</span>`;
+}
+
+const VIEWS = {
+  values: {
+    sort: "kval",
+    cols: [
+      ["#", "rank", "l"], ["Player", "n", "l"], ["Owner", "o", "l"], ["Salary", "basis"], ["Keep yrs", "yrs"],
+      ["PPG", "ppg_full"], ["ROS /wk", "lvl"], ["Next wk", "next"], ["Keeper value", "kval"]],
+    row: (p, i, max) => [i + 1, playerCell(p), esc(owner(p.o)), salCell(p), p.yrs, ppgCell(p), f1(p.lvl), f1(p.next), kvalCell(p, max)]
+  },
+  players: {
+    sort: "lvl",
+    cols: [
+      ["#", "rank", "l"], ["Player", "n", "l"], ["Owner", "o", "l"], ["ROS /wk", "lvl"], ["Over waiver", "par"],
+      ["ROS pts over waiver", "ros_par"], ["Next wk", "next"], ["PPG", "ppg_full"], ["Last 3", "l3"], ["Keeper value", "kval"]],
+    row: (p, i, max) => [i + 1, playerCell(p), esc(owner(p.o)), `<b>${f1(p.lvl)}</b>`, "+" + f1(p.par), f1(p.ros_par) + ` <small>(${p.gl}g)</small>`,
+                         f1(p.next), ppgCell(p), f1(p.l3), money(p.kval)]
+  }
+};
+let view = "values", sortKey = null, sortDir = -1;
+
+function rows() {
+  const pos = $("fPos").value, own = $("fOwner").value, fa = $("fFA").checked, q = $("fName").value.trim().toLowerCase();
+  return D.players.filter(p => (!pos || p.p === pos) && (!own || p.o === own) && (fa || p.o !== "FA") && (!q || p.n.toLowerCase().includes(q)));
+}
+function renderTable() {
+  const V = VIEWS[view], key = sortKey || V.sort;
+  const rs = rows().sort((a, b) => {
+    const x = a[key], y = b[key];
+    if (typeof x === "string" || typeof y === "string") return sortDir * String(x).localeCompare(String(y));
+    if (x == null || y == null) return (x == null) - (y == null);      // blanks last either way
+    return sortDir * (x - y);
+  });
+  const max = Math.max(...D.players.map(p => p.kval));
+  const mine = D.my_team;
+  $("fCount").textContent = `${rs.length} players`;
+  $("tbl").innerHTML = "<thead><tr>" + V.cols.map(([h, k, cls]) =>
+    `<th class="${cls || ""} ${k === key ? "sorted" : ""}" data-k="${k}">${h}${k === key ? (sortDir < 0 ? " ▾" : " ▴") : ""}</th>`).join("") + "</tr></thead><tbody>" +
+    rs.slice(0, 300).map((p, i) => `<tr class="${p.o === mine ? "me" : ""}">` + V.row(p, i, max).map((c, j) =>
+      `<td class="${V.cols[j][2] || ""}">${c}</td>`).join("") + "</tr>").join("") + "</tbody>";
+  $("tbl").querySelectorAll("th").forEach(th => th.onclick = () => {
+    const k = th.dataset.k; if (k === "rank") return;
+    if (k === (sortKey || V.sort)) sortDir = -sortDir; else { sortKey = k; sortDir = ["n", "o"].includes(k) ? 1 : -1; }
+    renderTable();
+  });
+}
+
+function list(names, tid, fmt) {
+  if (!names.length) return `<span class="mut">none</span>`;
+  const P = Object.fromEntries(D.players.filter(p => p.o === tid).map(p => [p.n, p]));
+  return names.map(n => { const p = P[n]; return p ? `<span class="pos ${p.p}">${p.p}</span>${esc(n)} <small>${fmt(p)}</small>` : esc(n); }).join(", ");
+}
+function advice(t) {
+  const P = Object.fromEntries(D.players.filter(p => p.o === t.id).map(p => [p.n, p]));
+  const weak = Object.entries(t.weakest).sort((a, b) => a[1] - b[1])[0];
+  if (t.role === "buyer") {
+    const chip = t.chips.length ? `Trade from <b>${t.chips.slice(0, 3).map(esc).join(", ")}</b>: keepers he can't keep anyway (he keeps ${t.locked.map(esc).join(", ")}).`
+                                : `No surplus keepers to deal; any deal costs one of his top three.`;
+    return `${chip} Weakest starting spot: <b>${weak ? weak[0] + " (" + f1(weak[1]) + "/wk)" : "—"}</b>. Target sellers' rentals there.`;
+  }
+  if (t.role === "seller") {
+    const sell = t.rentals.slice(0, 4).map(n => `${esc(n)} (${f1(P[n].lvl)}/wk)`).join(", ");
+    return (sell ? `Sell <b>${sell}</b>: none of them is one of his keepers, so their value to him ends this season. ` : `Nothing worth renting out. `) +
+      `Ask for a player worth more than his #3 keeper (${money(t.third_keeper)}); anything less won't make his keeper list.`;
+  }
+  return `On the bubble (${Math.round(100 * t.p_playoffs)}% playoffs). Upgrading <b>${weak ? weak[0] : "—"}</b> with a chip ${t.chips.length ? "(" + t.chips.slice(0, 2).map(esc).join(", ") + ")" : ""} could push him in; selling rentals is the other way.`;
+}
+function renderMarket() {
+  $("marketHow").innerHTML = `<p><b>Buyer</b>: ${Math.round(100 * R.buyer_p)}%+ to make the playoffs. <b>Seller</b>: under ${Math.round(100 * R.seller_p)}%. Everyone keeps at most <b>${R.max_keepers}</b>, so a team's <b>4th-best keeper</b> is worth nothing to him and real money to someone whose top three are weaker. That player is a <b>chip</b> (worth ${money(R.chip_min)}+). A <b>rental</b> is a useful player (${R.rental_min_par}+ pts/wk over the waiver wire) who is not in his owner's top three keepers: worth this season only. Trade deadline: week ${R.deadline_week}.</p>`;
+  const ts = [...D.teams].sort((a, b) => b.p_playoffs - a.p_playoffs);
+  $("teams").innerHTML = ts.map(t => `
+    <div class="card team ${t.id === D.my_team ? "me" : ""}">
+      <h3><span>${esc(t.name)}${t.id === D.my_team ? " <small class='mut'>(you)</small>" : ""}</span><span class="role ${t.role}">${t.role}</span></h3>
+      <div class="odds"><span><b>${t.w}-${t.l}</b></span><span>PF <b>${f1(t.pf)}</b></span><span>playoffs <b>${Math.round(100 * t.p_playoffs)}%</b></span><span>title <b>${(100 * t.p_title).toFixed(1)}%</b></span></div>
+      <div class="line"><b>Keeps</b> ${list(t.locked, t.id, p => money(p.kval))}</div>
+      <div class="line"><b>Chips</b> ${list(t.chips, t.id, p => money(p.kval))}</div>
+      <div class="line"><b title="${t.role === "seller" ? "Useful now, not one of his keepers: sell" : "Useful now, not one of his keepers: play them this season, they won't be kept"}">${t.role === "seller" ? "Sell" : "Season-only"}</b> ${list(t.rentals.slice(0, 6), t.id, p => f1(p.lvl) + "/wk")}</div>
+      <div class="advice">${advice(t)}</div>
+    </div>`).join("");
+  $("matchHow").innerHTML = `A seller's rental for a buyer's chip, kept only if both sides gain: the buyer's <b>whole starting lineup</b> improves ${R.match_min_gain}+ pts/wk after the swap (the chip may be starting for him now), and the chip breaks into the seller's <b>top ${R.max_keepers}</b> keepers, raising that total by ${money(R.match_min_keep)}+. The chip shown is the cheapest one that does it.`;
+  $("matches").innerHTML = "<thead><tr><th class='l'>Buyer gets</th><th class='l'>From (seller)</th><th class='l'>To (buyer)</th><th class='l'>Buyer gives</th><th>Buyer lineup /wk</th><th>Rest of season</th><th>Seller keepers</th></tr></thead><tbody>" +
+    (D.matches.length ? D.matches.map(m => `<tr class="${m.buyer === D.my_team || m.seller === D.my_team ? "me" : ""}">
+      <td class="l"><span class="pos ${m.pos}">${m.pos}</span>${esc(m.player)}</td><td class="l">${esc(owner(m.seller))}</td><td class="l">${esc(owner(m.buyer))}</td>
+      <td class="l"><span class="pos ${m.chip_pos}">${m.chip_pos}</span>${esc(m.chip)}</td><td>+${f1(m.gain)}</td><td>+${f1(m.ros_gain)}</td><td>+${money(m.keep_gain)}</td></tr>`).join("")
+      : "<tr><td class='l' colspan='7'>No trade clears both bars this week.</td></tr>") + "</tbody>";
+}
+
+function renderHow() {
+  $("howView").innerHTML = `
+    <h2>How the numbers are built</h2>
+    <p><b>ROS /wk</b> is the fitted rest-of-season ridge the trade calculator uses (walk-forward MAE 3.11 vs 3.31 for a naive blend), in this league's scoring. It is applied to a player's <b>full games only</b>: a game in which he played under ${Math.round(100 * R.partial.rel)}% of his own usual snap share (and under ${Math.round(100 * R.partial.abs)}% outright) is treated as an injury exit and dropped. ${D.partial_games} such games this season. Omar Cooper Jr.'s week 1 (7% of snaps, one catch) is one of them.</p>
+    <p><b>PPG</b> is the same: full games, with the all-games figure beside it when a game was dropped.</p>
+    <p><b>Keeper value</b> adds up every keeper year a player has left (${R.max_times_kept} minus the times he has been kept). Each year costs his basis (his auction price; <b>$1 for any waiver add</b>, per league rule) plus the owner's bump: the expected bump from his playoff odds the first year, +$${R.base_bump} more each year after. Each year's worth is what this league pays at auction for his level, after the measured year-over-year drift for his position and age (players 24 and under have tended to rise, older ones to fade), with the uncertainty widening every year. An owner keeps him only in years he is worth the price, so a year counts as the expected surplus when it is positive. Later years count less: ×${R.discount} per year. That discount is a judgement call, not a measurement.</p>
+    <p><b>Over waiver</b> is ROS /wk minus the average of the five best free agents at the position (QB ${f1(D.repl.QB)}, RB ${f1(D.repl.RB)}, WR ${f1(D.repl.WR)}, TE ${f1(D.repl.TE)}); <b>ROS pts over waiver</b> multiplies it by the games he has left through week 17, byes excluded.</p>
+    <p><b>Free agents</b> are listed when they have an active role (2+ games and a recent or projected line above a floor). Adding one gives you a $1 keeper with ${R.max_times_kept} years.</p>
+    <p><b>Limits.</b> The drift table splits only at age 24, so a 38-year-old is aged like a 26-year-old; retirement is not modelled. K and D/ST are left out. Rebuilt with every tab refresh (<code>scripts/league_values_bake.py</code>).</p>`;
+}
+
+function setView(v) {
+  view = v; sortKey = null; sortDir = -1;
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.v === v));
+  $("tableView").style.display = VIEWS[v] ? "" : "none";
+  $("marketView").style.display = v === "market" ? "" : "none";
+  $("howView").style.display = v === "how" ? "" : "none";
+  if (VIEWS[v]) renderTable(); else if (v === "market") renderMarket(); else renderHow();
+}
+document.querySelectorAll("#tabs button").forEach(b => b.onclick = () => setView(b.dataset.v));
+["fPos", "fOwner", "fFA", "fName"].forEach(id => $(id).addEventListener("input", renderTable));
+setView(location.hash === "#market" ? "market" : location.hash === "#players" ? "players" : "values");
+</script>
+</body>
+</html>
