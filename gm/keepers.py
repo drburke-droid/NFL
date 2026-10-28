@@ -195,6 +195,20 @@ def league_price_curve(cfg, drafts_path=None, min_games=6, min_bids=8):
     return {pos: _isotonic(*zip(*v)) for pos, v in pairs.items() if len(v) >= min_bids}
 
 
+_PRICE_CACHE = {}
+
+
+def price_curve(cfg):
+    """The curve keeper value is priced on: this league's own auction prices (league_price_curve),
+    with the model's dollar_curve only for a position that has too few bids. Used by the trade
+    calculator (next_season_board, gm_report) and the League Values tab alike, so a keeper is worth
+    the same on both. Cached per scoring config: the fit reads three seasons of nflverse."""
+    key = json.dumps(cfg.raw.get("scoring"), sort_keys=True)
+    if key not in _PRICE_CACHE:
+        _PRICE_CACHE[key] = {**dollar_curve(), **league_price_curve(cfg)}
+    return _PRICE_CACHE[key]
+
+
 def dollars_at(curve, pos, ppg):
     if pos not in curve:
         return 1.0
@@ -234,12 +248,13 @@ def next_season_board(cfg, est, curve=None, players=None, bump=NEXT_BUMP):
       cost   = this year's basis (the auction price; $1 for any waiver pickup, per league rule)
                + the owner's bump (assumed NEXT_BUMP until the standings settle)
       value  = expected auction dollars at the player's healthy level (the fitted rest-of-season
-               mean, which does not know he is hurt) after a measured year of drift and spread
+               mean, which does not know he is hurt) after a measured year of drift and spread,
+               priced on what this league pays at that position (price_curve: its own bids)
     Same shape as load_board() so the trade search reads it unchanged. Injured stashes are the
     case this exists for: their weekly value is near zero, their keeper value is not.
     `bump` is a number for every team or {team_id: bump} (see expected_bump).
     """
-    curve = curve or dollar_curve()
+    curve = curve or price_curve(cfg)          # what this league pays (league bids), not the model
     players = players or draft_tool_players()
     out = {}
     for t in cfg.teams:
