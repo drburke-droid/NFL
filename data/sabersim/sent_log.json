@@ -4120,5 +4120,98 @@
     "no DK props posted (news?): DeVonta Smith"
    ]
   }
+ },
+ "2026-10-30T00:15_1g": {
+  "sent_at": "2026-10-29T23:17:18Z",
+  "rows": 30,
+  "file": "Burke_Model_Burke_2026_thu08pm_1029_2315.csv",
+  "slate": "Thu 10/29 08:15 PM ET slate (1 games)",
+  "credits_left": 2106,
+  "lineups": [
+   "schedule: 18 weeks; week 8 runs Fri 10/30 .. Tue 11/03",
+   "week 8: 1 games in this send (kickoffs Fri 00:15Z .. Fri 00:15Z)",
+   "injury report (nfl.com): 83 skill/K players listed; practice {'FP': 33, 'LP': 29, 'DNP': 21}; designations {'Questionable': 1}",
+   "lineups: 427 statuses pulled {'espn': 218, '+sleeper': 90, 'sleeper': 85, 'espn+sleeper': 33, 'nfl-report': 1}; 1 Q, 4 OUT with a projection {'espn+sleeper': 4}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk8.csv",
+    "rows": 810,
+    "age_hours": 0.0,
+    "slate_skill": 28,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-10-29T23:16Z",
+    "credits_left": "105"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 21,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 7,
+     "rec_yds": 15,
+     "rec": 15,
+     "exp_td": 21
+    },
+    "no_line": [],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 7
+   },
+   "kdst": {
+    "file": "kdst_2026_wk8.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "CAR": [
+      "Ryan Fitzgerald"
+     ],
+     "GB": [
+      "Trey Smack"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 83,
+    "designations": {
+     "Questionable": 1
+    }
+   },
+   "lineups": {
+    "statuses": 427,
+    "by_src": {
+     "espn": 218,
+     "+sleeper": 90,
+     "sleeper": 85,
+     "espn+sleeper": 33,
+     "nfl-report": 1
+    },
+    "q": 1,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 4
+    }
+   },
+   "warnings": []
+  }
  }
 }
