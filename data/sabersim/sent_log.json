@@ -4213,5 +4213,151 @@
    },
    "warnings": []
   }
+ },
+ "2026-11-01T18:00_8g": {
+  "sent_at": "2026-11-01T17:02:40Z",
+  "rows": 232,
+  "file": "Burke_Model_Burke_2026_sun01pm_1101_1700.csv",
+  "slate": "Sun 11/01 01:00 PM ET slate (8 games)",
+  "credits_left": 2926,
+  "lineups": [
+   "schedule: 18 weeks; week 8 runs Fri 10/30 .. Tue 11/03",
+   "week 8: 8 games in this send (kickoffs Sun 18:00Z .. Sun 18:00Z)",
+   "injury report (nfl.com): 93 skill/K players listed; practice {'FP': 55, 'DNP': 21, 'LP': 17}; designations {'Questionable': 23, 'Out': 16}",
+   "lineups: 423 statuses pulled {'espn': 157, '+sleeper': 90, 'sleeper': 84, 'espn+sleeper': 76, 'nfl-report': 16}; 7 Q, 18 OUT with a projection {'espn+sleeper': 17, 'espn': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk8.csv",
+    "rows": 810,
+    "age_hours": 0.0,
+    "slate_skill": 230,
+    "slate_k": 16,
+    "slate_dst": 16
+   },
+   "dk_lines": {
+    "slate_games": 8,
+    "with_lines": 8,
+    "fetched_at": "2026-11-01T17:01Z",
+    "credits_left": "426"
+   },
+   "dk_props": {
+    "slate_events": 8,
+    "events_with_props": 8,
+    "with_props": 191,
+    "by_stat": {
+     "pass_yds": 16,
+     "pass_tds": 16,
+     "rush_yds": 50,
+     "rec_yds": 100,
+     "rec": 99,
+     "exp_td": 191
+    },
+    "no_line": [
+     "Breece Hall",
+     "Carnell Tate",
+     "Emeka Egbuka"
+    ],
+    "eligible": 75,
+    "name_aliases": [
+     "joshua palmer -> josh palmer",
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 39
+   },
+   "kdst": {
+    "file": "kdst_2026_wk8.csv",
+    "K": {
+     "hit": 16,
+     "of": 16
+    },
+    "DST": {
+     "hit": 16,
+     "of": 16
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 16,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ],
+     "ATL": [
+      "Nick Folk"
+     ],
+     "BAL": [
+      "Tyler Loop"
+     ],
+     "BUF": [
+      "Tyler Bass"
+     ],
+     "CIN": [
+      "Evan McPherson"
+     ],
+     "CLE": [
+      "Andre Szmyt"
+     ],
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "DET": [
+      "Jake Bates"
+     ],
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "JAX": [
+      "Cam Little"
+     ],
+     "LV": [
+      "Matt Gay"
+     ],
+     "MIN": [
+      "Will Reichard"
+     ],
+     "NYJ": [
+      "Jason Sanders"
+     ],
+     "PIT": [
+      "Chris Boswell"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ],
+     "TEN": [
+      "Joey Slye"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 93,
+    "designations": {
+     "Questionable": 23,
+     "Out": 16
+    }
+   },
+   "lineups": {
+    "statuses": 423,
+    "by_src": {
+     "espn": 157,
+     "+sleeper": 90,
+     "sleeper": 84,
+     "espn+sleeper": 76,
+     "nfl-report": 16
+    },
+    "q": 7,
+    "out": 18,
+    "out_by_src": {
+     "espn+sleeper": 17,
+     "espn": 1
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Breece Hall, Carnell Tate, Emeka Egbuka"
+   ]
+  }
  }
 }
