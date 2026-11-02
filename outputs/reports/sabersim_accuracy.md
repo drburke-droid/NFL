@@ -1,4 +1,4 @@
-# SaberSim send accuracy — 2026 (graded 2026-11-01T14:06Z)
+# SaberSim send accuracy — 2026 (graded 2026-11-02T14:01Z)
 
 latest send generated >= 50 min before kickoff (>= 55 for kickoffs before 2026-10-25 13:30Z, when the T-55 fallback began; >= 75 before 2026-09-27 20:10Z, when the send moved from T-80 to T-60), per game and player; QB/RB/WR/TE scored PPR (4-pt pass TD, -2 INT), K = DK kicker scoring; DST not graded
 
@@ -11,17 +11,17 @@ latest send generated >= 50 min before kickoff (>= 55 for kickoffs before 2026-1
 | 5 | 7 | 15 | 407 | 3.663 | 5.537 | +0.813 | 0.795 | 0.803 | 4.29 (model 3.757) | 4.362 (model 4.31) |
 | 6 | 6 | 13 | 360 | 3.469 | 5.1 | +0.501 | 0.792 | 0.808 | 4.128 (model 3.459) | 4.063 (model 3.995) |
 | 7 | 6 | 13 | 348 | 3.413 | 5.087 | +0.564 | 0.802 | 0.807 | 4.13 (model 3.544) | 4.157 (model 4.068) |
-| 8 | 1 | 1 | 28 | 2.657 | 3.827 | +0.865 | 0.933 | 0.964 | 3.048 (model 2.545) | 3.41 (model 3.103) |
+| 8 | 5 | 13 | 347 | 3.844 | 5.889 | +0.715 | 0.732 | 0.801 | 4.409 (model 3.927) | 4.459 (model 4.444) |
 
-**Overall:** n 2927 · MAE 3.653 · RMSE 5.37 · bias +0.354 · Spearman 0.776 · 80% coverage 0.805
+**Overall:** n 3246 · MAE 3.682 · RMSE 5.439 · bias +0.388 · Spearman 0.769 · 80% coverage 0.803
 
 | pos | n | MAE | RMSE | bias | 80% cov |
 |---|---|---|---|---|---|
-| K | 212 | 3.651 | 4.528 | +0.351 | 0.788 |
-| QB | 343 | 4.132 | 5.961 | +0.085 | 0.875 |
-| RB | 697 | 3.509 | 5.33 | +0.477 | 0.773 |
-| TE | 692 | 3.114 | 4.648 | +0.132 | 0.829 |
-| WR | 983 | 3.967 | 5.805 | +0.516 | 0.789 |
+| K | 236 | 3.661 | 4.53 | +0.266 | 0.784 |
+| QB | 372 | 4.31 | 6.21 | -0.004 | 0.86 |
+| RB | 772 | 3.548 | 5.468 | +0.582 | 0.775 |
+| TE | 776 | 3.092 | 4.615 | +0.192 | 0.83 |
+| WR | 1090 | 3.986 | 5.845 | +0.55 | 0.789 |
 
 ## Scale (2025 reference, full slate pool)
 
@@ -41,16 +41,17 @@ Bands (upper edge): MAE elite ≤4.05 · top ≤4.15 · consensus ≤4.30 · fai
 
 ## Subvertadown check
 
-- On 1785 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 52% of the time (50% = coin flip).
-- Adding the full team bonus, shared by projection, would have moved MAE from 3.58 to 3.59; half of it: 3.58.
+- On 1983 RB/WR/TE player-games where Subvertadown flagged a matchup of at least ±0.5 team points, the direction of our error matched the flag 52% of the time (50% = coin flip).
+- Adding the full team bonus, shared by projection, would have moved MAE from 3.60 to 3.60; half of it: 3.59.
 - Correlation between the bonus and our error: -0.00.
-- Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones, within each week, then averaged over weeks; 0 = no signal): RB +0.05, WR +0.04, TE +0.93; all +0.30.
+- Good minus bad matchups (how much more the flagged-good players beat our projection than the flagged-bad ones, within each week, then averaged over weeks; 0 = no signal): RB +0.11, WR +0.06, TE +0.82; all +0.29.
 - Directional only — a signal needs several hundred player-games before ±0.1 MAE means anything; prior studies found opponent-matchup features add nothing on top of FFA + DK, so the bar is 'consistently right direction', not one good week.
-- QB direction: where the two projections differed by 1+ point (both had him starting), the result landed on Subvertadown's side 39 of 85 times (46%; 50% = no better than ours).
-- QB: on 233 graded starters Subvertadown's projection MAE was 7.20 vs ours 5.31; a 50/50 blend 6.22.
+- QB direction: where the two projections differed by 1+ point (both had him starting), the result landed on Subvertadown's side 44 of 100 times (44%; 50% = no better than ours).
+- QB: on 258 graded starters Subvertadown's projection MAE was 7.30 vs ours 5.51; a 50/50 blend 6.38.
 
 Largest misses:
 
+- wk8 Tyler Allgeier (RB ARI): proj 4.4, actual 36.1
 - wk4 Tetairoa McMillan (WR CAR): proj 16.1, actual 45.2
 - wk4 CeeDee Lamb (WR DAL): proj 16.1, actual 41.3
 - wk4 Kyren Williams (RB LA): proj 12.1, actual 36.7
@@ -58,8 +59,7 @@ Largest misses:
 - wk4 Tyquan Thornton (WR KC): proj 3.8, actual 28.1
 - wk7 Tony Pollard (RB TEN): proj 12.4, actual 36.5
 - wk2 Jaxon Smith-Njigba (WR SEA): proj 18.8, actual 42.5
+- wk8 Emmett Johnson (RB KC): proj 2.0, actual 25.3
 - wk5 Isaiah Likely (TE NYG): proj 9.8, actual 32.4
+- wk8 Adonai Mitchell (WR NYJ): proj 4.9, actual 27.2
 - wk2 Davante Adams (WR LA): proj 17.4, actual 39.5
-- wk4 Brian Robinson (RB ATL): proj 3.7, actual 25.7
-- wk5 Drake Maye (QB NE): proj 18.1, actual 39.5
-- wk7 Mason Taylor (TE NYJ): proj 3.8, actual 25.2

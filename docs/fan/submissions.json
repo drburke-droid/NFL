@@ -1,6 +1,6 @@
 {
- "generated": "2026-11-01T14:06Z",
- "n_codes": 324,
+ "generated": "2026-11-02T14:01Z",
+ "n_codes": 326,
  "entries": [
   {
    "season": 2026,
@@ -10,6 +10,15 @@
    "submitted_at": "2026-11-01T04:43:45Z",
    "arrows": 14,
    "received": "10/31/2026 22:43:46"
+  },
+  {
+   "season": 2026,
+   "week": 8,
+   "fan": "REB",
+   "team": "CHI",
+   "submitted_at": "2026-11-01T17:09:22Z",
+   "arrows": 24,
+   "received": "11/1/2026 10:09:23"
   },
   {
    "season": 2026,
