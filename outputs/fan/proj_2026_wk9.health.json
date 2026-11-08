@@ -27,7 +27,17 @@
   "slate_k": 28,
   "slate_dst": 28
  },
- "kdst": null,
+ "kdst": {
+  "file": "kdst_2026_wk9.csv",
+  "K": {
+   "hit": 28,
+   "of": 28
+  },
+  "DST": {
+   "hit": 28,
+   "of": 28
+  }
+ },
  "dk_kickers": null,
  "injury_report": {
   "src": "nfl.com",
@@ -41,10 +51,10 @@
  "lineups": {
   "statuses": 419,
   "by_src": {
-   "espn": 152,
+   "espn": 151,
    "+sleeper": 85,
    "espn+sleeper": 84,
-   "sleeper": 78,
+   "sleeper": 79,
    "nfl-report": 20
   },
   "q": 17,
@@ -83,7 +93,7 @@
  "proj_kind": "playing_median",
  "csv": "proj_2026_wk9.csv",
  "rows": 394,
- "generated": "2026-11-08 12:10 ET",
+ "generated": "2026-11-08 12:14 ET",
  "kickoffs": [
   "Mon 11/09 08:15 PM ET",
   "Sun 11/08 01:00 PM ET",
