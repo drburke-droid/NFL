@@ -469021,3 +469021,2199 @@ snapshot,season,week_of_paste,table,team,player,week,value
 2026-11-08,2026,8,te_bonus,SF,,playoffs,0.0
 2026-11-08,2026,8,te_bonus,SF,,baseline,11.1
 2026-11-08,2026,8,te_bonus,SF,,next4,0.4
+2026-11-08,2026,9,dst,JAX,,9,9.9
+2026-11-08,2026,9,dst,JAX,,10,6.8
+2026-11-08,2026,9,dst,JAX,,11,5.5
+2026-11-08,2026,9,dst,JAX,,12,7.5
+2026-11-08,2026,9,dst,JAX,,13,2.8
+2026-11-08,2026,9,dst,JAX,,14,7.2
+2026-11-08,2026,9,dst,JAX,,15,4.7
+2026-11-08,2026,9,dst,JAX,,16,2.6
+2026-11-08,2026,9,dst,JAX,,17,6.5
+2026-11-08,2026,9,dst,JAX,,avg,5.9
+2026-11-08,2026,9,dst,JAX,,playoffs,4.6
+2026-11-08,2026,9,dst,SEA,,9,9.7
+2026-11-08,2026,9,dst,SEA,,10,2.9
+2026-11-08,2026,9,dst,SEA,,12,3.8
+2026-11-08,2026,9,dst,SEA,,13,6.0
+2026-11-08,2026,9,dst,SEA,,14,7.6
+2026-11-08,2026,9,dst,SEA,,15,8.7
+2026-11-08,2026,9,dst,SEA,,16,5.4
+2026-11-08,2026,9,dst,SEA,,17,6.5
+2026-11-08,2026,9,dst,SEA,,avg,6.3
+2026-11-08,2026,9,dst,SEA,,playoffs,6.9
+2026-11-08,2026,9,dst,NO,,9,7.8
+2026-11-08,2026,9,dst,NO,,10,4.8
+2026-11-08,2026,9,dst,NO,,11,2.8
+2026-11-08,2026,9,dst,NO,,12,1.9
+2026-11-08,2026,9,dst,NO,,13,4.9
+2026-11-08,2026,9,dst,NO,,14,3.9
+2026-11-08,2026,9,dst,NO,,15,4.5
+2026-11-08,2026,9,dst,NO,,16,5.3
+2026-11-08,2026,9,dst,NO,,17,3.5
+2026-11-08,2026,9,dst,NO,,avg,4.4
+2026-11-08,2026,9,dst,NO,,playoffs,4.4
+2026-11-08,2026,9,dst,HOU,,9,7.5
+2026-11-08,2026,9,dst,HOU,,10,8.2
+2026-11-08,2026,9,dst,HOU,,11,6.3
+2026-11-08,2026,9,dst,HOU,,12,7.6
+2026-11-08,2026,9,dst,HOU,,13,3.9
+2026-11-08,2026,9,dst,HOU,,14,5.4
+2026-11-08,2026,9,dst,HOU,,15,2.5
+2026-11-08,2026,9,dst,HOU,,16,6.1
+2026-11-08,2026,9,dst,HOU,,17,6.2
+2026-11-08,2026,9,dst,HOU,,avg,6.0
+2026-11-08,2026,9,dst,HOU,,playoffs,4.9
+2026-11-08,2026,9,dst,CHI,,9,6.8
+2026-11-08,2026,9,dst,CHI,,11,6.7
+2026-11-08,2026,9,dst,CHI,,12,4.3
+2026-11-08,2026,9,dst,CHI,,13,4.9
+2026-11-08,2026,9,dst,CHI,,14,7.1
+2026-11-08,2026,9,dst,CHI,,15,2.6
+2026-11-08,2026,9,dst,CHI,,16,6.1
+2026-11-08,2026,9,dst,CHI,,17,4.3
+2026-11-08,2026,9,dst,CHI,,avg,5.3
+2026-11-08,2026,9,dst,CHI,,playoffs,4.3
+2026-11-08,2026,9,dst,KC,,9,6.7
+2026-11-08,2026,9,dst,KC,,10,4.8
+2026-11-08,2026,9,dst,KC,,11,7.2
+2026-11-08,2026,9,dst,KC,,12,2.1
+2026-11-08,2026,9,dst,KC,,13,2.9
+2026-11-08,2026,9,dst,KC,,14,3.0
+2026-11-08,2026,9,dst,KC,,15,5.9
+2026-11-08,2026,9,dst,KC,,16,3.4
+2026-11-08,2026,9,dst,KC,,17,6.8
+2026-11-08,2026,9,dst,KC,,avg,4.8
+2026-11-08,2026,9,dst,KC,,playoffs,5.3
+2026-11-08,2026,9,dst,NYG,,9,6.5
+2026-11-08,2026,9,dst,NYG,,10,4.8
+2026-11-08,2026,9,dst,NYG,,11,2.8
+2026-11-08,2026,9,dst,NYG,,12,6.4
+2026-11-08,2026,9,dst,NYG,,13,3.1
+2026-11-08,2026,9,dst,NYG,,14,4.8
+2026-11-08,2026,9,dst,NYG,,15,7.2
+2026-11-08,2026,9,dst,NYG,,16,4.7
+2026-11-08,2026,9,dst,NYG,,17,1.8
+2026-11-08,2026,9,dst,NYG,,avg,4.7
+2026-11-08,2026,9,dst,NYG,,playoffs,4.6
+2026-11-08,2026,9,dst,DEN,,9,6.2
+2026-11-08,2026,9,dst,DEN,,11,4.6
+2026-11-08,2026,9,dst,DEN,,12,2.4
+2026-11-08,2026,9,dst,DEN,,13,7.9
+2026-11-08,2026,9,dst,DEN,,14,4.6
+2026-11-08,2026,9,dst,DEN,,15,1.7
+2026-11-08,2026,9,dst,DEN,,16,2.5
+2026-11-08,2026,9,dst,DEN,,17,3.1
+2026-11-08,2026,9,dst,DEN,,avg,4.1
+2026-11-08,2026,9,dst,DEN,,playoffs,2.4
+2026-11-08,2026,9,dst,PHI,,9,6.0
+2026-11-08,2026,9,dst,PHI,,11,3.2
+2026-11-08,2026,9,dst,PHI,,12,0.7
+2026-11-08,2026,9,dst,PHI,,13,3.5
+2026-11-08,2026,9,dst,PHI,,14,6.1
+2026-11-08,2026,9,dst,PHI,,15,3.8
+2026-11-08,2026,9,dst,PHI,,16,3.2
+2026-11-08,2026,9,dst,PHI,,17,2.1
+2026-11-08,2026,9,dst,PHI,,avg,3.6
+2026-11-08,2026,9,dst,PHI,,playoffs,3.0
+2026-11-08,2026,9,dst,MIN,,9,5.9
+2026-11-08,2026,9,dst,MIN,,10,6.2
+2026-11-08,2026,9,dst,MIN,,11,3.5
+2026-11-08,2026,9,dst,MIN,,12,6.6
+2026-11-08,2026,9,dst,MIN,,13,6.3
+2026-11-08,2026,9,dst,MIN,,14,3.1
+2026-11-08,2026,9,dst,MIN,,15,4.9
+2026-11-08,2026,9,dst,MIN,,16,6.3
+2026-11-08,2026,9,dst,MIN,,17,5.7
+2026-11-08,2026,9,dst,MIN,,avg,5.4
+2026-11-08,2026,9,dst,MIN,,playoffs,5.7
+2026-11-08,2026,9,dst,LA,,9,5.9
+2026-11-08,2026,9,dst,LA,,10,6.9
+2026-11-08,2026,9,dst,LA,,12,5.9
+2026-11-08,2026,9,dst,LA,,13,3.8
+2026-11-08,2026,9,dst,LA,,14,3.7
+2026-11-08,2026,9,dst,LA,,15,3.7
+2026-11-08,2026,9,dst,LA,,16,5.6
+2026-11-08,2026,9,dst,LA,,17,5.9
+2026-11-08,2026,9,dst,LA,,avg,5.2
+2026-11-08,2026,9,dst,LA,,playoffs,5.1
+2026-11-08,2026,9,dst,BUF,,9,5.7
+2026-11-08,2026,9,dst,BUF,,10,7.6
+2026-11-08,2026,9,dst,BUF,,11,7.9
+2026-11-08,2026,9,dst,BUF,,12,5.5
+2026-11-08,2026,9,dst,BUF,,13,5.2
+2026-11-08,2026,9,dst,BUF,,14,6.4
+2026-11-08,2026,9,dst,BUF,,15,5.5
+2026-11-08,2026,9,dst,BUF,,16,5.9
+2026-11-08,2026,9,dst,BUF,,17,6.4
+2026-11-08,2026,9,dst,BUF,,avg,6.2
+2026-11-08,2026,9,dst,BUF,,playoffs,5.9
+2026-11-08,2026,9,dst,SF,,9,5.7
+2026-11-08,2026,9,dst,SF,,10,3.4
+2026-11-08,2026,9,dst,SF,,11,8.8
+2026-11-08,2026,9,dst,SF,,12,7.2
+2026-11-08,2026,9,dst,SF,,13,7.0
+2026-11-08,2026,9,dst,SF,,14,5.4
+2026-11-08,2026,9,dst,SF,,15,6.9
+2026-11-08,2026,9,dst,SF,,16,4.3
+2026-11-08,2026,9,dst,SF,,17,8.3
+2026-11-08,2026,9,dst,SF,,avg,6.3
+2026-11-08,2026,9,dst,SF,,playoffs,6.5
+2026-11-08,2026,9,dst,NE,,9,5.6
+2026-11-08,2026,9,dst,NE,,10,3.8
+2026-11-08,2026,9,dst,NE,,12,7.5
+2026-11-08,2026,9,dst,NE,,13,2.4
+2026-11-08,2026,9,dst,NE,,14,5.9
+2026-11-08,2026,9,dst,NE,,15,5.4
+2026-11-08,2026,9,dst,NE,,16,6.1
+2026-11-08,2026,9,dst,NE,,17,5.4
+2026-11-08,2026,9,dst,NE,,avg,5.3
+2026-11-08,2026,9,dst,NE,,playoffs,5.6
+2026-11-08,2026,9,dst,DET,,9,5.1
+2026-11-08,2026,9,dst,DET,,10,3.6
+2026-11-08,2026,9,dst,DET,,11,5.8
+2026-11-08,2026,9,dst,DET,,12,2.7
+2026-11-08,2026,9,dst,DET,,13,5.5
+2026-11-08,2026,9,dst,DET,,14,5.6
+2026-11-08,2026,9,dst,DET,,15,6.1
+2026-11-08,2026,9,dst,DET,,16,6.5
+2026-11-08,2026,9,dst,DET,,17,3.9
+2026-11-08,2026,9,dst,DET,,avg,5.0
+2026-11-08,2026,9,dst,DET,,playoffs,5.5
+2026-11-08,2026,9,dst,DAL,,9,4.9
+2026-11-08,2026,9,dst,DAL,,10,1.6
+2026-11-08,2026,9,dst,DAL,,11,5.2
+2026-11-08,2026,9,dst,DAL,,12,6.9
+2026-11-08,2026,9,dst,DAL,,13,5.7
+2026-11-08,2026,9,dst,DAL,,15,2.8
+2026-11-08,2026,9,dst,DAL,,16,2.2
+2026-11-08,2026,9,dst,DAL,,17,4.5
+2026-11-08,2026,9,dst,DAL,,avg,4.2
+2026-11-08,2026,9,dst,DAL,,playoffs,3.2
+2026-11-08,2026,9,dst,CIN,,9,4.0
+2026-11-08,2026,9,dst,CIN,,10,5.3
+2026-11-08,2026,9,dst,CIN,,11,7.2
+2026-11-08,2026,9,dst,CIN,,12,6.3
+2026-11-08,2026,9,dst,CIN,,13,7.2
+2026-11-08,2026,9,dst,CIN,,14,4.9
+2026-11-08,2026,9,dst,CIN,,15,5.3
+2026-11-08,2026,9,dst,CIN,,16,5.4
+2026-11-08,2026,9,dst,CIN,,17,6.7
+2026-11-08,2026,9,dst,CIN,,avg,5.8
+2026-11-08,2026,9,dst,CIN,,playoffs,5.8
+2026-11-08,2026,9,dst,CLE,,9,3.9
+2026-11-08,2026,9,dst,CLE,,10,4.0
+2026-11-08,2026,9,dst,CLE,,12,3.0
+2026-11-08,2026,9,dst,CLE,,13,2.5
+2026-11-08,2026,9,dst,CLE,,14,4.8
+2026-11-08,2026,9,dst,CLE,,15,4.7
+2026-11-08,2026,9,dst,CLE,,16,6.4
+2026-11-08,2026,9,dst,CLE,,17,6.2
+2026-11-08,2026,9,dst,CLE,,avg,4.4
+2026-11-08,2026,9,dst,CLE,,playoffs,5.8
+2026-11-08,2026,9,dst,GB,,9,3.8
+2026-11-08,2026,9,dst,GB,,10,7.3
+2026-11-08,2026,9,dst,GB,,12,3.7
+2026-11-08,2026,9,dst,GB,,13,3.5
+2026-11-08,2026,9,dst,GB,,14,2.5
+2026-11-08,2026,9,dst,GB,,15,6.3
+2026-11-08,2026,9,dst,GB,,16,3.6
+2026-11-08,2026,9,dst,GB,,17,5.7
+2026-11-08,2026,9,dst,GB,,avg,4.5
+2026-11-08,2026,9,dst,GB,,playoffs,5.2
+2026-11-08,2026,9,dst,ARI,,9,3.8
+2026-11-08,2026,9,dst,ARI,,10,2.8
+2026-11-08,2026,9,dst,ARI,,11,2.7
+2026-11-08,2026,9,dst,ARI,,12,3.4
+2026-11-08,2026,9,dst,ARI,,13,7.2
+2026-11-08,2026,9,dst,ARI,,15,4.9
+2026-11-08,2026,9,dst,ARI,,16,3.1
+2026-11-08,2026,9,dst,ARI,,17,2.4
+2026-11-08,2026,9,dst,ARI,,avg,3.8
+2026-11-08,2026,9,dst,ARI,,playoffs,3.5
+2026-11-08,2026,9,dst,CAR,,9,3.8
+2026-11-08,2026,9,dst,CAR,,10,2.9
+2026-11-08,2026,9,dst,CAR,,11,7.7
+2026-11-08,2026,9,dst,CAR,,12,5.9
+2026-11-08,2026,9,dst,CAR,,13,4.9
+2026-11-08,2026,9,dst,CAR,,14,5.3
+2026-11-08,2026,9,dst,CAR,,15,2.7
+2026-11-08,2026,9,dst,CAR,,16,3.9
+2026-11-08,2026,9,dst,CAR,,17,5.6
+2026-11-08,2026,9,dst,CAR,,avg,4.7
+2026-11-08,2026,9,dst,CAR,,playoffs,4.1
+2026-11-08,2026,9,dst,BAL,,9,3.0
+2026-11-08,2026,9,dst,BAL,,10,8.8
+2026-11-08,2026,9,dst,BAL,,11,3.8
+2026-11-08,2026,9,dst,BAL,,12,2.6
+2026-11-08,2026,9,dst,BAL,,14,4.8
+2026-11-08,2026,9,dst,BAL,,15,3.3
+2026-11-08,2026,9,dst,BAL,,16,7.0
+2026-11-08,2026,9,dst,BAL,,17,1.5
+2026-11-08,2026,9,dst,BAL,,avg,4.4
+2026-11-08,2026,9,dst,BAL,,playoffs,3.9
+2026-11-08,2026,9,dst,TB,,9,3.0
+2026-11-08,2026,9,dst,TB,,11,2.9
+2026-11-08,2026,9,dst,TB,,12,7.8
+2026-11-08,2026,9,dst,TB,,13,9.1
+2026-11-08,2026,9,dst,TB,,14,7.6
+2026-11-08,2026,9,dst,TB,,15,6.3
+2026-11-08,2026,9,dst,TB,,16,6.4
+2026-11-08,2026,9,dst,TB,,17,5.5
+2026-11-08,2026,9,dst,TB,,avg,6.1
+2026-11-08,2026,9,dst,TB,,playoffs,6.1
+2026-11-08,2026,9,dst,LAC,,9,3.0
+2026-11-08,2026,9,dst,LAC,,10,6.9
+2026-11-08,2026,9,dst,LAC,,11,4.6
+2026-11-08,2026,9,dst,LAC,,12,3.0
+2026-11-08,2026,9,dst,LAC,,13,4.0
+2026-11-08,2026,9,dst,LAC,,14,2.0
+2026-11-08,2026,9,dst,LAC,,15,1.7
+2026-11-08,2026,9,dst,LAC,,16,4.7
+2026-11-08,2026,9,dst,LAC,,17,3.0
+2026-11-08,2026,9,dst,LAC,,avg,3.7
+2026-11-08,2026,9,dst,LAC,,playoffs,3.1
+2026-11-08,2026,9,dst,WAS,,9,2.4
+2026-11-08,2026,9,dst,WAS,,10,2.7
+2026-11-08,2026,9,dst,WAS,,11,3.1
+2026-11-08,2026,9,dst,WAS,,12,5.3
+2026-11-08,2026,9,dst,WAS,,13,4.4
+2026-11-08,2026,9,dst,WAS,,14,4.0
+2026-11-08,2026,9,dst,WAS,,15,6.0
+2026-11-08,2026,9,dst,WAS,,16,4.2
+2026-11-08,2026,9,dst,WAS,,17,2.3
+2026-11-08,2026,9,dst,WAS,,avg,3.8
+2026-11-08,2026,9,dst,WAS,,playoffs,4.2
+2026-11-08,2026,9,dst,MIA,,9,1.7
+2026-11-08,2026,9,dst,MIA,,10,4.0
+2026-11-08,2026,9,dst,MIA,,11,0.9
+2026-11-08,2026,9,dst,MIA,,12,5.8
+2026-11-08,2026,9,dst,MIA,,13,3.7
+2026-11-08,2026,9,dst,MIA,,14,2.7
+2026-11-08,2026,9,dst,MIA,,15,3.8
+2026-11-08,2026,9,dst,MIA,,16,6.7
+2026-11-08,2026,9,dst,MIA,,17,1.8
+2026-11-08,2026,9,dst,MIA,,avg,3.5
+2026-11-08,2026,9,dst,MIA,,playoffs,4.1
+2026-11-08,2026,9,dst,IND,,9,1.6
+2026-11-08,2026,9,dst,IND,,10,5.8
+2026-11-08,2026,9,dst,IND,,11,2.2
+2026-11-08,2026,9,dst,IND,,12,4.5
+2026-11-08,2026,9,dst,IND,,14,6.7
+2026-11-08,2026,9,dst,IND,,15,4.5
+2026-11-08,2026,9,dst,IND,,16,2.0
+2026-11-08,2026,9,dst,IND,,17,5.8
+2026-11-08,2026,9,dst,IND,,avg,4.1
+2026-11-08,2026,9,dst,IND,,playoffs,4.1
+2026-11-08,2026,9,dst,ATL,,9,1.6
+2026-11-08,2026,9,dst,ATL,,10,2.8
+2026-11-08,2026,9,dst,ATL,,12,4.6
+2026-11-08,2026,9,dst,ATL,,13,2.5
+2026-11-08,2026,9,dst,ATL,,14,6.1
+2026-11-08,2026,9,dst,ATL,,15,3.8
+2026-11-08,2026,9,dst,ATL,,16,4.5
+2026-11-08,2026,9,dst,ATL,,17,4.1
+2026-11-08,2026,9,dst,ATL,,avg,3.8
+2026-11-08,2026,9,dst,ATL,,playoffs,4.1
+2026-11-08,2026,9,dst,NYJ,,9,1.4
+2026-11-08,2026,9,dst,NYJ,,10,1.8
+2026-11-08,2026,9,dst,NYJ,,11,6.5
+2026-11-08,2026,9,dst,NYJ,,12,5.3
+2026-11-08,2026,9,dst,NYJ,,14,5.0
+2026-11-08,2026,9,dst,NYJ,,15,5.1
+2026-11-08,2026,9,dst,NYJ,,16,4.1
+2026-11-08,2026,9,dst,NYJ,,17,6.1
+2026-11-08,2026,9,dst,NYJ,,avg,4.4
+2026-11-08,2026,9,dst,NYJ,,playoffs,5.1
+2026-11-08,2026,9,dst,LV,,9,0.4
+2026-11-08,2026,9,dst,LV,,10,4.5
+2026-11-08,2026,9,dst,LV,,11,3.5
+2026-11-08,2026,9,dst,LV,,12,6.4
+2026-11-08,2026,9,dst,LV,,14,6.6
+2026-11-08,2026,9,dst,LV,,15,4.8
+2026-11-08,2026,9,dst,LV,,16,4.4
+2026-11-08,2026,9,dst,LV,,17,4.9
+2026-11-08,2026,9,dst,LV,,avg,4.4
+2026-11-08,2026,9,dst,LV,,playoffs,4.7
+2026-11-08,2026,9,dst,PIT,,10,2.5
+2026-11-08,2026,9,dst,PIT,,11,9.2
+2026-11-08,2026,9,dst,PIT,,12,5.8
+2026-11-08,2026,9,dst,PIT,,13,5.8
+2026-11-08,2026,9,dst,PIT,,14,4.7
+2026-11-08,2026,9,dst,PIT,,15,8.6
+2026-11-08,2026,9,dst,PIT,,16,6.4
+2026-11-08,2026,9,dst,PIT,,17,5.7
+2026-11-08,2026,9,dst,PIT,,avg,6.1
+2026-11-08,2026,9,dst,PIT,,playoffs,6.9
+2026-11-08,2026,9,dst,TEN,,10,1.3
+2026-11-08,2026,9,dst,TEN,,11,0.7
+2026-11-08,2026,9,dst,TEN,,12,1.6
+2026-11-08,2026,9,dst,TEN,,13,3.8
+2026-11-08,2026,9,dst,TEN,,14,1.6
+2026-11-08,2026,9,dst,TEN,,15,6.2
+2026-11-08,2026,9,dst,TEN,,16,1.5
+2026-11-08,2026,9,dst,TEN,,17,3.0
+2026-11-08,2026,9,dst,TEN,,avg,2.5
+2026-11-08,2026,9,dst,TEN,,playoffs,3.6
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,9,10.0
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,10,9.0
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,11,9.4
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,12,9.9
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,13,8.8
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,15,8.3
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,16,8.3
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,17,9.0
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,avg,9.3
+2026-11-08,2026,9,k,DAL,Brandon Aubrey,playoffs,8.5
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,9,9.4
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,10,8.7
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,11,8.8
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,12,10.1
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,13,8.0
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,14,8.5
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,15,7.8
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,16,8.2
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,17,8.3
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,avg,8.7
+2026-11-08,2026,9,k,HOU,Ka'imi Fairbairn,playoffs,8.1
+2026-11-08,2026,9,k,DET,Jake Bates,9,9.3
+2026-11-08,2026,9,k,DET,Jake Bates,10,7.5
+2026-11-08,2026,9,k,DET,Jake Bates,11,9.1
+2026-11-08,2026,9,k,DET,Jake Bates,12,7.5
+2026-11-08,2026,9,k,DET,Jake Bates,13,9.1
+2026-11-08,2026,9,k,DET,Jake Bates,14,9.3
+2026-11-08,2026,9,k,DET,Jake Bates,15,8.8
+2026-11-08,2026,9,k,DET,Jake Bates,16,9.2
+2026-11-08,2026,9,k,DET,Jake Bates,17,7.4
+2026-11-08,2026,9,k,DET,Jake Bates,avg,8.6
+2026-11-08,2026,9,k,DET,Jake Bates,playoffs,8.5
+2026-11-08,2026,9,k,IND,Spencer Shrader,9,9.2
+2026-11-08,2026,9,k,IND,Spencer Shrader,10,8.9
+2026-11-08,2026,9,k,IND,Spencer Shrader,11,8.0
+2026-11-08,2026,9,k,IND,Spencer Shrader,12,9.3
+2026-11-08,2026,9,k,IND,Spencer Shrader,14,9.8
+2026-11-08,2026,9,k,IND,Spencer Shrader,15,7.9
+2026-11-08,2026,9,k,IND,Spencer Shrader,16,8.3
+2026-11-08,2026,9,k,IND,Spencer Shrader,17,7.9
+2026-11-08,2026,9,k,IND,Spencer Shrader,avg,8.8
+2026-11-08,2026,9,k,IND,Spencer Shrader,playoffs,8.0
+2026-11-08,2026,9,k,CIN,Evan McPherson,9,9.2
+2026-11-08,2026,9,k,CIN,Evan McPherson,10,8.2
+2026-11-08,2026,9,k,CIN,Evan McPherson,11,8.2
+2026-11-08,2026,9,k,CIN,Evan McPherson,12,8.9
+2026-11-08,2026,9,k,CIN,Evan McPherson,13,8.7
+2026-11-08,2026,9,k,CIN,Evan McPherson,14,8.3
+2026-11-08,2026,9,k,CIN,Evan McPherson,15,9.1
+2026-11-08,2026,9,k,CIN,Evan McPherson,16,10.0
+2026-11-08,2026,9,k,CIN,Evan McPherson,17,8.6
+2026-11-08,2026,9,k,CIN,Evan McPherson,avg,8.8
+2026-11-08,2026,9,k,CIN,Evan McPherson,playoffs,9.2
+2026-11-08,2026,9,k,BUF,Tyler Bass,9,9.0
+2026-11-08,2026,9,k,BUF,Tyler Bass,10,9.9
+2026-11-08,2026,9,k,BUF,Tyler Bass,11,8.0
+2026-11-08,2026,9,k,BUF,Tyler Bass,12,8.1
+2026-11-08,2026,9,k,BUF,Tyler Bass,13,7.7
+2026-11-08,2026,9,k,BUF,Tyler Bass,14,8.3
+2026-11-08,2026,9,k,BUF,Tyler Bass,15,7.8
+2026-11-08,2026,9,k,BUF,Tyler Bass,16,8.1
+2026-11-08,2026,9,k,BUF,Tyler Bass,17,8.0
+2026-11-08,2026,9,k,BUF,Tyler Bass,avg,8.4
+2026-11-08,2026,9,k,BUF,Tyler Bass,playoffs,8.0
+2026-11-08,2026,9,k,JAX,Cam Little,9,8.9
+2026-11-08,2026,9,k,JAX,Cam Little,10,11.0
+2026-11-08,2026,9,k,JAX,Cam Little,11,8.7
+2026-11-08,2026,9,k,JAX,Cam Little,12,9.4
+2026-11-08,2026,9,k,JAX,Cam Little,13,8.1
+2026-11-08,2026,9,k,JAX,Cam Little,14,9.7
+2026-11-08,2026,9,k,JAX,Cam Little,15,9.0
+2026-11-08,2026,9,k,JAX,Cam Little,16,9.2
+2026-11-08,2026,9,k,JAX,Cam Little,17,10.0
+2026-11-08,2026,9,k,JAX,Cam Little,avg,9.3
+2026-11-08,2026,9,k,JAX,Cam Little,playoffs,9.4
+2026-11-08,2026,9,k,CHI,Cairo Santos,9,8.8
+2026-11-08,2026,9,k,CHI,Cairo Santos,11,8.1
+2026-11-08,2026,9,k,CHI,Cairo Santos,12,8.7
+2026-11-08,2026,9,k,CHI,Cairo Santos,13,7.3
+2026-11-08,2026,9,k,CHI,Cairo Santos,14,9.1
+2026-11-08,2026,9,k,CHI,Cairo Santos,15,7.7
+2026-11-08,2026,9,k,CHI,Cairo Santos,16,7.9
+2026-11-08,2026,9,k,CHI,Cairo Santos,17,8.4
+2026-11-08,2026,9,k,CHI,Cairo Santos,avg,8.3
+2026-11-08,2026,9,k,CHI,Cairo Santos,playoffs,8.0
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,9,8.8
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,10,7.9
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,11,7.5
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,12,5.6
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,13,7.0
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,14,7.1
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,15,6.5
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,16,5.7
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,17,6.9
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,avg,7.1
+2026-11-08,2026,9,k,CAR,Ryan Fitzgerald,playoffs,6.4
+2026-11-08,2026,9,k,CLE,Andre Szmyt,9,8.6
+2026-11-08,2026,9,k,CLE,Andre Szmyt,10,7.1
+2026-11-08,2026,9,k,CLE,Andre Szmyt,12,7.3
+2026-11-08,2026,9,k,CLE,Andre Szmyt,13,6.6
+2026-11-08,2026,9,k,CLE,Andre Szmyt,14,7.1
+2026-11-08,2026,9,k,CLE,Andre Szmyt,15,7.1
+2026-11-08,2026,9,k,CLE,Andre Szmyt,16,7.1
+2026-11-08,2026,9,k,CLE,Andre Szmyt,17,8.0
+2026-11-08,2026,9,k,CLE,Andre Szmyt,avg,7.4
+2026-11-08,2026,9,k,CLE,Andre Szmyt,playoffs,7.4
+2026-11-08,2026,9,k,KC,Harrison Butker,9,8.6
+2026-11-08,2026,9,k,KC,Harrison Butker,10,8.8
+2026-11-08,2026,9,k,KC,Harrison Butker,11,8.2
+2026-11-08,2026,9,k,KC,Harrison Butker,12,7.3
+2026-11-08,2026,9,k,KC,Harrison Butker,13,7.1
+2026-11-08,2026,9,k,KC,Harrison Butker,14,8.0
+2026-11-08,2026,9,k,KC,Harrison Butker,15,7.3
+2026-11-08,2026,9,k,KC,Harrison Butker,16,7.4
+2026-11-08,2026,9,k,KC,Harrison Butker,17,8.5
+2026-11-08,2026,9,k,KC,Harrison Butker,avg,7.9
+2026-11-08,2026,9,k,KC,Harrison Butker,playoffs,7.7
+2026-11-08,2026,9,k,SEA,Jason Myers,9,8.5
+2026-11-08,2026,9,k,SEA,Jason Myers,10,8.3
+2026-11-08,2026,9,k,SEA,Jason Myers,12,7.3
+2026-11-08,2026,9,k,SEA,Jason Myers,13,8.1
+2026-11-08,2026,9,k,SEA,Jason Myers,14,8.5
+2026-11-08,2026,9,k,SEA,Jason Myers,15,9.1
+2026-11-08,2026,9,k,SEA,Jason Myers,16,7.5
+2026-11-08,2026,9,k,SEA,Jason Myers,17,8.1
+2026-11-08,2026,9,k,SEA,Jason Myers,avg,8.3
+2026-11-08,2026,9,k,SEA,Jason Myers,playoffs,8.3
+2026-11-08,2026,9,k,SF,Eddy Pineiro,9,8.2
+2026-11-08,2026,9,k,SF,Eddy Pineiro,10,8.6
+2026-11-08,2026,9,k,SF,Eddy Pineiro,11,8.8
+2026-11-08,2026,9,k,SF,Eddy Pineiro,12,8.4
+2026-11-08,2026,9,k,SF,Eddy Pineiro,13,7.8
+2026-11-08,2026,9,k,SF,Eddy Pineiro,14,8.2
+2026-11-08,2026,9,k,SF,Eddy Pineiro,15,7.1
+2026-11-08,2026,9,k,SF,Eddy Pineiro,16,8.8
+2026-11-08,2026,9,k,SF,Eddy Pineiro,17,8.3
+2026-11-08,2026,9,k,SF,Eddy Pineiro,avg,8.3
+2026-11-08,2026,9,k,SF,Eddy Pineiro,playoffs,8.1
+2026-11-08,2026,9,k,DEN,Wil Lutz,9,8.2
+2026-11-08,2026,9,k,DEN,Wil Lutz,11,8.0
+2026-11-08,2026,9,k,DEN,Wil Lutz,12,6.3
+2026-11-08,2026,9,k,DEN,Wil Lutz,13,7.4
+2026-11-08,2026,9,k,DEN,Wil Lutz,14,7.5
+2026-11-08,2026,9,k,DEN,Wil Lutz,15,8.2
+2026-11-08,2026,9,k,DEN,Wil Lutz,16,6.8
+2026-11-08,2026,9,k,DEN,Wil Lutz,17,7.0
+2026-11-08,2026,9,k,DEN,Wil Lutz,avg,7.5
+2026-11-08,2026,9,k,DEN,Wil Lutz,playoffs,7.3
+2026-11-08,2026,9,k,MIN,Will Reichard,9,8.1
+2026-11-08,2026,9,k,MIN,Will Reichard,10,7.0
+2026-11-08,2026,9,k,MIN,Will Reichard,11,6.9
+2026-11-08,2026,9,k,MIN,Will Reichard,12,9.4
+2026-11-08,2026,9,k,MIN,Will Reichard,13,9.8
+2026-11-08,2026,9,k,MIN,Will Reichard,14,6.5
+2026-11-08,2026,9,k,MIN,Will Reichard,15,9.0
+2026-11-08,2026,9,k,MIN,Will Reichard,16,9.3
+2026-11-08,2026,9,k,MIN,Will Reichard,17,8.4
+2026-11-08,2026,9,k,MIN,Will Reichard,avg,8.2
+2026-11-08,2026,9,k,MIN,Will Reichard,playoffs,8.9
+2026-11-08,2026,9,k,NYG,Dominic Zvada,9,8.0
+2026-11-08,2026,9,k,NYG,Dominic Zvada,10,7.4
+2026-11-08,2026,9,k,NYG,Dominic Zvada,11,8.0
+2026-11-08,2026,9,k,NYG,Dominic Zvada,12,8.0
+2026-11-08,2026,9,k,NYG,Dominic Zvada,13,7.1
+2026-11-08,2026,9,k,NYG,Dominic Zvada,14,6.7
+2026-11-08,2026,9,k,NYG,Dominic Zvada,15,7.8
+2026-11-08,2026,9,k,NYG,Dominic Zvada,16,9.0
+2026-11-08,2026,9,k,NYG,Dominic Zvada,17,7.5
+2026-11-08,2026,9,k,NYG,Dominic Zvada,avg,7.7
+2026-11-08,2026,9,k,NYG,Dominic Zvada,playoffs,8.1
+2026-11-08,2026,9,k,NO,Charlie Smyth,9,7.7
+2026-11-08,2026,9,k,NO,Charlie Smyth,10,7.8
+2026-11-08,2026,9,k,NO,Charlie Smyth,11,6.4
+2026-11-08,2026,9,k,NO,Charlie Smyth,12,7.3
+2026-11-08,2026,9,k,NO,Charlie Smyth,13,8.1
+2026-11-08,2026,9,k,NO,Charlie Smyth,14,7.5
+2026-11-08,2026,9,k,NO,Charlie Smyth,15,7.8
+2026-11-08,2026,9,k,NO,Charlie Smyth,16,8.2
+2026-11-08,2026,9,k,NO,Charlie Smyth,17,8.4
+2026-11-08,2026,9,k,NO,Charlie Smyth,avg,7.7
+2026-11-08,2026,9,k,NO,Charlie Smyth,playoffs,8.2
+2026-11-08,2026,9,k,LA,Brandon McManus,9,7.5
+2026-11-08,2026,9,k,LA,Brandon McManus,10,8.5
+2026-11-08,2026,9,k,LA,Brandon McManus,12,7.8
+2026-11-08,2026,9,k,LA,Brandon McManus,13,7.7
+2026-11-08,2026,9,k,LA,Brandon McManus,14,8.5
+2026-11-08,2026,9,k,LA,Brandon McManus,15,8.0
+2026-11-08,2026,9,k,LA,Brandon McManus,16,7.5
+2026-11-08,2026,9,k,LA,Brandon McManus,17,7.3
+2026-11-08,2026,9,k,LA,Brandon McManus,avg,7.9
+2026-11-08,2026,9,k,LA,Brandon McManus,playoffs,7.6
+2026-11-08,2026,9,k,WAS,Drew Stevens,9,7.5
+2026-11-08,2026,9,k,WAS,Drew Stevens,10,6.8
+2026-11-08,2026,9,k,WAS,Drew Stevens,11,8.0
+2026-11-08,2026,9,k,WAS,Drew Stevens,12,9.1
+2026-11-08,2026,9,k,WAS,Drew Stevens,13,7.8
+2026-11-08,2026,9,k,WAS,Drew Stevens,14,7.4
+2026-11-08,2026,9,k,WAS,Drew Stevens,15,8.5
+2026-11-08,2026,9,k,WAS,Drew Stevens,16,7.9
+2026-11-08,2026,9,k,WAS,Drew Stevens,17,7.0
+2026-11-08,2026,9,k,WAS,Drew Stevens,avg,7.8
+2026-11-08,2026,9,k,WAS,Drew Stevens,playoffs,7.8
+2026-11-08,2026,9,k,ATL,Nick Folk,9,7.5
+2026-11-08,2026,9,k,ATL,Nick Folk,10,7.1
+2026-11-08,2026,9,k,ATL,Nick Folk,12,7.9
+2026-11-08,2026,9,k,ATL,Nick Folk,13,8.2
+2026-11-08,2026,9,k,ATL,Nick Folk,14,7.3
+2026-11-08,2026,9,k,ATL,Nick Folk,15,8.5
+2026-11-08,2026,9,k,ATL,Nick Folk,16,7.9
+2026-11-08,2026,9,k,ATL,Nick Folk,17,8.0
+2026-11-08,2026,9,k,ATL,Nick Folk,avg,7.8
+2026-11-08,2026,9,k,ATL,Nick Folk,playoffs,8.1
+2026-11-08,2026,9,k,TB,Chase McLaughlin,9,7.5
+2026-11-08,2026,9,k,TB,Chase McLaughlin,11,10.1
+2026-11-08,2026,9,k,TB,Chase McLaughlin,12,9.3
+2026-11-08,2026,9,k,TB,Chase McLaughlin,13,8.7
+2026-11-08,2026,9,k,TB,Chase McLaughlin,14,9.2
+2026-11-08,2026,9,k,TB,Chase McLaughlin,15,9.3
+2026-11-08,2026,9,k,TB,Chase McLaughlin,16,9.4
+2026-11-08,2026,9,k,TB,Chase McLaughlin,17,8.2
+2026-11-08,2026,9,k,TB,Chase McLaughlin,avg,9.0
+2026-11-08,2026,9,k,TB,Chase McLaughlin,playoffs,9.0
+2026-11-08,2026,9,k,NE,Andres Borregales,9,7.4
+2026-11-08,2026,9,k,NE,Andres Borregales,10,8.7
+2026-11-08,2026,9,k,NE,Andres Borregales,12,8.2
+2026-11-08,2026,9,k,NE,Andres Borregales,13,7.6
+2026-11-08,2026,9,k,NE,Andres Borregales,14,7.3
+2026-11-08,2026,9,k,NE,Andres Borregales,15,8.5
+2026-11-08,2026,9,k,NE,Andres Borregales,16,8.1
+2026-11-08,2026,9,k,NE,Andres Borregales,17,8.1
+2026-11-08,2026,9,k,NE,Andres Borregales,avg,8.0
+2026-11-08,2026,9,k,NE,Andres Borregales,playoffs,8.2
+2026-11-08,2026,9,k,LAC,Cameron Dicker,9,7.3
+2026-11-08,2026,9,k,LAC,Cameron Dicker,10,6.9
+2026-11-08,2026,9,k,LAC,Cameron Dicker,11,8.1
+2026-11-08,2026,9,k,LAC,Cameron Dicker,12,7.1
+2026-11-08,2026,9,k,LAC,Cameron Dicker,13,7.8
+2026-11-08,2026,9,k,LAC,Cameron Dicker,14,8.0
+2026-11-08,2026,9,k,LAC,Cameron Dicker,15,6.7
+2026-11-08,2026,9,k,LAC,Cameron Dicker,16,7.4
+2026-11-08,2026,9,k,LAC,Cameron Dicker,17,7.1
+2026-11-08,2026,9,k,LAC,Cameron Dicker,avg,7.4
+2026-11-08,2026,9,k,LAC,Cameron Dicker,playoffs,7.1
+2026-11-08,2026,9,k,GB,Trey Smack,9,7.2
+2026-11-08,2026,9,k,GB,Trey Smack,10,7.8
+2026-11-08,2026,9,k,GB,Trey Smack,12,7.1
+2026-11-08,2026,9,k,GB,Trey Smack,13,7.5
+2026-11-08,2026,9,k,GB,Trey Smack,14,6.5
+2026-11-08,2026,9,k,GB,Trey Smack,15,7.2
+2026-11-08,2026,9,k,GB,Trey Smack,16,6.1
+2026-11-08,2026,9,k,GB,Trey Smack,17,7.5
+2026-11-08,2026,9,k,GB,Trey Smack,avg,7.2
+2026-11-08,2026,9,k,GB,Trey Smack,playoffs,6.9
+2026-11-08,2026,9,k,LV,Matt Gay,9,6.6
+2026-11-08,2026,9,k,LV,Matt Gay,10,9.1
+2026-11-08,2026,9,k,LV,Matt Gay,11,8.2
+2026-11-08,2026,9,k,LV,Matt Gay,12,8.0
+2026-11-08,2026,9,k,LV,Matt Gay,14,9.1
+2026-11-08,2026,9,k,LV,Matt Gay,15,9.2
+2026-11-08,2026,9,k,LV,Matt Gay,16,8.9
+2026-11-08,2026,9,k,LV,Matt Gay,17,8.6
+2026-11-08,2026,9,k,LV,Matt Gay,avg,8.6
+2026-11-08,2026,9,k,LV,Matt Gay,playoffs,8.9
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,9,6.6
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,10,8.2
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,11,5.7
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,12,7.3
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,13,7.5
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,14,6.1
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,15,6.5
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,16,7.5
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,17,6.3
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,avg,6.9
+2026-11-08,2026,9,k,MIA,Zane Gonzalez,playoffs,6.8
+2026-11-08,2026,9,k,PHI,Jake Elliott,9,6.5
+2026-11-08,2026,9,k,PHI,Jake Elliott,11,7.1
+2026-11-08,2026,9,k,PHI,Jake Elliott,12,7.8
+2026-11-08,2026,9,k,PHI,Jake Elliott,13,9.5
+2026-11-08,2026,9,k,PHI,Jake Elliott,14,8.6
+2026-11-08,2026,9,k,PHI,Jake Elliott,15,7.6
+2026-11-08,2026,9,k,PHI,Jake Elliott,16,5.9
+2026-11-08,2026,9,k,PHI,Jake Elliott,17,7.2
+2026-11-08,2026,9,k,PHI,Jake Elliott,avg,7.6
+2026-11-08,2026,9,k,PHI,Jake Elliott,playoffs,6.9
+2026-11-08,2026,9,k,ARI,Chad Ryland,9,6.1
+2026-11-08,2026,9,k,ARI,Chad Ryland,10,7.5
+2026-11-08,2026,9,k,ARI,Chad Ryland,11,5.6
+2026-11-08,2026,9,k,ARI,Chad Ryland,12,8.2
+2026-11-08,2026,9,k,ARI,Chad Ryland,13,10.2
+2026-11-08,2026,9,k,ARI,Chad Ryland,15,8.5
+2026-11-08,2026,9,k,ARI,Chad Ryland,16,8.6
+2026-11-08,2026,9,k,ARI,Chad Ryland,17,8.2
+2026-11-08,2026,9,k,ARI,Chad Ryland,avg,8.0
+2026-11-08,2026,9,k,ARI,Chad Ryland,playoffs,8.4
+2026-11-08,2026,9,k,NYJ,Jason Sanders,9,6.0
+2026-11-08,2026,9,k,NYJ,Jason Sanders,10,6.7
+2026-11-08,2026,9,k,NYJ,Jason Sanders,11,8.6
+2026-11-08,2026,9,k,NYJ,Jason Sanders,12,7.3
+2026-11-08,2026,9,k,NYJ,Jason Sanders,14,7.2
+2026-11-08,2026,9,k,NYJ,Jason Sanders,15,8.0
+2026-11-08,2026,9,k,NYJ,Jason Sanders,16,7.0
+2026-11-08,2026,9,k,NYJ,Jason Sanders,17,7.1
+2026-11-08,2026,9,k,NYJ,Jason Sanders,avg,7.3
+2026-11-08,2026,9,k,NYJ,Jason Sanders,playoffs,7.4
+2026-11-08,2026,9,k,BAL,Jake Moody,9,5.7
+2026-11-08,2026,9,k,BAL,Jake Moody,10,8.1
+2026-11-08,2026,9,k,BAL,Jake Moody,11,6.3
+2026-11-08,2026,9,k,BAL,Jake Moody,12,8.0
+2026-11-08,2026,9,k,BAL,Jake Moody,14,7.6
+2026-11-08,2026,9,k,BAL,Jake Moody,15,7.3
+2026-11-08,2026,9,k,BAL,Jake Moody,16,7.6
+2026-11-08,2026,9,k,BAL,Jake Moody,17,6.2
+2026-11-08,2026,9,k,BAL,Jake Moody,avg,7.2
+2026-11-08,2026,9,k,BAL,Jake Moody,playoffs,7.0
+2026-11-08,2026,9,k,PIT,Chris Boswell,10,7.3
+2026-11-08,2026,9,k,PIT,Chris Boswell,11,8.5
+2026-11-08,2026,9,k,PIT,Chris Boswell,12,7.7
+2026-11-08,2026,9,k,PIT,Chris Boswell,13,8.5
+2026-11-08,2026,9,k,PIT,Chris Boswell,14,7.0
+2026-11-08,2026,9,k,PIT,Chris Boswell,15,8.7
+2026-11-08,2026,9,k,PIT,Chris Boswell,16,9.2
+2026-11-08,2026,9,k,PIT,Chris Boswell,17,8.1
+2026-11-08,2026,9,k,PIT,Chris Boswell,avg,8.1
+2026-11-08,2026,9,k,PIT,Chris Boswell,playoffs,8.7
+2026-11-08,2026,9,k,TEN,Joey Slye,10,6.3
+2026-11-08,2026,9,k,TEN,Joey Slye,11,7.3
+2026-11-08,2026,9,k,TEN,Joey Slye,12,6.0
+2026-11-08,2026,9,k,TEN,Joey Slye,13,7.2
+2026-11-08,2026,9,k,TEN,Joey Slye,14,7.5
+2026-11-08,2026,9,k,TEN,Joey Slye,15,9.1
+2026-11-08,2026,9,k,TEN,Joey Slye,16,8.0
+2026-11-08,2026,9,k,TEN,Joey Slye,17,7.8
+2026-11-08,2026,9,k,TEN,Joey Slye,avg,7.4
+2026-11-08,2026,9,k,TEN,Joey Slye,playoffs,8.3
+2026-11-08,2026,9,qb,SF,Brock Purdy,9,23.1
+2026-11-08,2026,9,qb,SF,Brock Purdy,10,20.5
+2026-11-08,2026,9,qb,SF,Brock Purdy,11,18.4
+2026-11-08,2026,9,qb,SF,Brock Purdy,12,17.9
+2026-11-08,2026,9,qb,SF,Brock Purdy,13,18.0
+2026-11-08,2026,9,qb,SF,Brock Purdy,14,17.8
+2026-11-08,2026,9,qb,SF,Brock Purdy,15,17.9
+2026-11-08,2026,9,qb,SF,Brock Purdy,16,19.4
+2026-11-08,2026,9,qb,SF,Brock Purdy,17,19.1
+2026-11-08,2026,9,qb,SF,Brock Purdy,avg,19.1
+2026-11-08,2026,9,qb,SF,Brock Purdy,playoffs,18.8
+2026-11-08,2026,9,qb,CIN,Joe Burrow,9,21.3
+2026-11-08,2026,9,qb,CIN,Joe Burrow,10,19.0
+2026-11-08,2026,9,qb,CIN,Joe Burrow,11,18.3
+2026-11-08,2026,9,qb,CIN,Joe Burrow,12,20.5
+2026-11-08,2026,9,qb,CIN,Joe Burrow,13,16.3
+2026-11-08,2026,9,qb,CIN,Joe Burrow,14,18.8
+2026-11-08,2026,9,qb,CIN,Joe Burrow,15,18.9
+2026-11-08,2026,9,qb,CIN,Joe Burrow,16,16.9
+2026-11-08,2026,9,qb,CIN,Joe Burrow,17,17.1
+2026-11-08,2026,9,qb,CIN,Joe Burrow,avg,18.6
+2026-11-08,2026,9,qb,CIN,Joe Burrow,playoffs,17.6
+2026-11-08,2026,9,qb,DET,Jared Goff,9,20.1
+2026-11-08,2026,9,qb,DET,Jared Goff,10,17.4
+2026-11-08,2026,9,qb,DET,Jared Goff,11,17.6
+2026-11-08,2026,9,qb,DET,Jared Goff,12,17.6
+2026-11-08,2026,9,qb,DET,Jared Goff,13,17.9
+2026-11-08,2026,9,qb,DET,Jared Goff,14,17.1
+2026-11-08,2026,9,qb,DET,Jared Goff,15,17.5
+2026-11-08,2026,9,qb,DET,Jared Goff,16,17.2
+2026-11-08,2026,9,qb,DET,Jared Goff,17,16.8
+2026-11-08,2026,9,qb,DET,Jared Goff,avg,17.7
+2026-11-08,2026,9,qb,DET,Jared Goff,playoffs,17.2
+2026-11-08,2026,9,qb,BUF,Josh Allen,9,20.1
+2026-11-08,2026,9,qb,BUF,Josh Allen,10,21.6
+2026-11-08,2026,9,qb,BUF,Josh Allen,11,21.8
+2026-11-08,2026,9,qb,BUF,Josh Allen,12,22.7
+2026-11-08,2026,9,qb,BUF,Josh Allen,13,20.5
+2026-11-08,2026,9,qb,BUF,Josh Allen,14,21.7
+2026-11-08,2026,9,qb,BUF,Josh Allen,15,20.2
+2026-11-08,2026,9,qb,BUF,Josh Allen,16,21.9
+2026-11-08,2026,9,qb,BUF,Josh Allen,17,19.9
+2026-11-08,2026,9,qb,BUF,Josh Allen,avg,21.1
+2026-11-08,2026,9,qb,BUF,Josh Allen,playoffs,20.7
+2026-11-08,2026,9,qb,DAL,Dak Prescott,9,19.8
+2026-11-08,2026,9,qb,DAL,Dak Prescott,10,17.6
+2026-11-08,2026,9,qb,DAL,Dak Prescott,11,18.4
+2026-11-08,2026,9,qb,DAL,Dak Prescott,12,18.2
+2026-11-08,2026,9,qb,DAL,Dak Prescott,13,14.3
+2026-11-08,2026,9,qb,DAL,Dak Prescott,15,16.2
+2026-11-08,2026,9,qb,DAL,Dak Prescott,16,17.6
+2026-11-08,2026,9,qb,DAL,Dak Prescott,17,18.8
+2026-11-08,2026,9,qb,DAL,Dak Prescott,avg,17.6
+2026-11-08,2026,9,qb,DAL,Dak Prescott,playoffs,17.5
+2026-11-08,2026,9,qb,CHI,Caleb Williams,9,19.6
+2026-11-08,2026,9,qb,CHI,Caleb Williams,11,20.1
+2026-11-08,2026,9,qb,CHI,Caleb Williams,12,20.9
+2026-11-08,2026,9,qb,CHI,Caleb Williams,13,19.4
+2026-11-08,2026,9,qb,CHI,Caleb Williams,14,18.8
+2026-11-08,2026,9,qb,CHI,Caleb Williams,15,16.8
+2026-11-08,2026,9,qb,CHI,Caleb Williams,16,19.8
+2026-11-08,2026,9,qb,CHI,Caleb Williams,17,19.8
+2026-11-08,2026,9,qb,CHI,Caleb Williams,avg,19.4
+2026-11-08,2026,9,qb,CHI,Caleb Williams,playoffs,18.8
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,9,19.6
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,10,17.7
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,11,18.7
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,12,16.0
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,13,16.0
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,14,17.0
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,15,15.9
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,16,16.8
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,17,16.7
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,avg,17.1
+2026-11-08,2026,9,qb,KC,Patrick Mahomes,playoffs,16.5
+2026-11-08,2026,9,qb,NE,Drake Maye,9,19.2
+2026-11-08,2026,9,qb,NE,Drake Maye,10,21.8
+2026-11-08,2026,9,qb,NE,Drake Maye,12,18.6
+2026-11-08,2026,9,qb,NE,Drake Maye,13,17.4
+2026-11-08,2026,9,qb,NE,Drake Maye,14,17.9
+2026-11-08,2026,9,qb,NE,Drake Maye,15,17.8
+2026-11-08,2026,9,qb,NE,Drake Maye,16,17.8
+2026-11-08,2026,9,qb,NE,Drake Maye,17,19.7
+2026-11-08,2026,9,qb,NE,Drake Maye,avg,18.8
+2026-11-08,2026,9,qb,NE,Drake Maye,playoffs,18.4
+2026-11-08,2026,9,qb,MIA,Malik Willis,9,18.8
+2026-11-08,2026,9,qb,MIA,Malik Willis,10,14.4
+2026-11-08,2026,9,qb,MIA,Malik Willis,11,14.3
+2026-11-08,2026,9,qb,MIA,Malik Willis,12,16.3
+2026-11-08,2026,9,qb,MIA,Malik Willis,13,16.5
+2026-11-08,2026,9,qb,MIA,Malik Willis,14,16.0
+2026-11-08,2026,9,qb,MIA,Malik Willis,15,17.0
+2026-11-08,2026,9,qb,MIA,Malik Willis,16,15.6
+2026-11-08,2026,9,qb,MIA,Malik Willis,17,16.4
+2026-11-08,2026,9,qb,MIA,Malik Willis,avg,16.1
+2026-11-08,2026,9,qb,MIA,Malik Willis,playoffs,16.3
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,9,18.7
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,10,15.9
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,11,16.3
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,12,20.1
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,13,16.9
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,14,19.0
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,15,17.9
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,16,18.2
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,17,18.3
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,avg,17.9
+2026-11-08,2026,9,qb,WAS,Jayden Daniels,playoffs,18.1
+2026-11-08,2026,9,qb,LA,Matthew Stafford,9,18.4
+2026-11-08,2026,9,qb,LA,Matthew Stafford,10,17.5
+2026-11-08,2026,9,qb,LA,Matthew Stafford,12,17.7
+2026-11-08,2026,9,qb,LA,Matthew Stafford,13,17.7
+2026-11-08,2026,9,qb,LA,Matthew Stafford,14,15.7
+2026-11-08,2026,9,qb,LA,Matthew Stafford,15,17.3
+2026-11-08,2026,9,qb,LA,Matthew Stafford,16,14.5
+2026-11-08,2026,9,qb,LA,Matthew Stafford,17,15.8
+2026-11-08,2026,9,qb,LA,Matthew Stafford,avg,16.8
+2026-11-08,2026,9,qb,LA,Matthew Stafford,playoffs,15.8
+2026-11-08,2026,9,qb,NO,Tyler Shough,9,18.1
+2026-11-08,2026,9,qb,NO,Tyler Shough,10,20.4
+2026-11-08,2026,9,qb,NO,Tyler Shough,11,15.4
+2026-11-08,2026,9,qb,NO,Tyler Shough,12,15.3
+2026-11-08,2026,9,qb,NO,Tyler Shough,13,18.7
+2026-11-08,2026,9,qb,NO,Tyler Shough,14,15.5
+2026-11-08,2026,9,qb,NO,Tyler Shough,15,15.2
+2026-11-08,2026,9,qb,NO,Tyler Shough,16,18.9
+2026-11-08,2026,9,qb,NO,Tyler Shough,17,16.5
+2026-11-08,2026,9,qb,NO,Tyler Shough,avg,17.1
+2026-11-08,2026,9,qb,NO,Tyler Shough,playoffs,16.9
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,9,18.0
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,10,16.8
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,11,18.4
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,12,17.8
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,13,16.7
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,14,18.5
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,15,20.8
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,16,19.6
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,17,20.0
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,avg,18.5
+2026-11-08,2026,9,qb,JAX,Trevor Lawrence,playoffs,20.1
+2026-11-08,2026,9,qb,DEN,Bo Nix,9,17.7
+2026-11-08,2026,9,qb,DEN,Bo Nix,11,17.6
+2026-11-08,2026,9,qb,DEN,Bo Nix,12,14.6
+2026-11-08,2026,9,qb,DEN,Bo Nix,13,16.9
+2026-11-08,2026,9,qb,DEN,Bo Nix,14,16.4
+2026-11-08,2026,9,qb,DEN,Bo Nix,15,17.0
+2026-11-08,2026,9,qb,DEN,Bo Nix,16,15.8
+2026-11-08,2026,9,qb,DEN,Bo Nix,17,16.2
+2026-11-08,2026,9,qb,DEN,Bo Nix,avg,16.5
+2026-11-08,2026,9,qb,DEN,Bo Nix,playoffs,16.4
+2026-11-08,2026,9,qb,GB,Jordan Love,9,17.6
+2026-11-08,2026,9,qb,GB,Jordan Love,10,15.4
+2026-11-08,2026,9,qb,GB,Jordan Love,12,16.6
+2026-11-08,2026,9,qb,GB,Jordan Love,13,18.5
+2026-11-08,2026,9,qb,GB,Jordan Love,14,15.8
+2026-11-08,2026,9,qb,GB,Jordan Love,15,19.1
+2026-11-08,2026,9,qb,GB,Jordan Love,16,15.9
+2026-11-08,2026,9,qb,GB,Jordan Love,17,15.5
+2026-11-08,2026,9,qb,GB,Jordan Love,avg,16.8
+2026-11-08,2026,9,qb,GB,Jordan Love,playoffs,16.8
+2026-11-08,2026,9,qb,LV,Kirk Cousins,9,17.6
+2026-11-08,2026,9,qb,LV,Kirk Cousins,10,17.2
+2026-11-08,2026,9,qb,LV,Kirk Cousins,11,15.8
+2026-11-08,2026,9,qb,LV,Kirk Cousins,12,16.4
+2026-11-08,2026,9,qb,LV,Kirk Cousins,14,16.4
+2026-11-08,2026,9,qb,LV,Kirk Cousins,15,18.9
+2026-11-08,2026,9,qb,LV,Kirk Cousins,16,16.9
+2026-11-08,2026,9,qb,LV,Kirk Cousins,17,17.7
+2026-11-08,2026,9,qb,LV,Kirk Cousins,avg,17.1
+2026-11-08,2026,9,qb,LV,Kirk Cousins,playoffs,17.9
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,9,17.1
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,10,16.3
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,11,16.1
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,12,17.8
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,13,16.5
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,14,17.5
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,15,17.6
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,16,16.7
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,17,16.5
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,avg,16.9
+2026-11-08,2026,9,qb,HOU,C.J. Stroud,playoffs,16.9
+2026-11-08,2026,9,qb,IND,Daniel Jones,9,16.9
+2026-11-08,2026,9,qb,IND,Daniel Jones,10,15.7
+2026-11-08,2026,9,qb,IND,Daniel Jones,11,14.8
+2026-11-08,2026,9,qb,IND,Daniel Jones,12,15.0
+2026-11-08,2026,9,qb,IND,Daniel Jones,14,14.2
+2026-11-08,2026,9,qb,IND,Daniel Jones,15,14.4
+2026-11-08,2026,9,qb,IND,Daniel Jones,16,16.5
+2026-11-08,2026,9,qb,IND,Daniel Jones,17,14.8
+2026-11-08,2026,9,qb,IND,Daniel Jones,avg,15.3
+2026-11-08,2026,9,qb,IND,Daniel Jones,playoffs,15.2
+2026-11-08,2026,9,qb,ATL,Michael Penix,9,16.9
+2026-11-08,2026,9,qb,ATL,Michael Penix,10,15.2
+2026-11-08,2026,9,qb,ATL,Michael Penix,12,14.7
+2026-11-08,2026,9,qb,ATL,Michael Penix,13,15.8
+2026-11-08,2026,9,qb,ATL,Michael Penix,14,16.1
+2026-11-08,2026,9,qb,ATL,Michael Penix,15,15.5
+2026-11-08,2026,9,qb,ATL,Michael Penix,16,15.5
+2026-11-08,2026,9,qb,ATL,Michael Penix,17,18.0
+2026-11-08,2026,9,qb,ATL,Michael Penix,avg,16.0
+2026-11-08,2026,9,qb,ATL,Michael Penix,playoffs,16.3
+2026-11-08,2026,9,qb,SEA,Drew Lock,9,16.8
+2026-11-08,2026,9,qb,SEA,Drew Lock,10,16.1
+2026-11-08,2026,9,qb,SEA,Drew Lock,12,13.8
+2026-11-08,2026,9,qb,SEA,Drew Lock,13,15.1
+2026-11-08,2026,9,qb,SEA,Drew Lock,14,17.1
+2026-11-08,2026,9,qb,SEA,Drew Lock,15,16.5
+2026-11-08,2026,9,qb,SEA,Drew Lock,16,16.1
+2026-11-08,2026,9,qb,SEA,Drew Lock,17,16.4
+2026-11-08,2026,9,qb,SEA,Drew Lock,avg,16.0
+2026-11-08,2026,9,qb,SEA,Drew Lock,playoffs,16.3
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,9,16.3
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,10,16.0
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,12,16.3
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,13,16.4
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,14,14.9
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,15,15.1
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,16,14.9
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,17,15.6
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,avg,15.7
+2026-11-08,2026,9,qb,CLE,Shedeur Sanders,playoffs,15.2
+2026-11-08,2026,9,qb,CAR,Bryce Young,9,16.2
+2026-11-08,2026,9,qb,CAR,Bryce Young,10,16.9
+2026-11-08,2026,9,qb,CAR,Bryce Young,11,16.2
+2026-11-08,2026,9,qb,CAR,Bryce Young,12,12.3
+2026-11-08,2026,9,qb,CAR,Bryce Young,13,15.8
+2026-11-08,2026,9,qb,CAR,Bryce Young,14,17.5
+2026-11-08,2026,9,qb,CAR,Bryce Young,15,16.9
+2026-11-08,2026,9,qb,CAR,Bryce Young,16,15.8
+2026-11-08,2026,9,qb,CAR,Bryce Young,17,16.5
+2026-11-08,2026,9,qb,CAR,Bryce Young,avg,16.0
+2026-11-08,2026,9,qb,CAR,Bryce Young,playoffs,16.4
+2026-11-08,2026,9,qb,TB,Baker Mayfield,9,15.4
+2026-11-08,2026,9,qb,TB,Baker Mayfield,11,17.2
+2026-11-08,2026,9,qb,TB,Baker Mayfield,12,15.5
+2026-11-08,2026,9,qb,TB,Baker Mayfield,13,17.7
+2026-11-08,2026,9,qb,TB,Baker Mayfield,14,16.8
+2026-11-08,2026,9,qb,TB,Baker Mayfield,15,17.1
+2026-11-08,2026,9,qb,TB,Baker Mayfield,16,17.2
+2026-11-08,2026,9,qb,TB,Baker Mayfield,17,17.1
+2026-11-08,2026,9,qb,TB,Baker Mayfield,avg,16.7
+2026-11-08,2026,9,qb,TB,Baker Mayfield,playoffs,17.1
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,9,15.2
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,10,18.4
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,11,17.0
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,12,17.1
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,13,16.7
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,14,15.7
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,15,17.7
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,16,17.7
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,17,17.2
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,avg,17.0
+2026-11-08,2026,9,qb,NYG,J.J. McCarthy,playoffs,17.5
+2026-11-08,2026,9,qb,MIN,Carson Wentz,9,15.2
+2026-11-08,2026,9,qb,MIN,Carson Wentz,10,16.5
+2026-11-08,2026,9,qb,MIN,Carson Wentz,11,16.1
+2026-11-08,2026,9,qb,MIN,Carson Wentz,12,16.0
+2026-11-08,2026,9,qb,MIN,Carson Wentz,13,18.4
+2026-11-08,2026,9,qb,MIN,Carson Wentz,14,16.9
+2026-11-08,2026,9,qb,MIN,Carson Wentz,15,17.6
+2026-11-08,2026,9,qb,MIN,Carson Wentz,16,19.0
+2026-11-08,2026,9,qb,MIN,Carson Wentz,17,17.2
+2026-11-08,2026,9,qb,MIN,Carson Wentz,avg,17.0
+2026-11-08,2026,9,qb,MIN,Carson Wentz,playoffs,17.9
+2026-11-08,2026,9,qb,LAC,Justin Herbert,9,15.1
+2026-11-08,2026,9,qb,LAC,Justin Herbert,10,12.4
+2026-11-08,2026,9,qb,LAC,Justin Herbert,11,16.6
+2026-11-08,2026,9,qb,LAC,Justin Herbert,12,16.5
+2026-11-08,2026,9,qb,LAC,Justin Herbert,13,14.2
+2026-11-08,2026,9,qb,LAC,Justin Herbert,14,15.8
+2026-11-08,2026,9,qb,LAC,Justin Herbert,15,16.3
+2026-11-08,2026,9,qb,LAC,Justin Herbert,16,15.8
+2026-11-08,2026,9,qb,LAC,Justin Herbert,17,16.9
+2026-11-08,2026,9,qb,LAC,Justin Herbert,avg,15.5
+2026-11-08,2026,9,qb,LAC,Justin Herbert,playoffs,16.4
+2026-11-08,2026,9,qb,NYJ,Geno Smith,9,14.5
+2026-11-08,2026,9,qb,NYJ,Geno Smith,10,13.5
+2026-11-08,2026,9,qb,NYJ,Geno Smith,11,16.3
+2026-11-08,2026,9,qb,NYJ,Geno Smith,12,14.3
+2026-11-08,2026,9,qb,NYJ,Geno Smith,14,16.4
+2026-11-08,2026,9,qb,NYJ,Geno Smith,15,17.2
+2026-11-08,2026,9,qb,NYJ,Geno Smith,16,15.5
+2026-11-08,2026,9,qb,NYJ,Geno Smith,17,16.9
+2026-11-08,2026,9,qb,NYJ,Geno Smith,avg,15.6
+2026-11-08,2026,9,qb,NYJ,Geno Smith,playoffs,16.5
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,9,11.3
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,10,14.1
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,11,14.4
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,12,15.5
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,14,14.0
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,15,13.4
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,16,14.0
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,17,14.9
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,avg,13.9
+2026-11-08,2026,9,qb,BAL,Joe Fagnano,playoffs,14.1
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,9,11.0
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,10,14.7
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,11,14.3
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,12,15.5
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,13,16.3
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,15,16.0
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,16,16.9
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,17,15.9
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,avg,15.1
+2026-11-08,2026,9,qb,ARI,Gardner Minshew,playoffs,16.3
+2026-11-08,2026,9,qb,PHI,Joe Milton,9,10.2
+2026-11-08,2026,9,qb,PHI,Joe Milton,11,11.5
+2026-11-08,2026,9,qb,PHI,Joe Milton,12,13.3
+2026-11-08,2026,9,qb,PHI,Joe Milton,13,14.8
+2026-11-08,2026,9,qb,PHI,Joe Milton,14,13.5
+2026-11-08,2026,9,qb,PHI,Joe Milton,15,14.5
+2026-11-08,2026,9,qb,PHI,Joe Milton,16,14.9
+2026-11-08,2026,9,qb,PHI,Joe Milton,17,13.3
+2026-11-08,2026,9,qb,PHI,Joe Milton,avg,13.2
+2026-11-08,2026,9,qb,PHI,Joe Milton,playoffs,14.2
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,10,15.3
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,11,16.9
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,12,17.5
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,13,17.7
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,14,15.1
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,15,15.2
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,16,17.6
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,17,17.0
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,avg,16.5
+2026-11-08,2026,9,qb,PIT,Aaron Rodgers,playoffs,16.6
+2026-11-08,2026,9,qb,TEN,Cam Ward,10,13.9
+2026-11-08,2026,9,qb,TEN,Cam Ward,11,16.2
+2026-11-08,2026,9,qb,TEN,Cam Ward,12,13.1
+2026-11-08,2026,9,qb,TEN,Cam Ward,13,15.1
+2026-11-08,2026,9,qb,TEN,Cam Ward,14,16.6
+2026-11-08,2026,9,qb,TEN,Cam Ward,15,14.0
+2026-11-08,2026,9,qb,TEN,Cam Ward,16,17.4
+2026-11-08,2026,9,qb,TEN,Cam Ward,17,14.5
+2026-11-08,2026,9,qb,TEN,Cam Ward,avg,15.1
+2026-11-08,2026,9,qb,TEN,Cam Ward,playoffs,15.3
+2026-11-08,2026,9,wr_bonus,IND,,9,4.2
+2026-11-08,2026,9,wr_bonus,IND,,10,1.4
+2026-11-08,2026,9,wr_bonus,IND,,11,1.8
+2026-11-08,2026,9,wr_bonus,IND,,12,0.9
+2026-11-08,2026,9,wr_bonus,IND,,14,1.7
+2026-11-08,2026,9,wr_bonus,IND,,15,1.0
+2026-11-08,2026,9,wr_bonus,IND,,16,2.9
+2026-11-08,2026,9,wr_bonus,IND,,17,-1.1
+2026-11-08,2026,9,wr_bonus,IND,,avg,1.6
+2026-11-08,2026,9,wr_bonus,IND,,playoffs,0.9
+2026-11-08,2026,9,wr_bonus,IND,,baseline,19.6
+2026-11-08,2026,9,wr_bonus,IND,,next4,2.1
+2026-11-08,2026,9,wr_bonus,SF,,9,3.5
+2026-11-08,2026,9,wr_bonus,SF,,10,2.2
+2026-11-08,2026,9,wr_bonus,SF,,11,-1.5
+2026-11-08,2026,9,wr_bonus,SF,,12,-2.3
+2026-11-08,2026,9,wr_bonus,SF,,13,-2.0
+2026-11-08,2026,9,wr_bonus,SF,,14,-1.9
+2026-11-08,2026,9,wr_bonus,SF,,15,-0.7
+2026-11-08,2026,9,wr_bonus,SF,,16,-2.3
+2026-11-08,2026,9,wr_bonus,SF,,17,1.1
+2026-11-08,2026,9,wr_bonus,SF,,avg,-0.4
+2026-11-08,2026,9,wr_bonus,SF,,playoffs,-0.7
+2026-11-08,2026,9,wr_bonus,SF,,baseline,22.7
+2026-11-08,2026,9,wr_bonus,SF,,next4,0.5
+2026-11-08,2026,9,wr_bonus,MIA,,9,2.5
+2026-11-08,2026,9,wr_bonus,MIA,,10,-0.3
+2026-11-08,2026,9,wr_bonus,MIA,,11,-2.4
+2026-11-08,2026,9,wr_bonus,MIA,,12,1.0
+2026-11-08,2026,9,wr_bonus,MIA,,13,-0.4
+2026-11-08,2026,9,wr_bonus,MIA,,14,-0.3
+2026-11-08,2026,9,wr_bonus,MIA,,15,1.1
+2026-11-08,2026,9,wr_bonus,MIA,,16,0.2
+2026-11-08,2026,9,wr_bonus,MIA,,17,0.6
+2026-11-08,2026,9,wr_bonus,MIA,,avg,0.2
+2026-11-08,2026,9,wr_bonus,MIA,,playoffs,0.6
+2026-11-08,2026,9,wr_bonus,MIA,,baseline,21.4
+2026-11-08,2026,9,wr_bonus,MIA,,next4,0.2
+2026-11-08,2026,9,wr_bonus,KC,,9,2.4
+2026-11-08,2026,9,wr_bonus,KC,,10,0.9
+2026-11-08,2026,9,wr_bonus,KC,,11,0.5
+2026-11-08,2026,9,wr_bonus,KC,,12,-2.2
+2026-11-08,2026,9,wr_bonus,KC,,13,0.0
+2026-11-08,2026,9,wr_bonus,KC,,14,-0.6
+2026-11-08,2026,9,wr_bonus,KC,,15,-1.5
+2026-11-08,2026,9,wr_bonus,KC,,16,-1.1
+2026-11-08,2026,9,wr_bonus,KC,,17,0.1
+2026-11-08,2026,9,wr_bonus,KC,,avg,-0.2
+2026-11-08,2026,9,wr_bonus,KC,,playoffs,-0.8
+2026-11-08,2026,9,wr_bonus,KC,,baseline,22.0
+2026-11-08,2026,9,wr_bonus,KC,,next4,0.4
+2026-11-08,2026,9,wr_bonus,ATL,,9,1.9
+2026-11-08,2026,9,wr_bonus,ATL,,10,0.2
+2026-11-08,2026,9,wr_bonus,ATL,,12,-2.8
+2026-11-08,2026,9,wr_bonus,ATL,,13,1.5
+2026-11-08,2026,9,wr_bonus,ATL,,14,-1.5
+2026-11-08,2026,9,wr_bonus,ATL,,15,-2.0
+2026-11-08,2026,9,wr_bonus,ATL,,16,-0.1
+2026-11-08,2026,9,wr_bonus,ATL,,17,2.8
+2026-11-08,2026,9,wr_bonus,ATL,,avg,0.0
+2026-11-08,2026,9,wr_bonus,ATL,,playoffs,0.2
+2026-11-08,2026,9,wr_bonus,ATL,,baseline,20.2
+2026-11-08,2026,9,wr_bonus,ATL,,next4,-0.2
+2026-11-08,2026,9,wr_bonus,LAC,,9,1.5
+2026-11-08,2026,9,wr_bonus,LAC,,10,-2.2
+2026-11-08,2026,9,wr_bonus,LAC,,11,2.4
+2026-11-08,2026,9,wr_bonus,LAC,,12,3.3
+2026-11-08,2026,9,wr_bonus,LAC,,13,-2.1
+2026-11-08,2026,9,wr_bonus,LAC,,14,2.7
+2026-11-08,2026,9,wr_bonus,LAC,,15,1.6
+2026-11-08,2026,9,wr_bonus,LAC,,16,-1.1
+2026-11-08,2026,9,wr_bonus,LAC,,17,2.3
+2026-11-08,2026,9,wr_bonus,LAC,,avg,0.9
+2026-11-08,2026,9,wr_bonus,LAC,,playoffs,0.9
+2026-11-08,2026,9,wr_bonus,LAC,,baseline,18.3
+2026-11-08,2026,9,wr_bonus,LAC,,next4,1.2
+2026-11-08,2026,9,wr_bonus,DEN,,9,1.3
+2026-11-08,2026,9,wr_bonus,DEN,,11,2.4
+2026-11-08,2026,9,wr_bonus,DEN,,12,-1.6
+2026-11-08,2026,9,wr_bonus,DEN,,13,-0.5
+2026-11-08,2026,9,wr_bonus,DEN,,14,-0.2
+2026-11-08,2026,9,wr_bonus,DEN,,15,2.4
+2026-11-08,2026,9,wr_bonus,DEN,,16,0.1
+2026-11-08,2026,9,wr_bonus,DEN,,17,1.2
+2026-11-08,2026,9,wr_bonus,DEN,,avg,0.6
+2026-11-08,2026,9,wr_bonus,DEN,,playoffs,1.2
+2026-11-08,2026,9,wr_bonus,DEN,,baseline,20.7
+2026-11-08,2026,9,wr_bonus,DEN,,next4,0.7
+2026-11-08,2026,9,wr_bonus,CIN,,9,1.2
+2026-11-08,2026,9,wr_bonus,CIN,,10,0.0
+2026-11-08,2026,9,wr_bonus,CIN,,11,-2.9
+2026-11-08,2026,9,wr_bonus,CIN,,12,0.8
+2026-11-08,2026,9,wr_bonus,CIN,,13,-1.6
+2026-11-08,2026,9,wr_bonus,CIN,,14,-1.1
+2026-11-08,2026,9,wr_bonus,CIN,,15,-0.5
+2026-11-08,2026,9,wr_bonus,CIN,,16,-0.6
+2026-11-08,2026,9,wr_bonus,CIN,,17,0.9
+2026-11-08,2026,9,wr_bonus,CIN,,avg,-0.4
+2026-11-08,2026,9,wr_bonus,CIN,,playoffs,-0.1
+2026-11-08,2026,9,wr_bonus,CIN,,baseline,28.8
+2026-11-08,2026,9,wr_bonus,CIN,,next4,-0.2
+2026-11-08,2026,9,wr_bonus,CLE,,9,0.9
+2026-11-08,2026,9,wr_bonus,CLE,,10,0.4
+2026-11-08,2026,9,wr_bonus,CLE,,12,0.5
+2026-11-08,2026,9,wr_bonus,CLE,,13,0.8
+2026-11-08,2026,9,wr_bonus,CLE,,14,-0.5
+2026-11-08,2026,9,wr_bonus,CLE,,15,-1.1
+2026-11-08,2026,9,wr_bonus,CLE,,16,0.7
+2026-11-08,2026,9,wr_bonus,CLE,,17,-1.0
+2026-11-08,2026,9,wr_bonus,CLE,,avg,0.1
+2026-11-08,2026,9,wr_bonus,CLE,,playoffs,-0.5
+2026-11-08,2026,9,wr_bonus,CLE,,baseline,18.0
+2026-11-08,2026,9,wr_bonus,CLE,,next4,0.6
+2026-11-08,2026,9,wr_bonus,DAL,,9,0.6
+2026-11-08,2026,9,wr_bonus,DAL,,10,-0.7
+2026-11-08,2026,9,wr_bonus,DAL,,11,4.0
+2026-11-08,2026,9,wr_bonus,DAL,,12,4.2
+2026-11-08,2026,9,wr_bonus,DAL,,13,-5.7
+2026-11-08,2026,9,wr_bonus,DAL,,15,-1.2
+2026-11-08,2026,9,wr_bonus,DAL,,16,0.9
+2026-11-08,2026,9,wr_bonus,DAL,,17,1.0
+2026-11-08,2026,9,wr_bonus,DAL,,avg,0.4
+2026-11-08,2026,9,wr_bonus,DAL,,playoffs,0.2
+2026-11-08,2026,9,wr_bonus,DAL,,baseline,29.5
+2026-11-08,2026,9,wr_bonus,DAL,,next4,2.0
+2026-11-08,2026,9,wr_bonus,NYG,,9,0.5
+2026-11-08,2026,9,wr_bonus,NYG,,10,0.7
+2026-11-08,2026,9,wr_bonus,NYG,,11,-0.4
+2026-11-08,2026,9,wr_bonus,NYG,,12,0.2
+2026-11-08,2026,9,wr_bonus,NYG,,13,-1.3
+2026-11-08,2026,9,wr_bonus,NYG,,14,-2.0
+2026-11-08,2026,9,wr_bonus,NYG,,15,-0.5
+2026-11-08,2026,9,wr_bonus,NYG,,16,-0.2
+2026-11-08,2026,9,wr_bonus,NYG,,17,2.5
+2026-11-08,2026,9,wr_bonus,NYG,,avg,-0.1
+2026-11-08,2026,9,wr_bonus,NYG,,playoffs,0.6
+2026-11-08,2026,9,wr_bonus,NYG,,baseline,21.2
+2026-11-08,2026,9,wr_bonus,NYG,,next4,0.3
+2026-11-08,2026,9,wr_bonus,NO,,9,0.5
+2026-11-08,2026,9,wr_bonus,NO,,10,3.4
+2026-11-08,2026,9,wr_bonus,NO,,11,-2.6
+2026-11-08,2026,9,wr_bonus,NO,,12,-1.5
+2026-11-08,2026,9,wr_bonus,NO,,13,3.6
+2026-11-08,2026,9,wr_bonus,NO,,14,-1.3
+2026-11-08,2026,9,wr_bonus,NO,,15,-2.8
+2026-11-08,2026,9,wr_bonus,NO,,16,3.1
+2026-11-08,2026,9,wr_bonus,NO,,17,0.7
+2026-11-08,2026,9,wr_bonus,NO,,avg,0.3
+2026-11-08,2026,9,wr_bonus,NO,,playoffs,0.3
+2026-11-08,2026,9,wr_bonus,NO,,baseline,23.0
+2026-11-08,2026,9,wr_bonus,NO,,next4,-0.1
+2026-11-08,2026,9,wr_bonus,NE,,9,-0.5
+2026-11-08,2026,9,wr_bonus,NE,,10,2.2
+2026-11-08,2026,9,wr_bonus,NE,,12,-0.1
+2026-11-08,2026,9,wr_bonus,NE,,13,-1.5
+2026-11-08,2026,9,wr_bonus,NE,,14,-2.5
+2026-11-08,2026,9,wr_bonus,NE,,15,-4.2
+2026-11-08,2026,9,wr_bonus,NE,,16,-0.5
+2026-11-08,2026,9,wr_bonus,NE,,17,0.4
+2026-11-08,2026,9,wr_bonus,NE,,avg,-0.9
+2026-11-08,2026,9,wr_bonus,NE,,playoffs,-1.5
+2026-11-08,2026,9,wr_bonus,NE,,baseline,25.1
+2026-11-08,2026,9,wr_bonus,NE,,next4,0.5
+2026-11-08,2026,9,wr_bonus,HOU,,9,-0.5
+2026-11-08,2026,9,wr_bonus,HOU,,10,-2.3
+2026-11-08,2026,9,wr_bonus,HOU,,11,0.2
+2026-11-08,2026,9,wr_bonus,HOU,,12,3.2
+2026-11-08,2026,9,wr_bonus,HOU,,13,-2.1
+2026-11-08,2026,9,wr_bonus,HOU,,14,-1.0
+2026-11-08,2026,9,wr_bonus,HOU,,15,0.8
+2026-11-08,2026,9,wr_bonus,HOU,,16,1.6
+2026-11-08,2026,9,wr_bonus,HOU,,17,-2.1
+2026-11-08,2026,9,wr_bonus,HOU,,avg,-0.3
+2026-11-08,2026,9,wr_bonus,HOU,,playoffs,0.1
+2026-11-08,2026,9,wr_bonus,HOU,,baseline,25.4
+2026-11-08,2026,9,wr_bonus,HOU,,next4,0.1
+2026-11-08,2026,9,wr_bonus,DET,,9,-0.5
+2026-11-08,2026,9,wr_bonus,DET,,10,-0.9
+2026-11-08,2026,9,wr_bonus,DET,,11,0.1
+2026-11-08,2026,9,wr_bonus,DET,,12,-0.6
+2026-11-08,2026,9,wr_bonus,DET,,13,0.0
+2026-11-08,2026,9,wr_bonus,DET,,14,3.3
+2026-11-08,2026,9,wr_bonus,DET,,15,-2.4
+2026-11-08,2026,9,wr_bonus,DET,,16,-1.5
+2026-11-08,2026,9,wr_bonus,DET,,17,-2.4
+2026-11-08,2026,9,wr_bonus,DET,,avg,-0.6
+2026-11-08,2026,9,wr_bonus,DET,,playoffs,-2.1
+2026-11-08,2026,9,wr_bonus,DET,,baseline,27.0
+2026-11-08,2026,9,wr_bonus,DET,,next4,-0.5
+2026-11-08,2026,9,wr_bonus,TB,,9,-0.7
+2026-11-08,2026,9,wr_bonus,TB,,11,1.1
+2026-11-08,2026,9,wr_bonus,TB,,12,-1.0
+2026-11-08,2026,9,wr_bonus,TB,,13,0.7
+2026-11-08,2026,9,wr_bonus,TB,,14,1.8
+2026-11-08,2026,9,wr_bonus,TB,,15,1.6
+2026-11-08,2026,9,wr_bonus,TB,,16,2.4
+2026-11-08,2026,9,wr_bonus,TB,,17,0.8
+2026-11-08,2026,9,wr_bonus,TB,,avg,0.8
+2026-11-08,2026,9,wr_bonus,TB,,playoffs,1.6
+2026-11-08,2026,9,wr_bonus,TB,,baseline,20.5
+2026-11-08,2026,9,wr_bonus,TB,,next4,-0.2
+2026-11-08,2026,9,wr_bonus,CAR,,9,-0.7
+2026-11-08,2026,9,wr_bonus,CAR,,10,0.7
+2026-11-08,2026,9,wr_bonus,CAR,,11,1.1
+2026-11-08,2026,9,wr_bonus,CAR,,12,-5.8
+2026-11-08,2026,9,wr_bonus,CAR,,13,-2.1
+2026-11-08,2026,9,wr_bonus,CAR,,14,0.7
+2026-11-08,2026,9,wr_bonus,CAR,,15,0.4
+2026-11-08,2026,9,wr_bonus,CAR,,16,-0.8
+2026-11-08,2026,9,wr_bonus,CAR,,17,-0.5
+2026-11-08,2026,9,wr_bonus,CAR,,avg,-0.8
+2026-11-08,2026,9,wr_bonus,CAR,,playoffs,-0.3
+2026-11-08,2026,9,wr_bonus,CAR,,baseline,23.4
+2026-11-08,2026,9,wr_bonus,CAR,,next4,-1.2
+2026-11-08,2026,9,wr_bonus,GB,,9,-0.8
+2026-11-08,2026,9,wr_bonus,GB,,10,-3.1
+2026-11-08,2026,9,wr_bonus,GB,,12,-0.4
+2026-11-08,2026,9,wr_bonus,GB,,13,0.8
+2026-11-08,2026,9,wr_bonus,GB,,14,-0.9
+2026-11-08,2026,9,wr_bonus,GB,,15,-0.6
+2026-11-08,2026,9,wr_bonus,GB,,16,-1.1
+2026-11-08,2026,9,wr_bonus,GB,,17,-0.9
+2026-11-08,2026,9,wr_bonus,GB,,avg,-0.9
+2026-11-08,2026,9,wr_bonus,GB,,playoffs,-0.9
+2026-11-08,2026,9,wr_bonus,GB,,baseline,25.3
+2026-11-08,2026,9,wr_bonus,GB,,next4,-1.4
+2026-11-08,2026,9,wr_bonus,SEA,,9,-0.8
+2026-11-08,2026,9,wr_bonus,SEA,,10,1.3
+2026-11-08,2026,9,wr_bonus,SEA,,12,-3.5
+2026-11-08,2026,9,wr_bonus,SEA,,13,-1.4
+2026-11-08,2026,9,wr_bonus,SEA,,14,-0.2
+2026-11-08,2026,9,wr_bonus,SEA,,15,1.3
+2026-11-08,2026,9,wr_bonus,SEA,,16,-0.9
+2026-11-08,2026,9,wr_bonus,SEA,,17,-1.4
+2026-11-08,2026,9,wr_bonus,SEA,,avg,-0.7
+2026-11-08,2026,9,wr_bonus,SEA,,playoffs,-0.3
+2026-11-08,2026,9,wr_bonus,SEA,,baseline,27.0
+2026-11-08,2026,9,wr_bonus,SEA,,next4,-1.0
+2026-11-08,2026,9,wr_bonus,LA,,9,-0.9
+2026-11-08,2026,9,wr_bonus,LA,,10,1.0
+2026-11-08,2026,9,wr_bonus,LA,,12,2.2
+2026-11-08,2026,9,wr_bonus,LA,,13,0.5
+2026-11-08,2026,9,wr_bonus,LA,,14,-2.9
+2026-11-08,2026,9,wr_bonus,LA,,15,2.5
+2026-11-08,2026,9,wr_bonus,LA,,16,-2.6
+2026-11-08,2026,9,wr_bonus,LA,,17,-3.3
+2026-11-08,2026,9,wr_bonus,LA,,avg,-0.4
+2026-11-08,2026,9,wr_bonus,LA,,playoffs,-1.1
+2026-11-08,2026,9,wr_bonus,LA,,baseline,24.3
+2026-11-08,2026,9,wr_bonus,LA,,next4,0.7
+2026-11-08,2026,9,wr_bonus,CHI,,9,-1.1
+2026-11-08,2026,9,wr_bonus,CHI,,11,0.5
+2026-11-08,2026,9,wr_bonus,CHI,,12,1.8
+2026-11-08,2026,9,wr_bonus,CHI,,13,0.8
+2026-11-08,2026,9,wr_bonus,CHI,,14,-2.1
+2026-11-08,2026,9,wr_bonus,CHI,,15,-2.8
+2026-11-08,2026,9,wr_bonus,CHI,,16,0.7
+2026-11-08,2026,9,wr_bonus,CHI,,17,0.3
+2026-11-08,2026,9,wr_bonus,CHI,,avg,-0.2
+2026-11-08,2026,9,wr_bonus,CHI,,playoffs,-0.6
+2026-11-08,2026,9,wr_bonus,CHI,,baseline,24.5
+2026-11-08,2026,9,wr_bonus,CHI,,next4,0.4
+2026-11-08,2026,9,wr_bonus,JAX,,9,-1.3
+2026-11-08,2026,9,wr_bonus,JAX,,10,1.6
+2026-11-08,2026,9,wr_bonus,JAX,,11,-1.0
+2026-11-08,2026,9,wr_bonus,JAX,,12,2.5
+2026-11-08,2026,9,wr_bonus,JAX,,13,-2.7
+2026-11-08,2026,9,wr_bonus,JAX,,14,-2.1
+2026-11-08,2026,9,wr_bonus,JAX,,15,3.4
+2026-11-08,2026,9,wr_bonus,JAX,,16,2.6
+2026-11-08,2026,9,wr_bonus,JAX,,17,0.0
+2026-11-08,2026,9,wr_bonus,JAX,,avg,0.3
+2026-11-08,2026,9,wr_bonus,JAX,,playoffs,2.0
+2026-11-08,2026,9,wr_bonus,JAX,,baseline,25.8
+2026-11-08,2026,9,wr_bonus,JAX,,next4,0.5
+2026-11-08,2026,9,wr_bonus,MIN,,9,-1.4
+2026-11-08,2026,9,wr_bonus,MIN,,10,-0.5
+2026-11-08,2026,9,wr_bonus,MIN,,11,-2.4
+2026-11-08,2026,9,wr_bonus,MIN,,12,1.4
+2026-11-08,2026,9,wr_bonus,MIN,,13,2.6
+2026-11-08,2026,9,wr_bonus,MIN,,14,0.0
+2026-11-08,2026,9,wr_bonus,MIN,,15,2.3
+2026-11-08,2026,9,wr_bonus,MIN,,16,2.8
+2026-11-08,2026,9,wr_bonus,MIN,,17,-0.2
+2026-11-08,2026,9,wr_bonus,MIN,,avg,0.5
+2026-11-08,2026,9,wr_bonus,MIN,,playoffs,1.6
+2026-11-08,2026,9,wr_bonus,MIN,,baseline,19.6
+2026-11-08,2026,9,wr_bonus,MIN,,next4,-0.7
+2026-11-08,2026,9,wr_bonus,NYJ,,9,-1.4
+2026-11-08,2026,9,wr_bonus,NYJ,,10,-2.3
+2026-11-08,2026,9,wr_bonus,NYJ,,11,0.4
+2026-11-08,2026,9,wr_bonus,NYJ,,12,-3.0
+2026-11-08,2026,9,wr_bonus,NYJ,,14,0.8
+2026-11-08,2026,9,wr_bonus,NYJ,,15,1.3
+2026-11-08,2026,9,wr_bonus,NYJ,,16,1.1
+2026-11-08,2026,9,wr_bonus,NYJ,,17,-1.5
+2026-11-08,2026,9,wr_bonus,NYJ,,avg,-0.6
+2026-11-08,2026,9,wr_bonus,NYJ,,playoffs,0.3
+2026-11-08,2026,9,wr_bonus,NYJ,,baseline,22.4
+2026-11-08,2026,9,wr_bonus,NYJ,,next4,-1.6
+2026-11-08,2026,9,wr_bonus,WAS,,9,-1.4
+2026-11-08,2026,9,wr_bonus,WAS,,10,-2.4
+2026-11-08,2026,9,wr_bonus,WAS,,11,-2.4
+2026-11-08,2026,9,wr_bonus,WAS,,12,3.2
+2026-11-08,2026,9,wr_bonus,WAS,,13,1.7
+2026-11-08,2026,9,wr_bonus,WAS,,14,1.0
+2026-11-08,2026,9,wr_bonus,WAS,,15,0.4
+2026-11-08,2026,9,wr_bonus,WAS,,16,-0.8
+2026-11-08,2026,9,wr_bonus,WAS,,17,-0.1
+2026-11-08,2026,9,wr_bonus,WAS,,avg,-0.1
+2026-11-08,2026,9,wr_bonus,WAS,,playoffs,-0.2
+2026-11-08,2026,9,wr_bonus,WAS,,baseline,23.0
+2026-11-08,2026,9,wr_bonus,WAS,,next4,-0.8
+2026-11-08,2026,9,wr_bonus,PHI,,9,-1.6
+2026-11-08,2026,9,wr_bonus,PHI,,11,-1.2
+2026-11-08,2026,9,wr_bonus,PHI,,12,2.2
+2026-11-08,2026,9,wr_bonus,PHI,,13,1.7
+2026-11-08,2026,9,wr_bonus,PHI,,14,-1.6
+2026-11-08,2026,9,wr_bonus,PHI,,15,-0.3
+2026-11-08,2026,9,wr_bonus,PHI,,16,2.8
+2026-11-08,2026,9,wr_bonus,PHI,,17,-0.3
+2026-11-08,2026,9,wr_bonus,PHI,,avg,0.2
+2026-11-08,2026,9,wr_bonus,PHI,,playoffs,0.7
+2026-11-08,2026,9,wr_bonus,PHI,,baseline,20.1
+2026-11-08,2026,9,wr_bonus,PHI,,next4,-0.2
+2026-11-08,2026,9,wr_bonus,LV,,9,-1.7
+2026-11-08,2026,9,wr_bonus,LV,,10,1.1
+2026-11-08,2026,9,wr_bonus,LV,,11,-2.0
+2026-11-08,2026,9,wr_bonus,LV,,12,-2.0
+2026-11-08,2026,9,wr_bonus,LV,,14,0.7
+2026-11-08,2026,9,wr_bonus,LV,,15,2.6
+2026-11-08,2026,9,wr_bonus,LV,,16,4.4
+2026-11-08,2026,9,wr_bonus,LV,,17,1.9
+2026-11-08,2026,9,wr_bonus,LV,,avg,0.6
+2026-11-08,2026,9,wr_bonus,LV,,playoffs,3.0
+2026-11-08,2026,9,wr_bonus,LV,,baseline,19.9
+2026-11-08,2026,9,wr_bonus,LV,,next4,-1.1
+2026-11-08,2026,9,wr_bonus,BAL,,9,-3.2
+2026-11-08,2026,9,wr_bonus,BAL,,10,-3.4
+2026-11-08,2026,9,wr_bonus,BAL,,11,-1.8
+2026-11-08,2026,9,wr_bonus,BAL,,12,1.3
+2026-11-08,2026,9,wr_bonus,BAL,,14,-2.2
+2026-11-08,2026,9,wr_bonus,BAL,,15,-1.8
+2026-11-08,2026,9,wr_bonus,BAL,,16,-0.9
+2026-11-08,2026,9,wr_bonus,BAL,,17,0.2
+2026-11-08,2026,9,wr_bonus,BAL,,avg,-1.5
+2026-11-08,2026,9,wr_bonus,BAL,,playoffs,-0.8
+2026-11-08,2026,9,wr_bonus,BAL,,baseline,18.8
+2026-11-08,2026,9,wr_bonus,BAL,,next4,-1.8
+2026-11-08,2026,9,wr_bonus,ARI,,9,-4.7
+2026-11-08,2026,9,wr_bonus,ARI,,10,-0.6
+2026-11-08,2026,9,wr_bonus,ARI,,11,-3.1
+2026-11-08,2026,9,wr_bonus,ARI,,12,-0.4
+2026-11-08,2026,9,wr_bonus,ARI,,13,4.0
+2026-11-08,2026,9,wr_bonus,ARI,,15,2.2
+2026-11-08,2026,9,wr_bonus,ARI,,16,0.9
+2026-11-08,2026,9,wr_bonus,ARI,,17,2.8
+2026-11-08,2026,9,wr_bonus,ARI,,avg,0.1
+2026-11-08,2026,9,wr_bonus,ARI,,playoffs,2.0
+2026-11-08,2026,9,wr_bonus,ARI,,baseline,18.3
+2026-11-08,2026,9,wr_bonus,ARI,,next4,-2.2
+2026-11-08,2026,9,wr_bonus,BUF,,9,-5.2
+2026-11-08,2026,9,wr_bonus,BUF,,10,0.1
+2026-11-08,2026,9,wr_bonus,BUF,,11,-1.0
+2026-11-08,2026,9,wr_bonus,BUF,,12,-0.5
+2026-11-08,2026,9,wr_bonus,BUF,,13,0.3
+2026-11-08,2026,9,wr_bonus,BUF,,14,0.0
+2026-11-08,2026,9,wr_bonus,BUF,,15,-0.9
+2026-11-08,2026,9,wr_bonus,BUF,,16,-0.4
+2026-11-08,2026,9,wr_bonus,BUF,,17,-2.4
+2026-11-08,2026,9,wr_bonus,BUF,,avg,-1.1
+2026-11-08,2026,9,wr_bonus,BUF,,playoffs,-1.2
+2026-11-08,2026,9,wr_bonus,BUF,,baseline,22.7
+2026-11-08,2026,9,wr_bonus,BUF,,next4,-1.7
+2026-11-08,2026,9,wr_bonus,PIT,,10,-0.8
+2026-11-08,2026,9,wr_bonus,PIT,,11,2.5
+2026-11-08,2026,9,wr_bonus,PIT,,12,1.8
+2026-11-08,2026,9,wr_bonus,PIT,,13,2.7
+2026-11-08,2026,9,wr_bonus,PIT,,14,-2.3
+2026-11-08,2026,9,wr_bonus,PIT,,15,2.4
+2026-11-08,2026,9,wr_bonus,PIT,,16,1.5
+2026-11-08,2026,9,wr_bonus,PIT,,17,2.6
+2026-11-08,2026,9,wr_bonus,PIT,,avg,1.3
+2026-11-08,2026,9,wr_bonus,PIT,,playoffs,2.2
+2026-11-08,2026,9,wr_bonus,PIT,,baseline,21.9
+2026-11-08,2026,9,wr_bonus,PIT,,next4,1.2
+2026-11-08,2026,9,wr_bonus,TEN,,10,-0.6
+2026-11-08,2026,9,wr_bonus,TEN,,11,2.5
+2026-11-08,2026,9,wr_bonus,TEN,,12,-1.2
+2026-11-08,2026,9,wr_bonus,TEN,,13,-0.4
+2026-11-08,2026,9,wr_bonus,TEN,,14,2.3
+2026-11-08,2026,9,wr_bonus,TEN,,15,-0.9
+2026-11-08,2026,9,wr_bonus,TEN,,16,3.8
+2026-11-08,2026,9,wr_bonus,TEN,,17,0.8
+2026-11-08,2026,9,wr_bonus,TEN,,avg,0.8
+2026-11-08,2026,9,wr_bonus,TEN,,playoffs,1.2
+2026-11-08,2026,9,wr_bonus,TEN,,baseline,20.7
+2026-11-08,2026,9,wr_bonus,TEN,,next4,0.2
+2026-11-08,2026,9,rb_bonus,CIN,,9,2.9
+2026-11-08,2026,9,rb_bonus,CIN,,10,-1.2
+2026-11-08,2026,9,rb_bonus,CIN,,11,-0.4
+2026-11-08,2026,9,rb_bonus,CIN,,12,2.2
+2026-11-08,2026,9,rb_bonus,CIN,,13,1.1
+2026-11-08,2026,9,rb_bonus,CIN,,14,-0.4
+2026-11-08,2026,9,rb_bonus,CIN,,15,0.9
+2026-11-08,2026,9,rb_bonus,CIN,,16,1.5
+2026-11-08,2026,9,rb_bonus,CIN,,17,0.4
+2026-11-08,2026,9,rb_bonus,CIN,,avg,0.8
+2026-11-08,2026,9,rb_bonus,CIN,,playoffs,0.9
+2026-11-08,2026,9,rb_bonus,CIN,,baseline,17.3
+2026-11-08,2026,9,rb_bonus,CIN,,next4,0.9
+2026-11-08,2026,9,rb_bonus,SF,,9,2.7
+2026-11-08,2026,9,rb_bonus,SF,,10,1.8
+2026-11-08,2026,9,rb_bonus,SF,,11,0.2
+2026-11-08,2026,9,rb_bonus,SF,,12,0.2
+2026-11-08,2026,9,rb_bonus,SF,,13,-0.5
+2026-11-08,2026,9,rb_bonus,SF,,14,-0.6
+2026-11-08,2026,9,rb_bonus,SF,,15,1.0
+2026-11-08,2026,9,rb_bonus,SF,,16,-1.3
+2026-11-08,2026,9,rb_bonus,SF,,17,1.0
+2026-11-08,2026,9,rb_bonus,SF,,avg,0.5
+2026-11-08,2026,9,rb_bonus,SF,,playoffs,0.2
+2026-11-08,2026,9,rb_bonus,SF,,baseline,22.1
+2026-11-08,2026,9,rb_bonus,SF,,next4,1.2
+2026-11-08,2026,9,rb_bonus,DEN,,9,2.1
+2026-11-08,2026,9,rb_bonus,DEN,,11,2.6
+2026-11-08,2026,9,rb_bonus,DEN,,12,-2.1
+2026-11-08,2026,9,rb_bonus,DEN,,13,1.8
+2026-11-08,2026,9,rb_bonus,DEN,,14,0.4
+2026-11-08,2026,9,rb_bonus,DEN,,15,1.6
+2026-11-08,2026,9,rb_bonus,DEN,,16,-0.3
+2026-11-08,2026,9,rb_bonus,DEN,,17,-1.3
+2026-11-08,2026,9,rb_bonus,DEN,,avg,0.6
+2026-11-08,2026,9,rb_bonus,DEN,,playoffs,0.0
+2026-11-08,2026,9,rb_bonus,DEN,,baseline,19.7
+2026-11-08,2026,9,rb_bonus,DEN,,next4,0.9
+2026-11-08,2026,9,rb_bonus,IND,,9,2.0
+2026-11-08,2026,9,rb_bonus,IND,,10,1.6
+2026-11-08,2026,9,rb_bonus,IND,,11,-0.1
+2026-11-08,2026,9,rb_bonus,IND,,12,0.1
+2026-11-08,2026,9,rb_bonus,IND,,14,0.4
+2026-11-08,2026,9,rb_bonus,IND,,15,-0.2
+2026-11-08,2026,9,rb_bonus,IND,,16,-0.4
+2026-11-08,2026,9,rb_bonus,IND,,17,0.6
+2026-11-08,2026,9,rb_bonus,IND,,avg,0.5
+2026-11-08,2026,9,rb_bonus,IND,,playoffs,0.0
+2026-11-08,2026,9,rb_bonus,IND,,baseline,19.5
+2026-11-08,2026,9,rb_bonus,IND,,next4,0.9
+2026-11-08,2026,9,rb_bonus,KC,,9,1.8
+2026-11-08,2026,9,rb_bonus,KC,,10,2.4
+2026-11-08,2026,9,rb_bonus,KC,,11,1.3
+2026-11-08,2026,9,rb_bonus,KC,,12,-1.2
+2026-11-08,2026,9,rb_bonus,KC,,13,-0.9
+2026-11-08,2026,9,rb_bonus,KC,,14,-1.1
+2026-11-08,2026,9,rb_bonus,KC,,15,-1.1
+2026-11-08,2026,9,rb_bonus,KC,,16,-0.9
+2026-11-08,2026,9,rb_bonus,KC,,17,1.3
+2026-11-08,2026,9,rb_bonus,KC,,avg,0.2
+2026-11-08,2026,9,rb_bonus,KC,,playoffs,-0.2
+2026-11-08,2026,9,rb_bonus,KC,,baseline,22.2
+2026-11-08,2026,9,rb_bonus,KC,,next4,1.1
+2026-11-08,2026,9,rb_bonus,DAL,,9,1.7
+2026-11-08,2026,9,rb_bonus,DAL,,10,-1.0
+2026-11-08,2026,9,rb_bonus,DAL,,11,1.2
+2026-11-08,2026,9,rb_bonus,DAL,,12,1.6
+2026-11-08,2026,9,rb_bonus,DAL,,13,-1.4
+2026-11-08,2026,9,rb_bonus,DAL,,15,-1.2
+2026-11-08,2026,9,rb_bonus,DAL,,16,-1.3
+2026-11-08,2026,9,rb_bonus,DAL,,17,0.3
+2026-11-08,2026,9,rb_bonus,DAL,,avg,0.0
+2026-11-08,2026,9,rb_bonus,DAL,,playoffs,-0.7
+2026-11-08,2026,9,rb_bonus,DAL,,baseline,18.7
+2026-11-08,2026,9,rb_bonus,DAL,,next4,0.9
+2026-11-08,2026,9,rb_bonus,CLE,,9,1.6
+2026-11-08,2026,9,rb_bonus,CLE,,10,0.4
+2026-11-08,2026,9,rb_bonus,CLE,,12,1.9
+2026-11-08,2026,9,rb_bonus,CLE,,13,-0.3
+2026-11-08,2026,9,rb_bonus,CLE,,14,2.8
+2026-11-08,2026,9,rb_bonus,CLE,,15,-0.3
+2026-11-08,2026,9,rb_bonus,CLE,,16,-0.6
+2026-11-08,2026,9,rb_bonus,CLE,,17,1.6
+2026-11-08,2026,9,rb_bonus,CLE,,avg,0.9
+2026-11-08,2026,9,rb_bonus,CLE,,playoffs,0.3
+2026-11-08,2026,9,rb_bonus,CLE,,baseline,16.6
+2026-11-08,2026,9,rb_bonus,CLE,,next4,1.3
+2026-11-08,2026,9,rb_bonus,NO,,9,1.2
+2026-11-08,2026,9,rb_bonus,NO,,10,2.2
+2026-11-08,2026,9,rb_bonus,NO,,11,-2.5
+2026-11-08,2026,9,rb_bonus,NO,,12,-1.5
+2026-11-08,2026,9,rb_bonus,NO,,13,1.0
+2026-11-08,2026,9,rb_bonus,NO,,14,0.4
+2026-11-08,2026,9,rb_bonus,NO,,15,-2.5
+2026-11-08,2026,9,rb_bonus,NO,,16,1.8
+2026-11-08,2026,9,rb_bonus,NO,,17,2.3
+2026-11-08,2026,9,rb_bonus,NO,,avg,0.3
+2026-11-08,2026,9,rb_bonus,NO,,playoffs,0.5
+2026-11-08,2026,9,rb_bonus,NO,,baseline,16.9
+2026-11-08,2026,9,rb_bonus,NO,,next4,-0.2
+2026-11-08,2026,9,rb_bonus,SEA,,9,1.0
+2026-11-08,2026,9,rb_bonus,SEA,,10,1.6
+2026-11-08,2026,9,rb_bonus,SEA,,12,-2.2
+2026-11-08,2026,9,rb_bonus,SEA,,13,1.9
+2026-11-08,2026,9,rb_bonus,SEA,,14,0.5
+2026-11-08,2026,9,rb_bonus,SEA,,15,0.9
+2026-11-08,2026,9,rb_bonus,SEA,,16,-0.4
+2026-11-08,2026,9,rb_bonus,SEA,,17,0.6
+2026-11-08,2026,9,rb_bonus,SEA,,avg,0.5
+2026-11-08,2026,9,rb_bonus,SEA,,playoffs,0.4
+2026-11-08,2026,9,rb_bonus,SEA,,baseline,17.8
+2026-11-08,2026,9,rb_bonus,SEA,,next4,0.2
+2026-11-08,2026,9,rb_bonus,HOU,,9,1.0
+2026-11-08,2026,9,rb_bonus,HOU,,10,1.2
+2026-11-08,2026,9,rb_bonus,HOU,,11,2.4
+2026-11-08,2026,9,rb_bonus,HOU,,12,1.1
+2026-11-08,2026,9,rb_bonus,HOU,,13,-2.2
+2026-11-08,2026,9,rb_bonus,HOU,,14,-0.2
+2026-11-08,2026,9,rb_bonus,HOU,,15,-1.0
+2026-11-08,2026,9,rb_bonus,HOU,,16,1.1
+2026-11-08,2026,9,rb_bonus,HOU,,17,-0.5
+2026-11-08,2026,9,rb_bonus,HOU,,avg,0.3
+2026-11-08,2026,9,rb_bonus,HOU,,playoffs,-0.1
+2026-11-08,2026,9,rb_bonus,HOU,,baseline,16.8
+2026-11-08,2026,9,rb_bonus,HOU,,next4,1.4
+2026-11-08,2026,9,rb_bonus,DET,,9,1.0
+2026-11-08,2026,9,rb_bonus,DET,,10,-1.6
+2026-11-08,2026,9,rb_bonus,DET,,11,-1.5
+2026-11-08,2026,9,rb_bonus,DET,,12,-1.7
+2026-11-08,2026,9,rb_bonus,DET,,13,2.0
+2026-11-08,2026,9,rb_bonus,DET,,14,1.1
+2026-11-08,2026,9,rb_bonus,DET,,15,-0.9
+2026-11-08,2026,9,rb_bonus,DET,,16,0.0
+2026-11-08,2026,9,rb_bonus,DET,,17,-2.5
+2026-11-08,2026,9,rb_bonus,DET,,avg,-0.5
+2026-11-08,2026,9,rb_bonus,DET,,playoffs,-1.2
+2026-11-08,2026,9,rb_bonus,DET,,baseline,22.3
+2026-11-08,2026,9,rb_bonus,DET,,next4,-0.9
+2026-11-08,2026,9,rb_bonus,NYG,,9,0.4
+2026-11-08,2026,9,rb_bonus,NYG,,10,0.6
+2026-11-08,2026,9,rb_bonus,NYG,,11,-1.0
+2026-11-08,2026,9,rb_bonus,NYG,,12,1.8
+2026-11-08,2026,9,rb_bonus,NYG,,13,-0.9
+2026-11-08,2026,9,rb_bonus,NYG,,14,-0.5
+2026-11-08,2026,9,rb_bonus,NYG,,15,1.8
+2026-11-08,2026,9,rb_bonus,NYG,,16,-1.0
+2026-11-08,2026,9,rb_bonus,NYG,,17,2.0
+2026-11-08,2026,9,rb_bonus,NYG,,avg,0.4
+2026-11-08,2026,9,rb_bonus,NYG,,playoffs,1.0
+2026-11-08,2026,9,rb_bonus,NYG,,baseline,18.3
+2026-11-08,2026,9,rb_bonus,NYG,,next4,0.4
+2026-11-08,2026,9,rb_bonus,NE,,9,0.1
+2026-11-08,2026,9,rb_bonus,NE,,10,-0.4
+2026-11-08,2026,9,rb_bonus,NE,,12,1.2
+2026-11-08,2026,9,rb_bonus,NE,,13,-0.6
+2026-11-08,2026,9,rb_bonus,NE,,14,0.0
+2026-11-08,2026,9,rb_bonus,NE,,15,-1.5
+2026-11-08,2026,9,rb_bonus,NE,,16,0.6
+2026-11-08,2026,9,rb_bonus,NE,,17,0.9
+2026-11-08,2026,9,rb_bonus,NE,,avg,0.0
+2026-11-08,2026,9,rb_bonus,NE,,playoffs,0.0
+2026-11-08,2026,9,rb_bonus,NE,,baseline,18.6
+2026-11-08,2026,9,rb_bonus,NE,,next4,0.3
+2026-11-08,2026,9,rb_bonus,MIA,,9,0.0
+2026-11-08,2026,9,rb_bonus,MIA,,10,1.5
+2026-11-08,2026,9,rb_bonus,MIA,,11,-1.1
+2026-11-08,2026,9,rb_bonus,MIA,,12,1.3
+2026-11-08,2026,9,rb_bonus,MIA,,13,0.2
+2026-11-08,2026,9,rb_bonus,MIA,,14,-1.5
+2026-11-08,2026,9,rb_bonus,MIA,,15,0.0
+2026-11-08,2026,9,rb_bonus,MIA,,16,1.6
+2026-11-08,2026,9,rb_bonus,MIA,,17,0.1
+2026-11-08,2026,9,rb_bonus,MIA,,avg,0.2
+2026-11-08,2026,9,rb_bonus,MIA,,playoffs,0.6
+2026-11-08,2026,9,rb_bonus,MIA,,baseline,17.0
+2026-11-08,2026,9,rb_bonus,MIA,,next4,0.4
+2026-11-08,2026,9,rb_bonus,ATL,,9,0.0
+2026-11-08,2026,9,rb_bonus,ATL,,10,-0.2
+2026-11-08,2026,9,rb_bonus,ATL,,12,-0.8
+2026-11-08,2026,9,rb_bonus,ATL,,13,-0.2
+2026-11-08,2026,9,rb_bonus,ATL,,14,0.9
+2026-11-08,2026,9,rb_bonus,ATL,,15,-1.0
+2026-11-08,2026,9,rb_bonus,ATL,,16,-1.4
+2026-11-08,2026,9,rb_bonus,ATL,,17,2.6
+2026-11-08,2026,9,rb_bonus,ATL,,avg,0.0
+2026-11-08,2026,9,rb_bonus,ATL,,playoffs,0.1
+2026-11-08,2026,9,rb_bonus,ATL,,baseline,20.7
+2026-11-08,2026,9,rb_bonus,ATL,,next4,-0.4
+2026-11-08,2026,9,rb_bonus,LA,,9,0.0
+2026-11-08,2026,9,rb_bonus,LA,,10,0.6
+2026-11-08,2026,9,rb_bonus,LA,,12,0.5
+2026-11-08,2026,9,rb_bonus,LA,,13,-0.2
+2026-11-08,2026,9,rb_bonus,LA,,14,-2.0
+2026-11-08,2026,9,rb_bonus,LA,,15,2.1
+2026-11-08,2026,9,rb_bonus,LA,,16,-0.9
+2026-11-08,2026,9,rb_bonus,LA,,17,-2.8
+2026-11-08,2026,9,rb_bonus,LA,,avg,-0.3
+2026-11-08,2026,9,rb_bonus,LA,,playoffs,-0.5
+2026-11-08,2026,9,rb_bonus,LA,,baseline,21.3
+2026-11-08,2026,9,rb_bonus,LA,,next4,0.4
+2026-11-08,2026,9,rb_bonus,MIN,,9,-0.1
+2026-11-08,2026,9,rb_bonus,MIN,,10,-0.4
+2026-11-08,2026,9,rb_bonus,MIN,,11,-1.8
+2026-11-08,2026,9,rb_bonus,MIN,,12,3.0
+2026-11-08,2026,9,rb_bonus,MIN,,13,2.0
+2026-11-08,2026,9,rb_bonus,MIN,,14,-1.6
+2026-11-08,2026,9,rb_bonus,MIN,,15,-0.4
+2026-11-08,2026,9,rb_bonus,MIN,,16,0.9
+2026-11-08,2026,9,rb_bonus,MIN,,17,0.3
+2026-11-08,2026,9,rb_bonus,MIN,,avg,0.2
+2026-11-08,2026,9,rb_bonus,MIN,,playoffs,0.2
+2026-11-08,2026,9,rb_bonus,MIN,,baseline,15.8
+2026-11-08,2026,9,rb_bonus,MIN,,next4,0.2
+2026-11-08,2026,9,rb_bonus,PHI,,9,-0.1
+2026-11-08,2026,9,rb_bonus,PHI,,11,-2.0
+2026-11-08,2026,9,rb_bonus,PHI,,12,1.3
+2026-11-08,2026,9,rb_bonus,PHI,,13,0.0
+2026-11-08,2026,9,rb_bonus,PHI,,14,1.1
+2026-11-08,2026,9,rb_bonus,PHI,,15,-0.1
+2026-11-08,2026,9,rb_bonus,PHI,,16,0.7
+2026-11-08,2026,9,rb_bonus,PHI,,17,-1.3
+2026-11-08,2026,9,rb_bonus,PHI,,avg,-0.1
+2026-11-08,2026,9,rb_bonus,PHI,,playoffs,-0.2
+2026-11-08,2026,9,rb_bonus,PHI,,baseline,16.4
+2026-11-08,2026,9,rb_bonus,PHI,,next4,-0.3
+2026-11-08,2026,9,rb_bonus,LAC,,9,-0.1
+2026-11-08,2026,9,rb_bonus,LAC,,10,-1.1
+2026-11-08,2026,9,rb_bonus,LAC,,11,1.0
+2026-11-08,2026,9,rb_bonus,LAC,,12,-0.9
+2026-11-08,2026,9,rb_bonus,LAC,,13,-2.3
+2026-11-08,2026,9,rb_bonus,LAC,,14,1.1
+2026-11-08,2026,9,rb_bonus,LAC,,15,-1.0
+2026-11-08,2026,9,rb_bonus,LAC,,16,0.5
+2026-11-08,2026,9,rb_bonus,LAC,,17,-0.6
+2026-11-08,2026,9,rb_bonus,LAC,,avg,-0.4
+2026-11-08,2026,9,rb_bonus,LAC,,playoffs,-0.4
+2026-11-08,2026,9,rb_bonus,LAC,,baseline,17.7
+2026-11-08,2026,9,rb_bonus,LAC,,next4,-0.3
+2026-11-08,2026,9,rb_bonus,CAR,,9,-0.3
+2026-11-08,2026,9,rb_bonus,CAR,,10,1.5
+2026-11-08,2026,9,rb_bonus,CAR,,11,0.5
+2026-11-08,2026,9,rb_bonus,CAR,,12,-2.6
+2026-11-08,2026,9,rb_bonus,CAR,,13,-0.9
+2026-11-08,2026,9,rb_bonus,CAR,,14,2.2
+2026-11-08,2026,9,rb_bonus,CAR,,15,-0.2
+2026-11-08,2026,9,rb_bonus,CAR,,16,-2.2
+2026-11-08,2026,9,rb_bonus,CAR,,17,0.4
+2026-11-08,2026,9,rb_bonus,CAR,,avg,-0.2
+2026-11-08,2026,9,rb_bonus,CAR,,playoffs,-0.7
+2026-11-08,2026,9,rb_bonus,CAR,,baseline,18.9
+2026-11-08,2026,9,rb_bonus,CAR,,next4,-0.2
+2026-11-08,2026,9,rb_bonus,CHI,,9,-0.4
+2026-11-08,2026,9,rb_bonus,CHI,,11,2.3
+2026-11-08,2026,9,rb_bonus,CHI,,12,-0.6
+2026-11-08,2026,9,rb_bonus,CHI,,13,-0.7
+2026-11-08,2026,9,rb_bonus,CHI,,14,1.1
+2026-11-08,2026,9,rb_bonus,CHI,,15,-1.2
+2026-11-08,2026,9,rb_bonus,CHI,,16,0.7
+2026-11-08,2026,9,rb_bonus,CHI,,17,-0.3
+2026-11-08,2026,9,rb_bonus,CHI,,avg,0.1
+2026-11-08,2026,9,rb_bonus,CHI,,playoffs,-0.3
+2026-11-08,2026,9,rb_bonus,CHI,,baseline,21.6
+2026-11-08,2026,9,rb_bonus,CHI,,next4,0.5
+2026-11-08,2026,9,rb_bonus,JAX,,9,-0.5
+2026-11-08,2026,9,rb_bonus,JAX,,10,0.8
+2026-11-08,2026,9,rb_bonus,JAX,,11,-0.2
+2026-11-08,2026,9,rb_bonus,JAX,,12,1.5
+2026-11-08,2026,9,rb_bonus,JAX,,13,-2.1
+2026-11-08,2026,9,rb_bonus,JAX,,14,-1.2
+2026-11-08,2026,9,rb_bonus,JAX,,15,1.3
+2026-11-08,2026,9,rb_bonus,JAX,,16,2.1
+2026-11-08,2026,9,rb_bonus,JAX,,17,0.7
+2026-11-08,2026,9,rb_bonus,JAX,,avg,0.3
+2026-11-08,2026,9,rb_bonus,JAX,,playoffs,1.3
+2026-11-08,2026,9,rb_bonus,JAX,,baseline,20.7
+2026-11-08,2026,9,rb_bonus,JAX,,next4,0.4
+2026-11-08,2026,9,rb_bonus,WAS,,9,-0.6
+2026-11-08,2026,9,rb_bonus,WAS,,10,-0.5
+2026-11-08,2026,9,rb_bonus,WAS,,11,-0.6
+2026-11-08,2026,9,rb_bonus,WAS,,12,1.6
+2026-11-08,2026,9,rb_bonus,WAS,,13,0.7
+2026-11-08,2026,9,rb_bonus,WAS,,14,1.0
+2026-11-08,2026,9,rb_bonus,WAS,,15,3.3
+2026-11-08,2026,9,rb_bonus,WAS,,16,-0.2
+2026-11-08,2026,9,rb_bonus,WAS,,17,-1.9
+2026-11-08,2026,9,rb_bonus,WAS,,avg,0.3
+2026-11-08,2026,9,rb_bonus,WAS,,playoffs,0.4
+2026-11-08,2026,9,rb_bonus,WAS,,baseline,16.4
+2026-11-08,2026,9,rb_bonus,WAS,,next4,0.0
+2026-11-08,2026,9,rb_bonus,GB,,9,-1.4
+2026-11-08,2026,9,rb_bonus,GB,,10,-0.5
+2026-11-08,2026,9,rb_bonus,GB,,12,-1.1
+2026-11-08,2026,9,rb_bonus,GB,,13,1.5
+2026-11-08,2026,9,rb_bonus,GB,,14,-0.7
+2026-11-08,2026,9,rb_bonus,GB,,15,1.7
+2026-11-08,2026,9,rb_bonus,GB,,16,-2.3
+2026-11-08,2026,9,rb_bonus,GB,,17,0.5
+2026-11-08,2026,9,rb_bonus,GB,,avg,-0.3
+2026-11-08,2026,9,rb_bonus,GB,,playoffs,0.0
+2026-11-08,2026,9,rb_bonus,GB,,baseline,15.9
+2026-11-08,2026,9,rb_bonus,GB,,next4,-1.0
+2026-11-08,2026,9,rb_bonus,NYJ,,9,-1.4
+2026-11-08,2026,9,rb_bonus,NYJ,,10,-0.7
+2026-11-08,2026,9,rb_bonus,NYJ,,11,1.4
+2026-11-08,2026,9,rb_bonus,NYJ,,12,0.5
+2026-11-08,2026,9,rb_bonus,NYJ,,14,1.0
+2026-11-08,2026,9,rb_bonus,NYJ,,15,0.9
+2026-11-08,2026,9,rb_bonus,NYJ,,16,-0.8
+2026-11-08,2026,9,rb_bonus,NYJ,,17,0.3
+2026-11-08,2026,9,rb_bonus,NYJ,,avg,0.1
+2026-11-08,2026,9,rb_bonus,NYJ,,playoffs,0.1
+2026-11-08,2026,9,rb_bonus,NYJ,,baseline,17.6
+2026-11-08,2026,9,rb_bonus,NYJ,,next4,-0.1
+2026-11-08,2026,9,rb_bonus,BUF,,9,-1.4
+2026-11-08,2026,9,rb_bonus,BUF,,10,0.8
+2026-11-08,2026,9,rb_bonus,BUF,,11,1.6
+2026-11-08,2026,9,rb_bonus,BUF,,12,-0.1
+2026-11-08,2026,9,rb_bonus,BUF,,13,-1.0
+2026-11-08,2026,9,rb_bonus,BUF,,14,0.1
+2026-11-08,2026,9,rb_bonus,BUF,,15,-1.1
+2026-11-08,2026,9,rb_bonus,BUF,,16,0.4
+2026-11-08,2026,9,rb_bonus,BUF,,17,0.8
+2026-11-08,2026,9,rb_bonus,BUF,,avg,0.0
+2026-11-08,2026,9,rb_bonus,BUF,,playoffs,0.0
+2026-11-08,2026,9,rb_bonus,BUF,,baseline,21.5
+2026-11-08,2026,9,rb_bonus,BUF,,next4,0.2
+2026-11-08,2026,9,rb_bonus,ARI,,9,-1.7
+2026-11-08,2026,9,rb_bonus,ARI,,10,-0.7
+2026-11-08,2026,9,rb_bonus,ARI,,11,-1.8
+2026-11-08,2026,9,rb_bonus,ARI,,12,-0.2
+2026-11-08,2026,9,rb_bonus,ARI,,13,1.9
+2026-11-08,2026,9,rb_bonus,ARI,,15,1.4
+2026-11-08,2026,9,rb_bonus,ARI,,16,1.2
+2026-11-08,2026,9,rb_bonus,ARI,,17,2.3
+2026-11-08,2026,9,rb_bonus,ARI,,avg,0.3
+2026-11-08,2026,9,rb_bonus,ARI,,playoffs,1.6
+2026-11-08,2026,9,rb_bonus,ARI,,baseline,16.6
+2026-11-08,2026,9,rb_bonus,ARI,,next4,-1.1
+2026-11-08,2026,9,rb_bonus,LV,,9,-1.8
+2026-11-08,2026,9,rb_bonus,LV,,10,0.9
+2026-11-08,2026,9,rb_bonus,LV,,11,-0.2
+2026-11-08,2026,9,rb_bonus,LV,,12,0.9
+2026-11-08,2026,9,rb_bonus,LV,,14,1.9
+2026-11-08,2026,9,rb_bonus,LV,,15,1.6
+2026-11-08,2026,9,rb_bonus,LV,,16,1.7
+2026-11-08,2026,9,rb_bonus,LV,,17,1.1
+2026-11-08,2026,9,rb_bonus,LV,,avg,0.8
+2026-11-08,2026,9,rb_bonus,LV,,playoffs,1.5
+2026-11-08,2026,9,rb_bonus,LV,,baseline,19.0
+2026-11-08,2026,9,rb_bonus,LV,,next4,-0.1
+2026-11-08,2026,9,rb_bonus,TB,,9,-1.9
+2026-11-08,2026,9,rb_bonus,TB,,11,-0.9
+2026-11-08,2026,9,rb_bonus,TB,,12,1.5
+2026-11-08,2026,9,rb_bonus,TB,,13,2.1
+2026-11-08,2026,9,rb_bonus,TB,,14,0.0
+2026-11-08,2026,9,rb_bonus,TB,,15,2.6
+2026-11-08,2026,9,rb_bonus,TB,,16,3.1
+2026-11-08,2026,9,rb_bonus,TB,,17,0.1
+2026-11-08,2026,9,rb_bonus,TB,,avg,0.8
+2026-11-08,2026,9,rb_bonus,TB,,playoffs,2.0
+2026-11-08,2026,9,rb_bonus,TB,,baseline,20.9
+2026-11-08,2026,9,rb_bonus,TB,,next4,-0.5
+2026-11-08,2026,9,rb_bonus,BAL,,9,-2.6
+2026-11-08,2026,9,rb_bonus,BAL,,10,0.7
+2026-11-08,2026,9,rb_bonus,BAL,,11,-0.2
+2026-11-08,2026,9,rb_bonus,BAL,,12,-0.5
+2026-11-08,2026,9,rb_bonus,BAL,,14,-2.2
+2026-11-08,2026,9,rb_bonus,BAL,,15,-2.7
+2026-11-08,2026,9,rb_bonus,BAL,,16,1.0
+2026-11-08,2026,9,rb_bonus,BAL,,17,-1.4
+2026-11-08,2026,9,rb_bonus,BAL,,avg,-1.0
+2026-11-08,2026,9,rb_bonus,BAL,,playoffs,-1.0
+2026-11-08,2026,9,rb_bonus,BAL,,baseline,18.5
+2026-11-08,2026,9,rb_bonus,BAL,,next4,-0.7
+2026-11-08,2026,9,rb_bonus,TEN,,10,-1.2
+2026-11-08,2026,9,rb_bonus,TEN,,11,2.1
+2026-11-08,2026,9,rb_bonus,TEN,,12,-1.8
+2026-11-08,2026,9,rb_bonus,TEN,,13,0.2
+2026-11-08,2026,9,rb_bonus,TEN,,14,-0.6
+2026-11-08,2026,9,rb_bonus,TEN,,15,2.0
+2026-11-08,2026,9,rb_bonus,TEN,,16,2.2
+2026-11-08,2026,9,rb_bonus,TEN,,17,-1.1
+2026-11-08,2026,9,rb_bonus,TEN,,avg,0.2
+2026-11-08,2026,9,rb_bonus,TEN,,playoffs,1.1
+2026-11-08,2026,9,rb_bonus,TEN,,baseline,17.3
+2026-11-08,2026,9,rb_bonus,TEN,,next4,-0.3
+2026-11-08,2026,9,rb_bonus,PIT,,10,-0.6
+2026-11-08,2026,9,rb_bonus,PIT,,11,1.6
+2026-11-08,2026,9,rb_bonus,PIT,,12,1.7
+2026-11-08,2026,9,rb_bonus,PIT,,13,2.0
+2026-11-08,2026,9,rb_bonus,PIT,,14,-1.5
+2026-11-08,2026,9,rb_bonus,PIT,,15,1.3
+2026-11-08,2026,9,rb_bonus,PIT,,16,2.5
+2026-11-08,2026,9,rb_bonus,PIT,,17,1.4
+2026-11-08,2026,9,rb_bonus,PIT,,avg,1.0
+2026-11-08,2026,9,rb_bonus,PIT,,playoffs,1.7
+2026-11-08,2026,9,rb_bonus,PIT,,baseline,18.6
+2026-11-08,2026,9,rb_bonus,PIT,,next4,0.9
+2026-11-08,2026,9,te_bonus,MIA,,9,2.1
+2026-11-08,2026,9,te_bonus,MIA,,10,1.1
+2026-11-08,2026,9,te_bonus,MIA,,11,-0.8
+2026-11-08,2026,9,te_bonus,MIA,,12,0.6
+2026-11-08,2026,9,te_bonus,MIA,,13,0.8
+2026-11-08,2026,9,te_bonus,MIA,,14,0.2
+2026-11-08,2026,9,te_bonus,MIA,,15,-0.9
+2026-11-08,2026,9,te_bonus,MIA,,16,-0.2
+2026-11-08,2026,9,te_bonus,MIA,,17,0.1
+2026-11-08,2026,9,te_bonus,MIA,,avg,0.3
+2026-11-08,2026,9,te_bonus,MIA,,playoffs,-0.3
+2026-11-08,2026,9,te_bonus,MIA,,baseline,8.2
+2026-11-08,2026,9,te_bonus,MIA,,next4,0.7
+2026-11-08,2026,9,te_bonus,DET,,9,1.7
+2026-11-08,2026,9,te_bonus,DET,,10,-0.5
+2026-11-08,2026,9,te_bonus,DET,,11,0.7
+2026-11-08,2026,9,te_bonus,DET,,12,0.5
+2026-11-08,2026,9,te_bonus,DET,,13,0.6
+2026-11-08,2026,9,te_bonus,DET,,14,1.1
+2026-11-08,2026,9,te_bonus,DET,,15,-0.7
+2026-11-08,2026,9,te_bonus,DET,,16,0.3
+2026-11-08,2026,9,te_bonus,DET,,17,-0.1
+2026-11-08,2026,9,te_bonus,DET,,avg,0.4
+2026-11-08,2026,9,te_bonus,DET,,playoffs,-0.2
+2026-11-08,2026,9,te_bonus,DET,,baseline,9.2
+2026-11-08,2026,9,te_bonus,DET,,next4,0.6
+2026-11-08,2026,9,te_bonus,SF,,9,1.7
+2026-11-08,2026,9,te_bonus,SF,,10,1.1
+2026-11-08,2026,9,te_bonus,SF,,11,-0.4
+2026-11-08,2026,9,te_bonus,SF,,12,-0.9
+2026-11-08,2026,9,te_bonus,SF,,13,-0.5
+2026-11-08,2026,9,te_bonus,SF,,14,-0.8
+2026-11-08,2026,9,te_bonus,SF,,15,-0.2
+2026-11-08,2026,9,te_bonus,SF,,16,0.4
+2026-11-08,2026,9,te_bonus,SF,,17,-0.3
+2026-11-08,2026,9,te_bonus,SF,,avg,0.0
+2026-11-08,2026,9,te_bonus,SF,,playoffs,0.0
+2026-11-08,2026,9,te_bonus,SF,,baseline,11.6
+2026-11-08,2026,9,te_bonus,SF,,next4,0.4
+2026-11-08,2026,9,te_bonus,NO,,9,1.5
+2026-11-08,2026,9,te_bonus,NO,,10,1.9
+2026-11-08,2026,9,te_bonus,NO,,11,-0.4
+2026-11-08,2026,9,te_bonus,NO,,12,0.2
+2026-11-08,2026,9,te_bonus,NO,,13,0.2
+2026-11-08,2026,9,te_bonus,NO,,14,0.4
+2026-11-08,2026,9,te_bonus,NO,,15,-0.5
+2026-11-08,2026,9,te_bonus,NO,,16,2.0
+2026-11-08,2026,9,te_bonus,NO,,17,0.7
+2026-11-08,2026,9,te_bonus,NO,,avg,0.7
+2026-11-08,2026,9,te_bonus,NO,,playoffs,0.7
+2026-11-08,2026,9,te_bonus,NO,,baseline,9.8
+2026-11-08,2026,9,te_bonus,NO,,next4,0.8
+2026-11-08,2026,9,te_bonus,IND,,9,1.5
+2026-11-08,2026,9,te_bonus,IND,,10,2.4
+2026-11-08,2026,9,te_bonus,IND,,11,-0.3
+2026-11-08,2026,9,te_bonus,IND,,12,0.3
+2026-11-08,2026,9,te_bonus,IND,,14,-0.6
+2026-11-08,2026,9,te_bonus,IND,,15,0.1
+2026-11-08,2026,9,te_bonus,IND,,16,1.6
+2026-11-08,2026,9,te_bonus,IND,,17,0.8
+2026-11-08,2026,9,te_bonus,IND,,avg,0.7
+2026-11-08,2026,9,te_bonus,IND,,playoffs,0.8
+2026-11-08,2026,9,te_bonus,IND,,baseline,8.6
+2026-11-08,2026,9,te_bonus,IND,,next4,0.9
+2026-11-08,2026,9,te_bonus,LA,,9,1.2
+2026-11-08,2026,9,te_bonus,LA,,10,1.5
+2026-11-08,2026,9,te_bonus,LA,,12,-0.2
+2026-11-08,2026,9,te_bonus,LA,,13,1.2
+2026-11-08,2026,9,te_bonus,LA,,14,-0.9
+2026-11-08,2026,9,te_bonus,LA,,15,1.2
+2026-11-08,2026,9,te_bonus,LA,,16,-1.1
+2026-11-08,2026,9,te_bonus,LA,,17,-0.6
+2026-11-08,2026,9,te_bonus,LA,,avg,0.3
+2026-11-08,2026,9,te_bonus,LA,,playoffs,-0.2
+2026-11-08,2026,9,te_bonus,LA,,baseline,11.3
+2026-11-08,2026,9,te_bonus,LA,,next4,0.8
+2026-11-08,2026,9,te_bonus,ATL,,9,1.2
+2026-11-08,2026,9,te_bonus,ATL,,10,1.2
+2026-11-08,2026,9,te_bonus,ATL,,12,-1.0
+2026-11-08,2026,9,te_bonus,ATL,,13,2.1
+2026-11-08,2026,9,te_bonus,ATL,,14,0.7
+2026-11-08,2026,9,te_bonus,ATL,,15,0.9
+2026-11-08,2026,9,te_bonus,ATL,,16,0.5
+2026-11-08,2026,9,te_bonus,ATL,,17,1.5
+2026-11-08,2026,9,te_bonus,ATL,,avg,0.9
+2026-11-08,2026,9,te_bonus,ATL,,playoffs,1.0
+2026-11-08,2026,9,te_bonus,ATL,,baseline,10.6
+2026-11-08,2026,9,te_bonus,ATL,,next4,0.4
+2026-11-08,2026,9,te_bonus,DAL,,9,1.1
+2026-11-08,2026,9,te_bonus,DAL,,10,-0.5
+2026-11-08,2026,9,te_bonus,DAL,,11,0.9
+2026-11-08,2026,9,te_bonus,DAL,,12,0.2
+2026-11-08,2026,9,te_bonus,DAL,,13,-1.8
+2026-11-08,2026,9,te_bonus,DAL,,15,-1.1
+2026-11-08,2026,9,te_bonus,DAL,,16,-0.2
+2026-11-08,2026,9,te_bonus,DAL,,17,0.0
+2026-11-08,2026,9,te_bonus,DAL,,avg,-0.2
+2026-11-08,2026,9,te_bonus,DAL,,playoffs,-0.4
+2026-11-08,2026,9,te_bonus,DAL,,baseline,8.6
+2026-11-08,2026,9,te_bonus,DAL,,next4,0.4
+2026-11-08,2026,9,te_bonus,CLE,,9,1.1
+2026-11-08,2026,9,te_bonus,CLE,,10,-0.7
+2026-11-08,2026,9,te_bonus,CLE,,12,0.7
+2026-11-08,2026,9,te_bonus,CLE,,13,0.9
+2026-11-08,2026,9,te_bonus,CLE,,14,0.3
+2026-11-08,2026,9,te_bonus,CLE,,15,-0.4
+2026-11-08,2026,9,te_bonus,CLE,,16,0.4
+2026-11-08,2026,9,te_bonus,CLE,,17,0.9
+2026-11-08,2026,9,te_bonus,CLE,,avg,0.4
+2026-11-08,2026,9,te_bonus,CLE,,playoffs,0.3
+2026-11-08,2026,9,te_bonus,CLE,,baseline,10.3
+2026-11-08,2026,9,te_bonus,CLE,,next4,0.4
+2026-11-08,2026,9,te_bonus,KC,,9,1.1
+2026-11-08,2026,9,te_bonus,KC,,10,0.9
+2026-11-08,2026,9,te_bonus,KC,,11,1.1
+2026-11-08,2026,9,te_bonus,KC,,12,-0.7
+2026-11-08,2026,9,te_bonus,KC,,13,-0.2
+2026-11-08,2026,9,te_bonus,KC,,14,0.5
+2026-11-08,2026,9,te_bonus,KC,,15,-0.1
+2026-11-08,2026,9,te_bonus,KC,,16,-0.3
+2026-11-08,2026,9,te_bonus,KC,,17,0.0
+2026-11-08,2026,9,te_bonus,KC,,avg,0.3
+2026-11-08,2026,9,te_bonus,KC,,playoffs,-0.1
+2026-11-08,2026,9,te_bonus,KC,,baseline,10.8
+2026-11-08,2026,9,te_bonus,KC,,next4,0.6
+2026-11-08,2026,9,te_bonus,DEN,,9,0.9
+2026-11-08,2026,9,te_bonus,DEN,,11,1.0
+2026-11-08,2026,9,te_bonus,DEN,,12,-0.7
+2026-11-08,2026,9,te_bonus,DEN,,13,1.4
+2026-11-08,2026,9,te_bonus,DEN,,14,0.0
+2026-11-08,2026,9,te_bonus,DEN,,15,1.2
+2026-11-08,2026,9,te_bonus,DEN,,16,-0.3
+2026-11-08,2026,9,te_bonus,DEN,,17,-0.3
+2026-11-08,2026,9,te_bonus,DEN,,avg,0.4
+2026-11-08,2026,9,te_bonus,DEN,,playoffs,0.2
+2026-11-08,2026,9,te_bonus,DEN,,baseline,8.4
+2026-11-08,2026,9,te_bonus,DEN,,next4,0.4
+2026-11-08,2026,9,te_bonus,SEA,,9,0.7
+2026-11-08,2026,9,te_bonus,SEA,,10,1.1
+2026-11-08,2026,9,te_bonus,SEA,,12,-1.3
+2026-11-08,2026,9,te_bonus,SEA,,13,0.4
+2026-11-08,2026,9,te_bonus,SEA,,14,-0.1
+2026-11-08,2026,9,te_bonus,SEA,,15,-0.6
+2026-11-08,2026,9,te_bonus,SEA,,16,-0.8
+2026-11-08,2026,9,te_bonus,SEA,,17,0.3
+2026-11-08,2026,9,te_bonus,SEA,,avg,0.0
+2026-11-08,2026,9,te_bonus,SEA,,playoffs,-0.3
+2026-11-08,2026,9,te_bonus,SEA,,baseline,7.5
+2026-11-08,2026,9,te_bonus,SEA,,next4,0.2
+2026-11-08,2026,9,te_bonus,CIN,,9,0.6
+2026-11-08,2026,9,te_bonus,CIN,,10,-0.1
+2026-11-08,2026,9,te_bonus,CIN,,11,1.1
+2026-11-08,2026,9,te_bonus,CIN,,12,0.7
+2026-11-08,2026,9,te_bonus,CIN,,13,0.4
+2026-11-08,2026,9,te_bonus,CIN,,14,0.4
+2026-11-08,2026,9,te_bonus,CIN,,15,0.4
+2026-11-08,2026,9,te_bonus,CIN,,16,0.8
+2026-11-08,2026,9,te_bonus,CIN,,17,0.2
+2026-11-08,2026,9,te_bonus,CIN,,avg,0.5
+2026-11-08,2026,9,te_bonus,CIN,,playoffs,0.5
+2026-11-08,2026,9,te_bonus,CIN,,baseline,11.3
+2026-11-08,2026,9,te_bonus,CIN,,next4,0.6
+2026-11-08,2026,9,te_bonus,NYJ,,9,0.5
+2026-11-08,2026,9,te_bonus,NYJ,,10,-0.5
+2026-11-08,2026,9,te_bonus,NYJ,,11,0.2
+2026-11-08,2026,9,te_bonus,NYJ,,12,1.2
+2026-11-08,2026,9,te_bonus,NYJ,,14,1.3
+2026-11-08,2026,9,te_bonus,NYJ,,15,1.6
+2026-11-08,2026,9,te_bonus,NYJ,,16,0.1
+2026-11-08,2026,9,te_bonus,NYJ,,17,-0.6
+2026-11-08,2026,9,te_bonus,NYJ,,avg,0.5
+2026-11-08,2026,9,te_bonus,NYJ,,playoffs,0.4
+2026-11-08,2026,9,te_bonus,NYJ,,baseline,9.7
+2026-11-08,2026,9,te_bonus,NYJ,,next4,0.3
+2026-11-08,2026,9,te_bonus,CAR,,9,0.5
+2026-11-08,2026,9,te_bonus,CAR,,10,0.7
+2026-11-08,2026,9,te_bonus,CAR,,11,0.3
+2026-11-08,2026,9,te_bonus,CAR,,12,-1.0
+2026-11-08,2026,9,te_bonus,CAR,,13,-0.7
+2026-11-08,2026,9,te_bonus,CAR,,14,0.6
+2026-11-08,2026,9,te_bonus,CAR,,15,0.5
+2026-11-08,2026,9,te_bonus,CAR,,16,-0.4
+2026-11-08,2026,9,te_bonus,CAR,,17,-0.7
+2026-11-08,2026,9,te_bonus,CAR,,avg,0.0
+2026-11-08,2026,9,te_bonus,CAR,,playoffs,-0.2
+2026-11-08,2026,9,te_bonus,CAR,,baseline,10.2
+2026-11-08,2026,9,te_bonus,CAR,,next4,0.1
+2026-11-08,2026,9,te_bonus,MIN,,9,0.4
+2026-11-08,2026,9,te_bonus,MIN,,10,-0.9
+2026-11-08,2026,9,te_bonus,MIN,,11,-0.8
+2026-11-08,2026,9,te_bonus,MIN,,12,1.2
+2026-11-08,2026,9,te_bonus,MIN,,13,1.8
+2026-11-08,2026,9,te_bonus,MIN,,14,-0.1
+2026-11-08,2026,9,te_bonus,MIN,,15,2.4
+2026-11-08,2026,9,te_bonus,MIN,,16,2.6
+2026-11-08,2026,9,te_bonus,MIN,,17,0.4
+2026-11-08,2026,9,te_bonus,MIN,,avg,0.8
+2026-11-08,2026,9,te_bonus,MIN,,playoffs,1.8
+2026-11-08,2026,9,te_bonus,MIN,,baseline,9.5
+2026-11-08,2026,9,te_bonus,MIN,,next4,-0.1
+2026-11-08,2026,9,te_bonus,CHI,,9,0.4
+2026-11-08,2026,9,te_bonus,CHI,,11,0.8
+2026-11-08,2026,9,te_bonus,CHI,,12,2.4
+2026-11-08,2026,9,te_bonus,CHI,,13,0.1
+2026-11-08,2026,9,te_bonus,CHI,,14,1.4
+2026-11-08,2026,9,te_bonus,CHI,,15,-0.6
+2026-11-08,2026,9,te_bonus,CHI,,16,-0.7
+2026-11-08,2026,9,te_bonus,CHI,,17,1.8
+2026-11-08,2026,9,te_bonus,CHI,,avg,0.7
+2026-11-08,2026,9,te_bonus,CHI,,playoffs,0.2
+2026-11-08,2026,9,te_bonus,CHI,,baseline,10.6
+2026-11-08,2026,9,te_bonus,CHI,,next4,1.2
+2026-11-08,2026,9,te_bonus,JAX,,9,0.0
+2026-11-08,2026,9,te_bonus,JAX,,10,0.5
+2026-11-08,2026,9,te_bonus,JAX,,11,-0.2
+2026-11-08,2026,9,te_bonus,JAX,,12,0.8
+2026-11-08,2026,9,te_bonus,JAX,,13,-0.3
+2026-11-08,2026,9,te_bonus,JAX,,14,0.2
+2026-11-08,2026,9,te_bonus,JAX,,15,0.5
+2026-11-08,2026,9,te_bonus,JAX,,16,1.3
+2026-11-08,2026,9,te_bonus,JAX,,17,1.6
+2026-11-08,2026,9,te_bonus,JAX,,avg,0.5
+2026-11-08,2026,9,te_bonus,JAX,,playoffs,1.1
+2026-11-08,2026,9,te_bonus,JAX,,baseline,9.7
+2026-11-08,2026,9,te_bonus,JAX,,next4,0.3
+2026-11-08,2026,9,te_bonus,HOU,,9,-0.1
+2026-11-08,2026,9,te_bonus,HOU,,10,0.6
+2026-11-08,2026,9,te_bonus,HOU,,11,1.5
+2026-11-08,2026,9,te_bonus,HOU,,12,1.5
+2026-11-08,2026,9,te_bonus,HOU,,13,-0.3
+2026-11-08,2026,9,te_bonus,HOU,,14,1.3
+2026-11-08,2026,9,te_bonus,HOU,,15,0.2
+2026-11-08,2026,9,te_bonus,HOU,,16,-0.3
+2026-11-08,2026,9,te_bonus,HOU,,17,-0.9
+2026-11-08,2026,9,te_bonus,HOU,,avg,0.4
+2026-11-08,2026,9,te_bonus,HOU,,playoffs,-0.3
+2026-11-08,2026,9,te_bonus,HOU,,baseline,10.0
+2026-11-08,2026,9,te_bonus,HOU,,next4,0.8
+2026-11-08,2026,9,te_bonus,TB,,9,-0.2
+2026-11-08,2026,9,te_bonus,TB,,11,1.7
+2026-11-08,2026,9,te_bonus,TB,,12,0.9
+2026-11-08,2026,9,te_bonus,TB,,13,-0.2
+2026-11-08,2026,9,te_bonus,TB,,14,0.4
+2026-11-08,2026,9,te_bonus,TB,,15,0.8
+2026-11-08,2026,9,te_bonus,TB,,16,1.0
+2026-11-08,2026,9,te_bonus,TB,,17,-0.4
+2026-11-08,2026,9,te_bonus,TB,,avg,0.5
+2026-11-08,2026,9,te_bonus,TB,,playoffs,0.5
+2026-11-08,2026,9,te_bonus,TB,,baseline,6.8
+2026-11-08,2026,9,te_bonus,TB,,next4,0.8
+2026-11-08,2026,9,te_bonus,LV,,9,-0.2
+2026-11-08,2026,9,te_bonus,LV,,10,0.6
+2026-11-08,2026,9,te_bonus,LV,,11,0.8
+2026-11-08,2026,9,te_bonus,LV,,12,1.1
+2026-11-08,2026,9,te_bonus,LV,,14,0.6
+2026-11-08,2026,9,te_bonus,LV,,15,2.3
+2026-11-08,2026,9,te_bonus,LV,,16,1.8
+2026-11-08,2026,9,te_bonus,LV,,17,2.1
+2026-11-08,2026,9,te_bonus,LV,,avg,1.1
+2026-11-08,2026,9,te_bonus,LV,,playoffs,2.0
+2026-11-08,2026,9,te_bonus,LV,,baseline,14.1
+2026-11-08,2026,9,te_bonus,LV,,next4,0.6
+2026-11-08,2026,9,te_bonus,LAC,,9,-0.4
+2026-11-08,2026,9,te_bonus,LAC,,10,0.0
+2026-11-08,2026,9,te_bonus,LAC,,11,1.3
+2026-11-08,2026,9,te_bonus,LAC,,12,0.7
+2026-11-08,2026,9,te_bonus,LAC,,13,-0.5
+2026-11-08,2026,9,te_bonus,LAC,,14,1.4
+2026-11-08,2026,9,te_bonus,LAC,,15,0.3
+2026-11-08,2026,9,te_bonus,LAC,,16,1.5
+2026-11-08,2026,9,te_bonus,LAC,,17,1.6
+2026-11-08,2026,9,te_bonus,LAC,,avg,0.7
+2026-11-08,2026,9,te_bonus,LAC,,playoffs,1.1
+2026-11-08,2026,9,te_bonus,LAC,,baseline,8.1
+2026-11-08,2026,9,te_bonus,LAC,,next4,0.4
+2026-11-08,2026,9,te_bonus,GB,,9,-0.7
+2026-11-08,2026,9,te_bonus,GB,,10,-1.2
+2026-11-08,2026,9,te_bonus,GB,,12,-0.6
+2026-11-08,2026,9,te_bonus,GB,,13,0.8
+2026-11-08,2026,9,te_bonus,GB,,14,-0.4
+2026-11-08,2026,9,te_bonus,GB,,15,1.6
+2026-11-08,2026,9,te_bonus,GB,,16,-0.1
+2026-11-08,2026,9,te_bonus,GB,,17,-0.6
+2026-11-08,2026,9,te_bonus,GB,,avg,-0.1
+2026-11-08,2026,9,te_bonus,GB,,playoffs,0.3
+2026-11-08,2026,9,te_bonus,GB,,baseline,8.2
+2026-11-08,2026,9,te_bonus,GB,,next4,-0.8
+2026-11-08,2026,9,te_bonus,BUF,,9,-0.8
+2026-11-08,2026,9,te_bonus,BUF,,10,0.8
+2026-11-08,2026,9,te_bonus,BUF,,11,1.9
+2026-11-08,2026,9,te_bonus,BUF,,12,1.1
+2026-11-08,2026,9,te_bonus,BUF,,13,0.0
+2026-11-08,2026,9,te_bonus,BUF,,14,-0.8
+2026-11-08,2026,9,te_bonus,BUF,,15,0.5
+2026-11-08,2026,9,te_bonus,BUF,,16,1.1
+2026-11-08,2026,9,te_bonus,BUF,,17,1.5
+2026-11-08,2026,9,te_bonus,BUF,,avg,0.6
+2026-11-08,2026,9,te_bonus,BUF,,playoffs,1.0
+2026-11-08,2026,9,te_bonus,BUF,,baseline,11.1
+2026-11-08,2026,9,te_bonus,BUF,,next4,0.8
+2026-11-08,2026,9,te_bonus,PHI,,9,-0.9
+2026-11-08,2026,9,te_bonus,PHI,,11,-0.6
+2026-11-08,2026,9,te_bonus,PHI,,12,0.7
+2026-11-08,2026,9,te_bonus,PHI,,13,1.2
+2026-11-08,2026,9,te_bonus,PHI,,14,0.4
+2026-11-08,2026,9,te_bonus,PHI,,15,-0.8
+2026-11-08,2026,9,te_bonus,PHI,,16,-0.4
+2026-11-08,2026,9,te_bonus,PHI,,17,-0.6
+2026-11-08,2026,9,te_bonus,PHI,,avg,-0.1
+2026-11-08,2026,9,te_bonus,PHI,,playoffs,-0.6
+2026-11-08,2026,9,te_bonus,PHI,,baseline,7.8
+2026-11-08,2026,9,te_bonus,PHI,,next4,-0.3
+2026-11-08,2026,9,te_bonus,BAL,,9,-0.9
+2026-11-08,2026,9,te_bonus,BAL,,10,-0.4
+2026-11-08,2026,9,te_bonus,BAL,,11,0.6
+2026-11-08,2026,9,te_bonus,BAL,,12,-0.2
+2026-11-08,2026,9,te_bonus,BAL,,14,-0.2
+2026-11-08,2026,9,te_bonus,BAL,,15,-0.3
+2026-11-08,2026,9,te_bonus,BAL,,16,1.1
+2026-11-08,2026,9,te_bonus,BAL,,17,0.8
+2026-11-08,2026,9,te_bonus,BAL,,avg,0.1
+2026-11-08,2026,9,te_bonus,BAL,,playoffs,0.5
+2026-11-08,2026,9,te_bonus,BAL,,baseline,9.1
+2026-11-08,2026,9,te_bonus,BAL,,next4,-0.2
+2026-11-08,2026,9,te_bonus,NYG,,9,-0.9
+2026-11-08,2026,9,te_bonus,NYG,,10,1.9
+2026-11-08,2026,9,te_bonus,NYG,,11,-0.3
+2026-11-08,2026,9,te_bonus,NYG,,12,1.4
+2026-11-08,2026,9,te_bonus,NYG,,13,-0.5
+2026-11-08,2026,9,te_bonus,NYG,,14,-0.9
+2026-11-08,2026,9,te_bonus,NYG,,15,1.2
+2026-11-08,2026,9,te_bonus,NYG,,16,2.3
+2026-11-08,2026,9,te_bonus,NYG,,17,1.4
+2026-11-08,2026,9,te_bonus,NYG,,avg,0.6
+2026-11-08,2026,9,te_bonus,NYG,,playoffs,1.6
+2026-11-08,2026,9,te_bonus,NYG,,baseline,10.7
+2026-11-08,2026,9,te_bonus,NYG,,next4,0.5
+2026-11-08,2026,9,te_bonus,WAS,,9,-1.1
+2026-11-08,2026,9,te_bonus,WAS,,10,-0.9
+2026-11-08,2026,9,te_bonus,WAS,,11,0.5
+2026-11-08,2026,9,te_bonus,WAS,,12,2.1
+2026-11-08,2026,9,te_bonus,WAS,,13,0.4
+2026-11-08,2026,9,te_bonus,WAS,,14,-0.7
+2026-11-08,2026,9,te_bonus,WAS,,15,0.5
+2026-11-08,2026,9,te_bonus,WAS,,16,-0.4
+2026-11-08,2026,9,te_bonus,WAS,,17,-0.4
+2026-11-08,2026,9,te_bonus,WAS,,avg,0.0
+2026-11-08,2026,9,te_bonus,WAS,,playoffs,-0.1
+2026-11-08,2026,9,te_bonus,WAS,,baseline,8.4
+2026-11-08,2026,9,te_bonus,WAS,,next4,0.2
+2026-11-08,2026,9,te_bonus,NE,,9,-1.1
+2026-11-08,2026,9,te_bonus,NE,,10,2.4
+2026-11-08,2026,9,te_bonus,NE,,12,-0.2
+2026-11-08,2026,9,te_bonus,NE,,13,-0.4
+2026-11-08,2026,9,te_bonus,NE,,14,-1.0
+2026-11-08,2026,9,te_bonus,NE,,15,0.3
+2026-11-08,2026,9,te_bonus,NE,,16,0.4
+2026-11-08,2026,9,te_bonus,NE,,17,1.0
+2026-11-08,2026,9,te_bonus,NE,,avg,0.2
+2026-11-08,2026,9,te_bonus,NE,,playoffs,0.6
+2026-11-08,2026,9,te_bonus,NE,,baseline,9.6
+2026-11-08,2026,9,te_bonus,NE,,next4,0.4
+2026-11-08,2026,9,te_bonus,ARI,,9,-1.6
+2026-11-08,2026,9,te_bonus,ARI,,10,-0.1
+2026-11-08,2026,9,te_bonus,ARI,,11,0.3
+2026-11-08,2026,9,te_bonus,ARI,,12,1.9
+2026-11-08,2026,9,te_bonus,ARI,,13,0.8
+2026-11-08,2026,9,te_bonus,ARI,,15,1.4
+2026-11-08,2026,9,te_bonus,ARI,,16,1.3
+2026-11-08,2026,9,te_bonus,ARI,,17,1.9
+2026-11-08,2026,9,te_bonus,ARI,,avg,0.7
+2026-11-08,2026,9,te_bonus,ARI,,playoffs,1.5
+2026-11-08,2026,9,te_bonus,ARI,,baseline,13.1
+2026-11-08,2026,9,te_bonus,ARI,,next4,0.1
+2026-11-08,2026,9,te_bonus,TEN,,10,-0.5
+2026-11-08,2026,9,te_bonus,TEN,,11,1.0
+2026-11-08,2026,9,te_bonus,TEN,,12,-0.7
+2026-11-08,2026,9,te_bonus,TEN,,13,1.4
+2026-11-08,2026,9,te_bonus,TEN,,14,2.4
+2026-11-08,2026,9,te_bonus,TEN,,15,0.8
+2026-11-08,2026,9,te_bonus,TEN,,16,1.9
+2026-11-08,2026,9,te_bonus,TEN,,17,0.4
+2026-11-08,2026,9,te_bonus,TEN,,avg,0.8
+2026-11-08,2026,9,te_bonus,TEN,,playoffs,1.0
+2026-11-08,2026,9,te_bonus,TEN,,baseline,7.0
+2026-11-08,2026,9,te_bonus,TEN,,next4,-0.1
+2026-11-08,2026,9,te_bonus,PIT,,10,0.1
+2026-11-08,2026,9,te_bonus,PIT,,11,-0.3
+2026-11-08,2026,9,te_bonus,PIT,,12,1.3
+2026-11-08,2026,9,te_bonus,PIT,,13,-0.2
+2026-11-08,2026,9,te_bonus,PIT,,14,-0.6
+2026-11-08,2026,9,te_bonus,PIT,,15,0.8
+2026-11-08,2026,9,te_bonus,PIT,,16,1.0
+2026-11-08,2026,9,te_bonus,PIT,,17,0.4
+2026-11-08,2026,9,te_bonus,PIT,,avg,0.3
+2026-11-08,2026,9,te_bonus,PIT,,playoffs,0.8
+2026-11-08,2026,9,te_bonus,PIT,,baseline,10.6
+2026-11-08,2026,9,te_bonus,PIT,,next4,0.4

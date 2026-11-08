@@ -4752,5 +4752,141 @@
    },
    "warnings": []
   }
+ },
+ "2026-11-08T18:00_7g": {
+  "sent_at": "2026-11-08T17:12:42Z",
+  "rows": 204,
+  "file": "Burke_Model_Burke_2026_sun01pm_1108_1710.csv",
+  "slate": "Sun 11/08 01:00 PM ET slate (7 games)",
+  "credits_left": 2750,
+  "lineups": [
+   "schedule: 18 weeks; week 9 runs Fri 11/06 .. Tue 11/10",
+   "week 9: 7 games in this send (kickoffs Sun 18:00Z .. Sun 18:00Z)",
+   "injury report (nfl.com): 121 skill/K players listed; practice {'FP': 53, 'DNP': 35, 'LP': 33}; designations {'Questionable': 27, 'Out': 27, 'Doubtful': 3}",
+   "lineups: 419 statuses pulled {'espn': 151, '+sleeper': 85, 'espn+sleeper': 84, 'sleeper': 79, 'nfl-report': 20}; 10 Q, 18 OUT with a projection {'espn+sleeper': 18}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk9.csv",
+    "rows": 860,
+    "age_hours": 0.0,
+    "slate_skill": 196,
+    "slate_k": 14,
+    "slate_dst": 14
+   },
+   "dk_lines": {
+    "slate_games": 7,
+    "with_lines": 7,
+    "fetched_at": "2026-11-08T17:11Z",
+    "credits_left": "250"
+   },
+   "dk_props": {
+    "slate_events": 7,
+    "events_with_props": 7,
+    "with_props": 157,
+    "by_stat": {
+     "pass_yds": 14,
+     "pass_tds": 14,
+     "rush_yds": 38,
+     "rec_yds": 88,
+     "rec": 87,
+     "exp_td": 157
+    },
+    "no_line": [
+     "Cam Skattebo",
+     "George Pickens",
+     "Kendre Miller"
+    ],
+    "eligible": 68,
+    "name_aliases": [
+     "chig okonkwo -> chigoziem okonkwo"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 39
+   },
+   "kdst": {
+    "file": "kdst_2026_wk9.csv",
+    "K": {
+     "hit": 14,
+     "of": 14
+    },
+    "DST": {
+     "hit": 14,
+     "of": 14
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 13,
+    "by_team": {
+     "CAR": [
+      "Ryan Fitzgerald"
+     ],
+     "CLE": [
+      "Andre Szmyt"
+     ],
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "DEN": [
+      "Wil Lutz"
+     ],
+     "DET": [
+      "Jake Bates"
+     ],
+     "IND": [
+      "Spencer Shrader"
+     ],
+     "KC": [
+      "Harrison Butker"
+     ],
+     "LA": [
+      "Brandon McManus"
+     ],
+     "NO": [
+      "Charlie Smyth"
+     ],
+     "NYG": [
+      "Dominic Zvada"
+     ],
+     "NYJ": [
+      "Jason Sanders"
+     ],
+     "PHI": [
+      "Jake Elliott"
+     ],
+     "WAS": [
+      "Drew Stevens"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 121,
+    "designations": {
+     "Questionable": 27,
+     "Out": 27,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 419,
+    "by_src": {
+     "espn": 151,
+     "+sleeper": 85,
+     "espn+sleeper": 84,
+     "sleeper": 79,
+     "nfl-report": 20
+    },
+    "q": 10,
+    "out": 18,
+    "out_by_src": {
+     "espn+sleeper": 18
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Cam Skattebo, Kendre Miller, George Pickens"
+   ]
+  }
  }
 }
