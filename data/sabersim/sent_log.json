@@ -5099,5 +5099,102 @@
    },
    "warnings": []
   }
+ },
+ "2026-11-09T01:20_1g": {
+  "sent_at": "2026-11-09T00:22:25Z",
+  "rows": 25,
+  "file": "Burke_Model_Burke_2026_sun08pm_1109_0020.csv",
+  "slate": "Sun 11/08 08:20 PM ET slate (1 games)",
+  "credits_left": 2671,
+  "lineups": [
+   "schedule: 18 weeks; week 9 runs Fri 11/06 .. Tue 11/10",
+   "week 9: 1 games in this send (kickoffs Mon 01:20Z .. Mon 01:20Z)",
+   "injury report (nfl.com): 121 skill/K players listed; practice {'FP': 53, 'DNP': 35, 'LP': 33}; designations {'Questionable': 27, 'Out': 27, 'Doubtful': 3}",
+   "lineups: 464 statuses pulled {'espn': 182, 'espn+sleeper': 96, '+sleeper': 86, 'sleeper': 82, 'nfl-report': 18}; 1 Q, 1 OUT with a projection {'espn+sleeper': 1}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk9.csv",
+    "rows": 860,
+    "age_hours": 0.0,
+    "slate_skill": 25,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-11-09T00:21Z",
+    "credits_left": "171"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 22,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 7,
+     "rec_yds": 14,
+     "rec": 14,
+     "exp_td": 22
+    },
+    "no_line": [],
+    "eligible": 9,
+    "name_aliases": [
+     "kenny gainwell -> kenneth gainwell"
+    ],
+    "ambiguous_names": [],
+    "no_props_n": 3
+   },
+   "kdst": {
+    "file": "kdst_2026_wk9.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "CHI": [
+      "Cairo Santos"
+     ],
+     "TB": [
+      "Chase McLaughlin"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 121,
+    "designations": {
+     "Questionable": 27,
+     "Out": 27,
+     "Doubtful": 3
+    }
+   },
+   "lineups": {
+    "statuses": 464,
+    "by_src": {
+     "espn": 182,
+     "espn+sleeper": 96,
+     "+sleeper": 86,
+     "sleeper": 82,
+     "nfl-report": 18
+    },
+    "q": 1,
+    "out": 1,
+    "out_by_src": {
+     "espn+sleeper": 1
+    }
+   },
+   "warnings": []
+  }
  }
 }
