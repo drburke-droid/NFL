@@ -1,26 +1,26 @@
 {
- "generated": "2026-11-09T14:07Z",
+ "generated": "2026-11-10T14:02Z",
  "overall": {
   "picks": 805,
-  "picks_graded": 780,
-  "picks_pending": 6,
-  "pick_hits": 378,
-  "pick_misses": 362,
-  "pick_hit_rate": 0.511,
-  "picks_closer": 325,
-  "picks_farther": 414,
+  "picks_graded": 786,
+  "picks_pending": 0,
+  "pick_hits": 380,
+  "pick_misses": 366,
+  "pick_hit_rate": 0.509,
+  "picks_closer": 327,
+  "picks_farther": 418,
   "n": 2683,
-  "graded": 2575,
-  "pending": 28,
+  "graded": 2603,
+  "pending": 0,
   "no_send": 80,
-  "hit_rate": 0.519,
-  "hits": 1295,
-  "misses": 1201,
-  "closer": 1211,
-  "farther": 1282,
-  "removed_pts": -132.99,
-  "mae_base_pts": 1.95,
-  "mae_adj_pts": 2.002
+  "hit_rate": 0.517,
+  "hits": 1306,
+  "misses": 1218,
+  "closer": 1221,
+  "farther": 1300,
+  "removed_pts": -138.13,
+  "mae_base_pts": 1.946,
+  "mae_adj_pts": 1.999
  },
  "by_fan": [
   {
@@ -96,43 +96,6 @@
    }
   },
   {
-   "fan": "ERK",
-   "pid": "d31cc68dd0b75e27",
-   "team": "MIN",
-   "weeks": [
-    5,
-    9
-   ],
-   "picks": 40,
-   "picks_graded": 24,
-   "picks_pending": 5,
-   "pick_hits": 14,
-   "pick_misses": 10,
-   "pick_hit_rate": 0.583,
-   "picks_closer": 11,
-   "picks_farther": 13,
-   "n": 175,
-   "graded": 103,
-   "pending": 23,
-   "no_send": 49,
-   "hit_rate": 0.554,
-   "hits": 56,
-   "misses": 45,
-   "closer": 55,
-   "farther": 47,
-   "removed_pts": 0.14,
-   "mae_base_pts": 2.142,
-   "mae_adj_pts": 2.141,
-   "rank": 3,
-   "best_call": {
-    "week": 5,
-    "player": "Matthew Stafford",
-    "stat": "pass_yds",
-    "arrows": 1,
-    "removed_pts": 1.1
-   }
-  },
-  {
    "fan": "SAM",
    "pid": "a6f7f547981fda0f",
    "team": "SF",
@@ -159,13 +122,50 @@
    "removed_pts": -2.03,
    "mae_base_pts": 1.794,
    "mae_adj_pts": 1.828,
-   "rank": 4,
+   "rank": 3,
    "best_call": {
     "week": 3,
     "player": "Jalen Hurts",
     "stat": "pass_yds",
     "arrows": -1,
     "removed_pts": 0.87
+   }
+  },
+  {
+   "fan": "ERK",
+   "pid": "d31cc68dd0b75e27",
+   "team": "MIN",
+   "weeks": [
+    5,
+    9
+   ],
+   "picks": 40,
+   "picks_graded": 29,
+   "picks_pending": 0,
+   "pick_hits": 16,
+   "pick_misses": 13,
+   "pick_hit_rate": 0.552,
+   "picks_closer": 13,
+   "picks_farther": 16,
+   "n": 175,
+   "graded": 126,
+   "pending": 0,
+   "no_send": 49,
+   "hit_rate": 0.532,
+   "hits": 66,
+   "misses": 58,
+   "closer": 64,
+   "farther": 61,
+   "removed_pts": -2.76,
+   "mae_base_pts": 2.03,
+   "mae_adj_pts": 2.052,
+   "rank": 4,
+   "best_call": {
+    "week": 5,
+    "player": "Matthew Stafford",
+    "stat": "pass_yds",
+    "arrows": 1,
+    "removed_pts": 1.1
    }
   },
   {
@@ -216,24 +216,24 @@
     9
    ],
    "picks": 196,
-   "picks_graded": 188,
-   "picks_pending": 1,
+   "picks_graded": 189,
+   "picks_pending": 0,
    "pick_hits": 91,
-   "pick_misses": 94,
-   "pick_hit_rate": 0.492,
+   "pick_misses": 95,
+   "pick_hit_rate": 0.489,
    "picks_closer": 78,
-   "picks_farther": 106,
+   "picks_farther": 107,
    "n": 822,
-   "graded": 787,
-   "pending": 5,
+   "graded": 792,
+   "pending": 0,
    "no_send": 30,
-   "hit_rate": 0.537,
-   "hits": 414,
-   "misses": 357,
-   "closer": 392,
-   "farther": 378,
-   "removed_pts": -17.79,
-   "mae_base_pts": 2.082,
+   "hit_rate": 0.535,
+   "hits": 415,
+   "misses": 361,
+   "closer": 393,
+   "farther": 382,
+   "removed_pts": -20.02,
+   "mae_base_pts": 2.08,
    "mae_adj_pts": 2.105,
    "rank": 6,
    "best_call": {
@@ -324,58 +324,58 @@
  ],
  "by_fan_week": [
   {
-   "fan": "ERK",
-   "pid": "d31cc68dd0b75e27",
-   "team": "MIN",
-   "week": 9,
-   "picks": 24,
-   "picks_graded": 8,
-   "picks_pending": 5,
-   "pick_hits": 4,
-   "pick_misses": 4,
-   "pick_hit_rate": 0.5,
-   "picks_closer": 3,
-   "picks_farther": 5,
-   "n": 106,
-   "graded": 34,
-   "pending": 23,
-   "no_send": 49,
-   "hit_rate": 0.455,
-   "hits": 15,
-   "misses": 18,
-   "closer": 14,
-   "farther": 20,
-   "removed_pts": -3.54,
-   "mae_base_pts": 2.045,
-   "mae_adj_pts": 2.149,
-   "last_submitted": "2026-11-08T17:31:24Z"
-  },
-  {
    "fan": "REB",
    "pid": "07d4562b12d59b0c",
    "team": "CHI",
    "week": 9,
    "picks": 26,
-   "picks_graded": 18,
-   "picks_pending": 1,
+   "picks_graded": 19,
+   "picks_pending": 0,
    "pick_hits": 7,
-   "pick_misses": 11,
-   "pick_hit_rate": 0.389,
+   "pick_misses": 12,
+   "pick_hit_rate": 0.368,
    "picks_closer": 8,
-   "picks_farther": 10,
+   "picks_farther": 11,
    "n": 106,
-   "graded": 71,
-   "pending": 5,
+   "graded": 76,
+   "pending": 0,
    "no_send": 30,
-   "hit_rate": 0.486,
-   "hits": 34,
-   "misses": 36,
-   "closer": 34,
-   "farther": 37,
-   "removed_pts": -4.17,
-   "mae_base_pts": 2.047,
-   "mae_adj_pts": 2.106,
+   "hit_rate": 0.467,
+   "hits": 35,
+   "misses": 40,
+   "closer": 35,
+   "farther": 41,
+   "removed_pts": -6.4,
+   "mae_base_pts": 2.024,
+   "mae_adj_pts": 2.108,
    "last_submitted": "2026-11-08T17:18:52Z"
+  },
+  {
+   "fan": "ERK",
+   "pid": "d31cc68dd0b75e27",
+   "team": "MIN",
+   "week": 9,
+   "picks": 24,
+   "picks_graded": 13,
+   "picks_pending": 0,
+   "pick_hits": 6,
+   "pick_misses": 7,
+   "pick_hit_rate": 0.462,
+   "picks_closer": 5,
+   "picks_farther": 8,
+   "n": 106,
+   "graded": 57,
+   "pending": 0,
+   "no_send": 49,
+   "hit_rate": 0.446,
+   "hits": 25,
+   "misses": 31,
+   "closer": 23,
+   "farther": 34,
+   "removed_pts": -6.44,
+   "mae_base_pts": 1.837,
+   "mae_adj_pts": 1.951,
+   "last_submitted": "2026-11-08T17:31:24Z"
   },
   {
    "fan": "REB",
@@ -810,6 +810,320 @@
    "last_submitted": "2026-09-27T04:29:08Z"
   }
  ],
+ "by_stat": {
+  "pass_int": {
+   "picks": 182,
+   "picks_graded": 174,
+   "picks_pending": 0,
+   "pick_hits": 85,
+   "pick_misses": 85,
+   "pick_hit_rate": 0.5,
+   "picks_closer": 85,
+   "picks_farther": 86,
+   "n": 182,
+   "graded": 174,
+   "pending": 0,
+   "no_send": 8,
+   "hit_rate": 0.5,
+   "hits": 85,
+   "misses": 85,
+   "closer": 85,
+   "farther": 86,
+   "removed_pts": -0.58,
+   "mae_base_pts": 0.666,
+   "mae_adj_pts": 0.67
+  },
+  "pass_tds": {
+   "picks": 189,
+   "picks_graded": 181,
+   "picks_pending": 0,
+   "pick_hits": 92,
+   "pick_misses": 86,
+   "pick_hit_rate": 0.517,
+   "picks_closer": 92,
+   "picks_farther": 86,
+   "n": 189,
+   "graded": 181,
+   "pending": 0,
+   "no_send": 8,
+   "hit_rate": 0.517,
+   "hits": 92,
+   "misses": 86,
+   "closer": 92,
+   "farther": 86,
+   "removed_pts": -0.71,
+   "mae_base_pts": 3.952,
+   "mae_adj_pts": 3.956
+  },
+  "pass_yds": {
+   "picks": 197,
+   "picks_graded": 189,
+   "picks_pending": 0,
+   "pick_hits": 105,
+   "pick_misses": 81,
+   "pick_hit_rate": 0.565,
+   "picks_closer": 76,
+   "picks_farther": 110,
+   "n": 197,
+   "graded": 189,
+   "pending": 0,
+   "no_send": 8,
+   "hit_rate": 0.565,
+   "hits": 105,
+   "misses": 81,
+   "closer": 76,
+   "farther": 110,
+   "removed_pts": -32.57,
+   "mae_base_pts": 2.167,
+   "mae_adj_pts": 2.339
+  },
+  "rec": {
+   "picks": 493,
+   "picks_graded": 483,
+   "picks_pending": 0,
+   "pick_hits": 244,
+   "pick_misses": 223,
+   "pick_hit_rate": 0.522,
+   "picks_closer": 223,
+   "picks_farther": 242,
+   "n": 493,
+   "graded": 483,
+   "pending": 0,
+   "no_send": 10,
+   "hit_rate": 0.522,
+   "hits": 244,
+   "misses": 223,
+   "closer": 223,
+   "farther": 242,
+   "removed_pts": -18.74,
+   "mae_base_pts": 1.578,
+   "mae_adj_pts": 1.616
+  },
+  "rec_tds": {
+   "picks": 450,
+   "picks_graded": 440,
+   "picks_pending": 0,
+   "pick_hits": 203,
+   "pick_misses": 214,
+   "pick_hit_rate": 0.487,
+   "picks_closer": 203,
+   "picks_farther": 214,
+   "n": 450,
+   "graded": 440,
+   "pending": 0,
+   "no_send": 10,
+   "hit_rate": 0.487,
+   "hits": 203,
+   "misses": 214,
+   "closer": 203,
+   "farther": 214,
+   "removed_pts": -27.49,
+   "mae_base_pts": 1.987,
+   "mae_adj_pts": 2.049
+  },
+  "rec_yds": {
+   "picks": 471,
+   "picks_graded": 461,
+   "picks_pending": 0,
+   "pick_hits": 238,
+   "pick_misses": 209,
+   "pick_hit_rate": 0.532,
+   "picks_closer": 221,
+   "picks_farther": 223,
+   "n": 471,
+   "graded": 461,
+   "pending": 0,
+   "no_send": 10,
+   "hit_rate": 0.532,
+   "hits": 238,
+   "misses": 209,
+   "closer": 221,
+   "farther": 223,
+   "removed_pts": -4.8,
+   "mae_base_pts": 2.023,
+   "mae_adj_pts": 2.034
+  },
+  "rush_tds": {
+   "picks": 337,
+   "picks_graded": 325,
+   "picks_pending": 0,
+   "pick_hits": 151,
+   "pick_misses": 165,
+   "pick_hit_rate": 0.478,
+   "picks_closer": 150,
+   "picks_farther": 166,
+   "n": 337,
+   "graded": 325,
+   "pending": 0,
+   "no_send": 12,
+   "hit_rate": 0.478,
+   "hits": 151,
+   "misses": 165,
+   "closer": 150,
+   "farther": 166,
+   "removed_pts": -30.98,
+   "mae_base_pts": 2.228,
+   "mae_adj_pts": 2.324
+  },
+  "rush_yds": {
+   "picks": 364,
+   "picks_graded": 350,
+   "picks_pending": 0,
+   "pick_hits": 188,
+   "pick_misses": 155,
+   "pick_hit_rate": 0.548,
+   "picks_closer": 171,
+   "picks_farther": 173,
+   "n": 364,
+   "graded": 350,
+   "pending": 0,
+   "no_send": 14,
+   "hit_rate": 0.548,
+   "hits": 188,
+   "misses": 155,
+   "closer": 171,
+   "farther": 173,
+   "removed_pts": -22.26,
+   "mae_base_pts": 1.52,
+   "mae_adj_pts": 1.583
+  }
+ },
+ "by_size": {
+  "1": {
+   "picks": 626,
+   "picks_graded": 607,
+   "picks_pending": 0,
+   "pick_hits": 291,
+   "pick_misses": 297,
+   "pick_hit_rate": 0.495,
+   "picks_closer": 265,
+   "picks_farther": 322,
+   "n": 2080,
+   "graded": 2000,
+   "pending": 0,
+   "no_send": 80,
+   "hit_rate": 0.519,
+   "hits": 1015,
+   "misses": 941,
+   "closer": 962,
+   "farther": 992,
+   "removed_pts": -101.6,
+   "mae_base_pts": 1.952,
+   "mae_adj_pts": 2.003
+  },
+  "2": {
+   "picks": 147,
+   "picks_graded": 147,
+   "picks_pending": 0,
+   "pick_hits": 75,
+   "pick_misses": 65,
+   "pick_hit_rate": 0.536,
+   "picks_closer": 54,
+   "picks_farther": 86,
+   "n": 541,
+   "graded": 541,
+   "pending": 0,
+   "no_send": 0,
+   "hit_rate": 0.511,
+   "hits": 266,
+   "misses": 255,
+   "closer": 241,
+   "farther": 278,
+   "removed_pts": -39.21,
+   "mae_base_pts": 1.979,
+   "mae_adj_pts": 2.051
+  },
+  "3": {
+   "picks": 17,
+   "picks_graded": 17,
+   "picks_pending": 0,
+   "pick_hits": 9,
+   "pick_misses": 4,
+   "pick_hit_rate": 0.692,
+   "picks_closer": 4,
+   "picks_farther": 9,
+   "n": 47,
+   "graded": 47,
+   "pending": 0,
+   "no_send": 0,
+   "hit_rate": 0.476,
+   "hits": 20,
+   "misses": 22,
+   "closer": 14,
+   "farther": 29,
+   "removed_pts": -12.85,
+   "mae_base_pts": 1.482,
+   "mae_adj_pts": 1.755
+  },
+  "4+": {
+   "picks": 15,
+   "picks_graded": 15,
+   "picks_pending": 0,
+   "pick_hits": 5,
+   "pick_misses": 0,
+   "pick_hit_rate": 1.0,
+   "picks_closer": 4,
+   "picks_farther": 1,
+   "n": 15,
+   "graded": 15,
+   "pending": 0,
+   "no_send": 0,
+   "hit_rate": 1.0,
+   "hits": 5,
+   "misses": 0,
+   "closer": 4,
+   "farther": 1,
+   "removed_pts": 15.53,
+   "mae_base_pts": 1.396,
+   "mae_adj_pts": 0.361
+  }
+ },
+ "by_direction": {
+  "boost": {
+   "picks": 447,
+   "picks_graded": 435,
+   "picks_pending": 0,
+   "pick_hits": 208,
+   "pick_misses": 221,
+   "pick_hit_rate": 0.485,
+   "picks_closer": 171,
+   "picks_farther": 257,
+   "n": 1359,
+   "graded": 1314,
+   "pending": 0,
+   "no_send": 45,
+   "hit_rate": 0.444,
+   "hits": 572,
+   "misses": 716,
+   "closer": 509,
+   "farther": 777,
+   "removed_pts": -139.65,
+   "mae_base_pts": 1.983,
+   "mae_adj_pts": 2.089
+  },
+  "fade": {
+   "picks": 358,
+   "picks_graded": 351,
+   "picks_pending": 0,
+   "pick_hits": 172,
+   "pick_misses": 145,
+   "pick_hit_rate": 0.543,
+   "picks_closer": 156,
+   "picks_farther": 161,
+   "n": 1324,
+   "graded": 1289,
+   "pending": 0,
+   "no_send": 35,
+   "hit_rate": 0.594,
+   "hits": 734,
+   "misses": 502,
+   "closer": 712,
+   "farther": 523,
+   "removed_pts": 1.52,
+   "mae_base_pts": 1.909,
+   "mae_adj_pts": 1.908
+  }
+ },
  "by_week": {
   "3": {
    "picks": 468,
@@ -945,25 +1259,25 @@
   },
   "9": {
    "picks": 50,
-   "picks_graded": 26,
-   "picks_pending": 6,
-   "pick_hits": 11,
-   "pick_misses": 15,
-   "pick_hit_rate": 0.423,
-   "picks_closer": 11,
-   "picks_farther": 15,
+   "picks_graded": 32,
+   "picks_pending": 0,
+   "pick_hits": 13,
+   "pick_misses": 19,
+   "pick_hit_rate": 0.406,
+   "picks_closer": 13,
+   "picks_farther": 19,
    "n": 212,
-   "graded": 105,
-   "pending": 28,
+   "graded": 133,
+   "pending": 0,
    "no_send": 79,
-   "hit_rate": 0.476,
-   "hits": 49,
-   "misses": 54,
-   "closer": 48,
-   "farther": 57,
-   "removed_pts": -7.71,
-   "mae_base_pts": 2.046,
-   "mae_adj_pts": 2.12
+   "hit_rate": 0.458,
+   "hits": 60,
+   "misses": 71,
+   "closer": 58,
+   "farther": 75,
+   "removed_pts": -12.85,
+   "mae_base_pts": 1.944,
+   "mae_adj_pts": 2.04
   }
  },
  "rows": [
@@ -1050,6 +1364,22 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "pass_tds",
+   "arrows": -1,
+   "baseline": 1.26,
+   "basis": "send",
+   "base": 1.41,
+   "adj": 1.269,
+   "actual": 1.0,
+   "direction": "hit",
+   "removed_pts": 0.564
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "George Kittle",
    "team": "SF",
    "pos": "TE",
@@ -1062,6 +1392,22 @@
    "actual": 4.0,
    "direction": "hit",
    "removed_pts": 0.524
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "rush_tds",
+   "arrows": -1,
+   "baseline": 0.71,
+   "basis": "send",
+   "base": 0.78,
+   "adj": 0.702,
+   "actual": 0.0,
+   "direction": "hit",
+   "removed_pts": 0.468
   },
   {
    "week": 9,
@@ -1098,6 +1444,22 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "rush_yds",
+   "arrows": -1,
+   "baseline": 36.36,
+   "basis": "send",
+   "base": 32.58,
+   "adj": 29.322,
+   "actual": 15.0,
+   "direction": "hit",
+   "removed_pts": 0.326
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "Caleb Williams",
    "team": "CHI",
    "pos": "QB",
@@ -1110,6 +1472,22 @@
    "actual": 16.0,
    "direction": "hit",
    "removed_pts": 0.19
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "James Cook",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rec",
+   "arrows": -1,
+   "baseline": 1.53,
+   "basis": "send",
+   "base": 1.56,
+   "adj": 1.404,
+   "actual": 0.0,
+   "direction": "hit",
+   "removed_pts": 0.156
   },
   {
    "week": 9,
@@ -1146,6 +1524,54 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "Ty Johnson",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rec",
+   "arrows": 1,
+   "baseline": 1.37,
+   "basis": "send",
+   "base": 1.2,
+   "adj": 1.32,
+   "actual": 2.0,
+   "direction": "hit",
+   "removed_pts": 0.12
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Ty Johnson",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rec_yds",
+   "arrows": 1,
+   "baseline": 14.27,
+   "basis": "send",
+   "base": 9.42,
+   "adj": 10.362,
+   "actual": 36.0,
+   "direction": "hit",
+   "removed_pts": 0.094
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "James Cook",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rec_yds",
+   "arrows": -1,
+   "baseline": 13.59,
+   "basis": "send",
+   "base": 8.14,
+   "adj": 7.326,
+   "actual": 0.0,
+   "direction": "hit",
+   "removed_pts": 0.081
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "Kirk Cousins",
    "team": "LV",
    "pos": "QB",
@@ -1178,6 +1604,22 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "Carson Wentz",
+   "team": "MIN",
+   "pos": "QB",
+   "stat": "pass_int",
+   "arrows": 1,
+   "baseline": 0.58,
+   "basis": "send",
+   "base": 0.59,
+   "adj": 0.649,
+   "actual": 2.0,
+   "direction": "hit",
+   "removed_pts": 0.059
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "Kirk Cousins",
    "team": "LV",
    "pos": "QB",
@@ -1190,6 +1632,38 @@
    "actual": 1.0,
    "direction": "hit",
    "removed_pts": 0.036
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "James Cook",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rec_tds",
+   "arrows": -1,
+   "baseline": 0.04,
+   "basis": "send",
+   "base": 0.04,
+   "adj": 0.036,
+   "actual": 0.0,
+   "direction": "hit",
+   "removed_pts": 0.024
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Ty Johnson",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rush_tds",
+   "arrows": 1,
+   "baseline": 0.01,
+   "basis": "send",
+   "base": 0.02,
+   "adj": 0.022,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.012
   },
   {
    "week": 9,
@@ -1210,6 +1684,38 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "Carson Wentz",
+   "team": "MIN",
+   "pos": "QB",
+   "stat": "rush_tds",
+   "arrows": 1,
+   "baseline": 0.04,
+   "basis": "send",
+   "base": 0.06,
+   "adj": 0.066,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.036
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Ty Johnson",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rec_tds",
+   "arrows": 1,
+   "baseline": 0.05,
+   "basis": "send",
+   "base": 0.06,
+   "adj": 0.066,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.036
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "Brock Purdy",
    "team": "SF",
    "pos": "QB",
@@ -1222,6 +1728,22 @@
    "actual": 232.0,
    "direction": "hit",
    "removed_pts": -0.046
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Ty Johnson",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rush_yds",
+   "arrows": 1,
+   "baseline": 5.38,
+   "basis": "send",
+   "base": 5.03,
+   "adj": 5.533,
+   "actual": 1.0,
+   "direction": "miss",
+   "removed_pts": -0.05
   },
   {
    "week": 9,
@@ -1258,6 +1780,22 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "pass_int",
+   "arrows": -1,
+   "baseline": 0.69,
+   "basis": "send",
+   "base": 0.7,
+   "adj": 0.63,
+   "actual": 1.0,
+   "direction": "miss",
+   "removed_pts": -0.07
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "Brock Purdy",
    "team": "SF",
    "pos": "QB",
@@ -1270,6 +1808,22 @@
    "actual": 1.0,
    "direction": "miss",
    "removed_pts": -0.073
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Carson Wentz",
+   "team": "MIN",
+   "pos": "QB",
+   "stat": "rush_yds",
+   "arrows": 1,
+   "baseline": 7.8,
+   "basis": "send",
+   "base": 7.66,
+   "adj": 8.426,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.077
   },
   {
    "week": 9,
@@ -1322,6 +1876,38 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "T.J. Hockenson",
+   "team": "MIN",
+   "pos": "TE",
+   "stat": "rec_tds",
+   "arrows": 1,
+   "baseline": 0.24,
+   "basis": "send",
+   "base": 0.31,
+   "adj": 0.341,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.186
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "T.J. Hockenson",
+   "team": "MIN",
+   "pos": "TE",
+   "stat": "rec_yds",
+   "arrows": 1,
+   "baseline": 35.29,
+   "basis": "send",
+   "base": 35.96,
+   "adj": 39.556,
+   "actual": 33.0,
+   "direction": "miss",
+   "removed_pts": -0.36
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "Christian McCaffrey",
    "team": "SF",
    "pos": "RB",
@@ -1334,6 +1920,38 @@
    "actual": 19.0,
    "direction": "miss",
    "removed_pts": -0.384
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "T.J. Hockenson",
+   "team": "MIN",
+   "pos": "TE",
+   "stat": "rec",
+   "arrows": 1,
+   "baseline": 3.97,
+   "basis": "send",
+   "base": 4.06,
+   "adj": 4.466,
+   "actual": 4.0,
+   "direction": "miss",
+   "removed_pts": -0.406
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "James Cook",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rush_tds",
+   "arrows": -1,
+   "baseline": 0.69,
+   "basis": "send",
+   "base": 0.71,
+   "adj": 0.639,
+   "actual": 1.0,
+   "direction": "miss",
+   "removed_pts": -0.426
   },
   {
    "week": 9,
@@ -1366,6 +1984,22 @@
    "actual": 0.0,
    "direction": "miss",
    "removed_pts": -0.486
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Carson Wentz",
+   "team": "MIN",
+   "pos": "QB",
+   "stat": "pass_tds",
+   "arrows": 1,
+   "baseline": 1.31,
+   "basis": "send",
+   "base": 1.45,
+   "adj": 1.595,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.58
   },
   {
    "week": 9,
@@ -1450,6 +2084,22 @@
   {
    "week": 9,
    "fan": "ERK",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "pass_yds",
+   "arrows": -1,
+   "baseline": 230.83,
+   "basis": "send",
+   "base": 235.76,
+   "adj": 212.184,
+   "actual": 234.0,
+   "direction": "hit",
+   "removed_pts": -0.802
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
    "player": "Drew Lock",
    "team": "SEA",
    "pos": "QB",
@@ -1462,6 +2112,38 @@
    "actual": 175.0,
    "direction": "miss",
    "removed_pts": -0.83
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "James Cook",
+   "team": "BUF",
+   "pos": "RB",
+   "stat": "rush_yds",
+   "arrows": -1,
+   "baseline": 90.64,
+   "basis": "send",
+   "base": 87.43,
+   "adj": 78.687,
+   "actual": 107.0,
+   "direction": "miss",
+   "removed_pts": -0.874
+  },
+  {
+   "week": 9,
+   "fan": "ERK",
+   "player": "Carson Wentz",
+   "team": "MIN",
+   "pos": "QB",
+   "stat": "pass_yds",
+   "arrows": 1,
+   "baseline": 198.8,
+   "basis": "send",
+   "base": 219.99,
+   "adj": 241.989,
+   "actual": 81.0,
+   "direction": "miss",
+   "removed_pts": -0.88
   },
   {
    "week": 9,
@@ -2010,6 +2692,22 @@
   {
    "week": 9,
    "fan": "REB",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "pass_int",
+   "arrows": 1,
+   "baseline": 0.69,
+   "basis": "send",
+   "base": 0.7,
+   "adj": 0.77,
+   "actual": 1.0,
+   "direction": "hit",
+   "removed_pts": 0.07
+  },
+  {
+   "week": 9,
+   "fan": "REB",
    "player": "Caleb Williams",
    "team": "CHI",
    "pos": "QB",
@@ -2410,6 +3108,22 @@
   {
    "week": 9,
    "fan": "REB",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "rush_yds",
+   "arrows": 1,
+   "baseline": 36.36,
+   "basis": "send",
+   "base": 32.58,
+   "adj": 35.838,
+   "actual": 15.0,
+   "direction": "miss",
+   "removed_pts": -0.326
+  },
+  {
+   "week": 9,
+   "fan": "REB",
    "player": "Emeka Egbuka",
    "team": "TB",
    "pos": "WR",
@@ -2438,6 +3152,22 @@
    "actual": 38.0,
    "direction": "miss",
    "removed_pts": -0.442
+  },
+  {
+   "week": 9,
+   "fan": "REB",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "rush_tds",
+   "arrows": 1,
+   "baseline": 0.71,
+   "basis": "send",
+   "base": 0.78,
+   "adj": 0.858,
+   "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.468
   },
   {
    "week": 9,
@@ -2500,6 +3230,22 @@
    "base": 1.41,
    "adj": 1.551,
    "actual": 0.0,
+   "direction": "miss",
+   "removed_pts": -0.564
+  },
+  {
+   "week": 9,
+   "fan": "REB",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "pass_tds",
+   "arrows": 1,
+   "baseline": 1.26,
+   "basis": "send",
+   "base": 1.41,
+   "adj": 1.551,
+   "actual": 1.0,
    "direction": "miss",
    "removed_pts": -0.564
   },
@@ -2614,6 +3360,22 @@
    "actual": 2.0,
    "direction": "miss",
    "removed_pts": -0.936
+  },
+  {
+   "week": 9,
+   "fan": "REB",
+   "player": "Josh Allen",
+   "team": "BUF",
+   "pos": "QB",
+   "stat": "pass_yds",
+   "arrows": 1,
+   "baseline": 230.83,
+   "basis": "send",
+   "base": 235.76,
+   "adj": 259.336,
+   "actual": 234.0,
+   "direction": "miss",
+   "removed_pts": -0.943
   },
   {
    "week": 9,
@@ -6918,454 +7680,6 @@
    "actual": 229.0,
    "direction": "miss",
    "removed_pts": -0.856
-  },
-  {
-   "week": 5,
-   "fan": "ERK",
-   "player": "Jahmyr Gibbs",
-   "team": "DET",
-   "pos": "RB",
-   "stat": "rush_yds",
-   "arrows": -1,
-   "baseline": 89.29,
-   "basis": "send",
-   "base": 88.08,
-   "adj": 79.272,
-   "actual": 151.0,
-   "direction": "miss",
-   "removed_pts": -0.881
-  },
-  {
-   "week": 5,
-   "fan": "ERK",
-   "player": "Josh Allen",
-   "team": "BUF",
-   "pos": "QB",
-   "stat": "pass_yds",
-   "arrows": 1,
-   "baseline": 244.01,
-   "basis": "send",
-   "base": 251.39,
-   "adj": 276.529,
-   "actual": 210.0,
-   "direction": "miss",
-   "removed_pts": -1.006
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Carson Wentz",
-   "team": "MIN",
-   "pos": "QB",
-   "stat": "pass_yds",
-   "arrows": -4,
-   "baseline": 78.32,
-   "basis": "send",
-   "base": 78.47,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "hit",
-   "removed_pts": 3.139
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Carson Wentz",
-   "team": "MIN",
-   "pos": "QB",
-   "stat": "pass_tds",
-   "arrows": -2,
-   "baseline": 0.76,
-   "basis": "send",
-   "base": 0.76,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "hit",
-   "removed_pts": 3.04
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Brock Bowers",
-   "team": "LV",
-   "pos": "TE",
-   "stat": "rec",
-   "arrows": 2,
-   "baseline": 5.68,
-   "basis": "send",
-   "base": 5.9,
-   "adj": 7.9,
-   "actual": 8.0,
-   "direction": "hit",
-   "removed_pts": 2.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Brock Bowers",
-   "team": "LV",
-   "pos": "TE",
-   "stat": "rec_yds",
-   "arrows": 2,
-   "baseline": 58.55,
-   "basis": "send",
-   "base": 68.6,
-   "adj": 88.6,
-   "actual": 110.0,
-   "direction": "hit",
-   "removed_pts": 2.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Keenan Allen",
-   "team": "IND",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": 2,
-   "baseline": 3.27,
-   "basis": "send",
-   "base": 3.18,
-   "adj": 5.18,
-   "actual": 5.0,
-   "direction": "hit",
-   "removed_pts": 1.64
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Treylon Burks",
-   "team": "WAS",
-   "pos": "WR",
-   "stat": "rec_yds",
-   "arrows": 2,
-   "baseline": 12.03,
-   "basis": "send",
-   "base": 9.95,
-   "adj": 29.95,
-   "actual": 26.0,
-   "direction": "hit",
-   "removed_pts": 1.21
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Dontayvion Wicks",
-   "team": "PHI",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 3.47,
-   "basis": "send",
-   "base": 3.64,
-   "adj": 4.64,
-   "actual": 5.0,
-   "direction": "hit",
-   "removed_pts": 1.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Parker Washington",
-   "team": "JAX",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 4.5,
-   "basis": "send",
-   "base": 4.46,
-   "adj": 5.46,
-   "actual": 6.0,
-   "direction": "hit",
-   "removed_pts": 1.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Tucker Kraft",
-   "team": "GB",
-   "pos": "TE",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 3.61,
-   "basis": "send",
-   "base": 3.8,
-   "adj": 4.8,
-   "actual": 5.0,
-   "direction": "hit",
-   "removed_pts": 1.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Woody Marks",
-   "team": "HOU",
-   "pos": "RB",
-   "stat": "rush_yds",
-   "arrows": 1,
-   "baseline": 29.66,
-   "basis": "send",
-   "base": 30.43,
-   "adj": 40.43,
-   "actual": 62.0,
-   "direction": "hit",
-   "removed_pts": 1.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Davante Adams",
-   "team": "LA",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 4.17,
-   "basis": "send",
-   "base": 4.18,
-   "adj": 5.18,
-   "actual": 5.0,
-   "direction": "hit",
-   "removed_pts": 0.64
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Tre Tucker",
-   "team": "LV",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 3.36,
-   "basis": "send",
-   "base": 3.25,
-   "adj": 4.25,
-   "actual": 4.0,
-   "direction": "hit",
-   "removed_pts": 0.5
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Keenan Allen",
-   "team": "IND",
-   "pos": "WR",
-   "stat": "rec_yds",
-   "arrows": 3,
-   "baseline": 34.22,
-   "basis": "send",
-   "base": 28.41,
-   "adj": 58.41,
-   "actual": 45.0,
-   "direction": "hit",
-   "removed_pts": 0.318
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Carson Wentz",
-   "team": "MIN",
-   "pos": "QB",
-   "stat": "pass_int",
-   "arrows": -1,
-   "baseline": 0.23,
-   "basis": "send",
-   "base": 0.23,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "hit",
-   "removed_pts": 0.23
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Carson Wentz",
-   "team": "MIN",
-   "pos": "QB",
-   "stat": "rush_yds",
-   "arrows": -1,
-   "baseline": 1.05,
-   "basis": "send",
-   "base": 1.05,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "hit",
-   "removed_pts": 0.105
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Antonio Williams",
-   "team": "WAS",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": 1,
-   "baseline": 2.16,
-   "basis": "send",
-   "base": 2.45,
-   "adj": 3.45,
-   "actual": 3.0,
-   "direction": "hit",
-   "removed_pts": 0.1
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Saquon Barkley",
-   "team": "PHI",
-   "pos": "RB",
-   "stat": "rush_yds",
-   "arrows": -4,
-   "baseline": 39.82,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Saquon Barkley",
-   "team": "PHI",
-   "pos": "RB",
-   "stat": "rush_tds",
-   "arrows": -1,
-   "baseline": 0.19,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Saquon Barkley",
-   "team": "PHI",
-   "pos": "RB",
-   "stat": "rec",
-   "arrows": -1,
-   "baseline": 0.73,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Saquon Barkley",
-   "team": "PHI",
-   "pos": "RB",
-   "stat": "rec_yds",
-   "arrows": -1,
-   "baseline": 4.75,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "DeVonta Smith",
-   "team": "PHI",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": -3,
-   "baseline": 2.09,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "DeVonta Smith",
-   "team": "PHI",
-   "pos": "WR",
-   "stat": "rec_yds",
-   "arrows": -3,
-   "baseline": 26.87,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "DeVonta Smith",
-   "team": "PHI",
-   "pos": "WR",
-   "stat": "rec_tds",
-   "arrows": -1,
-   "baseline": 0.16,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Marquise Brown",
-   "team": "PHI",
-   "pos": "WR",
-   "stat": "rec_yds",
-   "arrows": -1,
-   "baseline": 4.41,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Marquise Brown",
-   "team": "PHI",
-   "pos": "WR",
-   "stat": "rec",
-   "arrows": -1,
-   "baseline": 0.34,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
-  },
-  {
-   "week": 5,
-   "fan": "NYO",
-   "player": "Marquise Brown",
-   "team": "PHI",
-   "pos": "WR",
-   "stat": "rec_tds",
-   "arrows": -1,
-   "baseline": 0.03,
-   "basis": "send",
-   "base": 0.0,
-   "adj": 0.0,
-   "actual": 0.0,
-   "direction": "neutral",
-   "removed_pts": 0.0
   }
  ],
  "picks_best": [
@@ -7453,10 +7767,7 @@
    "removed_pts": -3.61
   }
  ],
- "pending_games": [
-  "wk9 BUF v MIN",
-  "wk9 MIN v BUF"
- ],
+ "pending_games": [],
  "season": 2026,
  "renamed": {
   "Nana Owusu": "NYO",
@@ -7466,22 +7777,493 @@
   "52dec07e6eca0ba3": "07d4562b12d59b0c",
   "87abe4771deffff1": "1d43b79ca299b191"
  },
- "revealed": false,
+ "revealed": true,
  "strategies": {
-  "sealed": true,
-  "unseal_after_week": 9,
   "registered": "2026-09-27",
-  "n_rules": 6,
-  "ahead": 2,
-  "weeks_scored": [
-   3,
-   4,
-   5,
-   6,
-   7,
-   8,
-   9
+  "registered_week": 3,
+  "in_sample_weeks": [
+   3
   ],
+  "note": "Rules fixed on 2026-09-27 from week 3; only later weeks test them. Replays are 10% swipes on the sent line.",
+  "rules": [
+   {
+    "key": "crowd",
+    "label": "Crowd majority, one vote per player",
+    "how": "every player anyone called, moved 10% the way most callers went",
+    "weeks": {
+     "3": {
+      "calls": 184,
+      "helped": 90,
+      "pts": 8.85
+     },
+     "4": {
+      "calls": 49,
+      "helped": 24,
+      "pts": -8.01
+     },
+     "5": {
+      "calls": 64,
+      "helped": 23,
+      "pts": -12.18
+     },
+     "6": {
+      "calls": 30,
+      "helped": 11,
+      "pts": -4.01
+     },
+     "7": {
+      "calls": 27,
+      "helped": 11,
+      "pts": -2.15
+     },
+     "8": {
+      "calls": 34,
+      "helped": 22,
+      "pts": 10.15
+     },
+     "9": {
+      "calls": 23,
+      "helped": 10,
+      "pts": -6.77
+     }
+    },
+    "out_of_sample": {
+     "calls": 227,
+     "helped": 101,
+     "pts": -22.97,
+     "weeks": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    },
+    "all": {
+     "calls": 411,
+     "helped": 191,
+     "pts": -14.12,
+     "weeks": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   },
+   {
+    "key": "fades",
+    "label": "Fades only",
+    "how": "every player any fan faded, faded 10%; boosts ignored",
+    "weeks": {
+     "3": {
+      "calls": 161,
+      "helped": 80,
+      "pts": -4.44
+     },
+     "4": {
+      "calls": 18,
+      "helped": 10,
+      "pts": 3.5
+     },
+     "5": {
+      "calls": 28,
+      "helped": 10,
+      "pts": -4.43
+     },
+     "6": {
+      "calls": 4,
+      "helped": 0,
+      "pts": 0.0
+     },
+     "7": {
+      "calls": 3,
+      "helped": 1,
+      "pts": 0.24
+     },
+     "8": {
+      "calls": 16,
+      "helped": 12,
+      "pts": 7.61
+     },
+     "9": {
+      "calls": 11,
+      "helped": 5,
+      "pts": -1.27
+     }
+    },
+    "out_of_sample": {
+     "calls": 80,
+     "helped": 38,
+     "pts": 5.65,
+     "weeks": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    },
+    "all": {
+     "calls": 241,
+     "helped": 118,
+     "pts": 1.21,
+     "weeks": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   },
+   {
+    "key": "fade_mid_boosts",
+    "label": "Fade mid-tier players fans boosted",
+    "how": "every player any fan boosted who projects 14-20 pts, faded 10%",
+    "weeks": {
+     "3": {
+      "calls": 36,
+      "helped": 16,
+      "pts": -7.73
+     },
+     "4": {
+      "calls": 10,
+      "helped": 5,
+      "pts": 2.27
+     },
+     "5": {
+      "calls": 17,
+      "helped": 7,
+      "pts": -0.98
+     },
+     "6": {
+      "calls": 12,
+      "helped": 5,
+      "pts": -0.39
+     },
+     "7": {
+      "calls": 10,
+      "helped": 5,
+      "pts": -1.42
+     },
+     "8": {
+      "calls": 7,
+      "helped": 3,
+      "pts": -2.98
+     },
+     "9": {
+      "calls": 6,
+      "helped": 3,
+      "pts": 0.64
+     }
+    },
+    "out_of_sample": {
+     "calls": 62,
+     "helped": 28,
+     "pts": -2.86,
+     "weeks": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    },
+    "all": {
+     "calls": 98,
+     "helped": 44,
+     "pts": -10.59,
+     "weeks": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   },
+   {
+    "key": "specialists",
+    "label": "Specialists",
+    "how": "REB on WR/TE, Nana Owusu on RBs, RJS on RBs, their direction at 10%",
+    "weeks": {
+     "3": {
+      "calls": 86,
+      "helped": 47,
+      "pts": 6.4
+     },
+     "4": {
+      "calls": 10,
+      "helped": 4,
+      "pts": -3.25
+     },
+     "5": {
+      "calls": 12,
+      "helped": 5,
+      "pts": -1.41
+     },
+     "6": {
+      "calls": 0,
+      "helped": 0,
+      "pts": 0.0
+     },
+     "7": {
+      "calls": 0,
+      "helped": 0,
+      "pts": 0.0
+     },
+     "8": {
+      "calls": 9,
+      "helped": 7,
+      "pts": 4.9
+     },
+     "9": {
+      "calls": 10,
+      "helped": 4,
+      "pts": -1.98
+     }
+    },
+    "out_of_sample": {
+     "calls": 41,
+     "helped": 20,
+     "pts": -1.74,
+     "weeks": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    },
+    "all": {
+     "calls": 127,
+     "helped": 67,
+     "pts": 4.66,
+     "weeks": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   },
+   {
+    "key": "size_1",
+    "label": "Calls at 10%, as made",
+    "how": "every call made with a 10% swipe (or a stat arrow), as the fan made it",
+    "weeks": {
+     "3": {
+      "calls": 364,
+      "helped": 177,
+      "pts": 2.95
+     },
+     "4": {
+      "calls": 58,
+      "helped": 24,
+      "pts": -16.49
+     },
+     "5": {
+      "calls": 98,
+      "helped": 31,
+      "pts": -30.22
+     },
+     "6": {
+      "calls": 44,
+      "helped": 11,
+      "pts": -18.72
+     },
+     "7": {
+      "calls": 40,
+      "helped": 10,
+      "pts": -29.52
+     },
+     "8": {
+      "calls": 22,
+      "helped": 11,
+      "pts": -4.91
+     },
+     "9": {
+      "calls": 32,
+      "helped": 13,
+      "pts": -12.85
+     }
+    },
+    "out_of_sample": {
+     "calls": 294,
+     "helped": 100,
+     "pts": -112.71,
+     "weeks": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    },
+    "all": {
+     "calls": 658,
+     "helped": 277,
+     "pts": -109.76,
+     "weeks": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   },
+   {
+    "key": "size_2",
+    "label": "Calls at 20-30%, as made",
+    "how": "every call made with a 20% or 30% swipe, as the fan made it",
+    "weeks": {
+     "3": {
+      "calls": 104,
+      "helped": 38,
+      "pts": -41.28
+     },
+     "4": {
+      "calls": 4,
+      "helped": 1,
+      "pts": -2.22
+     },
+     "5": {
+      "calls": 4,
+      "helped": 1,
+      "pts": -3.35
+     },
+     "6": {
+      "calls": 0,
+      "helped": 0,
+      "pts": 0.0
+     },
+     "7": {
+      "calls": 0,
+      "helped": 0,
+      "pts": 0.0
+     },
+     "8": {
+      "calls": 16,
+      "helped": 10,
+      "pts": 18.47
+     },
+     "9": {
+      "calls": 0,
+      "helped": 0,
+      "pts": 0.0
+     }
+    },
+    "out_of_sample": {
+     "calls": 24,
+     "helped": 12,
+     "pts": 12.9,
+     "weeks": [
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    },
+    "all": {
+     "calls": 128,
+     "helped": 50,
+     "pts": -28.38,
+     "weeks": [
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9
+     ]
+    }
+   }
+  ],
+  "sealed": false,
+  "spec": {
+   "registered": "2026-09-27",
+   "registered_week": 3,
+   "swipe_pct": 0.1,
+   "mid_tier_pts": [
+    14,
+    20
+   ],
+   "rules": [
+    [
+     "crowd",
+     "Crowd majority, one vote per player",
+     "every player anyone called, moved 10% the way most callers went"
+    ],
+    [
+     "fades",
+     "Fades only",
+     "every player any fan faded, faded 10%; boosts ignored"
+    ],
+    [
+     "fade_mid_boosts",
+     "Fade mid-tier players fans boosted",
+     "every player any fan boosted who projects 14-20 pts, faded 10%"
+    ],
+    [
+     "specialists",
+     "Specialists",
+     "REB on WR/TE, Nana Owusu on RBs, RJS on RBs, their direction at 10%"
+    ],
+    [
+     "size_1",
+     "Calls at 10%, as made",
+     "every call made with a 10% swipe (or a stat arrow), as the fan made it"
+    ],
+    [
+     "size_2",
+     "Calls at 20-30%, as made",
+     "every call made with a 20% or 30% swipe, as the fan made it"
+    ]
+   ],
+   "specialists": [
+    [
+     "REB",
+     [
+      "TE",
+      "WR"
+     ]
+    ],
+    [
+     "Nana Owusu",
+     [
+      "RB"
+     ]
+    ],
+    [
+     "RJS",
+     [
+      "RB"
+     ]
+    ]
+   ]
+  },
   "fingerprint": "214d1a83e973496d5eede5f80477e6d53ccc878472b20adfdd38262e06040d9c"
  },
  "basis": "send"
