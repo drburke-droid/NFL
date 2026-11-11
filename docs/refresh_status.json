@@ -1,8 +1,8 @@
 {
  "season": 2026,
  "week": 9,
- "schedule_week": 9,
- "generated": "2026-11-08T17:15+00:00",
+ "schedule_week": 10,
+ "generated": "2026-11-11T23:59+00:00",
  "steps": {
   "espn": "ok",
   "pastes": "ok",
@@ -11,12 +11,23 @@
   "gm": "ok",
   "trade": "ok",
   "values": "ok",
-  "fan": "ok",
+  "fan": "failed",
   "fanpicks": "ok",
   "props": "ok"
  },
  "python": "3.12.16",
  "platform": "linux",
- "errors": {},
+ "errors": {
+  "fan projections": [
+   "FFA weekly files: 67 ((2023, 1) .. (2026, 9))",
+   "  2026 box scores: 3,039 rows",
+   "  Odds API events: 27 (credits left 160)",
+   "  schedule: 18 weeks; week 10 runs Fri 11/13 .. Tue 11/17",
+   "week 10: 14 games in this send (kickoffs Fri 01:15Z .. Tue 01:15Z)",
+   "history: 17,123 player-weeks with FFA baseline + actual, {2023: 18, 2024: 20, 2025: 20}",
+   "  baseline MAE vs actual 4.218",
+   "no FFA file for 2026 wk10 \u2014 drop raw_stats_2026_wk10.csv in /home/runner/work/NFL/NFL/data/ffanalytics/FFAn_weekly"
+  ]
+ },
  "odds_keys": 6
 }

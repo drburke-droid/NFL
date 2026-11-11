@@ -153,11 +153,11 @@
    "owner": "espn98580191",
    "record": {
     "w": 1,
-    "l": 7,
+    "l": 8,
     "t": 0
    },
-   "points_for": 979.62,
-   "points_against": 1153.74,
+   "points_for": 1076.42,
+   "points_against": 1274.72,
    "playoff_seed": 11,
    "faab_remaining": 35.0,
    "roster": [
@@ -184,7 +184,7 @@
      "keeper_cost": {
       "price": 6
      },
-     "injury": "ACTIVE",
+     "injury": "INJURY_RESERVE",
      "times_kept": 1
     },
     {
@@ -197,7 +197,7 @@
      "keeper_cost": {
       "price": 23
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -262,7 +262,7 @@
      "keeper_cost": {
       "price": 3
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -275,7 +275,7 @@
      "keeper_cost": {
       "price": 7
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -314,7 +314,7 @@
      "keeper_cost": {
       "price": 17
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -377,12 +377,12 @@
    "owner": "eyedocjj",
    "record": {
     "w": 6,
-    "l": 2,
+    "l": 3,
     "t": 0
    },
-   "points_for": 848.78,
-   "points_against": 776.8,
-   "playoff_seed": 3,
+   "points_for": 950.86,
+   "points_against": 896.28,
+   "playoff_seed": 6,
    "faab_remaining": 100.0,
    "roster": [
     {
@@ -421,7 +421,7 @@
      "keeper_cost": {
       "price": 11
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -460,7 +460,7 @@
      "keeper_cost": {
       "price": 5
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -473,7 +473,7 @@
      "keeper_cost": {
       "price": 10
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -499,7 +499,7 @@
      "keeper_cost": {
       "price": 22
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -564,7 +564,7 @@
      "keeper_cost": {
       "price": 5
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -601,11 +601,11 @@
    "owner": "funblood",
    "record": {
     "w": 3,
-    "l": 5,
+    "l": 6,
     "t": 0
    },
-   "points_for": 849.7,
-   "points_against": 883.94,
+   "points_for": 954.94,
+   "points_against": 1053.68,
    "playoff_seed": 9,
    "faab_remaining": 28.0,
    "roster": [
@@ -619,7 +619,7 @@
      "keeper_cost": {
       "price": 4
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -697,7 +697,7 @@
      "keeper_cost": {
       "price": 19
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -718,7 +718,7 @@
      "name": "Jonah Coleman",
      "pos": "RB",
      "nfl_team": "DEN",
-     "slot": "RB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 2
@@ -731,7 +731,7 @@
      "name": "Kaelon Black",
      "pos": "RB",
      "nfl_team": "SF",
-     "slot": "BENCH",
+     "slot": "RB",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 5
@@ -762,14 +762,14 @@
      "keeper_cost": {
       "price": 18
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
      "player_id": "14880",
      "name": "Kirk Cousins",
      "pos": "QB",
-     "nfl_team": "LVR",
+     "nfl_team": "MIN",
      "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
@@ -824,12 +824,12 @@
    "name": "3AM  No Limit",
    "owner": "espn14211458",
    "record": {
-    "w": 7,
+    "w": 8,
     "l": 1,
     "t": 0
    },
-   "points_for": 1036.44,
-   "points_against": 794.88,
+   "points_for": 1153.4,
+   "points_against": 898.94,
    "playoff_seed": 1,
    "faab_remaining": 45.0,
    "roster": [
@@ -851,7 +851,7 @@
      "name": "Cam Skattebo",
      "pos": "RB",
      "nfl_team": "NYG",
-     "slot": "BENCH",
+     "slot": "RB",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 8
@@ -916,12 +916,12 @@
      "name": "Carnell Tate",
      "pos": "WR",
      "nfl_team": "TEN",
-     "slot": "BENCH",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 10
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -955,7 +955,7 @@
      "name": "Aaron Jones Sr.",
      "pos": "RB",
      "nfl_team": "MIN",
-     "slot": "RB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 17
@@ -1007,7 +1007,7 @@
      "name": "Tyler Allgeier",
      "pos": "RB",
      "nfl_team": "ARI",
-     "slot": "FLEX",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 2
@@ -1048,13 +1048,13 @@
    "name": "Glass Joe",
    "owner": "BobbyeddyB",
    "record": {
-    "w": 5,
+    "w": 6,
     "l": 3,
     "t": 0
    },
-   "points_for": 996.48,
-   "points_against": 1045.98,
-   "playoff_seed": 6,
+   "points_for": 1166.22,
+   "points_against": 1151.22,
+   "playoff_seed": 5,
    "faab_remaining": 25.0,
    "roster": [
     {
@@ -1062,7 +1062,7 @@
      "name": "Ja'Marr Chase",
      "pos": "WR",
      "nfl_team": "CIN",
-     "slot": "WR",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 61
@@ -1127,7 +1127,7 @@
      "name": "Bucky Irving",
      "pos": "RB",
      "nfl_team": "TB",
-     "slot": "RB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 1
@@ -1153,7 +1153,7 @@
      "name": "Matthew Golden",
      "pos": "WR",
      "nfl_team": "GB",
-     "slot": "FLEX",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 10
@@ -1192,7 +1192,7 @@
      "name": "Steelers D/ST",
      "pos": "DST",
      "nfl_team": "PIT",
-     "slot": "BENCH",
+     "slot": "DST",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 1
@@ -1205,12 +1205,12 @@
      "name": "Alvin Kamara",
      "pos": "RB",
      "nfl_team": "NO",
-     "slot": "BENCH",
+     "slot": "RB",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 12
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -1223,7 +1223,7 @@
      "keeper_cost": {
       "price": 0
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1257,7 +1257,7 @@
      "name": "Saints D/ST",
      "pos": "DST",
      "nfl_team": "NO",
-     "slot": "DST",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 1
@@ -1272,13 +1272,13 @@
    "name": "CMC Music Factory",
    "owner": "silverandblack.27",
    "record": {
-    "w": 5,
+    "w": 6,
     "l": 3,
     "t": 0
    },
-   "points_for": 1096.5,
-   "points_against": 1096.04,
-   "playoff_seed": 5,
+   "points_for": 1250.1,
+   "points_against": 1186.18,
+   "playoff_seed": 4,
    "faab_remaining": 80.0,
    "roster": [
     {
@@ -1286,12 +1286,12 @@
      "name": "Puka Nacua",
      "pos": "WR",
      "nfl_team": "LAR",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 16
      },
-     "injury": "ACTIVE",
+     "injury": "OUT",
      "times_kept": 3
     },
     {
@@ -1299,7 +1299,7 @@
      "name": "Matthew Stafford",
      "pos": "QB",
      "nfl_team": "LAR",
-     "slot": "BENCH",
+     "slot": "QB",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 6
@@ -1351,7 +1351,7 @@
      "name": "Dak Prescott",
      "pos": "QB",
      "nfl_team": "DAL",
-     "slot": "QB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 4
@@ -1369,7 +1369,7 @@
      "keeper_cost": {
       "price": 10
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1390,7 +1390,7 @@
      "name": "Jaylen Warren",
      "pos": "RB",
      "nfl_team": "PIT",
-     "slot": "BENCH",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 5
@@ -1416,12 +1416,12 @@
      "name": "Deebo Samuel Sr.",
      "pos": "WR",
      "nfl_team": "SF",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 10
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1429,7 +1429,7 @@
      "name": "Michael Mayer",
      "pos": "TE",
      "nfl_team": "LVR",
-     "slot": "FLEX",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 1
@@ -1460,7 +1460,7 @@
      "keeper_cost": {
       "price": 0
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 0
     },
     {
@@ -1468,7 +1468,7 @@
      "name": "Lions D/ST",
      "pos": "DST",
      "nfl_team": "DET",
-     "slot": "DST",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 0
@@ -1481,7 +1481,7 @@
      "name": "Vikings D/ST",
      "pos": "DST",
      "nfl_team": "MIN",
-     "slot": "BENCH",
+     "slot": "DST",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 10
@@ -1497,11 +1497,11 @@
    "owner": "CBPainTrain",
    "record": {
     "w": 0,
-    "l": 8,
+    "l": 9,
     "t": 0
    },
-   "points_for": 748.94,
-   "points_against": 1102.34,
+   "points_for": 853.0,
+   "points_against": 1219.3,
    "playoff_seed": 12,
    "faab_remaining": 36.0,
    "roster": [
@@ -1523,7 +1523,7 @@
      "name": "Omarion Hampton",
      "pos": "RB",
      "nfl_team": "LAC",
-     "slot": "RB",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 45
@@ -1536,7 +1536,7 @@
      "name": "Caleb Williams",
      "pos": "QB",
      "nfl_team": "CHI",
-     "slot": "QB",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 17
@@ -1562,7 +1562,7 @@
      "name": "Rome Odunze",
      "pos": "WR",
      "nfl_team": "CHI",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 13
@@ -1580,7 +1580,7 @@
      "keeper_cost": {
       "price": 48
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1593,7 +1593,7 @@
      "keeper_cost": {
       "price": 12
      },
-     "injury": "QUESTIONABLE",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -1601,7 +1601,7 @@
      "name": "Blake Corum",
      "pos": "RB",
      "nfl_team": "LAR",
-     "slot": "BENCH",
+     "slot": "RB",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 1
@@ -1626,8 +1626,8 @@
      "player_id": "4688813",
      "name": "Josh Downs",
      "pos": "WR",
-     "nfl_team": "IND",
-     "slot": "BENCH",
+     "nfl_team": "KC",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 9
@@ -1640,7 +1640,7 @@
      "name": "Jordyn Tyson",
      "pos": "WR",
      "nfl_team": "NO",
-     "slot": "FLEX",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 1
@@ -1653,7 +1653,7 @@
      "name": "Jordan Love",
      "pos": "QB",
      "nfl_team": "GB",
-     "slot": "BENCH",
+     "slot": "QB",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 6
@@ -1679,7 +1679,7 @@
      "name": "Bengals D/ST",
      "pos": "DST",
      "nfl_team": "CIN",
-     "slot": "BENCH",
+     "slot": "DST",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 0
@@ -1692,7 +1692,7 @@
      "name": "Bears D/ST",
      "pos": "DST",
      "nfl_team": "CHI",
-     "slot": "DST",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 9
@@ -1705,7 +1705,7 @@
      "name": "Makai Lemon",
      "pos": "WR",
      "nfl_team": "PHI",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 0
@@ -1721,11 +1721,11 @@
    "owner": "espn19238790",
    "record": {
     "w": 5,
-    "l": 3,
+    "l": 4,
     "t": 0
    },
-   "points_for": 946.92,
-   "points_against": 883.96,
+   "points_for": 1037.06,
+   "points_against": 1037.56,
    "playoff_seed": 7,
    "faab_remaining": 40.0,
    "roster": [
@@ -1804,7 +1804,7 @@
      "keeper_cost": {
       "price": 56
      },
-     "injury": "ACTIVE",
+     "injury": "OUT",
      "times_kept": 0
     },
     {
@@ -1856,7 +1856,7 @@
      "keeper_cost": {
       "price": 11
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -1902,7 +1902,7 @@
      "player_id": "15818",
      "name": "Keenan Allen",
      "pos": "WR",
-     "nfl_team": "IND",
+     "nfl_team": "SF",
      "slot": "BENCH",
      "acquired": "ADD",
      "keeper_cost": {
@@ -1945,11 +1945,11 @@
    "owner": "Rohabhabibo",
    "record": {
     "w": 2,
-    "l": 6,
+    "l": 7,
     "t": 0
    },
-   "points_for": 827.34,
-   "points_against": 940.1,
+   "points_for": 905.82,
+   "points_against": 1082.96,
    "playoff_seed": 10,
    "faab_remaining": 100.0,
    "roster": [
@@ -2054,7 +2054,7 @@
      "keeper_cost": {
       "price": 15
      },
-     "injury": "ACTIVE",
+     "injury": "DOUBTFUL",
      "times_kept": 0
     },
     {
@@ -2080,7 +2080,7 @@
      "keeper_cost": {
       "price": 4
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -2168,12 +2168,12 @@
    "name": "Empty Nesters",
    "owner": "RPT0777",
    "record": {
-    "w": 6,
+    "w": 7,
     "l": 2,
     "t": 0
    },
-   "points_for": 994.1,
-   "points_against": 901.0,
+   "points_for": 1115.08,
+   "points_against": 997.8,
    "playoff_seed": 2,
    "faab_remaining": 64.0,
    "roster": [
@@ -2182,12 +2182,12 @@
      "name": "George Pickens",
      "pos": "WR",
      "nfl_team": "DAL",
-     "slot": "BENCH",
+     "slot": "WR",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 12
      },
-     "injury": "OUT",
+     "injury": "QUESTIONABLE",
      "times_kept": 1
     },
     {
@@ -2195,12 +2195,12 @@
      "name": "Emeka Egbuka",
      "pos": "WR",
      "nfl_team": "TB",
-     "slot": "WR",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 25
      },
-     "injury": "QUESTIONABLE",
+     "injury": "ACTIVE",
      "times_kept": 1
     },
     {
@@ -2234,7 +2234,7 @@
      "name": "Saquon Barkley",
      "pos": "RB",
      "nfl_team": "PHI",
-     "slot": "FLEX",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 61
@@ -2265,7 +2265,7 @@
      "keeper_cost": {
       "price": 8
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2312,7 +2312,7 @@
      "name": "Jalen Coker",
      "pos": "WR",
      "nfl_team": "CAR",
-     "slot": "BENCH",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 2
@@ -2356,7 +2356,7 @@
      "keeper_cost": {
       "price": 2
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2392,13 +2392,13 @@
    "name": "Ugh...Yeah...What...Football!",
    "owner": "kdoggs80",
    "record": {
-    "w": 5,
+    "w": 6,
     "l": 3,
     "t": 0
    },
-   "points_for": 1168.78,
-   "points_against": 926.84,
-   "playoff_seed": 4,
+   "points_for": 1311.64,
+   "points_against": 1005.32,
+   "playoff_seed": 3,
    "faab_remaining": 55.0,
    "roster": [
     {
@@ -2471,7 +2471,7 @@
      "name": "Seahawks D/ST",
      "pos": "DST",
      "nfl_team": "SEA",
-     "slot": "DST",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 15
@@ -2489,7 +2489,7 @@
      "keeper_cost": {
       "price": 18
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 0
     },
     {
@@ -2510,7 +2510,7 @@
      "name": "Tony Pollard",
      "pos": "RB",
      "nfl_team": "TEN",
-     "slot": "BENCH",
+     "slot": "FLEX",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 15
@@ -2536,7 +2536,7 @@
      "name": "Rachaad White",
      "pos": "RB",
      "nfl_team": "WAS",
-     "slot": "FLEX",
+     "slot": "BENCH",
      "acquired": "DRAFT",
      "keeper_cost": {
       "price": 7
@@ -2601,7 +2601,7 @@
      "name": "Texans D/ST",
      "pos": "DST",
      "nfl_team": "HOU",
-     "slot": "BENCH",
+     "slot": "DST",
      "acquired": "ADD",
      "keeper_cost": {
       "price": 5
@@ -2616,12 +2616,12 @@
    "name": "Paul's Perfect Team",
    "owner": "ESPNFAN25233150",
    "record": {
-    "w": 3,
+    "w": 4,
     "l": 5,
     "t": 0
    },
-   "points_for": 934.12,
-   "points_against": 922.1,
+   "points_for": 1053.6,
+   "points_against": 1024.18,
    "playoff_seed": 8,
    "faab_remaining": 100.0,
    "roster": [
@@ -2661,7 +2661,7 @@
      "keeper_cost": {
       "price": 53
      },
-     "injury": "ACTIVE",
+     "injury": "QUESTIONABLE",
      "times_kept": 2
     },
     {

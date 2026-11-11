@@ -1,8 +1,8 @@
 {
  "season": 2026,
  "week": 9,
- "current_week": 9,
- "stale": false,
+ "current_week": 10,
+ "stale": true,
  "league": "Kuhn and Friends",
  "scoring": {
   "pass_yds": 0.04,
