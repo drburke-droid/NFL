@@ -5527,5 +5527,107 @@
     "no DK props posted (news?): Kenneth Walker III, Jordan Addison, Nathaniel Dell, T.J. Hockenson"
    ]
   }
+ },
+ "2026-11-15T21:05_2g": {
+  "sent_at": "2026-11-15T20:07:36Z",
+  "rows": 57,
+  "file": "Burke_Model_Burke_2026_sun04pm_1115_2005.csv",
+  "slate": "Sun 11/15 04:05 PM ET slate (2 games)",
+  "credits_left": 2512,
+  "lineups": [
+   "schedule: 18 weeks; week 10 runs Fri 11/13 .. Tue 11/17",
+   "week 10: 2 games in this send (kickoffs Sun 21:05Z .. Sun 21:05Z)",
+   "injury report (nfl.com): 113 skill/K players listed; practice {'FP': 65, 'DNP': 27, 'LP': 21}; designations {'Questionable': 26, 'Out': 20, 'Doubtful': 4}",
+   "lineups: 444 statuses pulled {'espn': 175, '+sleeper': 96, 'espn+sleeper': 83, 'sleeper': 74, 'nfl-report': 15, 'nfl-report+sleeper': 1}; 1 Q, 4 OUT with a projection {'espn+sleeper': 4}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk10.csv",
+    "rows": 809,
+    "age_hours": 0.0,
+    "slate_skill": 56,
+    "slate_k": 4,
+    "slate_dst": 4
+   },
+   "dk_lines": {
+    "slate_games": 2,
+    "with_lines": 2,
+    "fetched_at": "2026-11-15T20:06Z",
+    "credits_left": "12"
+   },
+   "dk_props": {
+    "slate_events": 2,
+    "events_with_props": 2,
+    "with_props": 46,
+    "by_stat": {
+     "pass_yds": 4,
+     "pass_tds": 4,
+     "rush_yds": 12,
+     "rec_yds": 28,
+     "rec": 28,
+     "exp_td": 46
+    },
+    "no_line": [],
+    "eligible": 17,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 10
+   },
+   "kdst": {
+    "file": "kdst_2026_wk10.csv",
+    "K": {
+     "hit": 4,
+     "of": 4
+    },
+    "DST": {
+     "hit": 4,
+     "of": 4
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 4,
+    "by_team": {
+     "ARI": [
+      "Chad Ryland"
+     ],
+     "LA": [
+      "Brandon McManus"
+     ],
+     "LV": [
+      "Matt Gay"
+     ],
+     "SEA": [
+      "Jason Myers"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 113,
+    "designations": {
+     "Questionable": 26,
+     "Out": 20,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 444,
+    "by_src": {
+     "espn": 175,
+     "+sleeper": 96,
+     "espn+sleeper": 83,
+     "sleeper": 74,
+     "nfl-report": 15,
+     "nfl-report+sleeper": 1
+    },
+    "q": 1,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 4
+    }
+   },
+   "warnings": []
+  }
  }
 }
