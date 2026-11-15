@@ -5629,5 +5629,101 @@
    },
    "warnings": []
   }
+ },
+ "2026-11-15T21:25_1g": {
+  "sent_at": "2026-11-15T20:27:11Z",
+  "rows": 31,
+  "file": "Burke_Model_Burke_2026_sun04pm_1115_2025.csv",
+  "slate": "Sun 11/15 04:25 PM ET slate (1 games)",
+  "credits_left": 2501,
+  "lineups": [
+   "schedule: 18 weeks; week 10 runs Fri 11/13 .. Tue 11/17",
+   "week 10: 1 games in this send (kickoffs Sun 21:25Z .. Sun 21:25Z)",
+   "injury report (nfl.com): 113 skill/K players listed; practice {'FP': 65, 'DNP': 27, 'LP': 21}; designations {'Questionable': 26, 'Out': 20, 'Doubtful': 4}",
+   "lineups: 447 statuses pulled {'espn': 176, '+sleeper': 96, 'espn+sleeper': 84, 'sleeper': 75, 'nfl-report': 15, 'nfl-report+sleeper': 1}; 0 Q, 4 OUT with a projection {'espn+sleeper': 4}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk10.csv",
+    "rows": 809,
+    "age_hours": 0.0,
+    "slate_skill": 31,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-11-15T20:26Z",
+    "credits_left": "1"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 23,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 6,
+     "rec_yds": 12,
+     "rec": 12,
+     "exp_td": 23
+    },
+    "no_line": [],
+    "eligible": 9,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 8
+   },
+   "kdst": {
+    "file": "kdst_2026_wk10.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "DAL": [
+      "Brandon Aubrey"
+     ],
+     "SF": [
+      "Eddy Pineiro"
+     ]
+    },
+    "not_the_one_we_send": {}
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 113,
+    "designations": {
+     "Questionable": 26,
+     "Out": 20,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 447,
+    "by_src": {
+     "espn": 176,
+     "+sleeper": 96,
+     "espn+sleeper": 84,
+     "sleeper": 75,
+     "nfl-report": 15,
+     "nfl-report+sleeper": 1
+    },
+    "q": 0,
+    "out": 4,
+    "out_by_src": {
+     "espn+sleeper": 4
+    }
+   },
+   "warnings": []
+  }
  }
 }
