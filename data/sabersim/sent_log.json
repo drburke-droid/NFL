@@ -5821,5 +5821,112 @@
    },
    "warnings": []
   }
+ },
+ "2026-11-17T01:15_1g": {
+  "sent_at": "2026-11-17T00:18:15Z",
+  "rows": 28,
+  "file": "Burke_Model_Burke_2026_mon08pm_1117_0015.csv",
+  "slate": "Mon 11/16 08:15 PM ET slate (1 games)",
+  "credits_left": 2479,
+  "lineups": [
+   "schedule: 18 weeks; week 10 runs Fri 11/13 .. Tue 11/17",
+   "week 10: 1 games in this send (kickoffs Tue 01:15Z .. Tue 01:15Z)",
+   "injury report (nfl.com): 113 skill/K players listed; practice {'FP': 65, 'DNP': 27, 'LP': 21}; designations {'Questionable': 26, 'Out': 20, 'Doubtful': 4}",
+   "lineups: 419 statuses pulled {'espn': 139, '+sleeper': 128, 'sleeper': 75, 'espn+sleeper': 58, 'nfl-report': 16, 'nfl-report+sleeper': 3}; 0 Q, 3 OUT with a projection {'espn+sleeper': 3}"
+  ],
+  "health": {
+   "ffa": {
+    "file": "raw_stats_2026_wk10.csv",
+    "rows": 809,
+    "age_hours": 0.0,
+    "slate_skill": 27,
+    "slate_k": 2,
+    "slate_dst": 2
+   },
+   "dk_lines": {
+    "slate_games": 1,
+    "with_lines": 1,
+    "fetched_at": "2026-11-17T00:17Z",
+    "credits_left": "478"
+   },
+   "dk_props": {
+    "slate_events": 1,
+    "events_with_props": 1,
+    "with_props": 22,
+    "by_stat": {
+     "pass_yds": 2,
+     "pass_tds": 2,
+     "rush_yds": 8,
+     "rec_yds": 16,
+     "rec": 16,
+     "exp_td": 22
+    },
+    "no_line": [
+     "Ladd McConkey"
+    ],
+    "eligible": 6,
+    "name_aliases": [],
+    "ambiguous_names": [],
+    "no_props_n": 5
+   },
+   "kdst": {
+    "file": "kdst_2026_wk10.csv",
+    "K": {
+     "hit": 2,
+     "of": 2
+    },
+    "DST": {
+     "hit": 2,
+     "of": 2
+    }
+   },
+   "dk_kickers": {
+    "priced_teams": 2,
+    "by_team": {
+     "BAL": [
+      "Riley Patterson"
+     ],
+     "LAC": [
+      "Cameron Dicker"
+     ]
+    },
+    "not_the_one_we_send": {
+     "BAL": {
+      "sending": "Ravens Kicker",
+      "dk_prices": [
+       "Riley Patterson"
+      ]
+     }
+    }
+   },
+   "injury_report": {
+    "src": "nfl.com",
+    "listed": 113,
+    "designations": {
+     "Questionable": 26,
+     "Out": 20,
+     "Doubtful": 4
+    }
+   },
+   "lineups": {
+    "statuses": 419,
+    "by_src": {
+     "espn": 139,
+     "+sleeper": 128,
+     "sleeper": 75,
+     "espn+sleeper": 58,
+     "nfl-report": 16,
+     "nfl-report+sleeper": 3
+    },
+    "q": 0,
+    "out": 3,
+    "out_by_src": {
+     "espn+sleeper": 3
+    }
+   },
+   "warnings": [
+    "no DK props posted (news?): Ladd McConkey"
+   ]
+  }
  }
 }
