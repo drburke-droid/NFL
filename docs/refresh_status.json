@@ -1,8 +1,8 @@
 {
  "season": 2026,
  "week": 10,
- "schedule_week": 10,
- "generated": "2026-11-14T15:42+00:00",
+ "schedule_week": 11,
+ "generated": "2026-11-17T20:51+00:00",
  "steps": {
   "espn": "ok",
   "pastes": "ok",
@@ -11,12 +11,50 @@
   "gm": "ok",
   "trade": "ok",
   "values": "ok",
-  "fan": "ok",
+  "fan": "failed",
   "fanpicks": "ok",
-  "props": "ok"
+  "props": "failed"
  },
  "python": "3.12.16",
  "platform": "linux",
- "errors": {},
+ "errors": {
+  "fan projections": [
+   "FFA weekly files: 68 ((2023, 1) .. (2026, 10))",
+   "  2026 box scores: 3,358 rows",
+   "  Odds API events: 29 (credits left 1)",
+   "  schedule: 18 weeks; week 11 runs Fri 11/20 .. Tue 11/24",
+   "week 11: 12 games in this send (kickoffs Fri 01:15Z .. Mon 01:20Z)",
+   "history: 17,141 player-weeks with FFA baseline + actual, {2023: 18, 2024: 20, 2025: 20}",
+   "  baseline MAE vs actual 4.217",
+   "no FFA file for 2026 wk11 \u2014 drop raw_stats_2026_wk11.csv in /home/runner/work/NFL/NFL/data/ffanalytics/FFAn_weekly"
+  ],
+  "props watch": [
+   "    led.loc[i, \"result\"] = \"win\" if win else (\"push\" if y == r.line else \"loss\")",
+   "    ~~~~~~~^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/indexing.py\", line 938, in __setitem__",
+   "    iloc._setitem_with_indexer(indexer, value, self.name)",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/indexing.py\", line 1953, in _setitem_with_indexer",
+   "    self._setitem_with_indexer_split_path(indexer, value, name)",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/indexing.py\", line 2044, in _setitem_with_indexer_split_path",
+   "    self._setitem_single_column(loc, value, pi)",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/indexing.py\", line 2181, in _setitem_single_column",
+   "    self.obj._mgr.column_setitem(loc, plane_indexer, value)",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/internals/managers.py\", line 1520, in column_setitem",
+   "    new_mgr = col_mgr.setitem((idx,), value)",
+   "              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/internals/managers.py\", line 604, in setitem",
+   "    return self.apply(\"setitem\", indexer=indexer, value=value)",
+   "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/internals/managers.py\", line 442, in apply",
+   "    applied = getattr(b, f)(**kwargs)",
+   "              ^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/internals/blocks.py\", line 1118, in setitem",
+   "    nb = self.coerce_to_target_dtype(value, raise_on_upcast=True)",
+   "         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+   "  File \"/opt/hostedtoolcache/Python/3.12.16/x64/lib/python3.12/site-packages/pandas/core/internals/blocks.py\", line 468, in coerce_to_target_dtype",
+   "    raise TypeError(f\"Invalid value '{other}' for dtype '{self.values.dtype}'\")",
+   "TypeError: Invalid value 'loss' for dtype 'float64'"
+  ]
+ },
  "odds_keys": 6
 }

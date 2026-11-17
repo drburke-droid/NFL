@@ -1,8 +1,8 @@
 {
  "season": 2026,
  "week": 10,
- "current_week": 10,
- "stale": false,
+ "current_week": 11,
+ "stale": true,
  "league": "Kuhn and Friends",
  "scoring": {
   "pass_yds": 0.04,
@@ -254,18 +254,6 @@
      "pts": 8.18,
      "inj": "NA",
      "out": false,
-     "rostered": true,
-     "owner": "Glass Joe",
-     "match": "name"
-    },
-    {
-     "name": "TreVeyon Henderson",
-     "pos": "RB",
-     "team": "NE",
-     "n": "treveyon henderson",
-     "pts": 0.0,
-     "inj": "O",
-     "out": true,
      "rostered": true,
      "owner": "Glass Joe",
      "match": "name"

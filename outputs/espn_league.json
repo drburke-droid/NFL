@@ -250,7 +250,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 217.3,
-     "last_pts": null
+     "last_pts": 5.4
     },
     {
      "name": "Garrett Wilson",
@@ -261,9 +261,9 @@
      "keeper": true,
      "keeper_price": 23,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 99.5,
-     "last_pts": 0.0
+     "last_pts": 16.6
     },
     {
      "name": "Brandon Aubrey",
@@ -276,7 +276,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 190.6,
-     "last_pts": 10.0
+     "last_pts": 12.0
     },
     {
      "name": "D'Andre Swift",
@@ -289,7 +289,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 230.6,
-     "last_pts": 3.1
+     "last_pts": null
     },
     {
      "name": "Quinshon Judkins",
@@ -302,7 +302,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 169.8,
-     "last_pts": 5.5
+     "last_pts": 16.1
     },
     {
      "name": "Javonte Williams",
@@ -315,7 +315,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 244.8,
-     "last_pts": 22.4
+     "last_pts": 7.7
     },
     {
      "name": "Jared Goff",
@@ -328,7 +328,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 378.1,
-     "last_pts": 6.3
+     "last_pts": 28.4
     },
     {
      "name": "Dalton Kincaid",
@@ -341,7 +341,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 126.1,
-     "last_pts": 5.8
+     "last_pts": 7.8
     },
     {
      "name": "Ollie Gordon II",
@@ -354,7 +354,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 54.1,
-     "last_pts": 7.4
+     "last_pts": 15.5
     },
     {
      "name": "Brenton Strange",
@@ -367,7 +367,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 118.0,
-     "last_pts": 4.2
+     "last_pts": 8.9
     },
     {
      "name": "T.J. Hockenson",
@@ -378,9 +378,9 @@
      "keeper": true,
      "keeper_price": 17,
      "acq": "ADD",
-     "inj": "OUT",
+     "inj": "QUESTIONABLE",
      "season_pts": 112.8,
-     "last_pts": 7.3
+     "last_pts": 0.0
     },
     {
      "name": "Aaron Rodgers",
@@ -393,7 +393,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 283.1,
-     "last_pts": null
+     "last_pts": 19.6
     },
     {
      "name": "KC Concepcion",
@@ -405,8 +405,8 @@
      "keeper_price": 13,
      "acq": "ADD",
      "inj": "ACTIVE",
-     "season_pts": 89.4,
-     "last_pts": 18.8
+     "season_pts": 101.1,
+     "last_pts": 11.7
     },
     {
      "name": "Seth McGowan",
@@ -418,8 +418,8 @@
      "keeper_price": 0,
      "acq": "ADD",
      "inj": "ACTIVE",
-     "season_pts": 32.7,
-     "last_pts": 11.2
+     "season_pts": 46.4,
+     "last_pts": 13.7
     },
     {
      "name": "Tank Dell",
@@ -432,7 +432,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 0.0,
-     "last_pts": 20.5
+     "last_pts": 5.1
     },
     {
      "name": "Ravens D/ST",
@@ -466,7 +466,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 165.1,
-     "last_pts": 9.4
+     "last_pts": null
     },
     {
      "name": "Chris Olave",
@@ -479,7 +479,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 269.0,
-     "last_pts": 16.8
+     "last_pts": 6.0
     },
     {
      "name": "Luther Burden III",
@@ -490,9 +490,9 @@
      "keeper": true,
      "keeper_price": 11,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 127.9,
-     "last_pts": 21.7
+     "last_pts": null
     },
     {
      "name": "Bijan Robinson",
@@ -505,7 +505,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 373.8,
-     "last_pts": 26.7
+     "last_pts": 17.7
     },
     {
      "name": "Drake London",
@@ -518,7 +518,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 202.9,
-     "last_pts": 11.8
+     "last_pts": 16.9
     },
     {
      "name": "Justin Herbert",
@@ -531,7 +531,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 353.9,
-     "last_pts": 13.4
+     "last_pts": 16.3
     },
     {
      "name": "David Montgomery",
@@ -542,7 +542,7 @@
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 169.9,
      "last_pts": 0.0
     },
@@ -557,7 +557,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 167.4,
-     "last_pts": 9.8
+     "last_pts": 7.5
     },
     {
      "name": "Xavier Worthy",
@@ -570,7 +570,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 109.9,
-     "last_pts": 10.8
+     "last_pts": 0.0
     },
     {
      "name": "Kendre Miller",
@@ -596,7 +596,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 130.0,
-     "last_pts": 3.0
+     "last_pts": 8.0
     },
     {
      "name": "Roschon Johnson",
@@ -609,7 +609,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 1.7,
-     "last_pts": 0.0
+     "last_pts": null
     },
     {
      "name": "J.J. McCarthy",
@@ -648,7 +648,7 @@
      "acq": "ADD",
      "inj": null,
      "season_pts": 87.5,
-     "last_pts": -0.5
+     "last_pts": 5.0
     },
     {
      "name": "Darren Waller",
@@ -661,7 +661,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 88.7,
-     "last_pts": 23.0
+     "last_pts": 4.4
     }
    ]
   },
@@ -682,7 +682,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 187.4,
-     "last_pts": 12.2
+     "last_pts": 16.1
     },
     {
      "name": "De'Von Achane",
@@ -708,7 +708,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 227.2,
-     "last_pts": 15.5
+     "last_pts": 24.4
     },
     {
      "name": "Derrick Henry",
@@ -721,7 +721,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 282.5,
-     "last_pts": 5.6
+     "last_pts": 19.0
     },
     {
      "name": "Jayden Daniels",
@@ -747,7 +747,7 @@
      "acq": "DRAFT",
      "inj": "QUESTIONABLE",
      "season_pts": 194.1,
-     "last_pts": 3.2
+     "last_pts": null
     },
     {
      "name": "Parker Washington",
@@ -760,20 +760,20 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 184.7,
-     "last_pts": 14.1
+     "last_pts": 28.2
     },
     {
      "name": "Jonah Coleman",
      "pos": "RB",
      "team": "DEN",
      "espn_id": 4702555,
-     "slot": "BENCH",
+     "slot": "RB",
      "keeper": true,
      "keeper_price": 2,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 62.9,
-     "last_pts": 18.8
+     "last_pts": null
     },
     {
      "name": "Kaelon Black",
@@ -785,8 +785,8 @@
      "keeper_price": 5,
      "acq": "DRAFT",
      "inj": "ACTIVE",
-     "season_pts": 38.7,
-     "last_pts": 7.0
+     "season_pts": 53.3,
+     "last_pts": 14.6
     },
     {
      "name": "Caleb Douglas",
@@ -798,8 +798,8 @@
      "keeper_price": 1,
      "acq": "DRAFT",
      "inj": "ACTIVE",
-     "season_pts": 60.6,
-     "last_pts": 13.0
+     "season_pts": 70.7,
+     "last_pts": 10.1
     },
     {
      "name": "Denzel Boston",
@@ -810,9 +810,9 @@
      "keeper": true,
      "keeper_price": 18,
      "acq": "ADD",
-     "inj": "QUESTIONABLE",
-     "season_pts": 102.7,
-     "last_pts": 15.8
+     "inj": "ACTIVE",
+     "season_pts": 105.3,
+     "last_pts": 2.6
     },
     {
      "name": "Kirk Cousins",
@@ -825,7 +825,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 129.5,
-     "last_pts": 17.6
+     "last_pts": 20.4
     },
     {
      "name": "Patriots D/ST",
@@ -838,7 +838,7 @@
      "acq": "ADD",
      "inj": null,
      "season_pts": 108.5,
-     "last_pts": -0.5
+     "last_pts": 1.0
     },
     {
      "name": "Antonio Williams",
@@ -858,13 +858,13 @@
      "pos": "RB",
      "team": "NO",
      "espn_id": 4569682,
-     "slot": "RB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 28,
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 48.1,
-     "last_pts": 14.7
+     "last_pts": 2.1
     },
     {
      "name": "Jason Sanders",
@@ -877,7 +877,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 0.0,
-     "last_pts": 16.0
+     "last_pts": 14.0
     }
    ]
   },
@@ -898,7 +898,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 367.9,
-     "last_pts": 13.4
+     "last_pts": 44.2
     },
     {
      "name": "Cam Skattebo",
@@ -922,9 +922,9 @@
      "keeper": true,
      "keeper_price": 6,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "DOUBTFUL",
      "season_pts": 425.0,
-     "last_pts": 27.3
+     "last_pts": 3.0
     },
     {
      "name": "Jeremiyah Love",
@@ -950,7 +950,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 212.4,
-     "last_pts": 15.6
+     "last_pts": 6.5
     },
     {
      "name": "Tyler Shough",
@@ -963,20 +963,20 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 186.0,
-     "last_pts": 21.7
+     "last_pts": 14.0
     },
     {
      "name": "Carnell Tate",
      "pos": "WR",
      "team": "TEN",
      "espn_id": 4871023,
-     "slot": "FLEX",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
-     "inj": "OUT",
+     "inj": "QUESTIONABLE",
      "season_pts": 79.3,
-     "last_pts": null
+     "last_pts": 0.0
     },
     {
      "name": "Tee Higgins",
@@ -989,7 +989,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 211.6,
-     "last_pts": 20.2
+     "last_pts": 11.6
     },
     {
      "name": "Kenny Gainwell",
@@ -1002,20 +1002,20 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 222.3,
-     "last_pts": 10.6
+     "last_pts": null
     },
     {
      "name": "Aaron Jones Sr.",
      "pos": "RB",
      "team": "MIN",
      "espn_id": 3042519,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 17,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 119.7,
-     "last_pts": 3.1
+     "last_pts": 12.5
     },
     {
      "name": "Mark Andrews",
@@ -1028,7 +1028,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 131.0,
-     "last_pts": 3.9
+     "last_pts": 16.2
     },
     {
      "name": "Tre Tucker",
@@ -1041,7 +1041,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 161.7,
-     "last_pts": 9.5
+     "last_pts": 1.9
     },
     {
      "name": "Kyle Pitts Sr.",
@@ -1054,7 +1054,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 210.8,
-     "last_pts": 5.3
+     "last_pts": 8.0
     },
     {
      "name": "Tyler Allgeier",
@@ -1067,7 +1067,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 123.0,
-     "last_pts": 6.6
+     "last_pts": 1.4
     },
     {
      "name": "Dominic Zvada",
@@ -1108,13 +1108,13 @@
      "pos": "WR",
      "team": "CIN",
      "espn_id": 4362628,
-     "slot": "FLEX",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 61,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 314.6,
-     "last_pts": 31.5
+     "last_pts": 34.1
     },
     {
      "name": "Rashee Rice",
@@ -1127,7 +1127,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 150.1,
-     "last_pts": 9.9
+     "last_pts": 13.2
     },
     {
      "name": "Joe Burrow",
@@ -1140,20 +1140,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 173.5,
-     "last_pts": 35.5
-    },
-    {
-     "name": "TreVeyon Henderson",
-     "pos": "RB",
-     "team": "NE",
-     "espn_id": 4432710,
-     "slot": "BENCH",
-     "keeper": true,
-     "keeper_price": 26,
-     "acq": "DRAFT",
-     "inj": "OUT",
-     "season_pts": 207.2,
-     "last_pts": 0.0
+     "last_pts": 41.2
     },
     {
      "name": "George Kittle",
@@ -1166,20 +1153,20 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 161.5,
-     "last_pts": 9.8
+     "last_pts": 13.4
     },
     {
      "name": "Bucky Irving",
      "pos": "RB",
      "team": "TB",
      "espn_id": 4596448,
-     "slot": "BENCH",
+     "slot": "RB",
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 139.5,
-     "last_pts": 28.5
+     "last_pts": null
     },
     {
      "name": "Dylan Sampson",
@@ -1192,46 +1179,46 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 88.6,
-     "last_pts": 7.8
+     "last_pts": 7.7
     },
     {
      "name": "Matthew Golden",
      "pos": "WR",
      "team": "GB",
      "espn_id": 4701936,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 70.0,
-     "last_pts": 32.4
+     "last_pts": 12.0
     },
     {
      "name": "Zach Charbonnet",
      "pos": "RB",
      "team": "SEA",
      "espn_id": 4426385,
-     "slot": "RB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 11,
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 181.4,
-     "last_pts": 9.6
+     "last_pts": 9.4
     },
     {
      "name": "Braelon Allen",
      "pos": "RB",
      "team": "NYJ",
      "espn_id": 4685247,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 30,
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 16.3,
-     "last_pts": 6.4
+     "last_pts": 5.6
     },
     {
      "name": "Steelers D/ST",
@@ -1244,7 +1231,7 @@
      "acq": "ADD",
      "inj": null,
      "season_pts": 96.0,
-     "last_pts": null
+     "last_pts": -1.5
     },
     {
      "name": "Alvin Kamara",
@@ -1257,7 +1244,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 102.7,
-     "last_pts": 7.9
+     "last_pts": 16.4
     },
     {
      "name": "Omar Cooper Jr.",
@@ -1270,7 +1257,7 @@
      "acq": "ADD",
      "inj": "QUESTIONABLE",
      "season_pts": 62.6,
-     "last_pts": 13.8
+     "last_pts": 0.0
     },
     {
      "name": "DeMario Douglas",
@@ -1283,7 +1270,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 95.8,
-     "last_pts": 15.2
+     "last_pts": 1.4
     },
     {
      "name": "Chase McLaughlin",
@@ -1296,7 +1283,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 157.0,
-     "last_pts": 10.0
+     "last_pts": null
     },
     {
      "name": "Chris Boswell",
@@ -1309,6 +1296,19 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 152.0,
+     "last_pts": 5.0
+    },
+    {
+     "name": "Buccaneers D/ST",
+     "pos": "DST",
+     "team": "TB",
+     "espn_id": -16027,
+     "slot": "BENCH",
+     "keeper": false,
+     "keeper_price": 0,
+     "acq": "ADD",
+     "inj": null,
+     "season_pts": 73.5,
      "last_pts": null
     }
    ]
@@ -1330,20 +1330,20 @@
      "acq": "DRAFT",
      "inj": "INJURY_RESERVE",
      "season_pts": 376.0,
-     "last_pts": 36.0
+     "last_pts": 0.0
     },
     {
      "name": "Matthew Stafford",
      "pos": "QB",
      "team": "LAR",
      "espn_id": 12483,
-     "slot": "QB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 453.4,
-     "last_pts": 14.2
+     "last_pts": 26.8
     },
     {
      "name": "Brock Bowers",
@@ -1354,9 +1354,9 @@
      "keeper": true,
      "keeper_price": 19,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 176.2,
-     "last_pts": 23.3
+     "last_pts": 3.8
     },
     {
      "name": "Christian McCaffrey",
@@ -1369,7 +1369,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 416.6,
-     "last_pts": 22.7
+     "last_pts": 46.3
     },
     {
      "name": "Zay Flowers",
@@ -1382,31 +1382,31 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 246.3,
-     "last_pts": 5.3
+     "last_pts": 12.4
     },
     {
      "name": "Dak Prescott",
      "pos": "QB",
      "team": "DAL",
      "espn_id": 2577417,
-     "slot": "BENCH",
+     "slot": "QB",
      "keeper": true,
      "keeper_price": 4,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 385.8,
-     "last_pts": 24.5
+     "last_pts": 45.4
     },
     {
      "name": "Mike Evans",
      "pos": "WR",
      "team": "SF",
      "espn_id": 16737,
-     "slot": "BENCH",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
-     "inj": "OUT",
+     "inj": "QUESTIONABLE",
      "season_pts": 84.8,
      "last_pts": 0.0
     },
@@ -1421,7 +1421,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 187.2,
-     "last_pts": null
+     "last_pts": 15.4
     },
     {
      "name": "Jaylen Warren",
@@ -1434,7 +1434,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 217.1,
-     "last_pts": null
+     "last_pts": 9.1
     },
     {
      "name": "Chuba Hubbard",
@@ -1447,20 +1447,20 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 126.4,
-     "last_pts": 13.6
+     "last_pts": 34.2
     },
     {
      "name": "Deebo Samuel Sr.",
      "pos": "WR",
      "team": "SF",
      "espn_id": 3126486,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 188.2,
-     "last_pts": 0.0
+     "last_pts": 25.9
     },
     {
      "name": "Michael Mayer",
@@ -1473,7 +1473,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 73.8,
-     "last_pts": 5.7
+     "last_pts": 3.8
     },
     {
      "name": "Jake Bates",
@@ -1486,7 +1486,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 152.0,
-     "last_pts": 15.0
+     "last_pts": 5.0
     },
     {
      "name": "Mack Hollins",
@@ -1499,33 +1499,33 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 113.4,
-     "last_pts": 12.6
+     "last_pts": 9.8
     },
     {
      "name": "Lions D/ST",
      "pos": "DST",
      "team": "DET",
      "espn_id": -16008,
-     "slot": "BENCH",
+     "slot": "DST",
      "keeper": false,
      "keeper_price": 0,
      "acq": "ADD",
      "inj": null,
      "season_pts": 67.5,
-     "last_pts": 7.5
+     "last_pts": 8.5
     },
     {
      "name": "Vikings D/ST",
      "pos": "DST",
      "team": "MIN",
      "espn_id": -16016,
-     "slot": "DST",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 10,
      "acq": "ADD",
      "inj": null,
      "season_pts": 100.5,
-     "last_pts": 3.0
+     "last_pts": 13.0
     }
    ]
   },
@@ -1546,98 +1546,98 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 188.5,
-     "last_pts": 8.4
+     "last_pts": 2.4
     },
     {
      "name": "Omarion Hampton",
      "pos": "RB",
      "team": "LAC",
      "espn_id": 4685382,
-     "slot": "BENCH",
+     "slot": "RB",
      "keeper": true,
      "keeper_price": 45,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 135.7,
-     "last_pts": 6.0
+     "last_pts": 17.5
     },
     {
      "name": "Caleb Williams",
      "pos": "QB",
      "team": "CHI",
      "espn_id": 4431611,
-     "slot": "BENCH",
+     "slot": "QB",
      "keeper": true,
      "keeper_price": 17,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 380.2,
-     "last_pts": 20.8
+     "last_pts": null
     },
     {
      "name": "Jadarian Price",
      "pos": "RB",
      "team": "SEA",
      "espn_id": 4685512,
-     "slot": "RB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 16,
      "acq": "DRAFT",
      "inj": "ACTIVE",
-     "season_pts": 33.5,
-     "last_pts": 11.8
+     "season_pts": 44.9,
+     "last_pts": 11.4
     },
     {
      "name": "Rome Odunze",
      "pos": "WR",
      "team": "CHI",
      "espn_id": 4431299,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 13,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 146.1,
-     "last_pts": 16.0
+     "last_pts": null
     },
     {
      "name": "A.J. Brown",
      "pos": "WR",
      "team": "NE",
      "espn_id": 4047646,
-     "slot": "FLEX",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 48,
      "acq": "DRAFT",
      "inj": "QUESTIONABLE",
      "season_pts": 220.3,
-     "last_pts": 0.0
+     "last_pts": 4.7
     },
     {
      "name": "Kyle Monangai",
      "pos": "RB",
      "team": "CHI",
      "espn_id": 4608686,
-     "slot": "BENCH",
+     "slot": "RB",
      "keeper": true,
      "keeper_price": 12,
      "acq": "DRAFT",
-     "inj": "OUT",
+     "inj": "QUESTIONABLE",
      "season_pts": 146.7,
-     "last_pts": 0.0
+     "last_pts": null
     },
     {
      "name": "Blake Corum",
      "pos": "RB",
      "team": "LAR",
      "espn_id": 4429096,
-     "slot": "RB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 122.2,
-     "last_pts": 11.8
+     "last_pts": 20.9
     },
     {
      "name": "Josh Downs",
@@ -1650,7 +1650,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 137.4,
-     "last_pts": 5.4
+     "last_pts": 15.3
     },
     {
      "name": "Jordyn Tyson",
@@ -1662,21 +1662,21 @@
      "keeper_price": 1,
      "acq": "DRAFT",
      "inj": "ACTIVE",
-     "season_pts": 6.0,
-     "last_pts": 6.0
+     "season_pts": 25.0,
+     "last_pts": 19.0
     },
     {
      "name": "Jordan Love",
      "pos": "QB",
      "team": "GB",
      "espn_id": 4036378,
-     "slot": "QB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 6,
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 289.1,
-     "last_pts": 42.2
+     "last_pts": 13.8
     },
     {
      "name": "Tyler Bass",
@@ -1689,33 +1689,33 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 0.0,
-     "last_pts": 13.0
+     "last_pts": 7.0
     },
     {
      "name": "Bengals D/ST",
      "pos": "DST",
      "team": "CIN",
      "espn_id": -16004,
-     "slot": "DST",
+     "slot": "BENCH",
      "keeper": false,
      "keeper_price": 0,
      "acq": "ADD",
      "inj": null,
      "season_pts": 65.0,
-     "last_pts": 4.0
+     "last_pts": 3.5
     },
     {
      "name": "Bears D/ST",
      "pos": "DST",
      "team": "CHI",
      "espn_id": -16003,
-     "slot": "BENCH",
+     "slot": "DST",
      "keeper": true,
      "keeper_price": 9,
      "acq": "ADD",
      "inj": null,
      "season_pts": 87.5,
-     "last_pts": 10.0
+     "last_pts": null
     },
     {
      "name": "Makai Lemon",
@@ -1728,7 +1728,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 73.7,
-     "last_pts": 12.1
+     "last_pts": null
     },
     {
      "name": "Kaleb Johnson",
@@ -1741,7 +1741,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 8.8,
-     "last_pts": 12.8
+     "last_pts": 4.2
     }
    ]
   },
@@ -1762,7 +1762,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 265.3,
-     "last_pts": 9.1
+     "last_pts": 5.2
     },
     {
      "name": "Jameson Williams",
@@ -1775,7 +1775,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 219.9,
-     "last_pts": 5.0
+     "last_pts": 9.0
     },
     {
      "name": "Trey McBride",
@@ -1788,7 +1788,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 315.9,
-     "last_pts": 12.4
+     "last_pts": 8.7
     },
     {
      "name": "Justin Jefferson",
@@ -1801,7 +1801,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 201.5,
-     "last_pts": 8.8
+     "last_pts": 16.4
     },
     {
      "name": "Ashton Jeanty",
@@ -1814,7 +1814,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 246.1,
-     "last_pts": 7.0
+     "last_pts": 10.4
     },
     {
      "name": "Josh Jacobs",
@@ -1827,7 +1827,7 @@
      "acq": "DRAFT",
      "inj": "OUT",
      "season_pts": 239.1,
-     "last_pts": 0.5
+     "last_pts": 0.0
     },
     {
      "name": "DJ Moore",
@@ -1840,7 +1840,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 173.2,
-     "last_pts": 6.6
+     "last_pts": 19.4
     },
     {
      "name": "Eagles D/ST",
@@ -1853,7 +1853,7 @@
      "acq": "DRAFT",
      "inj": null,
      "season_pts": 103.0,
-     "last_pts": 6.0
+     "last_pts": null
     },
     {
      "name": "Matt Gay",
@@ -1866,7 +1866,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 91.0,
-     "last_pts": 7.0
+     "last_pts": 8.0
     },
     {
      "name": "Woody Marks",
@@ -1877,9 +1877,9 @@
      "keeper": true,
      "keeper_price": 11,
      "acq": "DRAFT",
-     "inj": "ACTIVE",
+     "inj": "DOUBTFUL",
      "season_pts": 151.1,
-     "last_pts": 8.4
+     "last_pts": 7.5
     },
     {
      "name": "Devaughn Vele",
@@ -1892,7 +1892,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 66.3,
-     "last_pts": 3.7
+     "last_pts": 3.4
     },
     {
      "name": "Bryce Young",
@@ -1905,7 +1905,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 279.0,
-     "last_pts": 28.3
+     "last_pts": 8.1
     },
     {
      "name": "Pat Freiermuth",
@@ -1918,7 +1918,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 113.6,
-     "last_pts": null
+     "last_pts": 11.5
     },
     {
      "name": "Keenan Allen",
@@ -1931,7 +1931,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 182.7,
-     "last_pts": 6.6
+     "last_pts": 11.1
     },
     {
      "name": "Geno Smith",
@@ -1942,9 +1942,9 @@
      "keeper": true,
      "keeper_price": 1,
      "acq": "ADD",
-     "inj": "ACTIVE",
+     "inj": "QUESTIONABLE",
      "season_pts": 229.9,
-     "last_pts": 7.4
+     "last_pts": 5.9
     },
     {
      "name": "Bills D/ST",
@@ -1957,7 +1957,7 @@
      "acq": "ADD",
      "inj": null,
      "season_pts": 89.0,
-     "last_pts": 12.0
+     "last_pts": 9.0
     }
    ]
   },
@@ -1991,7 +1991,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 211.7,
-     "last_pts": 11.7
+     "last_pts": 14.8
     },
     {
      "name": "DeVonta Smith",
@@ -2002,9 +2002,9 @@
      "keeper": true,
      "keeper_price": 20,
      "acq": "DRAFT",
-     "inj": "OUT",
+     "inj": "QUESTIONABLE",
      "season_pts": 201.8,
-     "last_pts": 0.0
+     "last_pts": null
     },
     {
      "name": "Rams D/ST",
@@ -2017,7 +2017,7 @@
      "acq": "DRAFT",
      "inj": null,
      "season_pts": 103.5,
-     "last_pts": 9.0
+     "last_pts": 12.5
     },
     {
      "name": "Lamar Jackson",
@@ -2043,7 +2043,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 202.0,
-     "last_pts": 6.0
+     "last_pts": 3.0
     },
     {
      "name": "Tucker Kraft",
@@ -2056,7 +2056,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 117.2,
-     "last_pts": 1.9
+     "last_pts": 2.9
     },
     {
      "name": "Rhamondre Stevenson",
@@ -2067,9 +2067,9 @@
      "keeper": true,
      "keeper_price": 15,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 181.8,
-     "last_pts": 15.8
+     "last_pts": 1.5
     },
     {
      "name": "Malik Washington",
@@ -2082,14 +2082,14 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 117.7,
-     "last_pts": 4.1
+     "last_pts": 15.4
     },
     {
      "name": "Ladd McConkey",
      "pos": "WR",
      "team": "LAC",
      "espn_id": 4612826,
-     "slot": "FLEX",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 4,
      "acq": "DRAFT",
@@ -2115,13 +2115,13 @@
      "pos": "WR",
      "team": "LAC",
      "espn_id": 4686612,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 69.4,
-     "last_pts": 3.6
+     "last_pts": 13.6
     },
     {
      "name": "Bo Nix",
@@ -2134,7 +2134,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 367.8,
-     "last_pts": 20.7
+     "last_pts": null
     },
     {
      "name": "Chris Godwin Jr.",
@@ -2147,7 +2147,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 83.0,
-     "last_pts": 4.8
+     "last_pts": null
     },
     {
      "name": "Bam Knight",
@@ -2160,7 +2160,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 93.9,
-     "last_pts": 0.0
+     "last_pts": 1.9
     },
     {
      "name": "Corey Kiner",
@@ -2173,7 +2173,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 9.3,
-     "last_pts": 11.5
+     "last_pts": 2.5
     }
    ]
   },
@@ -2188,26 +2188,26 @@
      "pos": "WR",
      "team": "DAL",
      "espn_id": 4426354,
-     "slot": "FLEX",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 12,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 291.9,
-     "last_pts": 0.0
+     "last_pts": 43.5
     },
     {
      "name": "Emeka Egbuka",
      "pos": "WR",
      "team": "TB",
      "espn_id": 4567750,
-     "slot": "BENCH",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 25,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 195.7,
-     "last_pts": 6.9
+     "last_pts": null
     },
     {
      "name": "Jonathan Taylor",
@@ -2220,33 +2220,33 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 363.3,
-     "last_pts": 10.4
+     "last_pts": 12.3
     },
     {
      "name": "Ka'imi Fairbairn",
      "pos": "K",
      "team": "HOU",
      "espn_id": 2971573,
-     "slot": "BENCH",
+     "slot": "K",
      "keeper": true,
      "keeper_price": 1,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 194.0,
-     "last_pts": 17.0
+     "last_pts": 7.0
     },
     {
      "name": "Saquon Barkley",
      "pos": "RB",
      "team": "PHI",
      "espn_id": 3929630,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 61,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 233.3,
-     "last_pts": 8.2
+     "last_pts": null
     },
     {
      "name": "Trevor Lawrence",
@@ -2259,7 +2259,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 411.2,
-     "last_pts": 15.6
+     "last_pts": 33.8
     },
     {
      "name": "Bhayshul Tuten",
@@ -2272,7 +2272,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 89.6,
-     "last_pts": 8.9
+     "last_pts": 20.3
     },
     {
      "name": "Isaiah Likely",
@@ -2292,39 +2292,39 @@
      "pos": "WR",
      "team": "GB",
      "espn_id": 4248528,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 14,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 132.4,
-     "last_pts": 30.1
+     "last_pts": 6.7
     },
     {
      "name": "Jalen Coker",
      "pos": "WR",
      "team": "CAR",
      "espn_id": 4695883,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 91.4,
-     "last_pts": 6.6
+     "last_pts": 0.3
     },
     {
      "name": "Spencer Shrader",
      "pos": "K",
      "team": "IND",
      "espn_id": 4571557,
-     "slot": "K",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 57.0,
-     "last_pts": 16.0
+     "last_pts": 8.0
     },
     {
      "name": "Jaguars D/ST",
@@ -2337,7 +2337,7 @@
      "acq": "ADD",
      "inj": null,
      "season_pts": 117.0,
-     "last_pts": 8.5
+     "last_pts": 1.5
     },
     {
      "name": "Chris Rodriguez Jr.",
@@ -2350,7 +2350,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 92.0,
-     "last_pts": 11.2
+     "last_pts": 0.5
     },
     {
      "name": "Terrance Ferguson",
@@ -2376,7 +2376,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 178.8,
-     "last_pts": 6.5
+     "last_pts": 4.2
     },
     {
      "name": "Adonai Mitchell",
@@ -2387,9 +2387,9 @@
      "keeper": true,
      "keeper_price": 10,
      "acq": "ADD",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 88.9,
-     "last_pts": 0.0
+     "last_pts": 8.9
     }
    ]
   },
@@ -2410,20 +2410,20 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 282.6,
-     "last_pts": 10.5
+     "last_pts": 28.3
     },
     {
      "name": "Jaxon Smith-Njigba",
      "pos": "WR",
      "team": "SEA",
      "espn_id": 4430878,
-     "slot": "WR",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 13,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 360.9,
-     "last_pts": 12.1
+     "last_pts": 31.1
     },
     {
      "name": "Kenneth Walker III",
@@ -2436,7 +2436,7 @@
      "acq": "DRAFT",
      "inj": "QUESTIONABLE",
      "season_pts": 191.9,
-     "last_pts": 36.3
+     "last_pts": 0.0
     },
     {
      "name": "CeeDee Lamb",
@@ -2449,7 +2449,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 200.9,
-     "last_pts": 34.5
+     "last_pts": 20.2
     },
     {
      "name": "Josh Allen",
@@ -2462,7 +2462,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 427.6,
-     "last_pts": 15.9
+     "last_pts": 25.3
     },
     {
      "name": "Seahawks D/ST",
@@ -2475,7 +2475,7 @@
      "acq": "DRAFT",
      "inj": null,
      "season_pts": 151.5,
-     "last_pts": 9.5
+     "last_pts": 8.0
     },
     {
      "name": "Patrick Mahomes",
@@ -2488,7 +2488,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 340.7,
-     "last_pts": 21.5
+     "last_pts": 45.4
     },
     {
      "name": "Sam LaPorta",
@@ -2501,7 +2501,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 106.9,
-     "last_pts": 7.2
+     "last_pts": 2.6
     },
     {
      "name": "Tony Pollard",
@@ -2514,7 +2514,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 188.8,
-     "last_pts": null
+     "last_pts": 23.9
     },
     {
      "name": "Rachaad White",
@@ -2539,8 +2539,8 @@
      "keeper_price": 2,
      "acq": "DRAFT",
      "inj": "ACTIVE",
-     "season_pts": 60.8,
-     "last_pts": 9.4
+     "season_pts": 95.9,
+     "last_pts": 35.1
     },
     {
      "name": "Will Reichard",
@@ -2553,20 +2553,20 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 160.0,
-     "last_pts": 9.0
+     "last_pts": 12.0
     },
     {
      "name": "Germie Bernard",
      "pos": "WR",
      "team": "PIT",
      "espn_id": 4685261,
-     "slot": "BENCH",
+     "slot": "WR",
      "keeper": true,
      "keeper_price": 13,
      "acq": "ADD",
      "inj": "ACTIVE",
-     "season_pts": 66.8,
-     "last_pts": null
+     "season_pts": 67.8,
+     "last_pts": 1.0
     },
     {
      "name": "Jordan Mason",
@@ -2579,7 +2579,7 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 129.9,
-     "last_pts": 6.2
+     "last_pts": 5.9
     },
     {
      "name": "Texans D/ST",
@@ -2592,7 +2592,7 @@
      "acq": "ADD",
      "inj": null,
      "season_pts": 132.5,
-     "last_pts": 6.0
+     "last_pts": 3.0
     },
     {
      "name": "Fernando Mendoza",
@@ -2604,8 +2604,8 @@
      "keeper_price": 15,
      "acq": "ADD",
      "inj": "ACTIVE",
-     "season_pts": 2.2,
-     "last_pts": 0.0
+     "season_pts": 16.1,
+     "last_pts": 13.9
     }
    ]
   },
@@ -2639,7 +2639,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 305.2,
-     "last_pts": 16.7
+     "last_pts": 21.7
     },
     {
      "name": "Amon-Ra St. Brown",
@@ -2650,61 +2650,61 @@
      "keeper": true,
      "keeper_price": 53,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "ACTIVE",
      "season_pts": 324.0,
-     "last_pts": 16.6
+     "last_pts": 25.8
     },
     {
      "name": "Travis Etienne Jr.",
      "pos": "RB",
      "team": "NO",
      "espn_id": 4239996,
-     "slot": "BENCH",
+     "slot": "RB",
      "keeper": true,
      "keeper_price": 3,
      "acq": "DRAFT",
-     "inj": "INJURY_RESERVE",
+     "inj": "ACTIVE",
      "season_pts": 253.9,
-     "last_pts": 0.0
+     "last_pts": 6.4
     },
     {
      "name": "Mike Washington Jr.",
      "pos": "RB",
      "team": "LVR",
      "espn_id": 4686658,
-     "slot": "RB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 7,
      "acq": "DRAFT",
      "inj": "ACTIVE",
-     "season_pts": 37.6,
-     "last_pts": -0.3
+     "season_pts": 41.3,
+     "last_pts": 3.7
     },
     {
      "name": "Brock Purdy",
      "pos": "QB",
      "team": "SF",
      "espn_id": 4361741,
-     "slot": "QB",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 3,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 229.4,
-     "last_pts": 30.3
+     "last_pts": 37.7
     },
     {
      "name": "Jordan Addison",
      "pos": "WR",
      "team": "MIN",
      "espn_id": 4429205,
-     "slot": "FLEX",
+     "slot": "BENCH",
      "keeper": true,
      "keeper_price": 2,
      "acq": "DRAFT",
-     "inj": "QUESTIONABLE",
+     "inj": "OUT",
      "season_pts": 135.1,
-     "last_pts": 4.8
+     "last_pts": 0.0
     },
     {
      "name": "Travis Kelce",
@@ -2717,7 +2717,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 193.2,
-     "last_pts": 17.3
+     "last_pts": 5.0
     },
     {
      "name": "Stefon Diggs",
@@ -2743,7 +2743,7 @@
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 115.9,
-     "last_pts": 3.2
+     "last_pts": null
     },
     {
      "name": "Jacory Croskey-Merritt",
@@ -2763,26 +2763,26 @@
      "pos": "QB",
      "team": "HOU",
      "espn_id": 4432577,
-     "slot": "BENCH",
+     "slot": "QB",
      "keeper": true,
      "keeper_price": 2,
      "acq": "DRAFT",
      "inj": "ACTIVE",
      "season_pts": 254.5,
-     "last_pts": 46.4
+     "last_pts": 27.4
     },
     {
      "name": "Broncos D/ST",
      "pos": "DST",
      "team": "DEN",
      "espn_id": -16007,
-     "slot": "BENCH",
+     "slot": "DST",
      "keeper": true,
      "keeper_price": 3,
      "acq": "ADD",
      "inj": null,
      "season_pts": 111.0,
-     "last_pts": 5.5
+     "last_pts": null
     },
     {
      "name": "Cam Little",
@@ -2795,27 +2795,27 @@
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 166.0,
-     "last_pts": 17.0
+     "last_pts": 19.0
     },
     {
      "name": "Jakobi Meyers",
      "pos": "WR",
      "team": "JAC",
      "espn_id": 3916433,
-     "slot": "BENCH",
+     "slot": "FLEX",
      "keeper": true,
      "keeper_price": 5,
      "acq": "ADD",
      "inj": "ACTIVE",
      "season_pts": 176.8,
-     "last_pts": 10.5
+     "last_pts": 6.4
     },
     {
      "name": "Commanders D/ST",
      "pos": "DST",
      "team": "WAS",
      "espn_id": -16028,
-     "slot": "DST",
+     "slot": "BENCH",
      "keeper": false,
      "keeper_price": 0,
      "acq": "ADD",
