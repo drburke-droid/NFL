@@ -1,7 +1,7 @@
 {
  "season": 2026,
  "week": 10,
- "current_week": 11,
+ "current_week": 12,
  "stale": true,
  "league": "Kuhn and Friends",
  "scoring": {
@@ -74,6 +74,18 @@
      "match": ""
     },
     {
+     "name": "Geno Smith",
+     "pos": "QB",
+     "team": "NYJ",
+     "n": "geno smith",
+     "pts": 17.92,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Jacoby Brissett",
      "pos": "QB",
      "team": "BAL",
@@ -115,18 +127,6 @@
      "team": "ATL",
      "n": "michael penix",
      "pts": 15.95,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Cam Ward",
-     "pos": "QB",
-     "team": "TEN",
-     "n": "cam ward",
-     "pts": 15.74,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -261,11 +261,35 @@
    ],
    "free": [
     {
+     "name": "Corey Kiner",
+     "pos": "RB",
+     "team": "NE",
+     "n": "corey kiner",
+     "pts": 8.81,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Austin Ekeler",
      "pos": "RB",
      "team": "WAS",
      "n": "austin ekeler",
      "pts": 7.35,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
+     "name": "Audric Estime",
+     "pos": "RB",
+     "team": "NO",
+     "n": "audric estime",
+     "pts": 6.75,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -290,18 +314,6 @@
      "team": "LAC",
      "n": "kimani vidal",
      "pts": 6.61,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Justice Hill",
-     "pos": "RB",
-     "team": "BAL",
-     "n": "justice hill",
-     "pts": 6.49,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -338,18 +350,6 @@
      "team": "GB",
      "n": "marshawn lloyd",
      "pts": 5.65,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Samaje Perine",
-     "pos": "RB",
-     "team": "CIN",
-     "n": "samaje perine",
-     "pts": 5.46,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -468,6 +468,18 @@
      "rostered": true,
      "owner": "Glass Joe",
      "match": "name"
+    },
+    {
+     "name": "Xavier Hutchinson",
+     "pos": "WR",
+     "team": "HOU",
+     "n": "xavier hutchinson",
+     "pts": 7.43,
+     "inj": "NA",
+     "out": false,
+     "rostered": true,
+     "owner": "Glass Joe",
+     "match": "name"
     }
    ],
    "free": [
@@ -484,11 +496,11 @@
      "match": ""
     },
     {
-     "name": "Ryan Flournoy",
+     "name": "Germie Bernard",
      "pos": "WR",
-     "team": "DAL",
-     "n": "ryan flournoy",
-     "pts": 9.36,
+     "team": "PIT",
+     "n": "germie bernard",
+     "pts": 10.32,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -568,18 +580,6 @@
      "match": ""
     },
     {
-     "name": "Xavier Hutchinson",
-     "pos": "WR",
-     "team": "HOU",
-     "n": "xavier hutchinson",
-     "pts": 7.43,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
      "name": "Laquon Treadwell",
      "pos": "WR",
      "team": "IND",
@@ -614,9 +614,21 @@
      "rostered": false,
      "owner": "",
      "match": ""
+    },
+    {
+     "name": "Treylon Burks",
+     "pos": "WR",
+     "team": "WAS",
+     "n": "treylon burks",
+     "pts": 6.31,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
     }
    ],
-   "worst_of_mine": 9.06
+   "worst_of_mine": 7.43
   },
   "TE": {
    "mine": [
@@ -635,11 +647,11 @@
    ],
    "free": [
     {
-     "name": "Chigoziem Okonkwo",
+     "name": "Hunter Henry",
      "pos": "TE",
-     "team": "WAS",
-     "n": "chigoziem okonkwo",
-     "pts": 8.86,
+     "team": "NE",
+     "n": "hunter henry",
+     "pts": 9.71,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -822,6 +834,18 @@
      "match": ""
     },
     {
+     "name": "Spencer Shrader",
+     "pos": "K",
+     "team": "IND",
+     "n": "spencer shrader",
+     "pts": 9.1,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Evan McPherson",
      "pos": "K",
      "team": "CIN",
@@ -858,11 +882,11 @@
      "match": ""
     },
     {
-     "name": "Cameron Dicker",
+     "name": "Jason Myers",
      "pos": "K",
-     "team": "LAC",
-     "n": "cameron dicker",
-     "pts": 8.21,
+     "team": "SEA",
+     "n": "jason myers",
+     "pts": 8.13,
      "inj": "NA",
      "out": false,
      "rostered": false,
@@ -906,35 +930,23 @@
      "match": ""
     },
     {
+     "name": "Dominic Zvada",
+     "pos": "K",
+     "team": "NYG",
+     "n": "dominic zvada",
+     "pts": 7.53,
+     "inj": "NA",
+     "out": false,
+     "rostered": false,
+     "owner": "",
+     "match": ""
+    },
+    {
      "name": "Zane Gonzalez",
      "pos": "K",
      "team": "MIA",
      "n": "zane gonzalez",
      "pts": 7.44,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Riley Patterson",
-     "pos": "K",
-     "team": "BAL",
-     "n": "riley patterson",
-     "pts": 7.41,
-     "inj": "NA",
-     "out": false,
-     "rostered": false,
-     "owner": "",
-     "match": ""
-    },
-    {
-     "name": "Ryan Fitzgerald",
-     "pos": "K",
-     "team": "CAR",
-     "n": "ryan fitzgerald",
-     "pts": 7.3,
      "inj": "NA",
      "out": false,
      "rostered": false,

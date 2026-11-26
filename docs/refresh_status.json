@@ -1,8 +1,8 @@
 {
  "season": 2026,
  "week": 10,
- "schedule_week": 11,
- "generated": "2026-11-18T23:49+00:00",
+ "schedule_week": 12,
+ "generated": "2026-11-26T01:28+00:00",
  "steps": {
   "espn": "ok",
   "pastes": "ok",
@@ -20,13 +20,13 @@
  "errors": {
   "fan projections": [
    "FFA weekly files: 68 ((2023, 1) .. (2026, 10))",
-   "  2026 box scores: 3,358 rows",
-   "  Odds API events: 29 (credits left 1)",
-   "  schedule: 18 weeks; week 11 runs Fri 11/20 .. Tue 11/24",
-   "week 11: 12 games in this send (kickoffs Fri 01:15Z .. Mon 01:20Z)",
+   "  2026 box scores: 3,652 rows",
+   "  Odds API events: 30 (credits left 1)",
+   "  schedule: 18 weeks; week 12 runs Thu 11/26 .. Tue 12/01",
+   "week 12: 16 games in this send (kickoffs Thu 01:15Z .. Tue 01:15Z)",
    "history: 17,141 player-weeks with FFA baseline + actual, {2023: 18, 2024: 20, 2025: 20}",
    "  baseline MAE vs actual 4.217",
-   "no FFA file for 2026 wk11 \u2014 drop raw_stats_2026_wk11.csv in /home/runner/work/NFL/NFL/data/ffanalytics/FFAn_weekly"
+   "no FFA file for 2026 wk12 \u2014 drop raw_stats_2026_wk12.csv in /home/runner/work/NFL/NFL/data/ffanalytics/FFAn_weekly"
   ],
   "props watch": [
    "    led.loc[i, \"result\"] = \"win\" if win else (\"push\" if y == r.line else \"loss\")",
